@@ -1,31 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using CaseManagement.Workflow.Domains;
 
 namespace CaseManagement.BPMN.Domains
 {
-    public class BPMNReceiveTask : BPMNProcessFlowElement
+    public class BPMNReceiveTask : ProcessFlowInstanceElement
     {
-        public BPMNReceiveTask(string name, bool instantiate)
+        public BPMNReceiveTask(string id, string name, string operationId) : base(id, name)
         {
-            Name = name;
-            Instantiate = instantiate;
-            SequenceFlows = new List<BPMNSequenceFlow>();
+            OperationId = operationId;
         }
 
-        public string Name { get; set; }
-        public bool Instantiate { get; set; }
-        public ICollection<BPMNSequenceFlow> SequenceFlows { get; set; }
-
-        public static BPMNReceiveTask Build(ICollection<tFlowElement> flowElements, tReceiveTask receiveTask)
-        {
-            var sequenceFlows = flowElements.Where(i => i is tSequenceFlow && ((tSequenceFlow)i).sourceRef == receiveTask.id).Cast<tSequenceFlow>();
-            var result = new BPMNReceiveTask(receiveTask.name, receiveTask.instantiate);
-            foreach(var sequenceFlow in sequenceFlows)
-            {
-                result.SequenceFlows.Add(BPMNSequenceFlow.Build(flowElements, sequenceFlow));
-            }
-
-            return result;
-        }
+        public string OperationId { get; set; }
     }
 }

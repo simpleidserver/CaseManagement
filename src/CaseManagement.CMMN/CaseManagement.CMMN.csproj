@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>CMMN V2.0 implementation.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Domains\" />
+  </ItemGroup>
+</Project>

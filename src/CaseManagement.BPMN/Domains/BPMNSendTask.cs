@@ -1,19 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using CaseManagement.Workflow.Domains;
 
 namespace CaseManagement.BPMN.Domains
 {
-    public class BPMNSendTask : BPMNProcessFlowElement
+    public class BPMNSendTask : ProcessFlowInstanceElement
     {
-        public BPMNSendTask(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; set; }
-
-        public static BPMNSendTask Build(ICollection<tFlowElement> flowElements, tSendTask sendTask)
-        {
-            return new BPMNSendTask(sendTask.name);
-        }
+        public BPMNSendTask(string id, string name):  base(id, name) { }
     }
 }

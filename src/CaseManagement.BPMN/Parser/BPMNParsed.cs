@@ -1,19 +1,14 @@
-﻿using CaseManagement.BPMN.Domains;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CaseManagement.BPMN.Parser
 {
     public class BPMNParsed
     {
-        public BPMNParsed(tDefinitions definitions, ICollection<BPMNMessageElement> messageElements, ICollection<BPMNOperation> operations)
+        public BPMNParsed(ICollection<tProcess> processes)
         {
-            Definitions = definitions;
-            MessageElements = messageElements;
-            Operations = operations;
+            Processes = processes;
         }
 
-        public tDefinitions Definitions { get; private set; }
-        public ICollection<BPMNMessageElement> MessageElements { get; set; }
-        public ICollection<BPMNOperation> Operations { get; set; }
+        public ICollection<tProcess> Processes { get; private set; }
     }
 }

@@ -4,6 +4,9 @@
     <Description>BPMN V2.0 implementation.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Builders\" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CaseManagement.Workflow\CaseManagement.Workflow.csproj" />
   </ItemGroup>
 </Project>

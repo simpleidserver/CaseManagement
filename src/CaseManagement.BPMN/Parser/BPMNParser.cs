@@ -1,9 +1,5 @@
-﻿using CaseManagement.BPMN.Domains;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Xml.Linq;
-using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace CaseManagement.BPMN.Parser
@@ -14,7 +10,6 @@ namespace CaseManagement.BPMN.Parser
 
         public BPMNParsed ParseWSDL(string bpmnTxt, string dataDefsTxt, string interfacesTxt)
         {
-            // TAKE TYPE DEFINITIONS FROM WSDL AND DATADEFINITIONS WSDL.
             var ns = new XmlSerializerNamespaces();
             var xmlSerializer = new XmlSerializer(typeof(tDefinitions));
             tDefinitions defs = null;
@@ -23,6 +18,7 @@ namespace CaseManagement.BPMN.Parser
                 defs = (tDefinitions)xmlSerializer.Deserialize(txtReader);
             }
 
+            /*
             var messageElements = new List<BPMNMessageElement>();
             using (var txtReader = new StringReader(dataDefsTxt))
             {
@@ -34,46 +30,53 @@ namespace CaseManagement.BPMN.Parser
             }
 
             var operations = new List<BPMNOperation>();
-            var itemDefinitions = defs.Items.Where(i => i is tItemDefinition);
-            var messageDefinitions = defs.Items.Where(i => i is tMessage);
-            using (var txtReader = new StringReader(interfacesTxt))
+            var itemDefinitions = defs.Items.Where(i => i is tItemDefinition).Cast<tItemDefinition>();
+            var messages = defs.Items.Where(i => i is tMessage).Cast<tMessage>();
+            var interfaces = defs.Items.Where(i => i is tInterface).Cast<tInterface>();
+            var wsdlMessages = ExtractMessagesFromWSDL(interfacesTxt, messageElements);
+            foreach (var intf in interfaces)
             {
-                var xdoc = XDocument.Load(txtReader);
-                var messages = xdoc.Descendants(XName.Get("message", WSDL_NAMESPACE));
-                foreach(var message in messages)
+                foreach (var op in intf.operation)
                 {
-                    var nameAttribute = message.Attribute(XName.Get("name"));
-                    var parts = message.Descendants(XName.Get("part", WSDL_NAMESPACE));
-                    var record = new BPMNOperation
+                    var bpmnOp = new BPMNOperation
                     {
-                        Name = nameAttribute.Value
+                        Id = op.id,
+                        Name = op.name
                     };
-                    foreach (var part in parts)
+                    var inMessage = messages.FirstOrDefault(m => m.id == op.inMessageRef.Name);
+                    if (inMessage != null)
                     {
-                        nameAttribute = part.Attribute(XName.Get("name"));
-                        var elementAttribute = part.Attribute(XName.Get("element"));
-                        if (elementAttribute != null)
+                        var inMessageItemDefinition = itemDefinitions.First(i => i.id == inMessage.itemRef.Name);
+                        bpmnOp.InMessage = wsdlMessages.First(w => w.Name == inMessageItemDefinition.structureRef.Name);
+                    }
+
+                    var outMessage = messages.FirstOrDefault(m => m.id == op.outMessageRef.Name);
+                    if (outMessage != null)
+                    {
+                        var outMessageItemDefinition = itemDefinitions.First(i => i.id == outMessage.itemRef.Name);
+                        bpmnOp.OutMessage = wsdlMessages.First(w => w.Name == outMessageItemDefinition.structureRef.Name);
+                    }
+                    
+                    if (op.errorRef != null)
+                    {
+                        foreach (var fm in op.errorRef)
                         {
-                            record.Parts.Add(messageElements.First(m => m.Name == RemoveNamespace(elementAttribute.Value)));
-                        }
-                        else
-                        {
-                            var type = part.Attribute(XName.Get("type"));
-                            record.Parts.Add(new BPMNMessageElement
-                            {
-                                Name = nameAttribute.Value,
-                                Type = type.Value
-                            });
+                            var errorMessage = messages.First(m => m.id == fm.Name);
+                            var errorMessageItemDefinition = itemDefinitions.First(i => i.id == errorMessage.itemRef.Name);
+                            bpmnOp.ErrorMessages.Add(wsdlMessages.First(w => w.Name == errorMessageItemDefinition.structureRef.Name));
                         }
                     }
 
-                    operations.Add(record);
+                    operations.Add(bpmnOp);
                 }
             }
+            return new BPMNParsed(defs.Items.Where(t => t is tProcess).Cast<tProcess>().ToList(), operations);
+            */
 
-            return new BPMNParsed(defs, messageElements, operations);
+            return new BPMNParsed(defs.Items.Where(t => t is tProcess).Cast<tProcess>().ToList());
         }
 
+        /*
         private static BPMNMessageElement ParseMessageElement(XmlSchemaObject xmlSchemaObj)
         {
             if (xmlSchemaObj is XmlSchemaComplexType)
@@ -120,6 +123,51 @@ namespace CaseManagement.BPMN.Parser
 
             return null;
         }
+
+        private ICollection<BPMNMessageElement> ExtractMessagesFromWSDL(string interfacesTxt, List<BPMNMessageElement> existingMessages)
+        {
+            var result = new List<BPMNMessageElement>();
+            using (var txtReader = new StringReader(interfacesTxt))
+            {
+                var xdoc = XDocument.Load(txtReader);
+                var messages = xdoc.Descendants(XName.Get("message", WSDL_NAMESPACE));
+                foreach (var message in messages)
+                {
+                    var nameAttribute = message.Attribute(XName.Get("name"));
+                    var nameAttributeValue = nameAttribute.Value;
+                    var parts = message.Descendants(XName.Get("part", WSDL_NAMESPACE));
+                    var recordParts = new List<BPMNMessageElement>();
+                    foreach (var part in parts)
+                    {
+                        nameAttribute = part.Attribute(XName.Get("name"));
+                        var elementAttribute = part.Attribute(XName.Get("element"));
+                        if (elementAttribute != null)
+                        {
+                            recordParts.Add(existingMessages.First(m => m.Name == RemoveNamespace(elementAttribute.Value)));
+                        }
+                        else
+                        {
+                            var type = part.Attribute(XName.Get("type"));
+                            recordParts.Add(new BPMNMessageElement
+                            {
+                                Name = nameAttribute.Value,
+                                Type = type.Value
+                            });
+                        }
+                    }
+
+                    result.Add(new BPMNComplexMessageElement
+                    {
+                        Name = nameAttributeValue,
+                        Items = recordParts
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        */
 
         private static string RemoveNamespace(string str)
         {
