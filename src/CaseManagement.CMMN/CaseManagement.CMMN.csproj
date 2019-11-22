@@ -4,6 +4,6 @@
     <Description>CMMN V2.0 implementation.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Domains\" />
+    <ProjectReference Include="..\CaseManagement.Workflow\CaseManagement.Workflow.csproj" />
   </ItemGroup>
 </Project>

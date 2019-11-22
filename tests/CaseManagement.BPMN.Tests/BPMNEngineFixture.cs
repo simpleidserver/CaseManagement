@@ -39,7 +39,7 @@ namespace CaseManagement.BPMN.Tests
                 new BPMNEndEventProcessor(),
             };
             var engine = new WorkflowEngine(new ProcessFlowElementProcessorFactory(processors));
-            var context = new ProcessFlowInstanceExecutionContext();
+            var context = new ProcessFlowInstanceExecutionContext(instance);
             await engine.Start(instance, context);
             await engine.Start(secondInstance, context);
 

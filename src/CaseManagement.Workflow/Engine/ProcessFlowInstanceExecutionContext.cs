@@ -1,17 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using CaseManagement.Workflow.Domains;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.Workflow.Engine
 {
     public class ProcessFlowInstanceExecutionContext
     {
+        private ProcessFlowInstance _processFlowInstance;
         private Dictionary<string, string> _variables;
 
-        public ProcessFlowInstanceExecutionContext()
+        public ProcessFlowInstanceExecutionContext(ProcessFlowInstance processFlowInstance)
         {
+            _processFlowInstance = processFlowInstance;
             _variables = new Dictionary<string, string>();
         }
 
-        public ProcessFlowInstanceExecutionContext(string callingOperation) : this()
+        public ProcessFlowInstanceExecutionContext(ProcessFlowInstance processFlowInstance, string callingOperation) : this(processFlowInstance)
         {
             CallingOperation = callingOperation;
         }
@@ -31,6 +35,11 @@ namespace CaseManagement.Workflow.Engine
         public void SetVariable(string str, string value)
         {
             _variables.Add(str, value);
+        }
+        
+        public ProcessFlowInstanceElement GetElement(string id)
+        {
+            return _processFlowInstance.Elements.FirstOrDefault(e => e.Id == id);
         }
     }
 }

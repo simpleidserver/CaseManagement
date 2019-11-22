@@ -1,8 +1,6 @@
-﻿using CaseManagement.Workflow.Domains;
-
-namespace CaseManagement.CMMN.Domains
+﻿namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNTask : ProcessFlowInstanceElement
+    public class CMMNTask : CMMNPlanItem
     {
         public CMMNTask(string id, string name) : base(id, name)
         {

@@ -30,6 +30,11 @@ namespace CaseManagement.Workflow.Domains
             Elements.Add(elt);
         }
 
+        public ICollection<ProcessFlowInstanceElement> GetRunningElements()
+        {
+            return Elements.Where(e => e.Status == ProcessFlowInstanceElementStatus.Started).ToList();
+        }
+
         public void AddConnector(string sourceNodeId, string targetNodeId)
         {
             Connectors.Add(new ProcessFlowConnector(Elements.First(n => n.Id == sourceNodeId), Elements.First(n => n.Id == targetNodeId)));
