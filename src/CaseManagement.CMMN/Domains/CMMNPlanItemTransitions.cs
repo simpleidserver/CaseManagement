@@ -2,22 +2,23 @@
 {
     public enum CMMNPlanItemTransitions
     {
-        Close = 0,
-        Complete = 1,
-        Create = 2,
-        Disable = 3,
-        Enable = 4,
-        Exit = 5,
-        Fault = 6,
-        ManualStart = 7,
-        Occur = 8,
-        ParentResume = 9,
-        ParentSuspend = 10,
-        Reactivate = 11,
-        Reenable = 12,
-        Resume = 13,
-        Start = 14,
-        Suspend = 15,
-        Terminate = 16
+        None = 0,
+        Close = 1,
+        Complete = 2,
+        Create = 3,
+        Disable = 4,
+        Enable = 5,
+        Exit = 6,
+        Fault = 7,
+        ManualStart = 8,
+        Occur = 9,
+        ParentResume = 10,
+        ParentSuspend = 11,
+        Reactivate = 12,
+        Reenable = 13,
+        Resume = 14,
+        Start = 15,
+        Suspend = 16,
+        Terminate = 17
     }
 }

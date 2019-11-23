@@ -12,11 +12,24 @@ namespace CaseManagement.CMMN.Builders
             _planItem = planItem;
         }
 
-        public CMMNPlanItemBuilder AddSEntry(string id, string name, Action<CMMNSEntryBuilder> callback)
+        public CMMNPlanItemBuilder AddSEntry(string name, Action<CMMNSEntryBuilder> callback)
         {
-            var sEntry = new CMMNSEntry(id, name);
+            var sEntry = new CMMNSEntry(name);
             callback(new CMMNSEntryBuilder(sEntry));
             _planItem.SEntries.Add(sEntry);
+            return this;
+        }
+
+        public CMMNPlanItemBuilder SetManualActivationRule(string name, CMMNExpression expression)
+        {
+            var manualActivationRule = new CMMNManualActivationRule(name, expression);
+            _planItem.PlanItemControl = manualActivationRule;
+            return this;
+        }
+
+        public CMMNPlanItemBuilder SetProcessTaskDefinition(string name)
+        {
+            _planItem.PlanItemDefinition = new CMMNProcessTask(name);
             return this;
         }
     }

@@ -1,5 +1,4 @@
-﻿using CaseManagement.Workflow.Domains;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Domains
 {
@@ -25,16 +24,24 @@ namespace CaseManagement.CMMN.Domains
         public string Condition { get; set; }
     }
 
-    public class CMMNSEntry : ProcessFlowInstanceElement
+    public class CMMNSEntry
     {
-        public CMMNSEntry(string id, string name) : base(id, name)
+        public CMMNSEntry(string name)
         {
+            Name = name;
             OnParts = new List<CMMNPlanItemOnPart>();
         }
 
+        /// <summary>
+        /// Name of the Sentry.
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Defines the OnParts of the Sentry.
+        /// </summary>
         public ICollection<CMMNPlanItemOnPart> OnParts { get; set; }
         /// <summary>
-        /// Specify an (optional) condition.
+        /// Defines the IfPart of the Sentry. 
         /// </summary>
         public CMMNIfPart IfPart { get; set; }
     }

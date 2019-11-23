@@ -4,6 +4,7 @@
     {
         None = 0,
         Started = 1,
-        Finished = 2
+        Finished = 2,
+        Blocked = 3
     }
 }

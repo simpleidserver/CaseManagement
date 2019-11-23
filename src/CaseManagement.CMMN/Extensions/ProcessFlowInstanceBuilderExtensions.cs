@@ -6,10 +6,10 @@ namespace CaseManagement.Workflow.Builders
 {
     public static class ProcessFlowInstanceBuilderExtensions
     {
-        public static ProcessFlowInstanceBuilder AddProcessTask(this ProcessFlowInstanceBuilder builder, string id, string name, Action<CMMNProcessTaskBuilder> callback)
+        public static ProcessFlowInstanceBuilder AddPlanItem(this ProcessFlowInstanceBuilder builder, string id, string name, CMMNPlanItemDefinition planItemDef, Action<CMMNPlanItemBuilder> callback)
         {
-            var processTask = new CMMNProcessTask(id, name);
-            callback(new CMMNProcessTaskBuilder(processTask));
+            var processTask = CMMNPlanItem.New(id, name, planItemDef);
+            callback(new CMMNPlanItemBuilder(processTask));
             builder.AddElement(processTask);
             return builder;
         }

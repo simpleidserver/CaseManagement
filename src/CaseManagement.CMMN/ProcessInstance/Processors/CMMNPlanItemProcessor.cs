@@ -1,42 +1,56 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.ProcessInstance.Processors
 {
-    public class CMMNPlanItemProcessor : IProcessFlowElementProcessor
+    public class CMMNPlanItemProcessor : BaseProcessFlowElementProcessor
     {
-        public virtual Type ProcessFlowElementType => typeof(CMMNPlanItem);
+        public override Type ProcessFlowElementType => typeof(CMMNPlanItem);
 
-        public virtual Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
-        {
-            var processTask = (CMMNPlanItem)pfe;
-            processTask.Start();
-            if (!CheckCanBeExecuted(processTask, context))
-            {
-                return Task.FromResult(0);
-            }
-
-            pfe.Finish();
-            return Task.FromResult(0);
-
-        }
-
-        protected bool CheckCanBeExecuted(CMMNPlanItem pfe, ProcessFlowInstanceExecutionContext context)
+        protected override Task<bool> HandleProcessFlowInstance(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
         {
             var planItem = (CMMNPlanItem)pfe;
-            foreach(var se in planItem.SEntries)
+            var processTask = (CMMNProcessTask)planItem.PlanItemDefinition;
+            // TODO : check the plan definition status and execute the correct logic.
+            if (processTask.State == CMMNTaskStates.Active)
             {
-                if (CheckSEntry(se, context))
+                planItem.Complete();
+                return Task.FromResult(true);
+            }
+
+            if (!HandlePlanItemControl(planItem, context))
+            {
+                return Task.FromResult(false);
+            }
+
+            // TODO : execute the plan item definition.
+            planItem.Complete();
+            return Task.FromResult(true);
+        }
+
+        protected bool HandlePlanItemControl(CMMNPlanItem pfe, ProcessFlowInstanceExecutionContext context)
+        {
+            var planItem = (CMMNPlanItem)pfe;
+            if (planItem.SEntries.Any() && !planItem.SEntries.Any(s => CheckSEntry(s, context)))
+            {
+                return false;
+            }
+
+            if (planItem.PlanItemControl != null)
+            {
+                if (planItem.PlanItemControl is CMMNManualActivationRule)
                 {
-                    return true;
+                    planItem.Enable();
+                    return false;
                 }
             }
 
-            return !planItem.SEntries.Any();
+            planItem.Start();
+            return true;
         }
 
         private bool CheckSEntry(CMMNSEntry sEntry, ProcessFlowInstanceExecutionContext context)
@@ -48,7 +62,7 @@ namespace CaseManagement.CMMN.ProcessInstance.Processors
                     if (!string.IsNullOrWhiteSpace(onPart.SourceRef))
                     {
                         var elt = context.GetPlanItem(onPart.SourceRef);
-                        if (elt == null || elt.Transition != onPart.StandardEvent)
+                        if (elt == null || elt.Events.Last().Transition != onPart.StandardEvent)
                         {
                             return false;
                         }

@@ -16,7 +16,10 @@ namespace CaseManagement.Workflow.Engine
         public async Task Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceExecutionContext context)
         {
             var result = await Start(processFlowInstance, context, processFlowInstance.StartElement);
-            processFlowInstance.Finish();
+            if (result)
+            {
+                processFlowInstance.Finish();
+            }
         }
 
         private async Task<bool> Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceExecutionContext context, ProcessFlowInstanceElement elt)
@@ -33,13 +36,23 @@ namespace CaseManagement.Workflow.Engine
                 await processor.Handle(elt, context);
             }
 
+            if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
+            {
+                return false;
+            }
+
             var nextElts = processFlowInstance.NextElements(elt.Id);
-            bool result = true;
+            if (!nextElts.Any())
+            {
+                return true;
+            }
+
+            bool result = false;
             foreach (var nextElt in nextElts)
             {
-                if (!await Start(processFlowInstance, context, nextElt))
+                if (await Start(processFlowInstance, context, nextElt))
                 {
-                    result = false;
+                    result = true;
                 }
             }
 
