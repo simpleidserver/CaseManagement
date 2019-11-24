@@ -14,48 +14,60 @@ namespace CaseManagement.CMMN.ProcessInstance.Processors
         protected override Task<bool> HandleProcessFlowInstance(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
         {
             var planItem = (CMMNPlanItem)pfe;
-            var processTask = (CMMNProcessTask)planItem.PlanItemDefinition;
-            // TODO : check the plan definition status and execute the correct logic.
+            var processTask = planItem.PlanItemDefinition as CMMNProcessTask;
+            if (processTask != null)
+            {
+                return HandleProcessTask(planItem, processTask, context);
+            }
+
+            return Task.FromResult(true);
+        }
+
+        protected Task<bool> HandleProcessTask(CMMNPlanItem planItem, CMMNProcessTask processTask, ProcessFlowInstanceExecutionContext context)
+        {
+            if (planItem.ExitCriterions.Any() && planItem.ExitCriterions.Any(s => CheckCriterion(s, context)))
+            {
+                planItem.Terminate();
+                return Task.FromResult(true);
+            }
+            
+            if (processTask.State == CMMNTaskStates.Available)
+            {
+                if (planItem.EntryCriterions.Any() && !planItem.EntryCriterions.Any(s => CheckCriterion(s, context)))
+                {
+                    return Task.FromResult(true);
+                }
+
+                if (planItem.PlanItemControl != null)
+                {
+                    var manualActivationRule = planItem.PlanItemControl as CMMNManualActivationRule;
+                    if (manualActivationRule != null)
+                    {
+                        // Note : at the moment the ContextRef is ignored.
+                        if (ExpressionParser.IsValid(manualActivationRule.Expression.Body, context))
+                        {
+                            planItem.Enable();
+                            return Task.FromResult(false);
+                        }
+                    }
+                }
+
+                planItem.Start();
+            }
+
             if (processTask.State == CMMNTaskStates.Active)
             {
+                // TODO : Execute the plan item definition.
                 planItem.Complete();
                 return Task.FromResult(true);
             }
 
-            if (!HandlePlanItemControl(planItem, context))
-            {
-                return Task.FromResult(false);
-            }
-
-            // TODO : execute the plan item definition.
-            planItem.Complete();
             return Task.FromResult(true);
         }
 
-        protected bool HandlePlanItemControl(CMMNPlanItem pfe, ProcessFlowInstanceExecutionContext context)
+        private bool CheckCriterion(CMMNCriterion sCriterion, ProcessFlowInstanceExecutionContext context)
         {
-            var planItem = (CMMNPlanItem)pfe;
-            if (planItem.SEntries.Any() && !planItem.SEntries.Any(s => CheckSEntry(s, context)))
-            {
-                return false;
-            }
-
-            if (planItem.PlanItemControl != null)
-            {
-                if (planItem.PlanItemControl is CMMNManualActivationRule)
-                {
-                    planItem.Enable();
-                    return false;
-                }
-            }
-
-            planItem.Start();
-            return true;
-        }
-
-        private bool CheckSEntry(CMMNSEntry sEntry, ProcessFlowInstanceExecutionContext context)
-        {
-            foreach (var onPart in sEntry.OnParts)
+            foreach (var onPart in sCriterion.SEntry.OnParts)
             {
                 if (onPart is CMMNPlanItemOnPart)
                 {
@@ -70,9 +82,9 @@ namespace CaseManagement.CMMN.ProcessInstance.Processors
                 }
             }
 
-            if (sEntry.IfPart != null)
+            if (sCriterion.SEntry.IfPart != null)
             {
-                return ExpressionParser.IsValid(sEntry.IfPart.Condition, context);
+                return ExpressionParser.IsValid(sCriterion.SEntry.IfPart.Condition, context);
             }
 
             return true;

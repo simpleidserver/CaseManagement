@@ -47,12 +47,12 @@ namespace CaseManagement.Workflow.Engine
                 return true;
             }
 
-            bool result = false;
+            bool result = true;
             foreach (var nextElt in nextElts)
             {
-                if (await Start(processFlowInstance, context, nextElt))
+                if (!await Start(processFlowInstance, context, nextElt))
                 {
-                    result = true;
+                    result = false;
                 }
             }
 

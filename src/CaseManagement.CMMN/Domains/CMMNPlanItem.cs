@@ -8,7 +8,8 @@ namespace CaseManagement.CMMN.Domains
     {
         private CMMNPlanItem(string id, string name, CMMNPlanItemDefinition planItemDefinition) : base(id, name)
         {
-            SEntries = new List<CMMNSEntry>();
+            EntryCriterions = new List<CMMNCriterion>();
+            ExitCriterions = new List<CMMNCriterion>();
             Events = new List<CMMNPlanItemTransitionEvent>();
             var evt = new CMMNPlanItemCreated();
             Events.Add(evt);
@@ -17,17 +18,22 @@ namespace CaseManagement.CMMN.Domains
         }
 
         /// <summary>
-        /// [0...1]
+        /// The PlanItemControl controls aspects of the behavior of instances of the PlanItem object. [0...1]
         /// </summary>
         public CMMNPlanItemControl PlanItemControl { get; set; }
         /// <summary>
-        /// [1...1]
+        /// Reference to the corresponding PlanItemDefinition object. [1...1]
         /// </summary>
         public CMMNPlanItemDefinition PlanItemDefinition { get; set; }
         /// <summary>
-        /// [0...*] // EntryCriterion TODO !!
+        /// Zero or more EntryCriterion for that PlanItem. [0...*].
+        /// An EntryCriterion represents the condition for a PlanItem to become available.
         /// </summary>
-        public ICollection<CMMNSEntry> SEntries { get; set; }
+        public ICollection<CMMNCriterion> EntryCriterions { get; set; }
+        /// <summary>
+        /// An ExitCriterion represents the condition for a PlanItem to terminate. [0...*]
+        /// </summary>
+        public ICollection<CMMNCriterion> ExitCriterions { get; set; }
         public ICollection<CMMNPlanItemTransitionEvent> Events { get; set; }
         
         public void Enable()
@@ -59,6 +65,13 @@ namespace CaseManagement.CMMN.Domains
         public void Complete()
         {
             var evt = new CMMNPlanItemCompleted();
+            Events.Add(evt);
+            PlanItemDefinition.Handle(evt);
+        }
+
+        public void Terminate()
+        {
+            var evt = new CMMNPlanItemTerminated();
             Events.Add(evt);
             PlanItemDefinition.Handle(evt);
         }

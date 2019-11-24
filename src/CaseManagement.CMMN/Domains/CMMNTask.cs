@@ -31,6 +31,21 @@ namespace CaseManagement.CMMN.Domains
             {
                 Handle((CMMNPlanItemManuallyStarted)cmmnPlanItemEvent);
             }
+
+            if (cmmnPlanItemEvent is CMMNPlanItemStarted)
+            {
+                Handle((CMMNPlanItemStarted)cmmnPlanItemEvent);
+            }
+
+            if (cmmnPlanItemEvent is CMMNPlanItemTerminated)
+            {
+                Handle((CMMNPlanItemTerminated)cmmnPlanItemEvent);
+            }
+
+            if (cmmnPlanItemEvent is CMMNPlanItemCompleted)
+            {
+                Handle((CMMNPlanItemCompleted)cmmnPlanItemEvent);
+            }
         }
 
         private void Handle(CMMNPlanItemCreated evt)
@@ -46,6 +61,21 @@ namespace CaseManagement.CMMN.Domains
         private void Handle(CMMNPlanItemManuallyStarted evt)
         {
             State = CMMNTaskStates.Active;
+        }
+
+        private void Handle(CMMNPlanItemStarted evt)
+        {
+            State = CMMNTaskStates.Active;
+        }
+
+        private void Handle(CMMNPlanItemTerminated evt)
+        {
+            State = CMMNTaskStates.Terminated;
+        }
+
+        private void Handle(CMMNPlanItemCompleted evt)
+        {
+            State = CMMNTaskStates.Completed;
         }
     }
 }
