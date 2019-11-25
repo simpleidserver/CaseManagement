@@ -1,5 +1,5 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.ProcessInstance.Processors;
+﻿using CaseManagement.CMMN.CaseInstance.Processors;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Builders;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
@@ -15,7 +15,8 @@ namespace CaseManagement.CMMN.Tests
         [Fact]
         public async Task When_Launch_CaseInstance()
         {
-            var instance = ProcessFlowInstanceBuilder.New(CMMNPlanItem.New("0", "Assign reviewer", new CMMNProcessTask("Assign reviewer")))
+            var instance = ProcessFlowInstanceBuilder.New()
+                .AddPlanItem("0", "Assign reviewer", new CMMNProcessTask("Assign reviewer"), (c) => { })
                 .AddPlanItem("1", "Review reviewer", new CMMNProcessTask("Review reviewer"), (c) =>
                 {
                     c.AddEntryCriterion("sEntry", (ca) =>

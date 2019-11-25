@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace CaseManagement.CMMN.Parser
@@ -15,6 +16,18 @@ namespace CaseManagement.CMMN.Parser
             }
 
             return defs;
+        }
+
+        public string Serialize(tDefinitions def)
+        {
+            var xmlSerializer = new XmlSerializer(typeof(tDefinitions));
+            var strBuilder = new StringBuilder();
+            using (var txtWriter = new StringWriter(strBuilder))
+            {
+                xmlSerializer.Serialize(txtWriter, def);
+            }
+
+            return strBuilder.ToString();
         }
     }
 }

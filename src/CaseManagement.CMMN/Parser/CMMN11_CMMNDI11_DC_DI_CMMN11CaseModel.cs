@@ -1856,6 +1856,8 @@ public partial class tStage : tPlanFragment {
     [System.Xml.Serialization.XmlElementAttribute("planItemDefinition", typeof(tPlanItemDefinition))]
     [System.Xml.Serialization.XmlElementAttribute("stage", typeof(tStage))]
     [System.Xml.Serialization.XmlElementAttribute("task", typeof(tTask))]
+    [System.Xml.Serialization.XmlElementAttribute("humanTask", typeof(tHumanTask))]
+    [System.Xml.Serialization.XmlElementAttribute("processTask", typeof(tProcessTask))]    
     public tPlanItemDefinition[] Items {
         get {
             return this.itemsField;

@@ -13,12 +13,12 @@
         public string Name { get; set; }
         public ProcessFlowInstanceElementStatus Status { get; private set; }
 
-        internal void Run()
+        public void Run()
         {
             Status = ProcessFlowInstanceElementStatus.Started;
         }
 
-        internal void Finish()
+        public void Finish()
         {
             Status = ProcessFlowInstanceElementStatus.Finished;
         }

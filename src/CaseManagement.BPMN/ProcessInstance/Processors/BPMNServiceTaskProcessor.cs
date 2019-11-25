@@ -13,7 +13,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
 
         public async Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
         {
-            pfe.Start();
+            pfe.Run();
             var serviceTask = (BPMNServiceTask)pfe;
             var type = Type.GetType(serviceTask.FullQualifiedName);
             var instance = Activator.CreateInstance(type) as WorkflowTaskDelegate;

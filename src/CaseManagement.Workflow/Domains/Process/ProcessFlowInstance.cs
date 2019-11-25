@@ -6,22 +6,25 @@ namespace CaseManagement.Workflow.Domains
 {
     public class ProcessFlowInstance
     {
-        public ProcessFlowInstance()
+        private ProcessFlowInstance()
         {
             Elements = new List<ProcessFlowInstanceElement>();
             Connectors = new List<ProcessFlowConnector>();
         }
 
-        public ProcessFlowInstance(ProcessFlowInstanceElement startElement) : this()
+        private ProcessFlowInstance(string id) : this()
         {
-            StartElement = startElement;
-            AddElement(startElement);
+            Id = id;
+        }
+
+        private ProcessFlowInstance(string id, DateTime createDateTime) : this(id)
+        {
+            CreateDateTime = createDateTime;
         }
 
         public string Id { get; set; }
         public DateTime CreateDateTime { get; set; }
         public bool IsComplete { get; set; }
-        public ProcessFlowInstanceElement StartElement { get; set; }
         public ICollection<ProcessFlowInstanceElement> Elements { get; set; }
         public ICollection<ProcessFlowConnector> Connectors { get; set; }
 
@@ -50,9 +53,19 @@ namespace CaseManagement.Workflow.Domains
             return Connectors.Where(c => c.Target.Id == nodeId).Select(c => c.Source).ToList();
         }
 
+        public ICollection<ProcessFlowInstanceElement> GetStartElements()
+        {
+            return Elements.Where(e => Connectors.All(c => c.Target.Id != e.Id)).ToList();
+        }
+
         public void Finish()
         {
             IsComplete = true;
+        }
+
+        public static ProcessFlowInstance New()
+        {
+            return new ProcessFlowInstance(Guid.NewGuid().ToString(), DateTime.UtcNow);
         }
     }
 }

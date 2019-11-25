@@ -14,7 +14,8 @@ namespace CaseManagement.BPMN.Tests
         [Fact]
         public async Task When_Launch_ProcessInstance()
         {
-            var instance = ProcessFlowInstanceBuilder.New(new BPMNStartEvent("0", "startEvent"))
+            var instance = ProcessFlowInstanceBuilder.New()
+                .AddElement(new BPMNStartEvent("0", "startEvent"))
                 .AddElement(new BPMNTask("1", "chooseFirstname"))
                 .AddElement(new BPMNTask("2", "chooseLastname"))
                 .AddElement(new BPMNEndEvent("3", "endEvent"))
@@ -23,7 +24,8 @@ namespace CaseManagement.BPMN.Tests
                 .AddConnection("1", "3")
                 .AddConnection("2", "3")
                 .Build();
-            var secondInstance = ProcessFlowInstanceBuilder.New(new BPMNStartEvent("0", "startEvent"))
+            var secondInstance = ProcessFlowInstanceBuilder.New()
+                .AddElement(new BPMNStartEvent("0", "startEvent"))
                 .AddElement(new BPMNServiceTask("1", "serviceTask") { FullQualifiedName = typeof(SetFirstNameDelegate).AssemblyQualifiedName })
                 .AddElement(new BPMNEndEvent("2", "endEvent"))
                 .AddConnection("0", "1")

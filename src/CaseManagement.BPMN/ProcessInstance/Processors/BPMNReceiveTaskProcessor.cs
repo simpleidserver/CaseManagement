@@ -13,7 +13,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         public Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
         {
             var receiveTask = pfe as BPMNReceiveTask;
-            receiveTask.Start();
+            receiveTask.Run();
             if (context.CallingOperation != receiveTask.OperationId)
             {
                 return Task.FromResult(0);

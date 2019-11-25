@@ -15,7 +15,12 @@ namespace CaseManagement.Workflow.Engine
 
         public async Task Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceExecutionContext context)
         {
-            var result = await Start(processFlowInstance, context, processFlowInstance.StartElement);
+            bool result = false;
+            foreach(var startElt in processFlowInstance.GetStartElements())
+            {
+                result = await Start(processFlowInstance, context, startElt);
+            }
+
             if (result)
             {
                 processFlowInstance.Finish();

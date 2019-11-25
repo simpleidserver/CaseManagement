@@ -6,14 +6,14 @@ namespace CaseManagement.Workflow.Builders
     {
         private readonly ProcessFlowInstance _instance;
 
-        private ProcessFlowInstanceBuilder(ProcessFlowInstanceElement startElement)
+        private ProcessFlowInstanceBuilder()
         {
-            _instance = new ProcessFlowInstance(startElement);
+            _instance = ProcessFlowInstance.New();
         }
 
-        public static ProcessFlowInstanceBuilder New(ProcessFlowInstanceElement startElement)
+        public static ProcessFlowInstanceBuilder New()
         {
-            return new ProcessFlowInstanceBuilder(startElement);
+            return new ProcessFlowInstanceBuilder();
         }
 
         public ProcessFlowInstanceBuilder AddElement(ProcessFlowInstanceElement node)

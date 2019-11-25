@@ -13,5 +13,11 @@ namespace CaseManagement.Workflow.Builders
             builder.AddElement(processTask);
             return builder;
         }
+
+        public static ProcessFlowInstanceBuilder AddPlanItem(this ProcessFlowInstanceBuilder builder, CMMNPlanItem planItem)
+        {
+            builder.AddElement(planItem);
+            return builder;
+        }
     }
 }

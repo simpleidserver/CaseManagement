@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CaseManagement.CMMN.ProcessInstance.Processors
+namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNPlanItemProcessor : BaseProcessFlowElementProcessor
     {
@@ -62,6 +62,12 @@ namespace CaseManagement.CMMN.ProcessInstance.Processors
                 return Task.FromResult(true);
             }
 
+            return Task.FromResult(true);
+        }
+
+        protected Task<bool> HandleHumanTask()
+        {
+            // ADD A USER TASK.
             return Task.FromResult(true);
         }
 

@@ -5,6 +5,7 @@
         public static class RouteNames
         {
             public const string CaseDefinitions = "case-definitions";
+            public const string CaseInstances = "case-instances";
         }
     }
 }
