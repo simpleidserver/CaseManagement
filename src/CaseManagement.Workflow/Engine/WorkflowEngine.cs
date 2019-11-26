@@ -23,7 +23,7 @@ namespace CaseManagement.Workflow.Engine
 
             if (result)
             {
-                processFlowInstance.Finish();
+                processFlowInstance.Complete();
             }
         }
 

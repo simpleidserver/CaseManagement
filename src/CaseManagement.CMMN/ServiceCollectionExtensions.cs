@@ -1,6 +1,7 @@
 ﻿
 using CaseManagement.CMMN;
-using CaseManagement.CMMN.CaseInstance.Handlers;
+using CaseManagement.CMMN.CaseInstance.CommandHandlers;
+using CaseManagement.CMMN.CaseInstance.EventHandlers;
 using CaseManagement.CMMN.CaseInstance.Processors;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
@@ -14,10 +15,11 @@ namespace Microsoft.Extensions.DependencyInjection
         public static CMMNServerBuilder AddCMMN(this IServiceCollection services)
         {
             var builder = new CMMNServerBuilder(services);
-            services.AddMvc();
             services.AddWorkflow()
                 .AddInMemoryPersistence()
-                .AddHandlers();
+                .AddCommandHandlers()
+                .AddEventHandlers()
+                .AddProcessors();
             return builder;
         }
 
@@ -28,10 +30,19 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddHandlers(this IServiceCollection services)
+        private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
         {
             services.AddTransient<ILaunchCaseInstanceCommandHandler, LaunchCaseInstanceCommandHandler>();
             services.AddTransient<ICreateCaseInstanceCommandHandler, CreateCaseInstanceCommandHandler>();
+            services.AddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
+            return services;
+        }
+
+        private static IServiceCollection AddEventHandlers(this IServiceCollection services)
+        {
+            services.AddTransient<ProcessFlowInstanceCreatedEventHandler>();
+            services.AddTransient<ProcessFlowInstanceLaunchedEventHandler>();
+            services.AddTransient<ProcessFlowInstanceFormConfirmedEventHandler>();
             return services;
         }
 

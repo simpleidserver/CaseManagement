@@ -3078,9 +3078,9 @@ public partial class tDecisionParameter : tParameter {
 [System.Xml.Serialization.XmlRootAttribute("humanTask", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
 public partial class tHumanTask : tTask {
     
-    private tPlanningTable planningTableField;
-    
+    private tPlanningTable planningTableField;    
     private string performerRefField;
+    private string caseFormRefField;
     
     /// <remarks/>
     public tPlanningTable planningTable {
@@ -3102,6 +3102,19 @@ public partial class tHumanTask : tTask {
             this.performerRefField = value;
         }
     }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "formRef", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public string caseFormRef
+    {
+        get
+        {
+            return this.caseFormRefField;
+        }
+        set
+        {
+            this.caseFormRefField = value;
+        }
+    }
 }
 
 /// <remarks/>
@@ -3118,7 +3131,9 @@ public partial class tProcessTask : tTask {
     private tExpression processRefExpressionField;
     
     private System.Xml.XmlQualifiedName processRefField;
-    
+
+    private string assemblyQualifiedNameField;
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("parameterMapping")]
     public tParameterMapping[] parameterMapping {
@@ -3148,6 +3163,19 @@ public partial class tProcessTask : tTask {
         }
         set {
             this.processRefField = value;
+        }
+    }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "assemblyQualifiedName", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public string assemblyQualifiedName
+    {
+        get
+        {
+            return this.assemblyQualifiedNameField;
+        }
+        set
+        {
+            this.assemblyQualifiedNameField = value;
         }
     }
 }

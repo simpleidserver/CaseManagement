@@ -56,7 +56,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             var httpRequestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(url),
+                RequestUri = new Uri(Parse(url)),
                 Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
             };
             var httpResponseMessage = await _factory.CreateClient().SendAsync(httpRequestMessage).ConfigureAwait(false);
@@ -71,6 +71,17 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             _scenarioContext.Set(JsonConvert.DeserializeObject<JObject>(json), "jsonHttpBody");
         }
 
+        [When("extract '(.*)' from JSON body")]
+        public void WhenExtractJSONKeyFromBody(string key)
+        {
+            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
+            var val = jsonHttpBody.SelectToken(key);
+            if (val != null)
+            {
+                _scenarioContext.Set(val.ToString(), key);
+            }
+        }
+
         [Then("HTTP status code equals to '(.*)'")]
         public void ThenCheckHttpStatusCode(int code)
         {
@@ -83,6 +94,14 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         {
             var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
             Assert.True(jsonHttpBody.ContainsKey(key) == true);
+        }
+
+        [Then("JSON '(.*)'='(.*)'")]
+        public void ThenEqualsTo(string key, string value)
+        {
+            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
+            var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
+            Assert.Equal(value, currentValue);
         }
 
         private string Parse(string val)

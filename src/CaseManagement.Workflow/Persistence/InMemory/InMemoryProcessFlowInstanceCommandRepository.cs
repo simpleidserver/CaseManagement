@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Workflow.Domains;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Persistence.InMemory
@@ -15,6 +16,12 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public void Add(ProcessFlowInstance processFlowInstance)
         {
+            _processFlowInstances.Add(processFlowInstance);
+        }
+
+        public void Update(ProcessFlowInstance processFlowInstance)
+        {
+            _processFlowInstances.Remove(_processFlowInstances.First(p => p.Id == processFlowInstance.Id));
             _processFlowInstances.Add(processFlowInstance);
         }
 

@@ -20,5 +20,13 @@
         /// An Expression that MUST evaluate to boolean. [1...1]
         /// </summary>
         public CMMNExpression Expression { get; set; }
+
+        public override object Clone()
+        {
+            return new CMMNManualActivationRule(Name)
+            {
+                Expression = Expression == null ? null : (CMMNExpression)Expression.Clone()
+            };
+        }
     }
 }

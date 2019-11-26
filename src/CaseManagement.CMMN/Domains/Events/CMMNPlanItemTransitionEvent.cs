@@ -1,4 +1,6 @@
-﻿namespace CaseManagement.CMMN.Domains.Events
+﻿using CaseManagement.Workflow.Infrastructure;
+
+namespace CaseManagement.CMMN.Domains.Events
 {
     public class CMMNPlanItemTransitionEvent : DomainEvent
     {

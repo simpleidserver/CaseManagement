@@ -1,14 +1,18 @@
 ﻿using CaseManagement.Workflow.Domains;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.Workflow.Builders
 {
     public class ProcessFlowInstanceBuilder
     {
-        private readonly ProcessFlowInstance _instance;
+        private ICollection<ProcessFlowInstanceElement> _elements;
+        private ICollection<ProcessFlowConnector> _connectors;
 
         private ProcessFlowInstanceBuilder()
         {
-            _instance = ProcessFlowInstance.New();
+            _elements = new List<ProcessFlowInstanceElement>();
+            _connectors = new List<ProcessFlowConnector>();
         }
 
         public static ProcessFlowInstanceBuilder New()
@@ -18,19 +22,19 @@ namespace CaseManagement.Workflow.Builders
 
         public ProcessFlowInstanceBuilder AddElement(ProcessFlowInstanceElement node)
         {
-            _instance.AddElement(node);
+            _elements.Add(node);
             return this;
         }
 
         public ProcessFlowInstanceBuilder AddConnection(string sourceNodeId, string targetNodeId)
         {
-            _instance.AddConnector(sourceNodeId, targetNodeId);
+            _connectors.Add(new ProcessFlowConnector(_elements.First(e => e.Id == sourceNodeId), _elements.First(e => e.Id == targetNodeId)));
             return this;
         }
 
         public ProcessFlowInstance Build()
         {
-            return _instance;
+            return ProcessFlowInstance.New(_elements, _connectors);
         }
     }
 }

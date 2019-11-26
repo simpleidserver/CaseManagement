@@ -1,6 +1,8 @@
-﻿namespace CaseManagement.CMMN.Domains
+﻿using System;
+
+namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNExpression
+    public class CMMNExpression : ICloneable
     {
         public CMMNExpression(string language)
         {
@@ -14,5 +16,10 @@
 
         public string Language { get; set; }
         public string Body { get; set; }
+
+        public object Clone()
+        {
+            return new CMMNExpression(Language, Body);
+        }
     }
 }

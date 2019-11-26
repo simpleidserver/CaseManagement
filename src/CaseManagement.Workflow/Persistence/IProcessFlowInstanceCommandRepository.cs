@@ -6,6 +6,7 @@ namespace CaseManagement.Workflow.Persistence
     public interface IProcessFlowInstanceCommandRepository
     {
         void Add(ProcessFlowInstance processFlowInstance);
+        void Update(ProcessFlowInstance processFlowInstance);
         Task<int> SaveChanges();
     }
 }

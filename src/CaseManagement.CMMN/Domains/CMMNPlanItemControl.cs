@@ -1,6 +1,9 @@
-﻿namespace CaseManagement.CMMN.Domains
+﻿using System;
+
+namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNPlanItemControl
+    public abstract class CMMNPlanItemControl : ICloneable
     {
+        public abstract object Clone();
     }
 }

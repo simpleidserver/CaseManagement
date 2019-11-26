@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.Workflow.Domains;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
@@ -80,6 +81,16 @@ namespace CaseManagement.CMMN.Domains
         {
             var result = new CMMNPlanItem(id, name, planItemDef);
             return result;
+        }
+
+        public override object Clone()
+        {
+            return new CMMNPlanItem(Id, Name, (CMMNPlanItemDefinition)PlanItemDefinition.Clone())
+            {
+                PlanItemControl = PlanItemControl == null ? null : (CMMNPlanItemControl)PlanItemControl.Clone(),
+                EntryCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
+                ExitCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList()
+            };
         }
     }
 }

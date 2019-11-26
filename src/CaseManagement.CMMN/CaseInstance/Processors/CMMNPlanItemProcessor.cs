@@ -1,6 +1,10 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
+using CaseManagement.Workflow.Domains.Process;
 using CaseManagement.Workflow.Engine;
+using CaseManagement.Workflow.Infrastructure;
+using CaseManagement.Workflow.Infrastructure.Services;
+using CaseManagement.Workflow.Persistence;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +13,15 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNPlanItemProcessor : BaseProcessFlowElementProcessor
     {
+        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly IFormQueryRepository _formQueryRepository;
+        
+        public CMMNPlanItemProcessor(IBackgroundTaskQueue backgroundTaskQueue, IFormQueryRepository formQueryRepository)
+        {
+            _backgroundTaskQueue = backgroundTaskQueue;
+            _formQueryRepository = formQueryRepository;
+        }
+
         public override Type ProcessFlowElementType => typeof(CMMNPlanItem);
 
         protected override Task<bool> HandleProcessFlowInstance(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
@@ -17,25 +30,31 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             var processTask = planItem.PlanItemDefinition as CMMNProcessTask;
             if (processTask != null)
             {
-                return HandleProcessTask(planItem, processTask, context);
+                return HandleTask(planItem, processTask, context, HandleProcessTask);
+            }
+
+            var humanTask = planItem.PlanItemDefinition as CMMNHumanTask;
+            if (humanTask != null)
+            {
+                return HandleTask(planItem, humanTask, context, HandleHumanTask);
             }
 
             return Task.FromResult(true);
         }
 
-        protected Task<bool> HandleProcessTask(CMMNPlanItem planItem, CMMNProcessTask processTask, ProcessFlowInstanceExecutionContext context)
+        protected async Task<bool> HandleTask<T>(CMMNPlanItem planItem, T task, ProcessFlowInstanceExecutionContext context, Func<CMMNPlanItem, T, ProcessFlowInstanceExecutionContext, Task<bool>> callback) where T : CMMNTask
         {
             if (planItem.ExitCriterions.Any() && planItem.ExitCriterions.Any(s => CheckCriterion(s, context)))
             {
                 planItem.Terminate();
-                return Task.FromResult(true);
+                return true;
             }
-            
-            if (processTask.State == CMMNTaskStates.Available)
+
+            if (task.State == CMMNTaskStates.Available)
             {
                 if (planItem.EntryCriterions.Any() && !planItem.EntryCriterions.Any(s => CheckCriterion(s, context)))
                 {
-                    return Task.FromResult(true);
+                    return true;
                 }
 
                 if (planItem.PlanItemControl != null)
@@ -47,7 +66,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                         if (ExpressionParser.IsValid(manualActivationRule.Expression.Body, context))
                         {
                             planItem.Enable();
-                            return Task.FromResult(false);
+                            return false;
                         }
                     }
                 }
@@ -55,20 +74,47 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 planItem.Start();
             }
 
-            if (processTask.State == CMMNTaskStates.Active)
+            if (task.State == CMMNTaskStates.Active)
             {
-                // TODO : Execute the plan item definition.
-                planItem.Complete();
-                return Task.FromResult(true);
+                return await callback(planItem, task, context);
             }
 
-            return Task.FromResult(true);
+            return true;
         }
 
-        protected Task<bool> HandleHumanTask()
+        protected async Task<bool> HandleProcessTask(CMMNPlanItem planItem, CMMNProcessTask processTask, ProcessFlowInstanceExecutionContext context)
         {
-            // ADD A USER TASK.
-            return Task.FromResult(true);
+            var instance = (WorkflowTaskDelegate)Activator.CreateInstance(Type.GetType(processTask.AssemblyQualifiedName));
+            if (processTask.IsBlocking)
+            {
+                await instance.Handle(context);
+            }
+            else
+            {
+                _backgroundTaskQueue.QueueBackgroundWorkItem((token) => instance.Handle(context));
+            }
+
+            planItem.Complete();
+            return true;
+        }
+
+        protected async Task<bool> HandleHumanTask(CMMNPlanItem planItem, CMMNHumanTask humanTask, ProcessFlowInstanceExecutionContext context)
+        {
+            if (planItem.FormInstance != null && planItem.FormInstance.Status == ProcessFlowInstanceElementFormStatus.Complete)
+            {
+                planItem.Complete();
+                return true;
+            }
+
+            var form = await _formQueryRepository.FindFormById(humanTask.FormId);
+            planItem.SetFormInstance(form);
+            if (humanTask.IsBlocking)
+            {
+                return false;
+            }
+
+            planItem.Complete();
+            return true;
         }
 
         private bool CheckCriterion(CMMNCriterion sCriterion, ProcessFlowInstanceExecutionContext context)

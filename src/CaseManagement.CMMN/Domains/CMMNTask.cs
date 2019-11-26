@@ -1,8 +1,9 @@
 ﻿using CaseManagement.CMMN.Domains.Events;
+using CaseManagement.Workflow.Infrastructure;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNTask : CMMNPlanItemDefinition
+    public abstract class CMMNTask : CMMNPlanItemDefinition
     {
         public CMMNTask(string name) : base(name)
         {

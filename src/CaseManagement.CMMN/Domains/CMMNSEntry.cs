@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNPlanItemOnPart
+    public class CMMNPlanItemOnPart : ICloneable
     {
         /// <summary>
         /// Reference to a state transition in the lifecycle of a Stage, Task, EventListener or Milestone.
@@ -12,19 +14,35 @@ namespace CaseManagement.CMMN.Domains
         /// Refer to a PlanItem.
         /// </summary>
         public string SourceRef { get; set; }
-        // Exit criterion ?
+
+        public object Clone()
+        {
+            return new CMMNPlanItemOnPart
+            {
+                SourceRef = SourceRef,
+                StandardEvent = StandardEvent
+            };
+        }
     }
 
-    public class CMMNIfPart
+    public class CMMNIfPart : ICloneable
     {
         // contextRef ?
         /// <summary>
         /// Condition that is defined as Expression.
         /// </summary>
         public string Condition { get; set; }
+
+        public object Clone()
+        {
+            return new CMMNIfPart
+            {
+                Condition = Condition
+            };
+        }
     }
 
-    public class CMMNSEntry
+    public class CMMNSEntry : ICloneable
     {
         public CMMNSEntry(string name)
         {
@@ -44,5 +62,14 @@ namespace CaseManagement.CMMN.Domains
         /// Defines the IfPart of the Sentry. 
         /// </summary>
         public CMMNIfPart IfPart { get; set; }
+
+        public object Clone()
+        {
+            return new CMMNSEntry(Name)
+            {
+                IfPart = IfPart == null ? null : (CMMNIfPart)IfPart.Clone(),
+                OnParts = OnParts.Select(p => (CMMNPlanItemOnPart)p.Clone()).ToList()
+            };
+        }
     }
 }

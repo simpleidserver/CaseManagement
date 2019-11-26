@@ -1,8 +1,9 @@
-﻿using CaseManagement.CMMN.Domains.Events;
+﻿using CaseManagement.Workflow.Infrastructure;
+using System;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public abstract class CMMNPlanItemDefinition
+    public abstract class CMMNPlanItemDefinition : ICloneable
     {
         public CMMNPlanItemDefinition(string name)
         {
@@ -10,6 +11,9 @@ namespace CaseManagement.CMMN.Domains
         }
 
         public string Name { get; set; }
+
         public abstract void Handle(DomainEvent cmmnPlanItemEvent);
+
+        public abstract object Clone();
     }
 }
