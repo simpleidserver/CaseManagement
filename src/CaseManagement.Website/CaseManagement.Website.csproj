@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="angularApp\app\casedefinitions\services\caseinstances.service.js">
+      <DependentUpon>caseinstances.service.ts</DependentUpon>
+    </None>
+    <None Update="angularApp\app\casedefinitions\services\caseinstances.service.js.map">
+      <DependentUpon>caseinstances.service.js</DependentUpon>
+    </None>
+  </ItemGroup>
+</Project>

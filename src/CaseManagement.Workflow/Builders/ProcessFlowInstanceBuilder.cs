@@ -6,18 +6,22 @@ namespace CaseManagement.Workflow.Builders
 {
     public class ProcessFlowInstanceBuilder
     {
+        private string _processFlowTemplateId;
+        private string _processFlowName;
         private ICollection<ProcessFlowInstanceElement> _elements;
         private ICollection<ProcessFlowConnector> _connectors;
 
-        private ProcessFlowInstanceBuilder()
+        private ProcessFlowInstanceBuilder(string processFlowTemplateId, string processFlowName)
         {
+            _processFlowTemplateId = processFlowTemplateId;
+            _processFlowName = processFlowName;
             _elements = new List<ProcessFlowInstanceElement>();
             _connectors = new List<ProcessFlowConnector>();
         }
 
-        public static ProcessFlowInstanceBuilder New()
+        public static ProcessFlowInstanceBuilder New(string processFlowTemplateId, string processFlowName)
         {
-            return new ProcessFlowInstanceBuilder();
+            return new ProcessFlowInstanceBuilder(processFlowTemplateId, processFlowName);
         }
 
         public ProcessFlowInstanceBuilder AddElement(ProcessFlowInstanceElement node)
@@ -34,7 +38,7 @@ namespace CaseManagement.Workflow.Builders
 
         public ProcessFlowInstance Build()
         {
-            return ProcessFlowInstance.New(_elements, _connectors);
+            return ProcessFlowInstance.New(_processFlowTemplateId, _processFlowName, _elements, _connectors);
         }
     }
 }

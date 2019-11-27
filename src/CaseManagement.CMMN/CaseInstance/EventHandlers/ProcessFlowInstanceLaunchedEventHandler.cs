@@ -22,6 +22,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
         public async Task Handle(ProcessFlowInstanceLaunchedEvent @event)
         {
             var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(@event.Id);
+            flowInstance.Launch();
             var context = new ProcessFlowInstanceExecutionContext(flowInstance);
             await _workflowEngine.Start(flowInstance, context);
             _processFlowInstanceCommandRepository.Update(flowInstance);

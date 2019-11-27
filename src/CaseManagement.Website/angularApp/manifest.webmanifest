@@ -1,0 +1,27 @@
+{
+  "short_name": "BCV",
+  "name": "Bank CV",
+  "theme_color": "#eb5252",
+  "background_color": "#000000",
+  "display": "standalone",
+  "Scope": "/",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "images/icon-48-48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "images/icon-64-64.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "images/icon-192-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "index.html"
+}

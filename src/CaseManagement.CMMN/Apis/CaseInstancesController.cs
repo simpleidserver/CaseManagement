@@ -1,8 +1,12 @@
 ﻿using CaseManagement.CMMN.CaseInstance.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Persistence;
+using CaseManagement.Workflow.Persistence.Parameters;
+using CaseManagement.Workflow.Persistence.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
@@ -26,6 +30,14 @@ namespace CaseManagement.CMMN.Apis
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
             _confirmFormCommandHandler = confirmFormCommandHandler;
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
+        }
+
+        [HttpGet(".search")]
+        public async Task<IActionResult> Search()
+        {
+            var query = HttpContext.Request.Query;
+            var result = await _processFlowInstanceQueryRepository.Find(ExtractFindParameter(query));
+            return new OkObjectResult(ToDto(result));
         }
 
         [HttpPost]
@@ -66,6 +78,60 @@ namespace CaseManagement.CMMN.Apis
             }
 
             return new OkObjectResult(ToDto(flowInstance));
+        }
+
+        private static FindWorkflowInstanceParameter ExtractFindParameter(IQueryCollection query)
+        {
+            int startIndex;
+            int count;
+            string orderBy;
+            string templateId;
+            FindOrders findOrder;
+            var parameter = new FindWorkflowInstanceParameter();
+            if (query.TryGet("start_index", out startIndex))
+            {
+                parameter.StartIndex = startIndex;
+            }
+
+            if (query.TryGet("count", out count))
+            {
+                parameter.Count = count;
+            }
+
+            if (query.TryGet("order_by", out orderBy))
+            {
+                parameter.OrderBy = orderBy;
+            }
+
+            if (query.TryGet("order", out findOrder))
+            {
+                parameter.Order = findOrder;
+            }
+
+            if (query.TryGet("template_id", out templateId))
+            {
+                parameter.ProcessFlowTemplateId = templateId;
+            }
+
+            return parameter;
+        }
+
+        private static JObject ToDto(FindResponse<ProcessFlowInstance> resp)
+        {
+            return new JObject
+            {
+                { "start_index", resp.StartIndex },
+                { "total_length", resp.TotalLength },
+                { "count", resp.Count },
+                { "content", new JArray(resp.Content.Select(r => new JObject
+                {
+                    { "id", r.Id },
+                    { "name", r.ProcessFlowName },
+                    { "status", Enum.GetName(typeof(ProcessFlowInstanceStatus), r.Status).ToLowerInvariant() },
+                    { "template_id", r.ProcessFlowTemplateId },
+                    { "create_datetime", r.CreateDateTime }
+                })) }
+            };
         }
 
         private static JObject ToDto(ProcessFlowInstance flowInstance)

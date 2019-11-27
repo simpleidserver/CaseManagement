@@ -39,12 +39,12 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 return null;
             }
 
-            var processFlowInstance = BuildProcessFlowInstance(tCase);
+            var processFlowInstance = BuildProcessFlowInstance(tCase, caseDefinition.id);
             await Commit(processFlowInstance, processFlowInstance.GetStreamName());
             return processFlowInstance.Id;
         }
 
-        public static ProcessFlowInstance BuildProcessFlowInstance(tCase tCase)
+        public static ProcessFlowInstance BuildProcessFlowInstance(tCase tCase, string id)
         {
             var planModel = tCase.casePlanModel;
             var flowInstanceElements = new List<CMMNPlanItem>();
@@ -71,7 +71,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 flowInstanceElements.Add(flowInstanceElt);
             }
 
-            var builder = ProcessFlowInstanceBuilder.New();
+            var builder = ProcessFlowInstanceBuilder.New(id, planModel.name);
             foreach(var flowInstance in flowInstanceElements)
             {
                 builder.AddPlanItem(flowInstance);

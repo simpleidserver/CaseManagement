@@ -1,0 +1,27 @@
+@mixin app-theme($theme) {
+    $primary: map-get($theme, primary);
+    $warn: map-get($theme, warn);
+    $accent: map-get($theme, accent);
+    $foreground: map-get($theme, foreground);
+
+    ul.list p.period {
+        color: mat-color($primary);
+    }
+
+    ul.list li {
+        border-bottom-color: mat-color($foreground, divider) !important;
+    }
+
+    .error {
+        color: mat-color($warn);
+    }
+
+    .breadcrumb {
+        background-color: mat-color($primary, 300);
+        color: white;
+    }
+}
+
+@mixin component-themes($theme) {
+    @include app-theme($theme);
+}

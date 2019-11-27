@@ -15,6 +15,8 @@ namespace CaseManagement.Workflow.Domains
         }
 
         public DateTime CreateDateTime { get; set; }
+        public string ProcessFlowTemplateId { get; set; }
+        public string ProcessFlowName { get; set; }
         public ProcessFlowInstanceStatus Status { get; set; }
         public ICollection<ProcessFlowInstanceElement> Elements { get; set; }
         public ICollection<ProcessFlowConnector> Connectors { get; set; }
@@ -58,10 +60,10 @@ namespace CaseManagement.Workflow.Domains
             Handle(evt);
         }
 
-        public static ProcessFlowInstance New(ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors)
+        public static ProcessFlowInstance New(string processFlowTemplateId, string processFlowName, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors)
         {
             var result = new ProcessFlowInstance();
-            var evt = new ProcessFlowInstanceCreatedEvent(Guid.NewGuid().ToString(), DateTime.UtcNow, elements, connectors);
+            var evt = new ProcessFlowInstanceCreatedEvent(Guid.NewGuid().ToString(), processFlowTemplateId, processFlowName, DateTime.UtcNow, elements, connectors);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -104,6 +106,8 @@ namespace CaseManagement.Workflow.Domains
         public void Handle(ProcessFlowInstanceCreatedEvent evt)
         {
             Id = evt.Id;
+            ProcessFlowTemplateId = evt.ProcessFlowTemplateId;
+            ProcessFlowName = evt.ProcessFlowName;
             CreateDateTime = evt.CreateDateTime;
             Elements = evt.Elements;
             Connectors = evt.Connectors;
@@ -128,6 +132,8 @@ namespace CaseManagement.Workflow.Domains
                 Id = Id,
                 CreateDateTime = CreateDateTime,
                 Status = Status,
+                ProcessFlowTemplateId = ProcessFlowTemplateId,
+                ProcessFlowName = ProcessFlowName,
                 Version = Version,
                 Connectors = Connectors.Select(c => (ProcessFlowConnector)c.Clone()).ToList(),
                 Elements = Elements.Select(e => (ProcessFlowInstanceElement)e.Clone()).ToList()
