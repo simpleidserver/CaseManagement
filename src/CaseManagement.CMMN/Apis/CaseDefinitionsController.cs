@@ -106,8 +106,24 @@ namespace CaseManagement.CMMN.Apis
                 { "id", def.id },
                 { "name", def.name },
                 { "create_datetime", def.creationDate },
+                { "cases", ToDto(def.@case) },
                 { "xml",  new CMMNParser().Serialize(def) }
             };
+        }
+
+        private static JArray ToDto(tCase[] tCases)
+        {
+            var result = new JArray();
+            foreach(var tCase in tCases)
+            {
+                result.Add(new JObject
+                {
+                    { "id", tCase.id },
+                    { "name", tCase.casePlanModel.name }
+                });
+            }
+
+            return result;
         }
     }
 }

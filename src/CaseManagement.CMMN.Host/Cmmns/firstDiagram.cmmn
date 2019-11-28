@@ -11,7 +11,7 @@
           <cmmn:standardEvent>complete</cmmn:standardEvent>
         </cmmn:planItemOnPart>
       </cmmn:sentry>
-      <cmmn:processTask id="ProcessTask_03n8qmv" name="Send email" case:assemblyQualifiedName="CaseManagement.CMMN.Acceptance.Tests.Delegates.SendEmailTaskDelegate, CaseManagement.CMMN.Acceptance.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <cmmn:processTask id="ProcessTask_03n8qmv" name="Send email" case:assemblyQualifiedName="CaseManagement.CMMN.Host.Delegates.SendEmailTaskDelegate, CaseManagement.CMMN.Host, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
       <cmmn:humanTask id="HumanTask_07z2osx" name="Create meeting" case:formRef="createMeetingForm" />
     </cmmn:casePlanModel>
   </cmmn:case>

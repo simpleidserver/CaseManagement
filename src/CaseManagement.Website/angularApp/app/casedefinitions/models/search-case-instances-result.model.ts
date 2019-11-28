@@ -1,12 +1,12 @@
-export class SearchCaseInstanceItem {
+export class CaseInstance {
     Id: string;
     Name: string;
     Status: string;
     TemplateId: string;
     CreateDateTime: Date;
 
-    public static fromJson(json: any): SearchCaseInstanceItem {
-        let result = new SearchCaseInstanceItem();
+    public static fromJson(json: any): CaseInstance {
+        let result = new CaseInstance();
         result.Id = json["id"];
         result.Name = json["name"];
         result.Status = json["status"];
@@ -20,7 +20,7 @@ export class SearchCaseInstancesResult {
     StartIndex: number;
     Count: number;
     TotalLength: number;
-    Content: SearchCaseInstanceItem[];
+    Content: CaseInstance[];
 
     public static fromJson(json: any): SearchCaseInstancesResult
     {
@@ -28,10 +28,10 @@ export class SearchCaseInstancesResult {
         result.StartIndex = json["start_index"];
         result.Count = json["count"];
         result.TotalLength = json["total_length"];
-        let content: SearchCaseInstanceItem[] = [];
+        let content: CaseInstance[] = [];
         if (json["content"]) {
             json["content"].forEach(function (c: any) {
-                content.push(SearchCaseInstanceItem.fromJson(c));
+                content.push(CaseInstance.fromJson(c));
             });
         }
 

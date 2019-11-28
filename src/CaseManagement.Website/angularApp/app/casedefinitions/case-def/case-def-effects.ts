@@ -40,5 +40,5 @@ export class CaseDefEffects {
                     );
             }
             )
-        );
+    );        
 }

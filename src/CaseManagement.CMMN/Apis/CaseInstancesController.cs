@@ -47,10 +47,7 @@ namespace CaseManagement.CMMN.Apis
             return new ContentResult
             {
                 StatusCode = (int)HttpStatusCode.Created,
-                Content = new JObject
-                {
-                    { "id", result }
-                }.ToString()
+                Content = ToDto(result).ToString()
             };
         }
 

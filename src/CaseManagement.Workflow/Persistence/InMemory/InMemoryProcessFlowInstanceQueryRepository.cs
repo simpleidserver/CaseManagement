@@ -51,6 +51,11 @@ namespace CaseManagement.Workflow.Persistence.InMemory
                     {
                         result = result.OrderBy(r => r.CreateDateTime);
                     }
+
+                    if (parameter.OrderBy == "status")
+                    {
+                        result = result.OrderBy(r => r.Status);
+                    }
                     break;
                 case FindOrders.DESC:
                     if (parameter.OrderBy == "id")
@@ -71,6 +76,11 @@ namespace CaseManagement.Workflow.Persistence.InMemory
                     if (parameter.OrderBy == "create_datetime")
                     {
                         result = result.OrderByDescending(r => r.CreateDateTime);
+                    }
+
+                    if (parameter.OrderBy == "status")
+                    {
+                        result = result.OrderByDescending(r => r.Status);
                     }
 
                     break;

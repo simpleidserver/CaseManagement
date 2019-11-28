@@ -80,7 +80,7 @@ namespace CaseManagement.CMMN.Extensions
             }
 
             FindOrders result;
-            if (Enum.TryParse(orderStr, out result))
+            if (Enum.TryParse(orderStr.ToUpperInvariant(), out result))
             {
                 order = result;
                 return true;

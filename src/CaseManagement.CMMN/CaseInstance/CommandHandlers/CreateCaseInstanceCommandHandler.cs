@@ -23,7 +23,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             _cmmnDefinitionsQueryRepository = cmmnDefinitionsQueryRepository;
         }
 
-        public async Task<string> Handle(CreateCaseInstanceCommand createCaseInstanceCommand)
+        public async Task<ProcessFlowInstance> Handle(CreateCaseInstanceCommand createCaseInstanceCommand)
         {
             var caseDefinition = await _cmmnDefinitionsQueryRepository.FindDefinitionById(createCaseInstanceCommand.CaseDefinitionId);
             if (caseDefinition == null)
@@ -41,7 +41,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
             var processFlowInstance = BuildProcessFlowInstance(tCase, caseDefinition.id);
             await Commit(processFlowInstance, processFlowInstance.GetStreamName());
-            return processFlowInstance.Id;
+            return processFlowInstance;
         }
 
         public static ProcessFlowInstance BuildProcessFlowInstance(tCase tCase, string id)

@@ -8,56 +8,115 @@
     </div>
 </div>
 <div fxLayout="row">
-    <div fxFlex="80%" fxFlexOffset="10%">
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>{{ "CASE_DEFINITION" | translate }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <div id="canvas" style="height: 300px;"></div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-</div>
-<div fxLayout="row">
-    <div fxFlex="80%" fxFlexOffset="10%">
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>{{ "CASE_INSTANCES" | translate }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <div class="mat-elevation-z8 overflow-hidden">
-                    <table mat-table class="full-width" [dataSource]="caseInstances" matSort>
-                        <ng-container matColumnDef="Id">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_IDENTIFIER" | translate }}</th>
-                            <td mat-cell *matCellDef="let case"> {{case.Id}} </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Name">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_NAME" | translate }}</th>
-                            <td mat-cell *matCellDef="let case"> {{case.Name}} </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Status">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_STATUS" | translate }}</th>
-                            <td mat-cell *matCellDef="let case"> {{case.Status}} </td>
-                        </ng-container>
-                        <ng-container matColumnDef="CreateDateTime">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_CREATEDATETIME" | translate }}</th>
-                            <td mat-cell *matCellDef="let case"> {{case.CreateDateTime}} </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Actions">
-                            <th mat-header-cell *matHeaderCellDef>{{ "CASE_INSTANCE_ACTIONS" | translate }}</th>
-                            <td mat-cell *matCellDef="let case">
-                                <button mat-icon-button [routerLink]="['/casedefinitions/' + case.Id ]">
-                                    <mat-icon>visibility</mat-icon>
-                                </button>
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                    </table>
-                    <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-                </div>
-            </mat-card-content>
-        </mat-card>
+    <div fxFlexOffset="10%" fxFlex="80%">
+        <div fxLayout="column" fxLayoutGap="5px">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ "CASE_DEFINITION_INFORMATION" | translate }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isCaseDefinitionLoading" class="center-spinner">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                    <div fxLayout="row" *ngIf="!isCaseDefinitionLoading && !isCaseDefinitionErrorLoadOccured">
+                        <div fxFlex="50%" fxLayout="column">
+                            <mat-form-field>
+                                <mat-label>{{ "CASE_DEFINITION_ID" | translate }}</mat-label>
+                                <input matInput [value]="caseDefinition.Id" disabled />
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>{{ "CASE_DEFINITION_NAME" | translate }}</mat-label>
+                                <input matInput [value]="caseDefinition.Name" disabled />
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>{{ "CASE_DEFINITION_CREATEDATETIME" | translate }}</mat-label>
+                                <input matInput [value]="caseDefinition.CreateDateTime" disabled />
+                            </mat-form-field>
+                        </div>
+                        <div fxFlex="50%">
+                            <form (submit)="createCaseInstance($event)">
+                                <div fxLayout="column">
+                                    <mat-form-field>
+                                        <mat-label>{{ "SELECT_CASE_PLAN_MODEL" | translate }}</mat-label>
+                                        <mat-select [(value)]="selectedCasePlanModel">
+                                            <mat-option *ngFor="let casePlanModel of caseDefinition.CasePlanModels" [value]="casePlanModel.Id">
+                                                {{casePlanModel.Name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <button mat-raised-button type="submit">{{ "CREATE_CASE_INSTANCE" | translate }}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div *ngIf="isCaseDefinitionErrorLoadOccured" class="error">
+                        <p>{{ "ERROR_LOAD_CASE_DEFINITION" | translate }}</p>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ "CASE_DEFINITION_SCHEMA" | translate }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isCaseDefinitionLoading" class="center-spinner">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                    <div *ngIf="isCaseDefinitionErrorLoadOccured" class="error">
+                        <p>{{ "ERROR_LOAD_CASE_DEFINITION" | translate }}</p>
+                    </div>
+                    <div id="canvas" style="height: 300px;"></div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ "CASE_INSTANCES" | translate }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="mat-elevation-z8 overflow-hidden">
+                        <table mat-table class="full-width" [dataSource]="caseInstances" matSort>
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_NAME" | translate }}</th>
+                                <td mat-cell *matCellDef="let case"> {{case.Name}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_STATUS" | translate }}</th>
+                                <td mat-cell *matCellDef="let case">
+                                    <mat-chip-list>
+                                        <mat-chip *ngIf="case.Status == 'none'" color="none">{{ "CREATED" | translate }}</mat-chip>
+                                        <mat-chip *ngIf="case.Status == 'started'" color="accent">{{ "STARTED" | translate }}</mat-chip>
+                                        <mat-chip *ngIf="case.Status == 'completed'" color="primary">{{ "COMPLETED" | translate }}</mat-chip>
+                                    </mat-chip-list>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="create_datetime">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_CREATEDATETIME" | translate }}</th>
+                                <td mat-cell *matCellDef="let case"> {{case.CreateDateTime | date:'medium'}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="Actions">
+                                <th mat-header-cell *matHeaderCellDef>{{ "CASE_INSTANCE_ACTIONS" | translate }}</th>
+                                <td mat-cell *matCellDef="let case">
+                                    <button mat-icon-button (click)="launchInstance(case)">
+                                        <mat-icon>play_arrow</mat-icon>
+                                    </button>
+                                    <button mat-icon-button [routerLink]="['/casedefinitions/' + case.Id ]">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                        <div *ngIf="isCaseInstancesLoading" class="center-spinner">
+                            <mat-spinner></mat-spinner>
+                        </div>
+                        <div *ngIf="isCaseInstancesErrorLoadOccured" class="error">
+                            <p>{{ "ERROR_LOAD_CASE_INSTANCES" | translate }}</p>
+                        </div>
+                        <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
 </div>
