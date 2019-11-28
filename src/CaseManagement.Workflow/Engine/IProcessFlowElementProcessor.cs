@@ -7,6 +7,6 @@ namespace CaseManagement.Workflow.Engine
     public interface IProcessFlowElementProcessor
     {
         Type ProcessFlowElementType { get; }
-        Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context);
+        Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe);
     }
 }

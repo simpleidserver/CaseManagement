@@ -6,19 +6,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { CaseDefinitionsRoutes } from './casedefinitions.routes';
-import { ListCaseDefsComponent } from './list-case-defs/list-case-defs.component';
-import { CaseDefComponent } from './case-def/case-def.component';
-import * as fromListCaseDefsReducer from './list-case-defs/list-case-defs-reducer';
-import * as fromCaseDefReducer from './case-def/case-def-reducer';
-import { ListCaseDefsEffects } from './list-case-defs/list-case-defs-effects';
 import { CaseDefEffects } from './case-def/case-def-effects';
+import * as fromCaseDefReducer from './case-def/case-def-reducer';
+import { CaseDefComponent } from './case-def/case-def.component';
+import { CaseDefinitionsRoutes } from './casedefinitions.routes';
+import { ListCaseDefsEffects } from './list-case-defs/list-case-defs-effects';
+import * as fromListCaseDefsReducer from './list-case-defs/list-case-defs-reducer';
+import { ListCaseDefsComponent } from './list-case-defs/list-case-defs.component';
 import { CaseDefinitionsService } from './services/casedefinitions.service';
+import { CaseInstancesService } from './services/caseinstances.service';
 var CaseDefinitionsModule = (function () {
     function CaseDefinitionsModule() {
     }
@@ -44,7 +45,8 @@ var CaseDefinitionsModule = (function () {
                 CaseDefComponent
             ],
             providers: [
-                CaseDefinitionsService
+                CaseDefinitionsService,
+                CaseInstancesService
             ]
         })
     ], CaseDefinitionsModule);

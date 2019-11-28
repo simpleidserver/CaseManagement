@@ -16,12 +16,12 @@ namespace CaseManagement.Workflow.Domains
         public ProcessFlowInstanceElementStatus Status { get; private set; }
         public ProcessFlowInstanceElementForm FormInstance { get; private set; }
 
-        public void Run()
+        internal void Run()
         {
             Status = ProcessFlowInstanceElementStatus.Started;
         }
 
-        public void Finish()
+        internal void Finish()
         {
             Status = ProcessFlowInstanceElementStatus.Finished;
         }

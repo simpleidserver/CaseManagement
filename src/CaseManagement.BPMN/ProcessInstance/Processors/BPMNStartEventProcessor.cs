@@ -10,9 +10,9 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
     {
         public Type ProcessFlowElementType => typeof(BPMNStartEvent);
 
-        public Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
+        public Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
         {
-            pfe.Finish();
+            pf.CompleteElement(pfe);
             return Task.FromResult(0);
         }
     }

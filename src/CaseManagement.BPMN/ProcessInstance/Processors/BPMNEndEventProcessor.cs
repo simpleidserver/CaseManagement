@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
+using System;
+using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Processors
 {
@@ -10,9 +10,9 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
     {
         public Type ProcessFlowElementType => typeof(BPMNEndEvent);
 
-        public Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
+        public Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
         {
-            pfe.Finish();
+            pf.CompleteElement(pfe);
             return Task.FromResult(0);
         }
     }

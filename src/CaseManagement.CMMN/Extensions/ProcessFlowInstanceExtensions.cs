@@ -28,5 +28,10 @@ namespace CaseManagement.Workflow.Domains
             elt.ManualStart();
             return true;
         }
+
+        public static CMMNPlanItem GetPlanItem(this ProcessFlowInstance pf, string id)
+        {
+            return pf.Elements.FirstOrDefault(e => e.Id == id) as CMMNPlanItem;
+        }
     }
 }

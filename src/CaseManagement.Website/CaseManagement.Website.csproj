@@ -17,4 +17,7 @@
       <DependentUpon>caseinstances.service.js</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="angularApp\app\caseinstances\services\" />
+  </ItemGroup>
 </Project>

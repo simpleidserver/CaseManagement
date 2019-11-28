@@ -23,8 +23,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
         {
             var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(@event.Id);
             flowInstance.Launch();
-            var context = new ProcessFlowInstanceExecutionContext(flowInstance);
-            await _workflowEngine.Start(flowInstance, context);
+            await _workflowEngine.Start(flowInstance);
             _processFlowInstanceCommandRepository.Update(flowInstance);
             await _processFlowInstanceCommandRepository.SaveChanges();
         }

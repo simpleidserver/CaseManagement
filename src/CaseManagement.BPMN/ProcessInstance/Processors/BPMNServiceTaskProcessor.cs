@@ -11,14 +11,14 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
     {
         public Type ProcessFlowElementType => typeof(BPMNServiceTask);
 
-        public async Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
+        public async Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
         {
-            pfe.Run();
+            pf.LaunchElement(pfe);
             var serviceTask = (BPMNServiceTask)pfe;
             var type = Type.GetType(serviceTask.FullQualifiedName);
             var instance = Activator.CreateInstance(type) as WorkflowTaskDelegate;
-            await instance.Handle(context);
-            pfe.Finish();
+            await instance.Handle(pf);
+            pf.CompleteElement(pfe);
         }
     }
 }

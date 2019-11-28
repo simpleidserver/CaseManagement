@@ -13,12 +13,12 @@ namespace CaseManagement.Workflow.Engine
             _processFlowElementProcessorFactory = processFlowElementProcessorFactory;
         }
 
-        public async Task Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceExecutionContext context)
+        public async Task Start(ProcessFlowInstance processFlowInstance)
         {
             bool result = false;
             foreach(var startElt in processFlowInstance.GetStartElements())
             {
-                result = await Start(processFlowInstance, context, startElt);
+                result = await Start(processFlowInstance, startElt);
             }
 
             if (result)
@@ -27,7 +27,7 @@ namespace CaseManagement.Workflow.Engine
             }
         }
 
-        private async Task<bool> Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceExecutionContext context, ProcessFlowInstanceElement elt)
+        private async Task<bool> Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceElement elt)
         {
             var previousElts = processFlowInstance.PreviousElements(elt.Id);
             if (previousElts.Any(p => p.Status != ProcessFlowInstanceElementStatus.Finished))
@@ -38,7 +38,7 @@ namespace CaseManagement.Workflow.Engine
             if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
             {
                 var processor = _processFlowElementProcessorFactory.Build(elt);
-                await processor.Handle(elt, context);
+                await processor.Handle(processFlowInstance, elt);
             }
 
             if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
@@ -55,7 +55,7 @@ namespace CaseManagement.Workflow.Engine
             bool result = true;
             foreach (var nextElt in nextElts)
             {
-                if (!await Start(processFlowInstance, context, nextElt))
+                if (!await Start(processFlowInstance, nextElt))
                 {
                     result = false;
                 }

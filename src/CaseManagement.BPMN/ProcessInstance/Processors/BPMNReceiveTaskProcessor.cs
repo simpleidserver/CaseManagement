@@ -10,16 +10,11 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
     {
         public Type ProcessFlowElementType { get => typeof(BPMNReceiveTask); }
 
-        public Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
+        public Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
         {
             var receiveTask = pfe as BPMNReceiveTask;
-            receiveTask.Run();
-            if (context.CallingOperation != receiveTask.OperationId)
-            {
-                return Task.FromResult(0);
-            }
-
-            receiveTask.Finish();
+            pf.LaunchElement(pfe);
+            pf.CompleteElement(pfe);
             return Task.FromResult(0);
         }
     }

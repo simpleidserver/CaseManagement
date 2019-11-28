@@ -40,6 +40,7 @@ namespace CaseManagement.CMMN.Domains
         public void Enable()
         {
             var evt = new CMMNPlanItemEnabled();
+            // DON T USE ANY EVENT ANYMORE.
             Events.Add(evt);
             PlanItemDefinition.Handle(evt);
         }

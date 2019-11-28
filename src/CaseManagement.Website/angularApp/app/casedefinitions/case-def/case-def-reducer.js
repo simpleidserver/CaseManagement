@@ -11,22 +11,35 @@ var __assign = (this && this.__assign) || function () {
 };
 import { ActionTypes } from './case-def-actions';
 var initialCaseDefState = {
-    content: null,
-    isLoading: true,
-    isErrorLoadOccured: false
+    isCaseDefinitionLoading: true,
+    isCaseDefinitionErrorLoadOccured: false,
+    caseDefinitionContent: null,
+    isCaseInstancesLoading: true,
+    isCaseInstancesErrorLoadOccured: false,
+    caseInstancesContent: null
 };
 export function reducer(state, action) {
     if (state === void 0) { state = initialCaseDefState; }
     switch (action.type) {
         case ActionTypes.CASEDEFLOADED:
             var caseDefLoadedAction = action;
-            state.content = caseDefLoadedAction.result;
-            state.isLoading = false;
-            state.isErrorLoadOccured = false;
+            state.caseDefinitionContent = caseDefLoadedAction.result;
+            state.isCaseDefinitionLoading = false;
+            state.isCaseDefinitionErrorLoadOccured = false;
             return __assign({}, state);
         case ActionTypes.ERRORLOADCASEDEF:
-            state.isErrorLoadOccured = true;
-            state.isLoading = false;
+            state.isCaseDefinitionErrorLoadOccured = true;
+            state.isCaseDefinitionLoading = false;
+            return __assign({}, state);
+        case ActionTypes.CASEINSTANCESLOADED:
+            var caseInstancesLoadedAction = action;
+            state.caseInstancesContent = caseInstancesLoadedAction.result;
+            state.isCaseInstancesLoading = false;
+            state.isCaseInstancesErrorLoadOccured = false;
+            return __assign({}, state);
+        case ActionTypes.ERRORLOADCASEINSTANCES:
+            state.isCaseInstancesErrorLoadOccured = true;
+            state.isCaseInstancesLoading = false;
             return __assign({}, state);
         default:
             return state;

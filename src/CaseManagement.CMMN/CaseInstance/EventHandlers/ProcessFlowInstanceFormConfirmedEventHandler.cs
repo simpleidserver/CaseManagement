@@ -26,8 +26,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(@event.Id);
             var flowInstanceElt = flowInstance.Elements.FirstOrDefault(e => e.Id == @event.ElementId) as CMMNPlanItem;
             flowInstanceElt.Complete();
-            var context = new ProcessFlowInstanceExecutionContext(flowInstance);
-            await _workflowEngine.Start(flowInstance, context);
+            await _workflowEngine.Start(flowInstance);
             _processFlowInstanceCommandRepository.Update(flowInstance);
             await _processFlowInstanceCommandRepository.SaveChanges();
         }

@@ -1,0 +1,1 @@
+{"version":3,"file":"caseinstances.routes.js","sourceRoot":"","sources":["caseinstances.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAU,MAAM,iBAAiB,CAAC;AACvD,OAAO,EAAE,qBAAqB,EAAE,MAAM,yCAAyC,CAAC;AAEhF,IAAM,MAAM,GAAW;IACnB,EAAE,IAAI,EAAE,KAAK,EAAE,SAAS,EAAE,qBAAqB,EAAE;CACpD,CAAC;AAEF,MAAM,CAAC,IAAM,mBAAmB,GAAG,YAAY,CAAC,QAAQ,CAAC,MAAM,CAAC,CAAC"}

@@ -8,15 +8,15 @@ namespace CaseManagement.Workflow.Engine
     {
         public abstract Type ProcessFlowElementType { get; }
 
-        public async Task Handle(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context)
+        public async Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
         {
-            pfe.Run();
-            if (await HandleProcessFlowInstance(pfe, context))
+            pf.LaunchElement(pfe);
+            if (await HandleProcessFlowInstance(pf, pfe))
             {
-                pfe.Finish();
+                pf.CompleteElement(pfe);
             }
         }
 
-        protected abstract Task<bool> HandleProcessFlowInstance(ProcessFlowInstanceElement pfe, ProcessFlowInstanceExecutionContext context);
+        protected abstract Task<bool> HandleProcessFlowInstance(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe);
     }
 }

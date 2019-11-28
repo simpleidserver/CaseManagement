@@ -12,26 +12,38 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { CaseDefinitionsService } from '../services/casedefinitions.service';
+import { CaseInstancesService } from '../services/caseinstances.service';
 import { ActionTypes } from './case-def-actions';
 var CaseDefEffects = (function () {
-    function CaseDefEffects(actions$, caseDefinitionsService) {
+    function CaseDefEffects(actions$, caseDefinitionsService, caseInstancesService) {
         var _this = this;
         this.actions$ = actions$;
         this.caseDefinitionsService = caseDefinitionsService;
+        this.caseInstancesService = caseInstancesService;
         this.loadCaseDef$ = this.actions$
             .pipe(ofType(ActionTypes.CASEDEFLOAD), mergeMap(function (evt) {
             return _this.caseDefinitionsService.get(evt.id)
                 .pipe(map(function (casedef) { return { type: ActionTypes.CASEDEFLOADED, result: casedef }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADCASEDEF }); }));
+        }));
+        this.loadCaseInstances = this.actions$
+            .pipe(ofType(ActionTypes.CASEINSTANCESLOAD), mergeMap(function (evt) {
+            return _this.caseInstancesService.search(evt.startIndex, evt.count, evt.id, evt.order, evt.direction)
+                .pipe(map(function (caseInstances) { return { type: ActionTypes.CASEINSTANCESLOADED, result: caseInstances }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADCASEINSTANCES }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
     ], CaseDefEffects.prototype, "loadCaseDef$", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], CaseDefEffects.prototype, "loadCaseInstances", void 0);
     CaseDefEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            CaseDefinitionsService])
+            CaseDefinitionsService,
+            CaseInstancesService])
     ], CaseDefEffects);
     return CaseDefEffects;
 }());
