@@ -107,10 +107,10 @@
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
-                        <div *ngIf="isCaseInstancesLoading" class="center-spinner">
+                        <div *ngIf="isCaseExecutionStepsLoaded" class="center-spinner">
                             <mat-spinner></mat-spinner>
                         </div>
-                        <div *ngIf="isCaseInstancesErrorLoadOccured" class="error">
+                        <div *ngIf="isCaseExecutionStepsErrorLoadOccured" class="error">
                             <p>{{ "ERROR_LOAD_CASE_INSTANCES" | translate }}</p>
                         </div>
                         <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>

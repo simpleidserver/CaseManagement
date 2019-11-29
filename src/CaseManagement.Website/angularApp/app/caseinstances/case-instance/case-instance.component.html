@@ -11,6 +11,89 @@
     <div fxFlexOffset="10%" fxFlex="80%">
         <div fxLayout="column" fxLayoutGap="5px">
             <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ "CASE_INSTANCE_INFORMATION" | translate }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isCaseInstanceLoading" class="center-spinner">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                    <div *ngIf="isCaseInstanceErrorLoadOccured" class="error">
+                        <p>{{ "ERROR_LOAD_CASE_INSTANCE" | translate }}</p>
+                    </div>
+                    <div fxLayout="column" *ngIf="!isCaseInstanceLoading && !isCaseInstanceErrorLoadOccured">
+                        <mat-form-field>
+                            <mat-label>{{ "CASE_INSTANCE_ID" | translate }}</mat-label>
+                            <input matInput [value]="caseInstance.Id" disabled />
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>{{ "CASE_INSTANCE_STATUS" | translate }}</mat-label>
+                            <mat-chip-list>
+                                <mat-chip *ngIf="caseInstance.Status == 'none'" color="none">{{ "CREATED" | translate }}</mat-chip>
+                                <mat-chip *ngIf="caseInstance.Status == 'started'" color="accent">{{ "STARTED" | translate }}</mat-chip>
+                                <mat-chip *ngIf="caseInstance.Status == 'completed'" color="primary">{{ "COMPLETED" | translate }}</mat-chip>
+                            </mat-chip-list>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>{{ "CASE_INSTANCE_NAME" | translate }}</mat-label>
+                            <input matInput [value]="caseInstance.Name" disabled />
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>{{ "CASE_INSTANCE_TEMPLATEID" | translate }}</mat-label>
+                            <input matInput [value]="caseInstance.TemplateId" disabled />
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>{{ "CASE_INSTANCE_CREATEDATETIME" | translate }}</mat-label>
+                            <input matInput [value]="caseInstance.CreateDateTime" disabled />
+                        </mat-form-field>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ "CASE_INSTANCE_WORKFLOW" | translate }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isCaseInstanceLoading" class="center-spinner">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                    <div *ngIf="isCaseInstanceErrorLoadOccured" class="error">
+                        <p>{{ "ERROR_LOAD_CASE_INSTANCE" | translate }}</p>
+                    </div>
+                    <div id="canvas" height="300px;"></div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ "CASE_INSTANCE_EXECUTIONSTEPS" | translate }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="mat-elevation-z8 overflow-hidden">
+                        <table mat-table class="full-width" [dataSource]="executionSteps" matSort>
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "TASK_NAME" | translate }}</th>
+                                <td mat-cell *matCellDef="let executionStep"> {{executionStep.Name}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="start_datetime">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "START_DATETIME" | translate }}</th>
+                                <td mat-cell *matCellDef="let executionStep"> {{executionStep.StartDateTime}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="end_datetime">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "END_DATETIME" | translate }}</th>
+                                <td mat-cell *matCellDef="let executionStep"> {{executionStep.EndDateTime}} </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                        <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                        <div *ngIf="isCaseExecutionStepsLoaded" class="center-spinner">
+                            <mat-spinner></mat-spinner>
+                        </div>
+                        <div *ngIf="isCaseExecutionStepsErrorLoadOccured" class="error">
+                            <p>{{ "ERROR_LOAD_EXECUTIONSTEPS" | translate }}</p>
+                        </div>
+                    </div>
+                </mat-card-content>
             </mat-card>
         </div>
     </div>

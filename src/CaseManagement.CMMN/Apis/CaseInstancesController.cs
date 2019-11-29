@@ -36,7 +36,7 @@ namespace CaseManagement.CMMN.Apis
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query;
-            var result = await _processFlowInstanceQueryRepository.Find(ExtractFindParameter(query));
+            var result = await _processFlowInstanceQueryRepository.Find(ExtractFindWorkflowInstanceParameter(query));
             return new OkObjectResult(ToDto(result));
         }
 
@@ -77,14 +77,40 @@ namespace CaseManagement.CMMN.Apis
             return new OkObjectResult(ToDto(flowInstance));
         }
 
-        private static FindWorkflowInstanceParameter ExtractFindParameter(IQueryCollection query)
+        [HttpGet("{id}/steps/.search")]
+        public async Task<IActionResult> SearchExecutionSteps(string id)
         {
-            int startIndex;
-            int count;
-            string orderBy;
+            var query = HttpContext.Request.Query;
+            var parameter = ExtractFindExecutionStepsParameter(query);
+            parameter.ProcessFlowInstanceId = id;
+            var executionSteps = await _processFlowInstanceQueryRepository.FindExecutionSteps(parameter);
+            return new OkObjectResult(ToDto(executionSteps));
+        }
+
+        private static FindWorkflowInstanceParameter ExtractFindWorkflowInstanceParameter(IQueryCollection query)
+        {
             string templateId;
-            FindOrders findOrder;
             var parameter = new FindWorkflowInstanceParameter();
+            if (query.TryGet("template_id", out templateId))
+            {
+                parameter.ProcessFlowTemplateId = templateId;
+            }
+            ExtractFindParameter(query, parameter);
+            return parameter;
+        }
+
+        private static FindExecutionStepsParameter ExtractFindExecutionStepsParameter(IQueryCollection query)
+        {
+            var parameter = new FindExecutionStepsParameter();
+            ExtractFindParameter(query, parameter);
+            return parameter;
+        }
+
+        private static void ExtractFindParameter(IQueryCollection query, BaseFindParameter parameter)
+        {
+            int startIndex, count;
+            string orderBy;
+            FindOrders findOrder;
             if (query.TryGet("start_index", out startIndex))
             {
                 parameter.StartIndex = startIndex;
@@ -104,13 +130,23 @@ namespace CaseManagement.CMMN.Apis
             {
                 parameter.Order = findOrder;
             }
+        }
 
-            if (query.TryGet("template_id", out templateId))
+        private static JObject ToDto(FindResponse<ProcessFlowInstanceExecutionStep> resp)
+        {
+            return new JObject
             {
-                parameter.ProcessFlowTemplateId = templateId;
-            }
-
-            return parameter;
+                { "start_index", resp.StartIndex },
+                { "total_length", resp.TotalLength },
+                { "count", resp.Count },
+                { "content", new JArray(resp.Content.Select(r => new JObject
+                {
+                    { "start_datetime", r.StartDateTime },
+                    { "end_datetime", r.EndDateTime },
+                    { "name", r.Element.Name },
+                    { "id", r.Element.Id }
+                })) }
+            };
         }
 
         private static JObject ToDto(FindResponse<ProcessFlowInstance> resp)
@@ -137,6 +173,8 @@ namespace CaseManagement.CMMN.Apis
             {
                 { "id", flowInstance.Id },
                 { "create_datetime", flowInstance.CreateDateTime },
+                { "template_id", flowInstance.ProcessFlowTemplateId },
+                { "name", flowInstance.ProcessFlowName },
                 { "status", Enum.GetName(typeof(ProcessFlowInstanceStatus), flowInstance.Status).ToLowerInvariant() }
             };
             var planItems = new JArray();

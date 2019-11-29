@@ -1,9 +1,24 @@
+export class CaseInstancePlanItem {
+    Id: string;
+    Name: string;
+    Status: string;
+
+    public static fromJson(json: any): CaseInstancePlanItem {
+        let result = new CaseInstancePlanItem();
+        result.Id = json["id"];
+        result.Name = json["name"];
+        result.Status = json["status"];
+        return result;
+    }
+}
+
 export class CaseInstance {
     Id: string;
     Name: string;
     Status: string;
     TemplateId: string;
     CreateDateTime: Date;
+    PlanItems: CaseInstancePlanItem[];
 
     public static fromJson(json: any): CaseInstance {
         let result = new CaseInstance();
@@ -12,6 +27,14 @@ export class CaseInstance {
         result.Status = json["status"];
         result.TemplateId = json["template_id"];
         result.CreateDateTime = json["create_datetime"];
+        let items: CaseInstancePlanItem[] = [];
+        if (json["items"]) {
+            json["items"].forEach(function (i : any) {
+                items.push(CaseInstancePlanItem.fromJson(i));
+            });
+        }
+
+        result.PlanItems = items;
         return result;
     }
 }

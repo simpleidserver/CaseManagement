@@ -1,6 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using CaseManagement.Workflow.Domains;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -101,7 +105,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         {
             var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
             var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
-            Assert.Equal(value, currentValue);
+            Assert.Equal(value.ToLowerInvariant(), currentValue);
         }
 
         private string Parse(string val)

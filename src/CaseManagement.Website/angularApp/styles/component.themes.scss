@@ -20,6 +20,14 @@
         background-color: mat-color($primary, 300);
         color: white;
     }
+
+    .started:not(.djs-connection) .djs-visual > :nth-child(1) {
+        stroke: rgba(66, 180, 21, 0.7) !important;
+    }
+
+    .finished:not(.djs-connection) .djs-visual > :nth-child(1) {
+        stroke: rgb(255, 116, 0) !important;
+    }
 }
 
 @mixin component-themes($theme) {

@@ -47,13 +47,14 @@ namespace CaseManagement.Website
         {
             var angularRoutes = new[] {
                  "/home",
-                 "/about"
+                 "/about",
+                 "/casedefinitions",
+                 "/caseinstances"
              };
 
             app.Use(async (context, next) =>
             {
-                if (context.Request.Path.HasValue && null != angularRoutes.FirstOrDefault(
-                    (ar) => context.Request.Path.Value.StartsWith(ar, StringComparison.OrdinalIgnoreCase)))
+                if (context.Request.Path.HasValue && null != angularRoutes.FirstOrDefault((ar) => context.Request.Path.Value.StartsWith(ar, StringComparison.OrdinalIgnoreCase)))
                 {
                     context.Request.Path = new PathString("/");
                 }

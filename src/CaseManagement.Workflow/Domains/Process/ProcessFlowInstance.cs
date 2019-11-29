@@ -64,6 +64,17 @@ namespace CaseManagement.Workflow.Domains
 
         public void LaunchElement(string eltId)
         {
+            var elt = Elements.FirstOrDefault(e => e.Id == eltId);
+            if (elt == null)
+            {
+                return;
+            }
+
+            if (elt.Status != ProcessFlowInstanceElementStatus.None)
+            {
+                return;
+            }
+
             var evt = new ProcessFlowElementLaunchedEvent(Id, eltId, DateTime.UtcNow);
             DomainEvents.Add(evt);
             Handle(evt);
@@ -76,6 +87,17 @@ namespace CaseManagement.Workflow.Domains
 
         public void CompleteElement(string eltId)
         {
+            var elt = Elements.FirstOrDefault(e => e.Id == eltId);
+            if (elt == null)
+            {
+                return;
+            }
+
+            if (elt.Status != ProcessFlowInstanceElementStatus.Started)
+            {
+                return;
+            }
+
             var evt = new ProcessFlowElementCompletedEvent(Id, eltId, DateTime.UtcNow);
             DomainEvents.Add(evt);
             Handle(evt);

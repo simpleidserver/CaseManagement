@@ -3,12 +3,22 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SearchCaseInstancesResult, CaseInstance } from '../models/search-case-instances-result.model';
+import { SearchCaseExecutionStepsResult } from '../models/search-case-execution-steps-result.model';
 
 const url = "http://localhost:54942";
 
 @Injectable()
 export class CaseInstancesService {
     constructor(private http: HttpClient) { }
+
+    get(caseInstanceId: string): Observable<CaseInstance> {
+        let targetUrl = url + "/case-instances/" + caseInstanceId;
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
+            return CaseInstance.fromJson(res);
+        }));
+    }
 
     create(caseDefId: string, caseId: string) : Observable<CaseInstance> {
         const request = JSON.stringify({ case_definition_id: caseDefId, case_id: caseId });
@@ -42,6 +52,23 @@ export class CaseInstancesService {
 
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return SearchCaseInstancesResult.fromJson(res);
+        }));
+    }
+
+    searchExecutionSteps(startIndex: number, count: number, caseInstanceId: string, order: string, direction: string): Observable<SearchCaseExecutionStepsResult> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        let targetUrl = url + "/case-instances/" + caseInstanceId + "/steps/.search?start_index=" + startIndex + "&count=" + count;
+        if (order) {
+            targetUrl = targetUrl + "&order_by=" + order;
+        }
+
+        if (direction) {
+            targetUrl = targetUrl + "&order=" + direction;
+        }
+
+        return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
+            return SearchCaseExecutionStepsResult.fromJson(res);
         }));
     }
 }

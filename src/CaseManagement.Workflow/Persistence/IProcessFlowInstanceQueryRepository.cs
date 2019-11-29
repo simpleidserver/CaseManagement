@@ -8,6 +8,7 @@ namespace CaseManagement.Workflow.Persistence
     public interface IProcessFlowInstanceQueryRepository
     {
         Task<ProcessFlowInstance> FindFlowInstanceById(string id);
+        Task<FindResponse<ProcessFlowInstanceExecutionStep>> FindExecutionSteps(FindExecutionStepsParameter parameter);
         Task<FindResponse<ProcessFlowInstance>> Find(FindWorkflowInstanceParameter parameter);
     }
 }
