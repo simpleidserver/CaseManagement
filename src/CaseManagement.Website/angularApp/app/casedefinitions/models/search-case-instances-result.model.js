@@ -1,3 +1,16 @@
+var CaseInstancePlanItem = (function () {
+    function CaseInstancePlanItem() {
+    }
+    CaseInstancePlanItem.fromJson = function (json) {
+        var result = new CaseInstancePlanItem();
+        result.Id = json["id"];
+        result.Name = json["name"];
+        result.Status = json["status"];
+        return result;
+    };
+    return CaseInstancePlanItem;
+}());
+export { CaseInstancePlanItem };
 var CaseInstance = (function () {
     function CaseInstance() {
     }
@@ -8,6 +21,13 @@ var CaseInstance = (function () {
         result.Status = json["status"];
         result.TemplateId = json["template_id"];
         result.CreateDateTime = json["create_datetime"];
+        var items = [];
+        if (json["items"]) {
+            json["items"].forEach(function (i) {
+                items.push(CaseInstancePlanItem.fromJson(i));
+            });
+        }
+        result.PlanItems = items;
         return result;
     };
     return CaseInstance;

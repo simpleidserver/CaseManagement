@@ -1,4 +1,5 @@
-﻿using CaseManagement.Workflow.Domains;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.Workflow.Domains;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,19 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 foreach (var file in Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn"))
                 {
                     c.ImportDefinition(file);
+                }
+            })
+            .AddCaseProcesses(new List<ProcessAggregate>
+            {
+                new CaseManagementProcessAggregate
+                {
+                    Id = "countBikes",
+                    AssemblyQualifiedName = "CaseManagement.CMMN.Acceptance.Tests.Delegates.CountBikesTaskDelegate, CaseManagement.CMMN.Acceptance.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "countCars",
+                    AssemblyQualifiedName = "CaseManagement.CMMN.Acceptance.Tests.Delegates.CountCarsTaskDelegate, CaseManagement.CMMN.Acceptance.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
                 }
             })
             .AddForms(new List<Form>

@@ -110,6 +110,11 @@ namespace CaseManagement.Workflow.Domains
             Handle(evt);
         }
 
+        public void SetVariable(string key, int value)
+        {
+            SetVariable(key, value.ToString());
+        }
+
         public void SetVariable(string key, string value)
         {
             var evt = new ProcessFlowInstanceVariableAddedEvent(Id, key, value);
@@ -117,9 +122,19 @@ namespace CaseManagement.Workflow.Domains
             Handle(evt);
         }
 
+        public bool ContainsVariable(string key)
+        {
+            return ExecutionContext.ContainsVariable(key);
+        }
+
         public string GetVariable(string key)
         {
             return ExecutionContext.GetVariable(key);
+        }
+
+        public int GetNumberVariable(string key)
+        {
+            return int.Parse(GetVariable(key));
         }
 
         public static ProcessFlowInstance New(string processFlowTemplateId, string processFlowName, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors)

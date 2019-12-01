@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.Persistence;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,12 @@ namespace CaseManagement.CMMN
         public CMMNServerBuilder AddDefinitions(ICollection<tDefinitions> defs)
         {
             Services.AddSingleton<ICMMNDefinitionsQueryRepository>(new InMemoryCMMNDefinitionsQueryRepository(defs));
+            return this;
+        }
+
+        public CMMNServerBuilder AddCaseProcesses(ICollection<ProcessAggregate> caseProcesses)
+        {
+            Services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
             return this;
         }
     }

@@ -18,6 +18,11 @@ namespace CaseManagement.Workflow.Domains
             _variables = variables;
         }
 
+        internal bool ContainsVariable(string str)
+        {
+            return _variables.ContainsKey(str);
+        }
+
         internal string GetVariable(string str)
         {
             if (!_variables.ContainsKey(str))

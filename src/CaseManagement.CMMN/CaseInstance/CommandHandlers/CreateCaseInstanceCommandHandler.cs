@@ -97,12 +97,52 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 return BuildHumanTask((tHumanTask)planItemDef);
             }
 
+            if (planItemDef is tTask)
+            {
+                return BuildTask((tTask)planItemDef);
+            }
+
             return null;
+        }
+
+        private static CMMNTask BuildTask(tTask task)
+        {
+            return new CMMNTask(task.name);
         }
 
         private static CMMNPlanItemDefinition BuildProcessTask(tProcessTask processTask)
         {
-            return new CMMNProcessTask(processTask.name) { AssemblyQualifiedName = processTask.assemblyQualifiedName, IsBlocking = processTask.isBlocking };
+            var result = new CMMNProcessTask(processTask.name) { AssemblyQualifiedName = processTask.assemblyQualifiedName, IsBlocking = processTask.isBlocking };
+            if (processTask.parameterMapping != null)
+            {
+                foreach(var pm in processTask.parameterMapping)
+                {
+                    result.Mappings.Add(new CMMNParameterMapping
+                    {
+                        SourceRef = new CMMNParameter { Name = pm.sourceRef },
+                        TargetRef = new CMMNParameter { Name = pm.targetRef },
+                        Transformation = pm.transformation == null  ? null : new CMMNExpression(pm.transformation.language)
+                        {
+                            Body = pm.transformation.Text == null ? null : pm.transformation.Text.First()
+                        }
+                    });
+                }
+            }
+
+            if (processTask.processRef != null)
+            {
+                result.ProcessRef = processTask.processRef.Name;
+            }
+
+            if (processTask.processRefExpression != null)
+            {
+                result.ProcessRefExpression = new CMMNExpression(processTask.processRefExpression.language)
+                {
+                    Body = processTask.processRefExpression.Text.First()
+                };
+            }
+
+            return result;
         }
 
         private static CMMNPlanItemDefinition BuildHumanTask(tHumanTask humanTask)

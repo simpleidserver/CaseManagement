@@ -16,8 +16,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
             pf.LaunchElement(pfe);
             var serviceTask = (BPMNServiceTask)pfe;
             var type = Type.GetType(serviceTask.FullQualifiedName);
-            var instance = Activator.CreateInstance(type) as WorkflowTaskDelegate;
-            await instance.Handle(pf);
+            // var instance = Activator.CreateInstance(type) as WorkflowTaskDelegate;
+            // await instance.Handle(pf);
             pf.CompleteElement(pfe);
         }
     }

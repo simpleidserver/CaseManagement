@@ -1,14 +1,14 @@
-﻿using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Infrastructure;
+﻿using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
+using CaseManagement.CMMN.Infrastructures;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Host.Delegates
 {
-    public class SendEmailTaskDelegate : WorkflowTaskDelegate
+    public class SendEmailTaskDelegate : CaseProcessDelegate
     {
-        public override Task Handle(ProcessFlowInstance context)
+        public override Task<CaseProcessResponse> Handle(CaseProcessParameter parameter)
         {
-            return Task.FromResult(0);
+            return Task.FromResult(new CaseProcessResponse());
         }
     }
 }

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:case="https://github.com/simpleidserver/CaseManagement" id="sEntryWithCondition" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
+  <cmmn:case id="Case_1ey12wl">
+    <cmmn:casePlanModel id="CasePlanModel_01toj1d" name="Traffic alert">
+      <cmmn:planItem id="PlanItem_1wg0ql8" definitionRef="Task_03n8qmv">
+        <cmmn:entryCriterion id="EntryCriterion_03ushby" sentryRef="Sentry_174kp1p" />
+      </cmmn:planItem>
+      <cmmn:planItem id="PlanItem_1iqs5hf" definitionRef="ProcessTask_01rl1tn" />
+      <cmmn:planItem id="PlanItem_07cx0o3" definitionRef="ProcessTask_15k6shd" />
+      <cmmn:sentry id="Sentry_174kp1p">
+        <cmmn:planItemOnPart id="PlanItemOnPart_1ycnj6m" sourceRef="PlanItem_1iqs5hf">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+        <cmmn:planItemOnPart id="PlanItemOnPart_19w8xkd" sourceRef="PlanItem_07cx0o3">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+        <cmmn:ifPart>
+          <cmmn:condition>context.GetNumberVariable(&quot;nbBikes&quot;) &gt; 20 &amp;&amp; context.GetNumberVariable(&quot;nbCars&quot;) &gt; 50</cmmn:condition>
+        </cmmn:ifPart>
+      </cmmn:sentry>
+      <cmmn:task id="Task_03n8qmv" name="Send email" />
+      <cmmn:processTask id="ProcessTask_01rl1tn" name="Count number of bikes" processRef="countBikes">
+        <cmmn:parameterMapping sourceRef="nbBikes" targetRef="nbBikes">
+          <cmmn:transformation />
+        </cmmn:parameterMapping>
+      </cmmn:processTask>
+      <cmmn:processTask id="ProcessTask_15k6shd" name="Count number of cars" processRef="countCars">
+        <cmmn:parameterMapping sourceRef="nbCars" targetRef="nbCars">
+          <cmmn:transformation />
+        </cmmn:parameterMapping>
+      </cmmn:processTask>
+    </cmmn:casePlanModel>
+  </cmmn:case>
+  <cmmn:association id="Association_1xse9zb" sourceRef="EntryCriterion_03ushby" targetRef="TextAnnotation_1y5w6n2" />
+  <cmmn:textAnnotation id="TextAnnotation_1y5w6n2">
+    <cmmn:text>&gt; 20 bikes and &gt; 50 cars</cmmn:text>
+  </cmmn:textAnnotation>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram sharedStyle="b243f551-296a-4bc8-8a8a-0d5e343ed60f" id="_5a66685b-5f57-4e2f-b1d1-acca4fae04b2" name="Claims File">
+      <cmmndi:Size width="1313.31396484375" height="1009" />
+      <cmmndi:CMMNShape id="CasePlanModel_01toj1d_di" cmmnElementRef="CasePlanModel_01toj1d">
+        <dc:Bounds x="156" y="141" width="526" height="386" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="EntryCriterion_03ushby_di" cmmnElementRef="EntryCriterion_03ushby">
+        <dc:Bounds x="461" y="234" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="PlanItemOnPart_1ycnj6m_di" cmmnElementRef="PlanItemOnPart_1ycnj6m" targetCMMNElementRef="EntryCriterion_03ushby" isStandardEventVisible="true">
+        <di:waypoint x="276" y="249" />
+        <di:waypoint x="369" y="249" />
+        <di:waypoint x="369" y="248" />
+        <di:waypoint x="461" y="248" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="312" y="229" width="51" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNShape id="PlanItem_0p5chnw_di" cmmnElementRef="PlanItem_1wg0ql8">
+        <dc:Bounds x="471" y="209" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="TextAnnotation_1y5w6n2_di" cmmnElementRef="TextAnnotation_1y5w6n2">
+        <dc:Bounds x="360" y="436" width="100" height="30" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="Association_1xse9zb_di" cmmnElementRef="Association_1xse9zb">
+        <di:waypoint x="471" y="262" />
+        <di:waypoint x="471" y="287" />
+        <di:waypoint x="410" y="287" />
+        <di:waypoint x="410" y="436" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNShape id="PlanItem_0pfjw1e_di" cmmnElementRef="PlanItem_1iqs5hf">
+        <dc:Bounds x="176" y="209" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_11tzxtk_di" cmmnElementRef="PlanItem_07cx0o3">
+        <dc:Bounds x="176" y="367" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="PlanItemOnPart_19w8xkd_di" cmmnElementRef="PlanItemOnPart_19w8xkd" targetCMMNElementRef="EntryCriterion_03ushby" isStandardEventVisible="true">
+        <di:waypoint x="276" y="407" />
+        <di:waypoint x="369" y="407" />
+        <di:waypoint x="369" y="248" />
+        <di:waypoint x="461" y="248" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="343" y="317.5" width="51" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+    <cmmndi:CMMNStyle id="b243f551-296a-4bc8-8a8a-0d5e343ed60f" fontFamily="Arial,Helvetica,sans-serif" />
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

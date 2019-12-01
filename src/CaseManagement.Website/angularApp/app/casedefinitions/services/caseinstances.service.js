@@ -11,11 +11,20 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { SearchCaseInstancesResult, CaseInstance } from '../models/search-case-instances-result.model';
+import { SearchCaseExecutionStepsResult } from '../models/search-case-execution-steps-result.model';
 var url = "http://localhost:54942";
 var CaseInstancesService = (function () {
     function CaseInstancesService(http) {
         this.http = http;
     }
+    CaseInstancesService.prototype.get = function (caseInstanceId) {
+        var targetUrl = url + "/case-instances/" + caseInstanceId;
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            return CaseInstance.fromJson(res);
+        }));
+    };
     CaseInstancesService.prototype.create = function (caseDefId, caseId) {
         var request = JSON.stringify({ case_definition_id: caseDefId, case_id: caseId });
         var targetUrl = url + "/case-instances";
@@ -44,6 +53,20 @@ var CaseInstancesService = (function () {
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return SearchCaseInstancesResult.fromJson(res);
+        }));
+    };
+    CaseInstancesService.prototype.searchExecutionSteps = function (startIndex, count, caseInstanceId, order, direction) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        var targetUrl = url + "/case-instances/" + caseInstanceId + "/steps/.search?start_index=" + startIndex + "&count=" + count;
+        if (order) {
+            targetUrl = targetUrl + "&order_by=" + order;
+        }
+        if (direction) {
+            targetUrl = targetUrl + "&order=" + direction;
+        }
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            return SearchCaseExecutionStepsResult.fromJson(res);
         }));
     };
     CaseInstancesService = __decorate([

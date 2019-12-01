@@ -1,8 +1,10 @@
-﻿
-using CaseManagement.CMMN;
+﻿using CaseManagement.CMMN;
 using CaseManagement.CMMN.CaseInstance.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.EventHandlers;
 using CaseManagement.CMMN.CaseInstance.Processors;
+using CaseManagement.CMMN.CaseProcess.CommandHandlers;
+using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow.Engine;
@@ -19,6 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddInMemoryPersistence()
                 .AddCommandHandlers()
                 .AddEventHandlers()
+                .AddProcessHandlers()
                 .AddProcessors();
             return builder;
         }
@@ -26,7 +29,9 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddInMemoryPersistence(this IServiceCollection services)
         {
             var definitions = new List<tDefinitions>();
+            var caseProcesses = new List<ProcessAggregate>();
             services.AddSingleton<ICMMNDefinitionsQueryRepository>(new InMemoryCMMNDefinitionsQueryRepository(definitions));
+            services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
             return services;
         }
 
@@ -35,6 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ILaunchCaseInstanceCommandHandler, LaunchCaseInstanceCommandHandler>();
             services.AddTransient<ICreateCaseInstanceCommandHandler, CreateCaseInstanceCommandHandler>();
             services.AddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
+            services.AddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
             return services;
         }
 
@@ -49,6 +55,15 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddProcessors(this IServiceCollection services)
         {
             services.AddTransient<IProcessFlowElementProcessor, CMMNPlanItemProcessor>();
+            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNHumanTaskProcessor>();
+            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNProcessTaskProcessor>();
+            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNTaskProcessor>();
+            return services;
+        }
+
+        private static IServiceCollection AddProcessHandlers(this IServiceCollection services)
+        {
+            services.AddTransient<ICaseProcessHandler, CaseManagementCallbackProcessHandler>();
             return services;
         }
     }

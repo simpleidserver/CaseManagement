@@ -1,34 +1,35 @@
-var SearchCaseDefinitionItem = (function () {
-    function SearchCaseDefinitionItem() {
+var SearchCaseExecutionStepItem = (function () {
+    function SearchCaseExecutionStepItem() {
     }
-    SearchCaseDefinitionItem.fromJson = function (json) {
-        var result = new SearchCaseDefinitionItem();
-        result.CreateDateTime = json["create_datetime"];
+    SearchCaseExecutionStepItem.fromJson = function (json) {
+        var result = new SearchCaseExecutionStepItem();
         result.Id = json["id"];
         result.Name = json["name"];
+        result.StartDateTime = json["start_datetime"];
+        result.EndDateTime = json["end_datetime"];
         return result;
     };
-    return SearchCaseDefinitionItem;
+    return SearchCaseExecutionStepItem;
 }());
-export { SearchCaseDefinitionItem };
-var SearchCaseDefinitionsResult = (function () {
-    function SearchCaseDefinitionsResult() {
+export { SearchCaseExecutionStepItem };
+var SearchCaseExecutionStepsResult = (function () {
+    function SearchCaseExecutionStepsResult() {
     }
-    SearchCaseDefinitionsResult.fromJson = function (json) {
-        var result = new SearchCaseDefinitionsResult();
+    SearchCaseExecutionStepsResult.fromJson = function (json) {
+        var result = new SearchCaseExecutionStepsResult();
         result.StartIndex = json["start_index"];
         result.Count = json["count"];
         result.TotalLength = json["total_length"];
         var content = [];
         if (json["content"]) {
             json["content"].forEach(function (c) {
-                content.push(SearchCaseDefinitionItem.fromJson(c));
+                content.push(SearchCaseExecutionStepItem.fromJson(c));
             });
         }
         result.Content = content;
         return result;
     };
-    return SearchCaseDefinitionsResult;
+    return SearchCaseExecutionStepsResult;
 }());
-export { SearchCaseDefinitionsResult };
-//# sourceMappingURL=search-case-definitions-result.model.js.map
+export { SearchCaseExecutionStepsResult };
+//# sourceMappingURL=search-case-execution-steps-result.model.js.map

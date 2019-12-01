@@ -3,7 +3,7 @@ using CaseManagement.Workflow.Infrastructure;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public abstract class CMMNTask : CMMNPlanItemDefinition
+    public class CMMNTask : CMMNPlanItemDefinition
     {
         public CMMNTask(string name) : base(name)
         {
@@ -77,6 +77,20 @@ namespace CaseManagement.CMMN.Domains
         private void Handle(CMMNPlanItemCompleted evt)
         {
             State = CMMNTaskStates.Completed;
+        }
+
+        public override object Clone()
+        {
+            return CloneTask();
+        }
+
+        public virtual object CloneTask()
+        {
+            return new CMMNTask(Name)
+            {
+                State = State,
+                IsBlocking = IsBlocking
+            };
         }
     }
 }
