@@ -1,5 +1,7 @@
 ﻿using CaseManagement.Workflow.Domains.Events;
+using CaseManagement.Workflow.Domains.Process.Exceptions;
 using CaseManagement.Workflow.Infrastructure;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,9 +54,13 @@ namespace CaseManagement.Workflow.Domains
             Handle(evt);
         }
 
-        public void ConfirmForm(string eltId)
+        public void ConfirmForm(string eltId, Form form, JObject content)
         {
-            DomainEvents.Add(new ProcessFlowInstanceFormConfirmedEvent(Id, eltId));
+            var formInstance = CheckConfirmForm(form, content);
+            formInstance.Status = Process.ProcessFlowInstanceElementFormStatus.Complete;
+            var evt = new ProcessFlowInstanceFormConfirmedEvent(Id, eltId, formInstance);
+            DomainEvents.Add(evt);
+            Handle(evt);
         }
 
         public void LaunchElement(ProcessFlowInstanceElement elt)
@@ -210,7 +216,11 @@ namespace CaseManagement.Workflow.Domains
             Status = ProcessFlowInstanceStatus.Started;
         }
 
-        public void Handle(ProcessFlowInstanceFormConfirmedEvent evt) { }
+        public void Handle(ProcessFlowInstanceFormConfirmedEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            elt.SetFormInstance(evt.FormInstance);
+        }
 
         public void Handle(ProcessFlowInstanceCompletedEvent evt)
         {
@@ -261,6 +271,54 @@ namespace CaseManagement.Workflow.Domains
         public static string GetStreamName(string id)
         {
             return $"ProcessFlowInstance_{id}";
+        }
+
+        private static ProcessFlowInstanceElementForm CheckConfirmForm(Form form, JObject content)
+        {
+            var errors = new Dictionary<string, string>();
+            var result = ProcessFlowInstanceElementForm.New(form.Id);
+            foreach (var elt in form.Elements)
+            {
+                string value = string.Empty;
+                if (elt.IsRequired && (!content.ContainsKey(elt.Id) || string.IsNullOrWhiteSpace((value = content[elt.Id].ToString())) ))
+                {
+                    errors.Add("validation_error", $"field {elt.Id} is required");
+                }
+                
+                switch(elt.Type)
+                {
+                    case FormElementTypes.INT:
+                        int i;
+                        if (!int.TryParse(value, out i))
+                        {
+                            errors.Add("validation_error", $"field {elt.Id} is not an integer");
+                        }
+                        break;
+                    case FormElementTypes.BOOL:
+                        bool b;
+                        if (!bool.TryParse(value, out b))
+                        {
+                            errors.Add("validation_error", $"field {elt.Id} is not a boolean");
+                        }
+                        break;
+                }
+
+                result.Content.Add(new ProcessFlowInstanceElementFormElement
+                {
+                    FormElementId = elt.Id,
+                    Value = value
+                });
+            }
+
+            if (errors.Any())
+            {
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = errors
+                };
+            }
+
+            return result;
         }
     }
 }

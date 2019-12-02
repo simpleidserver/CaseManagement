@@ -26,9 +26,9 @@ namespace CaseManagement.Workflow.Domains
             Status = ProcessFlowInstanceElementStatus.Finished;
         }
 
-        public void SetFormInstance(Form form)
+        public void SetFormInstance(ProcessFlowInstanceElementForm formInstance)
         {
-            FormInstance = ProcessFlowInstanceElementForm.New(form.Id);
+            FormInstance = formInstance;
         }
 
         public virtual object Clone()

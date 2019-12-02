@@ -28,7 +28,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             }
 
             var form = await _formQueryRepository.FindFormById(humanTask.FormId);
-            cmmnPlanItem.SetFormInstance(form);
+            cmmnPlanItem.SetFormInstance(ProcessFlowInstanceElementForm.New(form.Id));
             if (humanTask.IsBlocking)
             {
                 return false;

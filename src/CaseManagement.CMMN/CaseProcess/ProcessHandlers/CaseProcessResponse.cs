@@ -13,12 +13,18 @@ namespace CaseManagement.CMMN.CaseProcess.ProcessHandlers
 
         public void AddParameter(string key, string value)
         {
+            if (_parameters.ContainsKey(key))
+            {
+                _parameters[key] = value;
+                return;
+            }
+
             _parameters.Add(key, value);
         }
 
         public void AddParameter(string key, int value)
         {
-            _parameters.Add(key, value.ToString());
+            AddParameter(key, value.ToString());
         }
 
         public Dictionary<string, string> Parameters => _parameters;

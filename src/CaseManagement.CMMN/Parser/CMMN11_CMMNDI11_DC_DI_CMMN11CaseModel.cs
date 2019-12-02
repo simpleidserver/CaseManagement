@@ -3132,8 +3132,6 @@ public partial class tProcessTask : tTask {
     
     private System.Xml.XmlQualifiedName processRefField;
 
-    private string assemblyQualifiedNameField;
-
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("parameterMapping")]
     public tParameterMapping[] parameterMapping {
@@ -3163,19 +3161,6 @@ public partial class tProcessTask : tTask {
         }
         set {
             this.processRefField = value;
-        }
-    }
-
-    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "assemblyQualifiedName", Namespace = "https://github.com/simpleidserver/CaseManagement")]
-    public string assemblyQualifiedName
-    {
-        get
-        {
-            return this.assemblyQualifiedNameField;
-        }
-        set
-        {
-            this.assemblyQualifiedNameField = value;
         }
     }
 }

@@ -4,6 +4,9 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\CaseInstances - Copy.feature.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
@@ -15,17 +18,23 @@
     <PackageReference Include="Moq" Version="4.10.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Features\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\src\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Cmmns\caseWithHumanTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\caseWithProcessTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Cmmns\sEntryWithCondition.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <SpecFlowFeatureFiles Update="Features\CaseInstanceErrors.feature">
+      <Visible>$(UsingMicrosoftNETSdk)</Visible>
+      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+    </SpecFlowFeatureFiles>
   </ItemGroup>
 </Project>

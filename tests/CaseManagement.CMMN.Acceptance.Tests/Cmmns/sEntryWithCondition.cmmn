@@ -20,14 +20,10 @@
       </cmmn:sentry>
       <cmmn:task id="Task_03n8qmv" name="Send email" />
       <cmmn:processTask id="ProcessTask_01rl1tn" name="Count number of bikes" processRef="countBikes">
-        <cmmn:parameterMapping sourceRef="nbBikes" targetRef="nbBikes">
-          <cmmn:transformation />
-        </cmmn:parameterMapping>
+        <cmmn:parameterMapping sourceRef="nbBikes" targetRef="nbBikes" />
       </cmmn:processTask>
       <cmmn:processTask id="ProcessTask_15k6shd" name="Count number of cars" processRef="countCars">
-        <cmmn:parameterMapping sourceRef="nbCars" targetRef="nbCars">
-          <cmmn:transformation />
-        </cmmn:parameterMapping>
+        <cmmn:parameterMapping sourceRef="nbCars" targetRef="nbCars" />
       </cmmn:processTask>
     </cmmn:casePlanModel>
   </cmmn:case>

@@ -35,6 +35,12 @@ namespace CaseManagement.Workflow.Domains
 
         internal void SetVariable(string str, string value)
         {
+            if (_variables.ContainsKey(str))
+            {
+                _variables[str] = value;
+                return;
+            }
+
             _variables.Add(str, value);
         }
 
@@ -42,5 +48,7 @@ namespace CaseManagement.Workflow.Domains
         {
             return new ProcessFlowInstanceExecutionContext(_variables.ToDictionary(c => c.Key, c => c.Value));
         }
+
+        public Dictionary<string, string> Variables => _variables;
     }
 }

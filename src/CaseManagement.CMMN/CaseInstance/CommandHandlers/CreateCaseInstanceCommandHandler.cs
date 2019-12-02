@@ -112,7 +112,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         private static CMMNPlanItemDefinition BuildProcessTask(tProcessTask processTask)
         {
-            var result = new CMMNProcessTask(processTask.name) { AssemblyQualifiedName = processTask.assemblyQualifiedName, IsBlocking = processTask.isBlocking };
+            var result = new CMMNProcessTask(processTask.name) { IsBlocking = processTask.isBlocking };
             if (processTask.parameterMapping != null)
             {
                 foreach(var pm in processTask.parameterMapping)

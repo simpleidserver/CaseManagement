@@ -1,8 +1,10 @@
 ﻿using CaseManagement.CMMN.CaseInstance.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.Commands;
+using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
+using CaseManagement.Workflow.Domains.Process.Exceptions;
 using CaseManagement.Workflow.Persistence;
 using CaseManagement.Workflow.Persistence.Parameters;
 using CaseManagement.Workflow.Persistence.Responses;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -59,10 +62,38 @@ namespace CaseManagement.CMMN.Apis
         }
 
         [HttpPost("{id}/confirm/{elt}")]
-        public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] ConfirmFormCommand confirmForm)
+        public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
         {
-            await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt });
-            return new OkResult();
+            try
+            {
+                await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt, Content = jObj });
+                return new OkResult();
+            }
+            catch(UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (ProcessFlowInstanceDomainException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch(Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
         }
 
         [HttpGet("{id}")]
@@ -175,6 +206,7 @@ namespace CaseManagement.CMMN.Apis
                 { "create_datetime", flowInstance.CreateDateTime },
                 { "template_id", flowInstance.ProcessFlowTemplateId },
                 { "name", flowInstance.ProcessFlowName },
+                { "context", ToDto(flowInstance.ExecutionContext) },
                 { "status", Enum.GetName(typeof(ProcessFlowInstanceStatus), flowInstance.Status).ToLowerInvariant() }
             };
             var planItems = new JArray();
@@ -187,6 +219,17 @@ namespace CaseManagement.CMMN.Apis
             return result;
         }
 
+        private static JObject ToDto(ProcessFlowInstanceExecutionContext context)
+        {
+            var jObj = new JObject();
+            foreach (var kvp in context.Variables)
+            {
+                jObj.Add(kvp.Key, kvp.Value);
+            }
+
+            return jObj;
+        }
+
         private static JObject ToDto(CMMNPlanItem planItem)
         {
             return new JObject
@@ -194,6 +237,25 @@ namespace CaseManagement.CMMN.Apis
                 { "id", planItem.Id },
                 { "name", planItem.Name },
                 { "status", Enum.GetName(typeof(ProcessFlowInstanceElementStatus), planItem.Status).ToLowerInvariant() }
+            };
+        }
+
+        private static ActionResult ToError(ICollection<KeyValuePair<string, string>> errors, HttpStatusCode statusCode, HttpRequest request)
+        {
+            var problemDetails = new ValidationProblemDetails
+            {
+                Instance = request.Path,
+                Status = (int)statusCode,
+                Detail = "Please refer to the errors property for additional details."
+            };
+            foreach (var kvp in errors.GroupBy(e => e.Key))
+            {
+                problemDetails.Errors.Add(kvp.Key, kvp.Select(s => s.Value).ToArray());
+            }
+
+            return new BadRequestObjectResult(problemDetails)
+            {
+                StatusCode = (int)statusCode
             };
         }
     }

@@ -1,4 +1,6 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.Acceptance.Tests.Delegates;
+using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithProcessTask;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,12 +27,17 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 new CaseManagementProcessAggregate
                 {
                     Id = "countBikes",
-                    AssemblyQualifiedName = "CaseManagement.CMMN.Acceptance.Tests.Delegates.CountBikesTaskDelegate, CaseManagement.CMMN.Acceptance.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+                    AssemblyQualifiedName = typeof(CountBikesTaskDelegate).AssemblyQualifiedName
                 },
                 new CaseManagementProcessAggregate
                 {
                     Id = "countCars",
-                    AssemblyQualifiedName = "CaseManagement.CMMN.Acceptance.Tests.Delegates.CountCarsTaskDelegate, CaseManagement.CMMN.Acceptance.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+                    AssemblyQualifiedName = typeof(CountCarsTaskDelegate).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "firstTestProcess",
+                    AssemblyQualifiedName = typeof(SetVariableTaskDelegate).AssemblyQualifiedName
                 }
             })
             .AddForms(new List<Form>
@@ -43,7 +50,8 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                         new FormElement
                         {
                             Id = "name",
-                            Type = FormElementTypes.TXT
+                            Type = FormElementTypes.TXT,
+                            IsRequired = true
                         }
                     }
                 }

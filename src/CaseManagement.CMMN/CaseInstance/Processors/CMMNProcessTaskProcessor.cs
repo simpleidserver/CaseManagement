@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.CaseProcess.Commands;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
+using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     // TODO : THROW EXCEPTION.
                 }
 
-                // TODO : Evaluate the ProcessRefExpression to get the processRefName.
+                processRef = ExpressionParser.GetStringEvaluation(processTask.ProcessRefExpression.Body, processFlowInstance);
             }
 
             foreach(var mapping in processTask.Mappings)
@@ -62,7 +63,10 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 var variableValue = processFlowInstance.GetVariable(mapping.SourceRef.Name);
                 if (mapping.Transformation != null)
                 {
-                    // TODO : EVALUATE THE TRANSFORMATION TO GET THE TARGET VALUE.
+                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, processFlowInstance, (i) =>
+                    {
+                        i.SetVariable("sourceValue", variableValue);
+                    });
                 }
 
                 parameters.Add(mapping.TargetRef.Name, variableValue);
@@ -70,23 +74,26 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
             var result = await _caseLaunchProcessCommandHandler.Handle(new LaunchCaseProcessCommand
             {
-                Id = processTask.ProcessRef,
+                Id = processRef,
                 Parameters = parameters
-            });
+            }).ConfigureAwait(false);
             foreach(var mapping in processTask.Mappings)
             {
                 if (!result.Parameters.ContainsKey(mapping.SourceRef.Name))
                 {
                     continue;
                 }
-
-                var variableValue = result.Parameters[mapping.SourceRef.Name];
+                
+                string vv = result.Parameters[mapping.SourceRef.Name];                
                 if (mapping.Transformation != null)
                 {
-                    // TODO : EVALUATE THE TRANSFORMATION TO GET THE TARGET VALUE.
+                    vv = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, processFlowInstance, (i) =>
+                    {
+                        i.SetVariable("sourceValue", vv);
+                    });
                 }
 
-                processFlowInstance.SetVariable(mapping.TargetRef.Name, variableValue);
+                processFlowInstance.SetVariable(mapping.TargetRef.Name, vv);
             }
         }
     }
