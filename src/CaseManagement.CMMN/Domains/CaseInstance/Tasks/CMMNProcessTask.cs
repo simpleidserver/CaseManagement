@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
@@ -29,6 +30,7 @@ namespace CaseManagement.CMMN.Domains
             return new CMMNProcessTask(Name)
             {
                 IsBlocking = IsBlocking,
+                Mappings = Mappings.Select(m =>(CMMNParameterMapping)m.Clone()).ToList(),
                 State = State,
                 AssemblyQualifiedName = AssemblyQualifiedName,
                 ProcessRef = ProcessRef,

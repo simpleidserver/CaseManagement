@@ -3,7 +3,7 @@ using CaseManagement.CMMN.CaseProcess.Commands;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
-using CaseManagement.Workflow.Infrastructure.Services;
+using Hangfire;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,12 +12,10 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNProcessTaskProcessor : BaseCMMNTaskProcessor
     {
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private ICaseLaunchProcessCommandHandler _caseLaunchProcessCommandHandler;
 
-        public CMMNProcessTaskProcessor(IBackgroundTaskQueue backgroundTaskQueue, ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler)
+        public CMMNProcessTaskProcessor(ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler)
         {
-            _backgroundTaskQueue = backgroundTaskQueue;
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }
 
@@ -32,7 +30,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             }
             else
             {
-                _backgroundTaskQueue.QueueBackgroundWorkItem((token) => RunProcess(processTask, pf));
+                BackgroundJob.Enqueue(() => RunProcess(processTask, pf));
             }
 
             cmmnPlanItem.Complete();

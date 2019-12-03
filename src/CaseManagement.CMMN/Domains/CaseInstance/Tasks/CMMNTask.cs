@@ -1,7 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.Events;
-using CaseManagement.Workflow.Infrastructure;
-
-namespace CaseManagement.CMMN.Domains
+﻿namespace CaseManagement.CMMN.Domains
 {
     public class CMMNTask : CMMNPlanItemDefinition
     {
@@ -16,67 +13,29 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public bool IsBlocking { get; set; }
 
-        public override void Handle(DomainEvent cmmnPlanItemEvent)
+        public override void Handle(CMMNPlanItemTransitions transition)
         {
-            if (cmmnPlanItemEvent is CMMNPlanItemCreated)
+            switch(transition)
             {
-                Handle((CMMNPlanItemCreated)cmmnPlanItemEvent);
+                case CMMNPlanItemTransitions.Create:
+                    State = CMMNTaskStates.Available;
+                    break;
+                case CMMNPlanItemTransitions.Enable:
+                    State = CMMNTaskStates.Enabled;
+                    break;
+                case CMMNPlanItemTransitions.ManualStart:
+                    State = CMMNTaskStates.Active;
+                    break;
+                case CMMNPlanItemTransitions.Start:
+                    State = CMMNTaskStates.Active;
+                    break;
+                case CMMNPlanItemTransitions.Terminate:
+                    State = CMMNTaskStates.Terminated;
+                    break;
+                case CMMNPlanItemTransitions.Complete:
+                    State = CMMNTaskStates.Completed;
+                    break;
             }
-
-            if (cmmnPlanItemEvent is CMMNPlanItemEnabled)
-            {
-                Handle((CMMNPlanItemEnabled)cmmnPlanItemEvent);
-            }
-
-            if (cmmnPlanItemEvent is CMMNPlanItemManuallyStarted)
-            {
-                Handle((CMMNPlanItemManuallyStarted)cmmnPlanItemEvent);
-            }
-
-            if (cmmnPlanItemEvent is CMMNPlanItemStarted)
-            {
-                Handle((CMMNPlanItemStarted)cmmnPlanItemEvent);
-            }
-
-            if (cmmnPlanItemEvent is CMMNPlanItemTerminated)
-            {
-                Handle((CMMNPlanItemTerminated)cmmnPlanItemEvent);
-            }
-
-            if (cmmnPlanItemEvent is CMMNPlanItemCompleted)
-            {
-                Handle((CMMNPlanItemCompleted)cmmnPlanItemEvent);
-            }
-        }
-
-        private void Handle(CMMNPlanItemCreated evt)
-        {
-            State = CMMNTaskStates.Available;
-        }
-
-        private void Handle(CMMNPlanItemEnabled evt)
-        {
-            State = CMMNTaskStates.Enabled;
-        }
-
-        private void Handle(CMMNPlanItemManuallyStarted evt)
-        {
-            State = CMMNTaskStates.Active;
-        }
-
-        private void Handle(CMMNPlanItemStarted evt)
-        {
-            State = CMMNTaskStates.Active;
-        }
-
-        private void Handle(CMMNPlanItemTerminated evt)
-        {
-            State = CMMNTaskStates.Terminated;
-        }
-
-        private void Handle(CMMNPlanItemCompleted evt)
-        {
-            State = CMMNTaskStates.Completed;
         }
 
         public override object Clone()

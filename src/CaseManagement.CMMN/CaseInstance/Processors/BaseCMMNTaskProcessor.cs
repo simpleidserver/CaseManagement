@@ -63,7 +63,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     if (!string.IsNullOrWhiteSpace(onPart.SourceRef))
                     {
                         var elt = pf.GetPlanItem(onPart.SourceRef);
-                        if (elt == null || elt.Events.Last().Transition != onPart.StandardEvent)
+                        if (elt == null || elt.TransitionHistories.Last().Transition != onPart.StandardEvent)
                         {
                             return false;
                         }

@@ -215,6 +215,50 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Launch caseWithTimerEventListener case instance and check his status is completed" +
+            "")]
+        [Xunit.TraitAttribute("FeatureTitle", "CaseInstances")]
+        [Xunit.TraitAttribute("Description", "Launch caseWithTimerEventListener case instance and check his status is completed" +
+            "")]
+        public virtual void LaunchCaseWithTimerEventListenerCaseInstanceAndCheckHisStatusIsCompleted()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithTimerEventListener case instance and check his status is completed" +
+                    "", null, ((string[])(null)));
+#line 58
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table10.AddRow(new string[] {
+                        "case_definition_id",
+                        "caseWithTimerEventListener"});
+            table10.AddRow(new string[] {
+                        "case_id",
+                        "Case_0d1ujq8"});
+#line 59
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table10, "When ");
+#line 64
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 65
+ testRunner.And("extract \'id\' from JSON body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 66
+ testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 67
+ testRunner.And("wait \'15\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 69
+ testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 70
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 72
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 73
+ testRunner.Then("JSON \'status\'=\'completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

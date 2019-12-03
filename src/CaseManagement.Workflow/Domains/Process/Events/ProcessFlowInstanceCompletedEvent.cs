@@ -1,5 +1,4 @@
 ﻿using CaseManagement.Workflow.Infrastructure;
-using CaseManagement.Workflow.Infrastructure.EvtBus;
 
 namespace CaseManagement.Workflow.Domains.Events
 {

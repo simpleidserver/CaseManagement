@@ -33,7 +33,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public Task<ProcessFlowInstance> FindFlowInstanceById(string id)
         {
-            return Task.FromResult(_processFlowInstances.FirstOrDefault(p => p.Id == id));
+            return Task.FromResult((ProcessFlowInstance)_processFlowInstances.FirstOrDefault(p => p.Id == id).Clone());
         }
 
         public Task<FindResponse<ProcessFlowInstanceExecutionStep>> FindExecutionSteps(FindExecutionStepsParameter parameter)
@@ -49,13 +49,13 @@ namespace CaseManagement.Workflow.Persistence.InMemory
                     Content = new List<ProcessFlowInstanceExecutionStep>()
                 });
             }
-
+        
             IQueryable<ProcessFlowInstanceExecutionStep> result = processFlowInstance.ExecutionSteps.AsQueryable();
             if(MAPPING_PROCESSINSTANCEEXECUTIONSTEP_NAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = InvokeOrderBy(result, MAPPING_PROCESSINSTANCEEXECUTIONSTEP_NAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
             }
-
+        
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
             return Task.FromResult(new FindResponse<ProcessFlowInstanceExecutionStep>

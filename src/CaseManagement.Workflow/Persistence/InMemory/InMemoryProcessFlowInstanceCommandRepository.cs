@@ -16,13 +16,13 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public void Add(ProcessFlowInstance processFlowInstance)
         {
-            _processFlowInstances.Add(processFlowInstance);
+            _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());
         }
 
         public void Update(ProcessFlowInstance processFlowInstance)
         {
             _processFlowInstances.Remove(_processFlowInstances.First(p => p.Id == processFlowInstance.Id));
-            _processFlowInstances.Add(processFlowInstance);
+            _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());
         }
 
         public Task<int> SaveChanges()

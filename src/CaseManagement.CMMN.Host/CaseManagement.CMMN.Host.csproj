@@ -10,9 +10,9 @@
     <ProjectReference Include="..\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Cmmns\" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Update="Cmmns\caseWithTimerEventListener.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\firstDiagram.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

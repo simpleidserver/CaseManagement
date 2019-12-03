@@ -3,15 +3,15 @@ using System;
 
 namespace CaseManagement.Workflow.Domains.Events
 {
-    public class ProcessFlowElementLaunchedEvent : DomainEvent
+    public class ProcessFlowElementStartedEvent : DomainEvent
     {
-        public ProcessFlowElementLaunchedEvent(string processFlowInstanceId, string processFlowInstanceElementId, DateTime startDateTime)
+        public ProcessFlowElementStartedEvent(string processFlowInstanceId, string processFlowInstanceElementId, DateTime startDateTime)
         {
             ProcessFlowInstanceId = processFlowInstanceId;
             ProcessFlowInstanceElementId = processFlowInstanceElementId;
             StartDateTime = startDateTime;
         }
-
+        
         public string ProcessFlowInstanceId { get; set; }
         public string ProcessFlowInstanceElementId { get; set; }
         public DateTime StartDateTime { get; set; }

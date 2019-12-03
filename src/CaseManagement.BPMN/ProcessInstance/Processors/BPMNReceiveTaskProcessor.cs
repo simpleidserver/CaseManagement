@@ -13,7 +13,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         public Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
         {
             var receiveTask = pfe as BPMNReceiveTask;
-            pf.LaunchElement(pfe);
+            pf.StartElement(pfe);
             pf.CompleteElement(pfe);
             return Task.FromResult(0);
         }

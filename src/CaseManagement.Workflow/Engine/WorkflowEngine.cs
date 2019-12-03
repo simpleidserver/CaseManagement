@@ -27,26 +27,25 @@ namespace CaseManagement.Workflow.Engine
             }
         }
 
-        private async Task<bool> Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceElement elt)
+        public async Task<bool> Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceElement currentElt)
         {
-            var previousElts = processFlowInstance.PreviousElements(elt.Id);
-            if (previousElts.Any(p => p.Status != ProcessFlowInstanceElementStatus.Finished))
+            if (!processFlowInstance.CanStartElement(currentElt.Id))
             {
                 return false;
             }
 
-            if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
+            if (!processFlowInstance.IsElementComplete(currentElt.Id))
             {
-                var processor = _processFlowElementProcessorFactory.Build(elt);
-                await processor.Handle(processFlowInstance, elt);
+                var processor = _processFlowElementProcessorFactory.Build(currentElt);
+                await processor.Handle(processFlowInstance, currentElt);
             }
 
-            if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
+            if (!processFlowInstance.IsElementComplete(currentElt.Id))
             {
                 return false;
             }
 
-            var nextElts = processFlowInstance.NextElements(elt.Id);
+            var nextElts = processFlowInstance.NextElements(currentElt.Id);
             if (!nextElts.Any())
             {
                 return true;

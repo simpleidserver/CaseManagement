@@ -4,19 +4,21 @@ namespace CaseManagement.Workflow.Domains
 {
     public class ProcessFlowInstanceExecutionStep : ICloneable
     {
-        public ProcessFlowInstanceExecutionStep(ProcessFlowInstanceElement element, DateTime startDateTime)
+        public ProcessFlowInstanceExecutionStep(string elementId, string elementName, DateTime startDateTime)
         {
-            Element = element;
+            ElementId = elementId;
+            ElementName = elementName;
             StartDateTime = startDateTime;
         }
 
-        public ProcessFlowInstanceElement Element { get; private set; }
+        public string ElementId { get; private set; }
+        public string ElementName { get; private set; }
         public DateTime StartDateTime { get; private set; }
         public DateTime? EndDateTime { get; set; }
 
         public object Clone()
         {
-            return new ProcessFlowInstanceExecutionStep((ProcessFlowInstanceElement)Element.Clone(), StartDateTime)
+            return new ProcessFlowInstanceExecutionStep(ElementId, ElementName, StartDateTime)
             {
                 EndDateTime = EndDateTime
             };

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Domains.Process;
 using CaseManagement.Workflow.Persistence;
+using System;
+using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
@@ -21,14 +21,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
         public override async Task<bool> Run(CMMNPlanItem cmmnPlanItem, ProcessFlowInstance pf)
         {
             var humanTask = cmmnPlanItem.PlanItemDefinition as CMMNHumanTask;
-            if (cmmnPlanItem.FormInstance != null && cmmnPlanItem.FormInstance.Status == ProcessFlowInstanceElementFormStatus.Complete)
+            var formInstance = pf.GetFormInstance(cmmnPlanItem.Id);
+            if (formInstance != null && formInstance.Status == ProcessFlowInstanceElementFormStatus.Complete)
             {
                 cmmnPlanItem.Complete();
                 return true;
             }
 
-            var form = await _formQueryRepository.FindFormById(humanTask.FormId);
-            cmmnPlanItem.SetFormInstance(ProcessFlowInstanceElementForm.New(form.Id));
             if (humanTask.IsBlocking)
             {
                 return false;

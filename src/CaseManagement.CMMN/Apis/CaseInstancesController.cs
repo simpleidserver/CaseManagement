@@ -174,8 +174,8 @@ namespace CaseManagement.CMMN.Apis
                 {
                     { "start_datetime", r.StartDateTime },
                     { "end_datetime", r.EndDateTime },
-                    { "name", r.Element.Name },
-                    { "id", r.Element.Id }
+                    { "name", r.ElementName },
+                    { "id", r.ElementId }
                 })) }
             };
         }
@@ -187,13 +187,20 @@ namespace CaseManagement.CMMN.Apis
                 { "start_index", resp.StartIndex },
                 { "total_length", resp.TotalLength },
                 { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => new JObject
-                {
-                    { "id", r.Id },
-                    { "name", r.ProcessFlowName },
-                    { "status", Enum.GetName(typeof(ProcessFlowInstanceStatus), r.Status).ToLowerInvariant() },
-                    { "template_id", r.ProcessFlowTemplateId },
-                    { "create_datetime", r.CreateDateTime }
+                { "content", new JArray(resp.Content.Select(r => {
+                    var result = new JObject
+                    {
+                        { "id", r.Id },
+                        { "name", r.ProcessFlowName },
+                        { "template_id", r.ProcessFlowTemplateId },
+                        { "create_datetime", r.CreateDateTime }
+                    };
+                    if (r.Status != null)
+                    {
+                        result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceStatus), r.Status).ToLowerInvariant());
+                    }
+
+                    return result;
                 })) }
             };
         }
@@ -206,9 +213,13 @@ namespace CaseManagement.CMMN.Apis
                 { "create_datetime", flowInstance.CreateDateTime },
                 { "template_id", flowInstance.ProcessFlowTemplateId },
                 { "name", flowInstance.ProcessFlowName },
-                { "context", ToDto(flowInstance.ExecutionContext) },
-                { "status", Enum.GetName(typeof(ProcessFlowInstanceStatus), flowInstance.Status).ToLowerInvariant() }
+                { "context", ToDto(flowInstance.ExecutionContext) }
             };
+            if (flowInstance.Status != null)
+            {
+                result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceStatus), flowInstance.Status).ToLowerInvariant());
+            }
+
             var planItems = new JArray();
             foreach(var planItem in flowInstance.Elements.Where(e => e is CMMNPlanItem).Cast<CMMNPlanItem>())
             {
@@ -232,12 +243,17 @@ namespace CaseManagement.CMMN.Apis
 
         private static JObject ToDto(CMMNPlanItem planItem)
         {
-            return new JObject
+            var result = new JObject
             {
                 { "id", planItem.Id },
-                { "name", planItem.Name },
-                { "status", Enum.GetName(typeof(ProcessFlowInstanceElementStatus), planItem.Status).ToLowerInvariant() }
+                { "name", planItem.Name }
             };
+            if (planItem.Status != null)
+            {
+                result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceElementStatus), planItem.Status).ToLowerInvariant());
+            }
+
+            return result;
         }
 
         private static ActionResult ToError(ICollection<KeyValuePair<string, string>> errors, HttpStatusCode statusCode, HttpRequest request)

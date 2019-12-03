@@ -10,7 +10,7 @@ namespace CaseManagement.Workflow.Engine
 
         public async Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
         {
-            pf.LaunchElement(pfe);
+            pf.StartElement(pfe);
             if (await HandleProcessFlowInstance(pf, pfe))
             {
                 pf.CompleteElement(pfe);

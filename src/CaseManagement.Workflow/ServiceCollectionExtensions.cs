@@ -4,7 +4,6 @@ using CaseManagement.Workflow.Infrastructure.EvtBus;
 using CaseManagement.Workflow.Infrastructure.EvtBus.InMemory;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.EvtStore.InMemory;
-using CaseManagement.Workflow.Infrastructure.Services;
 using CaseManagement.Workflow.Persistence;
 using CaseManagement.Workflow.Persistence.InMemory;
 using NEventStore;
@@ -20,8 +19,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var processFlowInstances = new List<ProcessFlowInstance>();
             var forms = new List<Form>();
             services.AddMvc();
-            services.AddHostedService<QueuedHostedService>();
-            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddTransient<IWorkflowEngine, WorkflowEngine>();
             services.AddTransient<IProcessFlowElementProcessorFactory, ProcessFlowElementProcessorFactory>();
             services.AddSingleton<IProcessFlowInstanceQueryRepository>(new InMemoryProcessFlowInstanceQueryRepository(processFlowInstances));

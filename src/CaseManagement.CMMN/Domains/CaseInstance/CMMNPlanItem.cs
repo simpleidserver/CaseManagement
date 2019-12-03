@@ -1,5 +1,5 @@
-﻿using CaseManagement.CMMN.Domains.Events;
-using CaseManagement.Workflow.Domains;
+﻿using CaseManagement.Workflow.Domains;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,11 +11,8 @@ namespace CaseManagement.CMMN.Domains
         {
             EntryCriterions = new List<CMMNCriterion>();
             ExitCriterions = new List<CMMNCriterion>();
-            Events = new List<CMMNPlanItemTransitionEvent>();
-            var evt = new CMMNPlanItemCreated();
-            Events.Add(evt);
+            TransitionHistories = new List<CMMNPlanItemStateHistory>();
             PlanItemDefinition = planItemDefinition;
-            planItemDefinition.Handle(evt);
         }
 
         /// <summary>
@@ -35,47 +32,54 @@ namespace CaseManagement.CMMN.Domains
         /// An ExitCriterion represents the condition for a PlanItem to terminate. [0...*]
         /// </summary>
         public ICollection<CMMNCriterion> ExitCriterions { get; set; }
-        public ICollection<CMMNPlanItemTransitionEvent> Events { get; set; }
+        public ICollection<CMMNPlanItemStateHistory> TransitionHistories { get; set; }
         
+        public void Create()
+        {
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Create);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Create));
+        }
+
         public void Enable()
         {
-            var evt = new CMMNPlanItemEnabled();
-            // DON T USE ANY EVENT ANYMORE.
-            Events.Add(evt);
-            PlanItemDefinition.Handle(evt);
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Enable);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Enable));
         }
 
         public void ManualStart()
         {
-            var evt = new CMMNPlanItemManuallyStarted();
-            Events.Add(evt);
-            PlanItemDefinition.Handle(evt);
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.ManualStart);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.ManualStart));
+        }
+
+        public void Occur()
+        {
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Occur);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Occur));
         }
 
         public void Start()
         {
-            var evt = new CMMNPlanItemStarted();
-            Events.Add(evt);
-            PlanItemDefinition.Handle(evt);
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Start);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Start));
         }
 
         public void Disable()
         {
-
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Disable);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Disable));
         }
 
         public void Complete()
         {
-            var evt = new CMMNPlanItemCompleted();
-            Events.Add(evt);
-            PlanItemDefinition.Handle(evt);
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Complete);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Complete));
         }
 
         public void Terminate()
         {
-            var evt = new CMMNPlanItemTerminated();
-            Events.Add(evt);
-            PlanItemDefinition.Handle(evt);
+            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Terminate);
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Terminate));
         }
 
         public static CMMNPlanItem New(string id, string name, CMMNPlanItemDefinition planItemDef)
@@ -84,13 +88,20 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
+        public override void HandleLaunch()
+        {
+            Create();
+        }
+
         public override object Clone()
         {
             return new CMMNPlanItem(Id, Name, (CMMNPlanItemDefinition)PlanItemDefinition.Clone())
             {
+                Status = Status,
                 PlanItemControl = PlanItemControl == null ? null : (CMMNPlanItemControl)PlanItemControl.Clone(),
                 EntryCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
-                ExitCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList()
+                ExitCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
+                TransitionHistories = TransitionHistories.Select(e => (CMMNPlanItemStateHistory)e.Clone()).ToList()
             };
         }
     }

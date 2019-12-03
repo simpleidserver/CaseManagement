@@ -12,7 +12,7 @@ namespace CaseManagement.CMMN.Domains
 
         public string Name { get; set; }
 
-        public abstract void Handle(DomainEvent cmmnPlanItemEvent);
+        public abstract void Handle(CMMNPlanItemTransitions transition);
 
         public abstract object Clone();
     }

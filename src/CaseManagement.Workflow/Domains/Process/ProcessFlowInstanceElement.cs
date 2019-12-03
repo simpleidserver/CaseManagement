@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CaseManagement.Workflow.Domains.Process.Exceptions;
+using System;
+using System.Collections.Generic;
 
 namespace CaseManagement.Workflow.Domains
 {
@@ -8,21 +10,32 @@ namespace CaseManagement.Workflow.Domains
         {
             Id = id;
             Name = name;
-            Status = ProcessFlowInstanceElementStatus.None;
         }
 
         public string Id { get; set; }
         public string Name { get; set; }
-        public ProcessFlowInstanceElementStatus Status { get; private set; }
-        public ProcessFlowInstanceElementForm FormInstance { get; private set; }
+        public ProcessFlowInstanceElementStatus? Status { get; set; }
+        public ProcessFlowInstanceElementForm FormInstance { get; set; }
 
-        internal void Run()
+        public void Launch()
         {
-            Status = ProcessFlowInstanceElementStatus.Started;
+            Status = ProcessFlowInstanceElementStatus.Launched;
+            HandleLaunch();
         }
 
-        internal void Finish()
+        public void Finish()
         {
+            if (Status != ProcessFlowInstanceElementStatus.Finished)
+            {
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = new Dictionary<string, string>
+                    {
+                        { "validation_error", "process element is not started" }
+                    }
+                };
+            }
+
             Status = ProcessFlowInstanceElementStatus.Finished;
         }
 
@@ -31,12 +44,13 @@ namespace CaseManagement.Workflow.Domains
             FormInstance = formInstance;
         }
 
+        public virtual void HandleLaunch() { }
+
         public virtual object Clone()
         {
             return new ProcessFlowInstanceElement(Id, Name)
             {
-                Status = Status,
-                FormInstance = FormInstance == null ? null : (ProcessFlowInstanceElementForm)FormInstance.Clone()
+                Status = Status
             };
         }
     }

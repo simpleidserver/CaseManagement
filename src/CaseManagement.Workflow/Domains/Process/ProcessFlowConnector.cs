@@ -4,18 +4,18 @@ namespace CaseManagement.Workflow.Domains
 {
     public class ProcessFlowConnector : ICloneable
     {
-        public ProcessFlowConnector(ProcessFlowInstanceElement source, ProcessFlowInstanceElement target)
+        public ProcessFlowConnector(string sourceId, string targetId)
         {
-            Source = source;
-            Target = target;
+            SourceId = sourceId;
+            TargetId = targetId;
         }
 
-        public ProcessFlowInstanceElement Source { get; set; }
-        public ProcessFlowInstanceElement Target { get; set; }
+        public string SourceId { get; set; }
+        public string TargetId { get; set; }
 
         public object Clone()
         {
-            return new ProcessFlowConnector((ProcessFlowInstanceElement)Source.Clone(), (ProcessFlowInstanceElement)Target.Clone());
+            return new ProcessFlowConnector(SourceId, TargetId);
         }
     }
 }

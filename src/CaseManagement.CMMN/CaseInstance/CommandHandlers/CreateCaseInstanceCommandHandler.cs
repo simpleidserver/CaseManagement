@@ -102,6 +102,11 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 return BuildTask((tTask)planItemDef);
             }
 
+            if (planItemDef is tTimerEventListener)
+            {
+                return BuildTimerEventListener((tTimerEventListener)planItemDef);
+            }
+
             return null;
         }
 
@@ -148,6 +153,20 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
         private static CMMNPlanItemDefinition BuildHumanTask(tHumanTask humanTask)
         {
             return new CMMNHumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking };
+        }
+
+        private static CMMNPlanItemDefinition BuildTimerEventListener(tTimerEventListener timerEventListener)
+        {
+            var result = new CMMNTimerEventListener(timerEventListener.name);
+            if (timerEventListener.timerExpression != null)
+            {
+                result.TimerExpression = new CMMNExpression(timerEventListener.timerExpression.language)
+                {
+                    Body = timerEventListener.timerExpression.Text.First()
+                };
+            }
+
+            return result;
         }
 
         private static CMMNSEntry BuildSEntry(tSentry sEntry)

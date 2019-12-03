@@ -101,7 +101,15 @@ namespace CaseManagement.Workflow.Infrastructure.EvtBus.InMemory
             var key = GetEventKey<T>();
             return GetHandlersForEvent(key);
         }
-        public IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName) => _handlers[eventName];
+        public IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName)
+        {
+            if (!_handlers.ContainsKey(eventName))
+            {
+                return new List<SubscriptionInfo>();
+            }
+
+            return _handlers[eventName];
+        }
 
         private void RaiseOnEventRemoved(string eventName)
         {

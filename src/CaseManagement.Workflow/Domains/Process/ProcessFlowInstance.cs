@@ -12,44 +12,133 @@ namespace CaseManagement.Workflow.Domains
     {
         public ProcessFlowInstance() : base()
         {
+            ExecutionContext = new ProcessFlowInstanceExecutionContext();
             ExecutionSteps = new List<ProcessFlowInstanceExecutionStep>();
             Elements = new List<ProcessFlowInstanceElement>();
             Connectors = new List<ProcessFlowConnector>();
-            ExecutionContext = new ProcessFlowInstanceExecutionContext();
         }
 
         public DateTime CreateDateTime { get; set; }
         public string ProcessFlowTemplateId { get; set; }
         public string ProcessFlowName { get; set; }
+
+        public ProcessFlowInstanceStatus? Status { get; set; }
         public ProcessFlowInstanceExecutionContext ExecutionContext { get; set; }
-        public ProcessFlowInstanceStatus Status { get; set; }
         public ICollection<ProcessFlowInstanceExecutionStep> ExecutionSteps { get; set; }
         public ICollection<ProcessFlowInstanceElement> Elements { get; set; }
         public ICollection<ProcessFlowConnector> Connectors { get; set; }
 
-        public ICollection<ProcessFlowInstanceElement> GetRunningElements()
+        #region Accessors
+
+        public bool IsFinished()
         {
-            return Elements.Where(e => e.Status == ProcessFlowInstanceElementStatus.Started).ToList();
+            var startElts = GetStartElements();
+            var result = true;
+            foreach(var startElt in startElts)
+            {
+                if (!IsFinished(startElt))
+                {
+                    result = false;
+                }
+            }
+
+            return result;
+        }
+
+        public ProcessFlowInstanceElementForm GetFormInstance(string eltId)
+        {
+            var elt = Elements.FirstOrDefault(e => e.Id == eltId);
+            if (elt == null)
+            {
+                return null;
+            }
+
+            return elt.FormInstance;
+        }
+
+        public bool IsElementComplete(string eltId)
+        {
+            var elt = Elements.FirstOrDefault(e => e.Id == eltId);
+            if (elt == null)
+            {
+                return false;
+            }
+
+            return elt.Status == ProcessFlowInstanceElementStatus.Finished;
+        }
+
+        public bool CanStartElement(string eltId)
+        {
+            var elt = Elements.FirstOrDefault(e => e.Id == eltId);
+            if (elt == null)
+            {
+                return false;
+            }
+
+            var previousElts = PreviousElements(eltId);
+            if (previousElts.Any(p => !IsElementComplete(p.Id)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public ICollection<ProcessFlowInstanceElement> NextElements(string nodeId)
         {
-            return Connectors.Where(c => c.Source.Id == nodeId).Select(c => c.Target).ToList();
+            return Connectors.Where(c => c.SourceId == nodeId).SelectMany(c => Elements.Where(e => e.Id == c.TargetId)).ToList();
         }
 
         public ICollection<ProcessFlowInstanceElement> PreviousElements(string nodeId)
         {
-            return Connectors.Where(c => c.Target.Id == nodeId).Select(c => c.Source).ToList();
+            return Connectors.Where(c => c.TargetId == nodeId).SelectMany(c => Elements.Where(e => e.Id == c.SourceId)).ToList();
         }
 
         public ICollection<ProcessFlowInstanceElement> GetStartElements()
         {
-            return Elements.Where(e => Connectors.All(c => c.Target.Id != e.Id)).ToList();
+            return Elements.Where(e => Connectors.All(c => c.TargetId != e.Id)).ToList();
         }
+
+        public bool ContainsVariable(string key)
+        {
+            return ExecutionContext.ContainsVariable(key);
+        }
+
+        public string GetVariable(string key)
+        {
+            return ExecutionContext.GetVariable(key);
+        }
+
+        public int GetNumberVariable(string key)
+        {
+            return int.Parse(GetVariable(key));
+        }
+
+        #endregion
+
+        #region Commands
 
         public void Launch()
         {
+            if (Status == ProcessFlowInstanceStatus.Started)
+            {
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = new Dictionary<string, string>
+                    {
+                        { "validation_error", "process instance is already launched" }
+                    }
+                };
+            }
+            
             var evt = new ProcessFlowInstanceLaunchedEvent(Id);
+            DomainEvents.Add(evt);
+            Handle(evt);
+        }
+
+        public void LaunchElement(string eltId)
+        {
+            var evt = new ProcessFlowElementLaunchedEvent(Id, eltId, DateTime.UtcNow);
             DomainEvents.Add(evt);
             Handle(evt);
         }
@@ -63,25 +152,26 @@ namespace CaseManagement.Workflow.Domains
             Handle(evt);
         }
 
-        public void LaunchElement(ProcessFlowInstanceElement elt)
+        public void StartElement(ProcessFlowInstanceElement elt)
         {
-            LaunchElement(elt.Id);
+            StartElement(elt.Id);
         }
 
-        public void LaunchElement(string eltId)
+        public void StartElement(string eltId)
         {
             var elt = Elements.FirstOrDefault(e => e.Id == eltId);
             if (elt == null)
             {
-                return;
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = new Dictionary<string, string>
+                    {
+                        { "validation_error", "process instance element doesn't exist" }
+                    }
+                };
             }
-
-            if (elt.Status != ProcessFlowInstanceElementStatus.None)
-            {
-                return;
-            }
-
-            var evt = new ProcessFlowElementLaunchedEvent(Id, eltId, DateTime.UtcNow);
+            
+            var evt = new ProcessFlowElementStartedEvent(Id, eltId, DateTime.UtcNow);
             DomainEvents.Add(evt);
             Handle(evt);
         }
@@ -96,12 +186,13 @@ namespace CaseManagement.Workflow.Domains
             var elt = Elements.FirstOrDefault(e => e.Id == eltId);
             if (elt == null)
             {
-                return;
-            }
-
-            if (elt.Status != ProcessFlowInstanceElementStatus.Started)
-            {
-                return;
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = new Dictionary<string, string>
+                    {
+                        { "validation_error", "process instance element doesn't exist" }
+                    }
+                };
             }
 
             var evt = new ProcessFlowElementCompletedEvent(Id, eltId, DateTime.UtcNow);
@@ -128,20 +219,7 @@ namespace CaseManagement.Workflow.Domains
             Handle(evt);
         }
 
-        public bool ContainsVariable(string key)
-        {
-            return ExecutionContext.ContainsVariable(key);
-        }
-
-        public string GetVariable(string key)
-        {
-            return ExecutionContext.GetVariable(key);
-        }
-
-        public int GetNumberVariable(string key)
-        {
-            return int.Parse(GetVariable(key));
-        }
+        #endregion
 
         public static ProcessFlowInstance New(string processFlowTemplateId, string processFlowName, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors)
         {
@@ -185,9 +263,9 @@ namespace CaseManagement.Workflow.Domains
                 Handle((ProcessFlowInstanceCompletedEvent)obj);
             }
 
-            if (obj is ProcessFlowElementLaunchedEvent)
+            if (obj is ProcessFlowElementStartedEvent)
             {
-                Handle((ProcessFlowElementLaunchedEvent)obj);
+                Handle((ProcessFlowElementStartedEvent)obj);
             }
 
             if (obj is ProcessFlowElementCompletedEvent)
@@ -198,6 +276,11 @@ namespace CaseManagement.Workflow.Domains
             if (obj is ProcessFlowInstanceVariableAddedEvent)
             {
                 Handle((ProcessFlowInstanceVariableAddedEvent)obj);
+            }
+
+            if (obj is ProcessFlowElementLaunchedEvent)
+            {
+                Handle((ProcessFlowElementLaunchedEvent)obj);
             }
         }
 
@@ -216,29 +299,33 @@ namespace CaseManagement.Workflow.Domains
             Status = ProcessFlowInstanceStatus.Started;
         }
 
-        public void Handle(ProcessFlowInstanceFormConfirmedEvent evt)
-        {
-            var elt = Elements.First(e => e.Id == evt.ElementId);
-            elt.SetFormInstance(evt.FormInstance);
-        }
-
         public void Handle(ProcessFlowInstanceCompletedEvent evt)
         {
             Status = ProcessFlowInstanceStatus.Completed;
         }
-        
-        public void Handle(ProcessFlowElementLaunchedEvent evt)
+
+        public void Handle(ProcessFlowInstanceFormConfirmedEvent evt)
         {
-            var elt = Elements.First(e => e.Id == evt.ProcessFlowInstanceElementId);
-            ExecutionSteps.Add(new ProcessFlowInstanceExecutionStep(elt, evt.StartDateTime));
-            elt.Run();
+            var elt = Elements.FirstOrDefault(e => e.Id == evt.ElementId);
+            elt.FormInstance = evt.FormInstance;
+        }
+
+        public void Handle(ProcessFlowElementLaunchedEvent evt) { }
+        
+        public void Handle(ProcessFlowElementStartedEvent evt)
+        {
+            var elt = Elements.FirstOrDefault(e => e.Id == evt.ProcessFlowInstanceElementId);
+            elt.Status = ProcessFlowInstanceElementStatus.Launched;
+            var existingElt = Elements.First(e => e.Id == evt.ProcessFlowInstanceElementId);
+            ExecutionSteps.Add(new ProcessFlowInstanceExecutionStep(existingElt.Id, existingElt.Name, evt.StartDateTime));
         }
 
         public void Handle(ProcessFlowElementCompletedEvent evt)
         {
-            var executionStep = ExecutionSteps.First(e => e.Element.Id == evt.ProcessFlowInstanceElementId);
+            var elt = Elements.FirstOrDefault(e => e.Id == evt.ProcessFlowInstanceElementId);
+            elt.Status = ProcessFlowInstanceElementStatus.Finished;
+            var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id && e.EndDateTime == null);
             executionStep.EndDateTime = evt.CompletedDateTime;
-            executionStep.Element.Finish();
         }
 
         public void Handle(ProcessFlowInstanceVariableAddedEvent evt)
@@ -252,11 +339,11 @@ namespace CaseManagement.Workflow.Domains
             {
                 Id = Id,
                 CreateDateTime = CreateDateTime,
-                Status = Status,
                 ProcessFlowTemplateId = ProcessFlowTemplateId,
                 ProcessFlowName = ProcessFlowName,
                 Version = Version,
-                ExecutionSteps = ExecutionSteps.Select(e => (ProcessFlowInstanceExecutionStep)e.Clone()).ToList(),
+                Status = Status,
+                ExecutionSteps = ExecutionSteps.Select(c => (ProcessFlowInstanceExecutionStep)c.Clone()).ToList(),
                 Connectors = Connectors.Select(c => (ProcessFlowConnector)c.Clone()).ToList(),
                 Elements = Elements.Select(e => (ProcessFlowInstanceElement)e.Clone()).ToList(),
                 ExecutionContext = (ProcessFlowInstanceExecutionContext)ExecutionContext.Clone()
@@ -316,6 +403,26 @@ namespace CaseManagement.Workflow.Domains
                 {
                     Errors = errors
                 };
+            }
+
+            return result;
+        }
+
+        private bool IsFinished(ProcessFlowInstanceElement elt)
+        {
+            if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
+            {
+                return false;
+            }
+
+            var nextElts = NextElements(elt.Id);
+            var result = true;
+            foreach(var nextElt in nextElts)
+            {
+                if (!IsFinished(nextElt))
+                {
+                    result = false;
+                }
             }
 
             return result;

@@ -54,3 +54,21 @@ Scenario: Launch caseWithHumanTask case instance and check his status is complet
 
 	Then HTTP status code equals to '200'
 	Then JSON 'status'='completed'
+
+Scenario: Launch caseWithTimerEventListener case instance and check his status is completed
+	When execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value                      |
+	| case_definition_id | caseWithTimerEventListener |
+	| case_id            | Case_0d1ujq8               |
+
+	And extract JSON from body
+	And extract 'id' from JSON body
+	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '15' seconds
+
+	And execute HTTP GET request 'http://localhost/case-instances/$id$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'status'='completed'
+	

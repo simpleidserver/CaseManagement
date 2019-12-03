@@ -8,6 +8,8 @@ using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow.Engine;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -23,6 +25,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddEventHandlers()
                 .AddProcessHandlers()
                 .AddProcessors();
+            services.AddHangfire((act) =>
+            {
+                var inMemory = GlobalConfiguration.Configuration.UseMemoryStorage();
+                act.UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseStorage(inMemory);
+            });
+            services.AddHangfireServer();
             return builder;
         }
 
@@ -49,6 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ProcessFlowInstanceCreatedEventHandler>();
             services.AddTransient<ProcessFlowInstanceLaunchedEventHandler>();
             services.AddTransient<ProcessFlowInstanceFormConfirmedEventHandler>();
+            services.AddTransient<ProcessFlowElementLaunchedEventHandler>();
             return services;
         }
 
@@ -58,6 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNHumanTaskProcessor>();
             services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNProcessTaskProcessor>();
             services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNTaskProcessor>();
+            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNTimerEventListenerProcessor>();
             return services;
         }
 

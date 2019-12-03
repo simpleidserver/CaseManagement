@@ -4,7 +4,9 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using TechTalk.SpecFlow;
 using Xunit;
 
@@ -80,6 +82,12 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             {
                 _scenarioContext.Set(val.ToString(), key);
             }
+        }
+
+        [When("wait '(.*)' seconds")]
+        public void WhenWaitSeconds(string seconds)
+        {
+            Thread.Sleep(int.Parse(seconds) * 1000);
         }
 
         [Then("HTTP status code equals to '(.*)'")]

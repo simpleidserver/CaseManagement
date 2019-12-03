@@ -32,7 +32,7 @@ namespace CaseManagement.Workflow.Builders
 
         public ProcessFlowInstanceBuilder AddConnection(string sourceNodeId, string targetNodeId)
         {
-            _connectors.Add(new ProcessFlowConnector(_elements.First(e => e.Id == sourceNodeId), _elements.First(e => e.Id == targetNodeId)));
+            _connectors.Add(new ProcessFlowConnector(sourceNodeId, targetNodeId));
             return this;
         }
 
