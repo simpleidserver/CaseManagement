@@ -3,6 +3,7 @@
     public enum ProcessFlowInstanceElementStatus
     {
         Launched = 1,
-        Finished = 2
+        Finished = 2,
+        Error = 3
     }
 }

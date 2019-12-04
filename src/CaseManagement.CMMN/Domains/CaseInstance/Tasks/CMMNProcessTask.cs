@@ -10,7 +10,6 @@ namespace CaseManagement.CMMN.Domains
             Mappings = new List<CMMNParameterMapping>();
         }
 
-        public string AssemblyQualifiedName { get; set; }
         /// <summary>
         /// Zero or more ParameterMapping objects. A ParameterMapping of a ProcessTask specifies how an input of the ProcessTask is mapped to an
         /// input of the called Process and how an output of the called Process is mapped to an output of the ProcessTask
@@ -32,7 +31,6 @@ namespace CaseManagement.CMMN.Domains
                 IsBlocking = IsBlocking,
                 Mappings = Mappings.Select(m =>(CMMNParameterMapping)m.Clone()).ToList(),
                 State = State,
-                AssemblyQualifiedName = AssemblyQualifiedName,
                 ProcessRef = ProcessRef,
                 // ProcessRef = ProcessRef == null ? null : (CMMNProcess)ProcessRef.Clone(),
                 ProcessRefExpression = ProcessRefExpression == null ? null : (CMMNExpression)ProcessRefExpression.Clone(),

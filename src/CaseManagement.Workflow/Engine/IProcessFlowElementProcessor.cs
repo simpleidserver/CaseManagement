@@ -1,5 +1,5 @@
-﻿using CaseManagement.Workflow.Domains;
-using System;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Engine
@@ -7,6 +7,6 @@ namespace CaseManagement.Workflow.Engine
     public interface IProcessFlowElementProcessor
     {
         Type ProcessFlowElementType { get; }
-        Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe);
+        Task Handle(WorkflowHandlerContext context, CancellationToken token);
     }
 }

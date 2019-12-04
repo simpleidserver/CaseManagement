@@ -6,26 +6,26 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.EvtStore.InMemory
 {
-    public class EventStoreRepository<T> : IEventStoreRepository<T> where T : BaseAggregate
+    public class InMemoryEventStoreRepository : IEventStoreRepository
     {
-        private readonly IAggregateSnapshotStore<T> _aggregateSnapshotStore;
+        private readonly IAggregateSnapshotStore _aggregateSnapshotStore;
         private readonly IStoreEvents _storeEvents;
 
-        public EventStoreRepository(IAggregateSnapshotStore<T> aggregateSnapshotStore, IStoreEvents storeEvents)
+        public InMemoryEventStoreRepository(IAggregateSnapshotStore aggregateSnapshotStore, IStoreEvents storeEvents)
         {
             _aggregateSnapshotStore = aggregateSnapshotStore;
             _storeEvents = storeEvents;
         }
 
-        public async Task<T> GetLastAggregate(string id, string streamName)
+        public async Task<T> GetLastAggregate<T>(string id, string streamName) where T : BaseAggregate
         {
-            var domainEvents = await GetLastDomainEvents(id, streamName);
-            return await GetLastAggregate(id, domainEvents);
+            var domainEvents = await GetLastDomainEvents<T>(id, streamName);
+            return await GetLastAggregate<T>(id, domainEvents);
         }
 
-        public async Task<T> GetLastAggregate(string id, IEnumerable<DomainEvent> domainEvents)
+        public async Task<T> GetLastAggregate<T>(string id, IEnumerable<DomainEvent> domainEvents) where T : BaseAggregate
         {
-            var snapCv = await _aggregateSnapshotStore.GetLast(id);
+            var snapCv = await _aggregateSnapshotStore.GetLast<T>(id);
             var instance = (T)Activator.CreateInstance(typeof(T));
             if (snapCv != null)
             {
@@ -40,9 +40,9 @@ namespace CaseManagement.Workflow.Infrastructure.EvtStore.InMemory
             return instance;
         }
 
-        public async Task<IEnumerable<DomainEvent>> GetLastDomainEvents(string id, string streamName)
+        public async Task<IEnumerable<DomainEvent>> GetLastDomainEvents<T>(string id, string streamName) where T : BaseAggregate
         {
-            var snapCv = await _aggregateSnapshotStore.GetLast(id);
+            var snapCv = await _aggregateSnapshotStore.GetLast<T>(id);
             DateTime? createDateTime = null;
             long position = 0;
             if (snapCv != null)

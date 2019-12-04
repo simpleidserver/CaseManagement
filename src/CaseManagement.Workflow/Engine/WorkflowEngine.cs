@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Workflow.Domains;
-using System.Linq;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Engine
@@ -13,54 +14,17 @@ namespace CaseManagement.Workflow.Engine
             _processFlowElementProcessorFactory = processFlowElementProcessorFactory;
         }
 
-        public async Task Start(ProcessFlowInstance processFlowInstance)
+        public async Task Start(ProcessFlowInstance processFlowInstance, CancellationToken cancellationToken)
         {
-            bool result = false;
+            cancellationToken.ThrowIfCancellationRequested();
+            var taskLst = new List<Task>();
             foreach(var startElt in processFlowInstance.GetStartElements())
             {
-                result = await Start(processFlowInstance, startElt);
+                var handlerContext = new WorkflowHandlerContext(processFlowInstance, startElt, _processFlowElementProcessorFactory);
+                taskLst.Add(handlerContext.Execute(cancellationToken));
             }
 
-            if (result)
-            {
-                processFlowInstance.Complete();
-            }
-        }
-
-        public async Task<bool> Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceElement currentElt)
-        {
-            if (!processFlowInstance.CanStartElement(currentElt.Id))
-            {
-                return false;
-            }
-
-            if (!processFlowInstance.IsElementComplete(currentElt.Id))
-            {
-                var processor = _processFlowElementProcessorFactory.Build(currentElt);
-                await processor.Handle(processFlowInstance, currentElt);
-            }
-
-            if (!processFlowInstance.IsElementComplete(currentElt.Id))
-            {
-                return false;
-            }
-
-            var nextElts = processFlowInstance.NextElements(currentElt.Id);
-            if (!nextElts.Any())
-            {
-                return true;
-            }
-
-            bool result = true;
-            foreach (var nextElt in nextElts)
-            {
-                if (!await Start(processFlowInstance, nextElt))
-                {
-                    result = false;
-                }
-            }
-
-            return result;
+            await Task.WhenAll(taskLst);
         }
     }
 }

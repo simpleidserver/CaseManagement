@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.EvtStore
 {
-    public interface IAggregateSnapshotStore<T> where T : BaseAggregate
+    public interface IAggregateSnapshotStore 
     {
-        Task<SnapshotElement<T>> GetLast(string id);
-        Task<bool> Add(SnapshotElement<T> snapshot);
-        ICollection<SnapshotElement<T>> Query();
+        Task<SnapshotElement<T>> GetLast<T>(string id) where T : BaseAggregate;
+        Task<bool> Add(SnapshotElement<BaseAggregate> snapshot);
+        ICollection<SnapshotElement<T>> Query<T>() where T : BaseAggregate;
     }
 }

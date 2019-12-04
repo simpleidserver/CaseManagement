@@ -120,36 +120,23 @@ namespace CaseManagement.Workflow.Domains
 
         public void Launch()
         {
-            if (Status == ProcessFlowInstanceStatus.Started)
-            {
-                throw new ProcessFlowInstanceDomainException
-                {
-                    Errors = new Dictionary<string, string>
-                    {
-                        { "validation_error", "process instance is already launched" }
-                    }
-                };
-            }
-            
-            var evt = new ProcessFlowInstanceLaunchedEvent(Id);
-            DomainEvents.Add(evt);
+            var evt = new ProcessFlowInstanceLaunchedEvent(Guid.NewGuid().ToString(), Id, Version + 1);
             Handle(evt);
+            DomainEvents.Add(evt);
         }
 
-        public void LaunchElement(string eltId)
+        public void RaiseEvent(string eltId, string state)
         {
-            var evt = new ProcessFlowElementLaunchedEvent(Id, eltId, DateTime.UtcNow);
-            DomainEvents.Add(evt);
+            var evt = new ProcessFlowInstanceElementStateChangedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, state);
             Handle(evt);
+            DomainEvents.Add(evt);
         }
 
         public void ConfirmForm(string eltId, Form form, JObject content)
         {
-            var formInstance = CheckConfirmForm(form, content);
-            formInstance.Status = Process.ProcessFlowInstanceElementFormStatus.Complete;
-            var evt = new ProcessFlowInstanceFormConfirmedEvent(Id, eltId, formInstance);
-            DomainEvents.Add(evt);
+            var evt = new ProcessFlowInstanceFormConfirmedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, form, content);
             Handle(evt);
+            DomainEvents.Add(evt);
         }
 
         public void StartElement(ProcessFlowInstanceElement elt)
@@ -159,21 +146,21 @@ namespace CaseManagement.Workflow.Domains
 
         public void StartElement(string eltId)
         {
-            var elt = Elements.FirstOrDefault(e => e.Id == eltId);
-            if (elt == null)
-            {
-                throw new ProcessFlowInstanceDomainException
-                {
-                    Errors = new Dictionary<string, string>
-                    {
-                        { "validation_error", "process instance element doesn't exist" }
-                    }
-                };
-            }
-            
-            var evt = new ProcessFlowElementStartedEvent(Id, eltId, DateTime.UtcNow);
-            DomainEvents.Add(evt);
+            var evt = new ProcessFlowElementStartedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
             Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        public void InvalidElement(ProcessFlowInstanceElement elt, string errorMessage)
+        {
+            InvalidElement(elt.Id, errorMessage);
+        }
+
+        public void InvalidElement(string eltId, string errorMessage)
+        {
+            var evt = new ProcessFlowElementInvalidEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, errorMessage, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
         }
 
         public void CompleteElement(ProcessFlowInstanceElement elt)
@@ -183,28 +170,16 @@ namespace CaseManagement.Workflow.Domains
 
         public void CompleteElement(string eltId)
         {
-            var elt = Elements.FirstOrDefault(e => e.Id == eltId);
-            if (elt == null)
-            {
-                throw new ProcessFlowInstanceDomainException
-                {
-                    Errors = new Dictionary<string, string>
-                    {
-                        { "validation_error", "process instance element doesn't exist" }
-                    }
-                };
-            }
-
-            var evt = new ProcessFlowElementCompletedEvent(Id, eltId, DateTime.UtcNow);
-            DomainEvents.Add(evt);
+            var evt = new ProcessFlowElementCompletedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
             Handle(evt);
+            DomainEvents.Add(evt);
         }
 
         public void Complete()
         {
-            var evt = new ProcessFlowInstanceCompletedEvent(Id);
-            DomainEvents.Add(evt);
+            var evt = new ProcessFlowInstanceCompletedEvent(Guid.NewGuid().ToString(), Id, Version + 1);
             Handle(evt);
+            DomainEvents.Add(evt);
         }
 
         public void SetVariable(string key, int value)
@@ -214,9 +189,9 @@ namespace CaseManagement.Workflow.Domains
 
         public void SetVariable(string key, string value)
         {
-            var evt = new ProcessFlowInstanceVariableAddedEvent(Id, key, value);
-            DomainEvents.Add(evt);
+            var evt = new ProcessFlowInstanceVariableAddedEvent(Guid.NewGuid().ToString(), Id, Version + 1, key, value);
             Handle(evt);
+            DomainEvents.Add(evt);
         }
 
         #endregion
@@ -224,7 +199,7 @@ namespace CaseManagement.Workflow.Domains
         public static ProcessFlowInstance New(string processFlowTemplateId, string processFlowName, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors)
         {
             var result = new ProcessFlowInstance();
-            var evt = new ProcessFlowInstanceCreatedEvent(Guid.NewGuid().ToString(), processFlowTemplateId, processFlowName, DateTime.UtcNow, elements, connectors);
+            var evt = new ProcessFlowInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFlowTemplateId, processFlowName, DateTime.UtcNow, elements, connectors);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -242,6 +217,11 @@ namespace CaseManagement.Workflow.Domains
         }
 
         public override void Handle(object obj)
+        {
+            CallHandle(obj);
+        }
+
+        public virtual void CallHandle(object obj)
         {
             if (obj is ProcessFlowInstanceCreatedEvent)
             {
@@ -282,6 +262,16 @@ namespace CaseManagement.Workflow.Domains
             {
                 Handle((ProcessFlowElementLaunchedEvent)obj);
             }
+
+            if (obj is ProcessFlowInstanceElementStateChangedEvent)
+            {
+                Handle((ProcessFlowInstanceElementStateChangedEvent)obj);
+            }
+
+            if (obj is ProcessFlowElementInvalidEvent)
+            {
+                Handle((ProcessFlowElementInvalidEvent)obj);
+            }
         }
 
         public void Handle(ProcessFlowInstanceCreatedEvent evt)
@@ -292,45 +282,102 @@ namespace CaseManagement.Workflow.Domains
             CreateDateTime = evt.CreateDateTime;
             Elements = evt.Elements;
             Connectors = evt.Connectors;
+            Version = evt.Version;
         }
 
         public void Handle(ProcessFlowInstanceLaunchedEvent evt)
         {
+            if (Status == ProcessFlowInstanceStatus.Started)
+            {
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = new Dictionary<string, string>
+                    {
+                        { "validation_error", "process instance is already launched" }
+                    }
+                };
+            }
+
             Status = ProcessFlowInstanceStatus.Started;
+            Version++;
         }
 
         public void Handle(ProcessFlowInstanceCompletedEvent evt)
         {
             Status = ProcessFlowInstanceStatus.Completed;
+            Version++;
         }
 
         public void Handle(ProcessFlowInstanceFormConfirmedEvent evt)
         {
+            var formInstance = CheckConfirmForm(evt.Form, evt.Content);
+            formInstance.Status = Process.ProcessFlowInstanceElementFormStatus.Complete;
             var elt = Elements.FirstOrDefault(e => e.Id == evt.ElementId);
-            elt.FormInstance = evt.FormInstance;
+            elt.FormInstance = formInstance;
+            Version++;
         }
 
-        public void Handle(ProcessFlowElementLaunchedEvent evt) { }
-        
         public void Handle(ProcessFlowElementStartedEvent evt)
         {
-            var elt = Elements.FirstOrDefault(e => e.Id == evt.ProcessFlowInstanceElementId);
+            var elt = Elements.FirstOrDefault(e => e.Id == evt.ElementId);
+            if (elt == null)
+            {
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = new Dictionary<string, string>
+                    {
+                        { "validation_error", "process instance element doesn't exist" }
+                    }
+                };
+            }
+
             elt.Status = ProcessFlowInstanceElementStatus.Launched;
-            var existingElt = Elements.First(e => e.Id == evt.ProcessFlowInstanceElementId);
+            var existingElt = Elements.First(e => e.Id == evt.ElementId);
             ExecutionSteps.Add(new ProcessFlowInstanceExecutionStep(existingElt.Id, existingElt.Name, evt.StartDateTime));
+            Version++;
         }
 
         public void Handle(ProcessFlowElementCompletedEvent evt)
         {
-            var elt = Elements.FirstOrDefault(e => e.Id == evt.ProcessFlowInstanceElementId);
+            var elt = Elements.FirstOrDefault(e => e.Id == evt.ElementId);
+            if (elt == null)
+            {
+                throw new ProcessFlowInstanceDomainException
+                {
+                    Errors = new Dictionary<string, string>
+                    {
+                        { "validation_error", "process instance element doesn't exist" }
+                    }
+                };
+            }
+
             elt.Status = ProcessFlowInstanceElementStatus.Finished;
             var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id && e.EndDateTime == null);
             executionStep.EndDateTime = evt.CompletedDateTime;
+            Version++;
         }
 
         public void Handle(ProcessFlowInstanceVariableAddedEvent evt)
         {
             ExecutionContext.SetVariable(evt.Key, evt.Value);
+            Version++;
+        }
+
+        public void Handle(ProcessFlowInstanceElementStateChangedEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            elt.HandleEvent(evt.State);
+            Version++;
+        }
+
+        public void Handle(ProcessFlowElementInvalidEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            elt.Status = ProcessFlowInstanceElementStatus.Error;
+            var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id && e.EndDateTime == null);
+            executionStep.EndDateTime = evt.InvalidDateTime;
+            executionStep.ErrorMessage = evt.ErrorMessage;
+            Version++;
         }
 
         public override object Clone()

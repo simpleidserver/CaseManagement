@@ -33,7 +33,13 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public Task<ProcessFlowInstance> FindFlowInstanceById(string id)
         {
-            return Task.FromResult((ProcessFlowInstance)_processFlowInstances.FirstOrDefault(p => p.Id == id).Clone());
+            var result = _processFlowInstances.FirstOrDefault(p => p.Id == id);
+            if (result == null)
+            {
+                return Task.FromResult<ProcessFlowInstance>(null);
+            }
+
+            return Task.FromResult((ProcessFlowInstance)result.Clone());
         }
 
         public Task<FindResponse<ProcessFlowInstanceExecutionStep>> FindExecutionSteps(FindExecutionStepsParameter parameter)

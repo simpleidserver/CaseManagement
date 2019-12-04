@@ -1,11 +1,14 @@
 ﻿using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.Commands;
+using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
 using Hangfire;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
@@ -19,26 +22,34 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }
 
-        public override Type PlanItemDefinitionType => typeof(CMMNProcessTask);
+        public override Type ProcessFlowElementType => typeof(CMMNProcessTask);
 
-        public override async Task<bool> Run(CMMNPlanItem cmmnPlanItem, ProcessFlowInstance pf)
+        public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
         {
-            var processTask = cmmnPlanItem.PlanItemDefinition as CMMNProcessTask;
+            var pf = context.ProcessFlowInstance;
+            var planItem = context.GetCMMNPlanItem();
+            var processTask = context.GetCMMNProcessTask();
             if (processTask.IsBlocking)
             {
-                await RunProcess(processTask, pf);
+                await HandleProcess(context, token);
             }
             else
             {
-                BackgroundJob.Enqueue(() => RunProcess(processTask, pf));
+                BackgroundJob.Enqueue(() => HandleBackgroundProcess(context, token));
+                pf.CompletePlanItem(planItem);
+                await context.Complete(token);
             }
-
-            cmmnPlanItem.Complete();
-            return true;
         }
 
-        private async Task RunProcess(CMMNProcessTask processTask, ProcessFlowInstance processFlowInstance)
+        private async Task HandleBackgroundProcess(WorkflowHandlerContext context, CancellationToken token)
         {
+            // TODO : SAVE THE MODIFICATIONS.
+        }
+
+        private async Task HandleProcess(WorkflowHandlerContext context, CancellationToken token)
+        {
+            var pf = context.ProcessFlowInstance;
+            var processTask = context.GetCMMNProcessTask();
             var parameters = new Dictionary<string, string>();
             var processRef = processTask.ProcessRef;
             if (string.IsNullOrWhiteSpace(processRef))
@@ -48,20 +59,20 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     // TODO : THROW EXCEPTION.
                 }
 
-                processRef = ExpressionParser.GetStringEvaluation(processTask.ProcessRefExpression.Body, processFlowInstance);
+                processRef = ExpressionParser.GetStringEvaluation(processTask.ProcessRefExpression.Body, pf);
             }
 
-            foreach(var mapping in processTask.Mappings)
+            foreach (var mapping in processTask.Mappings)
             {
-                if (!processFlowInstance.ContainsVariable(mapping.SourceRef.Name))
+                if (!pf.ContainsVariable(mapping.SourceRef.Name))
                 {
                     continue;
                 }
 
-                var variableValue = processFlowInstance.GetVariable(mapping.SourceRef.Name);
+                var variableValue = pf.GetVariable(mapping.SourceRef.Name);
                 if (mapping.Transformation != null)
                 {
-                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, processFlowInstance, (i) =>
+                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, pf, (i) =>
                     {
                         i.SetVariable("sourceValue", variableValue);
                     });
@@ -70,29 +81,38 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 parameters.Add(mapping.TargetRef.Name, variableValue);
             }
 
-            var result = await _caseLaunchProcessCommandHandler.Handle(new LaunchCaseProcessCommand
+            await _caseLaunchProcessCommandHandler.Handle(new LaunchCaseProcessCommand(processRef, parameters), (resp) =>
             {
-                Id = processRef,
-                Parameters = parameters
-            }).ConfigureAwait(false);
-            foreach(var mapping in processTask.Mappings)
+                return HandleLaunchCaseProcessCallback(context, resp, token);
+            }, token);
+        }
+
+        private async Task HandleLaunchCaseProcessCallback(WorkflowHandlerContext context, CaseProcessResponse caseProcessResponse, CancellationToken token)
+        {
+            var pf = context.ProcessFlowInstance;
+            var planItem = context.GetCMMNPlanItem();
+            var processTask = context.GetCMMNProcessTask();
+            foreach (var mapping in processTask.Mappings)
             {
-                if (!result.Parameters.ContainsKey(mapping.SourceRef.Name))
+                if (!caseProcessResponse.Parameters.ContainsKey(mapping.SourceRef.Name))
                 {
                     continue;
                 }
-                
-                string vv = result.Parameters[mapping.SourceRef.Name];                
+
+                string vv = caseProcessResponse.Parameters[mapping.SourceRef.Name];
                 if (mapping.Transformation != null)
                 {
-                    vv = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, processFlowInstance, (i) =>
+                    vv = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, pf, (i) =>
                     {
                         i.SetVariable("sourceValue", vv);
                     });
                 }
 
-                processFlowInstance.SetVariable(mapping.TargetRef.Name, vv);
+                pf.SetVariable(mapping.TargetRef.Name, vv);
             }
+
+            pf.CompletePlanItem(planItem);
+            await context.Complete(token);
         }
     }
 }

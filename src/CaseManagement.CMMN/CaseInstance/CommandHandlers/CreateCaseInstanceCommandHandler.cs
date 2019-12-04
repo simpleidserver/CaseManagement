@@ -3,10 +3,7 @@ using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.Workflow.Builders;
 using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Infrastructure.EvtBus;
-using CaseManagement.Workflow.Infrastructure.EvtStore;
-using Microsoft.Extensions.Options;
-using NEventStore;
+using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +11,15 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
-    public class CreateCaseInstanceCommandHandler : BaseCommandHandler<ProcessFlowInstance>, ICreateCaseInstanceCommandHandler
+    public class CreateCaseInstanceCommandHandler : ICreateCaseInstanceCommandHandler
     {
         private readonly ICMMNDefinitionsQueryRepository _cmmnDefinitionsQueryRepository;
+        private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public CreateCaseInstanceCommandHandler(ICMMNDefinitionsQueryRepository cmmnDefinitionsQueryRepository, IStoreEvents storeEvents, IEventBus eventBus, IAggregateSnapshotStore<ProcessFlowInstance> aggregateSnapshotStore,IOptions<SnapshotConfiguration> snapshotConfiguration) : base(storeEvents, eventBus, aggregateSnapshotStore, snapshotConfiguration)
+        public CreateCaseInstanceCommandHandler(ICMMNDefinitionsQueryRepository cmmnDefinitionsQueryRepository, ICommitAggregateHelper commitAggregateHelper)
         {
             _cmmnDefinitionsQueryRepository = cmmnDefinitionsQueryRepository;
+            _commitAggregateHelper = commitAggregateHelper;
         }
 
         public async Task<ProcessFlowInstance> Handle(CreateCaseInstanceCommand createCaseInstanceCommand)
@@ -40,7 +39,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
             var processFlowInstance = BuildProcessFlowInstance(tCase, caseDefinition.id);
-            await Commit(processFlowInstance, processFlowInstance.GetStreamName());
+            await _commitAggregateHelper.Commit(processFlowInstance, processFlowInstance.GetStreamName());
             return processFlowInstance;
         }
 

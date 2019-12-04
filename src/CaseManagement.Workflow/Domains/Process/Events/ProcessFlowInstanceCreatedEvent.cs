@@ -6,9 +6,8 @@ namespace CaseManagement.Workflow.Domains.Events
 {
     public class ProcessFlowInstanceCreatedEvent : DomainEvent
     {
-        public ProcessFlowInstanceCreatedEvent(string id, string processFlowTemplateId, string processFlowName, DateTime createDateTime, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors)
+        public ProcessFlowInstanceCreatedEvent(string id, string aggregateId, int version, string processFlowTemplateId, string processFlowName, DateTime createDateTime, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors) : base(id, aggregateId, version)
         {
-            Id = id;
             ProcessFlowTemplateId = processFlowTemplateId;
             ProcessFlowName = processFlowName;
             CreateDateTime = createDateTime;
@@ -16,7 +15,6 @@ namespace CaseManagement.Workflow.Domains.Events
             Connectors = connectors;
         }
 
-        public string Id { get; set; }
         public string ProcessFlowTemplateId { get; set; }
         public string ProcessFlowName { get; set; }
         public DateTime CreateDateTime { get; set; }

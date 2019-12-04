@@ -15,12 +15,14 @@ namespace CaseManagement.Workflow.Domains
         public string ElementName { get; private set; }
         public DateTime StartDateTime { get; private set; }
         public DateTime? EndDateTime { get; set; }
+        public string ErrorMessage { get; set; }
 
         public object Clone()
         {
             return new ProcessFlowInstanceExecutionStep(ElementId, ElementName, StartDateTime)
             {
-                EndDateTime = EndDateTime
+                EndDateTime = EndDateTime,
+                ErrorMessage = ErrorMessage
             };
         }
     }

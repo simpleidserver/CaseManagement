@@ -1,9 +1,9 @@
 ﻿using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Domains.Events;
 using CaseManagement.Workflow.Infrastructure;
-using CaseManagement.Workflow.Infrastructure.EvtBus;
 using CaseManagement.Workflow.Persistence;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.EventHandlers
@@ -17,7 +17,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             _processFlowInstanceCommandRepository = processFlowInstanceCommandRepository;
         }
 
-        public async Task Handle(ProcessFlowInstanceCreatedEvent @event)
+        public async Task Handle(ProcessFlowInstanceCreatedEvent @event, CancellationToken token)
         {
             var processFlowInstance = ProcessFlowInstance.New(new List<DomainEvent> { @event });
             _processFlowInstanceCommandRepository.Add(processFlowInstance);

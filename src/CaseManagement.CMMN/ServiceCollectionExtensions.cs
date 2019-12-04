@@ -5,9 +5,12 @@ using CaseManagement.CMMN.CaseInstance.Processors;
 using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
+using CaseManagement.Workflow.Domains.Events;
 using CaseManagement.Workflow.Engine;
+using CaseManagement.Workflow.Infrastructure;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using System.Collections.Generic;
@@ -24,6 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddCommandHandlers()
                 .AddEventHandlers()
                 .AddProcessHandlers()
+                .AddInfrastructure()
                 .AddProcessors();
             services.AddHangfire((act) =>
             {
@@ -34,6 +38,12 @@ namespace Microsoft.Extensions.DependencyInjection
             });
             services.AddHangfireServer();
             return builder;
+        }
+
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        {
+            services.AddTransient<IProcessFlowElementProcessorFactory, CMMPlanItemProcessorFactory>();
+            return services;
         }
 
         private static IServiceCollection AddInMemoryPersistence(this IServiceCollection services)
@@ -56,20 +66,25 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddEventHandlers(this IServiceCollection services)
         {
-            services.AddTransient<ProcessFlowInstanceCreatedEventHandler>();
-            services.AddTransient<ProcessFlowInstanceLaunchedEventHandler>();
-            services.AddTransient<ProcessFlowInstanceFormConfirmedEventHandler>();
-            services.AddTransient<ProcessFlowElementLaunchedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementCompletedEvent>, ProcessFlowElementCompletedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementInvalidEvent>, ProcessFlowElementInvalidEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementLaunchedEvent>, ProcessFlowElementLaunchedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementStartedEvent>, ProcessFlowElementStartedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceCompletedEvent>, ProcessFlowInstanceCompletedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceCreatedEvent>, ProcessFlowInstanceCreatedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceElementStateChangedEvent>, ProcessFlowInstanceElementStateChangedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceFormConfirmedEvent>, ProcessFlowInstanceFormConfirmedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceLaunchedEvent>, ProcessFlowInstanceLaunchedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceVariableAddedEvent>, ProcessFlowInstanceVariableAddedEventHandler>();
             return services;
         }
 
         private static IServiceCollection AddProcessors(this IServiceCollection services)
         {
-            services.AddTransient<IProcessFlowElementProcessor, CMMNPlanItemProcessor>();
-            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNHumanTaskProcessor>();
-            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNProcessTaskProcessor>();
-            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNTaskProcessor>();
-            services.AddTransient<ICMMNPlanItemDefinitionProcessor, CMMNTimerEventListenerProcessor>();
+            services.AddTransient<IProcessFlowElementProcessor, CMMNHumanTaskProcessor>();
+            services.AddTransient<IProcessFlowElementProcessor, CMMNProcessTaskProcessor>();
+            services.AddTransient<IProcessFlowElementProcessor, CMMNTaskProcessor>();
+            services.AddTransient<IProcessFlowElementProcessor, CMMNTimerEventListenerProcessor>();
             return services;
         }
 

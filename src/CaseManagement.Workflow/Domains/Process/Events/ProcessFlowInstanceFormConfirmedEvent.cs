@@ -1,20 +1,19 @@
 ﻿using CaseManagement.Workflow.Infrastructure;
+using Newtonsoft.Json.Linq;
 
 namespace CaseManagement.Workflow.Domains.Events
 {
     public class ProcessFlowInstanceFormConfirmedEvent : DomainEvent
     {
-        public ProcessFlowInstanceFormConfirmedEvent(string id, string elementId, ProcessFlowInstanceElementForm formInstance, string scopeId = null)
+        public ProcessFlowInstanceFormConfirmedEvent(string id, string aggregateId, int version, string elementId, Form form, JObject content) : base(id, aggregateId, version)
         {
-            Id = id;
             ElementId = elementId;
-            FormInstance = formInstance;
-            ScopeId = scopeId;
+            Form = form;
+            Content = content;
         }
 
-        public string Id { get; set; }
         public string ElementId { get; set; }
-        public ProcessFlowInstanceElementForm FormInstance { get; set; }
-        public string ScopeId { get; set; }
+        public Form Form { get; set; }
+        public JObject Content { get; set; }
     }
 }

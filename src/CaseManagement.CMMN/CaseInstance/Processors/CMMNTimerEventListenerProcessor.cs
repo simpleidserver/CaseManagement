@@ -1,36 +1,40 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Infrastructure.EvtBus;
-using CaseManagement.Workflow.Infrastructure.EvtStore;
+using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.ISO8601;
 using CaseManagement.Workflow.Persistence;
 using Hangfire;
-using Microsoft.Extensions.Options;
-using NEventStore;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
-    public class CMMNTimerEventListenerProcessor : BaseCommandHandler<ProcessFlowInstance>, ICMMNPlanItemDefinitionProcessor
+    public class CMMNTimerEventListenerProcessor : IProcessFlowElementProcessor
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
         private readonly IProcessFlowInstanceCommandRepository _processFlowInstanceCommandRepository;
         private readonly IBackgroundJobClient _backgroundJobClient;
 
-        public CMMNTimerEventListenerProcessor(IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository, IBackgroundJobClient  backgroundJobClient, IStoreEvents storeEvents, IEventBus eventBus, IAggregateSnapshotStore<ProcessFlowInstance> aggregateSnapshotStore, IOptions<SnapshotConfiguration> options) : base(storeEvents, eventBus, aggregateSnapshotStore, options)
+        public CMMNTimerEventListenerProcessor(IServiceProvider serviceProvider, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository, IBackgroundJobClient  backgroundJobClient)
         {
+            _serviceProvider = serviceProvider;
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
             _processFlowInstanceCommandRepository = processFlowInstanceCommandRepository;
             _backgroundJobClient = backgroundJobClient;
         }
 
-        public Type PlanItemDefinitionType => typeof(CMMNTimerEventListener);
+        public Type ProcessFlowElementType => typeof(CMMNTimerEventListener);
 
-        public Task<bool> Handle(CMMNPlanItem cmmnPlanItem, ProcessFlowInstance pf)
+        public Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
-            var timerEventListener = (CMMNTimerEventListener)cmmnPlanItem.PlanItemDefinition;
+            context.Start();
+            var pf = context.ProcessFlowInstance;
+            var planItem = context.GetCMMNPlanItem();
+            var timerEventListener = planItem.PlanItemDefinition as CMMNTimerEventListener;
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
             var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
             var currentDateTime = DateTime.UtcNow;
@@ -38,7 +42,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             {
                 if (currentDateTime < repeatingInterval.Interval.EndDateTime)
                 {
-                    cmmnPlanItem.Create();
+                    pf.CreatePlanItem(planItem);                    
                     var startDate = currentDateTime;
                     if (startDate < repeatingInterval.Interval.StartDateTime)
                     {
@@ -50,56 +54,72 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     for(var i = 0; i < repeatingInterval.RecurringTimeInterval; i++)
                     {
                         currentDateTime = currentDateTime.Add(newTimespan);
-                        _backgroundJobClient.Schedule(() => HandlePlanItemEventListener(pf.Id, cmmnPlanItem.Id), currentDateTime);
+                        _backgroundJobClient.Schedule(() => HandleListener(pf.Id, planItem.Id), currentDateTime);
                     }
                 }
             }
 
             if (time != null && currentDateTime < time.Value)
             {
-                cmmnPlanItem.Create();
-                _backgroundJobClient.Schedule(() => HandlePlanItemEventListener(pf.Id, cmmnPlanItem.Id), time.Value);
+                pf.CreatePlanItem(planItem);
+                _backgroundJobClient.Schedule(() => HandleListener(pf.Id, planItem.Id), time.Value);
             }
-            
-            return Task.FromResult(false);
+
+            return Task.FromResult(0);
         }
 
         [DisableConcurrentExecution(60)]
-        public async Task HandlePlanItemEventListener(string processInstanceId, string processInstanceEltId)
+        public async Task HandleListener(string processInstanceId, string processInstanceEltId)
         {
-            await ExecuteTimer(processInstanceId, processInstanceEltId);
-            var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(processInstanceId);
-            var cmmnPlanItem = flowInstance.Elements.First(e => e.Id == processInstanceEltId) as CMMNPlanItem;
-            var nbOccures = cmmnPlanItem.TransitionHistories.Where(t => t.Transition == CMMNPlanItemTransitions.Occur).Count();
-            var timerEventListener = (CMMNTimerEventListener)cmmnPlanItem.PlanItemDefinition;
+            var processFlowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(processInstanceId);
+            var currentElement = processFlowInstance.Elements.First(e => e.Id == processInstanceEltId) as CMMNPlanItem;
+            processFlowInstance.StartElement(currentElement);
+            processFlowInstance.OccurPlanItem(processInstanceEltId);
+            var factory = (IProcessFlowElementProcessorFactory)_serviceProvider.GetService(typeof(IProcessFlowElementProcessorFactory));
+            foreach (var nextElement in processFlowInstance.NextElements(currentElement.Id))
+            {
+                await Start(processFlowInstance, nextElement, factory);
+            }
+
+            var nbOccures = currentElement.TransitionHistories.Where(t => t.Transition == CMMNPlanItemTransitions.Occur).Count();
+            var timerEventListener = (CMMNTimerEventListener)currentElement.PlanItemDefinition;
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
             var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
-            if (repeatingInterval.RecurringTimeInterval == nbOccures || time != null)
+            processFlowInstance.CompleteElement(currentElement);
+            if ((repeatingInterval.RecurringTimeInterval == nbOccures || time != null) && processFlowInstance.IsFinished())
             {
-                flowInstance.CompleteElement(cmmnPlanItem);
-                if (flowInstance.IsFinished())
+                if (processFlowInstance.IsFinished())
                 {
-                    flowInstance.Complete();
+                    processFlowInstance.Complete();
                 }
             }
 
-            _processFlowInstanceCommandRepository.Update(flowInstance);
+            _processFlowInstanceCommandRepository.Update(processFlowInstance);
             await _processFlowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task ExecuteTimer(string processInstanceId, string processInstanceEltId)
+        private Task Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceElement elt, IProcessFlowElementProcessorFactory factory)
         {
-            var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(processInstanceId);
-            var cmmnPlanItem = flowInstance.Elements.First(e => e.Id == processInstanceEltId) as CMMNPlanItem;
-            cmmnPlanItem.Occur();
-            _processFlowInstanceCommandRepository.Update(flowInstance);
-            await _processFlowInstanceCommandRepository.SaveChanges();
-            foreach (var elt in flowInstance.NextElements(processInstanceEltId))
+            /*
+            var processor = factory.Build(elt);
+            await processor.Handle(processFlowInstance, elt);
+            if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
             {
-                flowInstance.LaunchElement(elt.Id);
+                return;
             }
 
-            await Commit(flowInstance, flowInstance.GetStreamName());
+            var nextElts = processFlowInstance.NextElements(elt.Id);
+            if (!nextElts.Any())
+            {
+                return;
+            }
+
+            foreach (var nextElt in nextElts)
+            {
+                await Start(processFlowInstance, nextElt, factory);
+            }
+            */
+            return Task.FromResult(0);
         }
     }
 }

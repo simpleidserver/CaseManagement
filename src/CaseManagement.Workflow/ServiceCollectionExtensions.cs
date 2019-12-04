@@ -1,14 +1,19 @@
 ﻿using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
-using CaseManagement.Workflow.Infrastructure.EvtBus;
-using CaseManagement.Workflow.Infrastructure.EvtBus.InMemory;
+using CaseManagement.Workflow.Infrastructure;
+using CaseManagement.Workflow.Infrastructure.Bus;
+using CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent;
+using CaseManagement.Workflow.Infrastructure.Bus.InMemory;
+using CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess;
+using CaseManagement.Workflow.Infrastructure.Bus.StopProcess;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.EvtStore.InMemory;
+using CaseManagement.Workflow.Infrastructure.Lock;
+using CaseManagement.Workflow.Infrastructure.Lock.InMemory;
 using CaseManagement.Workflow.Persistence;
 using CaseManagement.Workflow.Persistence.InMemory;
 using NEventStore;
 using System.Collections.Generic;
-using static CaseManagement.Workflow.Infrastructure.EvtStore.InMemory.InMemoryAggregateSnapshotStore;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -19,17 +24,18 @@ namespace Microsoft.Extensions.DependencyInjection
             var processFlowInstances = new List<ProcessFlowInstance>();
             var forms = new List<Form>();
             services.AddMvc();
+            services.AddHostedService<BusHostedService>();
             services.AddTransient<IWorkflowEngine, WorkflowEngine>();
-            services.AddTransient<IProcessFlowElementProcessorFactory, ProcessFlowElementProcessorFactory>();
             services.AddSingleton<IProcessFlowInstanceQueryRepository>(new InMemoryProcessFlowInstanceQueryRepository(processFlowInstances));
             services.AddSingleton<IProcessFlowInstanceCommandRepository>(new InMemoryProcessFlowInstanceCommandRepository(processFlowInstances));
             services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
             services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
-            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-            services.AddSingleton<IEventBus, InMemoryEventBus>();
             services.AddNEventStore()
                 .AddEventStores()
-                .AddSnapshotStore();
+                .AddInfrastructure()
+                .AddSnapshotStore()
+                .AddBus()
+                .AddLock();
             return services;
         }
 
@@ -40,14 +46,37 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddEventStores(this IServiceCollection services)
+        private static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddTransient<IEventStoreRepository<ProcessFlowInstance>, EventStoreRepository<ProcessFlowInstance>>();
+            services.AddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
             return services;
         }
+
+        private static IServiceCollection AddEventStores(this IServiceCollection services)
+        {
+            services.AddTransient<IEventStoreRepository, InMemoryEventStoreRepository>();
+            return services;
+        }
+
         private static IServiceCollection AddSnapshotStore(this IServiceCollection services)
         {
-            services.AddSingleton<IAggregateSnapshotStore<ProcessFlowInstance>, AggregateSnapshotStore<ProcessFlowInstance>>();
+            services.AddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
+            return services;
+        }
+
+        private static IServiceCollection AddBus(this IServiceCollection services)
+        {
+            services.AddSingleton<IRunningTaskPool, RunningTaskPool>();
+            services.AddSingleton<IQueueProvider, InMemoryQueueProvider>();
+            services.AddTransient<IMessageConsumer, DomainEventMessageConsumer>();
+            services.AddTransient<IMessageConsumer, LaunchProcessMessageConsumer>();
+            services.AddTransient<IMessageConsumer, StopProcessMessageConsumer>();
+            return services;
+        }
+
+        private static IServiceCollection AddLock(this IServiceCollection services)
+        {
+            services.AddSingleton<IDistributedLock, InMemoryDistributedLock>();
             return services;
         }
     }

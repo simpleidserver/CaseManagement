@@ -10,6 +10,7 @@ Scenario: Launch sEntryWithCondition case instance and check his status is compl
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '3600' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 	
@@ -65,10 +66,10 @@ Scenario: Launch caseWithTimerEventListener case instance and check his status i
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
 	And wait '15' seconds
-
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
 	Then JSON 'status'='completed'
+
 	

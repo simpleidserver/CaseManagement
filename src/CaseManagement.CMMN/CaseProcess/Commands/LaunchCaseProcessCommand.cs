@@ -4,9 +4,10 @@ namespace CaseManagement.CMMN.CaseProcess.Commands
 {
     public class LaunchCaseProcessCommand
     {
-        public LaunchCaseProcessCommand()
+        public LaunchCaseProcessCommand(string id, Dictionary<string, string> parameters)
         {
-            Parameters = new Dictionary<string, string>();
+            Id = id;
+            Parameters = parameters;
         }
 
         public string Id { get; set; }

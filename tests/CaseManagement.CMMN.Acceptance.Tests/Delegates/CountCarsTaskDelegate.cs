@@ -1,16 +1,18 @@
 ﻿using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Infrastructures;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Acceptance.Tests.Delegates
 {
     public class CountCarsTaskDelegate : CaseProcessDelegate
     {
-        public override Task<CaseProcessResponse> Handle(CaseProcessParameter parameter)
+        public override Task Handle(CaseProcessParameter parameter, Func<CaseProcessResponse, Task> callback, CancellationToken token)
         {
             var result = new CaseProcessResponse();
             result.AddParameter("nbCars", 51);
-            return Task.FromResult(result);
+            return callback(result);
         }
     }
 }

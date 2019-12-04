@@ -5,15 +5,13 @@ namespace CaseManagement.Workflow.Domains.Events
 {
     public class ProcessFlowElementStartedEvent : DomainEvent
     {
-        public ProcessFlowElementStartedEvent(string processFlowInstanceId, string processFlowInstanceElementId, DateTime startDateTime)
+        public ProcessFlowElementStartedEvent(string id, string aggregateId, int version, string elementId, DateTime startDateTime) : base(id, aggregateId, version)
         {
-            ProcessFlowInstanceId = processFlowInstanceId;
-            ProcessFlowInstanceElementId = processFlowInstanceElementId;
+            ElementId = elementId;
             StartDateTime = startDateTime;
         }
         
-        public string ProcessFlowInstanceId { get; set; }
-        public string ProcessFlowInstanceElementId { get; set; }
+        public string ElementId { get; set; }
         public DateTime StartDateTime { get; set; }
     }
 }

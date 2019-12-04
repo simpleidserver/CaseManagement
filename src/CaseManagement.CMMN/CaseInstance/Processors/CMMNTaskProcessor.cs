@@ -1,17 +1,21 @@
-﻿using System;
-using System.Threading.Tasks;
-using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
+using CaseManagement.Workflow.Engine;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNTaskProcessor : BaseCMMNTaskProcessor
     {
-        public override Type PlanItemDefinitionType => typeof(CMMNTask);
+        public override Type ProcessFlowElementType => typeof(CMMNTask);
 
-        public override Task<bool> Run(CMMNPlanItem cmmnPlanItem, ProcessFlowInstance pf)
+        public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
         {
-            return Task.FromResult(true);
+            context.ProcessFlowInstance.CompletePlanItem(context.GetCMMNPlanItem());
+            await context.Complete(token);
         }
     }
 }

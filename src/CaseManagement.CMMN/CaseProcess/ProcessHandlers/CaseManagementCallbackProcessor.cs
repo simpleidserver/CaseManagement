@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseProcess.ProcessHandlers
@@ -9,12 +10,11 @@ namespace CaseManagement.CMMN.CaseProcess.ProcessHandlers
     {
         public string ImplementationType => CMMNConstants.ProcessImplementationTypes.CASEMANAGEMENTCALLBACK;
 
-        public async Task<CaseProcessResponse> Handle(ProcessAggregate process, CaseProcessParameter parameter)
+        public Task Handle(ProcessAggregate process, CaseProcessParameter parameter, Func<CaseProcessResponse, Task> callback, CancellationToken token)
         {
             var caseManagementProcessAggregate = (CaseManagementProcessAggregate)process;
             var instance = (CaseProcessDelegate)Activator.CreateInstance(Type.GetType(caseManagementProcessAggregate.AssemblyQualifiedName));
-            var result = await instance.Handle(parameter);
-            return result;
+            return instance.Handle(parameter, callback, token);
         }
     }
 }

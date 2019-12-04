@@ -2,6 +2,7 @@
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Processors
@@ -10,9 +11,10 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
     {
         public Type ProcessFlowElementType => typeof(BPMNEndEvent);
 
-        public Task Handle(ProcessFlowInstance pf, ProcessFlowInstanceElement pfe)
+        public Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
-            pf.CompleteElement(pfe);
+            context.Start();
+            context.Complete(token);
             return Task.FromResult(0);
         }
     }

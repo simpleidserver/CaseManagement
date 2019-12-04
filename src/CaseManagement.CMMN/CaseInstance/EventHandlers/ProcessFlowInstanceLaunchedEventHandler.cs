@@ -1,7 +1,7 @@
 ﻿using CaseManagement.Workflow.Domains.Events;
-using CaseManagement.Workflow.Engine;
-using CaseManagement.Workflow.Infrastructure.EvtBus;
+using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Persistence;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.EventHandlers
@@ -10,20 +10,17 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
     {
         private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
         private readonly IProcessFlowInstanceCommandRepository _processFlowInstanceCommandRepository;
-        private readonly IWorkflowEngine _workflowEngine;
 
-        public ProcessFlowInstanceLaunchedEventHandler(IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository, IWorkflowEngine workflowEngine)
+        public ProcessFlowInstanceLaunchedEventHandler(IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository)
         {
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
             _processFlowInstanceCommandRepository = processFlowInstanceCommandRepository;
-            _workflowEngine = workflowEngine;
         }
 
-        public async Task Handle(ProcessFlowInstanceLaunchedEvent @event)
+        public async Task Handle(ProcessFlowInstanceLaunchedEvent @event, CancellationToken token)
         {
-            var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(@event.Id);
+            var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Launch();
-            await _workflowEngine.Start(flowInstance);
             _processFlowInstanceCommandRepository.Update(flowInstance);
             await _processFlowInstanceCommandRepository.SaveChanges();
         }

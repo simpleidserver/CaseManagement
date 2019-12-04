@@ -1,40 +1,40 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Domains.Process;
-using CaseManagement.Workflow.Persistence;
+using CaseManagement.Workflow.Engine;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNHumanTaskProcessor : BaseCMMNTaskProcessor
-    {
-        private readonly IFormQueryRepository _formQueryRepository;
-        
-        public CMMNHumanTaskProcessor(IFormQueryRepository formQueryRepository)
-        {
-            _formQueryRepository = formQueryRepository;
-        }
-        
-        public override Type PlanItemDefinitionType => typeof(CMMNHumanTask);
+    {        
+        public override Type ProcessFlowElementType => typeof(CMMNHumanTask);
 
-        public override async Task<bool> Run(CMMNPlanItem cmmnPlanItem, ProcessFlowInstance pf)
+        public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
         {
-            var humanTask = cmmnPlanItem.PlanItemDefinition as CMMNHumanTask;
-            var formInstance = pf.GetFormInstance(cmmnPlanItem.Id);
+            var pf = context.ProcessFlowInstance;
+            var cmmnPlanItem = context.GetCMMNPlanItem();
+            var humanTask = context.GetCMMNHumanTask();
+            var formInstance = pf.GetFormInstance(context.CurrentElement.Id);
             if (formInstance != null && formInstance.Status == ProcessFlowInstanceElementFormStatus.Complete)
             {
-                cmmnPlanItem.Complete();
-                return true;
+                pf.CompletePlanItem(cmmnPlanItem);
+                await context.Complete(token);
+                return;
             }
 
             if (humanTask.IsBlocking)
             {
-                return false;
+                // TODO : MANAGE BLOCKING STATE?
+                return;
             }
 
-            cmmnPlanItem.Complete();
-            return true;
+            pf.CompletePlanItem(cmmnPlanItem);
+            await context.Complete(token);
+            return;
         }
     }
 }

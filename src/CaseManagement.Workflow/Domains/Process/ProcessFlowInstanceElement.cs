@@ -46,6 +46,8 @@ namespace CaseManagement.Workflow.Domains
 
         public virtual void HandleLaunch() { }
 
+        public virtual void HandleEvent(string state) { }
+
         public virtual object Clone()
         {
             return new ProcessFlowInstanceElement(Id, Name)

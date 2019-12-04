@@ -9,40 +9,34 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+import { CaseInstanceState } from "./case-instance-states";
 import { ActionTypes } from "./case-instance-actions";
-var initialCaseInstanceState = {
-    caseDefinition: null,
-    caseInstance: null,
-    executionStepsResult: null,
-    isCaseInstanceLoading: true,
-    isCaseInstanceErrorLoadOccured: false,
-    isCaseExecutionStepsLoading: true,
-    isCaseExecutionStepsErrorLoadOccured: false
-};
+var initialCaseInstanceState = new CaseInstanceState();
 export function reducer(state, action) {
     if (state === void 0) { state = initialCaseInstanceState; }
     switch (action.type) {
         case ActionTypes.CASEINSTANCELOADED:
             var caseInstanceLoadedAction = action;
-            state.caseDefinition = caseInstanceLoadedAction.caseDefinition;
-            state.caseInstance = caseInstanceLoadedAction.caseInstance;
-            state.isCaseInstanceLoading = false;
-            state.isCaseInstanceErrorLoadOccured = false;
-            return __assign({}, state);
+            initialCaseInstanceState.caseDefinition = caseInstanceLoadedAction.caseDefinition;
+            initialCaseInstanceState.caseInstance = caseInstanceLoadedAction.caseInstance;
+            initialCaseInstanceState.isCaseInstanceLoading = false;
+            initialCaseInstanceState.isCaseInstanceErrorLoadOccured = false;
+            return __assign({}, initialCaseInstanceState);
         case ActionTypes.ERRORLOADCASEINSTANCE:
-            state.isCaseInstanceLoading = false;
-            state.isCaseInstanceErrorLoadOccured = true;
-            return __assign({}, state);
+            initialCaseInstanceState.isCaseInstanceLoading = false;
+            initialCaseInstanceState.isCaseInstanceErrorLoadOccured = true;
+            return __assign({}, initialCaseInstanceState);
         case ActionTypes.CASEEXECUTIONSTEPSLOADED:
+            console.log(state);
             var caseExecutionStepsLoadedAction = action;
-            state.executionStepsResult = caseExecutionStepsLoadedAction.result;
-            state.isCaseExecutionStepsLoading = false;
-            state.isCaseExecutionStepsErrorLoadOccured = false;
-            return __assign({}, state);
+            initialCaseInstanceState.executionStepsResult = caseExecutionStepsLoadedAction.result;
+            initialCaseInstanceState.isCaseExecutionStepsLoading = false;
+            initialCaseInstanceState.isCaseExecutionStepsErrorLoadOccured = false;
+            return __assign({}, initialCaseInstanceState);
         case ActionTypes.ERRORLOADCASEEXECUTIONSTEPS:
-            state.isCaseExecutionStepsLoading = false;
-            state.isCaseExecutionStepsErrorLoadOccured = false;
-            return __assign({}, state);
+            initialCaseInstanceState.isCaseExecutionStepsLoading = false;
+            initialCaseInstanceState.isCaseExecutionStepsErrorLoadOccured = false;
+            return __assign({}, initialCaseInstanceState);
     }
 }
 //# sourceMappingURL=case-instance-reducer.js.map

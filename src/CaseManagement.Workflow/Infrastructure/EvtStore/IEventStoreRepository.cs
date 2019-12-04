@@ -1,13 +1,12 @@
-﻿using CaseManagement.Workflow.Infrastructure.EvtBus;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.EvtStore
 {
-    public interface IEventStoreRepository<T> where T : BaseAggregate
+    public interface IEventStoreRepository
     {
-        Task<T> GetLastAggregate(string id, string streamName);
-        Task<T> GetLastAggregate(string id, IEnumerable<DomainEvent> domainEvents);
-        Task<IEnumerable<DomainEvent>> GetLastDomainEvents(string id, string streamName);
+        Task<T> GetLastAggregate<T>(string id, string streamName) where T : BaseAggregate;
+        Task<T> GetLastAggregate<T>(string id, IEnumerable<DomainEvent> domainEvents) where T : BaseAggregate;
+        Task<IEnumerable<DomainEvent>> GetLastDomainEvents<T>(string id, string streamName) where T : BaseAggregate;
     }
 }

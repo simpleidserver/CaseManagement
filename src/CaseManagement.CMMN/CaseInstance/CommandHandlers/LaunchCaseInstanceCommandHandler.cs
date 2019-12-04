@@ -1,25 +1,28 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Infrastructure.EvtBus;
+using CaseManagement.Workflow.Infrastructure;
+using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
-using Microsoft.Extensions.Options;
-using NEventStore;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
-    public class LaunchCaseInstanceCommandHandler : BaseCommandHandler<ProcessFlowInstance>, ILaunchCaseInstanceCommandHandler
+    public class LaunchCaseInstanceCommandHandler : ILaunchCaseInstanceCommandHandler
     {
-        private readonly IEventStoreRepository<ProcessFlowInstance> _eventStoreRepository;
+        private readonly IQueueProvider _queueProvider;
+        private readonly IEventStoreRepository _eventStoreRepository;
+        private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public LaunchCaseInstanceCommandHandler(IStoreEvents storeEvents, IEventBus eventBus, IEventStoreRepository<ProcessFlowInstance> eventStoreRepository, IAggregateSnapshotStore<ProcessFlowInstance> aggregateSnapshotStore, IOptions<SnapshotConfiguration> snapshotConfiguration) : base(storeEvents, eventBus, aggregateSnapshotStore, snapshotConfiguration)
+        public LaunchCaseInstanceCommandHandler(IQueueProvider queueProvider, IEventStoreRepository eventStoreRepository, ICommitAggregateHelper commitAggregateHelper)
         {
+            _queueProvider = queueProvider;
             _eventStoreRepository = eventStoreRepository;
+            _commitAggregateHelper = commitAggregateHelper;
         }
 
         public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate(launchCaseInstanceCommand.CaseInstanceId, ProcessFlowInstance.GetStreamName(launchCaseInstanceCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<ProcessFlowInstance>(launchCaseInstanceCommand.CaseInstanceId, ProcessFlowInstance.GetStreamName(launchCaseInstanceCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 // TODO : THROW EXCEPTION.
@@ -27,7 +30,8 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
 
             caseInstance.Launch();
-            await Commit(caseInstance, caseInstance.GetStreamName());
+            await _commitAggregateHelper.Commit(caseInstance, caseInstance.GetStreamName());
+            await _queueProvider.QueueLaunchProcess(caseInstance.Id);
         }
     }
 }

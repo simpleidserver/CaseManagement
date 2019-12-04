@@ -4,11 +4,8 @@ namespace CaseManagement.Workflow.Domains.Events
 {
     public class ProcessFlowInstanceLaunchedEvent : DomainEvent
     {
-        public ProcessFlowInstanceLaunchedEvent(string id)
+        public ProcessFlowInstanceLaunchedEvent(string id, string aggregateId, int version) : base(id, aggregateId, version)
         {
-            Id = id;
         }
-
-        public string Id { get; set; }
     }
 }

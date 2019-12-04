@@ -1,8 +1,10 @@
 ﻿using CaseManagement.CMMN.CaseProcess.Commands;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Persistence;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseProcess.CommandHandlers
@@ -18,7 +20,7 @@ namespace CaseManagement.CMMN.CaseProcess.CommandHandlers
             _processHandlers = processHandlers;
         }
 
-        public async Task<CaseProcessResponse> Handle(LaunchCaseProcessCommand launchCaseProcessCommand)
+        public async Task Handle(LaunchCaseProcessCommand launchCaseProcessCommand, Func<CaseProcessResponse, Task> callback, CancellationToken token)
         {
             var process = await _cmmnProcessQueryRepository.FindById(launchCaseProcessCommand.Id);
             if (process == null)
@@ -32,8 +34,7 @@ namespace CaseManagement.CMMN.CaseProcess.CommandHandlers
                 // TODO : THROW EXCEPTION.
             }
 
-            var result = await processHandler.Handle(process, new CaseProcessParameter(launchCaseProcessCommand.Parameters));
-            return result;
+            await processHandler.Handle(process, new CaseProcessParameter(launchCaseProcessCommand.Parameters), callback, token);
         }
     }
 }

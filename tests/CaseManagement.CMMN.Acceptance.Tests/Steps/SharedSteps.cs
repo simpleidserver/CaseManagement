@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using TechTalk.SpecFlow;
 using Xunit;
 
@@ -15,13 +14,18 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
     [Binding]
     public class SharedSteps
     {
+        private static Semaphore _obj = new Semaphore(initialCount: 1, maximumCount: 1);
         private readonly ScenarioContext _scenarioContext;
-        private CustomWebApplicationFactory<FakeStartup> _factory;
+        private static CustomWebApplicationFactory<FakeStartup> _factory;
 
         public SharedSteps(ScenarioContext scenarioContext)
         {
+            _obj.WaitOne();
             _scenarioContext = scenarioContext;
-            _factory = new CustomWebApplicationFactory<FakeStartup>();
+            if (_factory == null)
+            {
+                _factory = new CustomWebApplicationFactory<FakeStartup>();
+            }
         }
 
         [When("execute HTTP GET request '(.*)'")]
@@ -93,6 +97,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         [Then("HTTP status code equals to '(.*)'")]
         public void ThenCheckHttpStatusCode(int code)
         {
+            _obj.Release();
             var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
             Assert.Equal(code, (int)httpResponseMessage.StatusCode);
         }

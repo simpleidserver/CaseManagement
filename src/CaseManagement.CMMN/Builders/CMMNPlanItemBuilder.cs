@@ -5,19 +5,19 @@ namespace CaseManagement.CMMN.Builders
 {
     public class CMMNPlanItemBuilder
     {
-        private readonly CMMNPlanItem _planItem;
-
         public CMMNPlanItemBuilder(CMMNPlanItem planItem)
         {
-            _planItem = planItem;
+            PlanItem = planItem;
         }
+
+        protected CMMNPlanItem PlanItem { get; private set; }
 
         public CMMNPlanItemBuilder AddEntryCriterion(string name, Action<CMMNSEntryBuilder> callback)
         {
             var sEntry = new CMMNSEntry(name);
             var entryCriterion = new CMMNCriterion(name) { SEntry = sEntry };
             callback(new CMMNSEntryBuilder(sEntry));
-            _planItem.EntryCriterions.Add(entryCriterion);
+            PlanItem.EntryCriterions.Add(entryCriterion);
             return this;
         }
 
@@ -26,20 +26,14 @@ namespace CaseManagement.CMMN.Builders
             var sEntry = new CMMNSEntry(name);
             var entryCriterion = new CMMNCriterion(name) { SEntry = sEntry };
             callback(new CMMNSEntryBuilder(sEntry));
-            _planItem.ExitCriterions.Add(entryCriterion);
+            PlanItem.ExitCriterions.Add(entryCriterion);
             return this;
         }
 
         public CMMNPlanItemBuilder SetManualActivationRule(string name, CMMNExpression expression)
         {
             var manualActivationRule = new CMMNManualActivationRule(name, expression);
-            _planItem.PlanItemControl = manualActivationRule;
-            return this;
-        }
-
-        public CMMNPlanItemBuilder SetProcessTaskDefinition(string name)
-        {
-            _planItem.PlanItemDefinition = new CMMNProcessTask(name);
+            PlanItem.PlanItemControl = manualActivationRule;
             return this;
         }
     }
