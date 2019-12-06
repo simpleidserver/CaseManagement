@@ -6,48 +6,29 @@ namespace CaseManagement.Workflow.Infrastructure.Lock.InMemory
 {
     public class InMemoryDistributedLock : IDistributedLock
     {
-        private static object _obj = new object();
-
-        private class BlockAggregate
-        {
-            public BlockAggregate(string id)
-            {
-                Id = id;
-                IsBlocked = false;
-            }
-
-            public string Id { get; set; }
-            public bool IsBlocked { get; set; }  
-        }
-
-        private List<BlockAggregate> _aggregates = new List<BlockAggregate>();
+        private List<string> _locks = new List<string>();
 
         public Task<bool> AcquireLock(string id)
         {
-            lock (_obj)
+            lock (_locks)
             {
-                var aggregate = _aggregates.FirstOrDefault(a => a.Id == id);
-                if (aggregate == null)
+                if (_locks.Contains(id))
                 {
-                    aggregate = new BlockAggregate(id);
-                    _aggregates.Add(aggregate);
+                    return Task.FromResult(false);
                 }
 
-                if (!aggregate.IsBlocked)
-                {
-                    aggregate.IsBlocked = true;
-                    return Task.FromResult(true);
-                }
-
-                return Task.FromResult(false);
+                _locks.Add(id);
+                return Task.FromResult(true);
             }
         }
 
         public Task ReleaseLock(string id)
         {
-            var aggregate = _aggregates.First(a => a.Id == id);
-            _aggregates.Remove(aggregate);
-            return Task.CompletedTask;
+            lock(_locks)
+            {
+                _locks.Remove(id);
+                return Task.CompletedTask;
+            }
         }
     }
 }

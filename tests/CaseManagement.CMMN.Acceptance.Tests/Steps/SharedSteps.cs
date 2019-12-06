@@ -14,13 +14,13 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
     [Binding]
     public class SharedSteps
     {
-        private static Semaphore _obj = new Semaphore(initialCount: 1, maximumCount: 1);
+        // private static Semaphore _obj = new Semaphore(initialCount: 1, maximumCount: 1);
         private readonly ScenarioContext _scenarioContext;
         private static CustomWebApplicationFactory<FakeStartup> _factory;
 
         public SharedSteps(ScenarioContext scenarioContext)
         {
-            _obj.WaitOne();
+            // _obj.WaitOne();
             _scenarioContext = scenarioContext;
             if (_factory == null)
             {
@@ -97,7 +97,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         [Then("HTTP status code equals to '(.*)'")]
         public void ThenCheckHttpStatusCode(int code)
         {
-            _obj.Release();
+            // _obj.Release();
             var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
             Assert.Equal(code, (int)httpResponseMessage.StatusCode);
         }

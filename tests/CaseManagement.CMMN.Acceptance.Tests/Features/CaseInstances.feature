@@ -10,7 +10,7 @@ Scenario: Launch sEntryWithCondition case instance and check his status is compl
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
-	And wait '3600' seconds
+	And wait '15' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 	
@@ -28,6 +28,7 @@ Scenario: Launch caseWithProcessTask case instance and check his status is compl
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '15' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 
@@ -50,6 +51,7 @@ Scenario: Launch caseWithHumanTask case instance and check his status is complet
 	And execute HTTP POST JSON request 'http://localhost/case-instances/$id$/confirm/PI_ProcessTask_1'
 	| Key  | Value |	
 	| name | name  |
+	And wait '15' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 

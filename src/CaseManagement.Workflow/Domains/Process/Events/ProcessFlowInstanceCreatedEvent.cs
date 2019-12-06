@@ -1,9 +1,11 @@
 ﻿using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CaseManagement.Workflow.Domains.Events
 {
+    [DebuggerDisplay("Create process {AggregateId}")]
     public class ProcessFlowInstanceCreatedEvent : DomainEvent
     {
         public ProcessFlowInstanceCreatedEvent(string id, string aggregateId, int version, string processFlowTemplateId, string processFlowName, DateTime createDateTime, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors) : base(id, aggregateId, version)

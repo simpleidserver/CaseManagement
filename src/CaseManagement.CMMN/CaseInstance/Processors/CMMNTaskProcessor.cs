@@ -10,8 +10,8 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNTaskProcessor : BaseCMMNTaskProcessor
     {
-        public override Type ProcessFlowElementType => typeof(CMMNTask);
-
+        public override string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.Task).ToLowerInvariant();
+        
         public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
         {
             context.ProcessFlowInstance.CompletePlanItem(context.GetCMMNPlanItem());

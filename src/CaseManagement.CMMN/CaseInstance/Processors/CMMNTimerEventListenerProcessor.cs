@@ -27,14 +27,14 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             _backgroundJobClient = backgroundJobClient;
         }
 
-        public Type ProcessFlowElementType => typeof(CMMNTimerEventListener);
+        public string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.TimerEventListener).ToLowerInvariant();
 
         public Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
             context.Start();
             var pf = context.ProcessFlowInstance;
             var planItem = context.GetCMMNPlanItem();
-            var timerEventListener = planItem.PlanItemDefinition as CMMNTimerEventListener;
+            var timerEventListener = planItem.PlanItemDefinitionTimerEventListener;
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
             var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
             var currentDateTime = DateTime.UtcNow;
@@ -82,7 +82,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             }
 
             var nbOccures = currentElement.TransitionHistories.Where(t => t.Transition == CMMNPlanItemTransitions.Occur).Count();
-            var timerEventListener = (CMMNTimerEventListener)currentElement.PlanItemDefinition;
+            var timerEventListener = currentElement.PlanItemDefinitionTimerEventListener;
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
             var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
             processFlowInstance.CompleteElement(currentElement);

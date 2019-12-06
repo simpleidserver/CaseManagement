@@ -1,5 +1,5 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
-using CaseManagement.Workflow.Domains;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
@@ -22,7 +22,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<ProcessFlowInstance>(launchCaseInstanceCommand.CaseInstanceId, ProcessFlowInstance.GetStreamName(launchCaseInstanceCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(launchCaseInstanceCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(launchCaseInstanceCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 // TODO : THROW EXCEPTION.

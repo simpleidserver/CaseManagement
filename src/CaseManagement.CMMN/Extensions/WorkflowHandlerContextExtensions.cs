@@ -12,22 +12,22 @@ namespace CaseManagement.CMMN.Extensions
 
         public static CMMNTask GetCMMNTask(this WorkflowHandlerContext workflowHandlerContext)
         {
-            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinition as CMMNTask;
+            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinitionTask;
         }
 
         public static CMMNProcessTask GetCMMNProcessTask(this WorkflowHandlerContext workflowHandlerContext)
         {
-            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinition as CMMNProcessTask;
+            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinitionProcessTask;
         }
 
         public static CMMNHumanTask GetCMMNHumanTask(this WorkflowHandlerContext workflowHandlerContext)
         {
-            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinition as CMMNHumanTask;
+            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinitionHumanTask;
         }
 
         public static CMMNTimerEventListener GetCMMNTimerEventListener(this WorkflowHandlerContext workflowHandlerContext)
         {
-            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinition as CMMNTimerEventListener;
+            return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinitionTimerEventListener;
         }
     }
 }

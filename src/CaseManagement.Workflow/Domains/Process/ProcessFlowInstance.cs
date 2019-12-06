@@ -151,6 +151,18 @@ namespace CaseManagement.Workflow.Domains
             DomainEvents.Add(evt);
         }
 
+        public void BlockElement(ProcessFlowInstanceElement elt)
+        {
+            BlockElement(elt.Id);
+        }
+
+        public void BlockElement(string eltId)
+        {
+            var evt = new ProcessFlowElementBlockedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
         public void InvalidElement(ProcessFlowInstanceElement elt, string errorMessage)
         {
             InvalidElement(elt.Id, errorMessage);
@@ -272,11 +284,16 @@ namespace CaseManagement.Workflow.Domains
             {
                 Handle((ProcessFlowElementInvalidEvent)obj);
             }
+
+            if (obj is ProcessFlowElementBlockedEvent)
+            {
+                Handle((ProcessFlowElementBlockedEvent)obj);
+            }
         }
 
         public void Handle(ProcessFlowInstanceCreatedEvent evt)
         {
-            Id = evt.Id;
+            Id = evt.AggregateId;
             ProcessFlowTemplateId = evt.ProcessFlowTemplateId;
             ProcessFlowName = evt.ProcessFlowName;
             CreateDateTime = evt.CreateDateTime;
@@ -380,6 +397,13 @@ namespace CaseManagement.Workflow.Domains
             Version++;
         }
 
+        private void Handle(ProcessFlowElementBlockedEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            elt.Status = ProcessFlowInstanceElementStatus.Blocked;
+            Version++;
+        }
+
         public override object Clone()
         {
             return new ProcessFlowInstance
@@ -397,7 +421,7 @@ namespace CaseManagement.Workflow.Domains
             };
         }
 
-        public string GetStreamName()
+        public virtual string GetStreamName()
         {
             return GetStreamName(Id);
         }

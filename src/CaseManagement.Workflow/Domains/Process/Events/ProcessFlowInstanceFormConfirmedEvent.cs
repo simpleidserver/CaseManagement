@@ -1,8 +1,10 @@
 ﻿using CaseManagement.Workflow.Infrastructure;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 namespace CaseManagement.Workflow.Domains.Events
 {
+    [DebuggerDisplay("Confirm form instance {ElementId}")]
     public class ProcessFlowInstanceFormConfirmedEvent : DomainEvent
     {
         public ProcessFlowInstanceFormConfirmedEvent(string id, string aggregateId, int version, string elementId, Form form, JObject content) : base(id, aggregateId, version)

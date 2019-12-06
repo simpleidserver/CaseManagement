@@ -1,4 +1,4 @@
-﻿using CaseManagement.Workflow.Builders;
+﻿using CaseManagement.CMMN.Builders;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent;
 using CaseManagement.Workflow.Persistence;
@@ -14,7 +14,7 @@ namespace CaseManagement.CMMN.Tests
         [Fact]
         public async Task When_Queue_Create_ProcessInstance_Domain_Event()
         {
-            var instance = ProcessFlowInstanceBuilder.New("templateId", "Case with two tasks")
+            var instance = CMMNProcessFlowInstanceBuilder.New("templateId", "Case with two tasks")
                 .AddCMMNTask("1", "First Task", (c) => { })
                 .AddCMMNTask("2", "Second task", (c) => { })
                 .AddConnection("1", "2")

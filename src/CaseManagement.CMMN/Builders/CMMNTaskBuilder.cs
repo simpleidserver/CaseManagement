@@ -10,14 +10,14 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNTaskBuilder SetIsBlocking(bool isBlocking)
         {
-            var cmmnTask = (CMMNTask)PlanItem.PlanItemDefinition;
+            var cmmnTask = PlanItem.PlanItemDefinitionTask;
             cmmnTask.IsBlocking = isBlocking;
             return this;
         }
 
         public CMMNTaskBuilder SetState(CMMNTaskStates state)
         {
-            var cmmnTask = (CMMNTask)PlanItem.PlanItemDefinition;
+            var cmmnTask = PlanItem.PlanItemDefinitionTask;
             cmmnTask.State = state;
             return this;
         }

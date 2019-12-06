@@ -4,6 +4,8 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CMMNExpression : ICloneable
     {
+        public CMMNExpression() { }
+
         public CMMNExpression(string language)
         {
             Language = language;

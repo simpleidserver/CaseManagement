@@ -8,7 +8,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
 {
     public class BPMNReceiveTaskProcessor : IProcessFlowElementProcessor
     {
-        public Type ProcessFlowElementType { get => typeof(BPMNReceiveTask); }
+        public string ProcessFlowElementType => "";
 
         public Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {

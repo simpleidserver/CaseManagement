@@ -1,7 +1,7 @@
-﻿using CaseManagement.CMMN.CaseInstance.Commands;
+﻿using CaseManagement.CMMN.Builders;
+using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Builders;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Infrastructure;
 using System;
@@ -51,7 +51,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             foreach(var planItem in planModel.planItem)
             {
                 var planItemDef = planModel.Items.First(i => i.id == planItem.definitionRef);
-                var flowInstanceElt = CMMNPlanItem.New(planItem.id, planItem.name, BuildPlanItemDefinition(planItemDef));
+                var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
                 if (planItem.entryCriterion != null)
                 {
                     foreach(var entryCriterion in planItem.entryCriterion)
@@ -70,7 +70,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 flowInstanceElements.Add(flowInstanceElt);
             }
 
-            var builder = ProcessFlowInstanceBuilder.New(id, planModel.name);
+            var builder = CMMNProcessFlowInstanceBuilder.New(id, planModel.name);
             foreach(var flowInstance in flowInstanceElements)
             {
                 builder.AddPlanItem(flowInstance);
@@ -84,26 +84,26 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             return builder.Build();
         }
 
-        private static CMMNPlanItemDefinition BuildPlanItemDefinition(tPlanItemDefinition planItemDef)
+        private static CMMNPlanItem BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef)
         {
             if (planItemDef is tProcessTask)
             {
-                return BuildProcessTask((tProcessTask)planItemDef);
+                return CMMNPlanItem.New(id, name, BuildProcessTask((tProcessTask)planItemDef));
             }
 
             if (planItemDef is tHumanTask)
             {
-                return BuildHumanTask((tHumanTask)planItemDef);
+                return CMMNPlanItem.New(id, name, BuildHumanTask((tHumanTask)planItemDef));
             }
 
             if (planItemDef is tTask)
             {
-                return BuildTask((tTask)planItemDef);
+                return CMMNPlanItem.New(id, name, BuildTask((tTask)planItemDef));
             }
 
             if (planItemDef is tTimerEventListener)
             {
-                return BuildTimerEventListener((tTimerEventListener)planItemDef);
+                return CMMNPlanItem.New(id, name, BuildTimerEventListener((tTimerEventListener)planItemDef));
             }
 
             return null;
@@ -114,7 +114,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             return new CMMNTask(task.name);
         }
 
-        private static CMMNPlanItemDefinition BuildProcessTask(tProcessTask processTask)
+        private static CMMNProcessTask BuildProcessTask(tProcessTask processTask)
         {
             var result = new CMMNProcessTask(processTask.name) { IsBlocking = processTask.isBlocking };
             if (processTask.parameterMapping != null)
@@ -149,12 +149,12 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             return result;
         }
 
-        private static CMMNPlanItemDefinition BuildHumanTask(tHumanTask humanTask)
+        private static CMMNHumanTask BuildHumanTask(tHumanTask humanTask)
         {
             return new CMMNHumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking };
         }
 
-        private static CMMNPlanItemDefinition BuildTimerEventListener(tTimerEventListener timerEventListener)
+        private static CMMNTimerEventListener BuildTimerEventListener(tTimerEventListener timerEventListener)
         {
             var result = new CMMNTimerEventListener(timerEventListener.name);
             if (timerEventListener.timerExpression != null)

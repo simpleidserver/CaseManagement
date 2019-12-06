@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNHumanTaskProcessor : BaseCMMNTaskProcessor
-    {        
-        public override Type ProcessFlowElementType => typeof(CMMNHumanTask);
+    {
+        public override string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.HumanTask).ToLowerInvariant();
 
         public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
         {
@@ -28,7 +28,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
             if (humanTask.IsBlocking)
             {
-                // TODO : MANAGE BLOCKING STATE?
+                pf.BlockElement(cmmnPlanItem);
                 return;
             }
 

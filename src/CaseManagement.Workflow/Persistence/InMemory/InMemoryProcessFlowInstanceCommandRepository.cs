@@ -7,6 +7,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 {
     public class InMemoryProcessFlowInstanceCommandRepository : IProcessFlowInstanceCommandRepository
     {
+        private static object _obj = new object();
         private readonly ICollection<ProcessFlowInstance> _processFlowInstances;
 
         public InMemoryProcessFlowInstanceCommandRepository(ICollection<ProcessFlowInstance> processFlowInstances)
@@ -16,13 +17,19 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public void Add(ProcessFlowInstance processFlowInstance)
         {
-            _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());
+            lock(_obj)
+            {
+                _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());
+            }
         }
 
         public void Update(ProcessFlowInstance processFlowInstance)
         {
-            _processFlowInstances.Remove(_processFlowInstances.First(p => p.Id == processFlowInstance.Id));
-            _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());
+            lock(_obj)
+            {
+                _processFlowInstances.Remove(_processFlowInstances.First(p => p.Id == processFlowInstance.Id));
+                _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());
+            }
         }
 
         public Task<int> SaveChanges()

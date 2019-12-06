@@ -11,6 +11,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 {
     public class InMemoryProcessFlowInstanceQueryRepository : IProcessFlowInstanceQueryRepository
     {
+        private static object _obj = new object();
         private static Dictionary<string, string> MAPPING_PROCESSINSTANCE_NAME_TO_PROPERTYNAME = new Dictionary<string, string>
         {
             { "id", "Id" },
@@ -33,13 +34,16 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public Task<ProcessFlowInstance> FindFlowInstanceById(string id)
         {
-            var result = _processFlowInstances.FirstOrDefault(p => p.Id == id);
-            if (result == null)
+            lock(_obj)
             {
-                return Task.FromResult<ProcessFlowInstance>(null);
-            }
+                var result = _processFlowInstances.FirstOrDefault(p => p.Id == id);
+                if (result == null)
+                {
+                    return Task.FromResult<ProcessFlowInstance>(null);
+                }
 
-            return Task.FromResult((ProcessFlowInstance)result.Clone());
+                return Task.FromResult((ProcessFlowInstance)result.Clone());
+            }
         }
 
         public Task<FindResponse<ProcessFlowInstanceExecutionStep>> FindExecutionSteps(FindExecutionStepsParameter parameter)

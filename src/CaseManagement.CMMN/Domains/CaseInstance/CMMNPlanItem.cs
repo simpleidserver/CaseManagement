@@ -7,22 +7,28 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CMMNPlanItem : ProcessFlowInstanceElement
     {
-        private CMMNPlanItem(string id, string name, CMMNPlanItemDefinition planItemDefinition) : base(id, name)
+        public CMMNPlanItem(string id, string name) : base(id, name)
         {
             EntryCriterions = new List<CMMNCriterion>();
             ExitCriterions = new List<CMMNCriterion>();
             TransitionHistories = new List<CMMNPlanItemStateHistory>();
-            PlanItemDefinition = planItemDefinition;
         }
+
+        /// <summary>
+        /// Reference to the corresponding PlanItemDefinition object. [1...1]
+        /// </summary>
+        public CMMNPlanItemDefinitionTypes PlanItemDefinitionType { get; set; }
+        public CMMNTask PlanItemDefinitionTask { get; set; }
+        public CMMNHumanTask PlanItemDefinitionHumanTask { get; set; }
+        public CMMNProcessTask PlanItemDefinitionProcessTask { get; set; }
+        public CMMNTimerEventListener PlanItemDefinitionTimerEventListener { get; set; }
 
         /// <summary>
         /// The PlanItemControl controls aspects of the behavior of instances of the PlanItem object. [0...1]
         /// </summary>
-        public CMMNPlanItemControl PlanItemControl { get; set; }
-        /// <summary>
-        /// Reference to the corresponding PlanItemDefinition object. [1...1]
-        /// </summary>
-        public CMMNPlanItemDefinition PlanItemDefinition { get; set; }
+        public CMMNActivationRuleTypes? ActivationRule { get; set; }
+        public CMMNManualActivationRule ManualActivationRule { get; set; }
+
         /// <summary>
         /// Zero or more EntryCriterion for that PlanItem. [0...*].
         /// An EntryCriterion represents the condition for a PlanItem to become available.
@@ -33,58 +39,117 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public ICollection<CMMNCriterion> ExitCriterions { get; set; }
         public ICollection<CMMNPlanItemStateHistory> TransitionHistories { get; set; }
+
+        public void SetManualActivationRule(CMMNManualActivationRule activationRule)
+        {
+            ManualActivationRule = activationRule;
+            ActivationRule = CMMNActivationRuleTypes.ManualActivation;
+        }
         
         private void Create()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Create);
+            Handle(CMMNPlanItemTransitions.Create);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Create));
         }
 
         private void Enable()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Enable);
+            Handle(CMMNPlanItemTransitions.Enable);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Enable));
         }
 
         private void ManualStart()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.ManualStart);
+            Handle(CMMNPlanItemTransitions.ManualStart);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.ManualStart));
         }
 
         private void Occur()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Occur);
+            Handle(CMMNPlanItemTransitions.Occur);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Occur));
         }
 
         private void Start()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Start);
+            Handle(CMMNPlanItemTransitions.Start);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Start));
         }
 
         private void Disable()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Disable);
+            Handle(CMMNPlanItemTransitions.Disable);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Disable));
         }
 
         private void Complete()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Complete);
+            Handle(CMMNPlanItemTransitions.Complete);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Complete));
         }
 
         private void Terminate()
         {
-            PlanItemDefinition.Handle(CMMNPlanItemTransitions.Terminate);
+            Handle(CMMNPlanItemTransitions.Terminate);
             TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Terminate));
         }
 
-        public static CMMNPlanItem New(string id, string name, CMMNPlanItemDefinition planItemDef)
+        private void Handle(CMMNPlanItemTransitions transition)
         {
-            var result = new CMMNPlanItem(id, name, planItemDef);
+            switch(PlanItemDefinitionType)
+            {
+                case CMMNPlanItemDefinitionTypes.HumanTask:
+                    PlanItemDefinitionHumanTask.Handle(transition);
+                    break;
+                case CMMNPlanItemDefinitionTypes.ProcessTask:
+                    PlanItemDefinitionProcessTask.Handle(transition);
+                    break;
+                case CMMNPlanItemDefinitionTypes.Task:
+                    PlanItemDefinitionTask.Handle(transition);
+                    break;
+                case CMMNPlanItemDefinitionTypes.TimerEventListener:
+                    PlanItemDefinitionTimerEventListener.Handle(transition);
+                    break;
+            }
+        }
+
+        public static CMMNPlanItem New(string id, string name, CMMNHumanTask humanTask)
+        {
+            var result = new CMMNPlanItem(id, name)
+            {
+                PlanItemDefinitionHumanTask = humanTask,
+                PlanItemDefinitionType = CMMNPlanItemDefinitionTypes.HumanTask
+            };
+            return result;
+        }
+
+        public static CMMNPlanItem New(string id, string name, CMMNProcessTask processTask)
+        {
+            var result = new CMMNPlanItem(id, name)
+            {
+                PlanItemDefinitionProcessTask = processTask,
+                PlanItemDefinitionType = CMMNPlanItemDefinitionTypes.ProcessTask
+            };
+            return result;
+        }
+
+        public static CMMNPlanItem New(string id, string name, CMMNTask task)
+        {
+            var result = new CMMNPlanItem(id, name)
+            {
+                PlanItemDefinitionTask = task,
+                PlanItemDefinitionType = CMMNPlanItemDefinitionTypes.Task
+            };
+            return result;
+        }
+
+        public static CMMNPlanItem New(string id, string name, CMMNTimerEventListener timer)
+        {
+            var result = new CMMNPlanItem(id, name)
+            {
+                PlanItemDefinitionTimerEventListener = timer,
+                PlanItemDefinitionType = CMMNPlanItemDefinitionTypes.TimerEventListener
+            };
             return result;
         }
 
@@ -127,10 +192,17 @@ namespace CaseManagement.CMMN.Domains
 
         public override object Clone()
         {
-            return new CMMNPlanItem(Id, Name, (CMMNPlanItemDefinition)PlanItemDefinition.Clone())
+            return new CMMNPlanItem(Id, Name)
             {
                 Status = Status,
-                PlanItemControl = PlanItemControl == null ? null : (CMMNPlanItemControl)PlanItemControl.Clone(),
+                ActivationRule = ActivationRule,
+                FormInstance = FormInstance == null ? null : (ProcessFlowInstanceElementForm)FormInstance.Clone(),
+                ManualActivationRule = ManualActivationRule == null ? null : (CMMNManualActivationRule)ManualActivationRule.Clone(),
+                PlanItemDefinitionHumanTask = PlanItemDefinitionHumanTask == null ? null : (CMMNHumanTask)PlanItemDefinitionHumanTask.Clone(),
+                PlanItemDefinitionProcessTask = PlanItemDefinitionProcessTask == null ? null : (CMMNProcessTask)PlanItemDefinitionProcessTask.Clone(),
+                PlanItemDefinitionTask = PlanItemDefinitionTask == null ? null : (CMMNTask)PlanItemDefinitionTask.Clone(),
+                PlanItemDefinitionTimerEventListener = PlanItemDefinitionTimerEventListener == null ? null : (CMMNTimerEventListener)PlanItemDefinitionTimerEventListener.Clone(),
+                PlanItemDefinitionType = PlanItemDefinitionType,
                 EntryCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
                 ExitCriterions = ExitCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
                 TransitionHistories = TransitionHistories.Select(e => (CMMNPlanItemStateHistory)e.Clone()).ToList()

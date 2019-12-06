@@ -2,7 +2,7 @@
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Infrastructure;
+using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Persistence;
 using System.Linq;
@@ -12,15 +12,15 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
     public class ConfirmFormCommandHandler : IConfirmFormCommandHandler
     {
+        private readonly IQueueProvider _queueProvider;
         private readonly IFormQueryRepository _formQueryRepository;
         private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public ConfirmFormCommandHandler(IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository, ICommitAggregateHelper commitAggregateHelper)
+        public ConfirmFormCommandHandler(IQueueProvider queueProvider, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository)
         {
+            _queueProvider = queueProvider;
             _formQueryRepository = formQueryRepository;
             _eventStoreRepository = eventStoreRepository;
-            _commitAggregateHelper = commitAggregateHelper;
         }
         
         public async Task<bool> Handle(ConfirmFormCommand confirmFormCommand)
@@ -36,13 +36,13 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             {
                 throw new UnknownCaseInstanceElementException(caseInstance.Id, confirmFormCommand.CaseElementInstanceId);
             }
-
-            var humanTask = flowInstanceElt.PlanItemDefinition as CMMNHumanTask;
-            if (humanTask == null)
+            
+            if (flowInstanceElt.PlanItemDefinitionType != CMMNPlanItemDefinitionTypes.HumanTask)
             {
                 throw new NotSupportedTaskException("Task must be a HumanTask");
             }
 
+            var humanTask = flowInstanceElt.PlanItemDefinitionHumanTask;
             var form = await _formQueryRepository.FindFormById(humanTask.FormId);
             if (form == null)
             {
@@ -50,7 +50,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
             caseInstance.ConfirmForm(confirmFormCommand.CaseElementInstanceId, form, confirmFormCommand.Content);
-            await _commitAggregateHelper.Commit(caseInstance, caseInstance.GetStreamName());
+            await _queueProvider.QueueConfirmForm(caseInstance.Id, confirmFormCommand.CaseElementInstanceId, confirmFormCommand.Content);
             return true;
         }
     }

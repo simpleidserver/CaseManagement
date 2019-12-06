@@ -1,10 +1,11 @@
-﻿using CaseManagement.Workflow.Infrastructure;
-using System;
+﻿using System;
 
 namespace CaseManagement.CMMN.Domains
 {
     public abstract class CMMNPlanItemDefinition : ICloneable
     {
+        public CMMNPlanItemDefinition() { }
+
         public CMMNPlanItemDefinition(string name)
         {
             Name = name;

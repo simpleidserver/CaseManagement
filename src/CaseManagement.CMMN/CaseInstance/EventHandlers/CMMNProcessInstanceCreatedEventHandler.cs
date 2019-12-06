@@ -1,5 +1,5 @@
-﻿using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Domains.Events;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Domains.CaseInstance.Events;
 using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Persistence;
 using System.Collections.Generic;
@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.EventHandlers
 {
-    public class ProcessFlowInstanceCreatedEventHandler : IDomainEventHandler<ProcessFlowInstanceCreatedEvent>
+    public class CMMNProcessInstanceCreatedEventHandler : IDomainEventHandler<CMMNProcessInstanceCreatedEvent>
     {
         private readonly IProcessFlowInstanceCommandRepository _processFlowInstanceCommandRepository;
 
-        public ProcessFlowInstanceCreatedEventHandler(IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository)
+        public CMMNProcessInstanceCreatedEventHandler(IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository)
         {
             _processFlowInstanceCommandRepository = processFlowInstanceCommandRepository;
         }
 
-        public async Task Handle(ProcessFlowInstanceCreatedEvent @event, CancellationToken token)
+        public async Task Handle(CMMNProcessInstanceCreatedEvent @event, CancellationToken token)
         {
-            var processFlowInstance = ProcessFlowInstance.New(new List<DomainEvent> { @event });
+            var processFlowInstance = CMMNProcessFlowInstance.NewCMMNProcess(new List<DomainEvent> { @event });
             _processFlowInstanceCommandRepository.Add(processFlowInstance);
             await _processFlowInstanceCommandRepository.SaveChanges();
         }

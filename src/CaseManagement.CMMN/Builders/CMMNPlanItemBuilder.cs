@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.Builders
         public CMMNPlanItemBuilder SetManualActivationRule(string name, CMMNExpression expression)
         {
             var manualActivationRule = new CMMNManualActivationRule(name, expression);
-            PlanItem.PlanItemControl = manualActivationRule;
+            PlanItem.SetManualActivationRule(manualActivationRule);
             return this;
         }
     }

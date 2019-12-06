@@ -1,6 +1,7 @@
 ﻿using CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent;
 using CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.Bus

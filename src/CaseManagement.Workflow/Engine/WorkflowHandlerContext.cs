@@ -1,6 +1,7 @@
 ﻿using CaseManagement.Workflow.Domains;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,6 +37,17 @@ namespace CaseManagement.Workflow.Engine
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
+                if (!ProcessFlowInstance.PreviousElements(CurrentElement.Id).All(e => e.Status == ProcessFlowInstanceElementStatus.Finished) || CurrentElement.Status == ProcessFlowInstanceElementStatus.Launched)
+                {
+                    return;
+                }
+
+                if (CurrentElement.Status == ProcessFlowInstanceElementStatus.Finished)
+                {
+                    await ExecuteNext(cancellationToken);
+                    return;
+                }
+
                 var processor = _processFlowElementProcessorFactory.Build(CurrentElement);
                 await processor.Handle(this, cancellationToken);
             }

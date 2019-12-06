@@ -22,8 +22,8 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }
 
-        public override Type ProcessFlowElementType => typeof(CMMNProcessTask);
-
+        public override string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.ProcessTask).ToLowerInvariant();
+        
         public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
         {
             var pf = context.ProcessFlowInstance;

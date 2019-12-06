@@ -5,12 +5,15 @@ using CaseManagement.CMMN.CaseInstance.Processors;
 using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Domains.CaseInstance.Events;
 using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow.Domains.Events;
 using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure;
+using CaseManagement.Workflow.Infrastructure.Bus;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using System.Collections.Generic;
@@ -28,7 +31,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddEventHandlers()
                 .AddProcessHandlers()
                 .AddInfrastructure()
-                .AddProcessors();
+                .AddProcessors()
+                .AddBus();
             services.AddHangfire((act) =>
             {
                 var inMemory = GlobalConfiguration.Configuration.UseMemoryStorage();
@@ -38,6 +42,12 @@ namespace Microsoft.Extensions.DependencyInjection
             });
             services.AddHangfireServer();
             return builder;
+        }
+
+        public static IServiceCollection AddBus(this IServiceCollection services)
+        {
+            services.AddTransient<IMessageConsumer, ConfirmFormConsumer>();
+            return services;
         }
 
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
@@ -71,11 +81,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDomainEventHandler<ProcessFlowElementLaunchedEvent>, ProcessFlowElementLaunchedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowElementStartedEvent>, ProcessFlowElementStartedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceCompletedEvent>, ProcessFlowInstanceCompletedEventHandler>();
-            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceCreatedEvent>, ProcessFlowInstanceCreatedEventHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNProcessInstanceCreatedEvent>, CMMNProcessInstanceCreatedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceElementStateChangedEvent>, ProcessFlowInstanceElementStateChangedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceFormConfirmedEvent>, ProcessFlowInstanceFormConfirmedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceLaunchedEvent>, ProcessFlowInstanceLaunchedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceVariableAddedEvent>, ProcessFlowInstanceVariableAddedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementBlockedEvent>, ProcessFlowElementBlockedEventHandler>();
             return services;
         }
 
