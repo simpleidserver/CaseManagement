@@ -10,6 +10,8 @@ using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.EvtStore.InMemory;
 using CaseManagement.Workflow.Infrastructure.Lock;
 using CaseManagement.Workflow.Infrastructure.Lock.InMemory;
+using CaseManagement.Workflow.Infrastructure.Scheduler;
+using CaseManagement.Workflow.Infrastructure.Scheduler.InMemory;
 using CaseManagement.Workflow.Persistence;
 using CaseManagement.Workflow.Persistence.InMemory;
 using NEventStore;
@@ -35,7 +37,16 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddInfrastructure()
                 .AddSnapshotStore()
                 .AddBus()
+                .AddScheduler()
                 .AddLock();
+            return services;
+        }
+
+        private static IServiceCollection AddScheduler(this IServiceCollection services)
+        {
+            services.AddSingleton<IScheduleJobStore, InMemoryScheduleJobStore>();
+            services.AddTransient<ISchedulerHost, SchedulerHost>();
+            services.AddHostedService<SchedulerHostedService>();
             return services;
         }
 

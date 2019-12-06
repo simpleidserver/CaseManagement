@@ -8,12 +8,14 @@ using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.CaseInstance.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
+using CaseManagement.CMMN.Infrastructures.Scheduler;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow.Domains.Events;
 using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
+using CaseManagement.Workflow.Infrastructure.Scheduler;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using System.Collections.Generic;
@@ -32,6 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddProcessHandlers()
                 .AddInfrastructure()
                 .AddProcessors()
+                .AddScheduledJobHandlers()
                 .AddBus();
             services.AddHangfire((act) =>
             {
@@ -102,6 +105,12 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddProcessHandlers(this IServiceCollection services)
         {
             services.AddTransient<ICaseProcessHandler, CaseManagementCallbackProcessHandler>();
+            return services;
+        }
+
+        private static IServiceCollection AddScheduledJobHandlers(this IServiceCollection services)
+        {
+            services.AddTransient<IScheduleJobHandler<TimerEventMessage>, CMMNTimerEventHandler>();
             return services;
         }
     }

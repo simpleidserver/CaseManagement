@@ -16,6 +16,7 @@ Scenario: Check errors are returned when submit form and case-instance-element d
 	| case_id            | testCase			   |
 	And extract JSON from body
 	And extract 'id' from JSON body
+	And wait '15' seconds
 	And execute HTTP POST JSON request 'http://localhost/case-instances/$id$/confirm/ProcessTask'
 	| Key | Value |
 	And extract JSON from body
@@ -33,6 +34,7 @@ Scenario: Check errors are returned when submit form with missing required field
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '15' seconds
 	And execute HTTP POST JSON request 'http://localhost/case-instances/$id$/confirm/PI_ProcessTask_1'
 	| Key | Value |
 	And extract JSON from body

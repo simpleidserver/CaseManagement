@@ -25,7 +25,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
         
         public async Task<bool> Handle(ConfirmFormCommand confirmFormCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<ProcessFlowInstance>(confirmFormCommand.CaseInstanceId, ProcessFlowInstance.GetStreamName(confirmFormCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(confirmFormCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(confirmFormCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(confirmFormCommand.CaseInstanceId);
