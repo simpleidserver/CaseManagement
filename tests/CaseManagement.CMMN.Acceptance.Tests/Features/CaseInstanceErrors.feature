@@ -24,7 +24,6 @@ Scenario: Check errors are returned when submit form and case-instance-element d
 	Then HTTP status code equals to '404'
 	Then JSON 'errors.bad_request[0]'='case instance element doesn't exist'
 
-
 Scenario: Check errors are returned when submit form with missing required fields
 	When execute HTTP POST JSON request 'http://localhost/case-instances'
 	| Key                | Value               |

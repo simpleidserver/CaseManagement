@@ -21,6 +21,7 @@ namespace CaseManagement.CMMN.Tests
                 .Build();
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddCMMN();
+            serviceCollection.AddLogging();
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var queryRepository = serviceProvider.GetService<IProcessFlowInstanceQueryRepository>();

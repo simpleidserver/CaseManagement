@@ -17,11 +17,5 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
             };
             return queueProvider.Queue(DomainEventMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
         }
-
-        public static Task QueueLaunchProcess(this IQueueProvider queueProvider, string processId)
-        {
-            var message = new LaunchProcessMessage(processId);
-            return queueProvider.Queue(LaunchProcessMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
-        }
     }
 }

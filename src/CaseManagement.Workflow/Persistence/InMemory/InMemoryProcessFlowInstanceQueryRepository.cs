@@ -48,57 +48,63 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public Task<FindResponse<ProcessFlowInstanceExecutionStep>> FindExecutionSteps(FindExecutionStepsParameter parameter)
         {
-            var processFlowInstance = _processFlowInstances.FirstOrDefault(p => p.Id == parameter.ProcessFlowInstanceId);
-            if (processFlowInstance == null)
+            lock(_obj)
             {
+                var processFlowInstance = _processFlowInstances.FirstOrDefault(p => p.Id == parameter.ProcessFlowInstanceId);
+                if (processFlowInstance == null)
+                {
+                    return Task.FromResult(new FindResponse<ProcessFlowInstanceExecutionStep>
+                    {
+                        StartIndex = parameter.StartIndex,
+                        Count = parameter.Count,
+                        TotalLength = 0,
+                        Content = new List<ProcessFlowInstanceExecutionStep>()
+                    });
+                }
+
+                IQueryable<ProcessFlowInstanceExecutionStep> result = processFlowInstance.ExecutionSteps.AsQueryable();
+                if (MAPPING_PROCESSINSTANCEEXECUTIONSTEP_NAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+                {
+                    result = InvokeOrderBy(result, MAPPING_PROCESSINSTANCEEXECUTIONSTEP_NAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+                }
+
+                int totalLength = result.Count();
+                result = result.Skip(parameter.StartIndex).Take(parameter.Count);
                 return Task.FromResult(new FindResponse<ProcessFlowInstanceExecutionStep>
                 {
                     StartIndex = parameter.StartIndex,
                     Count = parameter.Count,
-                    TotalLength = 0,
-                    Content = new List<ProcessFlowInstanceExecutionStep>()
+                    TotalLength = totalLength,
+                    Content = result.ToList()
                 });
             }
-        
-            IQueryable<ProcessFlowInstanceExecutionStep> result = processFlowInstance.ExecutionSteps.AsQueryable();
-            if(MAPPING_PROCESSINSTANCEEXECUTIONSTEP_NAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
-            {
-                result = InvokeOrderBy(result, MAPPING_PROCESSINSTANCEEXECUTIONSTEP_NAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
-            }
-        
-            int totalLength = result.Count();
-            result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<ProcessFlowInstanceExecutionStep>
-            {
-                StartIndex = parameter.StartIndex,
-                Count = parameter.Count,
-                TotalLength = totalLength,
-                Content = result.ToList()
-            });
         }
 
         public Task<FindResponse<ProcessFlowInstance>> Find(FindWorkflowInstanceParameter parameter)
         {
-            IQueryable<ProcessFlowInstance> result = _processFlowInstances.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(parameter.ProcessFlowTemplateId))
+            lock(_obj)
             {
-                result = result.Where(r => r.ProcessFlowTemplateId == parameter.ProcessFlowTemplateId);
-            }
+                IQueryable<ProcessFlowInstance> result = _processFlowInstances.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(parameter.ProcessFlowTemplateId))
+                {
+                    result = result.Where(r => r.ProcessFlowTemplateId == parameter.ProcessFlowTemplateId);
+                }
 
-            if (MAPPING_PROCESSINSTANCE_NAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
-            {
-                result = InvokeOrderBy(result, MAPPING_PROCESSINSTANCE_NAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
-            }
+                if (MAPPING_PROCESSINSTANCE_NAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+                {
+                    result = InvokeOrderBy(result, MAPPING_PROCESSINSTANCE_NAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+                }
 
-            int totalLength = result.Count();
-            result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<ProcessFlowInstance>
-            {
-                StartIndex = parameter.StartIndex,
-                Count = parameter.Count,
-                TotalLength = totalLength,
-                Content = result.ToList()
-            });
+                int totalLength = result.Count();
+                result = result.Skip(parameter.StartIndex).Take(parameter.Count);
+                return Task.FromResult(new FindResponse<ProcessFlowInstance>
+                {
+                    StartIndex = parameter.StartIndex,
+                    Count = parameter.Count,
+                    TotalLength = totalLength,
+                    Content = result.ToList()
+                });
+            }
         }
 
         private static IQueryable<T> InvokeOrderBy<T>(IQueryable<T> source, string propertyName, FindOrders order)

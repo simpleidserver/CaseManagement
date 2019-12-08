@@ -37,7 +37,7 @@ namespace CaseManagement.Workflow.Infrastructure.EvtStore.InMemory
 
         private static SnapshotElement<T> Copy<T>(SnapshotElement<BaseAggregate> obj) where T : BaseAggregate
         {
-            var copy = (T)obj.Content.Clone();
+            var copy = (T)(obj.Content).Clone();
             return new SnapshotElement<T>(obj.Start, obj.CreateDateTime, copy);
         }
     }

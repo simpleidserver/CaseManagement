@@ -14,18 +14,22 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
     [Binding]
     public class SharedSteps
     {
-        // private static Semaphore _obj = new Semaphore(initialCount: 1, maximumCount: 1);
+        private static Semaphore _obj = new Semaphore(initialCount: 1, maximumCount: 1);
         private readonly ScenarioContext _scenarioContext;
         private static CustomWebApplicationFactory<FakeStartup> _factory;
+        private static HttpClient _client;
 
         public SharedSteps(ScenarioContext scenarioContext)
         {
-            // _obj.WaitOne();
+            _obj.WaitOne();
             _scenarioContext = scenarioContext;
             if (_factory == null)
             {
                 _factory = new CustomWebApplicationFactory<FakeStartup>();
+                _client = _factory.CreateClient();
             }
+
+            _obj.Release();
         }
 
         [When("execute HTTP GET request '(.*)'")]
@@ -37,7 +41,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(url)
             };
-            var httpResponseMessage = await _factory.CreateClient().SendAsync(httpRequestMessage).ConfigureAwait(false);
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
         
@@ -65,7 +69,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
                 RequestUri = new Uri(Parse(url)),
                 Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
             };
-            var httpResponseMessage = await _factory.CreateClient().SendAsync(httpRequestMessage).ConfigureAwait(false);
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
 

@@ -49,7 +49,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
 
         private async Task HandleConfirmForm(ConfirmFormMessage confirmFormMessage, string processId, CancellationToken cancellationToken)
         {
-            var flowInstance = await _eventStoreRepository.GetLastAggregate<ProcessFlowInstance>(confirmFormMessage.ProcessFlowId, ProcessFlowInstance.GetStreamName(confirmFormMessage.ProcessFlowId));
+            var flowInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(confirmFormMessage.ProcessFlowId, CMMNProcessFlowInstance.GetCMMNStreamName(confirmFormMessage.ProcessFlowId));
             if (flowInstance == null)
             {
                 TaskPool.RemoveTask(processId);

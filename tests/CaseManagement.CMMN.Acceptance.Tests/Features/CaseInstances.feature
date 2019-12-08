@@ -10,7 +10,7 @@ Scenario: Launch sEntryWithCondition case instance and check his status is compl
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
-	And wait '15' seconds
+	And wait '10' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 	
@@ -28,7 +28,7 @@ Scenario: Launch caseWithProcessTask case instance and check his status is compl
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
-	And wait '15' seconds
+	And wait '10' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 
@@ -51,14 +51,14 @@ Scenario: Launch caseWithHumanTask case instance and check his status is complet
 	And execute HTTP POST JSON request 'http://localhost/case-instances/$id$/confirm/PI_ProcessTask_1'
 	| Key  | Value |	
 	| name | name  |
-	And wait '15' seconds
+	And wait '10' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
 	Then JSON 'status'='completed'
 
-Scenario: Launch caseWithTimerEventListener case instance and check his status is completed
+Scenario: Launch caseWithTimerEventListDener case instance and check his status is completed
 	When execute HTTP POST JSON request 'http://localhost/case-instances'
 	| Key                | Value                      |
 	| case_definition_id | caseWithTimerEventListener |
@@ -67,7 +67,7 @@ Scenario: Launch caseWithTimerEventListener case instance and check his status i
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
-	And wait '15' seconds
+	And wait '10' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 

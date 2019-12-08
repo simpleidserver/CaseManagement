@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.Lock.InMemory
@@ -7,6 +6,11 @@ namespace CaseManagement.Workflow.Infrastructure.Lock.InMemory
     public class InMemoryDistributedLock : IDistributedLock
     {
         private List<string> _locks = new List<string>();
+
+        public Task<bool> IsLocked(string id)
+        {
+            return Task.FromResult(_locks.Contains(id));
+        }
 
         public Task<bool> AcquireLock(string id)
         {

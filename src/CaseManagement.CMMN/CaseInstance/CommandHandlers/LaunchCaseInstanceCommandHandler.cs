@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
+using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
@@ -25,7 +26,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(launchCaseInstanceCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(launchCaseInstanceCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
-                // TODO : THROW EXCEPTION.
+                throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CaseInstanceId);
             }
 
 

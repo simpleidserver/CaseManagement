@@ -2,9 +2,12 @@
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure;
+using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
+using CaseManagement.Workflow.Infrastructure.Lock;
 using CaseManagement.Workflow.Infrastructure.Scheduler;
 using CaseManagement.Workflow.ISO8601;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -14,20 +17,31 @@ namespace CaseManagement.CMMN.Infrastructures.Scheduler
 {
     public class CMMNTimerEventHandler : IScheduleJobHandler<TimerEventMessage>
     {
+        private readonly IDistributedLock _distributedLock;
         private readonly IProcessFlowElementProcessorFactory _factory;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly IEventStoreRepository _eventStoreRepository;
+        private readonly BusOptions _busOptions;
 
-        public CMMNTimerEventHandler(IProcessFlowElementProcessorFactory factory, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository)
+        public CMMNTimerEventHandler(IDistributedLock distributedLock, IProcessFlowElementProcessorFactory factory, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, IOptions<BusOptions> options)
         {
+            _distributedLock = distributedLock;
             _factory = factory;
             _commitAggregateHelper = commitAggregateHelper;
             _eventStoreRepository = eventStoreRepository;
+            _busOptions = options.Value;
         }
 
         public async Task Handle(TimerEventMessage message, CancellationToken token)
         {
-            var flowInstance = await _eventStoreRepository.GetLastAggregate<ProcessFlowInstance>(message.ProcessId, ProcessFlowInstance.GetStreamName(message.ProcessId));
+            if (!await _distributedLock.AcquireLock(message.ProcessId))
+            {
+                await Task.Delay(_busOptions.ConcurrencyExceptionIdleTimeInMs);
+                await Handle(message, token);
+                return;
+            }
+
+            var flowInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(message.ProcessId, CMMNProcessFlowInstance.GetCMMNStreamName(message.ProcessId));
             if (flowInstance == null)
             {
                 return;
@@ -61,6 +75,7 @@ namespace CaseManagement.CMMN.Infrastructures.Scheduler
             }
             finally
             {
+                await _distributedLock.ReleaseLock(message.ProcessId);
                 await _commitAggregateHelper.Commit(flowInstance, flowInstance.GetStreamName());
             }
         }

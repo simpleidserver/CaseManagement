@@ -1,6 +1,7 @@
 ﻿using NEventStore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,7 +68,7 @@ namespace CaseManagement.Workflow.Infrastructure.EvtStore.InMemory
                     domainEvents.AddRange(commit.Events.Select(e => (DomainEvent)e.Body));
                 }
             }
-
+            
             return domainEvents;
         }
     }

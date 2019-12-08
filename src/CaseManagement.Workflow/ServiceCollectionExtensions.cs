@@ -80,7 +80,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IRunningTaskPool, RunningTaskPool>();
             services.AddSingleton<IQueueProvider, InMemoryQueueProvider>();
             services.AddTransient<IMessageConsumer, DomainEventMessageConsumer>();
-            services.AddTransient<IMessageConsumer, LaunchProcessMessageConsumer>();
             services.AddTransient<IMessageConsumer, StopProcessMessageConsumer>();
             return services;
         }

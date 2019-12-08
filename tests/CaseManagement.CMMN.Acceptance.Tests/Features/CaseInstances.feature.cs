@@ -104,7 +104,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 12
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 13
- testRunner.And("wait \'15\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("wait \'10\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 14
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 15
@@ -149,7 +149,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 30
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 31
- testRunner.And("wait \'15\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("wait \'10\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 32
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 33
@@ -208,7 +208,7 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances/$id$/confirm/PI_P" +
                     "rocessTask_1\'", ((string)(null)), table9, "And ");
 #line 54
- testRunner.And("wait \'15\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("wait \'10\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 55
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 56
@@ -221,15 +221,15 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
-        [Xunit.FactAttribute(DisplayName="Launch caseWithTimerEventListener case instance and check his status is completed" +
-            "")]
+        [Xunit.FactAttribute(DisplayName="Launch caseWithTimerEventListDener case instance and check his status is complete" +
+            "d")]
         [Xunit.TraitAttribute("FeatureTitle", "CaseInstances")]
-        [Xunit.TraitAttribute("Description", "Launch caseWithTimerEventListener case instance and check his status is completed" +
-            "")]
-        public virtual void LaunchCaseWithTimerEventListenerCaseInstanceAndCheckHisStatusIsCompleted()
+        [Xunit.TraitAttribute("Description", "Launch caseWithTimerEventListDener case instance and check his status is complete" +
+            "d")]
+        public virtual void LaunchCaseWithTimerEventListDenerCaseInstanceAndCheckHisStatusIsCompleted()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithTimerEventListener case instance and check his status is completed" +
-                    "", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithTimerEventListDener case instance and check his status is complete" +
+                    "d", null, ((string[])(null)));
 #line 61
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -252,7 +252,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 69
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 70
- testRunner.And("wait \'15\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("wait \'10\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 71
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 72

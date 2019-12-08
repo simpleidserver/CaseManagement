@@ -406,6 +406,11 @@ namespace CaseManagement.Workflow.Domains
 
         public override object Clone()
         {
+            return HandleClone();
+        }
+
+        public virtual object HandleClone()
+        {
             return new ProcessFlowInstance
             {
                 Id = Id,

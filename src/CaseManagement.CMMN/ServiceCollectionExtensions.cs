@@ -8,6 +8,7 @@ using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.CaseInstance.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
+using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
 using CaseManagement.CMMN.Infrastructures.Scheduler;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
@@ -50,6 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddBus(this IServiceCollection services)
         {
             services.AddTransient<IMessageConsumer, ConfirmFormConsumer>();
+            services.AddTransient<IMessageConsumer, CMMNLaunchProcessMessageConsumer>();
             return services;
         }
 

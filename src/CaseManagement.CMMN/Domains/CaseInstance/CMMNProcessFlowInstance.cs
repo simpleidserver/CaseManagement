@@ -58,5 +58,22 @@ namespace CaseManagement.CMMN.Domains
             Connectors = evt.Connectors;
             Version = evt.Version;
         }
+
+        public override object HandleClone()
+        {
+            return new CMMNProcessFlowInstance
+            {
+                Id = Id,
+                CreateDateTime = CreateDateTime,
+                ProcessFlowTemplateId = ProcessFlowTemplateId,
+                ProcessFlowName = ProcessFlowName,
+                Version = Version,
+                Status = Status,
+                ExecutionSteps = ExecutionSteps.Select(c => (ProcessFlowInstanceExecutionStep)c.Clone()).ToList(),
+                Connectors = Connectors.Select(c => (ProcessFlowConnector)c.Clone()).ToList(),
+                Elements = Elements.Select(e => (ProcessFlowInstanceElement)e.Clone()).ToList(),
+                ExecutionContext = (ProcessFlowInstanceExecutionContext)ExecutionContext.Clone()
+            };
+        }
     }
 }

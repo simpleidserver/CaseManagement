@@ -1,5 +1,4 @@
-﻿using CaseManagement.Workflow.Infrastructure.Bus.Exceptions;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using System.Threading;
 using System.Threading.Tasks;
 

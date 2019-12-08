@@ -5,13 +5,12 @@ using CaseManagement.Workflow.Infrastructure.Lock;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess
 {
-    public class LaunchProcessMessageConsumer : BaseMessageConsumer
+    public abstract class BaseProcessInstanceMessageConsumer<T> : BaseMessageConsumer where T : ProcessFlowInstance
     {
         private readonly ILogger _logger;
         private readonly IDistributedLock _distributedLock;
@@ -19,7 +18,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess
         private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly IEventStoreRepository _eventStoreRepository;
 
-        public LaunchProcessMessageConsumer(ILogger<LaunchProcessMessageConsumer> logger, IDistributedLock distributedLock, IWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public BaseProcessInstanceMessageConsumer(ILogger<BaseProcessInstanceMessageConsumer<T>> logger, IDistributedLock distributedLock, IWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;
@@ -41,7 +40,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess
 
         private async Task HandleLaunchProcess(string pfId, CancellationToken token)
         {
-            var flowInstance = await _eventStoreRepository.GetLastAggregate<ProcessFlowInstance>(pfId, ProcessFlowInstance.GetStreamName(pfId));
+            var flowInstance = await _eventStoreRepository.GetLastAggregate<T>(pfId, GetStreamName(pfId));
             if (flowInstance == null)
             {
                 TaskPool.RemoveTask(flowInstance.Id);
@@ -79,5 +78,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess
                 await _distributedLock.ReleaseLock(lockId);
             }
         }
+
+        protected abstract string GetStreamName(string id);
     }
 }

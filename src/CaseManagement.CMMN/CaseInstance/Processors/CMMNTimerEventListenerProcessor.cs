@@ -1,5 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.Infrastructures.Scheduler;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure.Scheduler;
@@ -7,10 +8,8 @@ using CaseManagement.Workflow.ISO8601;
 using CaseManagement.Workflow.Persistence;
 using Hangfire;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CaseManagement.CMMN.Infrastructures.Scheduler;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
@@ -69,60 +68,6 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 // _backgroundJobClient.Schedule(() => HandleListener(pf.Id, planItem.Id), time.Value);
             }
 
-            return Task.FromResult(0);
-        }
-
-        [DisableConcurrentExecution(60)]
-        public async Task HandleListener(string processInstanceId, string processInstanceEltId)
-        {
-            var processFlowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(processInstanceId);
-            var currentElement = processFlowInstance.Elements.First(e => e.Id == processInstanceEltId) as CMMNPlanItem;
-            processFlowInstance.StartElement(currentElement);
-            processFlowInstance.OccurPlanItem(processInstanceEltId);
-            var factory = (IProcessFlowElementProcessorFactory)_serviceProvider.GetService(typeof(IProcessFlowElementProcessorFactory));
-            foreach (var nextElement in processFlowInstance.NextElements(currentElement.Id))
-            {
-                await Start(processFlowInstance, nextElement, factory);
-            }
-
-            var nbOccures = currentElement.TransitionHistories.Where(t => t.Transition == CMMNPlanItemTransitions.Occur).Count();
-            var timerEventListener = currentElement.PlanItemDefinitionTimerEventListener;
-            var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
-            var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
-            processFlowInstance.CompleteElement(currentElement);
-            if ((repeatingInterval.RecurringTimeInterval == nbOccures || time != null) && processFlowInstance.IsFinished())
-            {
-                if (processFlowInstance.IsFinished())
-                {
-                    processFlowInstance.Complete();
-                }
-            }
-
-            _processFlowInstanceCommandRepository.Update(processFlowInstance);
-            await _processFlowInstanceCommandRepository.SaveChanges();
-        }
-
-        private Task Start(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceElement elt, IProcessFlowElementProcessorFactory factory)
-        {
-            /*
-            var processor = factory.Build(elt);
-            await processor.Handle(processFlowInstance, elt);
-            if (elt.Status != ProcessFlowInstanceElementStatus.Finished)
-            {
-                return;
-            }
-
-            var nextElts = processFlowInstance.NextElements(elt.Id);
-            if (!nextElts.Any())
-            {
-                return;
-            }
-
-            foreach (var nextElt in nextElts)
-            {
-                await Start(processFlowInstance, nextElt, factory);
-            }
-            */
             return Task.FromResult(0);
         }
     }
