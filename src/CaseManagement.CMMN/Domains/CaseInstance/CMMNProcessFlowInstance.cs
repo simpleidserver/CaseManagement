@@ -12,7 +12,7 @@ namespace CaseManagement.CMMN.Domains
         public static CMMNProcessFlowInstance NewCMMNProcess(string processFlowTemplateId, string processFlowName, ICollection<CMMNPlanItem> elements, ICollection<ProcessFlowConnector> connectors)
         {
             var result = new CMMNProcessFlowInstance();
-            var evt = new CMMNProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFlowTemplateId, processFlowName, DateTime.UtcNow, elements, connectors);
+            var evt = new CMMNProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFlowTemplateId, processFlowName, DateTime.UtcNow, elements.Select(e => (CMMNPlanItem)e.Clone()).ToList(), connectors);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -54,7 +54,7 @@ namespace CaseManagement.CMMN.Domains
             ProcessFlowTemplateId = evt.ProcessFlowTemplateId;
             ProcessFlowName = evt.ProcessFlowName;
             CreateDateTime = evt.CreateDateTime;
-            Elements = evt.Elements.Cast<ProcessFlowInstanceElement>().ToList();
+            Elements = evt.Elements.Select(e => (ProcessFlowInstanceElement)e.Clone()).ToList();
             Connectors = evt.Connectors;
             Version = evt.Version;
         }

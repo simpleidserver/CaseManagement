@@ -15,19 +15,25 @@ namespace CaseManagement.Workflow.Infrastructure.EvtStore.InMemory
 
         public Task<SnapshotElement<T>> GetLast<T>(string id) where T : BaseAggregate
         {
-            var result = _snapshots.Where(s => s.Content.Id == id).OrderByDescending(s => s.CreateDateTime).FirstOrDefault();
-            if (result == null)
+            lock(_snapshots)
             {
-                return Task.FromResult((SnapshotElement<T>)null);
-            }
+                var result = _snapshots.Where(s => s.Content.Id == id).OrderByDescending(s => s.CreateDateTime).FirstOrDefault();
+                if (result == null)
+                {
+                    return Task.FromResult((SnapshotElement<T>)null);
+                }
 
-            return Task.FromResult(Copy<T>(result));
+                return Task.FromResult(Copy<T>(result));
+            }
         }
 
         public Task<bool> Add(SnapshotElement<BaseAggregate> snapshot)
         {
-            _snapshots.Add(snapshot);
-            return Task.FromResult(true);
+            lock(_snapshots)
+            {
+                _snapshots.Add(snapshot);
+                return Task.FromResult(true);
+            }
         }
 
         public ICollection<SnapshotElement<T>> Query<T>() where T : BaseAggregate

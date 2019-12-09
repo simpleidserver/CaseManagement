@@ -17,7 +17,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public void Add(ProcessFlowInstance processFlowInstance)
         {
-            lock(_obj)
+            lock(_processFlowInstances)
             {
                 _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());
             }
@@ -25,7 +25,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public void Update(ProcessFlowInstance processFlowInstance)
         {
-            lock(_obj)
+            lock(_processFlowInstances)
             {
                 _processFlowInstances.Remove(_processFlowInstances.First(p => p.Id == processFlowInstance.Id));
                 _processFlowInstances.Add((ProcessFlowInstance)processFlowInstance.Clone());

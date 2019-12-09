@@ -34,7 +34,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public Task<ProcessFlowInstance> FindFlowInstanceById(string id)
         {
-            lock(_obj)
+            lock(_processFlowInstances)
             {
                 var result = _processFlowInstances.FirstOrDefault(p => p.Id == id);
                 if (result == null)
@@ -48,7 +48,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public Task<FindResponse<ProcessFlowInstanceExecutionStep>> FindExecutionSteps(FindExecutionStepsParameter parameter)
         {
-            lock(_obj)
+            lock(_processFlowInstances)
             {
                 var processFlowInstance = _processFlowInstances.FirstOrDefault(p => p.Id == parameter.ProcessFlowInstanceId);
                 if (processFlowInstance == null)
@@ -82,7 +82,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 
         public Task<FindResponse<ProcessFlowInstance>> Find(FindWorkflowInstanceParameter parameter)
         {
-            lock(_obj)
+            lock(_processFlowInstances)
             {
                 IQueryable<ProcessFlowInstance> result = _processFlowInstances.AsQueryable();
                 if (!string.IsNullOrWhiteSpace(parameter.ProcessFlowTemplateId))

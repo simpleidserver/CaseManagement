@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace CaseManagement.Workflow.Domains
 {
@@ -211,7 +212,7 @@ namespace CaseManagement.Workflow.Domains
         public static ProcessFlowInstance New(string processFlowTemplateId, string processFlowName, ICollection<ProcessFlowInstanceElement> elements, ICollection<ProcessFlowConnector> connectors)
         {
             var result = new ProcessFlowInstance();
-            var evt = new ProcessFlowInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFlowTemplateId, processFlowName, DateTime.UtcNow, elements, connectors);
+            var evt = new ProcessFlowInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFlowTemplateId, processFlowName, DateTime.UtcNow, elements.Select(e => (ProcessFlowInstanceElement)e.Clone()).ToList(), connectors);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;

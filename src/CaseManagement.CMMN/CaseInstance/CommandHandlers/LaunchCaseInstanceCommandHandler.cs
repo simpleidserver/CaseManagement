@@ -30,8 +30,8 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
 
-            caseInstance.Launch();
-            await _commitAggregateHelper.Commit(caseInstance, caseInstance.GetStreamName());
+            // caseInstance.Launch();
+            // await _commitAggregateHelper.Commit(caseInstance, caseInstance.GetStreamName());
             await _queueProvider.QueueLaunchProcess(caseInstance.Id);
         }
     }

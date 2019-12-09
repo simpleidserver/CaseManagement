@@ -8,6 +8,7 @@ using CaseManagement.Workflow.Infrastructure.Lock;
 using CaseManagement.Workflow.Infrastructure.Scheduler;
 using CaseManagement.Workflow.ISO8601;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -40,7 +41,7 @@ namespace CaseManagement.CMMN.Infrastructures.Scheduler
                 await Handle(message, token);
                 return;
             }
-
+            
             var flowInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(message.ProcessId, CMMNProcessFlowInstance.GetCMMNStreamName(message.ProcessId));
             if (flowInstance == null)
             {
@@ -75,8 +76,8 @@ namespace CaseManagement.CMMN.Infrastructures.Scheduler
             }
             finally
             {
-                await _distributedLock.ReleaseLock(message.ProcessId);
                 await _commitAggregateHelper.Commit(flowInstance, flowInstance.GetStreamName());
+                await _distributedLock.ReleaseLock(message.ProcessId);
             }
         }
         

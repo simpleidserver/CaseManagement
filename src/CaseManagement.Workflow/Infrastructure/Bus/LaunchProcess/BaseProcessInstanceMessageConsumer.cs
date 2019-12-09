@@ -5,6 +5,7 @@ using CaseManagement.Workflow.Infrastructure.Lock;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,6 +61,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess
             {
                 try
                 {
+                    flowInstance.Launch();
                     await _workflowEngine.Start(flowInstance, token);
                 }
                 finally
