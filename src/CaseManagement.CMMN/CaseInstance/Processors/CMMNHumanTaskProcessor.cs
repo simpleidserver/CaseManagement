@@ -1,7 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Domains.Process;
 using CaseManagement.Workflow.Engine;
 using System;
 using System.Threading;
@@ -19,7 +18,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             var cmmnPlanItem = context.GetCMMNPlanItem();
             var humanTask = context.GetCMMNHumanTask();
             var formInstance = pf.GetFormInstance(context.CurrentElement.Id);
-            if (formInstance != null && formInstance.Status == ProcessFlowInstanceElementFormStatus.Complete)
+            if (formInstance == null && !string.IsNullOrWhiteSpace(humanTask.FormId))
+            {
+                pf.CreateForm(cmmnPlanItem.Id, humanTask.FormId, humanTask.PerformerRef);
+            }
+            else if (formInstance != null && formInstance.Status == FormInstanceStatus.Complete)
             {
                 pf.CompletePlanItem(cmmnPlanItem);
                 await context.Complete(token);

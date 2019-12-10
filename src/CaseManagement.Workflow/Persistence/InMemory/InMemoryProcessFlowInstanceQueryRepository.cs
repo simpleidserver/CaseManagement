@@ -107,7 +107,7 @@ namespace CaseManagement.Workflow.Persistence.InMemory
             }
         }
 
-        private static IQueryable<T> InvokeOrderBy<T>(IQueryable<T> source, string propertyName, FindOrders order)
+        public static IQueryable<T> InvokeOrderBy<T>(IQueryable<T> source, string propertyName, FindOrders order)
         {
             var piParametr = Expression.Parameter(typeof(T), "r");
             var property = Expression.Property(piParametr, propertyName);

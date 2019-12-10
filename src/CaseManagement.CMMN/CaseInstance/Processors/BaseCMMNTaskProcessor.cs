@@ -62,7 +62,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         public abstract Task Run(WorkflowHandlerContext context, CancellationToken token);
 
-        private bool CheckCriterion(CMMNCriterion sCriterion, ProcessFlowInstance pf)
+        public static bool CheckCriterion(CMMNCriterion sCriterion, ProcessFlowInstance pf)
         {
             foreach (var onPart in sCriterion.SEntry.OnParts)
             {

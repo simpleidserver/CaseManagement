@@ -64,6 +64,7 @@ namespace CaseManagement.CMMN.Apis
         [HttpPost("{id}/confirm/{elt}")]
         public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
         {
+            // CHECK THE ROLE.
             try
             {
                 await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt, Content = jObj });
@@ -126,41 +127,15 @@ namespace CaseManagement.CMMN.Apis
             {
                 parameter.ProcessFlowTemplateId = templateId;
             }
-            ExtractFindParameter(query, parameter);
+            parameter.ExtractFindParameter(query);
             return parameter;
         }
 
         private static FindExecutionStepsParameter ExtractFindExecutionStepsParameter(IQueryCollection query)
         {
             var parameter = new FindExecutionStepsParameter();
-            ExtractFindParameter(query, parameter);
+            parameter.ExtractFindParameter(query);
             return parameter;
-        }
-
-        private static void ExtractFindParameter(IQueryCollection query, BaseFindParameter parameter)
-        {
-            int startIndex, count;
-            string orderBy;
-            FindOrders findOrder;
-            if (query.TryGet("start_index", out startIndex))
-            {
-                parameter.StartIndex = startIndex;
-            }
-
-            if (query.TryGet("count", out count))
-            {
-                parameter.Count = count;
-            }
-
-            if (query.TryGet("order_by", out orderBy))
-            {
-                parameter.OrderBy = orderBy;
-            }
-
-            if (query.TryGet("order", out findOrder))
-            {
-                parameter.Order = findOrder;
-            }
         }
 
         private static JObject ToDto(FindResponse<ProcessFlowInstanceExecutionStep> resp)

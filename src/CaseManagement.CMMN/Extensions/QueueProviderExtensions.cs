@@ -2,14 +2,14 @@
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
 using CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.Bus
 {
     public static class QueueProviderExtensions
     {
-        public static Task QueueConfirmForm(this IQueueProvider queueProvider, string processId, string elementId, JObject content)
+        public static Task QueueConfirmForm(this IQueueProvider queueProvider, string processId, string elementId, Dictionary<string, string> content)
         {
             var message = new ConfirmFormMessage(processId, elementId, content);
             return queueProvider.Queue(ConfirmFormConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));

@@ -98,7 +98,7 @@ namespace CaseManagement.CMMN.Tests
         [Fact]
         public async Task When_Execute_HumanTask()
         {
-            var form = new Form
+            var form = new FormAggregate
             {
                 Id = "form",
                 Elements = new List<FormElement>
@@ -119,6 +119,7 @@ namespace CaseManagement.CMMN.Tests
                 .AddCMMNTask("1", "First task", (c) => { })
                 .AddCMMNHumanTask("2", "Human task", (c) =>
                 {
+                    c.SetFormId("form");
                     c.SetIsBlocking(true);
                 })
                 .Build();
@@ -129,7 +130,10 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(ProcessFlowInstanceElementStatus.Blocked, instance.Elements.Last().Status);
 
             var humanTask = instance.Elements.Last();
-            instance.ConfirmForm("2", form, jObj);
+            instance.ConfirmForm("2", humanTask.FormInstance.Id, "form", new Dictionary<string, string>
+            {
+                { "name", "name" }
+            });
             await workflowEngine.Start(instance, CancellationToken.None);
 
             Assert.Equal(ProcessFlowInstanceElementStatus.Finished, instance.Elements.First().Status);

@@ -2,9 +2,7 @@
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using Microsoft.Extensions.Options;
 using NEventStore;
-using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure
@@ -30,7 +28,6 @@ namespace CaseManagement.Workflow.Infrastructure
             {
                 foreach (var domainEvent in aggregate.DomainEvents)
                 {
-                    Debug.WriteLine($"Write event {streamName} {JsonConvert.SerializeObject(domainEvent)}");
                     evtStream.Add(new EventMessage { Body = domainEvent });
                 }
 

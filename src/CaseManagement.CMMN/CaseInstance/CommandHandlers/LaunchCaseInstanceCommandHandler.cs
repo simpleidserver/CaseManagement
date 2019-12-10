@@ -28,10 +28,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             {
                 throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CaseInstanceId);
             }
-
-
-            // caseInstance.Launch();
-            // await _commitAggregateHelper.Commit(caseInstance, caseInstance.GetStreamName());
+            
             await _queueProvider.QueueLaunchProcess(caseInstance.Id);
         }
     }

@@ -1,10 +1,14 @@
 ﻿using CaseManagement.CMMN.Acceptance.Tests.Delegates;
 using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithProcessTask;
+using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -14,6 +18,12 @@ namespace CaseManagement.CMMN.Acceptance.Tests
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCustomAuthentication(opts => { });
+            services.AddAuthorization(policy =>
+            {
+                policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
+            });
             var builder = services.AddCMMN();
             builder.AddDefinitions(c =>
             {
@@ -40,19 +50,44 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                     AssemblyQualifiedName = typeof(SetVariableTaskDelegate).AssemblyQualifiedName
                 }
             })
-            .AddForms(new List<Form>
+            .AddForms(new List<FormAggregate>
             {
-                new Form
+                new FormAggregate
                 {
                     Id = "createMeetingForm",
+                    Titles = new List<Translation>
+                    {
+                        new Translation("en", "Create meeting")
+                    },
                     Elements = new List<FormElement>
                     {
                         new FormElement
                         {
                             Id = "name",
+                            Names = new List<Translation>
+                            {
+                                new Translation("en", "Name")
+                            },
+                            Descriptions = new List<Translation>
+                            {
+                                new Translation("en", "Name of the meeting"),
+                                new Translation("fr", "Intitulé de la réunion")
+                            },
                             Type = FormElementTypes.TXT,
                             IsRequired = true
                         }
+                    }
+                }
+            })
+            .AddRoles(new List<RoleAggregate>
+            {
+                new RoleAggregate
+                {
+                    Id = "admin",
+                    Name = "admin",
+                    UserIds = new List<string>
+                    {
+                        "thabart"
                     }
                 }
             });
@@ -60,7 +95,17 @@ namespace CaseManagement.CMMN.Acceptance.Tests
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseAuthentication();
             app.UseCMMN();
+        }
+    }
+
+    public static class ServiceCollectionExtensions
+    {
+        public static AuthenticationBuilder AddCustomAuthentication(this AuthenticationBuilder authBuilder, Action<AuthenticationSchemeOptions> callback)
+        {
+            authBuilder.AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>(CookieAuthenticationDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme, callback);
+            return authBuilder;
         }
     }
 }

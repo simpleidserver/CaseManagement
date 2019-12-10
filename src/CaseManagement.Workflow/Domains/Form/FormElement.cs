@@ -6,13 +6,13 @@ namespace CaseManagement.Workflow.Domains
     {
         public FormElement()
         {
-            Names = new List<FormElementTranslation>();
-            Descriptions = new List<FormElementTranslation>();
+            Names = new List<Translation>();
+            Descriptions = new List<Translation>();
         }
 
         public string Id { get; set; }
-        public ICollection<FormElementTranslation> Names { get; set; }
-        public ICollection<FormElementTranslation> Descriptions { get; set; }
+        public ICollection<Translation> Names { get; set; }
+        public ICollection<Translation> Descriptions { get; set; }
         public FormElementTypes Type { get; set; }
         public bool IsRequired { get; set; }
     }

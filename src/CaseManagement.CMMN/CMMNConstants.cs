@@ -7,6 +7,7 @@
             public const string CaseDefinitions = "case-definitions";
             public const string CaseInstances = "case-instances";
             public const string CaseProcesses = "case-processes";
+            public const string CaseFormInstances = "case-form-instances";
         }
 
         public static class ProcessImplementationTypes

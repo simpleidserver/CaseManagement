@@ -88,7 +88,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceCompletedEvent>, ProcessFlowInstanceCompletedEventHandler>();
             services.AddTransient<IDomainEventHandler<CMMNProcessInstanceCreatedEvent>, CMMNProcessInstanceCreatedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceElementStateChangedEvent>, ProcessFlowInstanceElementStateChangedEventHandler>();
-            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceFormConfirmedEvent>, ProcessFlowInstanceFormConfirmedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementFormConfirmedEvent>, ProcessFlowElementFormConfirmedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementFormCreatedEvent>, ProcessFlowElementFormCreatedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceLaunchedEvent>, ProcessFlowInstanceLaunchedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceVariableAddedEvent>, ProcessFlowInstanceVariableAddedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowElementBlockedEvent>, ProcessFlowElementBlockedEventHandler>();
@@ -101,6 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IProcessFlowElementProcessor, CMMNProcessTaskProcessor>();
             services.AddTransient<IProcessFlowElementProcessor, CMMNTaskProcessor>();
             services.AddTransient<IProcessFlowElementProcessor, CMMNTimerEventListenerProcessor>();
+            services.AddTransient<IProcessFlowElementProcessor, CMMNMilestoneProcessor>();
             return services;
         }
 

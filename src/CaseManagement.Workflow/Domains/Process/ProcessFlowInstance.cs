@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace CaseManagement.Workflow.Domains
 {
@@ -46,7 +45,7 @@ namespace CaseManagement.Workflow.Domains
             return result;
         }
 
-        public ProcessFlowInstanceElementForm GetFormInstance(string eltId)
+        public FormInstanceAggregate GetFormInstance(string eltId)
         {
             var elt = Elements.FirstOrDefault(e => e.Id == eltId);
             if (elt == null)
@@ -133,9 +132,16 @@ namespace CaseManagement.Workflow.Domains
             DomainEvents.Add(evt);
         }
 
-        public void ConfirmForm(string eltId, Form form, JObject content)
+        public void CreateForm(string eltId, string formId, string performerRef)
         {
-            var evt = new ProcessFlowInstanceFormConfirmedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, form, content);
+            var evt = new ProcessFlowElementFormCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, Guid.NewGuid().ToString(), formId, performerRef);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        public void ConfirmForm(string elementId, string formInstanceId, string formId, Dictionary<string, string> formContent)
+        {
+            var evt = new ProcessFlowElementFormConfirmedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, formInstanceId, formId, formContent);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -246,9 +252,9 @@ namespace CaseManagement.Workflow.Domains
                 Handle((ProcessFlowInstanceLaunchedEvent)obj);
             }
 
-            if (obj is ProcessFlowInstanceFormConfirmedEvent)
+            if (obj is ProcessFlowElementFormConfirmedEvent)
             {
-                Handle((ProcessFlowInstanceFormConfirmedEvent)obj);
+                Handle((ProcessFlowElementFormConfirmedEvent)obj);
             }
 
             if (obj is ProcessFlowInstanceCompletedEvent)
@@ -290,6 +296,11 @@ namespace CaseManagement.Workflow.Domains
             {
                 Handle((ProcessFlowElementBlockedEvent)obj);
             }
+
+            if (obj is ProcessFlowElementFormCreatedEvent)
+            {
+                Handle((ProcessFlowElementFormCreatedEvent)obj);
+            }
         }
 
         public void Handle(ProcessFlowInstanceCreatedEvent evt)
@@ -326,12 +337,19 @@ namespace CaseManagement.Workflow.Domains
             Version++;
         }
 
-        public void Handle(ProcessFlowInstanceFormConfirmedEvent evt)
+        public void Handle(ProcessFlowElementFormConfirmedEvent evt)
         {
-            var formInstance = CheckConfirmForm(evt.Form, evt.Content);
-            formInstance.Status = Process.ProcessFlowInstanceElementFormStatus.Complete;
-            var elt = Elements.FirstOrDefault(e => e.Id == evt.ElementId);
-            elt.FormInstance = formInstance;
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            foreach(var kvp in evt.FormContent)
+            {
+                elt.FormInstance.AddElement(new FormInstanceElement
+                {
+                    FormElementId = kvp.Key,
+                    Value = kvp.Value
+                });
+            }
+
+            elt.FormInstance.Status = FormInstanceStatus.Complete;
             Version++;
         }
 
@@ -405,6 +423,15 @@ namespace CaseManagement.Workflow.Domains
             Version++;
         }
 
+        private void Handle(ProcessFlowElementFormCreatedEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            var formInstance = FormInstanceAggregate.New(evt.FormInstanceId, evt.FormId);
+            formInstance.RoleId = evt.PerformerRef;
+            elt.SetFormInstance(formInstance);
+            Version++;
+        }
+
         public override object Clone()
         {
             return HandleClone();
@@ -435,54 +462,6 @@ namespace CaseManagement.Workflow.Domains
         public static string GetStreamName(string id)
         {
             return $"ProcessFlowInstance_{id}";
-        }
-
-        private static ProcessFlowInstanceElementForm CheckConfirmForm(Form form, JObject content)
-        {
-            var errors = new Dictionary<string, string>();
-            var result = ProcessFlowInstanceElementForm.New(form.Id);
-            foreach (var elt in form.Elements)
-            {
-                string value = string.Empty;
-                if (elt.IsRequired && (!content.ContainsKey(elt.Id) || string.IsNullOrWhiteSpace((value = content[elt.Id].ToString())) ))
-                {
-                    errors.Add("validation_error", $"field {elt.Id} is required");
-                }
-                
-                switch(elt.Type)
-                {
-                    case FormElementTypes.INT:
-                        int i;
-                        if (!int.TryParse(value, out i))
-                        {
-                            errors.Add("validation_error", $"field {elt.Id} is not an integer");
-                        }
-                        break;
-                    case FormElementTypes.BOOL:
-                        bool b;
-                        if (!bool.TryParse(value, out b))
-                        {
-                            errors.Add("validation_error", $"field {elt.Id} is not a boolean");
-                        }
-                        break;
-                }
-
-                result.Content.Add(new ProcessFlowInstanceElementFormElement
-                {
-                    FormElementId = elt.Id,
-                    Value = value
-                });
-            }
-
-            if (errors.Any())
-            {
-                throw new ProcessFlowInstanceDomainException
-                {
-                    Errors = errors
-                };
-            }
-
-            return result;
         }
 
         private bool IsFinished(ProcessFlowInstanceElement elt)

@@ -106,6 +106,11 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 return CMMNPlanItem.New(id, name, BuildTimerEventListener((tTimerEventListener)planItemDef));
             }
 
+            if (planItemDef is tMilestone)
+            {
+                return CMMNPlanItem.New(id, name, BuildMilestone((tMilestone)planItemDef));
+            }
+
             return null;
         }
 
@@ -151,7 +156,17 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         private static CMMNHumanTask BuildHumanTask(tHumanTask humanTask)
         {
-            return new CMMNHumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking };
+            return new CMMNHumanTask(humanTask.name)
+            {
+                PerformerRef = humanTask.performerRef,
+                FormId = humanTask.caseFormRef,
+                IsBlocking = humanTask.isBlocking
+            };
+        }
+
+        private static CMMNMilestone BuildMilestone(tMilestone milestone)
+        {
+            return new CMMNMilestone(milestone.name);
         }
 
         private static CMMNTimerEventListener BuildTimerEventListener(tTimerEventListener timerEventListener)

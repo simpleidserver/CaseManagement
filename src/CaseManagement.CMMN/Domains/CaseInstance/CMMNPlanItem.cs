@@ -22,6 +22,7 @@ namespace CaseManagement.CMMN.Domains
         public CMMNHumanTask PlanItemDefinitionHumanTask { get; set; }
         public CMMNProcessTask PlanItemDefinitionProcessTask { get; set; }
         public CMMNTimerEventListener PlanItemDefinitionTimerEventListener { get; set; }
+        public CMMNMilestone PlanItemMilestone { get; set; }
 
         /// <summary>
         /// The PlanItemControl controls aspects of the behavior of instances of the PlanItem object. [0...1]
@@ -110,6 +111,9 @@ namespace CaseManagement.CMMN.Domains
                 case CMMNPlanItemDefinitionTypes.TimerEventListener:
                     PlanItemDefinitionTimerEventListener.Handle(transition);
                     break;
+                case CMMNPlanItemDefinitionTypes.Milestone:
+                    PlanItemMilestone.Handle(transition);
+                    break;
             }
         }
 
@@ -119,6 +123,16 @@ namespace CaseManagement.CMMN.Domains
             {
                 PlanItemDefinitionHumanTask = humanTask,
                 PlanItemDefinitionType = CMMNPlanItemDefinitionTypes.HumanTask
+            };
+            return result;
+        }
+
+        public static CMMNPlanItem New(string id, string name, CMMNMilestone milestone)
+        {
+            var result = new CMMNPlanItem(id, name)
+            {
+                PlanItemMilestone = milestone,
+                PlanItemDefinitionType = CMMNPlanItemDefinitionTypes.Milestone
             };
             return result;
         }
@@ -196,7 +210,7 @@ namespace CaseManagement.CMMN.Domains
             {
                 Status = Status,
                 ActivationRule = ActivationRule,
-                FormInstance = FormInstance == null ? null : (ProcessFlowInstanceElementForm)FormInstance.Clone(),
+                FormInstance = FormInstance == null ? null : (FormInstanceAggregate)FormInstance.Clone(),
                 ManualActivationRule = ManualActivationRule == null ? null : (CMMNManualActivationRule)ManualActivationRule.Clone(),
                 PlanItemDefinitionHumanTask = PlanItemDefinitionHumanTask == null ? null : (CMMNHumanTask)PlanItemDefinitionHumanTask.Clone(),
                 PlanItemDefinitionProcessTask = PlanItemDefinitionProcessTask == null ? null : (CMMNProcessTask)PlanItemDefinitionProcessTask.Clone(),
@@ -205,7 +219,8 @@ namespace CaseManagement.CMMN.Domains
                 PlanItemDefinitionType = PlanItemDefinitionType,
                 EntryCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
                 ExitCriterions = ExitCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
-                TransitionHistories = TransitionHistories.Select(e => (CMMNPlanItemStateHistory)e.Clone()).ToList()
+                TransitionHistories = TransitionHistories.Select(e => (CMMNPlanItemStateHistory)e.Clone()).ToList(),
+                PlanItemMilestone = PlanItemMilestone == null ? null : (CMMNMilestone)PlanItemMilestone.Clone()
             };
         }
     }

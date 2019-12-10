@@ -1,15 +1,12 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.Lock;
-using CaseManagement.Workflow.Persistence;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,16 +15,14 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
 {
     public class ConfirmFormConsumer : BaseMessageConsumer
     {
-        private readonly IFormQueryRepository _formQueryRepository;
         private readonly ILogger _logger;
         private readonly IDistributedLock _distributedLock;
         private readonly IWorkflowEngine _workflowEngine;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly IEventStoreRepository _eventStoreRepository;
 
-        public ConfirmFormConsumer(IFormQueryRepository formQueryRepository, ILogger<ConfirmFormConsumer> logger, IDistributedLock distributedLock, IWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public ConfirmFormConsumer(ILogger<ConfirmFormConsumer> logger, IDistributedLock distributedLock, IWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
         {
-            _formQueryRepository = formQueryRepository;
             _logger = logger;
             _distributedLock = distributedLock;
             _workflowEngine = workflowEngine;
@@ -71,8 +66,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
                 {
                     var flowInstanceElt = flowInstance.Elements.FirstOrDefault(e => e.Id == confirmFormMessage.ProcessElementId) as CMMNPlanItem;
                     var humanTask = flowInstanceElt.PlanItemDefinitionHumanTask;
-                    var form = await _formQueryRepository.FindFormById(humanTask.FormId);
-                    flowInstance.ConfirmForm(confirmFormMessage.ProcessElementId, form, confirmFormMessage.Content);
+                    flowInstance.ConfirmForm(confirmFormMessage.ProcessElementId, flowInstanceElt.FormInstance.Id, humanTask.FormId, confirmFormMessage.Content);
                     await _workflowEngine.Start(flowInstance, cancellationToken);
                 }
                 finally

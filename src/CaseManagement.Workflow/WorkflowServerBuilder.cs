@@ -15,10 +15,17 @@ namespace CaseManagement.Workflow
 
         public IServiceCollection Services { get; private set; }
 
-        public WorkflowServerBuilder AddForms(ICollection<Form> forms)
+        public WorkflowServerBuilder AddForms(ICollection<FormAggregate> forms)
         {
             Services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
             Services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
+            return this;
+        }
+
+        public WorkflowServerBuilder AddRoles(ICollection<RoleAggregate> roles)
+        {
+            Services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
+            Services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
             return this;
         }
     }

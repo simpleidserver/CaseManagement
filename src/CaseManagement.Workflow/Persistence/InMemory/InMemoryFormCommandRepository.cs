@@ -6,14 +6,14 @@ namespace CaseManagement.Workflow.Persistence.InMemory
 {
     public class InMemoryFormCommandRepository : IFormCommandRepository
     {
-        private ICollection<Form> _forms;
+        private ICollection<FormAggregate> _forms;
 
-        public InMemoryFormCommandRepository(ICollection<Form> forms)
+        public InMemoryFormCommandRepository(ICollection<FormAggregate> forms)
         {
             _forms = forms;
         }
 
-        public void Add(Form form)
+        public void Add(FormAggregate form)
         {
             _forms.Add(form);
         }

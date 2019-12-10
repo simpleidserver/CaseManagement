@@ -15,7 +15,7 @@ namespace CaseManagement.Workflow.Domains
         public string Id { get; set; }
         public string Name { get; set; }
         public ProcessFlowInstanceElementStatus? Status { get; set; }
-        public ProcessFlowInstanceElementForm FormInstance { get; set; }
+        public FormInstanceAggregate FormInstance { get; set; }
 
         public void Launch()
         {
@@ -39,7 +39,7 @@ namespace CaseManagement.Workflow.Domains
             Status = ProcessFlowInstanceElementStatus.Finished;
         }
 
-        public void SetFormInstance(ProcessFlowInstanceElementForm formInstance)
+        public void SetFormInstance(FormInstanceAggregate formInstance)
         {
             FormInstance = formInstance;
         }

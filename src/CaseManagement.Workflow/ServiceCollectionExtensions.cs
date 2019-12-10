@@ -4,7 +4,6 @@ using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent;
 using CaseManagement.Workflow.Infrastructure.Bus.InMemory;
-using CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess;
 using CaseManagement.Workflow.Infrastructure.Bus.StopProcess;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.EvtStore.InMemory;
@@ -24,7 +23,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddWorkflow(this IServiceCollection services)
         {
             var processFlowInstances = new List<ProcessFlowInstance>();
-            var forms = new List<Form>();
+            var forms = new List<FormAggregate>();
+            var formInstances = new List<FormInstanceAggregate>();
+            var roles = new List<RoleAggregate>();
             services.AddMvc();
             services.AddHostedService<BusHostedService>();
             services.AddTransient<IWorkflowEngine, WorkflowEngine>();
@@ -32,6 +33,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IProcessFlowInstanceCommandRepository>(new InMemoryProcessFlowInstanceCommandRepository(processFlowInstances));
             services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
             services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
+            services.AddSingleton<IFormInstanceCommandRepository>(new InMemoryFormInstanceCommandRepository(formInstances));
+            services.AddSingleton<IFormInstanceQueryRepository>(new InMemoryFormInstanceQueryRepository(formInstances));
+            services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
+            services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
             services.AddNEventStore()
                 .AddEventStores()
                 .AddInfrastructure()

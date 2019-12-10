@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
@@ -25,7 +26,10 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             _scenarioContext = scenarioContext;
             if (_factory == null)
             {
-                _factory = new CustomWebApplicationFactory<FakeStartup>();
+                _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
+                {
+                    c.AddSingleton(scenarioContext);
+                });
                 _client = _factory.CreateClient();
             }
 

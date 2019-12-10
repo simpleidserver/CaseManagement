@@ -5,6 +5,6 @@ namespace CaseManagement.Workflow.Persistence
 {
     public interface IFormQueryRepository
     {
-        Task<Form> FindFormById(string id);
+        Task<FormAggregate> FindFormById(string id);
     }
 }

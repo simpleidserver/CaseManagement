@@ -7,6 +7,7 @@
         }
 
         public string FormId { get; set; }
+        public string PerformerRef { get; set; }
 
         public override object Clone()
         {
@@ -14,7 +15,8 @@
             {
                 IsBlocking = IsBlocking,
                 State = State,
-                FormId = FormId
+                FormId = FormId,
+                PerformerRef = PerformerRef
             };
         }
     }

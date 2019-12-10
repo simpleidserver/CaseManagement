@@ -1,6 +1,7 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using CaseManagement.Workflow.Domains;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,12 @@ namespace CaseManagement.CMMN.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
+            services.AddAuthorization(policy =>
+            {
+                policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
+            });
             var builder = services.AddCMMN();
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
@@ -27,9 +34,9 @@ namespace CaseManagement.CMMN.Host
                     c.ImportDefinition(file);
                 }
             })
-            .AddForms(new List<Form>
+            .AddForms(new List<FormAggregate>
             {
-                new Form
+                new FormAggregate
                 {
                     Id = "createMeetingForm",
                     Elements = new List<FormElement>
@@ -46,6 +53,7 @@ namespace CaseManagement.CMMN.Host
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.UseAuthentication();
             app.UseCors("AllowAll");
             app.UseCMMN();
         }

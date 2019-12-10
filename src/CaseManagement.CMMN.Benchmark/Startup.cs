@@ -1,8 +1,12 @@
-﻿using CaseManagement.Workflow.Domains;
+﻿using CaseManagement.CMMN.Benchmark.Middlewares;
+using CaseManagement.Workflow.Domains;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -12,6 +16,12 @@ namespace CaseManagement.CMMN.Benchmark
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCustomAuthentication(opts => { });
+            services.AddAuthorization(policy =>
+            {
+                policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
+            });
             var builder = services.AddCMMN();
             builder.AddDefinitions(c =>
             {
@@ -20,9 +30,9 @@ namespace CaseManagement.CMMN.Benchmark
                     c.ImportDefinition(file);
                 }
             })
-            .AddForms(new List<Form>
+            .AddForms(new List<FormAggregate>
             {
-                new Form
+                new FormAggregate
                 {
                     Id = "createMeetingForm",
                     Elements = new List<FormElement>
@@ -47,6 +57,15 @@ namespace CaseManagement.CMMN.Benchmark
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseCMMN();
+        }
+    }
+
+    public static class ServiceCollectionExtensions
+    {
+        public static AuthenticationBuilder AddCustomAuthentication(this AuthenticationBuilder authBuilder, Action<AuthenticationSchemeOptions> callback)
+        {
+            authBuilder.AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>(CookieAuthenticationDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme, callback);
+            return authBuilder;
         }
     }
 }
