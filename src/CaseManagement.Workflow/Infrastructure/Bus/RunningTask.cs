@@ -1,19 +1,22 @@
-﻿using System.Threading;
+﻿using CaseManagement.Workflow.Domains;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.Bus
 {
     public class RunningTask
     {
-        public RunningTask(string id, Task task, CancellationTokenSource cancellationTokenSource)
+        public RunningTask(string processId, Task task, ProcessFlowInstance processFlowInstance, CancellationTokenSource cancellationTokenSource)
         {
-            Id = id;
+            ProcessId = processId;
             Task = task;
             CancellationTokenSource = cancellationTokenSource;
+            ProcessFlowInstance = processFlowInstance;
         }
 
-        public string Id { get; set; }
+        public string ProcessId { get; set; }
         public Task Task { get; set; }
+        public ProcessFlowInstance ProcessFlowInstance { get; set; }
         public CancellationTokenSource CancellationTokenSource { get; set; }
     }
 }

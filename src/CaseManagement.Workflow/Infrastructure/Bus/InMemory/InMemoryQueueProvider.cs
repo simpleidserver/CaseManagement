@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.Bus.InMemory
@@ -15,7 +16,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.InMemory
 
         public Task Queue(string queueName, string message)
         {
-            lock(_queues)
+            lock (_queues)
             {
                 if (!_queues.ContainsKey(queueName))
                 {
@@ -30,11 +31,6 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.InMemory
 
         public Task<string> Dequeue(string queueName)
         {
-            if (string.IsNullOrWhiteSpace(queueName))
-            {
-                return Task.FromResult<string>(null);
-            }
-
             lock(_queues)
             {
                 string json;
@@ -49,6 +45,24 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.InMemory
                 }
 
                 return Task.FromResult<string>(null);
+            }
+        }
+
+        public Task<string> Peek(string queueName)
+        {
+            lock (_queues)
+            {
+                if (!_queues.ContainsKey(queueName))
+                {
+                    return Task.FromResult<string>(null);
+                }
+
+                if (_queues[queueName].Count == 0)
+                {
+                    return Task.FromResult<string>(null);
+                }
+
+                return Task.FromResult(_queues[queueName].First());
             }
         }
     }

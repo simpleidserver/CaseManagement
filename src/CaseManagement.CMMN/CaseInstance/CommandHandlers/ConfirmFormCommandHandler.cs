@@ -53,7 +53,8 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
             var formValues = CheckConfirmForm(form, confirmFormCommand.Content);
-            await _queueProvider.QueueConfirmForm(caseInstance.Id, confirmFormCommand.CaseElementInstanceId, formValues);
+            caseInstance.ConfirmForm(confirmFormCommand.CaseElementInstanceId, flowInstanceElt.FormInstance.Id, form.Id, formValues);
+            await _queueProvider.QueueRaiseEvent(caseInstance.Id, caseInstance.DomainEvents.Last());
             return true;
         }
 

@@ -6,5 +6,6 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
     {
         Task Queue(string queueName, string message);
         Task<string> Dequeue(string queueName);
+        Task<string> Peek(string queueName);
     }
 }

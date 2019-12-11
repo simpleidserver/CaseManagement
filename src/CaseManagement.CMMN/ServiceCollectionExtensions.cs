@@ -2,21 +2,19 @@
 using CaseManagement.CMMN.CaseInstance.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.EventHandlers;
 using CaseManagement.CMMN.CaseInstance.Processors;
+using CaseManagement.CMMN.CaseInstance.Repositories;
+using CaseManagement.CMMN.CaseInstance.Watchers;
 using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.CaseInstance.Events;
-using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
-using CaseManagement.CMMN.Infrastructures.Scheduler;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow.Domains.Events;
 using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
-using CaseManagement.Workflow.Infrastructure.Scheduler;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using System.Collections.Generic;
@@ -33,9 +31,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddCommandHandlers()
                 .AddEventHandlers()
                 .AddProcessHandlers()
-                .AddInfrastructure()
                 .AddProcessors()
-                .AddScheduledJobHandlers()
+                .AddWatchers()
+                .AddCaseFileItemRepositories()
                 .AddBus();
             services.AddHangfire((act) =>
             {
@@ -50,14 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddBus(this IServiceCollection services)
         {
-            services.AddTransient<IMessageConsumer, ConfirmFormConsumer>();
             services.AddTransient<IMessageConsumer, CMMNLaunchProcessMessageConsumer>();
-            return services;
-        }
-
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
-        {
-            services.AddTransient<IProcessFlowElementProcessorFactory, CMMPlanItemProcessorFactory>();
             return services;
         }
 
@@ -76,6 +67,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ICreateCaseInstanceCommandHandler, CreateCaseInstanceCommandHandler>();
             services.AddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
             services.AddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
+            services.AddTransient<IStopCaseInstanceCommandHandler, StopCaseInstanceCommandHandler>();
             return services;
         }
 
@@ -93,6 +85,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceLaunchedEvent>, ProcessFlowInstanceLaunchedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceVariableAddedEvent>, ProcessFlowInstanceVariableAddedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowElementBlockedEvent>, ProcessFlowElementBlockedEventHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNCaseFileItemCreatedEvent>, CMMNCaseFileItemCreatedEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowInstanceCanceledEvent>, ProcessFlowInstanceCanceledEventHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementCancelledEvent>, ProcessFlowElementCancelledEventHandler>();
             return services;
         }
 
@@ -103,18 +98,27 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IProcessFlowElementProcessor, CMMNTaskProcessor>();
             services.AddTransient<IProcessFlowElementProcessor, CMMNTimerEventListenerProcessor>();
             services.AddTransient<IProcessFlowElementProcessor, CMMNMilestoneProcessor>();
+            services.AddTransient<IProcessFlowElementProcessor, CMMNCaseFileItemProcessor>();
+            return services;
+        }
+
+        private static IServiceCollection AddCaseFileItemRepositories(this IServiceCollection services)
+        {
+            services.AddTransient<ICaseFileItemRepository, DirectoryCaseFileItemRepository>();
+            services.AddTransient<ICaseFileItemRepositoryFactory, CaseFileItemRepositoryFactory>();
+            return services;
+        }
+
+        private static IServiceCollection AddWatchers(this IServiceCollection services)
+        {
+            services.AddTransient<ITimerEventWatcher, TimerEventWatcher>();
+            services.AddTransient<IConfirmFormEventWatcher, ConfirmFormEventWatcher>();
             return services;
         }
 
         private static IServiceCollection AddProcessHandlers(this IServiceCollection services)
         {
             services.AddTransient<ICaseProcessHandler, CaseManagementCallbackProcessHandler>();
-            return services;
-        }
-
-        private static IServiceCollection AddScheduledJobHandlers(this IServiceCollection services)
-        {
-            services.AddTransient<IScheduleJobHandler<TimerEventMessage>, CMMNTimerEventHandler>();
             return services;
         }
     }

@@ -4,13 +4,12 @@ using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent;
 using CaseManagement.Workflow.Infrastructure.Bus.InMemory;
+using CaseManagement.Workflow.Infrastructure.Bus.RaiseDomainEvent;
 using CaseManagement.Workflow.Infrastructure.Bus.StopProcess;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.EvtStore.InMemory;
 using CaseManagement.Workflow.Infrastructure.Lock;
 using CaseManagement.Workflow.Infrastructure.Lock.InMemory;
-using CaseManagement.Workflow.Infrastructure.Scheduler;
-using CaseManagement.Workflow.Infrastructure.Scheduler.InMemory;
 using CaseManagement.Workflow.Persistence;
 using CaseManagement.Workflow.Persistence.InMemory;
 using NEventStore;
@@ -29,6 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddMvc();
             services.AddHostedService<BusHostedService>();
             services.AddTransient<IWorkflowEngine, WorkflowEngine>();
+            services.AddTransient<IProcessFlowElementProcessorFactory, ProcessFlowElementProcessorFactory>();
             services.AddSingleton<IProcessFlowInstanceQueryRepository>(new InMemoryProcessFlowInstanceQueryRepository(processFlowInstances));
             services.AddSingleton<IProcessFlowInstanceCommandRepository>(new InMemoryProcessFlowInstanceCommandRepository(processFlowInstances));
             services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
@@ -42,16 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddInfrastructure()
                 .AddSnapshotStore()
                 .AddBus()
-                .AddScheduler()
                 .AddLock();
-            return services;
-        }
-
-        private static IServiceCollection AddScheduler(this IServiceCollection services)
-        {
-            services.AddSingleton<IScheduleJobStore, InMemoryScheduleJobStore>();
-            services.AddTransient<ISchedulerHost, SchedulerHost>();
-            services.AddHostedService<SchedulerHostedService>();
             return services;
         }
 
@@ -86,6 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IQueueProvider, InMemoryQueueProvider>();
             services.AddTransient<IMessageConsumer, DomainEventMessageConsumer>();
             services.AddTransient<IMessageConsumer, StopProcessMessageConsumer>();
+            services.AddTransient<IMessageConsumer, RaiseDomainEventMessageConsumer>();
             return services;
         }
 

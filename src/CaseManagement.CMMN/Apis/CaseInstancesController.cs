@@ -25,13 +25,15 @@ namespace CaseManagement.CMMN.Apis
         private readonly ICreateCaseInstanceCommandHandler _createCaseInstanceCommandHandler;
         private readonly ILaunchCaseInstanceCommandHandler _launchCaseInstanceCommandHandler;
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
+        private readonly IStopCaseInstanceCommandHandler _stopCaseInstanceCommandHandler;
         private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IStopCaseInstanceCommandHandler stopCaseInstanceCommandHandler, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
             _confirmFormCommandHandler = confirmFormCommandHandler;
+            _stopCaseInstanceCommandHandler = stopCaseInstanceCommandHandler;
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
         }
 
@@ -61,10 +63,17 @@ namespace CaseManagement.CMMN.Apis
             return new OkResult();
         }
 
+        [HttpGet("{id}/stop")]
+        public async Task<IActionResult> Stop(string id)
+        {
+            await _stopCaseInstanceCommandHandler.Handle(new StopCaseInstanceCommand { CaseInstanceId = id });
+            return new OkResult();
+        }
+
         [HttpPost("{id}/confirm/{elt}")]
         public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
         {
-            // CHECK THE ROLE.
+            // TODO : CHECK THE ROLE.
             try
             {
                 await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt, Content = jObj });
@@ -201,7 +210,14 @@ namespace CaseManagement.CMMN.Apis
                 planItems.Add(ToDto(planItem));
             }
 
+            var fileItems = new JArray();
+            foreach(var caseFileItem in flowInstance.Elements.Where(e => e is CMMNCaseFileItem).Cast<CMMNCaseFileItem>())
+            {
+                fileItems.Add(ToDto(caseFileItem));
+            }
+
             result.Add("items", planItems);
+            result.Add("fileitems", fileItems);
             return result;
         }
 
@@ -228,6 +244,24 @@ namespace CaseManagement.CMMN.Apis
                 result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceElementStatus), planItem.Status).ToLowerInvariant());
             }
 
+            return result;
+        }
+
+        private static JObject ToDto(CMMNCaseFileItem fileItem)
+        {
+            var result = new JObject();
+            if (fileItem.Status != null)
+            {
+                result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceElementStatus), fileItem.Status).ToLowerInvariant());
+            }
+
+            var metadata = new JObject();
+            foreach(var metadataValue in fileItem.MetadataLst)
+            {
+                metadata.Add(metadataValue.Key, metadataValue.Value);
+            }
+
+            result.Add("metadata", metadata);
             return result;
         }
 

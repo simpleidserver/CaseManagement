@@ -1,13 +1,14 @@
 ﻿using CaseManagement.CMMN.Builders;
 using CaseManagement.CMMN.CaseInstance.Processors;
+using CaseManagement.CMMN.CaseInstance.Watchers;
 using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.CMMN.Tests.Delegates;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -124,34 +125,31 @@ namespace CaseManagement.CMMN.Tests
                 })
                 .Build();
             var workflowEngine = new WorkflowEngine(factory);
-            await workflowEngine.Start(instance, CancellationToken.None);
-
-            Assert.Equal(ProcessFlowInstanceElementStatus.Finished, instance.Elements.First().Status);
-            Assert.Equal(ProcessFlowInstanceElementStatus.Blocked, instance.Elements.Last().Status);
-
+            workflowEngine.Start(instance, CancellationToken.None);
+            await Task.Delay(2 * 1000);
             var humanTask = instance.Elements.Last();
             instance.ConfirmForm("2", humanTask.FormInstance.Id, "form", new Dictionary<string, string>
             {
                 { "name", "name" }
             });
-            await workflowEngine.Start(instance, CancellationToken.None);
-
+            await Task.Delay(2 * 1000);
             Assert.Equal(ProcessFlowInstanceElementStatus.Finished, instance.Elements.First().Status);
             Assert.Equal(ProcessFlowInstanceElementStatus.Finished, instance.Elements.Last().Status);
         }
 
-        public static CMMPlanItemProcessorFactory BuildPlanItemProcessFactory(IEnumerable<Type> types = null)
+        public static ProcessFlowElementProcessorFactory BuildPlanItemProcessFactory(IEnumerable<Type> types = null)
         {
+            var serviceCollection = new ServiceCollection();
             var processors = new List<IProcessFlowElementProcessor>
             {
                 new CMMNTaskProcessor(),
-                new CMMNHumanTaskProcessor()
+                new CMMNHumanTaskProcessor(new ConfirmFormEventWatcher())
             };
             if (types != null)
             {
                 var processHandlers = new List<ICaseProcessHandler>
                 {
-                    new CaseManagementCallbackProcessHandler()
+                    new CaseManagementCallbackProcessHandler(serviceCollection.BuildServiceProvider())
                 };
                 var processAggregates = new List<ProcessAggregate>();
                 int i = 1;
@@ -169,7 +167,7 @@ namespace CaseManagement.CMMN.Tests
                 processors.Add(new CMMNProcessTaskProcessor(new CaseLaunchProcessCommandHandler(processQueryRepository, processHandlers)));
             }
 
-            return new CMMPlanItemProcessorFactory(processors);
+            return new ProcessFlowElementProcessorFactory(processors);
         }
     }
 }

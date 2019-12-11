@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,38 +32,39 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess
         public override string QueueName => QUEUE_NAME;
         public const string QUEUE_NAME = "launch-process";
 
-        protected override Task<RunningTask> Execute(string queueMessage)
+        protected override async Task<RunningTask> Execute(string queueMessage)
         {
             var message = JsonConvert.DeserializeObject<LaunchProcessMessage>(queueMessage);
             var cancellationTokenSource = new CancellationTokenSource();
-            var task = new Task(async () => await HandleLaunchProcess(message.ProcessFlowId, cancellationTokenSource.Token));
-            return Task.FromResult(new RunningTask(message.ProcessFlowId, task, cancellationTokenSource));
-        }
-
-        private async Task HandleLaunchProcess(string pfId, CancellationToken token)
-        {
-            var flowInstance = await _eventStoreRepository.GetLastAggregate<T>(pfId, GetStreamName(pfId));
-            if (flowInstance == null)
-            {
-                TaskPool.RemoveTask(flowInstance.Id);
-                return;
-            }
-
-            var lockId = flowInstance.Id;
+            var lockId = message.ProcessFlowId;
+            await QueueProvider.Dequeue(QueueName);
             if (!await _distributedLock.AcquireLock(lockId))
             {
                 _logger.LogDebug($"The process flow {lockId} is locked !");
-                await Task.Delay(Options.ConcurrencyExceptionIdleTimeInMs);
-                await HandleLaunchProcess(pfId, token);
-                return;
+                return null;
             }
 
+            var flowInstance = await _eventStoreRepository.GetLastAggregate<T>(message.ProcessFlowId, GetStreamName(message.ProcessFlowId));
+            var task = new Task(async () => await HandleLaunchProcess(flowInstance, message.ProcessFlowId, cancellationTokenSource.Token));
+            return new RunningTask(message.ProcessFlowId, task, flowInstance, cancellationTokenSource);
+        }
+
+        private async Task HandleLaunchProcess(ProcessFlowInstance flowInstance, string taskId, CancellationToken token)
+        {
+            var lockId = flowInstance.Id;
+            Debug.WriteLine($"Launch process {lockId}");
             try
             {
                 try
                 {
+                    flowInstance.EventRaised += HandleEventRaised;
                     flowInstance.Launch();
                     await _workflowEngine.Start(flowInstance, token);
+                    token.ThrowIfCancellationRequested();
+                }
+                catch(OperationCanceledException)
+                {
+                    flowInstance.Cancel();
                 }
                 finally
                 {
@@ -71,14 +73,19 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.LaunchProcess
                         flowInstance.Complete();
                     }
 
-                    await _commitAggregateHelper.Commit(flowInstance, flowInstance.GetStreamName());
+                    flowInstance.EventRaised -= HandleEventRaised;
                 }
             }
             finally
             {
-                TaskPool.RemoveTask(flowInstance.Id);
+                TaskPool.RemoveTask(taskId);
                 await _distributedLock.ReleaseLock(lockId);
             }
+        }
+
+        private async void HandleEventRaised(object sender, DomainEventArgs e)
+        {
+            await _commitAggregateHelper.Commit(e.ProcessFlowInstance, e.ProcessFlowInstance.GetStreamName());
         }
 
         protected abstract string GetStreamName(string id);

@@ -15,7 +15,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         public async Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
-            context.Start();
+            context.Start(token);
             var pf = context.ProcessFlowInstance;
             var cmmnPlanItem = context.GetCMMNPlanItem();
             var milestone = cmmnPlanItem.PlanItemMilestone;

@@ -5,7 +5,7 @@ using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
-using Hangfire;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -35,15 +35,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             }
             else
             {
-                BackgroundJob.Enqueue(() => HandleBackgroundProcess(context, token));
-                pf.CompletePlanItem(planItem);
-                await context.Complete(token);
+                // TODO : Manage background task.
+                // BackgroundJob.Enqueue(() => HandleBackgroundProcess(context, token));
+                // pf.CompletePlanItem(planItem);
+                // await context.Complete(token);
             }
-        }
-
-        private async Task HandleBackgroundProcess(WorkflowHandlerContext context, CancellationToken token)
-        {
-            // TODO : SAVE THE MODIFICATIONS.
         }
 
         private async Task HandleProcess(WorkflowHandlerContext context, CancellationToken token)
@@ -79,6 +75,12 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 }
 
                 parameters.Add(mapping.TargetRef.Name, variableValue);
+            }
+
+            if (!string.IsNullOrWhiteSpace(processTask.SourceRef))
+            {
+                var caseFileItem  = pf.GetCaseFileItem(processTask.SourceRef);
+                parameters.Add("caseFileItem", JsonConvert.SerializeObject(caseFileItem));
             }
 
             await _caseLaunchProcessCommandHandler.Handle(new LaunchCaseProcessCommand(processRef, parameters), (resp) =>

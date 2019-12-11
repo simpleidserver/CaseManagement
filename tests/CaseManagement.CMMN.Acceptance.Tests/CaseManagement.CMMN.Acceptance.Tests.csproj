@@ -21,6 +21,9 @@
     <ProjectReference Include="..\..\src\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Cmmns\caseWithCaseFileItem.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\caseWithHumanTaskAndRole.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -28,6 +31,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Cmmns\caseWithHumanTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithLongProcessTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Cmmns\caseWithProcessTask.cmmn">

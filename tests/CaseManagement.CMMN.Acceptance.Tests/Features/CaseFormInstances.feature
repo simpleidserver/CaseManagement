@@ -10,10 +10,11 @@ Scenario: Launch caseWithHumanTaskAndRole case instance and check form instance 
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '1' seconds
 	And execute HTTP POST JSON request 'http://localhost/case-instances/$id$/confirm/PI_ProcessTask_1'
 	| Key  | Value |	
 	| name | name  |
-	And wait '10' seconds
+	And wait '5' seconds
 	And execute HTTP GET request 'http://localhost/case-form-instances/.me/search'
 	And extract JSON from body
 

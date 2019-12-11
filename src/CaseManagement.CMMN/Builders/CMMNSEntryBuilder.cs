@@ -13,7 +13,7 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNSEntryBuilder AddOnPart(CMMNPlanItemOnPart itemPart)
         {
-            _sEntry.OnParts.Add(itemPart);
+            _sEntry.PlanItemOnParts.Add(itemPart);
             return this;
         }
 

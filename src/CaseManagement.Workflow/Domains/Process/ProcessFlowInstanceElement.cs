@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CaseManagement.Workflow.Domains
 {
-    public class ProcessFlowInstanceElement : ICloneable
+    public abstract class ProcessFlowInstanceElement : ICloneable
     {
         public ProcessFlowInstanceElement(string id, string name)
         {
@@ -14,6 +14,7 @@ namespace CaseManagement.Workflow.Domains
 
         public string Id { get; set; }
         public string Name { get; set; }
+        public abstract string ElementType { get; }
         public ProcessFlowInstanceElementStatus? Status { get; set; }
         public FormInstanceAggregate FormInstance { get; set; }
 
@@ -44,16 +45,10 @@ namespace CaseManagement.Workflow.Domains
             FormInstance = formInstance;
         }
 
-        public virtual void HandleLaunch() { }
+        public abstract void HandleLaunch();
 
-        public virtual void HandleEvent(string state) { }
+        public abstract void HandleEvent(string state);
 
-        public virtual object Clone()
-        {
-            return new ProcessFlowInstanceElement(Id, Name)
-            {
-                Status = Status
-            };
-        }
+        public abstract object Clone();
     }
 }

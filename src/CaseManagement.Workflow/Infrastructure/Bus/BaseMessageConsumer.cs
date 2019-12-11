@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,12 +44,13 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
                     continue;
                 }
 
-                var queueMessage = await QueueProvider.Dequeue(QueueName);
+                var queueMessage = await QueueProvider.Peek(QueueName);
                 if (queueMessage == null)
                 {
                     continue;
                 }
 
+                Debug.WriteLine($"Received message : {queueMessage}, Number of tasks : {TaskPool.NbTasks()}");
                 var task = await Execute(queueMessage);
                 if (task == null)
                 {

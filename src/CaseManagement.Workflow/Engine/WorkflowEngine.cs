@@ -22,10 +22,18 @@ namespace CaseManagement.Workflow.Engine
             foreach(var startElt in processFlowInstance.GetStartElements())
             {
                 var handlerContext = new WorkflowHandlerContext(processFlowInstance, startElt, _processFlowElementProcessorFactory);
-                taskLst.Add(handlerContext.Execute(cancellationToken));
+                taskLst.Add(Execute(handlerContext, cancellationToken));
             }
 
             await Task.WhenAll(taskLst);
+        }
+
+        private async Task Execute(WorkflowHandlerContext context, CancellationToken token)
+        {
+            var result = new List<Task>();
+            await context.Execute(token);
+            var subTasks = context.SubProcesses.Select(p => p.Task);
+            await Task.WhenAll(subTasks);
         }
     }
 }

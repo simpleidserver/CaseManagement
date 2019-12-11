@@ -3133,6 +3133,8 @@ public partial class tProcessTask : tTask {
     
     private System.Xml.XmlQualifiedName processRefField;
 
+    private System.Xml.XmlQualifiedName sourceRefField;
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("parameterMapping")]
     public tParameterMapping[] parameterMapping {
@@ -3155,13 +3157,27 @@ public partial class tProcessTask : tTask {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "processRef")]
     public System.Xml.XmlQualifiedName processRef {
         get {
             return this.processRefField;
         }
         set {
             this.processRefField = value;
+        }
+    }
+
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "sourceRef", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public System.Xml.XmlQualifiedName sourceRef
+    {
+        get
+        {
+            return this.sourceRefField;
+        }
+        set
+        {
+            this.sourceRefField = value;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         public async Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
-            context.Start();
+            context.Start(token);
             var pf = context.ProcessFlowInstance;
             var cmmnPlanItem = context.GetCMMNPlanItem();
             var processTask = ExtractTask(cmmnPlanItem);
@@ -29,7 +29,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             {
                 if (cmmnPlanItem.EntryCriterions.Any() && cmmnPlanItem.EntryCriterions.All(s => !CheckCriterion(s, pf)))
                 {
-                    // TODO : MANAGE BLOCKED ELEMENT.
+                    pf.BlockElement(cmmnPlanItem);
                     return;
                 }
 
@@ -64,24 +64,28 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         public static bool CheckCriterion(CMMNCriterion sCriterion, ProcessFlowInstance pf)
         {
-            foreach (var onPart in sCriterion.SEntry.OnParts)
+            foreach (var planItemOnPart in sCriterion.SEntry.PlanItemOnParts)
             {
-                if (onPart is CMMNPlanItemOnPart)
+                if (!string.IsNullOrWhiteSpace(planItemOnPart.SourceRef))
                 {
-                    if (!string.IsNullOrWhiteSpace(onPart.SourceRef))
+                    var elt = pf.GetPlanItem(planItemOnPart.SourceRef);
+                    if (elt == null || elt.TransitionHistories.Any() && elt.TransitionHistories.Last().Transition != planItemOnPart.StandardEvent)
                     {
-                        var elt = pf.GetPlanItem(onPart.SourceRef);
-                        if (elt == null || elt.TransitionHistories.Any() && elt.TransitionHistories.Last().Transition != onPart.StandardEvent)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }
-
-            if (sCriterion.SEntry.IfPart != null)
+            
+            foreach (var fileItemOnPart in sCriterion.SEntry.FileItemOnParts)
             {
-                return ExpressionParser.IsValid(sCriterion.SEntry.IfPart.Condition, pf);
+                if (!string.IsNullOrWhiteSpace(fileItemOnPart.SourceRef))
+                {
+                    var elt = pf.GetCaseFileItem(fileItemOnPart.SourceRef);
+                    if (elt == null || elt.TransitionHistories.Any() && elt.TransitionHistories.Last().Transition != fileItemOnPart.StandardEvent)
+                    {
+                        return false;
+                    }
+                }
             }
 
             return true;

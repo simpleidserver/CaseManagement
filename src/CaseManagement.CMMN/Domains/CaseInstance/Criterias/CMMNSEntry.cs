@@ -4,23 +4,61 @@ using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNPlanItemOnPart : ICloneable
+    public enum OnPartTypes
     {
-        /// <summary>
-        /// Reference to a state transition in the lifecycle of a Stage, Task, EventListener or Milestone.
-        /// </summary>
-        public CMMNPlanItemTransitions StandardEvent { get; set; }
+        PlanItem = 0,
+        FileItem = 1
+    }
+
+    public interface IOnPart : ICloneable
+    {
+        OnPartTypes Type { get; }
+    }
+
+    public class CMMNPlanItemOnPart : IOnPart
+    {
         /// <summary>
         /// Refer to a PlanItem.
         /// </summary>
         public string SourceRef { get; set; }
 
-        public object Clone()
+        /// <summary>
+        /// Reference to a state transition in the lifecycle of a Stage, Task, EventListener or Milestone.
+        /// </summary>
+        public CMMNPlanItemTransitions StandardEvent { get; set; }
+
+        public OnPartTypes Type => OnPartTypes.PlanItem;
+
+        public object  Clone()
         {
             return new CMMNPlanItemOnPart
             {
                 SourceRef = SourceRef,
                 StandardEvent = StandardEvent
+            };
+        }
+    }
+
+    public class CMMNCaseFileItemOnPart : IOnPart
+    {
+        /// <summary>
+        /// Refer to a CaseFileItem.
+        /// </summary>
+        public string SourceRef { get; set; }
+
+        /// <summary>
+        ///  Reference to a state transition in the CaseFileItem lifecyle.
+        /// </summary>
+        public CMMNCaseFileItemTransitions StandardEvent { get; set; }
+
+        public OnPartTypes Type => OnPartTypes.FileItem;
+
+        public object Clone()
+        {
+            return new CMMNCaseFileItemOnPart
+            {
+                StandardEvent = StandardEvent,
+                SourceRef = SourceRef
             };
         }
     }
@@ -47,7 +85,8 @@ namespace CaseManagement.CMMN.Domains
         public CMMNSEntry(string name)
         {
             Name = name;
-            OnParts = new List<CMMNPlanItemOnPart>();
+            PlanItemOnParts = new List<CMMNPlanItemOnPart>();
+            FileItemOnParts = new List<CMMNCaseFileItemOnPart>();
         }
 
         /// <summary>
@@ -57,7 +96,11 @@ namespace CaseManagement.CMMN.Domains
         /// <summary>
         /// Defines the OnParts of the Sentry.
         /// </summary>
-        public ICollection<CMMNPlanItemOnPart> OnParts { get; set; }
+        public ICollection<CMMNPlanItemOnPart> PlanItemOnParts { get; set; }
+        /// <summary>
+        /// Defines the OnParts of the Sentry.
+        /// </summary>
+        public ICollection<CMMNCaseFileItemOnPart> FileItemOnParts { get; set; }
         /// <summary>
         /// Defines the IfPart of the Sentry. 
         /// </summary>
@@ -68,7 +111,8 @@ namespace CaseManagement.CMMN.Domains
             return new CMMNSEntry(Name)
             {
                 IfPart = IfPart == null ? null : (CMMNIfPart)IfPart.Clone(),
-                OnParts = OnParts.Select(p => (CMMNPlanItemOnPart)p.Clone()).ToList()
+                PlanItemOnParts = PlanItemOnParts.Select(p => (CMMNPlanItemOnPart)p.Clone()).ToList(),
+                FileItemOnParts = FileItemOnParts.Select(p => (CMMNCaseFileItemOnPart)p.Clone()).ToList()
             };
         }
     }

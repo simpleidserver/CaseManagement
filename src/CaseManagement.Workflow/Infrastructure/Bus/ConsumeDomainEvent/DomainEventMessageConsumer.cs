@@ -1,5 +1,4 @@
-﻿using CaseManagement.Workflow.Infrastructure.Bus.Exceptions;
-using CaseManagement.Workflow.Infrastructure.Lock;
+﻿using CaseManagement.Workflow.Infrastructure.Lock;
 using CaseManagement.Workflow.Persistence;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -53,7 +52,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent
             var token = _cancellationTokenSource.Token;
             while (!token.IsCancellationRequested)
             {
-                var queueMessage = await _queueProvider.Dequeue(QueueName);
+                var queueMessage = await _queueProvider.Peek(QueueName);
                 if (queueMessage == null)
                 {
                     continue;
@@ -81,26 +80,23 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent
             {
                 Debug.WriteLine($"There is a concurrency error with the domain event, {domainEvent.GetType()} {domainEvent.Version} != {(flowInstance == null ? 0 : (flowInstance.Version + 1))} {JsonConvert.SerializeObject(domainEvent)}");
                 _logger.LogDebug($"There is a concurrency error with the domain event, {domainEvent.Version} != {(flowInstance == null ? 0 : (flowInstance.Version + 1))}");
-                await Task.Delay(_options.ConcurrencyExceptionIdleTimeInMs);
-                await HandleDomainEvent(domainEvent, concreteType, evtHandler);
                 return;
             }
 
+            await _queueProvider.Dequeue(QueueName);
             Debug.WriteLine($"Start event : {domainEvent.GetType()} {domainEvent.Version} {JsonConvert.SerializeObject(domainEvent)}");
-            var lockId = $"{domainEvent.AggregateId}_{domainEvent.Version}";
+            _logger.LogDebug($"Start event : {domainEvent.GetType()} {domainEvent.Version} {JsonConvert.SerializeObject(domainEvent)}");
+            var lockId = $"domain-event-{domainEvent.AggregateId}-{domainEvent.Version}";
+            if (!await _distributedLock.AcquireLock(lockId))
+            {
+                _logger.LogDebug($"The domain event {lockId} is locked !");
+                return;
+            }
+
             try
             {
-                if (!await _distributedLock.AcquireLock(lockId))
-                {
-                    throw new ResourceLockException();
-                }
-
                 var task = (Task)concreteType.GetMethod("Handle").Invoke(evtHandler, new object[] { domainEvent, _cancellationTokenSource.Token });
                 await task;
-            }
-            catch(ResourceLockException)
-            {
-                _logger.LogDebug($"Resource {lockId} is locked");
             }
             finally
             {

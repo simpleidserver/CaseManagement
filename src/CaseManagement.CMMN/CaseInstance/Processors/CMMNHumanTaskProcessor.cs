@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.CaseInstance.Watchers;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
@@ -10,6 +11,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNHumanTaskProcessor : BaseCMMNTaskProcessor
     {
+        private readonly IConfirmFormEventWatcher _formEventWatcher;
+
+        public CMMNHumanTaskProcessor(IConfirmFormEventWatcher formEventWatcher)
+        {
+            _formEventWatcher = formEventWatcher;
+        }
+
         public override string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.HumanTask).ToLowerInvariant();
 
         public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
@@ -22,6 +30,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             {
                 pf.CreateForm(cmmnPlanItem.Id, humanTask.FormId, humanTask.PerformerRef);
             }
+
             else if (formInstance != null && formInstance.Status == FormInstanceStatus.Complete)
             {
                 pf.CompletePlanItem(cmmnPlanItem);
@@ -32,6 +41,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             if (humanTask.IsBlocking)
             {
                 pf.BlockElement(cmmnPlanItem);
+                await context.StartSubProcess(_formEventWatcher, token);
                 return;
             }
 

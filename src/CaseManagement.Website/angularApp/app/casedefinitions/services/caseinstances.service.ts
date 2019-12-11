@@ -38,6 +38,13 @@ export class CaseInstancesService {
         return this.http.get(targetUrl, { headers: headers });
     }
 
+    stop(caseInstanceId: string) {
+        let targetUrl = url + "/case-instances/" + caseInstanceId + "/stop";
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers });
+    }
+
     search(startIndex: number, count: number, templateId: string, order: string, direction: string): Observable<SearchCaseInstancesResult>{
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');

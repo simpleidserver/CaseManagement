@@ -48,9 +48,15 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
+        public CMMNProcessFlowInstanceBuilder AddCaseFileItem(CMMNCaseFileItem fileItem)
+        {
+            AddElement(fileItem);
+            return this;
+        }
+
         public override ProcessFlowInstance Build()
         {
-            return CMMNProcessFlowInstance.NewCMMNProcess(ProcessFlowTemplateId, ProcessFlowName, Elements.Cast<CMMNPlanItem>().ToList(), Connectors);
+            return CMMNProcessFlowInstance.NewCMMNProcess(ProcessFlowTemplateId, ProcessFlowName, Elements.Where(e => e is CMMNPlanItem).Cast<CMMNPlanItem>().ToList(), Elements.Where(e => e is CMMNCaseFileItem).Cast<CMMNCaseFileItem>().ToList(), Connectors);
         }
 
         public static new CMMNProcessFlowInstanceBuilder New(string processFlowTemplateId, string processFlowName)

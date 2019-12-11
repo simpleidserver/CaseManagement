@@ -9,10 +9,10 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CMMNProcessFlowInstance : ProcessFlowInstance
     {
-        public static CMMNProcessFlowInstance NewCMMNProcess(string processFlowTemplateId, string processFlowName, ICollection<CMMNPlanItem> elements, ICollection<ProcessFlowConnector> connectors)
+        public static CMMNProcessFlowInstance NewCMMNProcess(string processFlowTemplateId, string processFlowName, ICollection<CMMNPlanItem> planItems, ICollection<CMMNCaseFileItem> fileItems, ICollection<ProcessFlowConnector> connectors)
         {
             var result = new CMMNProcessFlowInstance();
-            var evt = new CMMNProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFlowTemplateId, processFlowName, DateTime.UtcNow, elements.Select(e => (CMMNPlanItem)e.Clone()).ToList(), connectors);
+            var evt = new CMMNProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFlowTemplateId, processFlowName, DateTime.UtcNow, planItems.Select(e => (CMMNPlanItem)e.Clone()).ToList(), fileItems.Select(e => (CMMNCaseFileItem)e.Clone()).ToList(), connectors);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -36,6 +36,11 @@ namespace CaseManagement.CMMN.Domains
             {
                 Handle((CMMNProcessInstanceCreatedEvent)obj);
             }
+
+            if (obj is CMMNCaseFileItemCreatedEvent)
+            {
+                Handle((CMMNCaseFileItemCreatedEvent)obj);
+            }
         }
 
         public override string GetStreamName()
@@ -54,9 +59,31 @@ namespace CaseManagement.CMMN.Domains
             ProcessFlowTemplateId = evt.ProcessFlowTemplateId;
             ProcessFlowName = evt.ProcessFlowName;
             CreateDateTime = evt.CreateDateTime;
-            Elements = evt.Elements.Select(e => (ProcessFlowInstanceElement)e.Clone()).ToList();
+            foreach(var pi in evt.PlanItems)
+            {
+                Elements.Add((ProcessFlowInstanceElement)pi.Clone());
+            }
+
+            foreach(var cf in evt.FileItems)
+            {
+                Elements.Add((ProcessFlowInstanceElement)cf.Clone());
+            }
+            
             Connectors = evt.Connectors;
             Version = evt.Version;
+        }
+
+        public void Handle(CMMNCaseFileItemCreatedEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId) as CMMNCaseFileItem;
+            foreach (var kvp in evt.MetadataLst)
+            {
+                elt.MetadataLst.Add(new CMMNCaseFileItemMetadata(kvp.Key, kvp.Value));
+            }
+
+            elt.Create();
+            Version++;
+            base.RaiseEvent(evt);
         }
 
         public override object HandleClone()

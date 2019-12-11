@@ -13,7 +13,7 @@
       </cmmn:sentry>
       <cmmn:task id="Task_1xaq99o" name="Send EMAIL" />
       <cmmn:timerEventListener id="TimerEventListener_0shtnuf">
-        <cmmn:timerExpression>R2/P0Y0M0DT0H0M10S</cmmn:timerExpression>
+        <cmmn:timerExpression>R2/P0Y0M0DT0H0M60S</cmmn:timerExpression>
       </cmmn:timerEventListener>
     </cmmn:casePlanModel>
   </cmmn:case>

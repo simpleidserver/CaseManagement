@@ -38,16 +38,32 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 return null;
             }
 
-            var processFlowInstance = BuildProcessFlowInstance(tCase, caseDefinition.id);
+            var processFlowInstance = BuildProcessFlowInstance(tCase, caseDefinition.id, caseDefinition);
             await _commitAggregateHelper.Commit(processFlowInstance, processFlowInstance.GetStreamName());
             return processFlowInstance;
         }
 
-        public static ProcessFlowInstance BuildProcessFlowInstance(tCase tCase, string id)
+        public static ProcessFlowInstance BuildProcessFlowInstance(tCase tCase, string id, tDefinitions definitions)
         {
+            var fileModel = tCase.caseFileModel;
             var planModel = tCase.casePlanModel;
             var flowInstanceElements = new List<CMMNPlanItem>();
+            var caseFileItems = new List<CMMNCaseFileItem>();
             var connectors = new Dictionary<string, string>();
+            if (fileModel != null && fileModel.caseFileItem.Any())
+            {
+                foreach (var fileItem in fileModel.caseFileItem)
+                {
+                    var caseFileItemDefinition = definitions.caseFileItemDefinition.First(c => c.id == fileItem.definitionRef.Name);
+                    var caseFileItem = new CMMNCaseFileItem(fileItem.id, fileItem.name)
+                    {
+                        Multiplicity = (CMMNMultiplicities)fileItem.multiplicity,
+                        Definition = new CMMNCaseFileItemDefinition(caseFileItemDefinition.definitionType)
+                    };
+                    caseFileItems.Add(caseFileItem);
+                }
+            }
+
             foreach(var planItem in planModel.planItem)
             {
                 var planItemDef = planModel.Items.First(i => i.id == planItem.definitionRef);
@@ -58,9 +74,15 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                     {
                         var sEntry = planModel.sentry.First(s => s.id == entryCriterion.sentryRef);
                         var planItemOnParts = sEntry.Items.Where(i => i is tPlanItemOnPart).Cast<tPlanItemOnPart>();
+                        var caseItemOnParts = sEntry.Items.Where(i => i is tCaseFileItemOnPart).Cast<tCaseFileItemOnPart>();
                         foreach(var planItemOnPart in planItemOnParts)
                         {
                             connectors.Add(planItemOnPart.sourceRef, planItem.id);
+                        }
+
+                        foreach(var caseItemOnPart in caseItemOnParts)
+                        {
+                            connectors.Add(caseItemOnPart.sourceRef, planItem.id);
                         }
 
                         flowInstanceElt.EntryCriterions.Add(new CMMNCriterion(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
@@ -76,7 +98,12 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 builder.AddPlanItem(flowInstance);
             }
 
-            foreach(var connector in connectors)
+            foreach (var caseFileItem in caseFileItems)
+            {
+                builder.AddCaseFileItem(caseFileItem);
+            }
+
+            foreach (var connector in connectors)
             {
                 builder.AddConnection(connector.Key, connector.Value);
             }
@@ -143,6 +170,11 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 result.ProcessRef = processTask.processRef.Name;
             }
 
+            if (processTask.sourceRef != null)
+            {
+                result.SourceRef = processTask.sourceRef.Name;
+            }
+
             if (processTask.processRefExpression != null)
             {
                 result.ProcessRefExpression = new CMMNExpression(processTask.processRefExpression.language)
@@ -203,9 +235,20 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                         var planItemOnPart = onPart as tPlanItemOnPart;
                         var name = Enum.GetName(typeof(PlanItemTransition), planItemOnPart.standardEvent);
                         var standardEvt = (CMMNPlanItemTransitions)Enum.Parse(typeof(CMMNPlanItemTransitions), name, true);
-                        result.OnParts.Add(new CMMNPlanItemOnPart
+                        result.PlanItemOnParts.Add(new CMMNPlanItemOnPart
                         {
                             SourceRef = planItemOnPart.sourceRef,
+                            StandardEvent = standardEvt
+                        });
+                    }
+                    else if (onPart is tCaseFileItemOnPart)
+                    {
+                        var caseItemOnPart = onPart as tCaseFileItemOnPart;
+                        var name = Enum.GetName(typeof(CaseFileItemTransition), caseItemOnPart.standardEvent);
+                        var standardEvt = (CMMNCaseFileItemTransitions)Enum.Parse(typeof(CMMNCaseFileItemTransitions), name, true);
+                        result.FileItemOnParts.Add(new CMMNCaseFileItemOnPart
+                        {
+                            SourceRef = caseItemOnPart.sourceRef,
                             StandardEvent = standardEvt
                         });
                     }

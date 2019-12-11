@@ -1,13 +1,24 @@
 ﻿using CaseManagement.Workflow.Domains.Events;
 using CaseManagement.Workflow.Domains.Process.Exceptions;
 using CaseManagement.Workflow.Infrastructure;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.Workflow.Domains
 {
+    public class DomainEventArgs : EventArgs
+    {
+        public DomainEventArgs(ProcessFlowInstance processFlowInstance, DomainEvent domainEvent)
+        {
+            ProcessFlowInstance = processFlowInstance;
+            DomainEvent = domainEvent;
+        }
+
+        public ProcessFlowInstance ProcessFlowInstance { get; set; }
+        public DomainEvent DomainEvent { get; set; }
+    }
+
     public class ProcessFlowInstance : BaseAggregate
     {
         public ProcessFlowInstance() : base()
@@ -27,6 +38,7 @@ namespace CaseManagement.Workflow.Domains
         public ICollection<ProcessFlowInstanceExecutionStep> ExecutionSteps { get; set; }
         public ICollection<ProcessFlowInstanceElement> Elements { get; set; }
         public ICollection<ProcessFlowConnector> Connectors { get; set; }
+        public event EventHandler<DomainEventArgs> EventRaised;
 
         #region Accessors
 
@@ -120,30 +132,52 @@ namespace CaseManagement.Workflow.Domains
 
         public void Launch()
         {
-            var evt = new ProcessFlowInstanceLaunchedEvent(Guid.NewGuid().ToString(), Id, Version + 1);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowInstanceLaunchedEvent(Guid.NewGuid().ToString(), Id, Version + 1);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void Cancel()
+        {
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowInstanceCanceledEvent(Guid.NewGuid().ToString(), Id, Version + 1);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void RaiseEvent(string eltId, string state)
         {
-            var evt = new ProcessFlowInstanceElementStateChangedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, state);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowInstanceElementStateChangedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, state);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void CreateForm(string eltId, string formId, string performerRef)
         {
-            var evt = new ProcessFlowElementFormCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, Guid.NewGuid().ToString(), formId, performerRef);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowElementFormCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, Guid.NewGuid().ToString(), formId, performerRef);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void ConfirmForm(string elementId, string formInstanceId, string formId, Dictionary<string, string> formContent)
         {
-            var evt = new ProcessFlowElementFormConfirmedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, formInstanceId, formId, formContent);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowElementFormConfirmedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, formInstanceId, formId, formContent);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void StartElement(ProcessFlowInstanceElement elt)
@@ -153,9 +187,12 @@ namespace CaseManagement.Workflow.Domains
 
         public void StartElement(string eltId)
         {
-            var evt = new ProcessFlowElementStartedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowElementStartedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void BlockElement(ProcessFlowInstanceElement elt)
@@ -165,9 +202,27 @@ namespace CaseManagement.Workflow.Domains
 
         public void BlockElement(string eltId)
         {
-            var evt = new ProcessFlowElementBlockedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowElementBlockedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void CancelElement(ProcessFlowInstanceElement elt)
+        {
+            CancelElement(elt.Id);
+        }
+
+        public void CancelElement(string eltId)
+        {
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowElementCancelledEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void InvalidElement(ProcessFlowInstanceElement elt, string errorMessage)
@@ -177,9 +232,12 @@ namespace CaseManagement.Workflow.Domains
 
         public void InvalidElement(string eltId, string errorMessage)
         {
-            var evt = new ProcessFlowElementInvalidEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, errorMessage, DateTime.UtcNow);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowElementInvalidEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, errorMessage, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void CompleteElement(ProcessFlowInstanceElement elt)
@@ -189,16 +247,22 @@ namespace CaseManagement.Workflow.Domains
 
         public void CompleteElement(string eltId)
         {
-            var evt = new ProcessFlowElementCompletedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowElementCompletedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void Complete()
         {
-            var evt = new ProcessFlowInstanceCompletedEvent(Guid.NewGuid().ToString(), Id, Version + 1);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowInstanceCompletedEvent(Guid.NewGuid().ToString(), Id, Version + 1);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         public void SetVariable(string key, int value)
@@ -208,9 +272,12 @@ namespace CaseManagement.Workflow.Domains
 
         public void SetVariable(string key, string value)
         {
-            var evt = new ProcessFlowInstanceVariableAddedEvent(Guid.NewGuid().ToString(), Id, Version + 1, key, value);
-            Handle(evt);
-            DomainEvents.Add(evt);
+            lock(DomainEvents)
+            {
+                var evt = new ProcessFlowInstanceVariableAddedEvent(Guid.NewGuid().ToString(), Id, Version + 1, key, value);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
         }
 
         #endregion
@@ -301,6 +368,16 @@ namespace CaseManagement.Workflow.Domains
             {
                 Handle((ProcessFlowElementFormCreatedEvent)obj);
             }
+
+            if (obj is ProcessFlowInstanceCanceledEvent)
+            {
+                Handle((ProcessFlowInstanceCanceledEvent)obj);
+            }
+
+            if (obj is ProcessFlowElementCancelledEvent)
+            {
+                Handle((ProcessFlowElementCancelledEvent)obj);
+            }
         }
 
         public void Handle(ProcessFlowInstanceCreatedEvent evt)
@@ -329,12 +406,21 @@ namespace CaseManagement.Workflow.Domains
 
             Status = ProcessFlowInstanceStatus.Started;
             Version++;
+            RaiseEvent(evt);
+        }
+
+        public void Handle(ProcessFlowInstanceCanceledEvent evt)
+        {
+            Status = ProcessFlowInstanceStatus.Cancelled;
+            Version++;
+            RaiseEvent(evt);
         }
 
         public void Handle(ProcessFlowInstanceCompletedEvent evt)
         {
             Status = ProcessFlowInstanceStatus.Completed;
             Version++;
+            RaiseEvent(evt);
         }
 
         public void Handle(ProcessFlowElementFormConfirmedEvent evt)
@@ -351,6 +437,7 @@ namespace CaseManagement.Workflow.Domains
 
             elt.FormInstance.Status = FormInstanceStatus.Complete;
             Version++;
+            RaiseEvent(evt);
         }
 
         public void Handle(ProcessFlowElementStartedEvent evt)
@@ -371,6 +458,7 @@ namespace CaseManagement.Workflow.Domains
             var existingElt = Elements.First(e => e.Id == evt.ElementId);
             ExecutionSteps.Add(new ProcessFlowInstanceExecutionStep(existingElt.Id, existingElt.Name, evt.StartDateTime));
             Version++;
+            RaiseEvent(evt);
         }
 
         public void Handle(ProcessFlowElementCompletedEvent evt)
@@ -391,12 +479,14 @@ namespace CaseManagement.Workflow.Domains
             var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id && e.EndDateTime == null);
             executionStep.EndDateTime = evt.CompletedDateTime;
             Version++;
+            RaiseEvent(evt);
         }
 
         public void Handle(ProcessFlowInstanceVariableAddedEvent evt)
         {
             ExecutionContext.SetVariable(evt.Key, evt.Value);
             Version++;
+            RaiseEvent(evt);
         }
 
         public void Handle(ProcessFlowInstanceElementStateChangedEvent evt)
@@ -404,6 +494,7 @@ namespace CaseManagement.Workflow.Domains
             var elt = Elements.First(e => e.Id == evt.ElementId);
             elt.HandleEvent(evt.State);
             Version++;
+            RaiseEvent(evt);
         }
 
         public void Handle(ProcessFlowElementInvalidEvent evt)
@@ -414,6 +505,7 @@ namespace CaseManagement.Workflow.Domains
             executionStep.EndDateTime = evt.InvalidDateTime;
             executionStep.ErrorMessage = evt.ErrorMessage;
             Version++;
+            RaiseEvent(evt);
         }
 
         private void Handle(ProcessFlowElementBlockedEvent evt)
@@ -421,6 +513,7 @@ namespace CaseManagement.Workflow.Domains
             var elt = Elements.First(e => e.Id == evt.ElementId);
             elt.Status = ProcessFlowInstanceElementStatus.Blocked;
             Version++;
+            RaiseEvent(evt);
         }
 
         private void Handle(ProcessFlowElementFormCreatedEvent evt)
@@ -430,6 +523,21 @@ namespace CaseManagement.Workflow.Domains
             formInstance.RoleId = evt.PerformerRef;
             elt.SetFormInstance(formInstance);
             Version++;
+            RaiseEvent(evt);
+        }
+
+        private void Handle(ProcessFlowElementCancelledEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            elt.Status = ProcessFlowInstanceElementStatus.Cancelled;
+            var executionStep = ExecutionSteps.FirstOrDefault(e => e.ElementId == elt.Id && e.EndDateTime == null);
+            if (executionStep != null)
+            {
+                executionStep.EndDateTime = evt.CancellationDateTime;
+            }
+
+            Version++;
+            RaiseEvent(evt);
         }
 
         public override object Clone()
@@ -482,6 +590,16 @@ namespace CaseManagement.Workflow.Domains
             }
 
             return result;
+        }
+
+        protected void RaiseEvent(DomainEvent evt)
+        {
+            if (EventRaised != null)
+            {
+                var clone = (ProcessFlowInstance)this.Clone();
+                clone.DomainEvents.Add(evt);
+                EventRaised(this, new DomainEventArgs(clone, evt));
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using CaseManagement.CMMN.Acceptance.Tests.Delegates;
+using CaseManagement.CMMN.Acceptance.Tests.Delegates.caseWithCaseFileItem;
+using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithLongProcessTask;
 using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithProcessTask;
 using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
 using CaseManagement.CMMN.Domains;
@@ -48,6 +50,16 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 {
                     Id = "firstTestProcess",
                     AssemblyQualifiedName = typeof(SetVariableTaskDelegate).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "wait",
+                    AssemblyQualifiedName = typeof(WaitTaskDelegate).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "sendEmail",
+                    AssemblyQualifiedName = typeof(SendEmailTaskDelegate).AssemblyQualifiedName
                 }
             })
             .AddForms(new List<FormAggregate>

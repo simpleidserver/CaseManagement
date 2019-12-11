@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CaseManagement.Workflow.Domains;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.CaseProcess.ProcessHandlers
 {
@@ -10,7 +11,7 @@ namespace CaseManagement.CMMN.CaseProcess.ProcessHandlers
         {
             _parameters = parameters;
         }
-
+        
         public string GetStringParameter(string key)
         {
             if (!_parameters.ContainsKey(key))

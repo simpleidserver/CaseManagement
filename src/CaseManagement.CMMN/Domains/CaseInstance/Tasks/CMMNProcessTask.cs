@@ -20,6 +20,10 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public string ProcessRef { get; set; }
         /// <summary>
+        /// A reference to a CaseFileItem.
+        /// </summary>
+        public string SourceRef { get; set; }
+        /// <summary>
         /// If processRefExpression is specified, it is assumed that the expression evaluates to a QName which is a valid QName of an existing Process. [0...1]
         /// </summary>
         public CMMNExpression ProcessRefExpression { get; set; }
@@ -32,6 +36,7 @@ namespace CaseManagement.CMMN.Domains
                 Mappings = Mappings.Select(m =>(CMMNParameterMapping)m.Clone()).ToList(),
                 State = State,
                 ProcessRef = ProcessRef,
+                SourceRef = SourceRef,
                 // ProcessRef = ProcessRef == null ? null : (CMMNProcess)ProcessRef.Clone(),
                 ProcessRefExpression = ProcessRefExpression == null ? null : (CMMNExpression)ProcessRefExpression.Clone(),
                 Name = Name

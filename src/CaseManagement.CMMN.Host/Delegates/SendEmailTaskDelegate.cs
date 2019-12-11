@@ -8,6 +8,10 @@ namespace CaseManagement.CMMN.Host.Delegates
 {
     public class SendEmailTaskDelegate : CaseProcessDelegate
     {
+        public SendEmailTaskDelegate(IServiceProvider serviceProvider) : base(serviceProvider)
+        {
+        }
+
         public override Task Handle(CaseProcessParameter parameter, Func<CaseProcessResponse, Task> callback, CancellationToken token)
         {
             return callback(new CaseProcessResponse());

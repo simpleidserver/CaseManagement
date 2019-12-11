@@ -10,20 +10,35 @@ namespace CaseManagement.Workflow.Engine
     public class WorkflowHandlerContext
     {
         private readonly IProcessFlowElementProcessorFactory _processFlowElementProcessorFactory;
+        private readonly List<IWorkflowSubProcess> _subProcesses;
 
         public WorkflowHandlerContext(ProcessFlowInstance processFlowInstance, ProcessFlowInstanceElement currentElement, IProcessFlowElementProcessorFactory processFlowElementProcessorFactory)
         {
             ProcessFlowInstance = processFlowInstance;
             CurrentElement = currentElement;
             _processFlowElementProcessorFactory = processFlowElementProcessorFactory;
+            _subProcesses = new List<IWorkflowSubProcess>();
         }
 
         public ProcessFlowInstance ProcessFlowInstance { get; set; }   
         public ProcessFlowInstanceElement CurrentElement { get; set; }
+        public IProcessFlowElementProcessorFactory Factory => _processFlowElementProcessorFactory;
+        public List<IWorkflowSubProcess> SubProcesses => _subProcesses;
 
-        public void Start()
+        public void Start(CancellationToken token)
         {
             ProcessFlowInstance.StartElement(CurrentElement);
+            token.ThrowIfCancellationRequested();
+        }
+
+        public Task StartSubProcess(IWorkflowSubProcess subProcess, CancellationToken token)
+        {
+            lock(_subProcesses)
+            {
+                _subProcesses.Add(subProcess);
+            }
+
+            return subProcess.Start(this, token);
         }
 
         public async Task Complete(CancellationToken token)
@@ -34,24 +49,27 @@ namespace CaseManagement.Workflow.Engine
 
         public async Task Execute(CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            if (!ProcessFlowInstance.PreviousElements(CurrentElement.Id).All(e => e.Status == ProcessFlowInstanceElementStatus.Finished) || CurrentElement.Status == ProcessFlowInstanceElementStatus.Launched)
+            {
+                return;
+            }
+
+            if (CurrentElement.Status == ProcessFlowInstanceElementStatus.Finished)
+            {
+                await ExecuteNext(cancellationToken);
+                return;
+            }
+
             try
             {
-                if (!ProcessFlowInstance.PreviousElements(CurrentElement.Id).All(e => e.Status == ProcessFlowInstanceElementStatus.Finished) || CurrentElement.Status == ProcessFlowInstanceElementStatus.Launched)
-                {
-                    return;
-                }
-
-                if (CurrentElement.Status == ProcessFlowInstanceElementStatus.Finished)
-                {
-                    await ExecuteNext(cancellationToken);
-                    return;
-                }
-
                 var processor = _processFlowElementProcessorFactory.Build(CurrentElement);
                 await processor.Handle(this, cancellationToken);
             }
-            catch(Exception e)
+            catch (OperationCanceledException)
+            {
+                ProcessFlowInstance.CancelElement(CurrentElement);
+            }
+            catch (Exception e)
             {
                 ProcessFlowInstance.InvalidElement(CurrentElement, e.ToString());
             }

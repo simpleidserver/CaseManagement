@@ -13,7 +13,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
 
         public Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
-            context.Start();
+            context.Start(token);
             context.Complete(token);
             return Task.FromResult(0);
         }

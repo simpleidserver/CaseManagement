@@ -10,6 +10,11 @@ namespace CaseManagement.CMMN.Extensions
             return workflowHandlerContext.CurrentElement as CMMNPlanItem;
         }
 
+        public static CMMNCaseFileItem GetCMMNCaseFileItem(this WorkflowHandlerContext workflowHandlerContext)
+        {
+            return workflowHandlerContext.CurrentElement as CMMNCaseFileItem;
+        }
+
         public static CMMNTask GetCMMNTask(this WorkflowHandlerContext workflowHandlerContext)
         {
             return workflowHandlerContext.GetCMMNPlanItem().PlanItemDefinitionTask;

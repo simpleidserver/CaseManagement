@@ -17,6 +17,7 @@ let CmmnViewer = require('cmmn-js');
 })
 
 export class CaseDefComponent implements OnInit, OnDestroy {
+    interval: any;
     isCaseDefinitionLoading: boolean;
     isCaseDefinitionErrorLoadOccured: boolean;
     isCaseInstancesLoading: boolean;
@@ -68,6 +69,9 @@ export class CaseDefComponent implements OnInit, OnDestroy {
             }
         });
         self.refresh();
+        self.interval = setInterval(() => {
+            self.refresh();
+        }, 1000);
     }
 
     ngAfterViewInit() {
@@ -85,6 +89,13 @@ export class CaseDefComponent implements OnInit, OnDestroy {
     launchInstance(caseInstance: CaseInstance) {
         let self = this;
         self.caseInstanceService.launch(caseInstance.Id).subscribe(() => {
+            self.refresh();
+        });
+    }
+
+    stopInstance(caseInstance: CaseInstance) {
+        let self = this;
+        self.caseInstanceService.stop(caseInstance.Id).subscribe(() => {
             self.refresh();
         });
     }
@@ -120,5 +131,6 @@ export class CaseDefComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        clearInterval(this.interval);
     }
 }

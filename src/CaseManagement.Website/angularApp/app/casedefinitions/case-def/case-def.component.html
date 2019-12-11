@@ -85,6 +85,7 @@
                                     <mat-chip-list>
                                         <mat-chip *ngIf="case.Status == 'none'" color="none">{{ "CREATED" | translate }}</mat-chip>
                                         <mat-chip *ngIf="case.Status == 'started'" color="accent">{{ "STARTED" | translate }}</mat-chip>
+                                        <mat-chip *ngIf="case.Status == 'cancelled'" color="accent">{{ "CANCELLED" | translate }}</mat-chip>
                                         <mat-chip *ngIf="case.Status == 'completed'" color="primary">{{ "COMPLETED" | translate }}</mat-chip>
                                     </mat-chip-list>
                                 </td>
@@ -96,8 +97,11 @@
                             <ng-container matColumnDef="Actions">
                                 <th mat-header-cell *matHeaderCellDef>{{ "CASE_INSTANCE_ACTIONS" | translate }}</th>
                                 <td mat-cell *matCellDef="let case">
-                                    <button mat-icon-button (click)="launchInstance(case)">
+                                    <button mat-icon-button (click)="launchInstance(case)" *ngIf="case.Status != 'started' && case.Status != 'completed'">
                                         <mat-icon>play_arrow</mat-icon>
+                                    </button>
+                                    <button mat-icon-button (click)="stopInstance(case)" *ngIf="case.Status == 'started'">
+                                        <mat-icon>stop</mat-icon>
                                     </button>
                                     <button mat-icon-button [routerLink]="['/caseinstances/' + case.Id ]">
                                         <mat-icon>visibility</mat-icon>

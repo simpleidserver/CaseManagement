@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -102,6 +103,14 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             Thread.Sleep(int.Parse(seconds) * 1000);
         }
 
+        [When("add a file into the folder '(.*)'")]
+        public void ThenAddATileIntoFolder(string key)
+        {
+            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
+            var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
+            File.WriteAllText(Path.Combine(currentValue, "tmp.txt"), Guid.NewGuid().ToString());
+        }
+
         [Then("HTTP status code equals to '(.*)'")]
         public void ThenCheckHttpStatusCode(int code)
         {
@@ -123,6 +132,13 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
             var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
             Assert.Equal(value.ToLowerInvariant(), currentValue);
+        }
+
+        [Then("JSON exists '(.*)'")]
+        public void ThenJsonExists(string key)
+        {
+            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
+            Assert.NotNull(jsonHttpBody.SelectToken(key));
         }
 
         private string Parse(string val)

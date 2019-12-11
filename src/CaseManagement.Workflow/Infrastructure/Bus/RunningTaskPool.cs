@@ -20,11 +20,11 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
             return _runningTasks.Count();
         }
 
-        public void RemoveTask(string id)
+        public void RemoveTask(string processId)
         {
             lock(_runningTasks)
             {
-                _runningTasks.Remove(_runningTasks.First(a => a.Id == id));
+                _runningTasks.Remove(_runningTasks.First(a => a.ProcessId == processId));
             }
         }
 
@@ -36,9 +36,9 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
             }
         }
 
-        public RunningTask Get(string id)
+        public RunningTask Get(string processId)
         {
-            return _runningTasks.FirstOrDefault(r => r.Id == id);
+            return _runningTasks.FirstOrDefault(r => r.ProcessId == processId);
         }
     }
 }

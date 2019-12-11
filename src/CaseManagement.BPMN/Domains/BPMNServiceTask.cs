@@ -9,5 +9,22 @@ namespace CaseManagement.BPMN.Domains
         }
 
         public string FullQualifiedName { get; set; }
+
+        public override string ElementType => throw new System.NotImplementedException();
+
+        public override object Clone()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void HandleEvent(string state)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void HandleLaunch()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

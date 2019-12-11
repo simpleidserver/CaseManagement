@@ -8,6 +8,10 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Delegates
 {
     public class CountBikesTaskDelegate : CaseProcessDelegate
     {
+        public CountBikesTaskDelegate(IServiceProvider serviceProvider) : base(serviceProvider)
+        {
+        }
+
         public override Task Handle(CaseProcessParameter parameter, Func<CaseProcessResponse, Task> callback, CancellationToken token)
         {
             var result = new CaseProcessResponse();

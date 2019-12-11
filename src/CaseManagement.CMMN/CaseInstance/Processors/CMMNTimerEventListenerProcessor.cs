@@ -1,13 +1,12 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.CaseInstance.Watchers;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
-using CaseManagement.CMMN.Infrastructures.Scheduler;
 using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
-using CaseManagement.Workflow.Infrastructure.Scheduler;
 using CaseManagement.Workflow.ISO8601;
 using CaseManagement.Workflow.Persistence;
-using Hangfire;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,24 +14,22 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNTimerEventListenerProcessor : IProcessFlowElementProcessor
     {
+        private readonly ITimerEventWatcher _timerEventWatcher;
         private readonly IServiceProvider _serviceProvider;
         private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
         private readonly IProcessFlowInstanceCommandRepository _processFlowInstanceCommandRepository;
-        private readonly IScheduleJobStore _scheduleJobStore;
-        private readonly IBackgroundJobClient _backgroundJobClient;
 
-        public CMMNTimerEventListenerProcessor(IServiceProvider serviceProvider, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository, IScheduleJobStore schedulerJobStore, IBackgroundJobClient backgroundJobClient)
+        public CMMNTimerEventListenerProcessor(ITimerEventWatcher timerEventWatcher, IServiceProvider serviceProvider, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository)
         {
+            _timerEventWatcher = timerEventWatcher;
             _serviceProvider = serviceProvider;
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
             _processFlowInstanceCommandRepository = processFlowInstanceCommandRepository;
-            _scheduleJobStore = schedulerJobStore;
-            _backgroundJobClient = backgroundJobClient;
         }
 
         public string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.TimerEventListener).ToLowerInvariant();
 
-        public Task Handle(WorkflowHandlerContext context, CancellationToken token)
+        public async Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
             var pf = context.ProcessFlowInstance;
             var planItem = context.GetCMMNPlanItem();
@@ -56,7 +53,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     for(var i = 0; i < repeatingInterval.RecurringTimeInterval; i++)
                     {
                         currentDateTime = currentDateTime.Add(newTimespan);
-                        _scheduleJobStore.ScheduleJob(new TimerEventMessage { ProcessId = pf.Id, ElementId = planItem.Id}, currentDateTime);
+                        _timerEventWatcher.ScheduleJob(currentDateTime);
                     }
                 }
             }
@@ -64,11 +61,10 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             if (time != null && currentDateTime < time.Value)
             {
                 pf.CreatePlanItem(planItem);
-                _scheduleJobStore.ScheduleJob(new TimerEventMessage { ProcessId = pf.Id, ElementId = planItem.Id }, currentDateTime);
-                // _backgroundJobClient.Schedule(() => HandleListener(pf.Id, planItem.Id), time.Value);
+                _timerEventWatcher.ScheduleJob(currentDateTime);
             }
 
-            return Task.FromResult(0);
+            await context.StartSubProcess(_timerEventWatcher, token);
         }
     }
 }

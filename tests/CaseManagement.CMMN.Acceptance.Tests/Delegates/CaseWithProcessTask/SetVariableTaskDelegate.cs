@@ -8,6 +8,10 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithProcessTask
 {
     public class SetVariableTaskDelegate : CaseProcessDelegate
     {
+        public SetVariableTaskDelegate(IServiceProvider serviceProvider) : base(serviceProvider)
+        {
+        }
+
         public override Task Handle(CaseProcessParameter parameter, Func<CaseProcessResponse, Task> callback, CancellationToken token)
         {
             var value = parameter.GetStringParameter("processValue");

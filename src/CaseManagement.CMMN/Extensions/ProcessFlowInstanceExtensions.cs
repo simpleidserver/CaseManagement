@@ -1,11 +1,50 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Domains.CaseInstance.Events;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.Workflow.Domains
 {
     public static class ProcessFlowInstanceExtensions
     {
+        public static void CreateCaseFileItem(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem, Dictionary<string, string> metadata)
+        {
+            var evt = new CMMNCaseFileItemCreatedEvent(Guid.NewGuid().ToString(), processFlowInstance.Id, processFlowInstance.Version + 1, caseFileItem.Id, metadata);
+            processFlowInstance.Handle(evt);
+            processFlowInstance.DomainEvents.Add(evt);
+        }
+
+        public static void AddChild(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem)
+        {
+            processFlowInstance.RaiseEvent(caseFileItem.Id, CMMNCaseFileItemTransitions.AddChild);
+        }
+
+        public static void RemoveChild(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem)
+        {
+            processFlowInstance.RaiseEvent(caseFileItem.Id, CMMNCaseFileItemTransitions.RemoveChild);
+        }
+
+        public static void Delete(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem)
+        {
+            processFlowInstance.RaiseEvent(caseFileItem.Id, CMMNCaseFileItemTransitions.Delete);
+        }
+
+        public static void AddReference(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem)
+        {
+            processFlowInstance.RaiseEvent(caseFileItem.Id, CMMNCaseFileItemTransitions.AddReference);
+        }
+
+        public static void RemoveReference(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem)
+        {
+            processFlowInstance.RaiseEvent(caseFileItem.Id, CMMNCaseFileItemTransitions.RemoveReference);
+        }
+
+        public static void Update(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem)
+        {
+            processFlowInstance.RaiseEvent(caseFileItem.Id, CMMNCaseFileItemTransitions.Update);
+        }
+
         public static void CreatePlanItem(this ProcessFlowInstance processFlowInstance, CMMNPlanItem planItem)
         {
             processFlowInstance.RaiseEvent(planItem.Id, CMMNPlanItemTransitions.Create);
@@ -92,9 +131,20 @@ namespace CaseManagement.Workflow.Domains
             processFlowInstance.RaiseEvent(eltId, name);
         }
 
+        public static void RaiseEvent(this ProcessFlowInstance processFlowInstance, string eltId, CMMNCaseFileItemTransitions transition)
+        {
+            var name = Enum.GetName(typeof(CMMNCaseFileItemTransitions), transition);
+            processFlowInstance.RaiseEvent(eltId, name);
+        }
+
         public static CMMNPlanItem GetPlanItem(this ProcessFlowInstance pf, string id)
         {
             return pf.Elements.FirstOrDefault(e => e.Id == id) as CMMNPlanItem;
+        }
+
+        public static CMMNCaseFileItem GetCaseFileItem(this ProcessFlowInstance pf, string id)
+        {
+            return pf.Elements.FirstOrDefault(e => e.Id == id) as CMMNCaseFileItem;
         }
     }
 }

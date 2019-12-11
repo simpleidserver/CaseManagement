@@ -103,6 +103,8 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("extract \'id\' from JSON body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 12
  testRunner.And("execute HTTP GET request \'http://localhost/case-instances/$id$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 13
+ testRunner.And("wait \'1\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
@@ -110,36 +112,36 @@ this.ScenarioInitialize(scenarioInfo);
             table2.AddRow(new string[] {
                         "name",
                         "name"});
-#line 13
+#line 14
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances/$id$/confirm/PI_P" +
                     "rocessTask_1\'", ((string)(null)), table2, "And ");
-#line 16
- testRunner.And("wait \'10\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 17
- testRunner.And("execute HTTP GET request \'http://localhost/case-form-instances/.me/search\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("wait \'5\' seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 18
+ testRunner.And("execute HTTP GET request \'http://localhost/case-form-instances/.me/search\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 19
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 20
- testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 21
- testRunner.Then("JSON \'content[0].status\'=\'complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 22
- testRunner.Then("JSON \'content[0].form_id\'=\'createMeetingForm\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].status\'=\'complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 23
- testRunner.Then("JSON \'content[0].title#en\'=\'Create meeting\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].form_id\'=\'createMeetingForm\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 24
- testRunner.Then("JSON \'content[0].content[0].form_element_id\'=\'name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].title#en\'=\'Create meeting\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 25
- testRunner.Then("JSON \'content[0].content[0].is_required\'=\'true\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].content[0].form_element_id\'=\'name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 26
- testRunner.Then("JSON \'content[0].content[0].value\'=\'name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].content[0].is_required\'=\'true\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 27
- testRunner.Then("JSON \'content[0].content[0].type\'=\'txt\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].content[0].value\'=\'name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 28
- testRunner.Then("JSON \'content[0].content[0].name#en\'=\'Name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].content[0].type\'=\'txt\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 29
- testRunner.Then("JSON \'content[0].content[0].description#en\'=\'Name of the meeting\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].content[0].name#en\'=\'Name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 30
+ testRunner.Then("JSON \'content[0].content[0].description#en\'=\'Name of the meeting\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 31
  testRunner.Then("JSON \'content[0].content[0].description#fr\'=\'Intitulé de la réunion\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

@@ -14,6 +14,8 @@ namespace CaseManagement.CMMN.Domains
             TransitionHistories = new List<CMMNPlanItemStateHistory>();
         }
 
+        public override string ElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), PlanItemDefinitionType).ToLowerInvariant();
+
         /// <summary>
         /// Reference to the corresponding PlanItemDefinition object. [1...1]
         /// </summary>

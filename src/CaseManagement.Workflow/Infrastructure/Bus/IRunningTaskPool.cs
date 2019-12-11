@@ -8,7 +8,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
         int NbTasks();
         void RemoveTask(string id);
         void AddTask(RunningTask task);
-        RunningTask Get(string id);
+        RunningTask Get(string processId);
         IEnumerable<Task> Tasks { get; }
     }
 }
