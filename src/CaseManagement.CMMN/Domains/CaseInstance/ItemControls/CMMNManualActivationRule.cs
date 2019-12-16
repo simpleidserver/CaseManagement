@@ -2,6 +2,8 @@
 {
     public class CMMNManualActivationRule : CMMNPlanItemControl
     {
+        public CMMNManualActivationRule() { }
+
         public CMMNManualActivationRule(string name)
         {
             Name = name;

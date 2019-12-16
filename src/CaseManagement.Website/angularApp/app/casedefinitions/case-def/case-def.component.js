@@ -58,6 +58,9 @@ var CaseDefComponent = (function () {
             }
         });
         self.refresh();
+        self.interval = setInterval(function () {
+            self.refresh();
+        }, 1000);
     };
     CaseDefComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -73,6 +76,12 @@ var CaseDefComponent = (function () {
     CaseDefComponent.prototype.launchInstance = function (caseInstance) {
         var self = this;
         self.caseInstanceService.launch(caseInstance.Id).subscribe(function () {
+            self.refresh();
+        });
+    };
+    CaseDefComponent.prototype.stopInstance = function (caseInstance) {
+        var self = this;
+        self.caseInstanceService.stop(caseInstance.Id).subscribe(function () {
             self.refresh();
         });
     };
@@ -106,6 +115,7 @@ var CaseDefComponent = (function () {
     };
     CaseDefComponent.prototype.ngOnDestroy = function () {
         this.subscription.unsubscribe();
+        clearInterval(this.interval);
     };
     __decorate([
         ViewChild(MatPaginator),

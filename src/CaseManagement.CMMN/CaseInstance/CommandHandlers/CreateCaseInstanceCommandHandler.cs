@@ -89,6 +89,26 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                     }
                 }
 
+                if (planItem.itemControl != null && planItem.itemControl.manualActivationRule != null)
+                {
+                    var manualActivationRule = planItem.itemControl.manualActivationRule;
+                    flowInstanceElt.ActivationRule = CMMNActivationRuleTypes.ManualActivation;
+                    flowInstanceElt.ManualActivationRule = new CMMNManualActivationRule(manualActivationRule.name)
+                    {
+                        Expression = manualActivationRule.condition == null ? null : new CMMNExpression(manualActivationRule.condition.language, manualActivationRule.condition.Text.First())
+                    };
+                }
+
+                if (planItem.itemControl != null && planItem.itemControl.repetitionRule != null)
+                {
+                    var repetitionRule = planItem.itemControl.repetitionRule;
+                    flowInstanceElt.ActivationRule = CMMNActivationRuleTypes.Repetition;
+                    flowInstanceElt.RepetitionRule = new CMMNRepetitionRule(repetitionRule.name)
+                    {
+                        Condition = repetitionRule.condition == null ? null : new CMMNExpression(repetitionRule.condition.language, repetitionRule.condition.Text.First())
+                    };
+                }
+
                 flowInstanceElements.Add(flowInstanceElt);
             }
 

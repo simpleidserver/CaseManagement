@@ -4,6 +4,7 @@ using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.ISO8601;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,15 +13,27 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
 {
     public class TimerEventWatcher : ITimerEventWatcher
     {
+        private class Job
+        {
+            public Job(string processId, DateTime scheduleDateTime)
+            {
+                ProcessId = processId;
+                ScheduleDateTime = scheduleDateTime;
+            }
+
+            public string ProcessId { get; set; }
+            public DateTime ScheduleDateTime { get; set; }
+        }
+
         private readonly IServiceProvider _serviceProvider;
-        private readonly List<DateTime> _dateTimes;
+        private readonly List<Job> _jobs;
         private WorkflowHandlerContext _context;
         private CancellationToken _token;
 
         public TimerEventWatcher(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _dateTimes = new List<DateTime>();
+            _jobs = new List<Job>();
         }
 
         public Task Task { get; private set; }
@@ -34,17 +47,17 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
             return Task.CompletedTask;
         }
 
-        public void ScheduleJob(DateTime dateTime)
+        public void ScheduleJob(DateTime dateTime, string id)
         {
-            lock(_dateTimes)
+            lock(_jobs)
             {
-                _dateTimes.Add(dateTime);
+                _jobs.Add(new Job(id, dateTime));
             }
         }
 
         private void HandleTask()
         {
-            var factory = (IProcessFlowElementProcessorFactory)_serviceProvider.GetService(typeof(IProcessFlowElementProcessorFactory));
+            var factory = _context.Factory;
             while (!_token.IsCancellationRequested)
             {
                 var occurence = TakeNextOccurence();
@@ -56,49 +69,56 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
                 var flowInstance = _context.ProcessFlowInstance;
                 var tasks = new List<Task>();
                 var element = _context.CurrentElement as CMMNPlanItem;
-                flowInstance.StartElement(element);
+                if (element.TransitionHistories.Any(t => t.Transition == CMMNPlanItemTransitions.Occur))
+                {
+                    flowInstance.CreatePlanItem(element);
+                }
+
                 flowInstance.OccurPlanItem(element);
                 foreach (var nextElt in flowInstance.NextElements(element.Id))
                 {
                     var newContext = new WorkflowHandlerContext(flowInstance, nextElt, factory);
-                    tasks.Add(Task.Run(() => InternalStart(newContext, _token)));
+                    tasks.Add(Task.Run(() => newContext.Execute(_token)));
                 }
 
                 Task.WhenAll(tasks).Wait();
-                flowInstance.CompleteElement(element);
                 var nbOccures = element.TransitionHistories.Where(t => t.Transition == CMMNPlanItemTransitions.Occur).Count();
                 var timerEventListener = element.PlanItemDefinitionTimerEventListener;
                 var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
                 var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
                 if (repeatingInterval.RecurringTimeInterval == nbOccures || time != null)
                 {
-                    return;
+                    break;
                 }
             }
 
+            var pf = _context.ProcessFlowInstance;
             if (_token.IsCancellationRequested)
             {
-                var pf = _context.ProcessFlowInstance;
                 pf.CancelElement(_context.CurrentElement);
+            }
+            else
+            {
+                _context.Complete();
             }
         }
 
         private DateTime? TakeNextOccurence()
         {
             var currentDateTime = DateTime.UtcNow;
-            var filtered = _dateTimes.OrderBy(d => d).Where(d => d <= currentDateTime);
+            var filtered = _jobs.Where(j => j.ProcessId == _context.ProcessFlowInstance.Id && j.ScheduleDateTime <= currentDateTime).OrderBy(d => d.ScheduleDateTime);
             if (!filtered.Any())
             {
                 return null;
             }
 
             var result = filtered.First();
-            lock (_dateTimes)
+            lock (filtered)
             {
-                _dateTimes.Remove(result);
+                _jobs.Remove(result);
             }
 
-            return result;
+            return result.ScheduleDateTime;
         }
 
         private async Task InternalStart(WorkflowHandlerContext context, CancellationToken token)

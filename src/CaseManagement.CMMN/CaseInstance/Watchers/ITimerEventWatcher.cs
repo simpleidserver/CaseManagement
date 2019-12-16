@@ -5,6 +5,6 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
 {
     public interface ITimerEventWatcher : IWorkflowSubProcess
     {
-        void ScheduleJob(DateTime dateTime);
+        void ScheduleJob(DateTime dateTime, string processId);
     }
 }

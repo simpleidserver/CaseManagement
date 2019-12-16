@@ -4,6 +4,7 @@ using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -79,10 +80,14 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
                 }
             }
 
+            var pf = _context.ProcessFlowInstance;
             if (_token.IsCancellationRequested)
             {
-                var pf = _context.ProcessFlowInstance;
                 pf.CancelElement(_context.CurrentElement);
+            }
+            else
+            {
+                _context.Complete();
             }
 
             fileSystemWatcher.EnableRaisingEvents = false;
@@ -91,6 +96,7 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
 
         private void HandleFileCreated(object sender, FileSystemEventArgs e)
         {
+            Debug.WriteLine("File written");
             var caseFileItem = _context.CurrentElement as CMMNCaseFileItem;
             _context.ProcessFlowInstance.AddChild(caseFileItem);
             _context.ExecuteNext(_token).Wait();

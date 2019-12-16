@@ -58,6 +58,26 @@ Scenario: Launch caseWithHumanTask case instance and check his status is complet
 
 	Then HTTP status code equals to '200'
 	Then JSON 'status'='completed'
+	
+Scenario: Launch caseWithHumanTaskAndRole and check his status is completed
+	When execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value					|
+	| case_definition_id | caseWithHumanTaskAndRole	|
+	| case_id            | testCase					|
+	
+	And extract JSON from body
+	And extract 'id' from JSON body
+	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '1' seconds
+	And execute HTTP POST JSON request 'http://localhost/case-instances/$id$/confirm/PI_ProcessTask_1'
+	| Key  | Value |
+	| name | name  |
+	And wait '5' seconds
+	And execute HTTP GET request 'http://localhost/case-instances/$id$'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'status'='completed'
 
 Scenario: Launch caseWithTimerEventListener case instance and check his status is completed
 	When execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -68,7 +88,7 @@ Scenario: Launch caseWithTimerEventListener case instance and check his status i
 	And extract JSON from body
 	And extract 'id' from JSON body
 	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
-	And wait '5' seconds
+	And wait '15' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$id$'
 	And extract JSON from body
 
@@ -238,3 +258,43 @@ Scenario: Launch caseWithCaseFileItem case instance, submit the form, add a file
 	Then JSON 'status'='completed'
 	Then JSON exists 'fileitems[0].metadata.directory'
 	Then JSON exists 'context.fileContent'
+
+Scenario: Launch caseWithManualActivation and check his status is completed
+	When execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value					|
+	| case_definition_id | caseWithManualActivation |
+	| case_id            | testCase					|
+	
+	And extract JSON from body
+	And extract 'id' from JSON body
+	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '5' seconds
+	And execute HTTP GET request 'http://localhost/case-instances/$id$/activate/PI_ProcessTask_1'
+	And wait '5' seconds
+	And execute HTTP GET request 'http://localhost/case-instances/$id$'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'status'='completed'
+	Then JSON 'items[0].status'='finished'
+
+Scenario: Launch caseWithRepetitionRule and check his status is completed
+	When execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value					|
+	| case_definition_id | caseWithRepetitionRule	|
+	| case_id            | testCase					|
+	
+	And extract JSON from body
+	And extract 'id' from JSON body
+	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '5' seconds
+	And execute HTTP GET request 'http://localhost/case-instances/$id$'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'status'='completed'
+	Then JSON 'items[0].status'='finished'
+	Then JSON 'items[1].status'='finished'	
+	Then JSON 'items[2].status'='finished'	
+	Then JSON 'items[3].status'='finished'	
+	Then JSON 'context.nbClients'='10'

@@ -21,10 +21,16 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Middlewares
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            var nameIdentifier = "thabart";
+            if (_scenarioContext.ContainsKey("userId"))
+            {
+                nameIdentifier = _scenarioContext["userId"].ToString();
+            }
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, "Thierry Habart"),
-                new Claim(ClaimTypes.NameIdentifier, "thabart")
+                new Claim(ClaimTypes.NameIdentifier, nameIdentifier)
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);

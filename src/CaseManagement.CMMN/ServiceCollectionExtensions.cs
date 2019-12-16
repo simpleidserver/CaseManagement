@@ -56,8 +56,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var definitions = new List<tDefinitions>();
             var caseProcesses = new List<ProcessAggregate>();
+            var activations = new List<CaseActivationAggregate>();
             services.AddSingleton<ICMMNDefinitionsQueryRepository>(new InMemoryCMMNDefinitionsQueryRepository(definitions));
             services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
+            services.AddSingleton<ICMMNActivationCommandRepository>(new InMemoryCMMNActivationCommandRepository(activations));
             return services;
         }
 
@@ -68,6 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
             services.AddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
             services.AddTransient<IStopCaseInstanceCommandHandler, StopCaseInstanceCommandHandler>();
+            services.AddTransient<IActivateCommandHandler, ActivateCommandHandler>();
+            services.AddTransient<ITerminateCommandHandler, TerminateCommandHandler>();
             return services;
         }
 
@@ -88,6 +92,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDomainEventHandler<CMMNCaseFileItemCreatedEvent>, CMMNCaseFileItemCreatedEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowInstanceCanceledEvent>, ProcessFlowInstanceCanceledEventHandler>();
             services.AddTransient<IDomainEventHandler<ProcessFlowElementCancelledEvent>, ProcessFlowElementCancelledEventHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNManualStartCreated>, CMMNManualStartCreatedHandler>();
+            services.AddTransient<IDomainEventHandler<ProcessFlowElementUnblockedEvent>, ProcessFlowElementUnblockedEventHandler>();
             return services;
         }
 
@@ -112,7 +118,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddWatchers(this IServiceCollection services)
         {
             services.AddTransient<ITimerEventWatcher, TimerEventWatcher>();
-            services.AddTransient<IConfirmFormEventWatcher, ConfirmFormEventWatcher>();
+            services.AddTransient<IDomainEventWatcher, DomainEventWatcher>();
             return services;
         }
 

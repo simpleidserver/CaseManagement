@@ -26,7 +26,7 @@ namespace CaseManagement.Workflow.Domains
 
         public void Finish()
         {
-            if (Status != ProcessFlowInstanceElementStatus.Finished)
+            if (Status != ProcessFlowInstanceElementStatus.Launched)
             {
                 throw new ProcessFlowInstanceDomainException
                 {

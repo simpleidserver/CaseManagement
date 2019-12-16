@@ -37,11 +37,15 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
             var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
             var currentDateTime = DateTime.UtcNow;
+            if (planItem.Status != ProcessFlowInstanceElementStatus.Launched)
+            {
+                context.Start(token);
+            }
+
             if (repeatingInterval != null)
             {
                 if (currentDateTime < repeatingInterval.Interval.EndDateTime)
-                {
-                    pf.CreatePlanItem(planItem);                    
+                {              
                     var startDate = currentDateTime;
                     if (startDate < repeatingInterval.Interval.StartDateTime)
                     {
@@ -53,7 +57,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     for(var i = 0; i < repeatingInterval.RecurringTimeInterval; i++)
                     {
                         currentDateTime = currentDateTime.Add(newTimespan);
-                        _timerEventWatcher.ScheduleJob(currentDateTime);
+                        _timerEventWatcher.ScheduleJob(currentDateTime, pf.Id);
                     }
                 }
             }
@@ -61,7 +65,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             if (time != null && currentDateTime < time.Value)
             {
                 pf.CreatePlanItem(planItem);
-                _timerEventWatcher.ScheduleJob(currentDateTime);
+                _timerEventWatcher.ScheduleJob(currentDateTime, pf.Id);
             }
 
             await context.StartSubProcess(_timerEventWatcher, token);

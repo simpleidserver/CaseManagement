@@ -3,6 +3,7 @@ using CaseManagement.Workflow.Domains.Process.Exceptions;
 using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace CaseManagement.Workflow.Domains
@@ -123,6 +124,12 @@ namespace CaseManagement.Workflow.Domains
 
         public int GetNumberVariable(string key)
         {
+            var value = GetVariable(key);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return default(int);
+            }
+
             return int.Parse(GetVariable(key));
         }
 
@@ -205,6 +212,21 @@ namespace CaseManagement.Workflow.Domains
             lock(DomainEvents)
             {
                 var evt = new ProcessFlowElementBlockedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void UnblockElement(ProcessFlowInstanceElement elt)
+        {
+            UnblockElement(elt.Id);
+        }
+
+        public void UnblockElement(string eltId)
+        {
+            lock (DomainEvents)
+            {
+                var evt = new ProcessFlowElementUnblockedEvent(Guid.NewGuid().ToString(), Id, Version + 1, eltId, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -378,6 +400,11 @@ namespace CaseManagement.Workflow.Domains
             {
                 Handle((ProcessFlowElementCancelledEvent)obj);
             }
+
+            if (obj is ProcessFlowElementUnblockedEvent)
+            {
+                Handle((ProcessFlowElementUnblockedEvent)obj);
+            }
         }
 
         public void Handle(ProcessFlowInstanceCreatedEvent evt)
@@ -475,8 +502,9 @@ namespace CaseManagement.Workflow.Domains
                 };
             }
 
+            Debug.WriteLine($"Is finished : {elt.Id}");
             elt.Status = ProcessFlowInstanceElementStatus.Finished;
-            var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id && e.EndDateTime == null);
+            var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id);
             executionStep.EndDateTime = evt.CompletedDateTime;
             Version++;
             RaiseEvent(evt);
@@ -501,7 +529,7 @@ namespace CaseManagement.Workflow.Domains
         {
             var elt = Elements.First(e => e.Id == evt.ElementId);
             elt.Status = ProcessFlowInstanceElementStatus.Error;
-            var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id && e.EndDateTime == null);
+            var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id);
             executionStep.EndDateTime = evt.InvalidDateTime;
             executionStep.ErrorMessage = evt.ErrorMessage;
             Version++;
@@ -512,6 +540,14 @@ namespace CaseManagement.Workflow.Domains
         {
             var elt = Elements.First(e => e.Id == evt.ElementId);
             elt.Status = ProcessFlowInstanceElementStatus.Blocked;
+            Version++;
+            RaiseEvent(evt);
+        }
+
+        private void Handle(ProcessFlowElementUnblockedEvent evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId);
+            elt.Status = ProcessFlowInstanceElementStatus.Launched;
             Version++;
             RaiseEvent(evt);
         }
@@ -530,12 +566,8 @@ namespace CaseManagement.Workflow.Domains
         {
             var elt = Elements.First(e => e.Id == evt.ElementId);
             elt.Status = ProcessFlowInstanceElementStatus.Cancelled;
-            var executionStep = ExecutionSteps.FirstOrDefault(e => e.ElementId == elt.Id && e.EndDateTime == null);
-            if (executionStep != null)
-            {
-                executionStep.EndDateTime = evt.CancellationDateTime;
-            }
-
+            var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id);
+            executionStep.EndDateTime = evt.CancellationDateTime;
             Version++;
             RaiseEvent(evt);
         }

@@ -24,7 +24,6 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             var caseFileItem = context.GetCMMNCaseFileItem();
             var repository = _caseFileItemRepositoryFactory.Get(caseFileItem);
             await context.StartSubProcess(repository, token);
-            await context.Complete(token);
         }
     }
 }

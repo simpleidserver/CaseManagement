@@ -3,6 +3,9 @@
   <cmmn:case id="Case_0d1ujq8">
     <cmmn:casePlanModel id="CasePlanModel_0qazg9e" name="A case with TimerEvent">
       <cmmn:planItem id="PlanItem_04t8i1g" name="Send EMAIL" definitionRef="Task_1xaq99o">
+        <cmmn:itemControl id="PlanItemControl_1x0bhuw">
+          <cmmn:repetitionRule id="RepetitionRule_1e8pxww" />
+        </cmmn:itemControl>
         <cmmn:entryCriterion id="EntryCriterion_1emixlz" sentryRef="Sentry_1wpskn6" />
       </cmmn:planItem>
       <cmmn:planItem id="PlanItem_1wwlyh1" name="Timer" definitionRef="TimerEventListener_0shtnuf" />

@@ -1,7 +1,9 @@
 ﻿using CaseManagement.CMMN.Acceptance.Tests.Delegates;
 using CaseManagement.CMMN.Acceptance.Tests.Delegates.caseWithCaseFileItem;
 using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithLongProcessTask;
+using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithManualActivation;
 using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithProcessTask;
+using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithRepetitionRule;
 using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Domains;
@@ -60,6 +62,26 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 {
                     Id = "sendEmail",
                     AssemblyQualifiedName = typeof(SendEmailTaskDelegate).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "manualActivation",
+                    AssemblyQualifiedName = typeof(ManualActivationTask).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "caseWithRepetitionRule_countClients",
+                    AssemblyQualifiedName = typeof(CountClientsTask).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "caseWithRepetitionRule_sendEmail",
+                    AssemblyQualifiedName = typeof(SendEmailToClientTask).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "caseWithCaseFileItemAndOneRepetitionRule_sendEmail",
+                    AssemblyQualifiedName = typeof(Delegates.CaseWithCaseFileItemAndOneRepetitionRule.SendEmailTaskDelegate).AssemblyQualifiedName
                 }
             })
             .AddForms(new List<FormAggregate>

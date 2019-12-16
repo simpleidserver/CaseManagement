@@ -21,15 +21,14 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             var milestone = cmmnPlanItem.PlanItemMilestone;
             if (milestone.State == CMMNMilestoneStates.Available)
             {
-                if (cmmnPlanItem.EntryCriterions.Any() && cmmnPlanItem.EntryCriterions.All(s => !BaseCMMNTaskProcessor.CheckCriterion(s, pf)))
+                if (cmmnPlanItem.EntryCriterions.Any() && cmmnPlanItem.EntryCriterions.All(s => !BaseCMMNTaskProcessor.CheckCriterion(s, pf, cmmnPlanItem.Version)))
                 {
-                    pf.BlockElement(cmmnPlanItem);
                     return;
                 }
             }
 
             pf.OccurPlanItem(cmmnPlanItem);
-            await context.Complete(token);
+            await context.ExecuteNext(token);
         }
     }
 }

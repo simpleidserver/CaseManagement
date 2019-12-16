@@ -15,6 +15,13 @@ namespace CaseManagement.Workflow.Domains
             processFlowInstance.DomainEvents.Add(evt);
         }
 
+        public static void CreateManualStart(this ProcessFlowInstance processFlowInstance, CMMNPlanItem planItem)
+        {
+            var evt = new CMMNManualStartCreated(Guid.NewGuid().ToString(), processFlowInstance.Id, processFlowInstance.Version + 1, planItem.Id);
+            processFlowInstance.Handle(evt);
+            processFlowInstance.DomainEvents.Add(evt);
+        }
+
         public static void AddChild(this ProcessFlowInstance processFlowInstance, CMMNCaseFileItem caseFileItem)
         {
             processFlowInstance.RaiseEvent(caseFileItem.Id, CMMNCaseFileItemTransitions.AddChild);

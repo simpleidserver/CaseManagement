@@ -25,15 +25,27 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         {
             _obj.WaitOne();
             _scenarioContext = scenarioContext;
-            if (_factory == null)
+            _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
             {
-                _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
-                {
-                    c.AddSingleton(scenarioContext);
-                });
-                _client = _factory.CreateClient();
-            }
+                c.AddSingleton(scenarioContext);
+            });
+            _client = _factory.CreateClient();
+            // if (_factory == null)
+            // {
+            // }
+            // 
+            _obj.Release();
+        }
 
+        [BeforeScenario]
+        public void BeforeScenario()
+        {
+            _obj.WaitOne();
+        }
+
+        [AfterScenario]
+        public void AfterScenario()
+        {
             _obj.Release();
         }
 
@@ -108,13 +120,18 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         {
             var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
             var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
-            File.WriteAllText(Path.Combine(currentValue, "tmp.txt"), Guid.NewGuid().ToString());
+            File.WriteAllText(Path.Combine(currentValue, $"{Guid.NewGuid().ToString()}.txt"), Guid.NewGuid().ToString());
+        }
+
+        [When("authenticate as '(.*)'")]
+        public void WhenAuthenticate(string key)
+        {
+            _scenarioContext.Add("userId", key);
         }
 
         [Then("HTTP status code equals to '(.*)'")]
         public void ThenCheckHttpStatusCode(int code)
         {
-            // _obj.Release();
             var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
             Assert.Equal(code, (int)httpResponseMessage.StatusCode);
         }

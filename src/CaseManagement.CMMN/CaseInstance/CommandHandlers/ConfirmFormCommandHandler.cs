@@ -18,12 +18,14 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
         private readonly IQueueProvider _queueProvider;
         private readonly IFormQueryRepository _formQueryRepository;
         private readonly IEventStoreRepository _eventStoreRepository;
+        private readonly IRoleQueryRepository _roleQueryRepository;
 
-        public ConfirmFormCommandHandler(IQueueProvider queueProvider, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository)
+        public ConfirmFormCommandHandler(IQueueProvider queueProvider, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository, IRoleQueryRepository roleQueryRepository)
         {
             _queueProvider = queueProvider;
             _formQueryRepository = formQueryRepository;
             _eventStoreRepository = eventStoreRepository;
+            _roleQueryRepository = roleQueryRepository;
         }
         
         public async Task<bool> Handle(ConfirmFormCommand confirmFormCommand)
@@ -46,6 +48,15 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
             var humanTask = flowInstanceElt.PlanItemDefinitionHumanTask;
+            if (!string.IsNullOrWhiteSpace(humanTask.PerformerRef))
+            {
+                var roles = await _roleQueryRepository.FindRolesByUser(confirmFormCommand.UserIdentifier);
+                if (!roles.Any(r => r.Name == humanTask.PerformerRef))
+                {
+                    throw new UnauthorizedCaseWorkerException(confirmFormCommand.UserIdentifier, caseInstance.Id, flowInstanceElt.Id);
+                }
+            }
+            
             var form = await _formQueryRepository.FindFormById(humanTask.FormId);
             if (form == null)
             {

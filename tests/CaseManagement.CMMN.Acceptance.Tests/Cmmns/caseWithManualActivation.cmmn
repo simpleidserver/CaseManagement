@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="caseWithManualActivation" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
+  <cmmn:case id="testCase" name="One Process Task Case">
+    <cmmn:casePlanModel id="CasePlanModel_1" name="One process task">
+      <cmmn:planItem id="PI_ProcessTask_1" definitionRef="ProcessTask_1">
+        <cmmn:itemControl id="PlanItemControl_0kh0kt9">
+          <cmmn:manualActivationRule id="ManualActivationRule_1hi8h2f" />
+        </cmmn:itemControl>
+      </cmmn:planItem>
+      <cmmn:processTask id="ProcessTask_1" name="A Process Task" processRef="manualActivation">
+        <cmmn:parameterMapping sourceRef="variable" targetRef="variable" />        
+      </cmmn:processTask>
+    </cmmn:casePlanModel>
+  </cmmn:case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_1">
+      <cmmndi:Size width="500" height="500" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel_1" cmmnElementRef="CasePlanModel_1">
+        <dc:Bounds x="156" y="99" width="309" height="150" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_PI_ProcessTask_1" cmmnElementRef="PI_ProcessTask_1">
+        <dc:Bounds x="192" y="132" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

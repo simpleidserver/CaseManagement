@@ -7,5 +7,6 @@ namespace CaseManagement.CMMN.CaseInstance.Commands
         public string CaseInstanceId { get; set; }
         public string CaseElementInstanceId { get; set; }
         public JObject Content { get; set; }
+        public string UserIdentifier { get; set; }
     }
 }

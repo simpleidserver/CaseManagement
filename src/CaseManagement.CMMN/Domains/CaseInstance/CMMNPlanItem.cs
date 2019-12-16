@@ -16,6 +16,8 @@ namespace CaseManagement.CMMN.Domains
 
         public override string ElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), PlanItemDefinitionType).ToLowerInvariant();
 
+        public int Version { get; set; }
+
         /// <summary>
         /// Reference to the corresponding PlanItemDefinition object. [1...1]
         /// </summary>
@@ -31,6 +33,7 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public CMMNActivationRuleTypes? ActivationRule { get; set; }
         public CMMNManualActivationRule ManualActivationRule { get; set; }
+        public CMMNRepetitionRule RepetitionRule { get; set; }
 
         /// <summary>
         /// Zero or more EntryCriterion for that PlanItem. [0...*].
@@ -49,52 +52,53 @@ namespace CaseManagement.CMMN.Domains
             ActivationRule = CMMNActivationRuleTypes.ManualActivation;
         }
         
-        private void Create()
+        public void Create()
         {
             Handle(CMMNPlanItemTransitions.Create);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Create));
+            Version++;
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Create, Version));
         }
 
-        private void Enable()
+        public void Enable()
         {
             Handle(CMMNPlanItemTransitions.Enable);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Enable));
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Enable, Version));
         }
 
-        private void ManualStart()
+        public void ManualStart()
         {
             Handle(CMMNPlanItemTransitions.ManualStart);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.ManualStart));
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.ManualStart, Version));
         }
 
-        private void Occur()
+        public void Occur()
         {
             Handle(CMMNPlanItemTransitions.Occur);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Occur));
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Occur, Version));
         }
 
-        private void Start()
+        public void Start()
         {
             Handle(CMMNPlanItemTransitions.Start);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Start));
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Start, Version));
         }
 
-        private void Disable()
+        public void Disable()
         {
             Handle(CMMNPlanItemTransitions.Disable);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Disable));
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Disable, Version));
         }
 
-        private void Complete()
+        public void Complete()
         {
             Handle(CMMNPlanItemTransitions.Complete);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Complete));
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Complete, Version));
         }
 
-        private void Terminate()
+        public void Terminate()
         {
             Handle(CMMNPlanItemTransitions.Terminate);
-            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Terminate));
+            TransitionHistories.Add(new CMMNPlanItemStateHistory(DateTime.UtcNow, CMMNPlanItemTransitions.Terminate, Version));
         }
 
         private void Handle(CMMNPlanItemTransitions transition)
@@ -221,8 +225,10 @@ namespace CaseManagement.CMMN.Domains
                 PlanItemDefinitionType = PlanItemDefinitionType,
                 EntryCriterions = EntryCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
                 ExitCriterions = ExitCriterions.Select(e => (CMMNCriterion)e.Clone()).ToList(),
+                RepetitionRule = RepetitionRule == null ? null : (CMMNRepetitionRule)RepetitionRule.Clone(),
                 TransitionHistories = TransitionHistories.Select(e => (CMMNPlanItemStateHistory)e.Clone()).ToList(),
-                PlanItemMilestone = PlanItemMilestone == null ? null : (CMMNMilestone)PlanItemMilestone.Clone()
+                PlanItemMilestone = PlanItemMilestone == null ? null : (CMMNMilestone)PlanItemMilestone.Clone(),
+                Version = Version
             };
         }
     }

@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.CaseProcess.CommandHandlers;
+﻿using CaseManagement.CMMN.CaseInstance.Watchers;
+using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.Commands;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
@@ -17,7 +18,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
     {
         private ICaseLaunchProcessCommandHandler _caseLaunchProcessCommandHandler;
 
-        public CMMNProcessTaskProcessor(ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler)
+        public CMMNProcessTaskProcessor(ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler, IDomainEventWatcher domainEventHandler) : base(domainEventHandler)
         {
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }
@@ -114,7 +115,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             }
 
             pf.CompletePlanItem(planItem);
-            await context.Complete(token);
+            await context.ExecuteNext(token);
         }
     }
 }

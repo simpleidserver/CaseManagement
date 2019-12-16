@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:case="https://github.com/simpleidserver/CaseManagement" id="caseWithCaseFileItemAndOneRepetitionRule" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
+  <cmmn:caseFileItemDefinition id="CaseFileItemDefinition_1gxrx35" name="Document" definitionType="https://github.com/simpleidserver/casemanagement/directory" />
+  <cmmn:case id="testCase" name="One Process Task Case">
+    <cmmn:caseFileModel id="CaseFileModel_1v6m8eq">
+      <cmmn:caseFileItem id="CaseFileItem_03h5yir" definitionRef="CaseFileItemDefinition_1gxrx35" />
+    </cmmn:caseFileModel>
+    <cmmn:casePlanModel id="CasePlanModel_1" name="Case with caseFileItem and repetition rule">
+      <cmmn:planItem id="PlanItem_0dr13cy" definitionRef="ProcessTask_02soh5j">
+        <cmmn:itemControl id="PlanItemControl_15tewww">
+          <cmmn:repetitionRule id="RepetitionRule_07t7c3o">
+            <cmmn:condition>context.GetNumberVariable("nbEmails") &lt;= 2</cmmn:condition>            
+          </cmmn:repetitionRule>
+        </cmmn:itemControl>
+        <cmmn:entryCriterion id="EntryCriterion_1wciyvk" sentryRef="Sentry_09smshl" />
+      </cmmn:planItem>
+      <cmmn:sentry id="Sentry_09smshl">
+        <cmmn:caseFileItemOnPart id="CaseFileItemOnPart_11v0fh2" sourceRef="CaseFileItem_03h5yir">
+          <cmmn:standardEvent>addChild</cmmn:standardEvent>
+        </cmmn:caseFileItemOnPart>
+      </cmmn:sentry>
+      <cmmn:processTask id="ProcessTask_02soh5j" name="Send email" processRef="caseWithCaseFileItemAndOneRepetitionRule_sendEmail" case:sourceRef="CaseFileItem_03h5yir">
+        <cmmn:parameterMapping sourceRef="nbEmails" targetRef="nbEmails" />
+      </cmmn:processTask>
+    </cmmn:casePlanModel>
+  </cmmn:case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_1">
+      <cmmndi:Size width="500" height="500" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel_1" cmmnElementRef="CasePlanModel_1">
+        <dc:Bounds x="156" y="99" width="696" height="137" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CaseFileItem_03h5yir_di" cmmnElementRef="CaseFileItem_03h5yir">
+        <dc:Bounds x="226" y="151" width="36" height="50" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="218" y="201" width="52" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_1g5z3yd_di" cmmnElementRef="PlanItem_0dr13cy">
+        <dc:Bounds x="483" y="136" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="EntryCriterion_1wciyvk_di" cmmnElementRef="EntryCriterion_1wciyvk">
+        <dc:Bounds x="473" y="162" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="CaseFileItemOnPart_11v0fh2_di" cmmnElementRef="CaseFileItemOnPart_11v0fh2" targetCMMNElementRef="EntryCriterion_1wciyvk" isStandardEventVisible="true">
+        <di:waypoint x="262" y="176" />
+        <di:waypoint x="374" y="176" />
+        <di:waypoint x="374" y="176" />
+        <di:waypoint x="473" y="176" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="349" y="186" width="50" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

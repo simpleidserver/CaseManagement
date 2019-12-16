@@ -8,6 +8,7 @@ using CaseManagement.Workflow.Domains.Process.Exceptions;
 using CaseManagement.Workflow.Persistence;
 using CaseManagement.Workflow.Persistence.Parameters;
 using CaseManagement.Workflow.Persistence.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -27,14 +28,18 @@ namespace CaseManagement.CMMN.Apis
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
         private readonly IStopCaseInstanceCommandHandler _stopCaseInstanceCommandHandler;
         private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
+        private readonly IActivateCommandHandler _activateCommandHandler;
+        private readonly ITerminateCommandHandler _terminateCommandHandler;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IStopCaseInstanceCommandHandler stopCaseInstanceCommandHandler, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IStopCaseInstanceCommandHandler stopCaseInstanceCommandHandler, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IActivateCommandHandler activateCommandHandler, ITerminateCommandHandler terminateCommandHandler)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
             _confirmFormCommandHandler = confirmFormCommandHandler;
             _stopCaseInstanceCommandHandler = stopCaseInstanceCommandHandler;
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
+            _activateCommandHandler = activateCommandHandler;
+            _terminateCommandHandler = terminateCommandHandler;
         }
 
         [HttpGet(".search")]
@@ -71,12 +76,12 @@ namespace CaseManagement.CMMN.Apis
         }
 
         [HttpPost("{id}/confirm/{elt}")]
+        [Authorize("IsConnected")]
         public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
         {
-            // TODO : CHECK THE ROLE.
             try
             {
-                await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt, Content = jObj });
+                await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt, Content = jObj, UserIdentifier = this.GetNameIdentifier() });
                 return new OkResult();
             }
             catch(UnknownCaseInstanceException)
@@ -97,7 +102,76 @@ namespace CaseManagement.CMMN.Apis
             {
                 return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
+            catch(UnauthorizedCaseWorkerException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "unauthorized_request", "you're not authorized to confirm the human task" }
+                }, HttpStatusCode.Unauthorized, Request);
+            }
             catch(Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/activate/{elt}")]
+        public async Task<IActionResult> Activate(string id, string elt)
+        {
+            try
+            {
+                await _activateCommandHandler.Handle(new ActivateCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/terminate/{elt}")]
+        public async Task<IActionResult> Terminate(string id, string elt)
+        {
+            try
+            {
+                await _terminateCommandHandler.Handle(new TerminateCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (Exception ex)
             {
                 return ToError(new Dictionary<string, string>
                 {

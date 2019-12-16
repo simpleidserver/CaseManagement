@@ -41,6 +41,11 @@ namespace CaseManagement.CMMN.Domains
             {
                 Handle((CMMNCaseFileItemCreatedEvent)obj);
             }
+
+            if (obj is CMMNManualStartCreated)
+            {
+                Handle((CMMNManualStartCreated)obj);
+            }
         }
 
         public override string GetStreamName()
@@ -82,6 +87,14 @@ namespace CaseManagement.CMMN.Domains
             }
 
             elt.Create();
+            Version++;
+            base.RaiseEvent(evt);
+        }
+
+        private void Handle(CMMNManualStartCreated evt)
+        {
+            var elt = Elements.First(e => e.Id == evt.ElementId) as CMMNPlanItem;
+            elt.Enable();
             Version++;
             base.RaiseEvent(evt);
         }

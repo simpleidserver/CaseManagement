@@ -41,6 +41,12 @@ var CaseInstancesService = (function () {
         headers = headers.set('Accept', 'application/json');
         return this.http.get(targetUrl, { headers: headers });
     };
+    CaseInstancesService.prototype.stop = function (caseInstanceId) {
+        var targetUrl = url + "/case-instances/" + caseInstanceId + "/stop";
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers });
+    };
     CaseInstancesService.prototype.search = function (startIndex, count, templateId, order, direction) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');

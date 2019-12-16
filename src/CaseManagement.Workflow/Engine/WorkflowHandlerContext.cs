@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Engine
 {
-    public class WorkflowHandlerContext
+    public class WorkflowHandlerContext : ICloneable
     {
         private readonly IProcessFlowElementProcessorFactory _processFlowElementProcessorFactory;
         private readonly List<IWorkflowSubProcess> _subProcesses;
@@ -41,18 +41,25 @@ namespace CaseManagement.Workflow.Engine
             return subProcess.Start(this, token);
         }
 
-        public async Task Complete(CancellationToken token)
+        public void Complete()
         {
             ProcessFlowInstance.CompleteElement(CurrentElement);
-            await this.ExecuteNext(token);
+            foreach (var child in ProcessFlowInstance.NextElements(CurrentElement.Id))
+            {
+                if (ProcessFlowInstance.PreviousElements(child.Id).All(p => p.Status == ProcessFlowInstanceElementStatus.Finished) && child.Status == ProcessFlowInstanceElementStatus.Launched)
+                {
+                    var newContext = new WorkflowHandlerContext(ProcessFlowInstance, child, Factory);
+                    newContext.Complete();
+                }
+            }
         }
 
         public async Task Execute(CancellationToken cancellationToken)
         {
-            if (!ProcessFlowInstance.PreviousElements(CurrentElement.Id).All(e => e.Status == ProcessFlowInstanceElementStatus.Finished) || CurrentElement.Status == ProcessFlowInstanceElementStatus.Launched)
-            {
-                return;
-            }
+            // if (!ProcessFlowInstance.PreviousElements(CurrentElement.Id).All(e => e.Status == ProcessFlowInstanceElementStatus.Finished) || CurrentElement.Status == ProcessFlowInstanceElementStatus.Launched)
+            // {
+            //     return;
+            // }
 
             if (CurrentElement.Status == ProcessFlowInstanceElementStatus.Finished)
             {
@@ -85,6 +92,11 @@ namespace CaseManagement.Workflow.Engine
             }
 
             return Task.WhenAll(tasks);
+        }
+
+        public object Clone()
+        {
+            return new WorkflowHandlerContext(ProcessFlowInstance, CurrentElement, _processFlowElementProcessorFactory);
         }
     }
 }

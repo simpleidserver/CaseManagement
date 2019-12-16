@@ -41,8 +41,8 @@ namespace CaseManagement.CMMN.CMIS.Tests
             var serviceCollection = new ServiceCollection();
             var processors = new List<IProcessFlowElementProcessor>
             {
-                new CMMNTaskProcessor(),
-                new CMMNHumanTaskProcessor(new ConfirmFormEventWatcher())
+                new CMMNTaskProcessor(new DomainEventWatcher()),
+                new CMMNHumanTaskProcessor(new DomainEventWatcher())
             };
             if (types != null)
             {
@@ -63,7 +63,7 @@ namespace CaseManagement.CMMN.CMIS.Tests
                 }
 
                 var processQueryRepository = new InMemoryProcessQueryRepository(processAggregates);
-                processors.Add(new CMMNProcessTaskProcessor(new CaseLaunchProcessCommandHandler(processQueryRepository, processHandlers)));
+                processors.Add(new CMMNProcessTaskProcessor(new CaseLaunchProcessCommandHandler(processQueryRepository, processHandlers), new DomainEventWatcher()));
             }
 
             return new ProcessFlowElementProcessorFactory(processors);

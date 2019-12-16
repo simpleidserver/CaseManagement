@@ -2,6 +2,7 @@
 {
     public enum CMMNActivationRuleTypes
     {
-        ManualActivation = 0
+        ManualActivation = 0,
+        Repetition = 1
     }
 }
