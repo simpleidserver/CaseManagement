@@ -24,6 +24,9 @@
     <None Update="Cmmns\caseWithCaseFileItemAndOneRepetitionRule.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Cmmns\caseWithMilestoneAndOneRepetitionRule.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\caseWithRepetitionRule.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

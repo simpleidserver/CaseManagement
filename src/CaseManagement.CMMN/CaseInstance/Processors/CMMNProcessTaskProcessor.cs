@@ -18,7 +18,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
     {
         private ICaseLaunchProcessCommandHandler _caseLaunchProcessCommandHandler;
 
-        public CMMNProcessTaskProcessor(ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler, IDomainEventWatcher domainEventHandler) : base(domainEventHandler)
+        public CMMNProcessTaskProcessor(ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler, IDomainEventWatcher domainEventHandler, IProcessorHelper processorHelper) : base(domainEventHandler, processorHelper)
         {
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }

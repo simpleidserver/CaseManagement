@@ -96,7 +96,6 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
 
         private void HandleFileCreated(object sender, FileSystemEventArgs e)
         {
-            Debug.WriteLine("File written");
             var caseFileItem = _context.CurrentElement as CMMNCaseFileItem;
             _context.ProcessFlowInstance.AddChild(caseFileItem);
             _context.ExecuteNext(_token).Wait();

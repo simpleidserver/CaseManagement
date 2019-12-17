@@ -13,17 +13,19 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public abstract class BaseCMMNTaskProcessor : IProcessFlowElementProcessor
     {
-        public BaseCMMNTaskProcessor(IDomainEventWatcher domainEventWatcher)
+        public BaseCMMNTaskProcessor(IDomainEventWatcher domainEventWatcher, IProcessorHelper processorHelper)
         {
             DomainEventWatcher = domainEventWatcher;
+            ProcessorHelper = processorHelper;
         }
 
         public abstract string ProcessFlowElementType { get; }
         protected IDomainEventWatcher DomainEventWatcher { get; private set; }
+        protected IProcessorHelper ProcessorHelper { get; private set; }
 
         public async Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
-            bool oneOccurence = false;
+            RepetitionRuleResultTypes? repetitionRuleResult = RepetitionRuleResultTypes.Repeat;
             var pf = context.ProcessFlowInstance;
             var cmmnPlanItem = context.GetCMMNPlanItem();
             var processTask = ExtractTask(cmmnPlanItem);
@@ -31,6 +33,8 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             if (cmmnPlanItem.Status == null)
             {
                 context.Start(token);
+                pf.CreatePlanItem(cmmnPlanItem);
+                /*
                 DomainEventWatcher.AddCallback(async (obj, e) =>
                 {
                     var evt = e.DomainEvent as ProcessFlowInstanceElementStateChangedEvent;
@@ -50,52 +54,15 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     return;
                 });
                 await context.StartSubProcess(DomainEventWatcher, token);
+                */
             }
             else
             {
-                if (cmmnPlanItem.RepetitionRule != null && cmmnPlanItem.ActivationRule == CMMNActivationRuleTypes.Repetition)
+                repetitionRuleResult = ProcessorHelper.HandleRepetitionRule(cmmnPlanItem, pf);
+                if (repetitionRuleResult != null && repetitionRuleResult == RepetitionRuleResultTypes.Complete)
                 {
-                    bool isNewInstance = false;
-                    if (cmmnPlanItem.EntryCriterions.Any())
-                    {
-                        oneOccurence = true;
-                        if (cmmnPlanItem.EntryCriterions.Any(s => CheckCriterion(s, pf, actualVersion + 1)))
-                        {
-                            if (cmmnPlanItem.RepetitionRule.Condition != null)
-                            {
-                                if (ExpressionParser.IsValid(cmmnPlanItem.RepetitionRule.Condition.Body, pf))
-                                {
-                                    cmmnPlanItem.Create();
-                                    isNewInstance = true;
-                                }
-                            }
-                            else
-                            {
-                                cmmnPlanItem.Create();
-                                isNewInstance = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (cmmnPlanItem.RepetitionRule.Condition != null)
-                        {
-                            if (ExpressionParser.IsValid(cmmnPlanItem.RepetitionRule.Condition.Body, pf))
-                            {
-                                cmmnPlanItem.Create();
-                                isNewInstance = true;
-                            }
-                        }
-                    }
-
-                    if (!isNewInstance)
-                    { 
-                        if (!oneOccurence)
-                        {
-                            Complete(context);
-                        }
-                        return;
-                    }
+                    Complete(context);
+                    return;
                 }
             }
 
@@ -130,14 +97,14 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                             return;
                         }
 
-                        await InternalHandle(context, token, oneOccurence);
+                        await InternalHandle(context, token, repetitionRuleResult);
                         DomainEventWatcher.Quit = true;
                     });
                     return;
                 }
             }
 
-            await InternalHandle(context, token, oneOccurence);
+            await InternalHandle(context, token, repetitionRuleResult);
         }
 
         public abstract Task Run(WorkflowHandlerContext context, CancellationToken token);
@@ -178,7 +145,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             context.Complete();
         }
 
-        private async Task InternalHandle(WorkflowHandlerContext context, CancellationToken token, bool oneOccurence)
+        private async Task InternalHandle(WorkflowHandlerContext context, CancellationToken token, RepetitionRuleResultTypes? repetitionResult)
         {
             var pf = context.ProcessFlowInstance;
             var cmmnPlanItem = context.GetCMMNPlanItem();
@@ -203,7 +170,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 {
                     Complete(context);
                 }
-                else if (!oneOccurence)
+                else if (repetitionResult.Value == RepetitionRuleResultTypes.Repeat)
                 {
                     await Handle(context, token);
                 }

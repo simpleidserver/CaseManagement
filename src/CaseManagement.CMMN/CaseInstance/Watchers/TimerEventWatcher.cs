@@ -4,7 +4,6 @@ using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.ISO8601;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,15 +23,13 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
             public string ProcessId { get; set; }
             public DateTime ScheduleDateTime { get; set; }
         }
-
-        private readonly IServiceProvider _serviceProvider;
+        
         private readonly List<Job> _jobs;
         private WorkflowHandlerContext _context;
         private CancellationToken _token;
 
-        public TimerEventWatcher(IServiceProvider serviceProvider)
+        public TimerEventWatcher()
         {
-            _serviceProvider = serviceProvider;
             _jobs = new List<Job>();
         }
 
@@ -69,11 +66,7 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
                 var flowInstance = _context.ProcessFlowInstance;
                 var tasks = new List<Task>();
                 var element = _context.CurrentElement as CMMNPlanItem;
-                if (element.TransitionHistories.Any(t => t.Transition == CMMNPlanItemTransitions.Occur))
-                {
-                    flowInstance.CreatePlanItem(element);
-                }
-
+                flowInstance.CreatePlanItem(element);
                 flowInstance.OccurPlanItem(element);
                 foreach (var nextElt in flowInstance.NextElements(element.Id))
                 {

@@ -30,10 +30,6 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
                 c.AddSingleton(scenarioContext);
             });
             _client = _factory.CreateClient();
-            // if (_factory == null)
-            // {
-            // }
-            // 
             _obj.Release();
         }
 
@@ -91,11 +87,19 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         }
 
         [When("extract JSON from body")]
-        public async Task GivenExtractFromBody()
+        public async Task WhenExtractFromBody()
         {
             var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
             var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             _scenarioContext.Set(JsonConvert.DeserializeObject<JObject>(json), "jsonHttpBody");
+        }
+
+        [When("extract JSON from body into '(.*)'")]
+        public async Task WhenExtractFromBodyIntoKey(string key)
+        {
+            var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
+            var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            _scenarioContext.Set(JsonConvert.DeserializeObject<JObject>(json), key);
         }
 
         [When("extract '(.*)' from JSON body")]
@@ -143,12 +147,27 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             Assert.True(jsonHttpBody.ContainsKey(key) == true);
         }
 
+        [Then("extract JSON '(.*)', JSON '(.*)'='(.*)'")]
+        public void ThenExtractJSONEqualsTo(string jsonKey, string key, string value)
+        {
+            var jsonHttpBody = _scenarioContext[jsonKey] as JObject;
+            var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
+            Assert.Equal(value.ToLowerInvariant(), currentValue);
+        }
+
         [Then("JSON '(.*)'='(.*)'")]
         public void ThenEqualsTo(string key, string value)
         {
             var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
             var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
             Assert.Equal(value.ToLowerInvariant(), currentValue);
+        }
+
+        [Then("extract JSON '(.*)', JSON exists '(.*)'")]
+        public void ThenExtractJSONExists(string jsonKey, string key)
+        {
+            var jsonHttpBody = _scenarioContext[jsonKey] as JObject;
+            Assert.NotNull(jsonHttpBody.SelectToken(key));
         }
 
         [Then("JSON exists '(.*)'")]

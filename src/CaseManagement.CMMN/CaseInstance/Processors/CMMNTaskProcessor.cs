@@ -11,7 +11,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNTaskProcessor : BaseCMMNTaskProcessor
     {
-        public CMMNTaskProcessor(IDomainEventWatcher domainEventWatcher) : base(domainEventWatcher)
+        public CMMNTaskProcessor(IDomainEventWatcher domainEventWatcher, IProcessorHelper processorHelper) : base(domainEventWatcher, processorHelper)
         {
         }
 

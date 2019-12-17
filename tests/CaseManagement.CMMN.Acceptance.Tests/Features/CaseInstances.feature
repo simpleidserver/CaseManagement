@@ -151,6 +151,39 @@ Scenario: Launch caseWithMilestone case instance and check his status is complet
 	Then HTTP status code equals to '200'
 	Then JSON 'status'='completed'
 
+Scenario: Launch caseWithMilestoneAndOneRepetitionRule case instance and check his status is completed
+	When execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value                                 |
+	| case_definition_id | caseWithMilestoneAndOneRepetitionRule |
+	| case_id            | Case_1ey12wl                          |
+
+	And extract JSON from body
+	And extract 'id' from JSON body
+	And execute HTTP GET request 'http://localhost/case-instances/$id$/launch'
+	And wait '5' seconds
+	And execute HTTP GET request 'http://localhost/case-instances/$id$'
+	And extract JSON from body into 'caseInstance'
+	And execute HTTP GET request 'http://localhost/case-instances/$id$/steps/.search'
+	And extract JSON from body into 'executionSteps'
+
+	Then extract JSON 'caseInstance', JSON 'status'='completed'
+	Then extract JSON 'caseInstance', JSON 'context.nbTasks'='3'
+	Then extract JSON 'caseInstance', JSON 'items[0].version'='3'
+	Then extract JSON 'caseInstance', JSON 'items[1].version'='3'
+	Then extract JSON 'caseInstance', JSON 'items[0].status'='finished'
+	Then extract JSON 'caseInstance', JSON 'items[1].status'='finished'
+	Then extract JSON 'executionSteps', JSON 'content[0].id'='PlanItem_1twjtol'
+	Then extract JSON 'executionSteps', JSON exists 'content[0].start_datetime'
+	Then extract JSON 'executionSteps', JSON exists 'content[0].end_datetime'
+	Then extract JSON 'executionSteps', JSON 'content[0].histories[0].transition'='create'
+	Then extract JSON 'executionSteps', JSON 'content[0].histories[0].transition'='start'
+	Then extract JSON 'executionSteps', JSON 'content[0].histories[0].transition'='complete'
+	Then extract JSON 'executionSteps', JSON 'content[1].id'='PlanItem_1iqs5hf'
+	Then extract JSON 'executionSteps', JSON 'content[1].histories[0].transition'='create'
+	Then extract JSON 'executionSteps', JSON 'content[1].histories[0].transition'='occur'
+	Then extract JSON 'executionSteps', JSON exists 'content[1].start_datetime'
+	Then extract JSON 'executionSteps', JSON exists 'content[1].end_datetime'
+
 Scenario: Launch caseWithLongProcessTask case instance and stop case instance
 	When execute HTTP POST JSON request 'http://localhost/case-instances'
 	| Key                | Value                   |

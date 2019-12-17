@@ -15,7 +15,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
     {
         private List<string> _completeElements;
 
-        public CMMNHumanTaskProcessor(IDomainEventWatcher domainEventWatcher) : base(domainEventWatcher)
+        public CMMNHumanTaskProcessor(IDomainEventWatcher domainEventWatcher, IProcessorHelper processorHelper) : base(domainEventWatcher, processorHelper)
         {
             _completeElements = new List<string>();
         }

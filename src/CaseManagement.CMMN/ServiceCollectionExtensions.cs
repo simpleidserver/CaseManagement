@@ -105,6 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IProcessFlowElementProcessor, CMMNTimerEventListenerProcessor>();
             services.AddTransient<IProcessFlowElementProcessor, CMMNMilestoneProcessor>();
             services.AddTransient<IProcessFlowElementProcessor, CMMNCaseFileItemProcessor>();
+            services.AddTransient<IProcessorHelper, ProcessorHelper>();
             return services;
         }
 

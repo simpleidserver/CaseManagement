@@ -502,7 +502,6 @@ namespace CaseManagement.Workflow.Domains
                 };
             }
 
-            Debug.WriteLine($"Is finished : {elt.Id}");
             elt.Status = ProcessFlowInstanceElementStatus.Finished;
             var executionStep = ExecutionSteps.First(e => e.ElementId == elt.Id);
             executionStep.EndDateTime = evt.CompletedDateTime;

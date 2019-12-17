@@ -82,6 +82,11 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 {
                     Id = "caseWithCaseFileItemAndOneRepetitionRule_sendEmail",
                     AssemblyQualifiedName = typeof(Delegates.CaseWithCaseFileItemAndOneRepetitionRule.SendEmailTaskDelegate).AssemblyQualifiedName
+                },
+                new CaseManagementProcessAggregate
+                {
+                    Id = "caseWithMilestoneAndOneRepetitionRule_receiveTask",
+                    AssemblyQualifiedName = typeof(Delegates.CaseWithMilestoneAndOneRepetitionRule.ReceiveTaskDelegate).AssemblyQualifiedName
                 }
             })
             .AddForms(new List<FormAggregate>

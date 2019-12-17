@@ -311,13 +311,29 @@ namespace CaseManagement.CMMN.Apis
             var result = new JObject
             {
                 { "id", planItem.Id },
-                { "name", planItem.Name }
+                { "name", planItem.Name },
+                { "version", planItem.Version }
             };
+            var transitionHistories = new JArray();
+            if (planItem.TransitionHistories != null)
+            {
+                foreach(var transitionHistory in planItem.TransitionHistories)
+                {
+                    transitionHistories.Add(new JObject
+                    {
+                        { "create_datetime", transitionHistory.CreateDateTime },
+                        { "transition", Enum.GetName(typeof(CMMNPlanItemTransitions), transitionHistory.Transition).ToLowerInvariant() },
+                        { "version", transitionHistory.Version }
+                    });
+                }
+            }
+
             if (planItem.Status != null)
             {
                 result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceElementStatus), planItem.Status).ToLowerInvariant());
             }
 
+            result.Add("histories", transitionHistories);
             return result;
         }
 
