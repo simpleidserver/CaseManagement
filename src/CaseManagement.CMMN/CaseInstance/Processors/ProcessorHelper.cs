@@ -1,13 +1,9 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using System.Linq;
-
-namespace CaseManagement.CMMN.CaseInstance.Processors
+﻿namespace CaseManagement.CMMN.CaseInstance.Processors
 {
+    /*
     public class ProcessorHelper : IProcessorHelper
     {
-        public RepetitionRuleResultTypes? HandleRepetitionRule(CMMNPlanItem cmmnPlanItem, ProcessFlowInstance pf)
+        public RepetitionRuleResultTypes? HandleRepetitionRule(CMMNPlanItemDefinition cmmnPlanItem, ProcessFlowInstance pf)
         {
             var oneOccurence = false;
             int actualVersion = cmmnPlanItem.Version;
@@ -95,4 +91,5 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             return true;
         }
     }
+    */
 }

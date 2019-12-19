@@ -5,12 +5,12 @@ namespace CaseManagement.CMMN.Builders
 {
     public class CMMNPlanItemBuilder
     {
-        public CMMNPlanItemBuilder(CMMNPlanItem planItem)
+        public CMMNPlanItemBuilder(CMMNPlanItemDefinition planItem)
         {
             PlanItem = planItem;
         }
 
-        protected CMMNPlanItem PlanItem { get; private set; }
+        protected CMMNPlanItemDefinition PlanItem { get; private set; }
 
         public CMMNPlanItemBuilder AddEntryCriterion(string name, Action<CMMNSEntryBuilder> callback)
         {
@@ -34,6 +34,13 @@ namespace CaseManagement.CMMN.Builders
         {
             var manualActivationRule = new CMMNManualActivationRule(name, expression);
             PlanItem.SetManualActivationRule(manualActivationRule);
+            return this;
+        }
+
+        public CMMNPlanItemBuilder SetRepetitionRule(string name, CMMNExpression expression)
+        {
+            var repetitionRule = new CMMNRepetitionRule(name, expression);
+            PlanItem.SetRepetitionRule(repetitionRule);
             return this;
         }
     }

@@ -1,14 +1,10 @@
-﻿using CaseManagement.CMMN.CaseInstance.Watchers;
-using CaseManagement.CMMN.CaseProcess.CommandHandlers;
+﻿using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.Commands;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using Newtonsoft.Json;
-using System;
+using CaseManagement.CMMN.Infrastructures;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,58 +14,49 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
     {
         private ICaseLaunchProcessCommandHandler _caseLaunchProcessCommandHandler;
 
-        public CMMNProcessTaskProcessor(ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler, IDomainEventWatcher domainEventHandler, IProcessorHelper processorHelper) : base(domainEventHandler, processorHelper)
+        public CMMNProcessTaskProcessor(ICaseLaunchProcessCommandHandler caseLaunchProcessCommandHandler)
         {
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }
 
-        public override string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.ProcessTask).ToLowerInvariant();
-        
-        public override async Task Run(WorkflowHandlerContext context, CancellationToken token)
+        public override CMMNPlanItemDefinitionTypes Type => CMMNPlanItemDefinitionTypes.ProcessTask;
+
+        protected override async Task Run(PlanItemProcessorParameter parameter, CancellationToken token)
         {
-            var pf = context.ProcessFlowInstance;
-            var planItem = context.GetCMMNPlanItem();
-            var processTask = context.GetCMMNProcessTask();
+            var planItem = parameter.WorkflowDefinition.PlanItems.First(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
+            var processTask = planItem.PlanItemDefinitionProcessTask;
             if (processTask.IsBlocking)
             {
-                await HandleProcess(context, token);
+                await HandleProcess(parameter, token);
             }
             else
             {
-                // TODO : Manage background task.
-                // BackgroundJob.Enqueue(() => HandleBackgroundProcess(context, token));
-                // pf.CompletePlanItem(planItem);
-                // await context.Complete(token);
+                // TODO : ADD BACKGROUND PROCESS.
             }
         }
 
-        private async Task HandleProcess(WorkflowHandlerContext context, CancellationToken token)
+        private async Task HandleProcess(PlanItemProcessorParameter parameter, CancellationToken token)
         {
-            var pf = context.ProcessFlowInstance;
-            var processTask = context.GetCMMNProcessTask();
+            var planItem = parameter.WorkflowDefinition.PlanItems.First(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
+            var processTask = planItem.PlanItemDefinitionProcessTask;
             var parameters = new Dictionary<string, string>();
             var processRef = processTask.ProcessRef;
             if (string.IsNullOrWhiteSpace(processRef))
             {
-                if (processTask.ProcessRefExpression == null)
-                {
-                    // TODO : THROW EXCEPTION.
-                }
-
-                processRef = ExpressionParser.GetStringEvaluation(processTask.ProcessRefExpression.Body, pf);
+                processRef = ExpressionParser.GetStringEvaluation(processTask.ProcessRefExpression.Body, parameter.WorkflowInstance);
             }
 
             foreach (var mapping in processTask.Mappings)
             {
-                if (!pf.ContainsVariable(mapping.SourceRef.Name))
+                if (!parameter.WorkflowInstance.ContainsVariable(mapping.SourceRef.Name))
                 {
                     continue;
                 }
 
-                var variableValue = pf.GetVariable(mapping.SourceRef.Name);
+                var variableValue = parameter.WorkflowInstance.GetVariable(mapping.SourceRef.Name);
                 if (mapping.Transformation != null)
                 {
-                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, pf, (i) =>
+                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.WorkflowInstance, (i) =>
                     {
                         i.SetVariable("sourceValue", variableValue);
                     });
@@ -80,21 +67,20 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
             if (!string.IsNullOrWhiteSpace(processTask.SourceRef))
             {
-                var caseFileItem  = pf.GetCaseFileItem(processTask.SourceRef);
-                parameters.Add("caseFileItem", JsonConvert.SerializeObject(caseFileItem));
+                // var caseFileItem = pf.GetCaseFileItem(processTask.SourceRef);
+                // parameters.Add("caseFileItem", JsonConvert.SerializeObject(caseFileItem));
             }
-
+            
             await _caseLaunchProcessCommandHandler.Handle(new LaunchCaseProcessCommand(processRef, parameters), (resp) =>
             {
-                return HandleLaunchCaseProcessCallback(context, resp, token);
+                return HandleLaunchCaseProcessCallback(parameter, resp, token);
             }, token);
         }
-
-        private async Task HandleLaunchCaseProcessCallback(WorkflowHandlerContext context, CaseProcessResponse caseProcessResponse, CancellationToken token)
+        
+        private Task HandleLaunchCaseProcessCallback(PlanItemProcessorParameter parameter, CaseProcessResponse caseProcessResponse, CancellationToken token)
         {
-            var pf = context.ProcessFlowInstance;
-            var planItem = context.GetCMMNPlanItem();
-            var processTask = context.GetCMMNProcessTask();
+            var planItem = parameter.WorkflowDefinition.PlanItems.First(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
+            var processTask = planItem.PlanItemDefinitionProcessTask;
             foreach (var mapping in processTask.Mappings)
             {
                 if (!caseProcessResponse.Parameters.ContainsKey(mapping.SourceRef.Name))
@@ -105,17 +91,17 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 string vv = caseProcessResponse.Parameters[mapping.SourceRef.Name];
                 if (mapping.Transformation != null)
                 {
-                    vv = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, pf, (i) =>
+                    vv = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.WorkflowInstance, (i) =>
                     {
                         i.SetVariable("sourceValue", vv);
                     });
                 }
 
-                pf.SetVariable(mapping.TargetRef.Name, vv);
+                parameter.WorkflowInstance.SetVariable(mapping.TargetRef.Name, vv);
             }
 
-            pf.CompletePlanItem(planItem);
-            await context.ExecuteNext(token);
+            parameter.WorkflowInstance.MakeTransition(parameter.PlanItemInstance.Id, CMMNPlanItemTransitions.Complete);
+            return Task.CompletedTask;
         }
     }
 }

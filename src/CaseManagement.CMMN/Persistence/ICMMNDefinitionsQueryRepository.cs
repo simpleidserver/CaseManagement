@@ -1,5 +1,5 @@
-﻿using CaseManagement.Workflow.Persistence.Parameters;
-using CaseManagement.Workflow.Persistence.Responses;
+﻿using CaseManagement.CMMN.Persistence.Parameters;
+using CaseManagement.CMMN.Persistence.Responses;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

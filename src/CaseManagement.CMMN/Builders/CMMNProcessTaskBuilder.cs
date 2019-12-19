@@ -4,7 +4,7 @@ namespace CaseManagement.CMMN.Builders
 {
     public class CMMNProcessTaskBuilder : CMMNPlanItemBuilder
     {
-        public CMMNProcessTaskBuilder(CMMNPlanItem planItem) : base(planItem)
+        public CMMNProcessTaskBuilder(CMMNPlanItemDefinition planItem) : base(planItem)
         {
         }
 
@@ -12,13 +12,6 @@ namespace CaseManagement.CMMN.Builders
         {
             var cmmnTask = PlanItem.PlanItemDefinitionProcessTask;
             cmmnTask.IsBlocking = isBlocking;
-            return this;
-        }
-
-        public CMMNProcessTaskBuilder SetState(CMMNTaskStates state)
-        {
-            var cmmnTask = PlanItem.PlanItemDefinitionProcessTask;
-            cmmnTask.State = state;
             return this;
         }
 

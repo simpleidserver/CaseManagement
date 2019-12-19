@@ -26,7 +26,7 @@ namespace CaseManagement.CMMN.CMIS.Tests
             var cmisSessionFactory = new CMISSessionFactory(Options.Create(new CMISOptions()));
             var cmisDirectoryFactory = new CMISDirectoryCaseFileItemRepository(cmisSessionFactory, Options.Create(new CMISOptions()));
             var cancellationTokenSource = new CancellationTokenSource();
-            var instance = CMMNProcessFlowInstanceBuilder.New("templateId", "Case with two tasks")
+            var instance = CMMNWorkflowBuilder.New("templateId", "Case with two tasks")
                 .AddCaseFileItem(new CMMNCaseFileItem(Guid.NewGuid().ToString(), "name")
                 {
                     Definition = new CMMNCaseFileItemDefinition(CMISDirectoryCaseFileItemRepository.CASE_FILE_ITEM_TYPE)

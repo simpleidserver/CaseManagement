@@ -1,16 +1,8 @@
-﻿using CaseManagement.CMMN.Builders;
-using CaseManagement.Workflow.Infrastructure.Bus;
-using CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent;
-using CaseManagement.Workflow.Persistence;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace CaseManagement.CMMN.Tests
+﻿namespace CaseManagement.CMMN.Tests
 {
     public class DomainEventMessageConsumerFixture
     {
+        /*
         [Fact]
         public async Task When_Queue_Create_ProcessInstance_Domain_Event()
         {
@@ -36,5 +28,6 @@ namespace CaseManagement.CMMN.Tests
             var existingInstance = await queryRepository.FindFlowInstanceById(instance.Id);
             Assert.NotNull(existingInstance);
         }
+        */
     }
 }

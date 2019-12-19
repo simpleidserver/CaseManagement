@@ -1,16 +1,6 @@
-﻿using CaseManagement.CMMN.CaseInstance.Watchers;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using CaseManagement.Workflow.ISO8601;
-using CaseManagement.Workflow.Persistence;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.CaseInstance.Processors
+﻿namespace CaseManagement.CMMN.CaseInstance.Processors
 {
+    /*
     public class CMMNTimerEventListenerProcessor : IProcessFlowElementProcessor
     {
         private readonly ITimerEventWatcher _timerEventWatcher;
@@ -28,7 +18,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         public string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.TimerEventListener).ToLowerInvariant();
 
-        public async Task Handle(WorkflowHandlerContext context, CancellationToken token)
+        public Task Handle(WorkflowHandlerContext context, CancellationToken token)
         {
             var pf = context.ProcessFlowInstance;
             var planItem = context.GetCMMNPlanItem();
@@ -38,7 +28,6 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             var currentDateTime = DateTime.UtcNow;
             if (planItem.Status != ProcessFlowInstanceElementStatus.Launched)
             {
-                context.Start(token);
             }
 
             if (repeatingInterval != null)
@@ -67,7 +56,8 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 _timerEventWatcher.ScheduleJob(currentDateTime, pf.Id);
             }
 
-            await context.StartSubProcess(_timerEventWatcher, token);
+            return Task.CompletedTask;
         }
     }
+    */
 }

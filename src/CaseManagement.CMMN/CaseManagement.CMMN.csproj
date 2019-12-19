@@ -11,4 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CaseManagement.Workflow\CaseManagement.Workflow.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CaseInstance\EventHandlers\" />
+  </ItemGroup>
 </Project>

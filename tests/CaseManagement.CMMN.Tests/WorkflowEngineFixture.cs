@@ -1,20 +1,10 @@
 ﻿using CaseManagement.CMMN.Builders;
 using CaseManagement.CMMN.CaseInstance.Processors;
-using CaseManagement.CMMN.CaseInstance.Watchers;
-using CaseManagement.CMMN.CaseProcess.CommandHandlers;
-using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Persistence.InMemory;
-using CaseManagement.CMMN.Tests.Delegates;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
-using System;
+using CaseManagement.CMMN.Infrastructures;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace CaseManagement.CMMN.Tests
@@ -22,18 +12,103 @@ namespace CaseManagement.CMMN.Tests
     public class WorkflowEngineFixture
     {
         [Fact]
-        public async Task When_Execute_Two_Simple_Tasks()
+        public void When_Execute_One_Task_With_ManualActivationRule()
+        {
+            var workflowDefinition = CMMNWorkflowBuilder.New("templateId", "Case with one task")
+                .AddCMMNTask("1", "First Task", (c) => {
+                    c.SetManualActivationRule("activation", new CMMNExpression("language", "true"));
+                })
+                .Build();
+            var workflowEngine = new CMMNWorkflowEngine(new List<ICMMNPlanItemProcessor>
+            {
+                new CMMNTaskProcessor()
+            });
+            var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
+            workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
+            Thread.Sleep(5 * 1000);
+            var elt = workflowInstance.PlanItemInstances.First();
+            workflowInstance.MakeTransition(elt.Id, CMMNPlanItemTransitions.ManualStart);
+        }
+
+        [Fact]
+        public void When_Execute_One_Task_With_RepetitionRule()
+        {
+            var workflowDefinition = CMMNWorkflowBuilder.New("templateId", "Case with one task")
+                .AddCMMNProcessTask("1", "First Task", (c) => {
+                    c.SetProcessRef("increment");
+                    c.SetIsBlocking(true);
+                    c.AddMapping("increment", "increment");
+                    c.SetRepetitionRule("activation", new CMMNExpression("language", "context.GetNumberVariable(\"increment\") &lt;= 2"));
+                })
+                .Build();
+            var workflowEngine = new CMMNWorkflowEngine(new List<ICMMNPlanItemProcessor>
+            {
+                new CMMNProcessTaskProcessor(null)
+            });
+            var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
+            workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
+            Thread.Sleep(5 * 1000);
+        }
+
+        /*
+        [Fact]
+        public void When_Execute_Two_Tasks_With_RepetitionRule()
+        {
+            var factory = BuildPlanItemProcessFactory();
+            var instance = CMMNProcessFlowInstanceBuilder.New("templateId", "Case with one task")
+                .AddCMMNProcessTask("1", "First Task", (c) => {
+                    c.SetProcessRef("increment");
+                    c.SetIsBlocking(true);
+                    c.AddMapping("increment", "increment");
+                    c.SetRepetitionRule("activation", new CMMNExpression("language", "context.GetNumberVariable(\"increment\") &lt;= 1"));
+                })
+                .AddCMMNTask("2", "Second tasks", (c) =>
+                {
+                    c.AddEntryCriterion("entry", (s) =>
+                    {
+                        s.AddOnPart(new CMMNPlanItemOnPart { SourceRef = "1", StandardEvent = CMMNPlanItemTransitions.Complete });
+                    });
+                    c.SetRepetitionRule("activation", null);
+                })
+                .Build();
+            var workflowEngine = new CMMNWorkflowEngine(factory);
+            workflowEngine.Start(instance, CancellationToken.None);
+            Thread.Sleep(3600 * 1000);
+            string ssss = "";
+        }
+
+        [Fact]
+        public void When_Execute_Tasks_With_SEntry()
         {
             var factory = BuildPlanItemProcessFactory();
             var instance = CMMNProcessFlowInstanceBuilder.New("templateId", "Case with two tasks")
                 .AddCMMNTask("1", "First Task", (c) => { })
-                .AddCMMNTask("2", "Second task", (c) => { })
-                .AddConnection("1", "2")
+                .AddCMMNTask("2", "Second Task", (c) =>
+                {
+                    c.AddEntryCriterion("entry", (s) =>
+                    {
+                        s.AddOnPart(new CMMNPlanItemOnPart { SourceRef = "1", StandardEvent = CMMNPlanItemTransitions.Complete });
+                    });
+                })
                 .Build();
             var workflowEngine = new WorkflowEngine(factory);
-            await workflowEngine.Start(instance, CancellationToken.None);
-            Assert.Equal(ProcessFlowInstanceElementStatus.Finished, instance.Elements.First().Status);
-            Assert.Equal(ProcessFlowInstanceElementStatus.Finished, instance.Elements.Last().Status);
+            workflowEngine.Start(instance, CancellationToken.None);
+            Thread.Sleep(2 * 1000);
+
+            var firstTask = (instance.Elements.First() as CMMNPlanItemDefinition).PlanItemDefinitionTask;
+            var lastTask = (instance.Elements.Last() as CMMNPlanItemDefinition).PlanItemDefinitionTask;
+            Assert.Equal(CMMNTaskStates.Completed, firstTask.State);
+            Assert.Equal(CMMNTaskStates.Completed, lastTask.State);
+        }
+
+        [Fact]
+        public void When_Execute_Task_And_Suspend()
+        {
+            var factory = BuildPlanItemProcessFactory();
+            var instance = CMMNProcessFlowInstanceBuilder.New("templateId", "Case with two tasks")
+                .AddCMMNTask("1", "First Task", (c) => { })
+                .Build();
+
         }
 
         [Fact]
@@ -140,10 +215,23 @@ namespace CaseManagement.CMMN.Tests
         public static ProcessFlowElementProcessorFactory BuildPlanItemProcessFactory(IEnumerable<Type> types = null)
         {
             var serviceCollection = new ServiceCollection();
-            var processors = new List<IProcessFlowElementProcessor>
+            var processes = new List<ProcessAggregate>
             {
-                new CMMNTaskProcessor(new DomainEventWatcher()),
-                new CMMNHumanTaskProcessor(new DomainEventWatcher())
+                new CaseManagementProcessAggregate
+                {
+                    Id = "increment",
+                    AssemblyQualifiedName = typeof(IncrementTask).AssemblyQualifiedName
+                }
+            };
+            var caseLaunchProcessCommandHandler = new CaseLaunchProcessCommandHandler(new InMemoryProcessQueryRepository(processes), new List<ICaseProcessHandler>
+            {
+                new CaseManagementCallbackProcessHandler(serviceCollection.BuildServiceProvider())
+            });
+            var processors = new List<ICMMNElementProcessor>
+            {
+                new CMMNTaskProcessor(new ProcessorHelper()),
+                new CMMNHumanTaskProcessor(new ProcessorHelper()),
+                new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler, new ProcessorHelper())
             };
             if (types != null)
             {
@@ -164,10 +252,11 @@ namespace CaseManagement.CMMN.Tests
                 }
 
                 var processQueryRepository = new InMemoryProcessQueryRepository(processAggregates);
-                processors.Add(new CMMNProcessTaskProcessor(new CaseLaunchProcessCommandHandler(processQueryRepository, processHandlers), new DomainEventWatcher()));
+                processors.Add(new CMMNProcessTaskProcessor(new CaseLaunchProcessCommandHandler(processQueryRepository, processHandlers), new ProcessorHelper()));
             }
 
             return new ProcessFlowElementProcessorFactory(processors);
         }
+        */
     }
 }

@@ -1,11 +1,9 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Domains.Process.Exceptions;
+using CaseManagement.CMMN.Persistence;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
-using CaseManagement.Workflow.Persistence;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,13 +28,14 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
         
         public async Task<bool> Handle(ConfirmFormCommand confirmFormCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(confirmFormCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(confirmFormCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(confirmFormCommand.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(confirmFormCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(confirmFormCommand.CaseInstanceId);
             }
 
-            var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == confirmFormCommand.CaseElementInstanceId) as CMMNPlanItem;
+            /*
+            var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == confirmFormCommand.CaseElementInstanceId) as CMMNPlanItemDefinition;
             if (flowInstanceElt == null)
             {
                 throw new UnknownCaseInstanceElementException(caseInstance.Id, confirmFormCommand.CaseElementInstanceId);
@@ -63,9 +62,11 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 throw new UnknownFormException(humanTask.FormId);
             }
 
+            /*
             var formValues = CheckConfirmForm(form, confirmFormCommand.Content);
             caseInstance.ConfirmForm(confirmFormCommand.CaseElementInstanceId, flowInstanceElt.FormInstance.Id, form.Id, formValues);
             await _queueProvider.QueueRaiseEvent(caseInstance.Id, caseInstance.DomainEvents.Last());
+            */
             return true;
         }
 
@@ -104,10 +105,12 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
             if (errors.Any())
             {
+                /*
                 throw new ProcessFlowInstanceDomainException
                 {
                     Errors = errors
                 };
+                */
             }
 
             return result;

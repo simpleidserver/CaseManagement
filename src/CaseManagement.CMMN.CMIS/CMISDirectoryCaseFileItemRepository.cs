@@ -1,22 +1,6 @@
-﻿using CaseManagement.CMMN.CaseInstance.Repositories;
-using CaseManagement.CMMN.CMIS.Extensions;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using Microsoft.Extensions.Options;
-using PortCMIS.Client;
-using PortCMIS.Enums;
-using PortCMIS.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.CMIS
+﻿namespace CaseManagement.CMMN.CMIS
 {
+    /*
     public class CMISDirectoryCaseFileItemRepository : ICaseFileItemRepository
     {
         private readonly ICMISSessionFactory _cmisSessionFactory;
@@ -249,4 +233,5 @@ namespace CaseManagement.CMMN.CMIS
             public DateTime? UpdateDateTime { get; set; }
         }
     }
+    */
 }

@@ -1,7 +1,6 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using System.Linq;
@@ -22,13 +21,14 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         public async Task<bool> Handle(ActivateCommand activateCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(activateCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(activateCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(activateCommand.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(activateCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(activateCommand.CaseInstanceId);
             }
 
-            var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == activateCommand.CaseElementInstanceId) as CMMNPlanItem;
+            /*
+            var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == activateCommand.CaseElementInstanceId) as CMMNPlanItemDefinition;
             if (flowInstanceElt == null)
             {
                 throw new UnknownCaseInstanceElementException(caseInstance.Id, activateCommand.CaseElementInstanceId);
@@ -47,11 +47,13 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
             caseInstance.ManuallyStartPlanItem(flowInstanceElt.Id);
+            */
             await _queueProvider.QueueRaiseEvent(caseInstance.Id, caseInstance.DomainEvents.Last());
             return true;
         }
 
-        private bool IsEnabled(CMMNPlanItem planItem)
+        /*
+        private bool IsEnabled(CMMNPlanItemDefinition planItem)
         {
             switch(planItem.PlanItemDefinitionType)
             {
@@ -65,5 +67,6 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
             return false;
         }
+        */
     }
 }

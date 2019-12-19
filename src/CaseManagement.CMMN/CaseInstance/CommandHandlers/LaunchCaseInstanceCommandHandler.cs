@@ -12,17 +12,16 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
     {
         private readonly IQueueProvider _queueProvider;
         private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public LaunchCaseInstanceCommandHandler(IQueueProvider queueProvider, IEventStoreRepository eventStoreRepository, ICommitAggregateHelper commitAggregateHelper)
+        public LaunchCaseInstanceCommandHandler(IQueueProvider queueProvider, IEventStoreRepository eventStoreRepository)
         {
             _queueProvider = queueProvider;
             _eventStoreRepository = eventStoreRepository;
-            _commitAggregateHelper = commitAggregateHelper;
         }
 
-        public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
+        public Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
         {
+            /*
             var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(launchCaseInstanceCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(launchCaseInstanceCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
@@ -30,6 +29,8 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
             
             await _queueProvider.QueueLaunchProcess(caseInstance.Id);
+            */
+            return Task.CompletedTask;
         }
     }
 }

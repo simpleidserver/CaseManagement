@@ -40,9 +40,9 @@ namespace CaseManagement.Workflow.Infrastructure.Bus.RaiseDomainEvent
                 var runningTask = TaskPool.Get(message.ProcessFlowId);
                 if (runningTask != null)
                 {
-                    ((DomainEvent)domainEvent).Version = runningTask.ProcessFlowInstance.Version + 1;
-                    runningTask.ProcessFlowInstance.DomainEvents.Add((DomainEvent)domainEvent);
-                    runningTask.ProcessFlowInstance.Handle(domainEvent);
+                    ((DomainEvent)domainEvent).Version = runningTask.Aggregate.Version + 1;
+                    runningTask.Aggregate.DomainEvents.Add((DomainEvent)domainEvent);
+                    runningTask.Aggregate.Handle(domainEvent);
                 }
             }
             finally

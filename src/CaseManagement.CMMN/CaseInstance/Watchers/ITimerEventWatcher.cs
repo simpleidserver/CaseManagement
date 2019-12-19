@@ -1,9 +1,8 @@
-﻿using CaseManagement.Workflow.Engine;
-using System;
+﻿using System;
 
 namespace CaseManagement.CMMN.CaseInstance.Watchers
 {
-    public interface ITimerEventWatcher : IWorkflowSubProcess
+    public interface ITimerEventWatcher
     {
         void ScheduleJob(DateTime dateTime, string processId);
     }

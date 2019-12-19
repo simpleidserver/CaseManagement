@@ -1,12 +1,6 @@
-﻿using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.CaseInstance.Watchers
+﻿namespace CaseManagement.CMMN.CaseInstance.Watchers
 {
+    /*
     public class DomainEventWatcher : IDomainEventWatcher
     {
         private List<EventHandler<DomainEventArgs>> _callbackLst;
@@ -66,4 +60,5 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
             }
         }
     }
+    */
 }

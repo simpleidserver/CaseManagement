@@ -13,9 +13,11 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
             _caseFileItemRepositories = caseFileItemRepositories;
         }
 
+        /*
         public ICaseFileItemRepository Get(CMMNCaseFileItem caseFileItem)
         {
-            return _caseFileItemRepositories.First(c => c.CaseFileItemType == caseFileItem.Definition.DefinitionType);
+            // return _caseFileItemRepositories.First(c => c.CaseFileItemType == caseFileItem.Definition.DefinitionType);
         }
+        */
     }
 }

@@ -1,6 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
 using CaseManagement.Workflow.ISO8601;
 using System;
 using System.Collections.Generic;
@@ -10,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Watchers
 {
+    /*
     public class TimerEventWatcher : ITimerEventWatcher
     {
         private class Job
@@ -54,7 +53,6 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
 
         private void HandleTask()
         {
-            var factory = _context.Factory;
             while (!_token.IsCancellationRequested)
             {
                 var occurence = TakeNextOccurence();
@@ -65,13 +63,13 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
 
                 var flowInstance = _context.ProcessFlowInstance;
                 var tasks = new List<Task>();
-                var element = _context.CurrentElement as CMMNPlanItem;
+                var element = _context.CurrentElement as CMMNPlanItemDefinition;
                 flowInstance.CreatePlanItem(element);
                 flowInstance.OccurPlanItem(element);
                 foreach (var nextElt in flowInstance.NextElements(element.Id))
                 {
-                    var newContext = new WorkflowHandlerContext(flowInstance, nextElt, factory);
-                    tasks.Add(Task.Run(() => newContext.Execute(_token)));
+                    var newContext = new WorkflowHandlerContext(flowInstance, nextElt);
+                    // tasks.Add(Task.Run(() => newContext.Execute(_token)));
                 }
 
                 Task.WhenAll(tasks).Wait();
@@ -92,7 +90,6 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
             }
             else
             {
-                _context.Complete();
             }
         }
 
@@ -116,8 +113,8 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
 
         private async Task InternalStart(WorkflowHandlerContext context, CancellationToken token)
         {
-            var processor = context.Factory.Build(context.CurrentElement);
-            await processor.Handle(context, token);
+            // var processor = context.Factory.Build(context.CurrentElement);
+            // await processor.Handle(context, token);
             if (context.CurrentElement.Status != ProcessFlowInstanceElementStatus.Finished)
             {
                 return;
@@ -135,4 +132,5 @@ namespace CaseManagement.CMMN.CaseInstance.Watchers
             }
         }
     }
+    */
 }

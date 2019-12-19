@@ -1,10 +1,6 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
-using CaseManagement.CMMN.CaseInstance.Exceptions;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
@@ -22,13 +18,14 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         public async Task<bool> Handle(TerminateCommand terminateCommand)
         {
+            /*
             var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(terminateCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(terminateCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(terminateCommand.CaseInstanceId);
             }
 
-            var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == terminateCommand.CaseElementInstanceId) as CMMNPlanItem;
+            var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == terminateCommand.CaseElementInstanceId) as CMMNPlanItemDefinition;
             if (flowInstanceElt == null)
             {
                 throw new UnknownCaseInstanceElementException(caseInstance.Id, terminateCommand.CaseElementInstanceId);
@@ -49,9 +46,12 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             caseInstance.TerminatePlanItem(flowInstanceElt.Id);
             await _queueProvider.QueueRaiseEvent(caseInstance.Id, caseInstance.DomainEvents.Last());
             return true;
+            */
+            return true;
         }
 
-        private bool IsActivated(CMMNPlanItem planItem)
+        /*
+        private bool IsActivated(CMMNPlanItemDefinition planItem)
         {
             switch (planItem.PlanItemDefinitionType)
             {
@@ -65,5 +65,6 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
             return false;
         }
+        */
     }
 }

@@ -1,8 +1,8 @@
-﻿using CaseManagement.CMMN.Extensions;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Persistence;
-using CaseManagement.Workflow.Persistence.Parameters;
-using CaseManagement.Workflow.Persistence.Responses;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.Persistence;
+using CaseManagement.CMMN.Persistence.Parameters;
+using CaseManagement.CMMN.Persistence.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -93,7 +93,7 @@ namespace CaseManagement.CMMN.Apis
             {
                 RoleIds = roleIds
             };
-            parameter.ExtractFindParameter(query);
+            // parameter.ExtractFindParameter(query);
             return parameter;
         }
     }

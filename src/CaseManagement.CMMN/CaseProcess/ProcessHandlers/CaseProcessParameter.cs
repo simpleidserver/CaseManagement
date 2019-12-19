@@ -1,5 +1,4 @@
-﻿using CaseManagement.Workflow.Domains;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.CaseProcess.ProcessHandlers
 {

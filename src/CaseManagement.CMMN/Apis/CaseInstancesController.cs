@@ -3,11 +3,6 @@ using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Domains.Process.Exceptions;
-using CaseManagement.Workflow.Persistence;
-using CaseManagement.Workflow.Persistence.Parameters;
-using CaseManagement.Workflow.Persistence.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,25 +18,24 @@ namespace CaseManagement.CMMN.Apis
     [Route(CMMNConstants.RouteNames.CaseInstances)]
     public class CaseInstancesController : Controller
     {
-        private readonly ICreateCaseInstanceCommandHandler _createCaseInstanceCommandHandler;
         private readonly ILaunchCaseInstanceCommandHandler _launchCaseInstanceCommandHandler;
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
         private readonly IStopCaseInstanceCommandHandler _stopCaseInstanceCommandHandler;
-        private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
+        // private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
         private readonly IActivateCommandHandler _activateCommandHandler;
         private readonly ITerminateCommandHandler _terminateCommandHandler;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IStopCaseInstanceCommandHandler stopCaseInstanceCommandHandler, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IActivateCommandHandler activateCommandHandler, ITerminateCommandHandler terminateCommandHandler)
+        public CaseInstancesController(ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IStopCaseInstanceCommandHandler stopCaseInstanceCommandHandler, /* IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, */IActivateCommandHandler activateCommandHandler, ITerminateCommandHandler terminateCommandHandler)
         {
-            _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
             _confirmFormCommandHandler = confirmFormCommandHandler;
             _stopCaseInstanceCommandHandler = stopCaseInstanceCommandHandler;
-            _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
+            // _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
             _activateCommandHandler = activateCommandHandler;
             _terminateCommandHandler = terminateCommandHandler;
         }
 
+        /*
         [HttpGet(".search")]
         public async Task<IActionResult> Search()
         {
@@ -279,7 +273,7 @@ namespace CaseManagement.CMMN.Apis
             }
 
             var planItems = new JArray();
-            foreach(var planItem in flowInstance.Elements.Where(e => e is CMMNPlanItem).Cast<CMMNPlanItem>())
+            foreach(var planItem in flowInstance.Elements.Where(e => e is CMMNPlanItemDefinition).Cast<CMMNPlanItemDefinition>())
             {
                 planItems.Add(ToDto(planItem));
             }
@@ -295,7 +289,7 @@ namespace CaseManagement.CMMN.Apis
             return result;
         }
 
-        private static JObject ToDto(ProcessFlowInstanceExecutionContext context)
+        private static JObject ToDto(CMMNWorkflowInstanceExecutionContext context)
         {
             var jObj = new JObject();
             foreach (var kvp in context.Variables)
@@ -306,7 +300,7 @@ namespace CaseManagement.CMMN.Apis
             return jObj;
         }
 
-        private static JObject ToDto(CMMNPlanItem planItem)
+        private static JObject ToDto(CMMNPlanItemDefinition planItem)
         {
             var result = new JObject
             {
@@ -373,5 +367,6 @@ namespace CaseManagement.CMMN.Apis
                 StatusCode = (int)statusCode
             };
         }
+        */
     }
 }

@@ -1,12 +1,10 @@
-﻿using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using System;
+﻿using System;
 
 namespace CaseManagement.CMMN.CaseInstance.Watchers
 {
-    public interface IDomainEventWatcher : IWorkflowSubProcess
+    public interface IDomainEventWatcher
     {
         bool Quit { get; set; }
-        void AddCallback(EventHandler<DomainEventArgs> callback);
+        // void AddCallback(EventHandler<DomainEventArgs> callback);
     }
 }

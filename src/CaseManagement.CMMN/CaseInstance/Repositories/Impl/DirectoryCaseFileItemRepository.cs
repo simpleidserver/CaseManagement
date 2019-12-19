@@ -1,17 +1,6 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using CaseManagement.Workflow.Infrastructure.Bus;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.CaseInstance.Repositories
+﻿namespace CaseManagement.CMMN.CaseInstance.Repositories
 {
+    /*
     public class DirectoryCaseFileItemRepository : ICaseFileItemRepository
     {
         private const string METADATA_NAME = "directory";
@@ -87,7 +76,6 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
             }
             else
             {
-                _context.Complete();
             }
 
             fileSystemWatcher.EnableRaisingEvents = false;
@@ -98,11 +86,11 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
         {
             var caseFileItem = _context.CurrentElement as CMMNCaseFileItem;
             _context.ProcessFlowInstance.AddChild(caseFileItem);
-            _context.ExecuteNext(_token).Wait();
             if (_context.ProcessFlowInstance.NextElements(_context.CurrentElement.Id).All(s => s.Status == ProcessFlowInstanceElementStatus.Finished))
             {
                 _stop = true;
             }
         }
     }
+    */
 }

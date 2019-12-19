@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
-using CaseManagement.CMMN.CaseInstance.Commands;
-using CaseManagement.CMMN.CaseInstance.Exceptions;
-using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
+using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
@@ -20,6 +18,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         public async Task<bool> Handle(StopCaseInstanceCommand command)
         {
+            /*
             var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(command.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(command.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
@@ -27,6 +26,8 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
             await _queueProvider.QueueStopProcess(command.CaseInstanceId);
+            return true;
+            */
             return true;
         }
     }

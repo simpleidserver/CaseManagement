@@ -1,4 +1,4 @@
-﻿using CaseManagement.Workflow.Persistence.Parameters;
+﻿using CaseManagement.CMMN.Persistence.Parameters;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

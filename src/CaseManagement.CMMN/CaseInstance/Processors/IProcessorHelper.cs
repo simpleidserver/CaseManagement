@@ -1,10 +1,7 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
-
-namespace CaseManagement.CMMN.CaseInstance.Processors
+﻿namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public interface IProcessorHelper
     {
-        RepetitionRuleResultTypes? HandleRepetitionRule(CMMNPlanItem cmmnPlanItem, ProcessFlowInstance pf);
+        // RepetitionRuleResultTypes? HandleRepetitionRule(CMMNPlanItemDefinition cmmnPlanItem, ProcessFlowInstance pf);
     }
 }

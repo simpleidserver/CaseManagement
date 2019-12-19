@@ -1,16 +1,30 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.CMMN.Persistence.InMemory;
-using CaseManagement.Workflow;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace CaseManagement.CMMN
 {
-    public class CMMNServerBuilder : WorkflowServerBuilder
+    public class CMMNServerBuilder
     {
-        public CMMNServerBuilder(IServiceCollection services) : base(services) { }
+        private IServiceCollection _services;
+
+        public CMMNServerBuilder(IServiceCollection services)
+        {
+            _services = services;
+        }
+
+        /*
+        public CMMNServerBuilder AddForms(ICollection<FormAggregate> forms)
+        {
+            Services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
+            Services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
+            return this;
+        }
+
+        public CMMNServerBuilder AddRoles(ICollection<RoleAggregate> roles)
+        {
+            Services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
+            Services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
+            return this;
+        }
 
         public CMMNServerBuilder AddDefinitions(Action<CMMNDefinitionsBuilder> callback)
         {
@@ -31,5 +45,6 @@ namespace CaseManagement.CMMN
             Services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
             return this;
         }
+        */
     }
 }

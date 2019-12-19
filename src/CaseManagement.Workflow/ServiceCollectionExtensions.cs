@@ -1,8 +1,4 @@
-﻿using CaseManagement.Workflow.Domains;
-using CaseManagement.Workflow.Engine;
-using CaseManagement.Workflow.Infrastructure;
-using CaseManagement.Workflow.Infrastructure.Bus;
-using CaseManagement.Workflow.Infrastructure.Bus.ConsumeDomainEvent;
+﻿using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.Bus.InMemory;
 using CaseManagement.Workflow.Infrastructure.Bus.RaiseDomainEvent;
 using CaseManagement.Workflow.Infrastructure.Bus.StopProcess;
@@ -10,10 +6,7 @@ using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.EvtStore.InMemory;
 using CaseManagement.Workflow.Infrastructure.Lock;
 using CaseManagement.Workflow.Infrastructure.Lock.InMemory;
-using CaseManagement.Workflow.Persistence;
-using CaseManagement.Workflow.Persistence.InMemory;
 using NEventStore;
-using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -21,25 +14,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddWorkflow(this IServiceCollection services)
         {
-            var processFlowInstances = new List<ProcessFlowInstance>();
-            var forms = new List<FormAggregate>();
-            var formInstances = new List<FormInstanceAggregate>();
-            var roles = new List<RoleAggregate>();
             services.AddMvc();
             services.AddHostedService<BusHostedService>();
-            services.AddTransient<IWorkflowEngine, WorkflowEngine>();
-            services.AddTransient<IProcessFlowElementProcessorFactory, ProcessFlowElementProcessorFactory>();
-            services.AddSingleton<IProcessFlowInstanceQueryRepository>(new InMemoryProcessFlowInstanceQueryRepository(processFlowInstances));
-            services.AddSingleton<IProcessFlowInstanceCommandRepository>(new InMemoryProcessFlowInstanceCommandRepository(processFlowInstances));
-            services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
-            services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
-            services.AddSingleton<IFormInstanceCommandRepository>(new InMemoryFormInstanceCommandRepository(formInstances));
-            services.AddSingleton<IFormInstanceQueryRepository>(new InMemoryFormInstanceQueryRepository(formInstances));
-            services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
-            services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
             services.AddNEventStore()
                 .AddEventStores()
-                .AddInfrastructure()
                 .AddSnapshotStore()
                 .AddBus()
                 .AddLock();
@@ -50,12 +28,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var wireup = Wireup.Init().UsingInMemoryPersistence() .Build();
             services.AddSingleton(wireup);
-            return services;
-        }
-
-        private static IServiceCollection AddInfrastructure(this IServiceCollection services)
-        {
-            services.AddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
             return services;
         }
 
@@ -75,7 +47,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddSingleton<IRunningTaskPool, RunningTaskPool>();
             services.AddSingleton<IQueueProvider, InMemoryQueueProvider>();
-            services.AddTransient<IMessageConsumer, DomainEventMessageConsumer>();
             services.AddTransient<IMessageConsumer, StopProcessMessageConsumer>();
             services.AddTransient<IMessageConsumer, RaiseDomainEventMessageConsumer>();
             return services;

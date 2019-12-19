@@ -1,8 +1,8 @@
 ﻿using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Persistence.Parameters;
-using CaseManagement.Workflow.Persistence.Responses;
+using CaseManagement.CMMN.Persistence.Parameters;
+using CaseManagement.CMMN.Persistence.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -25,8 +25,9 @@ namespace CaseManagement.CMMN.Apis
         public async Task<IActionResult> Get()
         {
             var query = HttpContext.Request.Query;
-            var result = await _queryRepository.Find(ExtractFindParameter(query));
-            return new OkObjectResult(ToDto(result));
+            // var result = await _queryRepository.Find(ExtractFindParameter(query));
+            // return new OkObjectResult(ToDto(result));
+            return null;
         }
 
         [HttpGet("{id}")]
