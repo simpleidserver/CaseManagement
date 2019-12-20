@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains.Events;
+using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace CaseManagement.CMMN.Domains
     {
         public CMMNWorkflowInstance()
         {
-            PlanItemInstances = new List<CMMNPlanItemInstance>();
+            WorkflowElementInstances = new List<CMMNWorkflowElementInstance>();
             ExecutionContext = new CMMNWorkflowInstanceExecutionContext();
             DomainEvents = new List<DomainEvent>();
         }
@@ -35,7 +36,7 @@ namespace CaseManagement.CMMN.Domains
         public string WorkflowDefinitionId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public CMMNWorkflowInstanceExecutionContext ExecutionContext { get; set; }
-        public ICollection<CMMNPlanItemInstance> PlanItemInstances { get; set; }
+        public ICollection<CMMNWorkflowElementInstance> WorkflowElementInstances { get; set; }
         public event EventHandler<DomainEventArgs> EventRaised;
 
         #region Get
@@ -60,15 +61,116 @@ namespace CaseManagement.CMMN.Domains
 
             return int.Parse(GetVariable(key));
         }
-
-        public CMMNPlanItemInstance GetPlanItemInstance(string id)
+        
+        public ICollection<CMMNCriterion> GetEntryCriterions(string id, CMMNWorkflowDefinition workflowDefinition)
         {
-            return PlanItemInstances.FirstOrDefault(p => p.Id == id);
+            var planItemDefinition = GetWorkflowElementDefinition(id, workflowDefinition);
+            if (planItemDefinition == null)
+            {
+                return new List<CMMNCriterion>();
+            }
+
+            return planItemDefinition.EntryCriterions;
         }
 
-        public CMMNPlanItemInstance GetPlanItemInstance(string planItemDefinitionId, int version)
+        public bool IsRepetitionRuleSatisfied(string planItemId, CMMNWorkflowDefinition workflowDefinition, bool listenEvent = false)
         {
-            return PlanItemInstances.FirstOrDefault(p => p.PlanItemDefinitionId == planItemDefinitionId && p.Version == version);
+            var planItemDef = workflowDefinition.Elements.First(p => p.Id == planItemId);
+            if (planItemDef == null || planItemDef.ActivationRule != CMMNActivationRuleTypes.Repetition || planItemDef.RepetitionRule == null)
+            {
+                return false;
+            }
+
+            if (planItemDef.RepetitionRule.Condition != null && !ExpressionParser.IsValid(planItemDef.RepetitionRule.Condition.Body, this))
+            {
+                return false;
+            }
+
+            if (!listenEvent)
+            {
+                if (!planItemDef.EntryCriterions.Any())
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (!planItemDef.EntryCriterions.Any())
+            {
+                return false;
+            }
+            
+            var lastPlanItem = GetLastWorkflowElementInstance(planItemId);
+            if (!planItemDef.EntryCriterions.Any(c => IsCriteriaSatisfied(c, lastPlanItem.Version + 1)))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool IsManualActivationRuleSatisfied(string id, CMMNWorkflowDefinition workflowDefinition)
+        {
+            var planItemDef = GetWorkflowElementDefinition(id, workflowDefinition);
+            if (planItemDef == null || planItemDef.ActivationRule != CMMNActivationRuleTypes.ManualActivation || planItemDef.ManualActivationRule == null)
+            {
+                return false;
+            }
+
+            if (planItemDef.ManualActivationRule.Expression != null && !ExpressionParser.IsValid(planItemDef.ManualActivationRule.Expression.Body, this))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool IsCriteriaSatisfied(CMMNCriterion criteria, int version)
+        {
+            var planItemOnParts = criteria.SEntry.PlanItemOnParts;
+            foreach (var planItemOnPart in planItemOnParts)
+            {
+                var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.WorkflowElementDefinitionId == planItemOnPart.SourceRef);
+                if (source == null)
+                {
+                    return false;
+                }
+
+                if (!source.TransitionHistories.Any(t => t.Transition == planItemOnPart.StandardEvent))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public CMMNWorkflowElementDefinition GetWorkflowElementDefinition(string id, CMMNWorkflowDefinition workflowDefinition)
+        {
+            var elementInstance = WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
+            if (elementInstance == null)
+            {
+                return null;
+            }
+
+            return workflowDefinition.Elements.FirstOrDefault(p => p.Id == elementInstance.WorkflowElementDefinitionId);
+        }
+
+        public CMMNWorkflowElementInstance GetWorkflowElementInstance(string id)
+        {
+            return WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
+        }
+
+        public CMMNWorkflowElementInstance GetWorkflowElementInstance(string workflowItemDefinitionId, int version)
+        {
+            return WorkflowElementInstances.FirstOrDefault(p => p.WorkflowElementDefinitionId == workflowItemDefinitionId && p.Version == version);
+        }
+
+        public CMMNWorkflowElementInstance GetLastWorkflowElementInstance(string workflowItemDefinitionId)
+        {
+            var result = WorkflowElementInstances.Where(p => p.WorkflowElementDefinitionId == workflowItemDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
+            return result;
         }
 
         public string GetStreamName()
@@ -79,23 +181,38 @@ namespace CaseManagement.CMMN.Domains
         #endregion
 
         #region Commands
-
-        public CMMNPlanItemInstance CreatePlanItemInstance(CMMNPlanItemDefinition planItemDefinition)
+        
+        public CMMNWorkflowElementInstance CreateWorkflowElementInstance(CMMNWorkflowElementDefinition workflowElementDefinition)
         {
-            lock(DomainEvents)
+            return CreateWorkflowElementInstance(workflowElementDefinition.Id, workflowElementDefinition.Type);
+        }
+
+        public CMMNWorkflowElementInstance CreateWorkflowElementInstance(string planItemDefinitionId, CMMNWorkflowElementTypes workflowElementType)
+        {
+            lock (DomainEvents)
             {
-                var evt = new CMMNPlanItemInstanceCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, Guid.NewGuid().ToString(), planItemDefinition.Id, planItemDefinition.PlanItemDefinitionType, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, Guid.NewGuid().ToString(), planItemDefinitionId, workflowElementType, DateTime.UtcNow);
                 var result = Handle(evt);
                 DomainEvents.Add(evt);
                 return result;
             }
         }
 
-        public void MakeTransition(string elementId, CMMNPlanItemTransitions transition)
+        public void CreateFormInstance(string elementId, string formId, string performerRef)
+        {
+            lock (DomainEvents)
+            {
+                var evt = new CMMNWorkflowElementInstanceFormCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, Guid.NewGuid().ToString(), formId, performerRef);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransition(string elementId, CMMNTransitions transition)
         {
             lock(DomainEvents)
             {
-                var evt = new CMMNPlanItemTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, transition, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, transition, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -141,19 +258,24 @@ namespace CaseManagement.CMMN.Domains
                 Handle((CMMNWorkflowInstanceCreatedEvent)obj);
             }
 
-            if (obj is CMMNPlanItemInstanceCreatedEvent)
+            if (obj is CMMNWorkflowElementCreatedEvent)
             {
-                Handle((CMMNPlanItemInstanceCreatedEvent)obj);
+                Handle((CMMNWorkflowElementCreatedEvent)obj);
             }
 
-            if (obj is CMMNPlanItemTransitionRaisedEvent)
+            if (obj is CMMNWorkflowElementTransitionRaisedEvent)
             {
-                Handle((CMMNPlanItemTransitionRaisedEvent)obj);
+                Handle((CMMNWorkflowElementTransitionRaisedEvent)obj);
             }
 
             if (obj is CMMNWorkflowInstanceVariableAddedEvent)
             {
                 Handle((CMMNWorkflowInstanceVariableAddedEvent)obj);
+            }
+
+            if (obj is CMMNWorkflowElementInstanceFormCreatedEvent)
+            {
+                Handle((CMMNWorkflowElementInstanceFormCreatedEvent)obj);
             }
         }
 
@@ -164,19 +286,20 @@ namespace CaseManagement.CMMN.Domains
             WorkflowDefinitionId = evt.DefinitionId;
         }
 
-        private CMMNPlanItemInstance Handle(CMMNPlanItemInstanceCreatedEvent evt)
+        private CMMNWorkflowElementInstance Handle(CMMNWorkflowElementCreatedEvent evt)
         {
-            var elt = new CMMNPlanItemInstance(evt.ElementId, evt.CreateDateTime, evt.PlanItemDefinitionId, evt.PlanItemDefinitionType);
-            PlanItemInstances.Add(elt);
-            elt.UpdateState(CMMNPlanItemTransitions.Create, evt.CreateDateTime);
+            var existingPlanItem = WorkflowElementInstances.Where(p => p.WorkflowElementDefinitionId == evt.WorkflowElementDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
+            var elt = new CMMNWorkflowElementInstance(evt.ElementId, evt.CreateDateTime, evt.WorkflowElementDefinitionId, evt.WorkflowElementDefinitionType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1);
+            WorkflowElementInstances.Add(elt);
+            elt.UpdateState(CMMNTransitions.Create, evt.CreateDateTime);
             Version++;
             RaiseEvent(evt);
             return elt;
         }
 
-        private void Handle(CMMNPlanItemTransitionRaisedEvent evt)
+        private void Handle(CMMNWorkflowElementTransitionRaisedEvent evt)
         {
-            var elt = PlanItemInstances.First(p => p.Id == evt.ElementId);
+            var elt = WorkflowElementInstances.First(p => p.Id == evt.ElementId);
             elt.UpdateState(evt.Transition, evt.UpdateDateTime);
             Version++;
             RaiseEvent(evt);
@@ -185,6 +308,14 @@ namespace CaseManagement.CMMN.Domains
         private void Handle(CMMNWorkflowInstanceVariableAddedEvent evt)
         {
             ExecutionContext.SetVariable(evt.Key, evt.Value);
+            Version++;
+            RaiseEvent(evt);
+        }
+
+        private void Handle(CMMNWorkflowElementInstanceFormCreatedEvent evt)
+        {
+            var planItemInstance = WorkflowElementInstances.First(p => p.Id == evt.ElementId);
+            planItemInstance.FormInstanceId = evt.FormInstanceId;
             Version++;
             RaiseEvent(evt);
         }

@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.Builders
 {
-    public class CMMNTaskBuilder : CMMNPlanItemBuilder
+    public class CMMNTaskBuilder : CMMNWorkflowElementBuilder
     {
         public CMMNTaskBuilder(CMMNPlanItemDefinition planItem) : base(planItem)
         {
@@ -10,7 +10,7 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNTaskBuilder SetIsBlocking(bool isBlocking)
         {
-            var cmmnTask = PlanItem.PlanItemDefinitionTask;
+            var cmmnTask = (WorkflowElementDefinition as CMMNPlanItemDefinition).PlanItemDefinitionTask;
             cmmnTask.IsBlocking = isBlocking;
             return this;
         }

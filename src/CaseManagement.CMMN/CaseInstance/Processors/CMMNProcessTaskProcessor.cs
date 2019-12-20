@@ -19,11 +19,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }
 
-        public override CMMNPlanItemDefinitionTypes Type => CMMNPlanItemDefinitionTypes.ProcessTask;
+        public override CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.ProcessTask;
 
         protected override async Task Run(PlanItemProcessorParameter parameter, CancellationToken token)
         {
-            var planItem = parameter.WorkflowDefinition.PlanItems.First(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
+            var planItem = parameter.WorkflowDefinition.Elements.First(p => p.Id == parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             if (processTask.IsBlocking)
             {
@@ -37,7 +37,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         private async Task HandleProcess(PlanItemProcessorParameter parameter, CancellationToken token)
         {
-            var planItem = parameter.WorkflowDefinition.PlanItems.First(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
+            var planItem = parameter.WorkflowDefinition.Elements.First(p => p.Id == parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             var parameters = new Dictionary<string, string>();
             var processRef = processTask.ProcessRef;
@@ -79,7 +79,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
         
         private Task HandleLaunchCaseProcessCallback(PlanItemProcessorParameter parameter, CaseProcessResponse caseProcessResponse, CancellationToken token)
         {
-            var planItem = parameter.WorkflowDefinition.PlanItems.First(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
+            var planItem = parameter.WorkflowDefinition.Elements.First(p => p.Id == parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             foreach (var mapping in processTask.Mappings)
             {
@@ -100,7 +100,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 parameter.WorkflowInstance.SetVariable(mapping.TargetRef.Name, vv);
             }
 
-            parameter.WorkflowInstance.MakeTransition(parameter.PlanItemInstance.Id, CMMNPlanItemTransitions.Complete);
+            parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Complete);
             return Task.CompletedTask;
         }
     }

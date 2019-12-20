@@ -6,7 +6,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public interface ICMMNPlanItemProcessor
     {
-        CMMNPlanItemDefinitionTypes Type { get; }
+        CMMNWorkflowElementTypes Type { get; }
         Task Handle(PlanItemProcessorParameter parameter, CancellationToken token);
     }
 }

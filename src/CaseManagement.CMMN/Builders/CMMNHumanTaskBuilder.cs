@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.Builders
 {
-    public class CMMNHumanTaskBuilder : CMMNPlanItemBuilder
+    public class CMMNHumanTaskBuilder : CMMNWorkflowElementBuilder
     {
         public CMMNHumanTaskBuilder(CMMNPlanItemDefinition planItem) : base(planItem)
         {
@@ -10,14 +10,14 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNHumanTaskBuilder SetIsBlocking(bool isBlocking)
         {
-            var cmmnTask = PlanItem.PlanItemDefinitionHumanTask;
+            var cmmnTask = (WorkflowElementDefinition as CMMNPlanItemDefinition).PlanItemDefinitionHumanTask;
             cmmnTask.IsBlocking = isBlocking;
             return this;
         }
 
         public CMMNHumanTaskBuilder SetFormId(string formId)
         {
-            var cmmnTask = PlanItem.PlanItemDefinitionHumanTask;
+            var cmmnTask = (WorkflowElementDefinition as CMMNPlanItemDefinition).PlanItemDefinitionHumanTask;
             cmmnTask.FormId = formId;
             return this;
         }

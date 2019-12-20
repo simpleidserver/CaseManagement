@@ -1,6 +1,6 @@
 ﻿namespace CaseManagement.CMMN.Domains
 {
-    public enum CMMNPlanItemTransitions
+    public enum CMMNTransitions
     {
         None = 0,
         Close = 1,

@@ -20,14 +20,13 @@ namespace CaseManagement.CMMN.Infrastructures
         public Task Start(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            // var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
-            foreach (var planItem in workflowDefinition.PlanItems)
+            var createListener = new CreateListener(workflowDefinition, workflowInstance, _cmmnPlanItemProcessors, cancellationToken);
+            createListener.Listen();
+            var repetitionListener = new RepetitionListener(workflowDefinition, workflowInstance);
+            repetitionListener.Listen();
+            foreach (var element in workflowDefinition.Elements)
             {
-                // var repetitionListener = new RepetitionListener(workflowInstance);
-                // repetitionListener.Listen();
-                var createListener = new CreateListener(workflowDefinition, workflowInstance, _cmmnPlanItemProcessors, cancellationToken);
-                createListener.Listen();
-                workflowInstance.CreatePlanItemInstance(planItem);
+                workflowInstance.CreateWorkflowElementInstance(element);
             }
 
             return Task.CompletedTask;
@@ -35,7 +34,7 @@ namespace CaseManagement.CMMN.Infrastructures
 
         private class CreateListener
         {
-            private CMMNWorkflowDefinition _workflowDefinition;
+            private readonly CMMNWorkflowDefinition _workflowDefinition;
             private readonly CMMNWorkflowInstance _workflowInstance;
             private readonly IEnumerable<ICMMNPlanItemProcessor> _processors;
             private readonly CancellationToken _token;
@@ -55,89 +54,59 @@ namespace CaseManagement.CMMN.Infrastructures
 
             private void HandleEventRaised(object sender, DomainEventArgs args)
             {
-                var elementCreated = args.DomainEvt as CMMNPlanItemInstanceCreatedEvent;
+                var elementCreated = args.DomainEvt as CMMNWorkflowElementCreatedEvent;
                 if (elementCreated == null)
                 {
                     return;
                 }
 
-                var processor = _processors.First(p => p.Type == elementCreated.PlanItemDefinitionType);
-                processor.Handle(new PlanItemProcessorParameter(_workflowDefinition, _workflowInstance, _workflowInstance.PlanItemInstances.Last()), _token).ContinueWith((obj) =>
+                var processor = _processors.First(p => p.Type == elementCreated.WorkflowElementDefinitionType);
+                var parameter = new PlanItemProcessorParameter(_workflowDefinition, _workflowInstance, _workflowInstance.GetWorkflowElementInstance(elementCreated.ElementId));
+                processor.Handle(parameter, _token).ContinueWith((obj) =>
                 {
-
-                });
-                /*
-                var processor = _processFlowElementProcessorFactory.Build(cmmnPlanItem);
-                var context = new CMMNWorkflowInstanceContext(_processFlowIntrance, _planItem, _planItem.Version);
-                processor.Handle(context, _token).ContinueWith((obj) =>
-                {
-                    if (_processFlowIntrance.IsRepetitionRuleValid(_planItem))
+                    if (_workflowInstance.IsRepetitionRuleSatisfied(elementCreated.WorkflowElementDefinitionId, _workflowDefinition, false))
                     {
-                        _processFlowIntrance.CreatePlanItem(_planItem);
+                        _workflowInstance.CreateWorkflowElementInstance(elementCreated.WorkflowElementDefinitionId, elementCreated.WorkflowElementDefinitionType);
                         return;
                     }
-
-                    // _processFlowIntrance.CompleteElement(_planItem);
-                    _planItem.StateChanged -= HandleStateChanged;
                 });
-                */
             }
         }
 
         private class RepetitionListener
         {
-            private Dictionary<string, string> _mappingPlanItemEvent;
+            private readonly CMMNWorkflowDefinition _workflowDefinition;
             private readonly CMMNWorkflowInstance _workflowInstance;
-            private readonly CMMNPlanItemInstance _planItemInstance;
 
-            public RepetitionListener(CMMNWorkflowInstance workflowInstance)
+            public RepetitionListener(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance)
             {
+                _workflowDefinition = workflowDefinition;
                 _workflowInstance = workflowInstance;
-                // _planItemInstance = planItemInstance;
             }
 
-            public bool Listen()
+            public void Listen()
             {
-                _mappingPlanItemEvent = new Dictionary<string, string>();
-                /*
-                if (_planItemInstance.PlanItemDefinition.ActivationRule == CMMNActivationRuleTypes.Repetition && _planItemInstance.PlanItemDefinition.EntryCriterions.Any())
-                {
-                    foreach (var entryCriterion in _planItemInstance.PlanItemDefinition.EntryCriterions)
-                    {
-                        var planItemOnParts = entryCriterion.SEntry.PlanItemOnParts.Where(p => !string.IsNullOrWhiteSpace(p.SourceRef));
-                        foreach (var planItemOnPart in planItemOnParts)
-                        {
-                            var elt = _workflowInstance.GetPlanItemInstance(planItemOnPart.SourceRef);
-                            _mappingPlanItemEvent.Add(planItemOnPart.SourceRef, Enum.GetName(typeof(CMMNPlanItemTransitions), planItemOnPart.StandardEvent));
-                            elt.TransitionApplied += HandleTransitionApplied;
-                        }
-                    }
-
-                    return true;
-                }
-
-                return false;
-                */
-                return true;
+                _workflowInstance.EventRaised += HandleEventRaised;
             }
 
-            private void HandleTransitionApplied(object sender, string e)
+            private void HandleEventRaised(object sender, DomainEventArgs e)
             {
-                var elt = sender as CMMNPlanItemInstance;
-                if (elt.Version == 1 || elt.Version != _planItemInstance.Version)
+                var raisedEvt = e.DomainEvt as CMMNWorkflowElementTransitionRaisedEvent;
+                if (raisedEvt == null)
                 {
                     return;
                 }
 
-                var standarEvent = _mappingPlanItemEvent[elt.Id];
-                if (e == standarEvent)
+                var sourcePlanItemInstance = _workflowInstance.GetWorkflowElementInstance(raisedEvt.ElementId);
+                foreach (var planItem in _workflowDefinition.Elements)
                 {
-                    /*
-                    if (_processFlowIntrance.IsEntryCriterionValid(_planItem))
+                    if(planItem.EntryCriterions.Any(ec => ec.SEntry.PlanItemOnParts.Any(pi => pi.StandardEvent == raisedEvt.Transition && pi.SourceRef == sourcePlanItemInstance.WorkflowElementDefinitionId)) && planItem.ActivationRule == CMMNActivationRuleTypes.Repetition)
                     {
-                        _processFlowIntrance.CreatePlanItem(_planItem);
+                        if (_workflowInstance.IsRepetitionRuleSatisfied(planItem.Id, _workflowDefinition, true))
+                        {
+                            _workflowInstance.CreateWorkflowElementInstance(planItem.Id, planItem.Type);
+                        }
                     }
-                    */
                 }
             }
         }

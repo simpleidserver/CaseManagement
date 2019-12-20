@@ -6,20 +6,29 @@ namespace CaseManagement.CMMN.Builders
 {
     public class CMMNWorkflowBuilder
     {
-        private string _processFlowTemplateId;
-        private string _processFlowName;
-        private ICollection<CMMNPlanItemDefinition> _planItems { get; set; }
+        private readonly string _processFlowTemplateId;
+        private readonly string _processFlowName;
+        private ICollection<CMMNWorkflowElementDefinition> _elements { get; set; }
 
         private CMMNWorkflowBuilder(string processFlowTemplateId, string processFlowName)
         {
             _processFlowTemplateId = processFlowTemplateId;
             _processFlowName = processFlowName;
-            _planItems = new List<CMMNPlanItemDefinition>();
+            _elements = new List<CMMNWorkflowElementDefinition>();
         }
 
         public CMMNWorkflowBuilder AddCMMNPlanItem(CMMNPlanItemDefinition planItem)
         {
-            _planItems.Add(planItem);
+            _elements.Add(planItem);
+            return this;
+        }
+
+        public CMMNWorkflowBuilder AddCMMNStage(string id, string name, Action<CMMNStageBuilder> callback)
+        {
+            var stage = new CMMNStageDefinition(id, name);
+            var builder = new CMMNStageBuilder(stage);
+            callback(builder);
+            _elements.Add(stage);
             return this;
         }
 
@@ -52,7 +61,7 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNWorkflowDefinition Build()
         {
-            return CMMNWorkflowDefinition.New(_processFlowTemplateId, _processFlowTemplateId, "", _planItems);
+            return CMMNWorkflowDefinition.New(_processFlowTemplateId, _processFlowTemplateId, "", _elements);
         }
 
         public static CMMNWorkflowBuilder New(string id, string name)

@@ -2,9 +2,9 @@
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNPlanInstanceStateHistory
+    public class CMMNWorkflowElementInstanceHistory
     {
-        public CMMNPlanInstanceStateHistory(string state, DateTime updateDateTime)
+        public CMMNWorkflowElementInstanceHistory(string state, DateTime updateDateTime)
         {
             State = state;
             UpdateDateTime = updateDateTime;

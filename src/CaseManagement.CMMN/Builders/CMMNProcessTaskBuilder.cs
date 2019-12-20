@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.Builders
 {
-    public class CMMNProcessTaskBuilder : CMMNPlanItemBuilder
+    public class CMMNProcessTaskBuilder : CMMNWorkflowElementBuilder
     {
         public CMMNProcessTaskBuilder(CMMNPlanItemDefinition planItem) : base(planItem)
         {
@@ -10,21 +10,21 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNProcessTaskBuilder SetIsBlocking(bool isBlocking)
         {
-            var cmmnTask = PlanItem.PlanItemDefinitionProcessTask;
+            var cmmnTask = (WorkflowElementDefinition as CMMNPlanItemDefinition).PlanItemDefinitionProcessTask;
             cmmnTask.IsBlocking = isBlocking;
             return this;
         }
 
         public CMMNProcessTaskBuilder SetProcessRef(string processRef)
         {
-            var cmmnTask = PlanItem.PlanItemDefinitionProcessTask;
+            var cmmnTask = (WorkflowElementDefinition as CMMNPlanItemDefinition).PlanItemDefinitionProcessTask;
             cmmnTask.ProcessRef = processRef;
             return this;
         }
 
         public CMMNProcessTaskBuilder AddMapping(string sourceRef, string targetRef)
         {
-            var cmmnTask = PlanItem.PlanItemDefinitionProcessTask;
+            var cmmnTask = (WorkflowElementDefinition as CMMNPlanItemDefinition).PlanItemDefinitionProcessTask;
             cmmnTask.Mappings.Add(new CMMNParameterMapping
             {
                 SourceRef = new CMMNParameter { Name = sourceRef },

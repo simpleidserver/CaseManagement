@@ -25,7 +25,7 @@ namespace CaseManagement.CMMN.Domains
         /// <summary>
         /// Reference to a state transition in the lifecycle of a Stage, Task, EventListener or Milestone.
         /// </summary>
-        public CMMNPlanItemTransitions StandardEvent { get; set; }
+        public CMMNTransitions StandardEvent { get; set; }
 
         public OnPartTypes Type => OnPartTypes.PlanItem;
 

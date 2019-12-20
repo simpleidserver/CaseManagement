@@ -4,14 +4,16 @@
     <Description>CMMN V2.0 implementation.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="CaseInstance\EventHandlers\**" />
+    <EmbeddedResource Remove="CaseInstance\EventHandlers\**" />
+    <None Remove="CaseInstance\EventHandlers\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.7" />
     <PackageReference Include="Hangfire.Core" Version="1.7.7" />
     <PackageReference Include="Hangfire.MemoryStorage.Core" Version="1.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CaseManagement.Workflow\CaseManagement.Workflow.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CaseInstance\EventHandlers\" />
   </ItemGroup>
 </Project>

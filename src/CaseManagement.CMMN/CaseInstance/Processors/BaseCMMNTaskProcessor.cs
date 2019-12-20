@@ -8,54 +8,82 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public abstract class BaseCMMNTaskProcessor : ICMMNPlanItemProcessor
     {
-        public abstract CMMNPlanItemDefinitionTypes Type { get; }
+        public abstract CMMNWorkflowElementTypes Type { get; }
 
         public Task Handle(PlanItemProcessorParameter parameter, CancellationToken token)
         {
-            var task = new Task(() => HandleTask(parameter, token), token, TaskCreationOptions.LongRunning);
+            var cancellationTokenSource = new CancellationTokenSource();
+            var task = new Task(() => HandleTask(parameter, cancellationTokenSource), token, TaskCreationOptions.LongRunning);
             task.Start();
             return task;
         }
 
         protected abstract Task Run(PlanItemProcessorParameter parameter, CancellationToken token);
 
-        private void HandleTask(PlanItemProcessorParameter parameter, CancellationToken token)
+        private async void HandleTask(PlanItemProcessorParameter parameter, CancellationTokenSource tokenSource)
         {
             CMMNCriterionListener.Listen(parameter);
             var isManuallyActivated = CMMNManualActivationListener.Listen(parameter);
-            /*
             if (!isManuallyActivated)
             {
-                pf.StartPlanItem(cmmnPlanItem);
+                parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Start);
             }
 
-            cmmnPlanItem.StateChanged += HandleSuspend;
-            cmmnPlanItem.StateChanged += HandleResume;
-            Thread.Sleep(100);
-            Run(context, token).Wait();
-            */
-        }
-
-        private void HandleSuspend(object obj, string state)
-        {
-            var name = Enum.GetName(typeof(CMMNPlanItemTransitions), CMMNPlanItemTransitions.Suspend);
-            if (name != state)
+            bool isSuspend = false;
+            bool isTerminate = false;
+            bool isOperationExecuted = false;
+            bool continueExecution = true;
+            var resumeEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Resume, () =>
             {
-                return;
-            }
-
-            // _processTaskTokenSource.Cancel();
-        }
-
-        private void HandleResume(object obj, string state)
-        {
-            var name = Enum.GetName(typeof(CMMNPlanItemTransitions), CMMNPlanItemTransitions.Resume);
-            if (name != state)
+                tokenSource = new CancellationTokenSource();
+                isSuspend = false;
+                isOperationExecuted = false;
+            });
+            var suspendEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Suspend, () =>
             {
-                return;
+                isSuspend = true;
+                tokenSource.Cancel();
+            });
+            var terminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Terminate, () =>
+            {
+                isTerminate = true;
+                tokenSource.Cancel();
+            });
+            while (continueExecution)
+            {
+                Thread.Sleep(100);
+                if (isSuspend)
+                {
+                    continue;
+                }
+
+                if (!isOperationExecuted)
+                {
+                    isOperationExecuted = true;
+                    try
+                    {
+                        await Run(parameter, tokenSource.Token);
+                        tokenSource.Token.ThrowIfCancellationRequested();
+                        continueExecution = false;
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        if (isTerminate)
+                        {
+                            continueExecution = false;
+                        }
+                    }
+                    catch(Exception)
+                    {
+                        parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Fault);
+                        isSuspend = true;
+                    }
+                }
             }
-            
-            // _processTask.Start();
+
+            suspendEvtListener.Unsubscribe();
+            terminateEvtListener.Unsubscribe();
+            resumeEvtListener.Unsubscribe();
         }
     }
 }

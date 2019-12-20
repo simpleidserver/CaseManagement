@@ -1,6 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Domains.Events;
-using CaseManagement.CMMN.Infrastructures;
 using System.Linq;
 using System.Threading;
 
@@ -10,54 +8,22 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
     {
         public static bool Listen(PlanItemProcessorParameter parameter)
         {
-            var planItemDefinition = parameter.WorkflowDefinition.PlanItems.FirstOrDefault(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
-            if (planItemDefinition.ManualActivationRule == null || (planItemDefinition.ManualActivationRule.Expression != null && !ExpressionParser.IsValid(planItemDefinition.ManualActivationRule.Expression.Body, parameter.WorkflowInstance)))
+            var planItemDefinition = parameter.WorkflowDefinition.Elements.FirstOrDefault(p => p.Id == parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
+            if (!parameter.WorkflowInstance.IsManualActivationRuleSatisfied(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition))
             {
                 return false;
             }
-
-            var semaphore = new Semaphore(0, 1);
-            var manualActivation = new ManualActivationListener(parameter, semaphore);
-            manualActivation.Listen();
-            semaphore.WaitOne();
-            return true;
-        }
-        
-        public class ManualActivationListener
-        {
-            private readonly PlanItemProcessorParameter _parameter;
-            private readonly Semaphore _semaphore;
-
-            public ManualActivationListener(PlanItemProcessorParameter parameter, Semaphore semaphore)
-            {
-                _parameter = parameter;
-                _semaphore = semaphore;
-            }
-
-            public void Listen()
-            {
-                _parameter.WorkflowInstance.EventRaised += HandlePlanItemChanged;
-                _semaphore.WaitOne();
-            }
             
-            public void Unsubscribe()
+            parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Enable);
+            var resetEvent = new ManualResetEvent(false);
+            var manualStartListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ManualStart, () =>
             {
-                _parameter.WorkflowInstance.EventRaised -= HandlePlanItemChanged;
-            }
+                resetEvent.Set();
+            });
 
-            private void HandlePlanItemChanged(object sender, DomainEventArgs args)
-            {
-                var evt = args.DomainEvt as CMMNPlanItemTransitionRaisedEvent;
-                if (evt == null)
-                {
-                    return;
-                }
-
-                if (evt.ElementId == _parameter.PlanItemInstance.Id && evt.Transition == CMMNPlanItemTransitions.ManualStart)
-                {
-                    _semaphore.Release();
-                }
-            }
+            resetEvent.WaitOne();
+            manualStartListener.Unsubscribe();
+            return true;
         }
     }
 }

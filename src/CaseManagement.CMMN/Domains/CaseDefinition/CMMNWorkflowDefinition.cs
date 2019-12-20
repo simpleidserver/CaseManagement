@@ -4,22 +4,22 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CMMNWorkflowDefinition
     {
-        public CMMNWorkflowDefinition(string id, string name, string description, ICollection<CMMNPlanItemDefinition> planItems)
+        public CMMNWorkflowDefinition(string id, string name, string description, ICollection<CMMNWorkflowElementDefinition> elements)
         {
             Id = id;
             Name = name;
             Description = description;
-            PlanItems = planItems;
+            Elements = elements;
         }
 
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public ICollection<CMMNPlanItemDefinition> PlanItems { get; set; }
+        public ICollection<CMMNWorkflowElementDefinition> Elements { get; set; }
 
-        public static CMMNWorkflowDefinition New(string id, string name, string description, ICollection<CMMNPlanItemDefinition> planItems)
+        public static CMMNWorkflowDefinition New(string id, string name, string description, ICollection<CMMNWorkflowElementDefinition> elements)
         {
-            return new CMMNWorkflowDefinition(id, name, description, planItems);
+            return new CMMNWorkflowDefinition(id, name, description, elements);
         }
     }
 }

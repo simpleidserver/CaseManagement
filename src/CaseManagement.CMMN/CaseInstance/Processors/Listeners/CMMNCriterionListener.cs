@@ -10,51 +10,38 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
     {
         public static void Listen(PlanItemProcessorParameter parameter)
         {
-            var planItemDefinition = parameter.WorkflowDefinition.PlanItems.First(p => p.Id == parameter.PlanItemInstance.PlanItemDefinitionId);
+            var planItemDefinition = parameter.WorkflowDefinition.Elements.First(p => p.Id == parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
             if (!planItemDefinition.EntryCriterions.Any())
             {
                 return;
             }
 
-            var semaphore = new Semaphore(planItemDefinition.EntryCriterions.Count() - 1, planItemDefinition.EntryCriterions.Count());
-            var listeners = new List<CriterionListener>();
-            foreach (var entryCriterion in planItemDefinition.EntryCriterions)
+
+            if (planItemDefinition.EntryCriterions.Any(c => parameter.WorkflowInstance.IsCriteriaSatisfied(c, parameter.WorkflowElementInstance.Version)))
             {
-                var listener = new CriterionListener(parameter, entryCriterion, semaphore);
-                listener.Listen();
-                listeners.Add(listener);
-                semaphore.WaitOne();
+                return;
             }
 
-            foreach(var listener in listeners)
-            {
-                listener.Unsubscribe();
-            }
+            var manualResetEvent = new ManualResetEvent(false);
+            var criterionListener = new CriterionListener(parameter, manualResetEvent);
+            criterionListener.Listen();
         }
 
         public class CriterionListener
         {
-            private Dictionary<string, CMMNPlanItemTransitions> _mappingPlanItemEvent;
             private readonly PlanItemProcessorParameter _parameter;
-            private readonly CMMNCriterion _criterion;
-            private readonly Semaphore _semaphore;
+            private readonly ManualResetEvent _manualResetEvent;
 
-            public CriterionListener(PlanItemProcessorParameter parameter, CMMNCriterion criterion, Semaphore semaphore)
+            public CriterionListener(PlanItemProcessorParameter parameter, ManualResetEvent manualResetEvent)
             {
                 _parameter = parameter;
-                _criterion = criterion;
-                _semaphore = semaphore;
+                _manualResetEvent = manualResetEvent;
             }
 
             public void Listen()
             {
                 _parameter.WorkflowInstance.EventRaised += HandlePlanItemChanged;
-                _mappingPlanItemEvent = new Dictionary<string, CMMNPlanItemTransitions>();
-                var planItemOnParts = _criterion.SEntry.PlanItemOnParts.Where(p => !string.IsNullOrWhiteSpace(p.SourceRef));
-                foreach (var planItemOnPart in planItemOnParts)
-                {
-                    _mappingPlanItemEvent.Add(planItemOnPart.SourceRef, planItemOnPart.StandardEvent);
-                }
+                _manualResetEvent.WaitOne();
             }
 
             public void Unsubscribe()
@@ -64,21 +51,23 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 
             private void HandlePlanItemChanged(object obj, DomainEventArgs args)
             {
-                var evt = args.DomainEvt as CMMNPlanItemTransitionRaisedEvent;
+                var evt = args.DomainEvt as CMMNWorkflowElementTransitionRaisedEvent;
                 if (evt == null)
                 {
                     return;
                 }
-
-                var planItemInstance = _parameter.WorkflowInstance.GetPlanItemInstance(evt.ElementId);
-                if (_mappingPlanItemEvent.ContainsKey(planItemInstance.PlanItemDefinitionId))
+                
+                var sourcePlanItemInstance = _parameter.WorkflowInstance.GetWorkflowElementInstance(evt.ElementId);
+                var planItemDefinition = _parameter.WorkflowDefinition.Elements.First(p => p.Id == _parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
+                if (!planItemDefinition.EntryCriterions.Any(e => e.SEntry.PlanItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.WorkflowElementDefinitionId && p.StandardEvent == evt.Transition)))
                 {
-                    var standardEvent = _mappingPlanItemEvent[planItemInstance.PlanItemDefinitionId];
-                    if (evt.Transition == standardEvent)
-                    {
-                        _mappingPlanItemEvent.Remove(evt.ElementId);
-                        _semaphore.Release();
-                    }
+                    return;
+                }
+
+                if (planItemDefinition.EntryCriterions.Any(c => _parameter.WorkflowInstance.IsCriteriaSatisfied(c, _parameter.WorkflowElementInstance.Version)))
+                {
+                    Unsubscribe();
+                    _manualResetEvent.Set();
                 }
             }
         }
