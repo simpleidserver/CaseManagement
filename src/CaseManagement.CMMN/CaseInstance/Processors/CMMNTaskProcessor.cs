@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using CaseManagement.CMMN.Domains;
+using System.Threading;
 using System.Threading.Tasks;
-using CaseManagement.CMMN.Domains;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
@@ -13,5 +13,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Complete);
             return Task.CompletedTask;
         }
+
+        protected override void Unsubscribe() { }
     }
 }

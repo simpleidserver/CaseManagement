@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using System.Linq;
 using System.Threading;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
@@ -8,7 +7,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
     {
         public static bool Listen(PlanItemProcessorParameter parameter)
         {
-            var planItemDefinition = parameter.WorkflowDefinition.Elements.FirstOrDefault(p => p.Id == parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
+            var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
             if (!parameter.WorkflowInstance.IsManualActivationRuleSatisfied(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition))
             {
                 return false;

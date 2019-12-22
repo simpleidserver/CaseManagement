@@ -1,41 +1,34 @@
-﻿namespace CaseManagement.CMMN.CaseInstance.Processors
+﻿using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
+using CaseManagement.CMMN.Domains;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace CaseManagement.CMMN.CaseInstance.Processors
 {
-    /*
     public class CMMNHumanTaskProcessor : BaseCMMNTaskProcessor
     {
-        public CMMNHumanTaskProcessor(IProcessorHelper processorHelper) : base(processorHelper)
+        public override CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.HumanTask;
+
+        private FormInstanceSubmittedListener _listener;
+
+        protected override Task Run(PlanItemProcessorParameter parameter, CancellationToken token)
         {
-        }
-
-        public override string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.HumanTask).ToLowerInvariant();
-
-        protected override async Task Run(WorkflowHandlerContext context, CancellationToken token)
-        {
-            var pf = context.ProcessFlowInstance;
-            var cmmnPlanItem = context.GetCMMNPlanItem();
-            var humanTask = context.GetCMMNHumanTask();
-            var formInstance = pf.GetFormInstance(context.CurrentElement.Id);
-            if (formInstance == null && !string.IsNullOrWhiteSpace(humanTask.FormId))
-            {
-                pf.CreateForm(cmmnPlanItem.Id, humanTask.FormId, humanTask.PerformerRef);
-            }
-
-            else if (formInstance != null && formInstance.Status == FormInstanceStatus.Complete)
-            {
-                pf.CompletePlanItem(cmmnPlanItem);
-                // await context.ExecuteNext(token);
-                return;
-            }
-
+            var humanTask = (parameter.WorkflowInstance.GetWorkflowElementDefinition(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition) as CMMNPlanItemDefinition).PlanItemDefinitionHumanTask;
+            parameter.WorkflowInstance.CreateFormInstance(parameter.WorkflowElementInstance.Id, humanTask.FormId, humanTask.PerformerRef);
             if (humanTask.IsBlocking)
             {
-                pf.BlockElement(cmmnPlanItem);
-                return;
+                _listener = CMMNFormInstanceSubmittedListener.Listen(parameter);
             }
 
-            pf.CompletePlanItem(cmmnPlanItem);
-            return;
+            return Task.CompletedTask;
+        }
+
+        protected override void Unsubscribe()
+        {
+            if (_listener != null)
+            {
+                _listener.Unsubscribe();
+            }
         }
     }
-    */
 }

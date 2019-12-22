@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.Domains.Events;
+﻿using CaseManagement.CMMN.Domains.CaseInstance.Events;
+using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.Workflow.Infrastructure;
 using System;
@@ -21,8 +22,11 @@ namespace CaseManagement.CMMN.Domains
     {
         public CMMNWorkflowInstance()
         {
-            WorkflowElementInstances = new List<CMMNWorkflowElementInstance>();
             ExecutionContext = new CMMNWorkflowInstanceExecutionContext();
+            StateHistories = new List<CMMNWorkflowInstanceHistory>();
+            TransitionHistories = new List<CMMNWorkflowInstanceTransitionHistory>();
+            ExecutionHistories = new List<CMMNWorkflowElementExecutionHistory>();
+            WorkflowElementInstances = new List<CMMNWorkflowElementInstance>();
             DomainEvents = new List<DomainEvent>();
         }
 
@@ -35,7 +39,11 @@ namespace CaseManagement.CMMN.Domains
 
         public string WorkflowDefinitionId { get; set; }
         public DateTime CreateDateTime { get; set; }
+        public string State { get; set; }
         public CMMNWorkflowInstanceExecutionContext ExecutionContext { get; set; }
+        public ICollection<CMMNWorkflowInstanceHistory> StateHistories { get; set; }
+        public ICollection<CMMNWorkflowInstanceTransitionHistory> TransitionHistories { get; set; }
+        public ICollection<CMMNWorkflowElementExecutionHistory> ExecutionHistories { get; set; }
         public ICollection<CMMNWorkflowElementInstance> WorkflowElementInstances { get; set; }
         public event EventHandler<DomainEventArgs> EventRaised;
 
@@ -75,7 +83,7 @@ namespace CaseManagement.CMMN.Domains
 
         public bool IsRepetitionRuleSatisfied(string planItemId, CMMNWorkflowDefinition workflowDefinition, bool listenEvent = false)
         {
-            var planItemDef = workflowDefinition.Elements.First(p => p.Id == planItemId);
+            var planItemDef = workflowDefinition.GetElement(planItemId);
             if (planItemDef == null || planItemDef.ActivationRule != CMMNActivationRuleTypes.Repetition || planItemDef.RepetitionRule == null)
             {
                 return false;
@@ -143,6 +151,25 @@ namespace CaseManagement.CMMN.Domains
                 }
             }
 
+            if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
+            {
+                if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, this))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool IsWorkflowElementDefinitionFinished(string elementDefinitionId)
+        {
+            var executionHistory = ExecutionHistories.FirstOrDefault(e => e.WorkflowElementDefinitionId == elementDefinitionId);
+            if (executionHistory == null || executionHistory.EndDateTime == null)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -154,7 +181,7 @@ namespace CaseManagement.CMMN.Domains
                 return null;
             }
 
-            return workflowDefinition.Elements.FirstOrDefault(p => p.Id == elementInstance.WorkflowElementDefinitionId);
+            return workflowDefinition.GetElement(elementInstance.WorkflowElementDefinitionId);
         }
 
         public CMMNWorkflowElementInstance GetWorkflowElementInstance(string id)
@@ -165,6 +192,11 @@ namespace CaseManagement.CMMN.Domains
         public CMMNWorkflowElementInstance GetWorkflowElementInstance(string workflowItemDefinitionId, int version)
         {
             return WorkflowElementInstances.FirstOrDefault(p => p.WorkflowElementDefinitionId == workflowItemDefinitionId && p.Version == version);
+        }
+
+        public ICollection<CMMNWorkflowElementInstance> GetWorkflowElementInstancesByParentId(string parentId)
+        {
+            return WorkflowElementInstances.Where(e => e.ParentId == parentId).ToList();
         }
 
         public CMMNWorkflowElementInstance GetLastWorkflowElementInstance(string workflowItemDefinitionId)
@@ -182,16 +214,16 @@ namespace CaseManagement.CMMN.Domains
 
         #region Commands
         
-        public CMMNWorkflowElementInstance CreateWorkflowElementInstance(CMMNWorkflowElementDefinition workflowElementDefinition)
+        public CMMNWorkflowElementInstance CreateWorkflowElementInstance(CMMNWorkflowElementDefinition workflowElementDefinition, string parentId = null)
         {
-            return CreateWorkflowElementInstance(workflowElementDefinition.Id, workflowElementDefinition.Type);
+            return CreateWorkflowElementInstance(workflowElementDefinition.Id, workflowElementDefinition.Type, parentId);
         }
 
-        public CMMNWorkflowElementInstance CreateWorkflowElementInstance(string planItemDefinitionId, CMMNWorkflowElementTypes workflowElementType)
+        public CMMNWorkflowElementInstance CreateWorkflowElementInstance(string planItemDefinitionId, CMMNWorkflowElementTypes workflowElementType, string parentId = null)
         {
             lock (DomainEvents)
             {
-                var evt = new CMMNWorkflowElementCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, Guid.NewGuid().ToString(), planItemDefinitionId, workflowElementType, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, Guid.NewGuid().ToString(), planItemDefinitionId, workflowElementType, DateTime.UtcNow, parentId);
                 var result = Handle(evt);
                 DomainEvents.Add(evt);
                 return result;
@@ -203,6 +235,47 @@ namespace CaseManagement.CMMN.Domains
             lock (DomainEvents)
             {
                 var evt = new CMMNWorkflowElementInstanceFormCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, Guid.NewGuid().ToString(), formId, performerRef);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void SubmitForm(string elementId, string formInstanceId)
+        {
+            lock(DomainEvents)
+            {
+                var evt = new CMMNWorkflowElementInstanceFormSubmittedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, formInstanceId);
+                Handle(evt);
+                DomainEvents.Add(evt);
+                MakeTransition(elementId, CMMNTransitions.Complete);
+            }
+        }
+
+        public void StartElement(string elementDefinitionId)
+        {
+            lock (DomainEvents)
+            {
+                var evt = new CMMNWorkflowElementStartedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementDefinitionId, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void FinishElement(string elementDefinitionId)
+        {
+            lock(DomainEvents)
+            {
+                var evt = new CMMNWorkflowElementFinishedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementDefinitionId, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransition(CMMNTransitions transition)
+        {
+            lock(DomainEvents)
+            {
+                var evt = new CMMNWorkflowTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, transition, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -239,8 +312,11 @@ namespace CaseManagement.CMMN.Domains
         {
             var result = new CMMNWorkflowInstance();
             var evt = new CMMNWorkflowInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, DateTime.UtcNow);
+            var secondEvt = new CMMNWorkflowTransitionRaisedEvent(Guid.NewGuid().ToString(), evt.AggregateId, 0, CMMNTransitions.Create, DateTime.UtcNow);
             result.DomainEvents.Add(evt);
+            result.DomainEvents.Add(secondEvt);
             result.Handle(evt);
+            result.Handle(secondEvt);
             return result;
         }
 
@@ -277,6 +353,26 @@ namespace CaseManagement.CMMN.Domains
             {
                 Handle((CMMNWorkflowElementInstanceFormCreatedEvent)obj);
             }
+
+            if (obj is CMMNWorkflowElementInstanceFormSubmittedEvent)
+            {
+                Handle((CMMNWorkflowElementInstanceFormSubmittedEvent)obj);
+            }
+
+            if (obj is CMMNWorkflowElementStartedEvent)
+            {
+                Handle((CMMNWorkflowElementStartedEvent)obj);
+            }
+
+            if (obj is CMMNWorkflowElementFinishedEvent)
+            {
+                Handle((CMMNWorkflowElementFinishedEvent)obj);
+            }
+
+            if (obj is CMMNWorkflowTransitionRaisedEvent)
+            {
+                Handle((CMMNWorkflowTransitionRaisedEvent)obj);
+            }
         }
 
         private void Handle(CMMNWorkflowInstanceCreatedEvent evt)
@@ -289,7 +385,7 @@ namespace CaseManagement.CMMN.Domains
         private CMMNWorkflowElementInstance Handle(CMMNWorkflowElementCreatedEvent evt)
         {
             var existingPlanItem = WorkflowElementInstances.Where(p => p.WorkflowElementDefinitionId == evt.WorkflowElementDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
-            var elt = new CMMNWorkflowElementInstance(evt.ElementId, evt.CreateDateTime, evt.WorkflowElementDefinitionId, evt.WorkflowElementDefinitionType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1);
+            var elt = new CMMNWorkflowElementInstance(evt.ElementId, evt.CreateDateTime, evt.WorkflowElementDefinitionId, evt.WorkflowElementDefinitionType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1, evt.ParentId);
             WorkflowElementInstances.Add(elt);
             elt.UpdateState(CMMNTransitions.Create, evt.CreateDateTime);
             Version++;
@@ -318,6 +414,125 @@ namespace CaseManagement.CMMN.Domains
             planItemInstance.FormInstanceId = evt.FormInstanceId;
             Version++;
             RaiseEvent(evt);
+        }
+
+        private void Handle(CMMNWorkflowElementInstanceFormSubmittedEvent evt)
+        {
+            Version++;
+            RaiseEvent(evt);
+        }
+
+        private void Handle(CMMNWorkflowElementStartedEvent evt)
+        {
+            ExecutionHistories.Add(new CMMNWorkflowElementExecutionHistory(evt.ElementDefinitionId, evt.StartDateTime));
+            Version++;
+            RaiseEvent(evt);
+        }
+
+        private void Handle(CMMNWorkflowElementFinishedEvent evt)
+        {
+            var executionHistory = ExecutionHistories.First(e => e.WorkflowElementDefinitionId == evt.ElementDefinitionId);
+            executionHistory.EndDateTime = evt.EndDateTime;
+        }
+
+        private void Handle(CMMNWorkflowTransitionRaisedEvent evt)
+        {
+            CMMNCaseStates? state = null;
+            switch (evt.Transition)
+            {
+                case CMMNTransitions.Create:
+                    if (!string.IsNullOrWhiteSpace(State))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is already initialized" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Active;
+                    break;
+                case CMMNTransitions.Complete:
+                    if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is not active" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Completed;
+                    break;
+                case CMMNTransitions.Terminate:
+                    if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is not active" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Terminated;
+                    break;
+                case CMMNTransitions.Fault:
+                    if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is not active" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Failed;
+                    break;
+                case CMMNTransitions.Suspend:
+                    if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is not active" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Suspended;
+                    break;
+                case CMMNTransitions.Close:
+                    if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed) &&
+                        State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Terminated) &&
+                        State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed) &&
+                        State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Suspended))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is not completed / terminated / failed / suspended" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Closed;
+                    break;
+                case CMMNTransitions.Reactivate:
+                    if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed) && 
+                        State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Terminated) &&
+                        State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed) &&
+                        State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Suspended))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is not completed / terminated / failed / suspended" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Active;
+                    break;
+            }
+
+            if (state != null)
+            {
+                State = Enum.GetName(typeof(CMMNCaseStates), state);
+                StateHistories.Add(new CMMNWorkflowInstanceHistory(State, DateTime.UtcNow));
+                TransitionHistories.Add(new CMMNWorkflowInstanceTransitionHistory(evt.Transition, DateTime.UtcNow));
+                Version++;
+                RaiseEvent(evt);
+            }
         }
 
         #endregion

@@ -19,6 +19,7 @@
         Resume = 14,
         Start = 15,
         Suspend = 16,
-        Terminate = 17
+        Terminate = 17,
+        ParentTerminate = 18
     }
 }

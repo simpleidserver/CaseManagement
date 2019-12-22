@@ -6,7 +6,7 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CMMNWorkflowElementInstance
     {
-        public CMMNWorkflowElementInstance(string id, DateTime createDateTime, string workflowElementDefinitionId, CMMNWorkflowElementTypes workflowElementDefinitionType, int version)
+        public CMMNWorkflowElementInstance(string id, DateTime createDateTime, string workflowElementDefinitionId, CMMNWorkflowElementTypes workflowElementDefinitionType, int version, string parentId)
         {
             Id = id;
             CreateDateTime = createDateTime;
@@ -15,6 +15,7 @@ namespace CaseManagement.CMMN.Domains
             Version = version;
             StateHistories = new List<CMMNWorkflowElementInstanceHistory>();
             TransitionHistories = new List<CMMNWorkflowElementInstanceTransitionHistory>();
+            ParentId = parentId;
         }
 
         public string Id { get; set; }
@@ -24,6 +25,7 @@ namespace CaseManagement.CMMN.Domains
         public CMMNWorkflowElementTypes WorkflowElementDefinitionType { get; set; }
         public string FormInstanceId { get; set; }
         public string State { get; set; }
+        public string ParentId { get; set; }
         public ICollection<CMMNWorkflowElementInstanceHistory> StateHistories { get; set; }
         public ICollection<CMMNWorkflowElementInstanceTransitionHistory> TransitionHistories { get; set; }
         public event EventHandler<string> TransitionApplied;
@@ -42,7 +44,7 @@ namespace CaseManagement.CMMN.Domains
 
         public static CMMNWorkflowElementInstance New(CMMNWorkflowElementDefinition workflowElementDefinition)
         {
-            return new CMMNWorkflowElementInstance(Guid.NewGuid().ToString(), DateTime.UtcNow, workflowElementDefinition.Id, workflowElementDefinition.Type, 0);
+            return new CMMNWorkflowElementInstance(Guid.NewGuid().ToString(), DateTime.UtcNow, workflowElementDefinition.Id, workflowElementDefinition.Type, 0, null);
         }
 
         private string GetState(CMMNTransitions planItemTransition)
@@ -52,6 +54,7 @@ namespace CaseManagement.CMMN.Domains
                 case CMMNWorkflowElementTypes.HumanTask:
                 case CMMNWorkflowElementTypes.Task:
                 case CMMNWorkflowElementTypes.ProcessTask:
+                case CMMNWorkflowElementTypes.Stage:
                     CMMNTaskStates taskState = CMMNTaskStates.Available;
                     switch (planItemTransition)
                     {
@@ -164,6 +167,39 @@ namespace CaseManagement.CMMN.Domains
                             }
 
                             taskState = CMMNTaskStates.Completed;
+                            break;
+                        case CMMNTransitions.ParentTerminate:
+                            if (State != Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "planitem instance is not active" }
+                                });
+                            }
+
+                            taskState = CMMNTaskStates.Terminated;
+                            break;
+                        case CMMNTransitions.ParentSuspend:
+                            if (State != Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "planitem instance is not active" }
+                                });
+                            }
+
+                            taskState = CMMNTaskStates.Suspended;
+                            break;
+                        case CMMNTransitions.ParentResume:
+                            if (State != Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "planitem instance is not suspended" }
+                                });
+                            }
+
+                            taskState = CMMNTaskStates.Active;
                             break;
                     }
 

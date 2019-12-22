@@ -21,5 +21,12 @@ namespace CaseManagement.CMMN.Builders
             cmmnTask.FormId = formId;
             return this;
         }
+
+        public CMMNHumanTaskBuilder SetPerformerRef(string performerRef)
+        {
+            var cmmnTask = (WorkflowElementDefinition as CMMNPlanItemDefinition).PlanItemDefinitionHumanTask;
+            cmmnTask.PerformerRef = performerRef;
+            return this;
+        }
     }
 }
