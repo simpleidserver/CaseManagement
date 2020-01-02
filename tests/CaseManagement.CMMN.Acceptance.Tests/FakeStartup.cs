@@ -1,20 +1,12 @@
-﻿using CaseManagement.CMMN.Acceptance.Tests.Delegates;
-using CaseManagement.CMMN.Acceptance.Tests.Delegates.caseWithCaseFileItem;
-using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithLongProcessTask;
-using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithManualActivation;
-using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithProcessTask;
-using CaseManagement.CMMN.Acceptance.Tests.Delegates.CaseWithRepetitionRule;
-using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Domains;
+﻿using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Acceptance.Tests
 {
@@ -29,13 +21,9 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
             var builder = services.AddCMMN();
-            builder.AddDefinitions(c =>
-            {
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn"))
-                {
-                    c.ImportDefinition(file);
-                }
-            })
+            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
+            builder.AddDefinitions(files);
+            /*
             .AddCaseProcesses(new List<ProcessAggregate>
             {
                 new CaseManagementProcessAggregate
@@ -130,6 +118,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                     }
                 }
             });
+            */
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

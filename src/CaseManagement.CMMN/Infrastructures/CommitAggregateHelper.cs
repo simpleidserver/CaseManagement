@@ -4,6 +4,7 @@ using CaseManagement.Workflow.Infrastructure.EvtStore;
 using Microsoft.Extensions.Options;
 using NEventStore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Infrastructures
@@ -27,9 +28,12 @@ namespace CaseManagement.CMMN.Infrastructures
         {
             using (var evtStream = _storeEvents.OpenStream(streamName, streamName, int.MinValue, int.MaxValue))
             {
-                foreach (var domainEvent in aggregate.DomainEvents)
+                lock(aggregate.DomainEvents)
                 {
-                    evtStream.Add(new EventMessage { Body = domainEvent });
+                    foreach (var domainEvent in aggregate.DomainEvents)
+                    {
+                        evtStream.Add(new EventMessage { Body = domainEvent });
+                    }
                 }
 
                 evtStream.CommitChanges(Guid.NewGuid());
@@ -37,10 +41,33 @@ namespace CaseManagement.CMMN.Infrastructures
 
             foreach (var evt in aggregate.DomainEvents)
             {
-                // await _queueProvider.Queue(evt);
+                await _queueProvider.QueueEvent(evt);
             }
 
             if (((aggregate.Version - 1) % _snapshotConfiguration.SnapshotFrequency) == 0)
+            {
+                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, aggregate));
+            }
+        }
+
+        public async Task Commit<T>(T aggregate, ICollection<DomainEvent> evts, int aggregateVersion, string streamName) where T : BaseAggregate
+        {
+            using (var evtStream = _storeEvents.OpenStream(streamName, streamName, int.MinValue, int.MaxValue))
+            {
+                foreach (var domainEvent in evts)
+                {
+                    evtStream.Add(new EventMessage { Body = domainEvent });
+                }
+
+                evtStream.CommitChanges(Guid.NewGuid());
+            }
+
+            foreach (var evt in evts)
+            {
+                await _queueProvider.QueueEvent(evt);
+            }
+
+            if (((aggregateVersion - 1) % _snapshotConfiguration.SnapshotFrequency) == 0)
             {
                 await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, aggregate));
             }

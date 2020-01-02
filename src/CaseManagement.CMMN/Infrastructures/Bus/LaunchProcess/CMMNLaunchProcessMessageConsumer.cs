@@ -1,11 +1,13 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Persistence;
+using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.Lock;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,14 +21,16 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
         private readonly ICMMNWorkflowEngine _workflowEngine;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly IEventStoreRepository _eventStoreRepository;
+        private readonly ICMMNWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
 
-        public CMMNLaunchProcessMessageConsumer(ILogger<CMMNLaunchProcessMessageConsumer> logger, IDistributedLock distributedLock, ICMMNWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public CMMNLaunchProcessMessageConsumer(ILogger<CMMNLaunchProcessMessageConsumer> logger, IDistributedLock distributedLock, ICMMNWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, ICMMNWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;
             _workflowEngine = workflowEngine;
             _commitAggregateHelper = commitAggregateHelper;
             _eventStoreRepository = eventStoreRepository;
+            _cmmnWorkflowDefinitionQueryRepository = cmmnWorkflowDefinitionQueryRepository;
         }
 
         public override string QueueName => QUEUE_NAME;
@@ -44,31 +48,27 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
                 return null;
             }
 
-            // var flowInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(message.ProcessFlowId, null/*GetStreamName(message.ProcessFlowId)*/);
-            // var task = new Task(async () => await HandleLaunchProcess(flowInstance, message.ProcessFlowId, cancellationTokenSource.Token));
-            // return new RunningTask(message.ProcessFlowId, task, flowInstance, cancellationTokenSource);
-            return null;
+            var workflowInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(message.ProcessFlowId, CMMNWorkflowInstance.GetStreamName(message.ProcessFlowId));
+            var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(workflowInstance.WorkflowDefinitionId);
+            var task = new Task(async () => await HandleLaunchProcess(workflowDefinition, workflowInstance, message.ProcessFlowId, cancellationTokenSource.Token));
+            return new RunningTask(message.ProcessFlowId, task, workflowInstance, cancellationTokenSource);
         }
 
-        private async Task HandleLaunchProcess(CMMNWorkflowInstance flowInstance, string taskId, CancellationToken token)
+        private async Task HandleLaunchProcess(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, string taskId, CancellationToken token)
         {
-            var lockId = flowInstance.Id;
+            var lockId = workflowInstance.Id;
             Debug.WriteLine($"Launch process {lockId}");
             try
             {
                 try
                 {
-                    flowInstance.EventRaised += HandleEventRaised;
-                    // await _workflowEngine.Start(flowInstance, token);
+                    workflowInstance.EventRaised += HandleEventRaised;
+                    await _workflowEngine.Start(workflowDefinition, workflowInstance, token);
                     token.ThrowIfCancellationRequested();
-                }
-                catch(OperationCanceledException)
-                {
-                    // flowInstance.Cancel();
                 }
                 finally
                 {
-                    flowInstance.EventRaised -= HandleEventRaised;
+                    workflowInstance.EventRaised -= HandleEventRaised;
                 }
             }
             finally
@@ -80,9 +80,8 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
 
         private async void HandleEventRaised(object sender, DomainEventArgs e)
         {
-            // await _commitAggregateHelper.Commit(e.ProcessFlowInstance, e.ProcessFlowInstance.GetStreamName());
+            var workflowInstance = sender as CMMNWorkflowInstance;
+            await _commitAggregateHelper.Commit(workflowInstance, new List<DomainEvent> { e.DomainEvt }, workflowInstance.Version, workflowInstance.GetStreamName());
         }
-
-        // protected abstract string GetStreamName(string id);
     }
 }

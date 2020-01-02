@@ -1,10 +1,10 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Repositories
 {
     public interface ICaseFileItemRepository
     {
-        string CaseFileItemType { get; }
-        // CaseFileItem Get(CMMNCaseFileItem caseFileItem);
+        Task<CaseFileItem> GetCaseFileItemInstance(string id);
+        Task AddCaseFileItem(string instanceId, string id);
     }
 }

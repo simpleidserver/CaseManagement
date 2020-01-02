@@ -5,7 +5,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 {
     public class CMMNManualActivationListener
     {
-        public static bool Listen(PlanItemProcessorParameter parameter)
+        public static bool Listen(ProcessorParameter parameter)
         {
             var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
             if (!parameter.WorkflowInstance.IsManualActivationRuleSatisfied(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition))

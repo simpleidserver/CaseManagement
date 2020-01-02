@@ -21,7 +21,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         public override CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.ProcessTask;
 
-        protected override async Task Run(PlanItemProcessorParameter parameter, CancellationToken token)
+        protected override async Task Run(ProcessorParameter parameter, CancellationToken token)
         {
             var planItem = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
@@ -40,7 +40,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         }
 
-        private async Task HandleProcess(PlanItemProcessorParameter parameter, CancellationToken token)
+        private async Task HandleProcess(ProcessorParameter parameter, CancellationToken token)
         {
             var planItem = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
@@ -82,7 +82,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             }, token);
         }
         
-        private Task HandleLaunchCaseProcessCallback(PlanItemProcessorParameter parameter, CaseProcessResponse caseProcessResponse, CancellationToken token)
+        private Task HandleLaunchCaseProcessCallback(ProcessorParameter parameter, CaseProcessResponse caseProcessResponse, CancellationToken token)
         {
             var planItem = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;

@@ -1,5 +1,5 @@
-﻿using CaseManagement.CMMN.Extensions;
-using CaseManagement.CMMN.Parser;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
@@ -14,26 +14,24 @@ namespace CaseManagement.CMMN.Apis
     [Route(CMMNConstants.RouteNames.CaseDefinitions)]
     public class CaseDefinitionsController : Controller
     {
-        private readonly ICMMNDefinitionsQueryRepository _queryRepository;
+        private readonly ICMMNWorkflowDefinitionQueryRepository _queryRepository;
 
-        public CaseDefinitionsController(ICMMNDefinitionsQueryRepository queryRepository)
+        public CaseDefinitionsController(ICMMNWorkflowDefinitionQueryRepository queryRepository)
         {
             _queryRepository = queryRepository;
         }
 
-        [HttpGet(".search")]
-        public async Task<IActionResult> Get()
+        [HttpGet("cmmndefinitions")]
+        public async Task<IActionResult> GetCMMNDefinitions()
         {
-            var query = HttpContext.Request.Query;
-            // var result = await _queryRepository.Find(ExtractFindParameter(query));
-            // return new OkObjectResult(ToDto(result));
-            return null;
+            var result = await _queryRepository.GetCMMDefinitions();
+            return new OkObjectResult(result);
         }
-
+                
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            var result = await _queryRepository.FindDefinitionById(id);
+            var result = await _queryRepository.FindById(id);
             if (result == null)
             {
                 return new NotFoundResult();
@@ -42,25 +40,48 @@ namespace CaseManagement.CMMN.Apis
             return new OkObjectResult(ToDto(result));
         }
 
-        [HttpGet("{id}/cases")]
-        public async Task<IActionResult> GetCases(string id)
+        [HttpGet(".search")]
+        public async Task<IActionResult> Search()
         {
-            var result = await _queryRepository.FindDefinitionById(id);
-            if (result == null)
-            {
-                return new NotFoundResult();
-            }
-
-            return new OkObjectResult(result.@case);
+            var query = HttpContext.Request.Query;
+            var result = await _queryRepository.Find(ExtractFindParameter(query));
+            return new OkObjectResult(ToDto(result));
         }
 
-        private static BaseFindParameter ExtractFindParameter(IQueryCollection query)
+        private static JObject ToDto(FindResponse<CMMNWorkflowDefinition> resp)
+        {
+            return new JObject
+            {
+                { "start_index", resp.StartIndex },
+                { "total_length", resp.TotalLength },
+                { "count", resp.Count },
+                { "content", new JArray(resp.Content.Select(r => new JObject
+                {
+                    { "id", r.Id },
+                    { "name", r.Name },
+                    { "create_datetime", r.CreateDateTime }
+                })) }
+            };
+        }
+
+        private static JObject ToDto(CMMNWorkflowDefinition def)
+        {
+            return new JObject
+            {
+                { "id", def.Id },
+                { "name", def.Name },
+                { "create_datetime", def.CreateDateTime }
+            };
+        }
+
+        private static FindWorkflowDefinitionsParameter ExtractFindParameter(IQueryCollection query)
         {
             int startIndex;
             int count;
             string orderBy;
+            string cmmnDefinition;
             FindOrders findOrder;
-            var parameter = new BaseFindParameter();
+            var parameter = new FindWorkflowDefinitionsParameter();
             if (query.TryGet("start_index", out startIndex))
             {
                 parameter.StartIndex = startIndex;
@@ -81,50 +102,12 @@ namespace CaseManagement.CMMN.Apis
                 parameter.Order = findOrder;
             }
 
-            return parameter;
-        }
-
-        private static JObject ToDto(FindResponse<tDefinitions> resp)
-        {
-            return new JObject
+            if (query.TryGet("cmmn_definition", out cmmnDefinition))
             {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => new JObject
-                {
-                    { "id", r.id },
-                    { "name", r.name },
-                    { "create_datetime", r.creationDate }
-                })) }
-            };
-        }
-
-        private static JObject ToDto(tDefinitions def)
-        {
-            return new JObject
-            {
-                { "id", def.id },
-                { "name", def.name },
-                { "create_datetime", def.creationDate },
-                { "cases", ToDto(def.@case) },
-                { "xml",  new CMMNParser().Serialize(def) }
-            };
-        }
-
-        private static JArray ToDto(tCase[] tCases)
-        {
-            var result = new JArray();
-            foreach(var tCase in tCases)
-            {
-                result.Add(new JObject
-                {
-                    { "id", tCase.id },
-                    { "name", tCase.casePlanModel.name }
-                });
+                parameter.CMMNDefinition = cmmnDefinition;
             }
 
-            return result;
+            return parameter;
         }
     }
 }

@@ -21,40 +21,7 @@
     <ProjectReference Include="..\..\src\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Cmmns\caseWithCaseFileItemAndOneRepetitionRule.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithMilestoneAndOneRepetitionRule.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithRepetitionRule.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithCaseFileItem.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithHumanTaskAndRole.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithMilestone.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithHumanTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithLongProcessTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithManualActivation.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithProcessTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithTimerEventListener.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\sEntryWithCondition.cmmn">
+    <None Update="Cmmns\caseWithOneTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -69,6 +36,7 @@
     </SpecFlowFeatureFiles>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Delegates\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

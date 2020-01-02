@@ -7,6 +7,7 @@
         ProcessTask = 2,
         TimerEventListener = 3,
         Milestone = 4,
-        Stage = 5
+        Stage = 5,
+        CaseFileItem = 6
     }
 }

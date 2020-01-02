@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace CaseManagement.CMMN.Domains.CaseInstance.Events
+namespace CaseManagement.CMMN.Domains.Events
 {
     [DebuggerDisplay("Start the element {ElementDefinitionId}")]
     public class CMMNWorkflowElementStartedEvent : DomainEvent

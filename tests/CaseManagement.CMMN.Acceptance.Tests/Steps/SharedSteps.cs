@@ -65,7 +65,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             foreach (var record in table.Rows)
             {
                 var key = record["Key"];
-                var value = record["Value"];
+                var value = Parse(record["Value"]);
                 try
                 {
                     jObj.Add(key, JToken.Parse(value));
@@ -102,11 +102,11 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             _scenarioContext.Set(JsonConvert.DeserializeObject<JObject>(json), key);
         }
 
-        [When("extract '(.*)' from JSON body")]
-        public void WhenExtractJSONKeyFromBody(string key)
+        [When("extract '(.*)' from JSON body into '(.*)'")]
+        public void WhenExtractJSONKeyFromBody(string selector, string key)
         {
             var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
-            var val = jsonHttpBody.SelectToken(key);
+            var val = jsonHttpBody.SelectToken(selector);
             if (val != null)
             {
                 _scenarioContext.Set(val.ToString(), key);

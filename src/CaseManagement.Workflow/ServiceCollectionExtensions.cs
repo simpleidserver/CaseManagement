@@ -1,6 +1,5 @@
 ﻿using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.Bus.InMemory;
-using CaseManagement.Workflow.Infrastructure.Bus.RaiseDomainEvent;
 using CaseManagement.Workflow.Infrastructure.Bus.StopProcess;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using CaseManagement.Workflow.Infrastructure.EvtStore.InMemory;
@@ -48,7 +47,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IRunningTaskPool, RunningTaskPool>();
             services.AddSingleton<IQueueProvider, InMemoryQueueProvider>();
             services.AddTransient<IMessageConsumer, StopProcessMessageConsumer>();
-            services.AddTransient<IMessageConsumer, RaiseDomainEventMessageConsumer>();
             return services;
         }
 

@@ -6,10 +6,10 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 {
     public class FormInstanceSubmittedListener
     {
-        private readonly PlanItemProcessorParameter _parameter;
+        private readonly ProcessorParameter _parameter;
         private readonly ManualResetEvent _manualResetEvent;
 
-        public FormInstanceSubmittedListener(PlanItemProcessorParameter parameter, ManualResetEvent manualResetEvent)
+        public FormInstanceSubmittedListener(ProcessorParameter parameter, ManualResetEvent manualResetEvent)
         {
             _parameter = parameter;
             _manualResetEvent = manualResetEvent;
@@ -44,7 +44,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 
     public class CMMNFormInstanceSubmittedListener
     {
-        public static FormInstanceSubmittedListener Listen(PlanItemProcessorParameter parameter)
+        public static FormInstanceSubmittedListener Listen(ProcessorParameter parameter)
         {
             var manualResetEvent = new ManualResetEvent(false);
             var criterionListener = new FormInstanceSubmittedListener(parameter, manualResetEvent);

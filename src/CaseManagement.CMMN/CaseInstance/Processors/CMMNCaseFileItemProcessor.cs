@@ -1,22 +1,29 @@
-﻿namespace CaseManagement.CMMN.CaseInstance.Processors
-{
-    /*
-    public class CMMNCaseFileItemProcessor : IProcessFlowElementProcessor
-    {
-        private readonly ICaseFileItemRepositoryFactory _caseFileItemRepositoryFactory;
+﻿using CaseManagement.CMMN.CaseInstance.Processors.CaseFileItem;
+using CaseManagement.CMMN.Domains;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-        public CMMNCaseFileItemProcessor(ICaseFileItemRepositoryFactory caseFileItemRepositoryFactory)
+namespace CaseManagement.CMMN.CaseInstance.Processors
+{
+    public class CMMNCaseFileItemProcessor : IProcessor
+    {
+        private readonly IEnumerable<ICaseFileItemListener> _caseFileItemListeners;
+
+        public CMMNCaseFileItemProcessor(IEnumerable<ICaseFileItemListener> caseFileItemListeners)
         {
-            _caseFileItemRepositoryFactory = caseFileItemRepositoryFactory;
+            _caseFileItemListeners = caseFileItemListeners;
         }
 
-        public string ProcessFlowElementType => CMMNCaseFileItem.ELEMENT_TYPE;
+        public CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.CaseFileItem;
 
-        public async Task Handle(WorkflowHandlerContext context, CancellationToken token)
+        public async Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
-            var caseFileItem = context.GetCMMNCaseFileItem();
-            var repository = _caseFileItemRepositoryFactory.Get(caseFileItem);
+            var caseFile = parameter.WorkflowInstance.GetWorkflowElementDefinition(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition) as CMMNCaseFileItemDefinition;
+            var caseFileItemListener = _caseFileItemListeners.First(c => c.CaseFileItemType == caseFile.Definition);
+            await caseFileItemListener.Start(parameter, token);
+            return parameter;
         }
     }
-    */
 }

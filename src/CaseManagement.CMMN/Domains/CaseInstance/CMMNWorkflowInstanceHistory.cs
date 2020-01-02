@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNWorkflowInstanceHistory
+    public class CMMNWorkflowInstanceHistory : ICloneable
     {
         public CMMNWorkflowInstanceHistory(string state, DateTime updateDateTime)
         {
@@ -12,5 +12,10 @@ namespace CaseManagement.CMMN.Domains
 
         public string State { get; set; }
         public DateTime UpdateDateTime { get; set; }
+
+        public object Clone()
+        {
+            return new CMMNWorkflowInstanceHistory(State, UpdateDateTime);
+        }
     }
 }

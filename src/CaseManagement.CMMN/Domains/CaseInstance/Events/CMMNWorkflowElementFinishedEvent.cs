@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace CaseManagement.CMMN.Domains.CaseInstance.Events
+namespace CaseManagement.CMMN.Domains.Events
 {
     [DebuggerDisplay("Finish the element {ElementDefinitionId}")]
     public class CMMNWorkflowElementFinishedEvent : DomainEvent

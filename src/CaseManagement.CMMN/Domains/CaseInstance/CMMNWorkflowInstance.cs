@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.CaseInstance.Events;
-using CaseManagement.CMMN.Domains.Events;
+﻿using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.Workflow.Infrastructure;
 using System;
@@ -246,8 +245,8 @@ namespace CaseManagement.CMMN.Domains
             {
                 var evt = new CMMNWorkflowElementInstanceFormSubmittedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, formInstanceId);
                 Handle(evt);
-                DomainEvents.Add(evt);
                 MakeTransition(elementId, CMMNTransitions.Complete);
+                DomainEvents.Add(evt);
             }
         }
 
@@ -312,7 +311,7 @@ namespace CaseManagement.CMMN.Domains
         {
             var result = new CMMNWorkflowInstance();
             var evt = new CMMNWorkflowInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, DateTime.UtcNow);
-            var secondEvt = new CMMNWorkflowTransitionRaisedEvent(Guid.NewGuid().ToString(), evt.AggregateId, 0, CMMNTransitions.Create, DateTime.UtcNow);
+            var secondEvt = new CMMNWorkflowTransitionRaisedEvent(Guid.NewGuid().ToString(), evt.AggregateId, 1, CMMNTransitions.Create, DateTime.UtcNow);
             result.DomainEvents.Add(evt);
             result.DomainEvents.Add(secondEvt);
             result.Handle(evt);
@@ -320,6 +319,17 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
+        public static CMMNWorkflowInstance New(List<DomainEvent> evts)
+        {
+            var result = new CMMNWorkflowInstance();
+            foreach(var evt in evts)
+            {
+                result.Handle(evt);
+            }
+
+            return result;
+        }
+        
         public static string GetStreamName(string id)
         {
             return $"cmmn-workflow-instance-{id}";
@@ -377,7 +387,7 @@ namespace CaseManagement.CMMN.Domains
 
         private void Handle(CMMNWorkflowInstanceCreatedEvent evt)
         {
-            Id = evt.Id;
+            Id = evt.AggregateId;
             CreateDateTime = evt.CreateDateTime;
             WorkflowDefinitionId = evt.DefinitionId;
         }
@@ -433,6 +443,8 @@ namespace CaseManagement.CMMN.Domains
         {
             var executionHistory = ExecutionHistories.First(e => e.WorkflowElementDefinitionId == evt.ElementDefinitionId);
             executionHistory.EndDateTime = evt.EndDateTime;
+            Version++;
+            RaiseEvent(evt);
         }
 
         private void Handle(CMMNWorkflowTransitionRaisedEvent evt)
@@ -539,7 +551,17 @@ namespace CaseManagement.CMMN.Domains
 
         public override object Clone()
         {
-            return new CMMNWorkflowInstance(Id, CreateDateTime, null);
+            return new CMMNWorkflowInstance(Id, CreateDateTime, WorkflowDefinitionId)
+            {
+                ExecutionContext = ExecutionContext == null ? null : (CMMNWorkflowInstanceExecutionContext)ExecutionContext.Clone(),
+                ExecutionHistories = ExecutionHistories == null ? null : ExecutionHistories.Select(e => (CMMNWorkflowElementExecutionHistory)e.Clone()).ToList(),
+                State = State,
+                StateHistories = StateHistories == null ? null : StateHistories.Select(s => (CMMNWorkflowInstanceHistory)s.Clone()).ToList(),
+                TransitionHistories = TransitionHistories == null ? null : TransitionHistories.Select(t => (CMMNWorkflowInstanceTransitionHistory)t.Clone()).ToList(),
+                Version = Version,
+                WorkflowDefinitionId = WorkflowDefinitionId,
+                WorkflowElementInstances = WorkflowElementInstances == null ? null : WorkflowElementInstances.Select(w => (CMMNWorkflowElementInstance)w.Clone()).ToList()
+            };
         }
 
         private void RaiseEvent(DomainEvent evt)

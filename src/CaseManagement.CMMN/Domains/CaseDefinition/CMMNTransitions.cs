@@ -20,6 +20,13 @@
         Start = 15,
         Suspend = 16,
         Terminate = 17,
-        ParentTerminate = 18
+        ParentTerminate = 18,
+        Update = 19,
+        Replace = 20,
+        AddChild = 21,
+        RemoveChild = 22,
+        AddReference = 23,
+        RemoveReference = 24,
+        Delete = 25
     }
 }

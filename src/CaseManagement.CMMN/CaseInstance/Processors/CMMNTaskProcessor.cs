@@ -8,7 +8,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
     {
         public override CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.Task;
 
-        protected override Task Run(PlanItemProcessorParameter parameter, CancellationToken token)
+        protected override Task Run(ProcessorParameter parameter, CancellationToken token)
         {
             parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Complete);
             return Task.CompletedTask;

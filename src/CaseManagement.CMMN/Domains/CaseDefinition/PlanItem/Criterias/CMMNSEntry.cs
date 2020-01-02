@@ -49,7 +49,7 @@ namespace CaseManagement.CMMN.Domains
         /// <summary>
         ///  Reference to a state transition in the CaseFileItem lifecyle.
         /// </summary>
-        public CMMNCaseFileItemTransitions StandardEvent { get; set; }
+        public CMMNTransitions StandardEvent { get; set; }
 
         public OnPartTypes Type => OnPartTypes.FileItem;
 

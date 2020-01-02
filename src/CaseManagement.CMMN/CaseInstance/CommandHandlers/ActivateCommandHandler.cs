@@ -47,8 +47,8 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             }
 
             caseInstance.ManuallyStartPlanItem(flowInstanceElt.Id);
-            */
             await _queueProvider.QueueRaiseEvent(caseInstance.Id, caseInstance.DomainEvents.Last());
+            */
             return true;
         }
 

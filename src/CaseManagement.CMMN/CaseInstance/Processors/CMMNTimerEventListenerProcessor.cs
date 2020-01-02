@@ -1,39 +1,39 @@
-﻿namespace CaseManagement.CMMN.CaseInstance.Processors
-{
-    /*
-    public class CMMNTimerEventListenerProcessor : IProcessFlowElementProcessor
-    {
-        private readonly ITimerEventWatcher _timerEventWatcher;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
-        private readonly IProcessFlowInstanceCommandRepository _processFlowInstanceCommandRepository;
+﻿using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
+using CaseManagement.CMMN.Domains;
+using CaseManagement.Workflow.ISO8601;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-        public CMMNTimerEventListenerProcessor(ITimerEventWatcher timerEventWatcher, IServiceProvider serviceProvider, IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, IProcessFlowInstanceCommandRepository processFlowInstanceCommandRepository)
+namespace CaseManagement.CMMN.CaseInstance.Processors
+{
+    public class CMMNTimerEventListenerProcessor : IProcessor
+    {
+        public CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.TimerEventListener;
+
+        public Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
-            _timerEventWatcher = timerEventWatcher;
-            _serviceProvider = serviceProvider;
-            _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
-            _processFlowInstanceCommandRepository = processFlowInstanceCommandRepository;
+            var task = new Task<ProcessorParameter>(() =>
+            {
+                return HandleTask(parameter).Result;
+            }, token, TaskCreationOptions.LongRunning);
+            task.Start();
+            return task;
         }
 
-        public string ProcessFlowElementType => Enum.GetName(typeof(CMMNPlanItemDefinitionTypes), CMMNPlanItemDefinitionTypes.TimerEventListener).ToLowerInvariant();
-
-        public Task Handle(WorkflowHandlerContext context, CancellationToken token)
+        private async Task<ProcessorParameter> HandleTask(ProcessorParameter parameter)
         {
-            var pf = context.ProcessFlowInstance;
-            var planItem = context.GetCMMNPlanItem();
-            var timerEventListener = planItem.PlanItemDefinitionTimerEventListener;
+            var timerEventListener = (parameter.WorkflowInstance.GetWorkflowElementDefinition(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition) as CMMNPlanItemDefinition).PlanItemDefinitionTimerEventListener;
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
             var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
             var currentDateTime = DateTime.UtcNow;
-            if (planItem.Status != ProcessFlowInstanceElementStatus.Launched)
-            {
-            }
-
+            var taskLst = new List<Task>();
+            var dates = new Queue<DateTime>();
             if (repeatingInterval != null)
             {
                 if (currentDateTime < repeatingInterval.Interval.EndDateTime)
-                {              
+                {
                     var startDate = currentDateTime;
                     if (startDate < repeatingInterval.Interval.StartDateTime)
                     {
@@ -42,22 +42,91 @@
 
                     var diff = repeatingInterval.Interval.EndDateTime.Subtract(startDate);
                     var newTimespan = new TimeSpan(diff.Ticks / (repeatingInterval.RecurringTimeInterval));
-                    for(var i = 0; i < repeatingInterval.RecurringTimeInterval; i++)
+                    for (var i = 0; i < repeatingInterval.RecurringTimeInterval; i++)
                     {
                         currentDateTime = currentDateTime.Add(newTimespan);
-                        _timerEventWatcher.ScheduleJob(currentDateTime, pf.Id);
+                        var subParameter = parameter;
+                        if (i > 0)
+                        {
+                            var newInstance = parameter.WorkflowInstance.CreateWorkflowElementInstance(parameter.WorkflowElementInstance.WorkflowElementDefinitionId, parameter.WorkflowElementInstance.WorkflowElementDefinitionType);
+                            subParameter = new ProcessorParameter(parameter.WorkflowDefinition, parameter.WorkflowInstance, newInstance);
+                        }
+
+                        taskLst.Add(BuildTask(subParameter, currentDateTime));
                     }
                 }
             }
-
-            if (time != null && currentDateTime < time.Value)
+            else if (time != null)
             {
-                pf.CreatePlanItem(planItem);
-                _timerEventWatcher.ScheduleJob(currentDateTime, pf.Id);
+                var subTask = Task.Factory.StartNew(() =>
+                {
+                    HandleTask(parameter, time.Value);
+                }, TaskCreationOptions.LongRunning);
+                taskLst.Add(subTask);
             }
 
-            return Task.CompletedTask;
+            await Task.WhenAll(taskLst);
+            return parameter;
+        }
+
+        private Task BuildTask(ProcessorParameter parameter, DateTime date)
+        {
+            var result = Task.Factory.StartNew(() =>
+            {
+                HandleTask(parameter, date);
+            }, TaskCreationOptions.LongRunning);
+            return result;
+        }
+
+        private void HandleTask(ProcessorParameter parameter, DateTime date)
+        {
+            bool continueExecution = true;
+            bool isSuspend = false;
+            var parentSuspendEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentSuspend, () =>
+            {
+                isSuspend = true;
+            });
+            var parentResumeEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentResume, () =>
+            {
+                isSuspend = false;
+            });
+            var parentTerminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentTerminate, () =>
+            {
+                continueExecution = false;
+            });
+            var suspendEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Suspend, () =>
+            {
+                isSuspend = true;
+            });
+            var resumeEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Resume, () =>
+            {
+                isSuspend = false;
+            });
+            var terminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Terminate, () =>
+            {
+                continueExecution = false;
+            });
+            while (continueExecution)
+            {
+                Thread.Sleep(100);
+                if (isSuspend)
+                {
+                    continue;
+                }
+
+                if (DateTime.UtcNow >= date)
+                {
+                    parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Occur);
+                    continueExecution = false;
+                }
+            }
+
+            parentSuspendEvtListener.Unsubscribe();
+            parentResumeEvtListener.Unsubscribe();
+            parentTerminateEvtListener.Unsubscribe();
+            suspendEvtListener.Unsubscribe();
+            resumeEvtListener.Unsubscribe();
+            terminateEvtListener.Unsubscribe();
         }
     }
-    */
 }

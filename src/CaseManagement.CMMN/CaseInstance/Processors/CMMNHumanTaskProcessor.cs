@@ -11,7 +11,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         private FormInstanceSubmittedListener _listener;
 
-        protected override Task Run(PlanItemProcessorParameter parameter, CancellationToken token)
+        protected override Task Run(ProcessorParameter parameter, CancellationToken token)
         {
             var humanTask = (parameter.WorkflowInstance.GetWorkflowElementDefinition(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition) as CMMNPlanItemDefinition).PlanItemDefinitionHumanTask;
             parameter.WorkflowInstance.CreateFormInstance(parameter.WorkflowElementInstance.Id, humanTask.FormId, humanTask.PerformerRef);

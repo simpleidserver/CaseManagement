@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
+﻿using CaseManagement.CMMN.CaseInstance.Exceptions;
+using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using System;
 using System.Linq;
@@ -7,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
-    public class CMMNStageProcessor : ICMMNPlanItemProcessor
+    public class CMMNStageProcessor : IProcessor
     {
         public CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.Stage;
 
-        public Task<PlanItemProcessorParameter> Handle(PlanItemProcessorParameter parameter, CancellationToken token)
+        public Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
             var cancellationTokenSource = new CancellationTokenSource();
-            var task = new Task<PlanItemProcessorParameter>(() => HandleTask(parameter, cancellationTokenSource), TaskCreationOptions.LongRunning);
+            var task = new Task<ProcessorParameter>(() => HandleTask(parameter, cancellationTokenSource), TaskCreationOptions.LongRunning);
             task.Start();
             return task;
         }
 
-        private PlanItemProcessorParameter HandleTask(PlanItemProcessorParameter parameter, CancellationTokenSource tokenSource)
+        private ProcessorParameter HandleTask(ProcessorParameter parameter, CancellationTokenSource tokenSource)
         {
-            CMMNCriterionListener.Listen(parameter);
+            CMMNCriterionListener.ListenEntryCriterias(parameter);
             var isManuallyActivated = CMMNManualActivationListener.Listen(parameter);
             if (!isManuallyActivated)
             {
@@ -92,6 +93,23 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     parameter.WorkflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentTerminate);
                 }
             });
+            var kvp = CMMNCriterionListener.ListenExitCriterias(parameter);
+            if (kvp != null)
+            {
+                try
+                {
+                    kvp.Value.Key.ContinueWith((r) =>
+                    {
+                        r.Wait();
+                        parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Terminate);
+                    });
+                }
+                catch (TerminateCaseInstanceElementException)
+                {
+                    parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Terminate);
+                }
+            }
+
             while (continueExecution)
             {
                 Thread.Sleep(100);
@@ -121,6 +139,16 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             suspendEvtListener.Unsubscribe();
             resumeEvtListener.Unsubscribe();
             terminateEvtListener.Unsubscribe();
+            if (kvp != null)
+            {
+                if (kvp.Value.Key.IsCanceled || kvp.Value.Key.IsCompleted || kvp.Value.Key.IsFaulted)
+                {
+                    kvp.Value.Key.Dispose();
+                }
+
+                kvp.Value.Value.Unsubscribe();
+            }
+
             return parameter;
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
@@ -11,11 +12,15 @@ namespace CaseManagement.CMMN.Domains
             Name = name;
             Description = description;
             Elements = elements;
+            ExitCriterias = new List<CMMNCriterion>();
         }
 
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string CmmnDefinition { get; set; }
+        public DateTime CreateDateTime { get; set; }
+        public ICollection<CMMNCriterion> ExitCriterias { get; set; }
         public ICollection<CMMNWorkflowElementDefinition> Elements { get; set; }
 
         public CMMNWorkflowElementDefinition GetElement(string id)

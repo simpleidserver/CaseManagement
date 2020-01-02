@@ -1,7 +1,6 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using System.Threading.Tasks;
@@ -19,18 +18,15 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             _eventStoreRepository = eventStoreRepository;
         }
 
-        public Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
+        public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
         {
-            /*
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNProcessFlowInstance>(launchCaseInstanceCommand.CaseInstanceId, CMMNProcessFlowInstance.GetCMMNStreamName(launchCaseInstanceCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(launchCaseInstanceCommand.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(launchCaseInstanceCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CaseInstanceId);
             }
             
             await _queueProvider.QueueLaunchProcess(caseInstance.Id);
-            */
-            return Task.CompletedTask;
         }
     }
 }

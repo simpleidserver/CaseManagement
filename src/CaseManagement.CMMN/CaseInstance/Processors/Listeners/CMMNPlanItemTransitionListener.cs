@@ -6,7 +6,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 {
     public static class CMMNPlanItemTransitionListener
     {
-        public static EventListener Listen(PlanItemProcessorParameter parameter, CMMNTransitions transition, Action callback)
+        public static EventListener Listen(ProcessorParameter parameter, CMMNTransitions transition, Action callback)
         {
             var evtListener = new EventListener(parameter, transition, callback);
             evtListener.Listen();
@@ -15,11 +15,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 
         public class EventListener
         {
-            private readonly PlanItemProcessorParameter _parameter;
+            private readonly ProcessorParameter _parameter;
             private readonly CMMNTransitions _transition;
             private readonly Action _callback;
 
-            public EventListener(PlanItemProcessorParameter parameter, CMMNTransitions transition, Action callback)
+            public EventListener(ProcessorParameter parameter, CMMNTransitions transition, Action callback)
             {
                 _parameter = parameter;
                 _transition = transition;

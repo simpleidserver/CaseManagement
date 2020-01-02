@@ -76,23 +76,6 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Features
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Check error is returned when case-definition doesn\'t exist")]
-        [Xunit.TraitAttribute("FeatureTitle", "CaseDefinitionsErrors")]
-        [Xunit.TraitAttribute("Description", "Check error is returned when case-definition doesn\'t exist")]
-        public virtual void CheckErrorIsReturnedWhenCase_DefinitionDoesntExist()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when case-definition doesn\'t exist", null, ((string[])(null)));
-#line 4
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 5
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/invalid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 7
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

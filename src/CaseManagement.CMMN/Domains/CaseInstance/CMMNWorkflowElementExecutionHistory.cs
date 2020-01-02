@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNWorkflowElementExecutionHistory
+    public class CMMNWorkflowElementExecutionHistory : ICloneable
     {
         public CMMNWorkflowElementExecutionHistory(string workflowElementDefinitionId, DateTime startDateTime)
         {
@@ -13,5 +13,13 @@ namespace CaseManagement.CMMN.Domains
         public string WorkflowElementDefinitionId { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime? EndDateTime { get; set; }
+
+        public object Clone()
+        {
+            return new CMMNWorkflowElementExecutionHistory(WorkflowElementDefinitionId, StartDateTime)
+            {
+                EndDateTime = EndDateTime
+            };
+        }
     }
 }

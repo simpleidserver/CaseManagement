@@ -1,15 +1,9 @@
 ﻿using CaseManagement.CMMN.CaseInstance.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.Commands;
-using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -18,21 +12,13 @@ namespace CaseManagement.CMMN.Apis
     [Route(CMMNConstants.RouteNames.CaseInstances)]
     public class CaseInstancesController : Controller
     {
+        private readonly ICreateCaseInstanceCommandHandler _createCaseInstanceCommandHandler;
         private readonly ILaunchCaseInstanceCommandHandler _launchCaseInstanceCommandHandler;
-        private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
-        private readonly IStopCaseInstanceCommandHandler _stopCaseInstanceCommandHandler;
-        // private readonly IProcessFlowInstanceQueryRepository _processFlowInstanceQueryRepository;
-        private readonly IActivateCommandHandler _activateCommandHandler;
-        private readonly ITerminateCommandHandler _terminateCommandHandler;
 
-        public CaseInstancesController(ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IStopCaseInstanceCommandHandler stopCaseInstanceCommandHandler, /* IProcessFlowInstanceQueryRepository processFlowInstanceQueryRepository, */IActivateCommandHandler activateCommandHandler, ITerminateCommandHandler terminateCommandHandler)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler)
         {
+            _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
-            _confirmFormCommandHandler = confirmFormCommandHandler;
-            _stopCaseInstanceCommandHandler = stopCaseInstanceCommandHandler;
-            // _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
-            _activateCommandHandler = activateCommandHandler;
-            _terminateCommandHandler = terminateCommandHandler;
         }
 
         /*
@@ -43,6 +29,7 @@ namespace CaseManagement.CMMN.Apis
             var result = await _processFlowInstanceQueryRepository.Find(ExtractFindWorkflowInstanceParameter(query));
             return new OkObjectResult(ToDto(result));
         }
+        */
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCaseInstanceCommand createCaseInstance)
@@ -62,6 +49,7 @@ namespace CaseManagement.CMMN.Apis
             return new OkResult();
         }
 
+        /*
         [HttpGet("{id}/stop")]
         public async Task<IActionResult> Stop(string id)
         {
@@ -256,36 +244,95 @@ namespace CaseManagement.CMMN.Apis
                 })) }
             };
         }
+        */
 
-        private static JObject ToDto(ProcessFlowInstance flowInstance)
+        private static JObject ToDto(CMMNWorkflowInstance workflowInstance)
         {
             var result = new JObject
             {
-                { "id", flowInstance.Id },
-                { "create_datetime", flowInstance.CreateDateTime },
-                { "template_id", flowInstance.ProcessFlowTemplateId },
-                { "name", flowInstance.ProcessFlowName },
-                { "context", ToDto(flowInstance.ExecutionContext) }
+                { "id", workflowInstance.Id },
+                { "create_datetime", workflowInstance.CreateDateTime},
+                { "definition_id", workflowInstance.WorkflowDefinitionId },
+                { "context", ToDto(workflowInstance.ExecutionContext) },
+                { "state", workflowInstance.State }
             };
-            if (flowInstance.Status != null)
+            var stateHistories = new JArray();
+            var transitionHistories = new JArray();
+            var executionHistories = new JArray();
+            var elts = new JArray();
+            foreach(var stateHistory in workflowInstance.StateHistories)
             {
-                result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceStatus), flowInstance.Status).ToLowerInvariant());
+                stateHistories.Add(new JObject
+                {
+                    { "state", stateHistory.State },
+                    { "datetime", stateHistory.UpdateDateTime }
+                });
             }
 
-            var planItems = new JArray();
-            foreach(var planItem in flowInstance.Elements.Where(e => e is CMMNPlanItemDefinition).Cast<CMMNPlanItemDefinition>())
+            foreach(var transitionHistory in workflowInstance.TransitionHistories)
             {
-                planItems.Add(ToDto(planItem));
+                transitionHistories.Add(new JObject
+                {
+                    { "transition", Enum.GetName(typeof(CMMNTransitions), transitionHistory.Transition) },
+                    { "datetime", transitionHistory.CreateDateTime }
+                });
             }
 
-            var fileItems = new JArray();
-            foreach(var caseFileItem in flowInstance.Elements.Where(e => e is CMMNCaseFileItem).Cast<CMMNCaseFileItem>())
+            foreach (var executionHistory in workflowInstance.ExecutionHistories)
             {
-                fileItems.Add(ToDto(caseFileItem));
+                executionHistories.Add(new JObject
+                {
+                    { "start_datetime", executionHistory.StartDateTime },
+                    { "end_datetime", executionHistory.EndDateTime },
+                    { "id", executionHistory.WorkflowElementDefinitionId }
+                });
             }
 
-            result.Add("items", planItems);
-            result.Add("fileitems", fileItems);
+            foreach(var elt in workflowInstance.WorkflowElementInstances)
+            {
+                elts.Add(ToDto(elt));
+            }
+
+            result.Add("state_histories", stateHistories);
+            result.Add("transition_histories", transitionHistories);
+            result.Add("execution_histories", executionHistories);
+            result.Add("elements", elts);
+            return result;
+        }
+
+        private static JObject ToDto(CMMNWorkflowElementInstance elt)
+        {
+            var result = new JObject
+            {
+                { "id", elt.Id },
+                { "version", elt.Version },
+                { "create_datetime", elt.CreateDateTime},
+                { "definition_id", elt.WorkflowElementDefinitionId },
+                { "form_instanceid", elt.FormInstanceId },
+                { "state", elt.State }
+            };
+            var stateHistories = new JArray();
+            var transitionHistories = new JArray();
+            foreach (var stateHistory in elt.StateHistories)
+            {
+                stateHistories.Add(new JObject
+                {
+                    { "state", stateHistory.State },
+                    { "datetime", stateHistory.UpdateDateTime }
+                });
+            }
+
+            foreach (var transitionHistory in elt.TransitionHistories)
+            {
+                transitionHistories.Add(new JObject
+                {
+                    { "transition", Enum.GetName(typeof(CMMNTransitions), transitionHistory.Transition) },
+                    { "datetime", transitionHistory.CreateDateTime }
+                });
+            }
+
+            result.Add("state_histories", stateHistories);
+            result.Add("transition_histories", transitionHistories);
             return result;
         }
 
@@ -300,36 +347,7 @@ namespace CaseManagement.CMMN.Apis
             return jObj;
         }
 
-        private static JObject ToDto(CMMNPlanItemDefinition planItem)
-        {
-            var result = new JObject
-            {
-                { "id", planItem.Id },
-                { "name", planItem.Name },
-                { "version", planItem.Version }
-            };
-            var transitionHistories = new JArray();
-            if (planItem.TransitionHistories != null)
-            {
-                foreach(var transitionHistory in planItem.TransitionHistories)
-                {
-                    transitionHistories.Add(new JObject
-                    {
-                        { "create_datetime", transitionHistory.CreateDateTime },
-                        { "transition", Enum.GetName(typeof(CMMNPlanItemTransitions), transitionHistory.Transition).ToLowerInvariant() },
-                        { "version", transitionHistory.Version }
-                    });
-                }
-            }
-
-            if (planItem.Status != null)
-            {
-                result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceElementStatus), planItem.Status).ToLowerInvariant());
-            }
-
-            result.Add("histories", transitionHistories);
-            return result;
-        }
+        /*
 
         private static JObject ToDto(CMMNCaseFileItem fileItem)
         {

@@ -1,10 +1,11 @@
 ﻿using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CMMNWorkflowElementInstance
+    public class CMMNWorkflowElementInstance : ICloneable
     {
         public CMMNWorkflowElementInstance(string id, DateTime createDateTime, string workflowElementDefinitionId, CMMNWorkflowElementTypes workflowElementDefinitionType, int version, string parentId)
         {
@@ -205,40 +206,126 @@ namespace CaseManagement.CMMN.Domains
 
                     return Enum.GetName(typeof(CMMNTaskStates), taskState);
                 case CMMNWorkflowElementTypes.Milestone:
+                case CMMNWorkflowElementTypes.TimerEventListener:
                     CMMNMilestoneStates milestoneState = CMMNMilestoneStates.Available;
                     switch (planItemTransition)
                     {
                         case CMMNTransitions.Create:
+                            if (!string.IsNullOrWhiteSpace(State))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "milestone instance is initialized" }
+                                });
+                            }
+
                             milestoneState = CMMNMilestoneStates.Available;
                             break;
                         case CMMNTransitions.Occur:
+                            if (State != Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "milestone instance is not available" }
+                                });
+                            }
+
                             milestoneState = CMMNMilestoneStates.Completed;
                             break;
                         case CMMNTransitions.Suspend:
+                            if (State != Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "milestone instance is not available" }
+                                });
+                            }
+
                             milestoneState = CMMNMilestoneStates.Suspended;
                             break;
                         case CMMNTransitions.Terminate:
+                            if (State != Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "milestone instance is not available" }
+                                });
+                            }
+
                             milestoneState = CMMNMilestoneStates.Terminated;
+                            break;
+                        case CMMNTransitions.Resume:
+                            if (State != Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Suspended))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "milestone instance is not suspended" }
+                                });
+                            }
+
+                            milestoneState = CMMNMilestoneStates.Available;
                             break;
                     }
 
                     return Enum.GetName(typeof(CMMNMilestoneStates), milestoneState);
-                case CMMNWorkflowElementTypes.TimerEventListener:
-                    var listenerState = CMMNEventListenerStates.Available;
-                    switch (planItemTransition)
+                case CMMNWorkflowElementTypes.CaseFileItem:
+                    CMMNCaseFileItemStates caseFileItemState = CMMNCaseFileItemStates.Available;
+                    switch(planItemTransition)
                     {
                         case CMMNTransitions.Create:
-                            listenerState = CMMNEventListenerStates.Available;
+                            if (!string.IsNullOrWhiteSpace(State))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "casefileitem is initialized" }
+                                });
+                            }
+
+                            caseFileItemState = CMMNCaseFileItemStates.Available;
                             break;
-                        case CMMNTransitions.Occur:
-                            listenerState = CMMNEventListenerStates.Completed;
+                        case CMMNTransitions.Update:
+                        case CMMNTransitions.Replace:
+                        case CMMNTransitions.AddChild:
+                        case CMMNTransitions.RemoveChild:
+                        case CMMNTransitions.AddReference:
+                        case CMMNTransitions.RemoveReference:
+                            if (State != Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Available))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "casefileitem is not available" }
+                                });
+                            }
+
+                            caseFileItemState = CMMNCaseFileItemStates.Available;
+                            break;
+                        case CMMNTransitions.Delete:
+                            if (State != Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Available))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "casefileitem is not available" }
+                                });
+                            }
+
+                            caseFileItemState = CMMNCaseFileItemStates.Discarded;
                             break;
                     }
-
-                    return Enum.GetName(typeof(CMMNTransitions), listenerState);
+                    return Enum.GetName(typeof(CMMNCaseFileItemStates), caseFileItemState);
             }
 
             return null;
+        }
+
+        public object Clone()
+        {
+            return new CMMNWorkflowElementInstance(Id, CreateDateTime, WorkflowElementDefinitionId, WorkflowElementDefinitionType, Version, ParentId)
+            {
+                FormInstanceId = FormInstanceId,
+                State = State,
+                StateHistories = StateHistories == null ? null : StateHistories.Select(s => (CMMNWorkflowElementInstanceHistory)s.Clone()).ToList(),
+                TransitionHistories = TransitionHistories == null ? null : TransitionHistories.Select(t => (CMMNWorkflowElementInstanceTransitionHistory)t.Clone()).ToList()
+            };
         }
     }
 }

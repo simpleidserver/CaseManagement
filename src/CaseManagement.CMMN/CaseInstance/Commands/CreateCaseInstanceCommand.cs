@@ -7,7 +7,5 @@ namespace CaseManagement.CMMN.CaseInstance.Commands
     {
         [DataMember(Name = "case_definition_id")]
         public string CaseDefinitionId { get; set; }
-        [DataMember(Name = "case_id")]
-        public string CasesId { get; set; }
     }
 }

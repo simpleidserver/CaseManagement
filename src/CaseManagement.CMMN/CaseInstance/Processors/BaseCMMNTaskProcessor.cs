@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
+﻿using CaseManagement.CMMN.CaseInstance.Exceptions;
+using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using System;
 using System.Threading;
@@ -6,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
-    public abstract class BaseCMMNTaskProcessor : ICMMNPlanItemProcessor
+    public abstract class BaseCMMNTaskProcessor : IProcessor
     {
         public abstract CMMNWorkflowElementTypes Type { get; }
 
-        public Task<PlanItemProcessorParameter> Handle(PlanItemProcessorParameter parameter, CancellationToken token)
+        public Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
-            var task = new Task<PlanItemProcessorParameter>(() =>
+            var task = new Task<ProcessorParameter>(() =>
             {
                 var cancellationTokenSource = new CancellationTokenSource();
                 return HandleTask(parameter, cancellationTokenSource).Result;
@@ -21,12 +22,12 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             return task;
         }
 
-        protected abstract Task Run(PlanItemProcessorParameter parameter, CancellationToken token);
+        protected abstract Task Run(ProcessorParameter parameter, CancellationToken token);
         protected abstract void Unsubscribe();
 
-        private async Task<PlanItemProcessorParameter> HandleTask(PlanItemProcessorParameter parameter, CancellationTokenSource tokenSource)
+        private async Task<ProcessorParameter> HandleTask(ProcessorParameter parameter, CancellationTokenSource tokenSource)
         {
-            CMMNCriterionListener.Listen(parameter);
+            CMMNCriterionListener.ListenEntryCriterias(parameter);
             var isManuallyActivated = CMMNManualActivationListener.Listen(parameter);
             if (!isManuallyActivated)
             {
@@ -69,6 +70,29 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 isTerminate = true;
                 tokenSource.Cancel();
             });
+            var kvp = CMMNCriterionListener.ListenExitCriterias(parameter);
+            if (kvp != null)
+            {
+                try
+                {
+                    kvp.Value.Key.ContinueWith((r) =>
+                    {
+                        r.Wait();
+                        if (parameter.WorkflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                        {
+                            parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Terminate);
+                        }
+                    });
+                }
+                catch (TerminateCaseInstanceElementException)
+                {
+                    if (parameter.WorkflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                    {
+                        parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Terminate);
+                    }
+                }
+            }
+
             while (continueExecution)
             {
                 Thread.Sleep(100);
@@ -110,6 +134,16 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             suspendEvtListener.Unsubscribe();
             terminateEvtListener.Unsubscribe();
             resumeEvtListener.Unsubscribe();
+            if (kvp != null)
+            {
+                if(kvp.Value.Key.IsCanceled || kvp.Value.Key.IsCompleted || kvp.Value.Key.IsFaulted)
+                {
+                    kvp.Value.Key.Dispose();
+                }
+
+                kvp.Value.Value.Unsubscribe();
+            }
+
             return parameter;
         }
     }

@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Parser;
+using CaseManagement.CMMN.Persistence;
+using CaseManagement.CMMN.Persistence.InMemory;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN
 {
@@ -9,6 +14,18 @@ namespace CaseManagement.CMMN
         public CMMNServerBuilder(IServiceCollection services)
         {
             _services = services;
+        }
+
+        public CMMNServerBuilder AddDefinitions(List<string> pathLst)
+        {
+            var result = new List<CMMNWorkflowDefinition>();
+            foreach(var path in pathLst)
+            {
+                result.AddRange(CMMNParser.ExtractWorkflowDefinition(path));
+            }
+            
+            _services.AddSingleton<ICMMNWorkflowDefinitionQueryRepository>(new InMemoryCMMNWorkflowDefinitionQueryRepository(result));
+            return this;
         }
 
         /*

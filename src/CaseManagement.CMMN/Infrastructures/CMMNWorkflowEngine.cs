@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.CaseInstance.Processors;
+﻿using CaseManagement.CMMN.CaseInstance.Exceptions;
+using CaseManagement.CMMN.CaseInstance.Processors;
 using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
@@ -12,9 +13,9 @@ namespace CaseManagement.CMMN.Infrastructures
 {
     public class CMMNWorkflowEngine : ICMMNWorkflowEngine
     {
-        private readonly IEnumerable<ICMMNPlanItemProcessor> _cmmnPlanItemProcessors;
+        private readonly IEnumerable<IProcessor> _cmmnPlanItemProcessors;
 
-        public CMMNWorkflowEngine(IEnumerable<ICMMNPlanItemProcessor> cmmnPlanItemProcessors)
+        public CMMNWorkflowEngine(IEnumerable<IProcessor> cmmnPlanItemProcessors)
         {
             _cmmnPlanItemProcessors = cmmnPlanItemProcessors;
         }
@@ -50,7 +51,10 @@ namespace CaseManagement.CMMN.Infrastructures
                     var workflowElementInstances = workflowInstance.WorkflowElementInstances;
                     foreach (var workflowElementInstance in workflowElementInstances)
                     {
-                        workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentResume);
+                        if (workflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended))
+                        {
+                            workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentResume);
+                        }
                     }
                 }
             });
@@ -59,7 +63,10 @@ namespace CaseManagement.CMMN.Infrastructures
                 var workflowElementInstances = workflowInstance.WorkflowElementInstances;
                 foreach (var workflowElementInstance in workflowElementInstances)
                 {
-                    workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentSuspend);
+                    if (workflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                    {
+                        workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentSuspend);
+                    }
                 }
 
                 isSuspend = true;
@@ -69,11 +76,31 @@ namespace CaseManagement.CMMN.Infrastructures
                 var workflowElementInstances = workflowInstance.WorkflowElementInstances;
                 foreach (var workflowElementInstance in workflowElementInstances)
                 {
-                    workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentTerminate);
+                    if (workflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                    {
+                        workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentTerminate);
+                    }
                 }
 
                 continueExecution = false;
             });
+            var kvp = CMMNCriterionListener.ListenExitCriterias(new ProcessorParameter(null, workflowInstance, new CMMNWorkflowElementInstance(null, DateTime.UtcNow, null, CMMNWorkflowElementTypes.Stage, 0, null)), workflowDefinition.ExitCriterias);
+            if (kvp != null)
+            {
+                try
+                {
+                    kvp.Value.Key.ContinueWith((r) =>
+                    {
+                        r.Wait();
+                        workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+                    });
+                }
+                catch (TerminateCaseInstanceElementException)
+                {
+                    workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+                }
+            }
+
             while (continueExecution)
             {
                 Thread.Sleep(100);
@@ -102,16 +129,26 @@ namespace CaseManagement.CMMN.Infrastructures
             terminateListener.Unsubscribe();
             createListener.Unsubscribe();
             repetitionListener.Unsubscribe();
+            cancellationTokenSource.Cancel();
+            if (kvp != null)
+            {
+                if (kvp.Value.Key.IsCanceled || kvp.Value.Key.IsCompleted || kvp.Value.Key.IsFaulted)
+                {
+                    kvp.Value.Key.Dispose();
+                }
+
+                kvp.Value.Value.Unsubscribe();
+            }
         }
 
         private class CreateListener
         {
             private readonly CMMNWorkflowDefinition _workflowDefinition;
             private readonly CMMNWorkflowInstance _workflowInstance;
-            private readonly IEnumerable<ICMMNPlanItemProcessor> _processors;
+            private readonly IEnumerable<IProcessor> _processors;
             private readonly CancellationToken _token;
 
-            public CreateListener(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, IEnumerable<ICMMNPlanItemProcessor> processors, CancellationToken token)
+            public CreateListener(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, IEnumerable<IProcessor> processors, CancellationToken token)
             {
                 _workflowDefinition = workflowDefinition;
                 _workflowInstance = workflowInstance;
@@ -138,11 +175,17 @@ namespace CaseManagement.CMMN.Infrastructures
                 }
 
                 var processor = _processors.First(p => p.Type == elementCreated.WorkflowElementDefinitionType);
-                var parameter = new PlanItemProcessorParameter(_workflowDefinition, _workflowInstance, _workflowInstance.GetWorkflowElementInstance(elementCreated.ElementId));
+                var parameter = new ProcessorParameter(_workflowDefinition, _workflowInstance, _workflowInstance.GetWorkflowElementInstance(elementCreated.ElementId));
                 var workflowElementInstance = parameter.WorkflowInstance.GetLastWorkflowElementInstance(elementCreated.WorkflowElementDefinitionId);
                 if (workflowElementInstance == null || workflowElementInstance.Version == 0)
                 {
                     _workflowInstance.StartElement(elementCreated.WorkflowElementDefinitionId);
+                }
+
+                // Note : Ignore TimerEventListener and CaseFileItem.
+                if (workflowElementInstance.Version > 0 && (workflowElementInstance.WorkflowElementDefinitionType == CMMNWorkflowElementTypes.TimerEventListener || workflowElementInstance.WorkflowElementDefinitionType == CMMNWorkflowElementTypes.CaseFileItem))
+                {
+                    return;
                 }
 
                 processor.Handle(parameter, _token).ContinueWith((obj) =>

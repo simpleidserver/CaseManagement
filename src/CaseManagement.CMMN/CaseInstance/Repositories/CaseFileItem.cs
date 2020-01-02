@@ -10,7 +10,6 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
         }
 
         public string Id { get; set; }
-
         public abstract string ReadContent();
         public abstract IEnumerable<CaseFileItem> GetChildren();
     }
