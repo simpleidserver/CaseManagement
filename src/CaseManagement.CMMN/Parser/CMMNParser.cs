@@ -52,32 +52,7 @@ namespace CaseManagement.CMMN.Parser
         private static CMMNWorkflowDefinition BuildWorkflowDefinition(tCase tCase, string fileName)
         {
             var planModel = tCase.casePlanModel;
-            var planItems = new List<CMMNPlanItemDefinition>();
-            foreach (var planItem in planModel.planItem)
-            {
-                var planItemDef = planModel.Items.First(i => i.id == planItem.definitionRef);
-                var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
-                if (planItem.entryCriterion != null)
-                {
-                    foreach (var entryCriterion in planItem.entryCriterion)
-                    {
-                        var sEntry = planModel.sentry.First(s => s.id == entryCriterion.sentryRef);
-                        flowInstanceElt.EntryCriterions.Add(new CMMNCriterion(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
-                    }
-                }
-
-                if (planItem.exitCriterion != null)
-                {
-                    foreach (var exitCriteria in planItem.exitCriterion)
-                    {
-                        var sEntry = planModel.sentry.First(s => s.id == exitCriteria.sentryRef);
-                        flowInstanceElt.ExitCriterions.Add(new CMMNCriterion(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
-                    }
-                }
-
-                planItems.Add(flowInstanceElt);
-            }
-
+            var planItems = BuildPlanItems(planModel);
             var builder = CMMNWorkflowBuilder.New(Guid.NewGuid().ToString(), tCase.name);
             foreach (var planItem in planItems)
             {
@@ -148,6 +123,11 @@ namespace CaseManagement.CMMN.Parser
                 return CMMNPlanItemDefinition.New(id, name, BuildMilestone((tMilestone)planItemDef));
             }
 
+            if (planItemDef is tStage)
+            {
+                return CMMNPlanItemDefinition.New(id, name, BuildStage((tStage)planItemDef));
+            }
+
             return null;
         }
 
@@ -213,6 +193,49 @@ namespace CaseManagement.CMMN.Parser
         private static CMMNMilestone BuildMilestone(tMilestone milestone)
         {
             return new CMMNMilestone(milestone.name);
+        }
+
+        private static CMMNStageDefinition BuildStage(tStage stage)
+        {
+            var planItems = BuildPlanItems(stage);
+            var result = new CMMNStageDefinition(stage.name);
+            foreach (var planItem in planItems)
+            {
+                result.Elements.Add(planItem);
+            }
+
+            return result;
+        }
+
+        private static List<CMMNPlanItemDefinition> BuildPlanItems(tStage stage)
+        {
+            var planItems = new List<CMMNPlanItemDefinition>();
+            foreach (var planItem in stage.planItem)
+            {
+                var planItemDef = stage.Items.First(i => i.id == planItem.definitionRef);
+                var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
+                if (planItem.entryCriterion != null)
+                {
+                    foreach (var entryCriterion in planItem.entryCriterion)
+                    {
+                        var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
+                        flowInstanceElt.EntryCriterions.Add(new CMMNCriterion(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
+                    }
+                }
+
+                if (planItem.exitCriterion != null)
+                {
+                    foreach (var exitCriteria in planItem.exitCriterion)
+                    {
+                        var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
+                        flowInstanceElt.ExitCriterions.Add(new CMMNCriterion(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
+                    }
+                }
+
+                planItems.Add(flowInstanceElt);
+            }
+
+            return planItems;
         }
     }
 }

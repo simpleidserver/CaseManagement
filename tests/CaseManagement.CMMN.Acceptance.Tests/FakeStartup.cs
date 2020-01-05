@@ -1,10 +1,13 @@
-﻿using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
+﻿using CaseManagement.CMMN.Acceptance.Tests.Delegates;
+using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
+using CaseManagement.CMMN.Domains;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -22,7 +25,20 @@ namespace CaseManagement.CMMN.Acceptance.Tests
             });
             var builder = services.AddCMMN();
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
-            builder.AddDefinitions(files);
+            builder.AddDefinitions(files)
+                .AddCaseProcesses(new List<ProcessAggregate>
+                {
+                    new CaseManagementProcessAggregate
+                    {
+                        Id = "longtask",
+                        AssemblyQualifiedName = typeof(LongTask).AssemblyQualifiedName
+                    },
+                    new CaseManagementProcessAggregate
+                    {
+                        Id = "failtask",
+                        AssemblyQualifiedName = typeof(FailTask).AssemblyQualifiedName
+                    }
+                });
             /*
             .AddCaseProcesses(new List<ProcessAggregate>
             {

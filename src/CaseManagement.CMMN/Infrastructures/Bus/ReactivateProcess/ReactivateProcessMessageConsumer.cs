@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
 {
-    public class CMMNLaunchProcessMessageConsumer : BaseMessageConsumer
+    public class ReactivateProcessMessageConsumer : BaseMessageConsumer
     {
         private readonly ILogger _logger;
         private readonly IDistributedLock _distributedLock;
@@ -23,7 +23,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
         private readonly IEventStoreRepository _eventStoreRepository;
         private readonly ICMMNWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
 
-        public CMMNLaunchProcessMessageConsumer(ILogger<ReactivateProcessMessageConsumer> logger, IDistributedLock distributedLock, ICMMNWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, ICMMNWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public ReactivateProcessMessageConsumer(ILogger<ReactivateProcessMessageConsumer> logger, IDistributedLock distributedLock, ICMMNWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, ICMMNWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;
@@ -34,36 +34,48 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
         }
 
         public override string QueueName => QUEUE_NAME;
-        public const string QUEUE_NAME = "launch-process";
+        public const string QUEUE_NAME = "reactivate-process";
 
         protected override async Task<RunningTask> Execute(string queueMessage)
         {
-            var message = JsonConvert.DeserializeObject<LaunchProcessMessage>(queueMessage);
+            var message = JsonConvert.DeserializeObject<ReactivateProcessMessage>(queueMessage);
             var cancellationTokenSource = new CancellationTokenSource();
-            var lockId = message.ProcessFlowId;
-            await QueueProvider.Dequeue(QueueName);
+            var lockId = message.Id;
             if (!await _distributedLock.AcquireLock(lockId))
             {
                 _logger.LogDebug($"The process flow {lockId} is locked !");
                 return null;
             }
 
-            var workflowInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(message.ProcessFlowId, CMMNWorkflowInstance.GetStreamName(message.ProcessFlowId));
+            if (!await _distributedLock.AcquireLock(message.CaseInstanceId))
+            {
+                var runningTask = TaskPool.Get(message.CaseInstanceId);
+                if (runningTask != null)
+                {
+                    await QueueProvider.Dequeue(QueueName);
+                    await _distributedLock.ReleaseLock(message.Id);
+                    (runningTask.Aggregate as CMMNWorkflowInstance).MakeTransition(CMMNTransitions.Reactivate);
+                }
+
+                return null;
+            }
+
+            await QueueProvider.Dequeue(QueueName);
+            var workflowInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(message.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(message.CaseInstanceId));
             var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(workflowInstance.WorkflowDefinitionId);
-            var task = new Task(async () => await HandleLaunchProcess(workflowDefinition, workflowInstance, message.ProcessFlowId, cancellationTokenSource.Token));
-            return new RunningTask(message.ProcessFlowId, task, workflowInstance, cancellationTokenSource);
+            var task = new Task(async () => await HandleLaunchProcess(workflowDefinition, workflowInstance, message.CaseInstanceId, lockId, cancellationTokenSource.Token));
+            return new RunningTask(message.CaseInstanceId, task, workflowInstance, cancellationTokenSource);
         }
 
-        private async Task HandleLaunchProcess(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, string taskId, CancellationToken token)
+        private async Task HandleLaunchProcess(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, string taskId, string lockId, CancellationToken token)
         {
-            var lockId = workflowInstance.Id;
-            Debug.WriteLine($"Launch process {lockId}");
+            Debug.WriteLine($"Reactivate process {lockId}");
             try
             {
                 try
                 {
                     workflowInstance.EventRaised += HandleEventRaised;
-                    await _workflowEngine.Start(workflowDefinition, workflowInstance, token);
+                    await _workflowEngine.Reactivate(workflowDefinition, workflowInstance, token);
                     token.ThrowIfCancellationRequested();
                 }
                 finally

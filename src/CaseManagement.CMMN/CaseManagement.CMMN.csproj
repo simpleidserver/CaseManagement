@@ -6,4 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CaseManagement.Workflow\CaseManagement.Workflow.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Domains\CaseDefinition\Stage\" />
+  </ItemGroup>
 </Project>

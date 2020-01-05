@@ -28,6 +28,12 @@ namespace CaseManagement.CMMN
             return this;
         }
 
+        public CMMNServerBuilder AddCaseProcesses(ICollection<ProcessAggregate> caseProcesses)
+        {
+            _services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
+            return this;
+        }
+
         /*
         public CMMNServerBuilder AddForms(ICollection<FormAggregate> forms)
         {

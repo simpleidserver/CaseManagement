@@ -29,7 +29,17 @@ namespace CaseManagement.CMMN.Infrastructures
             return task;
         }
 
-        private void HandleTask(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, CancellationTokenSource cancellationTokenSource)
+        public Task Reactivate(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            workflowInstance.MakeTransition(CMMNTransitions.Reactivate);
+            var cancellationTokenSource = new CancellationTokenSource();
+            var task = new Task(() => HandleTask(workflowDefinition, workflowInstance, cancellationTokenSource, true));
+            task.Start();
+            return task;
+        }
+
+        private void HandleTask(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, CancellationTokenSource cancellationTokenSource, bool reactivate = false)
         {
             var createListener = new CreateListener(workflowDefinition, workflowInstance, _cmmnPlanItemProcessors, cancellationTokenSource.Token);
             createListener.Listen();
@@ -37,7 +47,29 @@ namespace CaseManagement.CMMN.Infrastructures
             repetitionListener.Listen();
             foreach (var element in workflowDefinition.Elements)
             {
-                workflowInstance.CreateWorkflowElementInstance(element);
+                if (!reactivate)
+                {
+                    workflowInstance.CreateWorkflowElementInstance(element);
+                }
+                else
+                {
+                    foreach (var elt in workflowInstance.WorkflowElementInstances.Where(w => w.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active)).ToList())
+                    {
+                        var parameter = new ProcessorParameter(workflowDefinition, workflowInstance, workflowInstance.GetWorkflowElementInstance(elt.Id));
+                        var processor = _cmmnPlanItemProcessors.First(p => p.Type == elt.WorkflowElementDefinitionType);
+                        processor.Handle(parameter, cancellationTokenSource.Token).ContinueWith((obj) =>
+                        {
+                            var result = obj.Result;
+                            if (result.WorkflowInstance.IsRepetitionRuleSatisfied(result.WorkflowElementInstance.WorkflowElementDefinitionId, result.WorkflowDefinition, false))
+                            {
+                                result.WorkflowInstance.CreateWorkflowElementInstance(result.WorkflowElementInstance.WorkflowElementDefinitionId, result.WorkflowElementInstance.WorkflowElementDefinitionType);
+                                return;
+                            }
+
+                            result.WorkflowInstance.FinishElement(result.WorkflowElementInstance.WorkflowElementDefinitionId);
+                        });
+                    }
+                }
             }
 
             var children = workflowDefinition.Elements.Select(e => e.Id);
@@ -116,6 +148,12 @@ namespace CaseManagement.CMMN.Infrastructures
                     {
                         continueExecution = false;
                         workflowInstance.MakeTransition(CMMNTransitions.Complete);
+                    }
+
+                    if (children.Any(c => workflowInstance.IsWorkflowElementDefinitionFailed(c) && workflowDefinition.GetElement(c).Type != CMMNWorkflowElementTypes.Stage))
+                    {
+                        continueExecution = false;
+                        workflowInstance.MakeTransition(CMMNTransitions.Fault);
                     }
                 }
                 catch (OperationCanceledException)

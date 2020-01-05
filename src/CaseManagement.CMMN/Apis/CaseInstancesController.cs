@@ -1,9 +1,15 @@
 ﻿using CaseManagement.CMMN.CaseInstance.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.Commands;
+using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Persistence;
+using CaseManagement.Workflow.Infrastructure;
+using Microsoft.AspNetCore.Http;    
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -14,11 +20,21 @@ namespace CaseManagement.CMMN.Apis
     {
         private readonly ICreateCaseInstanceCommandHandler _createCaseInstanceCommandHandler;
         private readonly ILaunchCaseInstanceCommandHandler _launchCaseInstanceCommandHandler;
+        private readonly ISuspendCommandHandler _suspendCommandHandler;
+        private readonly IResumeCommandHandler _resumeCommandHandler;
+        private readonly ITerminateCommandHandler _terminateCommandHandler;
+        private readonly IReactivateCommandHandler _reactivateCommandHandler;
+        private readonly ICMMNWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
+            _suspendCommandHandler = suspendCommandHandler;
+            _resumeCommandHandler = resumeCommandHandler;
+            _terminateCommandHandler = terminateCommandHandler;
+            _reactivateCommandHandler = reactivateCommandHandler;
+            _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
         }
 
         /*
@@ -47,6 +63,256 @@ namespace CaseManagement.CMMN.Apis
         {
             await _launchCaseInstanceCommandHandler.Handle(new LaunchCaseInstanceCommand { CaseInstanceId = id });
             return new OkResult();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(id);
+            if (flowInstance == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkObjectResult(ToDto(flowInstance));
+        }
+
+        [HttpGet("{id}/suspend")]
+        public async Task<IActionResult> Suspend(string id)
+        {
+            try
+            {
+                await _suspendCommandHandler.Handle(new SuspendCommand(id, null));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/suspend/{elt}")]
+        public async Task<IActionResult> Suspend(string id, string elt)
+        {
+            try
+            {
+                await _suspendCommandHandler.Handle(new SuspendCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/reactivate")]
+        public async Task<IActionResult> Reactivate(string id)
+        {
+            try
+            {
+                await _reactivateCommandHandler.Handle(new ReactivateCommand(id, null));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/reactivate/{elt}")]
+        public async Task<IActionResult> Reactivate(string id, string elt)
+        {
+            try
+            {
+                await _reactivateCommandHandler.Handle(new ReactivateCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/resume/{elt}")]
+        public async Task<IActionResult> Resume(string id, string elt)
+        {
+            try
+            {
+                await _resumeCommandHandler.Handle(new ResumeCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/terminate")]
+        public async Task<IActionResult> Terminate(string id)
+        {
+            try
+            {
+                await _terminateCommandHandler.Handle(new TerminateCommand(id, null));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/terminate/{elt}")]
+        public async Task<IActionResult> Terminate(string id, string elt)
+        {
+            try
+            {
+                await _terminateCommandHandler.Handle(new TerminateCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
         }
 
         /*
@@ -160,18 +426,6 @@ namespace CaseManagement.CMMN.Apis
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
             }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
-        {
-            var flowInstance =  await _processFlowInstanceQueryRepository.FindFlowInstanceById(id);
-            if (flowInstance == null)
-            {
-                return new NotFoundResult();
-            }
-
-            return new OkObjectResult(ToDto(flowInstance));
         }
 
         [HttpGet("{id}/steps/.search")]
@@ -347,6 +601,25 @@ namespace CaseManagement.CMMN.Apis
             return jObj;
         }
 
+        private static ActionResult ToError(ICollection<KeyValuePair<string, string>> errors, HttpStatusCode statusCode, HttpRequest request)
+        {
+            var problemDetails = new ValidationProblemDetails
+            {
+                Instance = request.Path,
+                Status = (int)statusCode,
+                Detail = "Please refer to the errors property for additional details."
+            };
+            foreach (var kvp in errors.GroupBy(e => e.Key))
+            {
+                problemDetails.Errors.Add(kvp.Key, kvp.Select(s => s.Value).ToArray());
+            }
+
+            return new BadRequestObjectResult(problemDetails)
+            {
+                StatusCode = (int)statusCode
+            };
+        }
+
         /*
 
         private static JObject ToDto(CMMNCaseFileItem fileItem)
@@ -365,25 +638,6 @@ namespace CaseManagement.CMMN.Apis
 
             result.Add("metadata", metadata);
             return result;
-        }
-
-        private static ActionResult ToError(ICollection<KeyValuePair<string, string>> errors, HttpStatusCode statusCode, HttpRequest request)
-        {
-            var problemDetails = new ValidationProblemDetails
-            {
-                Instance = request.Path,
-                Status = (int)statusCode,
-                Detail = "Please refer to the errors property for additional details."
-            };
-            foreach (var kvp in errors.GroupBy(e => e.Key))
-            {
-                problemDetails.Errors.Add(kvp.Key, kvp.Select(s => s.Value).ToArray());
-            }
-
-            return new BadRequestObjectResult(problemDetails)
-            {
-                StatusCode = (int)statusCode
-            };
         }
         */
     }

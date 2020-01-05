@@ -9,6 +9,7 @@ using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
 using CaseManagement.CMMN.Persistence;
@@ -46,7 +47,9 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddBus(this IServiceCollection services)
         {
             services.AddTransient<IMessageConsumer, CMMNLaunchProcessMessageConsumer>();
+            services.AddTransient<IMessageConsumer, ReactivateProcessMessageConsumer>();
             services.AddTransient<IMessageConsumer, DomainEventMessageConsumer>();
+            services.AddTransient<IMessageConsumer, CMMNTransitionEventMessageConsumer>();
             return services;
         }
 
@@ -66,6 +69,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
         {
+            services.AddTransient<IReactivateCommandHandler, ReactivateCommandHandler>();
+            services.AddTransient<IResumeCommandHandler, ResumeCommandHandler>();
             services.AddTransient<ILaunchCaseInstanceCommandHandler, LaunchCaseInstanceCommandHandler>();
             services.AddTransient<ICreateCaseInstanceCommandHandler, CreateCaseInstanceCommandHandler>();
             services.AddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
@@ -73,6 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IStopCaseInstanceCommandHandler, StopCaseInstanceCommandHandler>();
             services.AddTransient<IActivateCommandHandler, ActivateCommandHandler>();
             services.AddTransient<ITerminateCommandHandler, TerminateCommandHandler>();
+            services.AddTransient<ISuspendCommandHandler, SuspendCommandHandler>();
             return services;
         }
 
@@ -94,6 +100,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddTransient<IProcessor, CMMNCaseFileItemProcessor>();
             services.AddTransient<IProcessor, CMMNHumanTaskProcessor>();
+            services.AddTransient<IProcessor, CMMNProcessTaskProcessor>();
             services.AddTransient<IProcessor, CMMNMilestoneProcessor>();
             services.AddTransient<IProcessor, CMMNStageProcessor>();
             services.AddTransient<IProcessor, CMMNTaskProcessor>();

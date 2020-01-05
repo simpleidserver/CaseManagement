@@ -21,6 +21,15 @@
     <ProjectReference Include="..\..\src\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Cmmns\caseWithTwoStages.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithOneFailProcessTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithOneLongProcessTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\caseWithOneTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -36,7 +45,6 @@
     </SpecFlowFeatureFiles>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Delegates\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

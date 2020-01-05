@@ -9,9 +9,12 @@ namespace CaseManagement.CMMN.Tests
         [Fact]
         public void When_Extract_WorkflowDefinitions()
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneTask.cmmn");
-            var result = CMMNParser.ExtractWorkflowDefinition(path);
-            Assert.NotNull(result);
+            var firstPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneTask.cmmn");
+            var secondPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithTwoStages.cmmn");
+            var firstResult = CMMNParser.ExtractWorkflowDefinition(firstPath);
+            var secondResult = CMMNParser.ExtractWorkflowDefinition(secondPath);
+            Assert.NotNull(firstResult);
+            Assert.NotNull(secondResult);
         }
     }
 }

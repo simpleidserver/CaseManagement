@@ -103,6 +103,28 @@ namespace CaseManagement.CMMN.Domains
 
                             taskState = CMMNTaskStates.Enabled;
                             break;
+                        case CMMNTransitions.Fault:
+                            if (State != Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "planitem instance is not active" }
+                                });
+                            }
+
+                            taskState = CMMNTaskStates.Failed;
+                            break;
+                        case CMMNTransitions.Reactivate:
+                            if (State != Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed))
+                            {
+                                throw new AggregateValidationException(new Dictionary<string, string>
+                                {
+                                    { "transition", "planitem instance is not failed" }
+                                });
+                            }
+
+                            taskState = CMMNTaskStates.Active;
+                            break;
                         case CMMNTransitions.ManualStart:
                             if (State != Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Enabled))
                             {

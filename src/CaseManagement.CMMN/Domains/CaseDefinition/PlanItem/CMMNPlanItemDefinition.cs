@@ -12,6 +12,17 @@
         public CMMNProcessTask PlanItemDefinitionProcessTask { get; set; }
         public CMMNTimerEventListener PlanItemDefinitionTimerEventListener { get; set; }
         public CMMNMilestone PlanItemMilestone { get; set; }
+        public CMMNStageDefinition Stage { get; set; }
+
+        public static CMMNPlanItemDefinition New(string id, string name, CMMNStageDefinition stage)
+        {
+            var result = new CMMNPlanItemDefinition(id, name)
+            {
+                Stage = stage,
+                Type = CMMNWorkflowElementTypes.Stage
+            };
+            return result;
+        }
 
         public static CMMNPlanItemDefinition New(string id, string name, CMMNHumanTask humanTask)
         {

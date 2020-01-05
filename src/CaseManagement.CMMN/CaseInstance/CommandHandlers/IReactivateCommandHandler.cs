@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
-    public interface ITerminateCommandHandler
+    public interface IReactivateCommandHandler
     {
-        Task Handle(TerminateCommand terminateCommand);
+        Task Handle(ReactivateCommand command);
     }
 }

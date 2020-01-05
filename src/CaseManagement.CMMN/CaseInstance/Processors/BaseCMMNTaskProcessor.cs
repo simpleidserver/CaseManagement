@@ -29,7 +29,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
         {
             CMMNCriterionListener.ListenEntryCriterias(parameter);
             var isManuallyActivated = CMMNManualActivationListener.Listen(parameter);
-            if (!isManuallyActivated)
+            if (!isManuallyActivated && parameter.WorkflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available))
             {
                 parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Start);
             }
@@ -38,6 +38,12 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             bool isTerminate = false;
             bool isOperationExecuted = false;
             bool continueExecution = true;
+            var parentReactivateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Reactivate, () =>
+            {
+                tokenSource = new CancellationTokenSource();
+                isSuspend = false;
+                isOperationExecuted = false;
+            });
             var parentTerminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentTerminate, () =>
             {
                 isTerminate = true;
@@ -119,7 +125,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
                         Unsubscribe();
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Fault);
                         isSuspend = true;
@@ -128,6 +134,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 }
             }
 
+            parentReactivateEvtListener.Unsubscribe();
             parentTerminateEvtListener.Unsubscribe();
             parentSuspendEvtListener.Unsubscribe();
             parentResumeEvtListener.Unsubscribe();
@@ -136,7 +143,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             resumeEvtListener.Unsubscribe();
             if (kvp != null)
             {
-                if(kvp.Value.Key.IsCanceled || kvp.Value.Key.IsCompleted || kvp.Value.Key.IsFaulted)
+                if (kvp.Value.Key.IsCanceled || kvp.Value.Key.IsCompleted || kvp.Value.Key.IsFaulted)
                 {
                     kvp.Value.Key.Dispose();
                 }

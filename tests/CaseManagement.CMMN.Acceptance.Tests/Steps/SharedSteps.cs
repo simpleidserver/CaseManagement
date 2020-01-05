@@ -116,7 +116,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         [When("wait '(.*)' seconds")]
         public void WhenWaitSeconds(string seconds)
         {
-            Thread.Sleep(int.Parse(seconds) * 1000);
+            Thread.Sleep(int.Parse(seconds));
         }
 
         [When("add a file into the folder '(.*)'")]

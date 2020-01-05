@@ -1,7 +1,10 @@
-﻿using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent;
+using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
 using CaseManagement.Workflow.Infrastructure.Bus.StopProcess;
 using Newtonsoft.Json;
+using System;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Workflow.Infrastructure.Bus
@@ -14,10 +17,22 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
             return queueProvider.Queue(DomainEventMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
         }
 
+        public static Task QueueTransition(this IQueueProvider queueProvider, string caseInstanceId, string caseInstanceElementId, CMMNTransitions transition)
+        {
+            var message = new CMMNTransitionEventMessage { Id = Guid.NewGuid().ToString(), CaseInstanceId = caseInstanceId, CaseInstanceElementId = caseInstanceElementId, Transition = transition };
+            return queueProvider.Queue(CMMNTransitionEventMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
+        }
+
         public static Task QueueLaunchProcess(this IQueueProvider queueProvider, string processId)
         {
             var message = new LaunchProcessMessage(processId);
             return queueProvider.Queue(CMMNLaunchProcessMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
+        }
+
+        public static Task QueueReactivateProcess(this IQueueProvider queueProvider, string caseInstanceId)
+        {
+            var message = new ReactivateProcessMessage(Guid.NewGuid().ToString(), caseInstanceId);
+            return queueProvider.Queue(ReactivateProcessMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
         }
 
         public static Task QueueStopProcess(this IQueueProvider queueProvider, string processId)

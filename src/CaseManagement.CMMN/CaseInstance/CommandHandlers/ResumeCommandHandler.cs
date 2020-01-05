@@ -1,0 +1,40 @@
+﻿using CaseManagement.CMMN.CaseInstance.Commands;
+using CaseManagement.CMMN.CaseInstance.Exceptions;
+using CaseManagement.CMMN.Domains;
+using CaseManagement.Workflow.Infrastructure.Bus;
+using CaseManagement.Workflow.Infrastructure.EvtStore;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
+{
+    public class ResumeCommandHandler : IResumeCommandHandler
+    {
+        private readonly IEventStoreRepository _eventStoreRepository;
+        private readonly IQueueProvider _queueProvider;
+
+        public ResumeCommandHandler(IEventStoreRepository eventStoreRepository, IQueueProvider queueProvider)
+        {
+            _eventStoreRepository = eventStoreRepository;
+            _queueProvider = queueProvider;
+        }
+
+        public async Task Handle(ResumeCommand resumeCommand)
+        {
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(resumeCommand.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(resumeCommand.CaseInstanceId));
+            if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
+            {
+                throw new UnknownCaseInstanceException(resumeCommand.CaseInstanceId);
+            }
+
+            var elt = caseInstance.WorkflowElementInstances.FirstOrDefault(w => w.Id == resumeCommand.CaseInstanceElementId);
+            if (elt == null)
+            {
+                throw new UnknownCaseInstanceElementException(resumeCommand.CaseInstanceId, resumeCommand.CaseInstanceElementId);
+            }
+
+            caseInstance.MakeTransition(elt.Id, CMMNTransitions.Resume);
+            await _queueProvider.QueueTransition(caseInstance.Id, elt.Id, CMMNTransitions.Resume);
+        }
+    }
+}

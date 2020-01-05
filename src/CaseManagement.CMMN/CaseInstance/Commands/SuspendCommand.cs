@@ -1,8 +1,8 @@
 ﻿namespace CaseManagement.CMMN.CaseInstance.Commands
 {
-    public class TerminateCommand
+    public class SuspendCommand
     {
-        public TerminateCommand(string caseInstanceId, string caseInstanceElementId)
+        public SuspendCommand(string caseInstanceId, string caseInstanceElementId)
         {
             CaseInstanceId = caseInstanceId;
             CaseInstanceElementId = caseInstanceElementId;

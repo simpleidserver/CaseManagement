@@ -172,6 +172,17 @@ namespace CaseManagement.CMMN.Domains
             return true;
         }
 
+        public bool IsWorkflowElementDefinitionFailed(string elementDefinitionId)
+        {
+            var last = GetLastWorkflowElementInstance(elementDefinitionId);
+            if (last != null && last.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public CMMNWorkflowElementDefinition GetWorkflowElementDefinition(string id, CMMNWorkflowDefinition workflowDefinition)
         {
             var elementInstance = WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
@@ -276,6 +287,17 @@ namespace CaseManagement.CMMN.Domains
             {
                 var evt = new CMMNWorkflowTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, transition, DateTime.UtcNow);
                 Handle(evt);
+                if (transition == CMMNTransitions.Reactivate)
+                {
+                    foreach(var elt in WorkflowElementInstances)
+                    {
+                        if (elt.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed))
+                        {
+                            MakeTransition(elt.Id, CMMNTransitions.Reactivate);
+                        }
+                    }
+                }
+
                 DomainEvents.Add(evt);
             }
         }

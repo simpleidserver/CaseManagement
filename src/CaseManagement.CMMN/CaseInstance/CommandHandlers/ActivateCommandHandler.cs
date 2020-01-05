@@ -3,7 +3,6 @@ using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
@@ -26,7 +25,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             {
                 throw new UnknownCaseInstanceException(activateCommand.CaseInstanceId);
             }
-
+            
             /*
             var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == activateCommand.CaseElementInstanceId) as CMMNPlanItemDefinition;
             if (flowInstanceElt == null)

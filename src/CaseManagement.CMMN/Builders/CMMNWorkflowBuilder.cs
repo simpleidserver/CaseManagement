@@ -27,7 +27,8 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNWorkflowBuilder AddCMMNStage(string id, string name, Action<CMMNStageBuilder> callback)
         {
-            var stage = new CMMNStageDefinition(id, name);
+            var planItemDef = new CMMNStageDefinition(name);
+            var stage = CMMNPlanItemDefinition.New(id, name, planItemDef);
             var builder = new CMMNStageBuilder(stage);
             callback(builder);
             _elements.Add(stage);

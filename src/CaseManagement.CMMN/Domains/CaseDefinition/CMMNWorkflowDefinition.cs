@@ -42,7 +42,7 @@ namespace CaseManagement.CMMN.Domains
             }
 
             
-            foreach(var stage in elements.Where(e => e is CMMNStageDefinition).Cast<CMMNStageDefinition>())
+            foreach(var stage in elements.Where(e => e is CMMNPlanItemDefinition).Cast<CMMNPlanItemDefinition>().Where(e => e.Type == CMMNWorkflowElementTypes.Stage).Select(e => e.Stage))
             {
                 result = GetElement(stage.Elements, id);
                 if (result != null)
