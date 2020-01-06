@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Benchmark.Middlewares;
-using CaseManagement.Workflow.Domains;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -7,8 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Benchmark
 {
@@ -23,31 +22,10 @@ namespace CaseManagement.CMMN.Benchmark
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
             var builder = services.AddCMMN();
-            builder.AddDefinitions(c =>
-            {
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn"))
-                {
-                    c.ImportDefinition(file);
-                }
-            })
-            .AddForms(new List<FormAggregate>
-            {
-                new FormAggregate
-                {
-                    Id = "createMeetingForm",
-                    Elements = new List<FormElement>
-                    {
-                        new FormElement
-                        {
-                            Id = "name",
-                            Type = FormElementTypes.TXT
-                        }
-                    }
-                }
-            });
+            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
+            builder.AddDefinitions(files);
             services.AddLogging(b =>
             {
-                b.AddFilter("Hangfire", LogLevel.Error);
                 b.AddFilter("Microsoft", LogLevel.Error);
                 b.AddFilter("System", LogLevel.Error);
                 b.AddFilter("CaseManagement", LogLevel.Error);   

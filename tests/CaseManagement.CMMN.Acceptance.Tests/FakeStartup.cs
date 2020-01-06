@@ -38,6 +38,21 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                         Id = "failtask",
                         AssemblyQualifiedName = typeof(FailTask).AssemblyQualifiedName
                     }
+                })
+                .AddForms(new List<FormAggregate>
+                {
+                    new FormAggregate
+                    {
+                        Id = "form",
+                        Elements = new List<FormElement>
+                        {
+                            new FormElement
+                            {
+                                Id = "name",
+                                Type = FormElementTypes.TXT
+                            }
+                        }
+                    }
                 });
             /*
             .AddCaseProcesses(new List<ProcessAggregate>

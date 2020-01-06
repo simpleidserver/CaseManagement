@@ -34,6 +34,13 @@ namespace CaseManagement.CMMN
             return this;
         }
 
+        public CMMNServerBuilder AddForms(ICollection<FormAggregate> forms)
+        {
+            _services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
+            _services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
+            return this;
+        }
+
         /*
         public CMMNServerBuilder AddForms(ICollection<FormAggregate> forms)
         {

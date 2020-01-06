@@ -1,6 +1,6 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
+using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Exceptions;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Persistence;
 using System.Threading.Tasks;

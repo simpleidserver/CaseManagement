@@ -9,6 +9,7 @@ using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
@@ -50,6 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IMessageConsumer, ReactivateProcessMessageConsumer>();
             services.AddTransient<IMessageConsumer, DomainEventMessageConsumer>();
             services.AddTransient<IMessageConsumer, CMMNTransitionEventMessageConsumer>();
+            services.AddTransient<IMessageConsumer, ConfirmFormMessageConsumer>();
             return services;
         }
 
@@ -59,16 +61,20 @@ namespace Microsoft.Extensions.DependencyInjection
             var caseProcesses = new List<ProcessAggregate>();
             var activations = new List<CaseActivationAggregate>();
             var instances = new List<CMMNWorkflowInstance>();
+            var roles = new List<RoleAggregate>();
             services.AddSingleton<ICMMNWorkflowDefinitionQueryRepository>(new InMemoryCMMNWorkflowDefinitionQueryRepository(definitions));
             services.AddSingleton<ICMMNWorkflowInstanceQueryRepository>(new InMemoryCMMNWorkflowInstanceQueryRepository(instances));
             services.AddSingleton<ICMMNWorkflowInstanceCommandRepository>(new InMemoryCMMNWorkflowInstanceCommandRepository(instances));
             services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
             services.AddSingleton<ICMMNActivationCommandRepository>(new InMemoryCMMNActivationCommandRepository(activations));
+            services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
+            services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
             return services;
         }
 
         private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
         {
+            services.AddTransient<ICloseCommandHandler, CloseCommandHandler>();
             services.AddTransient<IReactivateCommandHandler, ReactivateCommandHandler>();
             services.AddTransient<IResumeCommandHandler, ResumeCommandHandler>();
             services.AddTransient<ILaunchCaseInstanceCommandHandler, LaunchCaseInstanceCommandHandler>();

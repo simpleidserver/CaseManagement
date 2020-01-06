@@ -27,14 +27,20 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 throw new UnknownCaseInstanceException(resumeCommand.CaseInstanceId);
             }
 
-            var elt = caseInstance.WorkflowElementInstances.FirstOrDefault(w => w.Id == resumeCommand.CaseInstanceElementId);
-            if (elt == null)
+            if (!string.IsNullOrWhiteSpace(resumeCommand.CaseInstanceElementId))
             {
-                throw new UnknownCaseInstanceElementException(resumeCommand.CaseInstanceId, resumeCommand.CaseInstanceElementId);
+                var elt = caseInstance.WorkflowElementInstances.FirstOrDefault(w => w.Id == resumeCommand.CaseInstanceElementId);
+                if (elt == null)
+                {
+                    throw new UnknownCaseInstanceElementException(resumeCommand.CaseInstanceId, resumeCommand.CaseInstanceElementId);
+                }
+
+                caseInstance.MakeTransition(elt.Id, CMMNTransitions.Resume);
+                await _queueProvider.QueueTransition(caseInstance.Id, elt.Id, CMMNTransitions.Resume);
             }
 
-            caseInstance.MakeTransition(elt.Id, CMMNTransitions.Resume);
-            await _queueProvider.QueueTransition(caseInstance.Id, elt.Id, CMMNTransitions.Resume);
+            caseInstance.MakeTransition(CMMNTransitions.Resume);
+            await _queueProvider.QueueTransition(caseInstance.Id, null, CMMNTransitions.Resume);
         }
     }
 }

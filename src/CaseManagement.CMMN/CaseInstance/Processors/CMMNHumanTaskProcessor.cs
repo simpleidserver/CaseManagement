@@ -20,6 +20,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 _listener = CMMNFormInstanceSubmittedListener.Listen(parameter);
             }
 
+            // parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Complete);
             return Task.CompletedTask;
         }
 

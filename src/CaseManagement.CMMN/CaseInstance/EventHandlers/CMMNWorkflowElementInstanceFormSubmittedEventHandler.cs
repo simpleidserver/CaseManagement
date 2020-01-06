@@ -1,16 +1,28 @@
 ﻿using CaseManagement.CMMN.Domains.Events;
+using CaseManagement.CMMN.Persistence;
 using CaseManagement.Workflow.Infrastructure;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.EventHandlers
 {
-    class CMMNWorkflowElementInstanceFormSubmittedEventHandler : IDomainEventHandler<CMMNWorkflowElementInstanceFormSubmittedEvent>
+    public class CMMNWorkflowElementInstanceFormSubmittedEventHandler : IDomainEventHandler<CMMNWorkflowElementInstanceFormSubmittedEvent>
     {
-        public Task Handle(CMMNWorkflowElementInstanceFormSubmittedEvent @event, CancellationToken cancellationToken)
+        private readonly ICMMNWorkflowInstanceCommandRepository _cmmnWorkflowInstanceCommandRepository;
+        private readonly ICMMNWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
+
+        public CMMNWorkflowElementInstanceFormSubmittedEventHandler(ICMMNWorkflowInstanceCommandRepository cmmnWorkflowInstanceCommandRepository, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
-            throw new NotImplementedException();
+            _cmmnWorkflowInstanceCommandRepository = cmmnWorkflowInstanceCommandRepository;
+            _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
+        }
+
+        public async Task Handle(CMMNWorkflowElementInstanceFormSubmittedEvent @event, CancellationToken cancellationToken)
+        {
+            var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
+            flowInstance.Handle(@event);
+            _cmmnWorkflowInstanceCommandRepository.Update(flowInstance);
+            await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
     }
 }

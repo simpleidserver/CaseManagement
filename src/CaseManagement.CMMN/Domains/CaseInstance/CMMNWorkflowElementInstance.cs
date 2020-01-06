@@ -33,19 +33,139 @@ namespace CaseManagement.CMMN.Domains
 
         public void UpdateState(CMMNTransitions transition, DateTime updateDateTime)
         {
-            var state = GetState(transition);
-            StateHistories.Add(new CMMNWorkflowElementInstanceHistory(state, updateDateTime));
-            TransitionHistories.Add(new CMMNWorkflowElementInstanceTransitionHistory(transition, updateDateTime));
-            State = state;
-            if (TransitionApplied != null)
+            lock(TransitionHistories)
             {
-                TransitionApplied(this, state);
+                lock(StateHistories)
+                {
+                    var state = GetState(transition);
+                    StateHistories.Add(new CMMNWorkflowElementInstanceHistory(state, updateDateTime));
+                    TransitionHistories.Add(new CMMNWorkflowElementInstanceTransitionHistory(transition, updateDateTime));
+                    State = state;
+                    if (TransitionApplied != null)
+                    {
+                        TransitionApplied(this, state);
+                    }
+                }
             }
         }
 
         public static CMMNWorkflowElementInstance New(CMMNWorkflowElementDefinition workflowElementDefinition)
         {
             return new CMMNWorkflowElementInstance(Guid.NewGuid().ToString(), DateTime.UtcNow, workflowElementDefinition.Id, workflowElementDefinition.Type, 0, null);
+        }
+
+        public bool IsFail()
+        {
+            switch (WorkflowElementDefinitionType)
+            {
+                case CMMNWorkflowElementTypes.HumanTask:
+                case CMMNWorkflowElementTypes.ProcessTask:
+                case CMMNWorkflowElementTypes.Stage:
+                case CMMNWorkflowElementTypes.Task:
+                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed))
+                    {
+                        return true;
+                    }
+
+                    return false;
+            }
+
+            return false;
+        }
+
+        public bool IsSuspend()
+        {
+            switch (WorkflowElementDefinitionType)
+            {
+                case CMMNWorkflowElementTypes.HumanTask:
+                case CMMNWorkflowElementTypes.ProcessTask:
+                case CMMNWorkflowElementTypes.Stage:
+                case CMMNWorkflowElementTypes.Task:
+                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                case CMMNWorkflowElementTypes.Milestone:
+                case CMMNWorkflowElementTypes.TimerEventListener:
+                    if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Suspended))
+                    {
+                        return true;
+                    }
+
+                    return false;
+            }
+
+            return false;
+        }
+
+        public bool IsActive()
+        {
+            switch (WorkflowElementDefinitionType)
+            {
+                case CMMNWorkflowElementTypes.CaseFileItem:
+                    if (State == Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Available))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                case CMMNWorkflowElementTypes.HumanTask:
+                case CMMNWorkflowElementTypes.ProcessTask:
+                case CMMNWorkflowElementTypes.Stage:
+                case CMMNWorkflowElementTypes.Task:
+                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                case CMMNWorkflowElementTypes.Milestone:
+                case CMMNWorkflowElementTypes.TimerEventListener:
+                    if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
+                    {
+                        return true;
+                    }
+
+                    return false;
+            }
+
+            return false;
+        }
+
+        public bool IsComplete()
+        {
+            switch (WorkflowElementDefinitionType)
+            {
+                case CMMNWorkflowElementTypes.CaseFileItem:
+                    if (State == Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Discarded))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                case CMMNWorkflowElementTypes.HumanTask:
+                case CMMNWorkflowElementTypes.ProcessTask:
+                case CMMNWorkflowElementTypes.Stage:
+                case CMMNWorkflowElementTypes.Task:
+                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed) || State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                case CMMNWorkflowElementTypes.Milestone:
+                case CMMNWorkflowElementTypes.TimerEventListener:
+                    if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Completed) || State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Terminated))
+                    {
+                        return true;
+                    }
+
+                    return false;
+            }
+
+            return false;
         }
 
         private string GetState(CMMNTransitions planItemTransition)
@@ -190,6 +310,10 @@ namespace CaseManagement.CMMN.Domains
                             }
 
                             taskState = CMMNTaskStates.Completed;
+                            break;
+                        case CMMNTransitions.Exit:
+                        case CMMNTransitions.ParentExit:
+                            taskState = CMMNTaskStates.Terminated;
                             break;
                         case CMMNTransitions.ParentTerminate:
                             if (State != Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))

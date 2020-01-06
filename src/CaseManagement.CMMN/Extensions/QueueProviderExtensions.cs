@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
@@ -31,7 +32,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
 
         public static Task QueueReactivateProcess(this IQueueProvider queueProvider, string caseInstanceId)
         {
-            var message = new ReactivateProcessMessage(Guid.NewGuid().ToString(), caseInstanceId);
+            var message = new ReactivateProcessMessage(caseInstanceId);
             return queueProvider.Queue(ReactivateProcessMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
         }
 
@@ -39,6 +40,12 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
         {
             var message = new StopProcessMessage(processId);
             return queueProvider.Queue(StopProcessMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
+        }
+
+        public static Task QueueSubmitForm(this IQueueProvider queueProvider, string caseInstanceId, string caseElementInstanceId, string formInstanceId)
+        {
+            var message = new ConfirmFormMessage(caseInstanceId, caseElementInstanceId, formInstanceId);
+            return queueProvider.Queue(ConfirmFormMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
         }
     }
 }

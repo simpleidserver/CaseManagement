@@ -40,26 +40,13 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
         {
             var message = JsonConvert.DeserializeObject<ReactivateProcessMessage>(queueMessage);
             var cancellationTokenSource = new CancellationTokenSource();
-            var lockId = message.Id;
+            var lockId = message.CaseInstanceId;
             if (!await _distributedLock.AcquireLock(lockId))
             {
                 _logger.LogDebug($"The process flow {lockId} is locked !");
                 return null;
             }
-
-            if (!await _distributedLock.AcquireLock(message.CaseInstanceId))
-            {
-                var runningTask = TaskPool.Get(message.CaseInstanceId);
-                if (runningTask != null)
-                {
-                    await QueueProvider.Dequeue(QueueName);
-                    await _distributedLock.ReleaseLock(message.Id);
-                    (runningTask.Aggregate as CMMNWorkflowInstance).MakeTransition(CMMNTransitions.Reactivate);
-                }
-
-                return null;
-            }
-
+            
             await QueueProvider.Dequeue(QueueName);
             var workflowInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(message.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(message.CaseInstanceId));
             var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(workflowInstance.WorkflowDefinitionId);

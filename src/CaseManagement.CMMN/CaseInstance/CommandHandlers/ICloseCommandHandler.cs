@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
-    public interface IConfirmFormCommandHandler
+    public interface ICloseCommandHandler
     {
-        Task Handle(ConfirmFormCommand confirmFormCommand);
+        Task Handle(CloseCommand closeCommand);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CaseManagement.CMMN.Exceptions
+namespace CaseManagement.CMMN.CaseInstance.Exceptions
 {
     public class UnknownCaseDefinitionException : Exception
     {

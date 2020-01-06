@@ -2,13 +2,11 @@
 {
     public class ReactivateProcessMessage
     {
-        public ReactivateProcessMessage(string id, string caseInstanceId)
+        public ReactivateProcessMessage(string caseInstanceId)
         {
-            Id = id;
             CaseInstanceId = caseInstanceId;
         }
         
-        public string Id { get; set; }
         public string CaseInstanceId { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence;
+using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
 using Newtonsoft.Json.Linq;
@@ -17,57 +18,56 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
         private readonly IFormQueryRepository _formQueryRepository;
         private readonly IEventStoreRepository _eventStoreRepository;
         private readonly IRoleQueryRepository _roleQueryRepository;
+        private readonly ICMMNWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
 
-        public ConfirmFormCommandHandler(IQueueProvider queueProvider, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository, IRoleQueryRepository roleQueryRepository)
+        public ConfirmFormCommandHandler(IQueueProvider queueProvider, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository, IRoleQueryRepository roleQueryRepository, ICMMNWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository)
         {
             _queueProvider = queueProvider;
             _formQueryRepository = formQueryRepository;
             _eventStoreRepository = eventStoreRepository;
             _roleQueryRepository = roleQueryRepository;
+            _cmmnWorkflowDefinitionQueryRepository = cmmnWorkflowDefinitionQueryRepository;
         }
         
-        public async Task<bool> Handle(ConfirmFormCommand confirmFormCommand)
+        public async Task Handle(ConfirmFormCommand confirmFormCommand)
         {
             var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(confirmFormCommand.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(confirmFormCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(confirmFormCommand.CaseInstanceId);
             }
-
-            /*
-            var flowInstanceElt = caseInstance.Elements.FirstOrDefault(e => e.Id == confirmFormCommand.CaseElementInstanceId) as CMMNPlanItemDefinition;
-            if (flowInstanceElt == null)
+            
+            var caseInstanceElt = caseInstance.WorkflowElementInstances.FirstOrDefault(e => e.Id == confirmFormCommand.CaseElementInstanceId);
+            if (caseInstanceElt == null)
             {
                 throw new UnknownCaseInstanceElementException(caseInstance.Id, confirmFormCommand.CaseElementInstanceId);
             }
             
-            if (flowInstanceElt.PlanItemDefinitionType != CMMNPlanItemDefinitionTypes.HumanTask)
+            if (caseInstanceElt.WorkflowElementDefinitionType != CMMNWorkflowElementTypes.HumanTask)
             {
                 throw new NotSupportedTaskException("Task must be a HumanTask");
             }
 
-            var humanTask = flowInstanceElt.PlanItemDefinitionHumanTask;
+            var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(caseInstance.WorkflowDefinitionId);
+            var humanTask = (workflowDefinition.GetElement(caseInstanceElt.WorkflowElementDefinitionId) as CMMNPlanItemDefinition).PlanItemDefinitionHumanTask;
             if (!string.IsNullOrWhiteSpace(humanTask.PerformerRef))
             {
                 var roles = await _roleQueryRepository.FindRolesByUser(confirmFormCommand.UserIdentifier);
                 if (!roles.Any(r => r.Name == humanTask.PerformerRef))
                 {
-                    throw new UnauthorizedCaseWorkerException(confirmFormCommand.UserIdentifier, caseInstance.Id, flowInstanceElt.Id);
+                    throw new UnauthorizedCaseWorkerException(confirmFormCommand.UserIdentifier, caseInstance.Id, caseInstanceElt.Id);
                 }
             }
-            
+
             var form = await _formQueryRepository.FindFormById(humanTask.FormId);
             if (form == null)
             {
                 throw new UnknownFormException(humanTask.FormId);
             }
 
-            /*
             var formValues = CheckConfirmForm(form, confirmFormCommand.Content);
-            caseInstance.ConfirmForm(confirmFormCommand.CaseElementInstanceId, flowInstanceElt.FormInstance.Id, form.Id, formValues);
-            await _queueProvider.QueueRaiseEvent(caseInstance.Id, caseInstance.DomainEvents.Last());
-            */
-            return true;
+            caseInstance.SubmitForm(caseInstanceElt.Id, caseInstanceElt.FormInstanceId);
+            await _queueProvider.QueueSubmitForm(caseInstance.Id, caseInstanceElt.Id, caseInstanceElt.FormInstanceId);
         }
 
         private static Dictionary<string, string> CheckConfirmForm(FormAggregate form, JObject content)
@@ -105,12 +105,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
             if (errors.Any())
             {
-                /*
-                throw new ProcessFlowInstanceDomainException
-                {
-                    Errors = errors
-                };
-                */
+                throw new AggregateValidationException(errors);
             }
 
             return result;

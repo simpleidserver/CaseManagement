@@ -17,14 +17,20 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         
         public void Add(CMMNWorkflowInstance workflowInstance)
         {
-            _instances.Add((CMMNWorkflowInstance)workflowInstance.Clone());
+            lock(_instances)
+            {
+                _instances.Add((CMMNWorkflowInstance)workflowInstance.Clone());
+            }
         }
 
         public void Update(CMMNWorkflowInstance workflowInstance)
         {
-            var instance = _instances.First(i => i.Id == workflowInstance.Id);
-            _instances.Remove(instance);
-            _instances.Add((CMMNWorkflowInstance)workflowInstance.Clone());
+            lock(_instances)
+            {
+                var instance = _instances.First(i => i.Id == workflowInstance.Id);
+                _instances.Remove(instance);
+                _instances.Add((CMMNWorkflowInstance)workflowInstance.Clone());
+            }
         }
 
         public Task<int> SaveChanges()

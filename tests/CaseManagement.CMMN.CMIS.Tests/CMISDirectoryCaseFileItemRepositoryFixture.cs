@@ -1,24 +1,8 @@
-﻿using CaseManagement.CMMN.Builders;
-using CaseManagement.CMMN.CaseInstance.Processors;
-using CaseManagement.CMMN.CaseInstance.Watchers;
-using CaseManagement.CMMN.CaseProcess.CommandHandlers;
-using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Persistence.InMemory;
-using CaseManagement.Workflow.Engine;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace CaseManagement.CMMN.CMIS.Tests
+﻿namespace CaseManagement.CMMN.CMIS.Tests
 {
     public class CMISDirectoryCaseFileItemRepositoryFixture
     {
+        /*
         [Fact]
         public async Task When_Listen_CMIS_Directory_And_Add_Directory()
         {
@@ -68,5 +52,6 @@ namespace CaseManagement.CMMN.CMIS.Tests
 
             return new ProcessFlowElementProcessorFactory(processors);
         }
+        */
     }
 }

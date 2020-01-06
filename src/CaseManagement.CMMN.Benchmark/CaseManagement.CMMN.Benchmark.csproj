@@ -12,7 +12,7 @@
     <ProjectReference Include="..\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Cmmns\caseWithTimerEventListener.cmmn">
+    <None Update="Cmmns\CaseWithOneTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

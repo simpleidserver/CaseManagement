@@ -88,6 +88,38 @@ Scenario: Launch caseWithTwoStages and check his status is completed
 	Then JSON 'elements[3].state_histories[1].state'='Active'
 	Then JSON 'elements[3].state_histories[2].state'='Completed'
 
+Scenario: Launch caseWithOneHumanTask and check his status is completed
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneHumanTask.cmmn'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value    |
+	| case_definition_id | $defid$  |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
+	And wait '1000' seconds
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$'
+	And extract JSON from body
+	And extract 'elements[0].id' from JSON body into 'eltid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances/$insid$/confirm/$eltid$'
+	| Key  | Value |
+	| name | name  |
+	And wait '2000' seconds
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'state'='Completed'
+	Then JSON 'state_histories[0].state'='Active'
+	Then JSON 'state_histories[1].state'='Completed'
+	Then JSON 'elements[0].transition_histories[0].transition'='Create'
+	Then JSON 'elements[0].transition_histories[1].transition'='Start'
+	Then JSON 'elements[0].transition_histories[2].transition'='Complete'
+	Then JSON 'elements[0].state_histories[0].state'='Available'
+	Then JSON 'elements[0].state_histories[1].state'='Active'
+	Then JSON 'elements[0].state_histories[2].state'='Completed'
+
 Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (scope = ProcessTask)
 	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneLongProcessTask.cmmn'
 	And extract JSON from body
@@ -98,7 +130,7 @@ Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (
 	And extract JSON from body
 	And extract 'id' from JSON body into 'insid'
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
-	And wait '100' seconds
+	And wait '500' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$'
 	And extract JSON from body
 	And extract 'elements[0].id' from JSON body into 'eltid'
@@ -134,13 +166,13 @@ Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (
 	And extract JSON from body
 	And extract 'id' from JSON body into 'insid'
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
-	And wait '100' seconds
+	And wait '500' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$'
 	And extract JSON from body
 	And extract 'elements[0].id' from JSON body into 'eltid'
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/suspend'
 	And wait '100' seconds
-	And execute HTTP GET request 'http://localhost/case-instances/$insid$/reactivate'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/resume'
 	And wait '3000' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$'
 	And extract JSON from body
@@ -205,7 +237,7 @@ Scenario: Terminate caseWithOneLongProcessTask and check his status is terminate
 	And extract JSON from body
 	And extract 'id' from JSON body into 'insid'
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
-	And wait '100' seconds
+	And wait '500' seconds
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$'
 	And extract JSON from body
 	And extract 'elements[0].id' from JSON body into 'eltid'

@@ -16,7 +16,10 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public Task<CMMNWorkflowInstance> FindFlowInstanceById(string id)
         {
-            return Task.FromResult(_instances.FirstOrDefault(i => i.Id == id));
+            lock(_instances)
+            {
+                return Task.FromResult(_instances.FirstOrDefault(i => i.Id == id));
+            }
         }
     }
 }

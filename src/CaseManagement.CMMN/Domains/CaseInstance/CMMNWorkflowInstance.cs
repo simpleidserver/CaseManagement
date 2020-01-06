@@ -3,6 +3,7 @@ using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
@@ -497,6 +498,7 @@ namespace CaseManagement.CMMN.Domains
                     state = CMMNCaseStates.Completed;
                     break;
                 case CMMNTransitions.Terminate:
+                case CMMNTransitions.Exit:
                     if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active))
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
@@ -528,6 +530,17 @@ namespace CaseManagement.CMMN.Domains
                     }
 
                     state = CMMNCaseStates.Suspended;
+                    break;
+                case CMMNTransitions.Resume:
+                    if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Suspended))
+                    {
+                        throw new AggregateValidationException(new Dictionary<string, string>
+                        {
+                            { "transition", "case instance is not suspend" }
+                        });
+                    }
+
+                    state = CMMNCaseStates.Active;
                     break;
                 case CMMNTransitions.Close:
                     if (State != Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed) &&
@@ -561,11 +574,17 @@ namespace CaseManagement.CMMN.Domains
 
             if (state != null)
             {
-                State = Enum.GetName(typeof(CMMNCaseStates), state);
-                StateHistories.Add(new CMMNWorkflowInstanceHistory(State, DateTime.UtcNow));
-                TransitionHistories.Add(new CMMNWorkflowInstanceTransitionHistory(evt.Transition, DateTime.UtcNow));
-                Version++;
-                RaiseEvent(evt);
+                lock(StateHistories)
+                {
+                    lock(TransitionHistories)
+                    {
+                        State = Enum.GetName(typeof(CMMNCaseStates), state);
+                        StateHistories.Add(new CMMNWorkflowInstanceHistory(State, DateTime.UtcNow));
+                        TransitionHistories.Add(new CMMNWorkflowInstanceTransitionHistory(evt.Transition, DateTime.UtcNow));
+                        Version++;
+                        RaiseEvent(evt);
+                    }
+                }
             }
         }
 

@@ -27,6 +27,7 @@
         RemoveChild = 22,
         AddReference = 23,
         RemoveReference = 24,
-        Delete = 25
+        Delete = 25,
+        ParentExit = 26
     }
 }

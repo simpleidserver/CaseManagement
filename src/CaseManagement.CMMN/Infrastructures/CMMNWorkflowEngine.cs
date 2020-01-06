@@ -3,6 +3,7 @@ using CaseManagement.CMMN.CaseInstance.Processors;
 using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace CaseManagement.CMMN.Infrastructures
                 }
                 else
                 {
-                    foreach (var elt in workflowInstance.WorkflowElementInstances.Where(w => w.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active)).ToList())
+                    foreach (var elt in workflowInstance.WorkflowElementInstances.Where(w => w.IsActive()).ToList())
                     {
                         var parameter = new ProcessorParameter(workflowDefinition, workflowInstance, workflowInstance.GetWorkflowElementInstance(elt.Id));
                         var processor = _cmmnPlanItemProcessors.First(p => p.Type == elt.WorkflowElementDefinitionType);
@@ -75,27 +76,35 @@ namespace CaseManagement.CMMN.Infrastructures
             var children = workflowDefinition.Elements.Select(e => e.Id);
             bool continueExecution = true;
             bool isSuspend = false;
-            var reactivateListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Reactivate, () =>
+            var exitListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Exit, () =>
             {
-                if (isSuspend)
+                var workflowElementInstances = workflowInstance.WorkflowElementInstances;
+                foreach (var workflowElementInstance in workflowElementInstances)
                 {
-                    isSuspend = false;
-                    var workflowElementInstances = workflowInstance.WorkflowElementInstances;
-                    foreach (var workflowElementInstance in workflowElementInstances)
+                    workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentExit);
+                }
+
+                continueExecution = false;
+            });
+            var resumeListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Resume, () =>
+            {
+                var workflowElementInstances = workflowInstance.WorkflowElementInstances;
+                foreach (var workflowElementInstance in workflowElementInstances)
+                {
+                    if (workflowElementInstance.IsSuspend())
                     {
-                        if (workflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended))
-                        {
-                            workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentResume);
-                        }
+                        workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentResume);
                     }
                 }
+
+                isSuspend = false;
             });
             var suspendListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Suspend, () =>
             {
                 var workflowElementInstances = workflowInstance.WorkflowElementInstances;
                 foreach (var workflowElementInstance in workflowElementInstances)
                 {
-                    if (workflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                    if (workflowElementInstance.IsActive())
                     {
                         workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentSuspend);
                     }
@@ -108,7 +117,7 @@ namespace CaseManagement.CMMN.Infrastructures
                 var workflowElementInstances = workflowInstance.WorkflowElementInstances;
                 foreach (var workflowElementInstance in workflowElementInstances)
                 {
-                    if (workflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                    if (workflowElementInstance.IsActive())
                     {
                         workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentTerminate);
                     }
@@ -124,12 +133,12 @@ namespace CaseManagement.CMMN.Infrastructures
                     kvp.Value.Key.ContinueWith((r) =>
                     {
                         r.Wait();
-                        workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+                        workflowInstance.MakeTransition(CMMNTransitions.Exit);
                     });
                 }
                 catch (TerminateCaseInstanceElementException)
                 {
-                    workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+                    workflowInstance.MakeTransition(CMMNTransitions.Exit);
                 }
             }
 
@@ -144,16 +153,15 @@ namespace CaseManagement.CMMN.Infrastructures
                 try
                 {
                     cancellationTokenSource.Token.ThrowIfCancellationRequested();
-                    if (children.All(c => workflowInstance.IsWorkflowElementDefinitionFinished(c)))
-                    {
-                        continueExecution = false;
-                        workflowInstance.MakeTransition(CMMNTransitions.Complete);
-                    }
-
                     if (children.Any(c => workflowInstance.IsWorkflowElementDefinitionFailed(c) && workflowDefinition.GetElement(c).Type != CMMNWorkflowElementTypes.Stage))
                     {
                         continueExecution = false;
                         workflowInstance.MakeTransition(CMMNTransitions.Fault);
+                    }
+                    else if (children.All(c => workflowInstance.IsWorkflowElementDefinitionFinished(c)))
+                    {
+                        continueExecution = false;
+                        workflowInstance.MakeTransition(CMMNTransitions.Complete);
                     }
                 }
                 catch (OperationCanceledException)
@@ -162,7 +170,8 @@ namespace CaseManagement.CMMN.Infrastructures
                 }
             }
 
-            reactivateListener.Unsubscribe();
+            exitListener.Unsubscribe();
+            resumeListener.Unsubscribe();
             suspendListener.Unsubscribe();
             terminateListener.Unsubscribe();
             createListener.Unsubscribe();
@@ -234,8 +243,11 @@ namespace CaseManagement.CMMN.Infrastructures
                         result.WorkflowInstance.CreateWorkflowElementInstance(result.WorkflowElementInstance.WorkflowElementDefinitionId, result.WorkflowElementInstance.WorkflowElementDefinitionType);
                         return;
                     }
-
-                    result.WorkflowInstance.FinishElement(result.WorkflowElementInstance.WorkflowElementDefinitionId);
+                    
+                    if (result.WorkflowElementInstance.IsComplete())
+                    {
+                        result.WorkflowInstance.FinishElement(result.WorkflowElementInstance.WorkflowElementDefinitionId);
+                    }
                 });
             }
         }

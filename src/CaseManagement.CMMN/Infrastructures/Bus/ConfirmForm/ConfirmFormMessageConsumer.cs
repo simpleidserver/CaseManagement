@@ -4,29 +4,29 @@ using CaseManagement.Workflow.Infrastructure.Lock;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Linq;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent
+namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
 {
-    public class CMMNTransitionEventMessageConsumer : BaseMessageConsumer
+    public class ConfirmFormMessageConsumer : BaseMessageConsumer
     {
         private readonly ILogger _logger;
         private readonly IDistributedLock _distributedLock;
 
-        public CMMNTransitionEventMessageConsumer(ILogger<CMMNTransitionEventMessageConsumer> logger, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public ConfirmFormMessageConsumer(ILogger<ConfirmFormMessageConsumer> logger, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;
         }
 
         public override string QueueName => QUEUE_NAME;
-        public const string QUEUE_NAME = "received-event";
+        public const string QUEUE_NAME = "confirm-form";
 
         protected override async Task<RunningTask> Execute(string queueMessage)
         {
-            var message = JsonConvert.DeserializeObject<CMMNTransitionEventMessage>(queueMessage);
-            var lockId = $"{QueueName}-{message.Id}";
+            var message = JsonConvert.DeserializeObject<ConfirmFormMessage>(queueMessage);
+            var lockId = $"{QueueName}-{message.CaseInstanceId}-{message.CaseElementInstanceId}";
             if (!await _distributedLock.AcquireLock(lockId))
             {
                 _logger.LogDebug($"The received event {lockId} is locked !");
@@ -41,14 +41,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent
                 {
                     await QueueProvider.Dequeue(QueueName);
                     var workflowInstance = runningTask.Aggregate as CMMNWorkflowInstance;
-                    if (string.IsNullOrWhiteSpace(message.CaseInstanceElementId))
-                    {
-                        workflowInstance.MakeTransition(message.Transition);
-                    }
-                    else if(workflowInstance.WorkflowElementInstances.Any(i => i.Id == message.CaseInstanceElementId))
-                    {
-                        workflowInstance.MakeTransition(message.CaseInstanceElementId, message.Transition);
-                    }
+                    workflowInstance.SubmitForm(message.CaseElementInstanceId, message.FormInstanceId);
                 }
 
                 return null;

@@ -2,9 +2,11 @@
 using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.Workflow.Infrastructure;
-using Microsoft.AspNetCore.Http;    
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
@@ -24,9 +26,11 @@ namespace CaseManagement.CMMN.Apis
         private readonly IResumeCommandHandler _resumeCommandHandler;
         private readonly ITerminateCommandHandler _terminateCommandHandler;
         private readonly IReactivateCommandHandler _reactivateCommandHandler;
+        private readonly ICloseCommandHandler _closeCommandHandler;
+        private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
         private readonly ICMMNWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
@@ -34,6 +38,8 @@ namespace CaseManagement.CMMN.Apis
             _resumeCommandHandler = resumeCommandHandler;
             _terminateCommandHandler = terminateCommandHandler;
             _reactivateCommandHandler = reactivateCommandHandler;
+            _closeCommandHandler = closeCommandHandler;
+            _confirmFormCommandHandler = confirmFormCommandHandler;
             _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
         }
 
@@ -50,19 +56,39 @@ namespace CaseManagement.CMMN.Apis
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCaseInstanceCommand createCaseInstance)
         {
-            var result = await _createCaseInstanceCommandHandler.Handle(createCaseInstance);
-            return new ContentResult
+            try
             {
-                StatusCode = (int)HttpStatusCode.Created,
-                Content = ToDto(result).ToString()
-            };
+                var result = await _createCaseInstanceCommandHandler.Handle(createCaseInstance);
+                return new ContentResult
+                {
+                    StatusCode = (int)HttpStatusCode.Created,
+                    Content = ToDto(result).ToString()
+                };
+            }
+            catch (UnknownCaseDefinitionException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case definition doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
         }
 
         [HttpGet("{id}/launch")]
         public async Task<IActionResult> Launch(string id)
         {
-            await _launchCaseInstanceCommandHandler.Handle(new LaunchCaseInstanceCommand { CaseInstanceId = id });
-            return new OkResult();
+            try
+            {
+                await _launchCaseInstanceCommandHandler.Handle(new LaunchCaseInstanceCommand { CaseInstanceId = id });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
         }
 
         [HttpGet("{id}")]
@@ -90,13 +116,6 @@ namespace CaseManagement.CMMN.Apis
                 return ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
-            }
-            catch (UnknownCaseInstanceElementException)
-            {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
@@ -180,6 +199,7 @@ namespace CaseManagement.CMMN.Apis
         {
             try
             {
+                // Note : possible to reactivate only stage.
                 await _reactivateCommandHandler.Handle(new ReactivateCommand(id, elt));
                 return new OkResult();
             }
@@ -195,6 +215,34 @@ namespace CaseManagement.CMMN.Apis
                 return ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/resume")]
+        public async Task<IActionResult> Resume(string id)
+        {
+            try
+            {
+                await _resumeCommandHandler.Handle(new ResumeCommand(id, null));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
@@ -305,6 +353,77 @@ namespace CaseManagement.CMMN.Apis
             catch (AggregateValidationException ex)
             {
                 return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/close")]
+        public async Task<IActionResult> Close(string id)
+        {
+            try
+            {
+                await _closeCommandHandler.Handle(new CloseCommand(id));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPost("{id}/confirm/{elt}")]
+        [Authorize("IsConnected")]
+        public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
+        {
+            try
+            {
+                await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt, Content = jObj, UserIdentifier = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnauthorizedCaseWorkerException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "unauthorized_request", "you're not authorized to confirm the human task" }
+                }, HttpStatusCode.Unauthorized, Request);
             }
             catch (Exception ex)
             {
