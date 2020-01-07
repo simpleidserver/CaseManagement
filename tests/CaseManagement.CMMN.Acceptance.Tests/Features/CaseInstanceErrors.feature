@@ -81,3 +81,25 @@ Scenario: Reactivate not failed case instance and check error is returned
 	
 	Then HTTP status code equals to '400'
 	Then JSON 'errors.transition[0]'='case instance is not completed / terminated / failed / suspended'
+
+Scenario: Activate unknown case instance and check error is returned
+	When execute HTTP GET request 'http://localhost/case-instances/1/activate/1'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'errors.bad_request[0]'='case instance doesn't exist'
+
+Scenario: Activate unknown case element instance and check error is returned
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneManualActivationTask.cmmn'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value    |
+	| case_definition_id | $defid$  |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/activate/1'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'errors.bad_request[0]'='case instance element doesn't exist'

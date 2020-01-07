@@ -3,7 +3,6 @@ using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
@@ -20,6 +19,8 @@ namespace CaseManagement.CMMN.Domains
 
     public class CMMNWorkflowInstance : BaseAggregate
     {
+        private object _lock;
+
         public CMMNWorkflowInstance()
         {
             ExecutionContext = new CMMNWorkflowInstanceExecutionContext();
@@ -28,6 +29,7 @@ namespace CaseManagement.CMMN.Domains
             ExecutionHistories = new List<CMMNWorkflowElementExecutionHistory>();
             WorkflowElementInstances = new List<CMMNWorkflowElementInstance>();
             DomainEvents = new List<DomainEvent>();
+            _lock = new object();
         }
 
         public CMMNWorkflowInstance(string id, DateTime createDateTime, string workflowDefinitionId) : base()
@@ -51,12 +53,18 @@ namespace CaseManagement.CMMN.Domains
 
         public bool ContainsVariable(string key)
         {
-            return ExecutionContext.ContainsVariable(key);
+            lock(ExecutionContext)
+            {
+                return ExecutionContext.ContainsVariable(key);
+            }
         }
 
         public string GetVariable(string key)
         {
-            return ExecutionContext.GetVariable(key);
+            lock(ExecutionContext)
+            {
+                return ExecutionContext.GetVariable(key);
+            }
         }
 
         public int GetNumberVariable(string key)
@@ -69,7 +77,7 @@ namespace CaseManagement.CMMN.Domains
 
             return int.Parse(GetVariable(key));
         }
-        
+
         public ICollection<CMMNCriterion> GetEntryCriterions(string id, CMMNWorkflowDefinition workflowDefinition)
         {
             var planItemDefinition = GetWorkflowElementDefinition(id, workflowDefinition);
@@ -108,7 +116,7 @@ namespace CaseManagement.CMMN.Domains
             {
                 return false;
             }
-            
+
             var lastPlanItem = GetLastWorkflowElementInstance(planItemId);
             if (!planItemDef.EntryCriterions.Any(c => IsCriteriaSatisfied(c, lastPlanItem.Version + 1)))
             {
@@ -137,40 +145,47 @@ namespace CaseManagement.CMMN.Domains
         public bool IsCriteriaSatisfied(CMMNCriterion criteria, int version)
         {
             var planItemOnParts = criteria.SEntry.PlanItemOnParts;
-            foreach (var planItemOnPart in planItemOnParts)
+            lock(WorkflowElementInstances)
             {
-                var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.WorkflowElementDefinitionId == planItemOnPart.SourceRef);
-                if (source == null)
+                foreach (var planItemOnPart in planItemOnParts)
                 {
-                    return false;
+                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.WorkflowElementDefinitionId == planItemOnPart.SourceRef);
+                    if (source == null)
+                    {
+                        return false;
+                    }
+
+                    var transitionHistories = source.TransitionHistories.ToList();
+                    if (!transitionHistories.Any(t => t.Transition == planItemOnPart.StandardEvent))
+                    {
+                        return false;
+                    }
                 }
 
-                if (!source.TransitionHistories.Any(t => t.Transition == planItemOnPart.StandardEvent))
+                if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
                 {
-                    return false;
+                    if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, this))
+                    {
+                        return false;
+                    }
                 }
+
+                return true;
             }
-
-            if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
-            {
-                if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, this))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         public bool IsWorkflowElementDefinitionFinished(string elementDefinitionId)
         {
-            var executionHistory = ExecutionHistories.FirstOrDefault(e => e.WorkflowElementDefinitionId == elementDefinitionId);
-            if (executionHistory == null || executionHistory.EndDateTime == null)
+            lock(ExecutionHistories)
             {
-                return false;
-            }
+                var executionHistory = ExecutionHistories.FirstOrDefault(e => e.WorkflowElementDefinitionId == elementDefinitionId);
+                if (executionHistory == null || executionHistory.EndDateTime == null)
+                {
+                    return false;
+                }
 
-            return true;
+                return true;
+            }
         }
 
         public bool IsWorkflowElementDefinitionFailed(string elementDefinitionId)
@@ -186,34 +201,49 @@ namespace CaseManagement.CMMN.Domains
 
         public CMMNWorkflowElementDefinition GetWorkflowElementDefinition(string id, CMMNWorkflowDefinition workflowDefinition)
         {
-            var elementInstance = WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
-            if (elementInstance == null)
+            lock(WorkflowElementInstances)
             {
-                return null;
-            }
+                var elementInstance = WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
+                if (elementInstance == null)
+                {
+                    return null;
+                }
 
-            return workflowDefinition.GetElement(elementInstance.WorkflowElementDefinitionId);
+                return workflowDefinition.GetElement(elementInstance.WorkflowElementDefinitionId);
+            }
         }
 
         public CMMNWorkflowElementInstance GetWorkflowElementInstance(string id)
         {
-            return WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
+            lock(WorkflowElementInstances)
+            {
+                return WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
+            }
         }
 
         public CMMNWorkflowElementInstance GetWorkflowElementInstance(string workflowItemDefinitionId, int version)
         {
-            return WorkflowElementInstances.FirstOrDefault(p => p.WorkflowElementDefinitionId == workflowItemDefinitionId && p.Version == version);
+            lock(WorkflowElementInstances)
+            {
+                return WorkflowElementInstances.FirstOrDefault(p => p.WorkflowElementDefinitionId == workflowItemDefinitionId && p.Version == version);
+            }
         }
 
         public ICollection<CMMNWorkflowElementInstance> GetWorkflowElementInstancesByParentId(string parentId)
         {
-            return WorkflowElementInstances.Where(e => e.ParentId == parentId).ToList();
+            lock(WorkflowElementInstances)
+            {
+                return WorkflowElementInstances.Where(e => e.ParentId == parentId).ToList();
+            }
         }
 
         public CMMNWorkflowElementInstance GetLastWorkflowElementInstance(string workflowItemDefinitionId)
         {
-            var result = WorkflowElementInstances.Where(p => p.WorkflowElementDefinitionId == workflowItemDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
-            return result;
+            lock(WorkflowElementInstances)
+            {
+                var result = WorkflowElementInstances.Where(p => p.WorkflowElementDefinitionId == workflowItemDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
+                return result;
+            }
         }
 
         public string GetStreamName()
@@ -264,7 +294,7 @@ namespace CaseManagement.CMMN.Domains
 
         public void StartElement(string elementDefinitionId)
         {
-            lock (DomainEvents)
+            lock(DomainEvents)
             {
                 var evt = new CMMNWorkflowElementStartedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementDefinitionId, DateTime.UtcNow);
                 Handle(evt);
@@ -292,7 +322,7 @@ namespace CaseManagement.CMMN.Domains
                 {
                     foreach(var elt in WorkflowElementInstances)
                     {
-                        if (elt.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed))
+                        if (elt.IsFail())
                         {
                             MakeTransition(elt.Id, CMMNTransitions.Reactivate);
                         }
@@ -312,7 +342,291 @@ namespace CaseManagement.CMMN.Domains
                 DomainEvents.Add(evt);
             }
         }
+
+        public void MakeTransitionEnable(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsAvailable())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Enable, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionAddChild(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsAvailable())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.AddChild, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionStart(string elementId)
+        {
+            lock(DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsAvailable())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Start, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionFault(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsActive())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Fault, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionExit(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+                
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Exit, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
         
+        public void MakeTransitionOccur(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsAvailable())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Occur, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionParentExit(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+                
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentExit, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionReactivate(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsFail())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Reactivate, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionParentSuspend(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsActive())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentSuspend, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionSuspend(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsActive())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Suspend, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionParentResume(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsSuspend())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentResume, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionResume(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsSuspend())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Resume, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionParentTerminate(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsActive())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentTerminate, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionComplete(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsActive())
+                {
+                    return;
+                }
+
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Complete, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
         public void SetVariable(string key, int value)
         {
             SetVariable(key, value.ToString());
@@ -574,17 +888,11 @@ namespace CaseManagement.CMMN.Domains
 
             if (state != null)
             {
-                lock(StateHistories)
-                {
-                    lock(TransitionHistories)
-                    {
-                        State = Enum.GetName(typeof(CMMNCaseStates), state);
-                        StateHistories.Add(new CMMNWorkflowInstanceHistory(State, DateTime.UtcNow));
-                        TransitionHistories.Add(new CMMNWorkflowInstanceTransitionHistory(evt.Transition, DateTime.UtcNow));
-                        Version++;
-                        RaiseEvent(evt);
-                    }
-                }
+                State = Enum.GetName(typeof(CMMNCaseStates), state);
+                StateHistories.Add(new CMMNWorkflowInstanceHistory(State, DateTime.UtcNow));
+                TransitionHistories.Add(new CMMNWorkflowInstanceTransitionHistory(evt.Transition, DateTime.UtcNow));
+                Version++;
+                RaiseEvent(evt);
             }
         }
 

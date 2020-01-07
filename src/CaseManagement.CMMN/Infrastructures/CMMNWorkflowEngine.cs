@@ -3,12 +3,12 @@ using CaseManagement.CMMN.CaseInstance.Processors;
 using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static CaseManagement.CMMN.CaseInstance.Processors.Listeners.CMMNCriterionListener;
 
 namespace CaseManagement.CMMN.Infrastructures
 {
@@ -33,7 +33,6 @@ namespace CaseManagement.CMMN.Infrastructures
         public Task Reactivate(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            workflowInstance.MakeTransition(CMMNTransitions.Reactivate);
             var cancellationTokenSource = new CancellationTokenSource();
             var task = new Task(() => HandleTask(workflowDefinition, workflowInstance, cancellationTokenSource, true));
             task.Start();
@@ -42,6 +41,77 @@ namespace CaseManagement.CMMN.Infrastructures
 
         private void HandleTask(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, CancellationTokenSource cancellationTokenSource, bool reactivate = false)
         {
+            var children = workflowDefinition.Elements.Select(e => e.Id);
+            bool continueExecution = true;
+            bool isSuspend = false;
+            var exitListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Exit, () =>
+            {
+                lock(workflowInstance.WorkflowElementInstances)
+                {
+                    var workflowElementInstances = workflowInstance.WorkflowElementInstances;
+                    foreach (var workflowElementInstance in workflowElementInstances)
+                    {
+                        workflowInstance.MakeTransitionParentExit(workflowElementInstance.Id);
+                    }
+
+                    continueExecution = false;
+                }
+            });
+            var resumeListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Resume, () =>
+            {
+                lock(workflowInstance.WorkflowElementInstances)
+                {
+                    var workflowElementInstances = workflowInstance.WorkflowElementInstances;
+                    foreach (var workflowElementInstance in workflowElementInstances)
+                    {
+                        workflowInstance.MakeTransitionParentResume(workflowElementInstance.Id);
+                    }
+
+                    isSuspend = false;
+                }
+            });
+            var suspendListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Suspend, () =>
+            {
+                lock(workflowInstance.WorkflowElementInstances)
+                {
+                    var workflowElementInstances = workflowInstance.WorkflowElementInstances;
+                    foreach (var workflowElementInstance in workflowElementInstances)
+                    {
+                        workflowInstance.MakeTransitionParentSuspend(workflowElementInstance.Id);
+                    }
+
+                    isSuspend = true;
+                }
+            });
+            var terminateListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Terminate, () =>
+            {
+                lock(workflowInstance.WorkflowElementInstances)
+                {
+                    var workflowElementInstances = workflowInstance.WorkflowElementInstances;
+                    foreach (var workflowElementInstance in workflowElementInstances)
+                    {
+                        workflowInstance.MakeTransitionParentTerminate(workflowElementInstance.Id);
+                    }
+                }
+            });
+            KeyValuePair<Task, CriterionListener>? kvp = null;
+            try
+            {
+                kvp = CMMNCriterionListener.ListenExitCriterias(new ProcessorParameter(null, workflowInstance, new CMMNWorkflowElementInstance(null, DateTime.UtcNow, null, CMMNWorkflowElementTypes.Stage, 0, null)), workflowDefinition.ExitCriterias.ToList());
+                if (kvp != null)
+                {
+                    kvp.Value.Key.ContinueWith((r) =>
+                    {
+                        r.Wait();
+                        workflowInstance.MakeTransition(CMMNTransitions.Exit);
+                    });
+                }
+            }
+            catch (TerminateCaseInstanceElementException)
+            {
+                workflowInstance.MakeTransition(CMMNTransitions.Exit);
+            }
+
             var createListener = new CreateListener(workflowDefinition, workflowInstance, _cmmnPlanItemProcessors, cancellationTokenSource.Token);
             createListener.Listen();
             var repetitionListener = new RepetitionListener(workflowDefinition, workflowInstance);
@@ -54,91 +124,26 @@ namespace CaseManagement.CMMN.Infrastructures
                 }
                 else
                 {
-                    foreach (var elt in workflowInstance.WorkflowElementInstances.Where(w => w.IsActive()).ToList())
+                    lock(workflowInstance.WorkflowElementInstances)
                     {
-                        var parameter = new ProcessorParameter(workflowDefinition, workflowInstance, workflowInstance.GetWorkflowElementInstance(elt.Id));
-                        var processor = _cmmnPlanItemProcessors.First(p => p.Type == elt.WorkflowElementDefinitionType);
-                        processor.Handle(parameter, cancellationTokenSource.Token).ContinueWith((obj) =>
+                        workflowInstance.MakeTransition(CMMNTransitions.Reactivate);
+                        foreach (var elt in workflowInstance.WorkflowElementInstances.Where(w => w.IsActive()))
                         {
-                            var result = obj.Result;
-                            if (result.WorkflowInstance.IsRepetitionRuleSatisfied(result.WorkflowElementInstance.WorkflowElementDefinitionId, result.WorkflowDefinition, false))
+                            var parameter = new ProcessorParameter(workflowDefinition, workflowInstance, workflowInstance.GetWorkflowElementInstance(elt.Id));
+                            var processor = _cmmnPlanItemProcessors.First(p => p.Type == elt.WorkflowElementDefinitionType);
+                            processor.Handle(parameter, cancellationTokenSource.Token).ContinueWith((obj) =>
                             {
-                                result.WorkflowInstance.CreateWorkflowElementInstance(result.WorkflowElementInstance.WorkflowElementDefinitionId, result.WorkflowElementInstance.WorkflowElementDefinitionType);
-                                return;
-                            }
+                                var result = obj.Result;
+                                if (result.WorkflowInstance.IsRepetitionRuleSatisfied(result.WorkflowElementInstance.WorkflowElementDefinitionId, result.WorkflowDefinition, false))
+                                {
+                                    result.WorkflowInstance.CreateWorkflowElementInstance(result.WorkflowElementInstance.WorkflowElementDefinitionId, result.WorkflowElementInstance.WorkflowElementDefinitionType);
+                                    return;
+                                }
 
-                            result.WorkflowInstance.FinishElement(result.WorkflowElementInstance.WorkflowElementDefinitionId);
-                        });
+                                result.WorkflowInstance.FinishElement(result.WorkflowElementInstance.WorkflowElementDefinitionId);
+                            });
+                        }
                     }
-                }
-            }
-
-            var children = workflowDefinition.Elements.Select(e => e.Id);
-            bool continueExecution = true;
-            bool isSuspend = false;
-            var exitListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Exit, () =>
-            {
-                var workflowElementInstances = workflowInstance.WorkflowElementInstances;
-                foreach (var workflowElementInstance in workflowElementInstances)
-                {
-                    workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentExit);
-                }
-
-                continueExecution = false;
-            });
-            var resumeListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Resume, () =>
-            {
-                var workflowElementInstances = workflowInstance.WorkflowElementInstances;
-                foreach (var workflowElementInstance in workflowElementInstances)
-                {
-                    if (workflowElementInstance.IsSuspend())
-                    {
-                        workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentResume);
-                    }
-                }
-
-                isSuspend = false;
-            });
-            var suspendListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Suspend, () =>
-            {
-                var workflowElementInstances = workflowInstance.WorkflowElementInstances;
-                foreach (var workflowElementInstance in workflowElementInstances)
-                {
-                    if (workflowElementInstance.IsActive())
-                    {
-                        workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentSuspend);
-                    }
-                }
-
-                isSuspend = true;
-            });
-            var terminateListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Terminate, () =>
-            {
-                var workflowElementInstances = workflowInstance.WorkflowElementInstances;
-                foreach (var workflowElementInstance in workflowElementInstances)
-                {
-                    if (workflowElementInstance.IsActive())
-                    {
-                        workflowInstance.MakeTransition(workflowElementInstance.Id, CMMNTransitions.ParentTerminate);
-                    }
-                }
-
-                continueExecution = false;
-            });
-            var kvp = CMMNCriterionListener.ListenExitCriterias(new ProcessorParameter(null, workflowInstance, new CMMNWorkflowElementInstance(null, DateTime.UtcNow, null, CMMNWorkflowElementTypes.Stage, 0, null)), workflowDefinition.ExitCriterias);
-            if (kvp != null)
-            {
-                try
-                {
-                    kvp.Value.Key.ContinueWith((r) =>
-                    {
-                        r.Wait();
-                        workflowInstance.MakeTransition(CMMNTransitions.Exit);
-                    });
-                }
-                catch (TerminateCaseInstanceElementException)
-                {
-                    workflowInstance.MakeTransition(CMMNTransitions.Exit);
                 }
             }
 

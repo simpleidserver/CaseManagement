@@ -62,6 +62,9 @@ namespace Microsoft.Extensions.DependencyInjection
             var activations = new List<CaseActivationAggregate>();
             var instances = new List<CMMNWorkflowInstance>();
             var roles = new List<RoleAggregate>();
+            var formInstances = new List<FormInstanceAggregate>();
+            services.AddSingleton<IFormInstanceCommandRepository>(new InMemoryFormInstanceCommandRepository(formInstances));
+            services.AddSingleton<IFormInstanceQueryRepository>(new InMemoryFormInstanceQueryRepository(formInstances));
             services.AddSingleton<ICMMNWorkflowDefinitionQueryRepository>(new InMemoryCMMNWorkflowDefinitionQueryRepository(definitions));
             services.AddSingleton<ICMMNWorkflowInstanceQueryRepository>(new InMemoryCMMNWorkflowInstanceQueryRepository(instances));
             services.AddSingleton<ICMMNWorkflowInstanceCommandRepository>(new InMemoryCMMNWorkflowInstanceCommandRepository(instances));

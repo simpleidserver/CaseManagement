@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CaseManagement.CMMN.Domains;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CaseManagement.CMMN.Domains;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
 {
@@ -18,7 +18,13 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         {
             lock(_instances)
             {
-                return Task.FromResult(_instances.FirstOrDefault(i => i.Id == id));
+                var result = _instances.FirstOrDefault(i => i.Id == id);
+                if (result == null)
+                {
+                    return Task.FromResult((CMMNWorkflowInstance)null);
+                }
+
+                return Task.FromResult(result.Clone()  as CMMNWorkflowInstance);
             }
         }
     }

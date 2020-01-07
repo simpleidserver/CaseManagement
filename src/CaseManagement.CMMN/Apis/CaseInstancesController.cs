@@ -28,9 +28,10 @@ namespace CaseManagement.CMMN.Apis
         private readonly IReactivateCommandHandler _reactivateCommandHandler;
         private readonly ICloseCommandHandler _closeCommandHandler;
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
+        private readonly IActivateCommandHandler _activateCommandHandler;
         private readonly ICMMNWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
@@ -40,6 +41,7 @@ namespace CaseManagement.CMMN.Apis
             _reactivateCommandHandler = reactivateCommandHandler;
             _closeCommandHandler = closeCommandHandler;
             _confirmFormCommandHandler = confirmFormCommandHandler;
+            _activateCommandHandler = activateCommandHandler;
             _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
         }
 
@@ -434,57 +436,6 @@ namespace CaseManagement.CMMN.Apis
             }
         }
 
-        /*
-        [HttpGet("{id}/stop")]
-        public async Task<IActionResult> Stop(string id)
-        {
-            await _stopCaseInstanceCommandHandler.Handle(new StopCaseInstanceCommand { CaseInstanceId = id });
-            return new OkResult();
-        }
-
-        [HttpPost("{id}/confirm/{elt}")]
-        [Authorize("IsConnected")]
-        public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
-        {
-            try
-            {
-                await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CaseInstanceId = id, CaseElementInstanceId = elt, Content = jObj, UserIdentifier = this.GetNameIdentifier() });
-                return new OkResult();
-            }
-            catch(UnknownCaseInstanceException)
-            {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
-            }
-            catch (UnknownCaseInstanceElementException)
-            {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance element doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
-            }
-            catch (ProcessFlowInstanceDomainException ex)
-            {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
-            }
-            catch(UnauthorizedCaseWorkerException)
-            {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "unauthorized_request", "you're not authorized to confirm the human task" }
-                }, HttpStatusCode.Unauthorized, Request);
-            }
-            catch(Exception ex)
-            {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "invalid_request", ex.Message }
-                }, HttpStatusCode.BadRequest, Request);
-            }
-        }
-
         [HttpGet("{id}/activate/{elt}")]
         public async Task<IActionResult> Activate(string id, string elt)
         {
@@ -507,36 +458,9 @@ namespace CaseManagement.CMMN.Apis
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (Exception ex)
+            catch (AggregateValidationException ex)
             {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "invalid_request", ex.Message }
-                }, HttpStatusCode.BadRequest, Request);
-            }
-        }
-
-        [HttpGet("{id}/terminate/{elt}")]
-        public async Task<IActionResult> Terminate(string id, string elt)
-        {
-            try
-            {
-                await _terminateCommandHandler.Handle(new TerminateCommand(id, elt));
-                return new OkResult();
-            }
-            catch (UnknownCaseInstanceException)
-            {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
-            }
-            catch (UnknownCaseInstanceElementException)
-            {
-                return ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance element doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
@@ -546,78 +470,6 @@ namespace CaseManagement.CMMN.Apis
                 }, HttpStatusCode.BadRequest, Request);
             }
         }
-
-        [HttpGet("{id}/steps/.search")]
-        public async Task<IActionResult> SearchExecutionSteps(string id)
-        {
-            var query = HttpContext.Request.Query;
-            var parameter = ExtractFindExecutionStepsParameter(query);
-            parameter.ProcessFlowInstanceId = id;
-            var executionSteps = await _processFlowInstanceQueryRepository.FindExecutionSteps(parameter);
-            return new OkObjectResult(ToDto(executionSteps));
-        }
-
-        private static FindWorkflowInstanceParameter ExtractFindWorkflowInstanceParameter(IQueryCollection query)
-        {
-            string templateId;
-            var parameter = new FindWorkflowInstanceParameter();
-            if (query.TryGet("template_id", out templateId))
-            {
-                parameter.ProcessFlowTemplateId = templateId;
-            }
-            parameter.ExtractFindParameter(query);
-            return parameter;
-        }
-
-        private static FindExecutionStepsParameter ExtractFindExecutionStepsParameter(IQueryCollection query)
-        {
-            var parameter = new FindExecutionStepsParameter();
-            parameter.ExtractFindParameter(query);
-            return parameter;
-        }
-
-        private static JObject ToDto(FindResponse<ProcessFlowInstanceExecutionStep> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => new JObject
-                {
-                    { "start_datetime", r.StartDateTime },
-                    { "end_datetime", r.EndDateTime },
-                    { "name", r.ElementName },
-                    { "id", r.ElementId }
-                })) }
-            };
-        }
-
-        private static JObject ToDto(FindResponse<ProcessFlowInstance> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => {
-                    var result = new JObject
-                    {
-                        { "id", r.Id },
-                        { "name", r.ProcessFlowName },
-                        { "template_id", r.ProcessFlowTemplateId },
-                        { "create_datetime", r.CreateDateTime }
-                    };
-                    if (r.Status != null)
-                    {
-                        result.Add("status", Enum.GetName(typeof(ProcessFlowInstanceStatus), r.Status).ToLowerInvariant());
-                    }
-
-                    return result;
-                })) }
-            };
-        }
-        */
 
         private static JObject ToDto(CMMNWorkflowInstance workflowInstance)
         {

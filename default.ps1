@@ -57,7 +57,7 @@ task test {
     Push-Location -Path $base_dir\tests\CaseManagement.CMMN.Tests
 
     try {
-        exec { & dotnet test -c $config --no-build --no-restore }
+        exec { & dotnet test -c $config -v n --no-build --no-restore }
     } finally {
         Pop-Location
     }
@@ -65,7 +65,7 @@ task test {
     Push-Location -Path $base_dir\tests\CaseManagement.CMMN.Acceptance.Tests
 
     try {
-        exec { & dotnet test -c $config --no-build --no-restore }
+        exec { & dotnet test -c $config -v n --no-build --no-restore }
     } finally {
         Pop-Location
     }

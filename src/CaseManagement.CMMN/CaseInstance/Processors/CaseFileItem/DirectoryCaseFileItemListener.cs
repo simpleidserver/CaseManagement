@@ -71,7 +71,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.CaseFileItem
 
         private void HandleFileCreated(ProcessorParameter parameter)
         {
-            parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.AddChild);
+            parameter.WorkflowInstance.MakeTransitionAddChild(parameter.WorkflowElementInstance.Id);
         }
     }
 }

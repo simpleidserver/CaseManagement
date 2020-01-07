@@ -7,6 +7,8 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CMMNWorkflowElementInstance : ICloneable
     {
+        private object _lock;
+
         public CMMNWorkflowElementInstance(string id, DateTime createDateTime, string workflowElementDefinitionId, CMMNWorkflowElementTypes workflowElementDefinitionType, int version, string parentId)
         {
             Id = id;
@@ -17,6 +19,8 @@ namespace CaseManagement.CMMN.Domains
             StateHistories = new List<CMMNWorkflowElementInstanceHistory>();
             TransitionHistories = new List<CMMNWorkflowElementInstanceTransitionHistory>();
             ParentId = parentId;
+            _lock = new object();
+
         }
 
         public string Id { get; set; }
@@ -33,18 +37,15 @@ namespace CaseManagement.CMMN.Domains
 
         public void UpdateState(CMMNTransitions transition, DateTime updateDateTime)
         {
-            lock(TransitionHistories)
+            lock (_lock)
             {
-                lock(StateHistories)
+                var state = GetState(transition);
+                StateHistories.Add(new CMMNWorkflowElementInstanceHistory(state, updateDateTime));
+                TransitionHistories.Add(new CMMNWorkflowElementInstanceTransitionHistory(transition, updateDateTime));
+                State = state;
+                if (TransitionApplied != null)
                 {
-                    var state = GetState(transition);
-                    StateHistories.Add(new CMMNWorkflowElementInstanceHistory(state, updateDateTime));
-                    TransitionHistories.Add(new CMMNWorkflowElementInstanceTransitionHistory(transition, updateDateTime));
-                    State = state;
-                    if (TransitionApplied != null)
-                    {
-                        TransitionApplied(this, state);
-                    }
+                    TransitionApplied(this, state);
                 }
             }
         }
@@ -54,118 +55,167 @@ namespace CaseManagement.CMMN.Domains
             return new CMMNWorkflowElementInstance(Guid.NewGuid().ToString(), DateTime.UtcNow, workflowElementDefinition.Id, workflowElementDefinition.Type, 0, null);
         }
 
+        public bool IsAvailable()
+        {
+            lock (_lock)
+            {
+                switch (WorkflowElementDefinitionType)
+                {
+                    case CMMNWorkflowElementTypes.HumanTask:
+                    case CMMNWorkflowElementTypes.ProcessTask:
+                    case CMMNWorkflowElementTypes.Stage:
+                    case CMMNWorkflowElementTypes.Task:
+                        if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available))
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    case CMMNWorkflowElementTypes.Milestone:
+                    case CMMNWorkflowElementTypes.TimerEventListener:
+                        if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    case CMMNWorkflowElementTypes.CaseFileItem:
+                        if (State == Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Available))
+                        {
+                            return true;
+                        }
+
+                        return false;
+                }
+
+                return false;
+            }
+        }
+
         public bool IsFail()
         {
-            switch (WorkflowElementDefinitionType)
+            lock(_lock)
             {
-                case CMMNWorkflowElementTypes.HumanTask:
-                case CMMNWorkflowElementTypes.ProcessTask:
-                case CMMNWorkflowElementTypes.Stage:
-                case CMMNWorkflowElementTypes.Task:
-                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed))
-                    {
-                        return true;
-                    }
+                switch (WorkflowElementDefinitionType)
+                {
+                    case CMMNWorkflowElementTypes.HumanTask:
+                    case CMMNWorkflowElementTypes.ProcessTask:
+                    case CMMNWorkflowElementTypes.Stage:
+                    case CMMNWorkflowElementTypes.Task:
+                        if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed))
+                        {
+                            return true;
+                        }
 
-                    return false;
+                        return false;
+                }
+
+                return false;
             }
-
-            return false;
         }
 
         public bool IsSuspend()
         {
-            switch (WorkflowElementDefinitionType)
+            lock(_lock)
             {
-                case CMMNWorkflowElementTypes.HumanTask:
-                case CMMNWorkflowElementTypes.ProcessTask:
-                case CMMNWorkflowElementTypes.Stage:
-                case CMMNWorkflowElementTypes.Task:
-                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended))
-                    {
-                        return true;
-                    }
+                switch (WorkflowElementDefinitionType)
+                {
+                    case CMMNWorkflowElementTypes.HumanTask:
+                    case CMMNWorkflowElementTypes.ProcessTask:
+                    case CMMNWorkflowElementTypes.Stage:
+                    case CMMNWorkflowElementTypes.Task:
+                        if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended))
+                        {
+                            return true;
+                        }
 
-                    return false;
-                case CMMNWorkflowElementTypes.Milestone:
-                case CMMNWorkflowElementTypes.TimerEventListener:
-                    if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Suspended))
-                    {
-                        return true;
-                    }
+                        return false;
+                    case CMMNWorkflowElementTypes.Milestone:
+                    case CMMNWorkflowElementTypes.TimerEventListener:
+                        if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Suspended))
+                        {
+                            return true;
+                        }
 
-                    return false;
+                        return false;
+                }
+
+                return false;
             }
-
-            return false;
         }
 
         public bool IsActive()
         {
-            switch (WorkflowElementDefinitionType)
+            lock(_lock)
             {
-                case CMMNWorkflowElementTypes.CaseFileItem:
-                    if (State == Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Available))
-                    {
-                        return true;
-                    }
+                switch (WorkflowElementDefinitionType)
+                {
+                    case CMMNWorkflowElementTypes.CaseFileItem:
+                        if (State == Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Available))
+                        {
+                            return true;
+                        }
 
-                    return false;
-                case CMMNWorkflowElementTypes.HumanTask:
-                case CMMNWorkflowElementTypes.ProcessTask:
-                case CMMNWorkflowElementTypes.Stage:
-                case CMMNWorkflowElementTypes.Task:
-                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
-                    {
-                        return true;
-                    }
+                        return false;
+                    case CMMNWorkflowElementTypes.HumanTask:
+                    case CMMNWorkflowElementTypes.ProcessTask:
+                    case CMMNWorkflowElementTypes.Stage:
+                    case CMMNWorkflowElementTypes.Task:
+                        if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active))
+                        {
+                            return true;
+                        }
 
-                    return false;
-                case CMMNWorkflowElementTypes.Milestone:
-                case CMMNWorkflowElementTypes.TimerEventListener:
-                    if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
-                    {
-                        return true;
-                    }
+                        return false;
+                    case CMMNWorkflowElementTypes.Milestone:
+                    case CMMNWorkflowElementTypes.TimerEventListener:
+                        if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
+                        {
+                            return true;
+                        }
 
-                    return false;
+                        return false;
+                }
+
+                return false;
             }
-
-            return false;
         }
 
         public bool IsComplete()
         {
-            switch (WorkflowElementDefinitionType)
+            lock(_lock)
             {
-                case CMMNWorkflowElementTypes.CaseFileItem:
-                    if (State == Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Discarded))
-                    {
-                        return true;
-                    }
+                switch (WorkflowElementDefinitionType)
+                {
+                    case CMMNWorkflowElementTypes.CaseFileItem:
+                        if (State == Enum.GetName(typeof(CMMNCaseFileItemStates), CMMNCaseFileItemStates.Discarded))
+                        {
+                            return true;
+                        }
 
-                    return false;
-                case CMMNWorkflowElementTypes.HumanTask:
-                case CMMNWorkflowElementTypes.ProcessTask:
-                case CMMNWorkflowElementTypes.Stage:
-                case CMMNWorkflowElementTypes.Task:
-                    if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed) || State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated))
-                    {
-                        return true;
-                    }
+                        return false;
+                    case CMMNWorkflowElementTypes.HumanTask:
+                    case CMMNWorkflowElementTypes.ProcessTask:
+                    case CMMNWorkflowElementTypes.Stage:
+                    case CMMNWorkflowElementTypes.Task:
+                        if (State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed) || State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated))
+                        {
+                            return true;
+                        }
 
-                    return false;
-                case CMMNWorkflowElementTypes.Milestone:
-                case CMMNWorkflowElementTypes.TimerEventListener:
-                    if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Completed) || State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Terminated))
-                    {
-                        return true;
-                    }
+                        return false;
+                    case CMMNWorkflowElementTypes.Milestone:
+                    case CMMNWorkflowElementTypes.TimerEventListener:
+                        if (State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Completed) || State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Terminated))
+                        {
+                            return true;
+                        }
 
-                    return false;
+                        return false;
+                }
+
+                return false;
             }
-
-            return false;
         }
 
         private string GetState(CMMNTransitions planItemTransition)

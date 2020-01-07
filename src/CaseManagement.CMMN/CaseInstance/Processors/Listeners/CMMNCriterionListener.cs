@@ -10,67 +10,86 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 {
     public class CMMNCriterionListener
     {
+        public class ListenEntryCriteriaResult
+        {
+            public ListenEntryCriteriaResult(bool isCriteriaSatisfied)
+            {
+                IsCriteriaSatisfied = isCriteriaSatisfied;
+            }
+
+            public ListenEntryCriteriaResult(Task task, CriterionListener listener)
+            {
+                IsCriteriaSatisfied = false;
+                Task = task;
+                Listener = listener;
+            }
+
+            public bool IsCriteriaSatisfied { get; set; }
+            public Task Task { get; set; }
+            public CriterionListener Listener { get; set; }
+        }
+
         public static void ListenEntryCriterias(ProcessorParameter parameter)
         {
             var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
-            if (!planItemDefinition.EntryCriterions.Any())
+            var entryCriterion = planItemDefinition.EntryCriterions.ToList();
+            if (!entryCriterion.Any())
             {
                 return;
             }
 
-
-            if (planItemDefinition.EntryCriterions.Any(c => parameter.WorkflowInstance.IsCriteriaSatisfied(c, parameter.WorkflowElementInstance.Version)))
+            if (entryCriterion.Any(c => parameter.WorkflowInstance.IsCriteriaSatisfied(c, parameter.WorkflowElementInstance.Version)))
             {
                 return;
             }
 
             var manualResetEvent = new ManualResetEvent(false);
-            var criterionListener = new CriterionListener(parameter, manualResetEvent, planItemDefinition.EntryCriterions);
+            var criterionListener = new CriterionListener(parameter, manualResetEvent, entryCriterion);
             criterionListener.Listen();
         }
 
-        public static KeyValuePair<Task, CriterionListener>? ListenEntryCriteriasBg(ProcessorParameter parameter)
+        public static ListenEntryCriteriaResult ListenEntryCriteriasBg(ProcessorParameter parameter)
         {
             var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
-            if (!planItemDefinition.EntryCriterions.Any())
+            var entryCriterion = planItemDefinition.EntryCriterions.ToList();
+            if (!entryCriterion.Any())
             {
                 return null;
             }
 
-
-            if (planItemDefinition.EntryCriterions.Any(c => parameter.WorkflowInstance.IsCriteriaSatisfied(c, parameter.WorkflowElementInstance.Version)))
+            if (entryCriterion.Any(c => parameter.WorkflowInstance.IsCriteriaSatisfied(c, parameter.WorkflowElementInstance.Version)))
             {
-                return null;
+                return new ListenEntryCriteriaResult(true);
             }
 
             var manualResetEvent = new ManualResetEvent(false);
-            var criterionListener = new CriterionListener(parameter, manualResetEvent, planItemDefinition.EntryCriterions);
+            var criterionListener = new CriterionListener(parameter, manualResetEvent, entryCriterion);
             var task = new Task(() =>
             {
                 criterionListener.Listen();
             }, TaskCreationOptions.LongRunning);
             task.Start();
-            return new KeyValuePair<Task, CriterionListener>(task, criterionListener);
+            return new ListenEntryCriteriaResult(task, criterionListener);
         }
 
         public static KeyValuePair<Task, CriterionListener>? ListenExitCriterias(ProcessorParameter parameter)
         {
             var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
-            if (!planItemDefinition.ExitCriterions.Any())
-            {
-                return null;
-            }
-
-            if (planItemDefinition.ExitCriterions.Any(c => parameter.WorkflowInstance.IsCriteriaSatisfied(c, parameter.WorkflowElementInstance.Version)))
-            {
-                throw new TerminateCaseInstanceElementException();
-            }
-
-            return ListenExitCriterias(parameter, planItemDefinition.ExitCriterions);
+            return ListenExitCriterias(parameter, planItemDefinition.ExitCriterions.ToList());
         }
 
         public static KeyValuePair<Task, CriterionListener>? ListenExitCriterias(ProcessorParameter parameter, ICollection<CMMNCriterion> criterias)
         {
+            if (!criterias.Any())
+            {
+                return null;
+            }
+
+            if (criterias.Any(c => parameter.WorkflowInstance.IsCriteriaSatisfied(c, parameter.WorkflowElementInstance.Version)))
+            {
+                throw new TerminateCaseInstanceElementException();
+            }
+
             var manualResetEvent = new ManualResetEvent(false);
             var criterionListener = new CriterionListener(parameter, manualResetEvent, criterias);
             var task = new Task(() =>
@@ -112,7 +131,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
                 {
                     return;
                 }
-                
+
                 var sourcePlanItemInstance = _parameter.WorkflowInstance.GetWorkflowElementInstance(evt.ElementId);
                 if (!_criterions.Any(e => e.SEntry.PlanItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.WorkflowElementDefinitionId && p.StandardEvent == evt.Transition)))
                 {

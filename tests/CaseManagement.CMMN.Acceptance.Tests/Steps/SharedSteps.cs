@@ -23,20 +23,18 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
 
         public SharedSteps(ScenarioContext scenarioContext)
         {
-            _obj.WaitOne();
             _scenarioContext = scenarioContext;
-            _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
-            {
-                c.AddSingleton(scenarioContext);
-            });
-            _client = _factory.CreateClient();
-            _obj.Release();
         }
 
         [BeforeScenario]
         public void BeforeScenario()
         {
             _obj.WaitOne();
+            _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
+            {
+                c.AddSingleton(_scenarioContext);
+            });
+            _client = _factory.CreateClient();
         }
 
         [AfterScenario]
@@ -55,6 +53,36 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
                 RequestUri = new Uri(url)
             };
             var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
+        [When("poll '(.*)', until '(.*)'='(.*)'")]
+        public async Task WhenPollHTTPGETRequest(string url, string key, string value)
+        {
+            url = Parse(url);
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url)
+            };
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            var json = await httpResponseMessage.Content.ReadAsStringAsync();
+            var jObj = JsonConvert.DeserializeObject<JObject>(json);
+            if (jObj == null)
+            {
+                Thread.Sleep(10);
+                await WhenPollHTTPGETRequest(url, key, value);
+                return;
+            }
+
+            var token = jObj.SelectToken(key);
+            if (token == null || token.ToString() != value)
+            {
+                Thread.Sleep(100);
+                await WhenPollHTTPGETRequest(url, key, value);
+                return;
+            }
+
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
         

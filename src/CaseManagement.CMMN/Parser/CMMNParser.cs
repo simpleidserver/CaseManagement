@@ -232,6 +232,32 @@ namespace CaseManagement.CMMN.Parser
                     }
                 }
 
+                if (planItem.itemControl != null)
+                {
+                    if (planItem.itemControl.manualActivationRule != null)
+                    {
+                        var manualActivationRule = new CMMNManualActivationRule(planItem.itemControl.manualActivationRule.name);
+                        var condition = planItem.itemControl.manualActivationRule.condition;
+                        if (condition != null && condition.Text.Any())
+                        {
+                            manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
+                        }
+
+                        flowInstanceElt.SetManualActivationRule(manualActivationRule);
+                    }
+                    else if (planItem.itemControl.repetitionRule != null)
+                    {
+                        var repetitionRule = new CMMNRepetitionRule(planItem.itemControl.repetitionRule.name);
+                        var condition = planItem.itemControl.repetitionRule.condition;
+                        if (condition != null && condition.Text.Any())
+                        {
+                            repetitionRule.Condition = new CMMNExpression(condition.language, condition.Text.First());
+                        }
+
+                        flowInstanceElt.SetRepetitionRule(repetitionRule);
+                    }
+                }
+
                 planItems.Add(flowInstanceElt);
             }
 

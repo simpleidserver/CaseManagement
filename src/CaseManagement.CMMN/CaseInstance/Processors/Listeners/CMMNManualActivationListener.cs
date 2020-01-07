@@ -13,7 +13,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
                 return false;
             }
             
-            parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Enable);
+            parameter.WorkflowInstance.MakeTransitionEnable(parameter.WorkflowElementInstance.Id);
             var resetEvent = new ManualResetEvent(false);
             var manualStartListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ManualStart, () =>
             {

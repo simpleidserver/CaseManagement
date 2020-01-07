@@ -10,25 +10,18 @@ using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.CMMN.Tests.Delegates;
 using CaseManagement.Workflow.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace CaseManagement.CMMN.Tests
 {
     public class WorkflowEngineFixture
     {
-        private readonly ITestOutputHelper outputHelper;
-
-        public WorkflowEngineFixture(ITestOutputHelper outputHelper)
-        {
-            this.outputHelper = outputHelper;
-        }
-
         #region Task
 
         #region PlanItemControl
@@ -47,10 +40,10 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, "1", CMMNTaskStates.Enabled);
             var elt = workflowInstance.WorkflowElementInstances.First();
             workflowInstance.MakeTransition(elt.Id, CMMNTransitions.ManualStart);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Enabled), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(2).State);
@@ -87,7 +80,7 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(3, workflowInstance.WorkflowElementInstances.Count());
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
@@ -139,7 +132,8 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(5 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(4, workflowInstance.WorkflowElementInstances.Count());
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
@@ -188,12 +182,12 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", CMMNTaskStates.Active);
             var elt = workflowInstance.WorkflowElementInstances.First();
             workflowInstance.MakeTransition(elt.Id, CMMNTransitions.Suspend);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", CMMNTaskStates.Suspended);
             workflowInstance.MakeTransition(elt.Id, CMMNTransitions.Resume);
-            Thread.Sleep(3 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
@@ -215,23 +209,25 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", CMMNTaskStates.Enabled);
             var elt = workflowInstance.WorkflowElementInstances.First();
             workflowInstance.MakeTransition(elt.Id, CMMNTransitions.Disable);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", CMMNTaskStates.Disabled);
             var ex = Assert.Throws<AggregateValidationException>(() => workflowInstance.MakeTransition(elt.Id, CMMNTransitions.ManualStart));
             Assert.NotNull(ex);
             workflowInstance.MakeTransition(elt.Id, CMMNTransitions.Reenable);
+            Wait(workflowInstance, "1", CMMNTaskStates.Enabled);
             workflowInstance.MakeTransition(elt.Id, CMMNTransitions.ManualStart);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Enabled), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Disabled), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Enabled), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(3).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(4).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(5).State);
+
         }
-        
+
         [Fact]
         public void When_Execute_LongTask_And_Terminate()
         {
@@ -260,10 +256,10 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", CMMNTaskStates.Active);
             var elt = workflowInstance.WorkflowElementInstances.First();
             workflowInstance.MakeTransition(elt.Id, CMMNTransitions.Terminate);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
@@ -298,14 +294,15 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2000);
+            Wait(workflowInstance, CMMNCaseStates.Failed);
             workflowEngine.Reactivate(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2000);
+            Wait(workflowInstance, CMMNCaseStates.Failed, 2);
 
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstance.StateHistories.ElementAt(1).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(2).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstance.StateHistories.ElementAt(3).State);
+            var workflowInstanceStateHistories = workflowInstance.StateHistories.ToList();
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstanceStateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstanceStateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstanceStateHistories.ElementAt(2).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstanceStateHistories.ElementAt(3).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
@@ -365,7 +362,12 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, "1", CMMNTaskStates.Completed);
+            Wait(workflowInstance, "2", CMMNTaskStates.Completed);
+            Wait(workflowInstance, "3", CMMNTaskStates.Available);
+            workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+            Wait(workflowInstance, CMMNCaseStates.Terminated);
+            
             Assert.Equal(3, workflowInstance.WorkflowElementInstances.Count());
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
@@ -404,7 +406,7 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                     c.AddEntryCriterion("entry", (cb) =>
                     {
-                        cb.AddOnPart(new CMMNPlanItemOnPart { SourceRef = "1", StandardEvent = CMMNTransitions.Create });
+                        cb.AddOnPart(new CMMNPlanItemOnPart { SourceRef = "1", StandardEvent = CMMNTransitions.Start });
                     });
                     c.AddExitCriterion("exit", (cb) =>
                     {
@@ -419,22 +421,22 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Thread.Sleep(2000);
+            // Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(2, workflowInstance.WorkflowElementInstances.Count());
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
-            Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.ElementAt(0).TransitionHistories.ElementAt(0).Transition);
-            Assert.Equal(CMMNTransitions.Start, workflowInstance.WorkflowElementInstances.ElementAt(0).TransitionHistories.ElementAt(1).Transition);
-            Assert.Equal(CMMNTransitions.Complete, workflowInstance.WorkflowElementInstances.ElementAt(0).TransitionHistories.ElementAt(2).Transition);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
-            Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.ElementAt(1).TransitionHistories.ElementAt(0).Transition);
-            Assert.Equal(CMMNTransitions.Start, workflowInstance.WorkflowElementInstances.ElementAt(1).TransitionHistories.ElementAt(1).Transition);
-            Assert.Equal(CMMNTransitions.Exit, workflowInstance.WorkflowElementInstances.ElementAt(1).TransitionHistories.ElementAt(2).Transition);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(0).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(1).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(2).State);
+            Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "1").TransitionHistories.ElementAt(0).Transition);
+            Assert.Equal(CMMNTransitions.Start, workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "1").TransitionHistories.ElementAt(1).Transition);
+            Assert.Equal(CMMNTransitions.Complete, workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "1").TransitionHistories.ElementAt(2).Transition);
+            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "1").StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "1").StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed), workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "1").StateHistories.ElementAt(2).State);
+            Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "2").TransitionHistories.ElementAt(0).Transition);
+            Assert.True(workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "2").TransitionHistories.Any(t => t.Transition == CMMNTransitions.Exit) == true);
+            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "2").StateHistories.ElementAt(0).State);
+            Assert.True(workflowInstance.WorkflowElementInstances.First(i => i.WorkflowElementDefinitionId == "2").StateHistories.Any(t => t.State == (Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated))) == true);
         }
 
         #endregion
@@ -458,10 +460,10 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(1 * 1000);
+            Wait(workflowInstance, "1", CMMNTaskStates.Active);
             var firstElement = workflowInstance.WorkflowElementInstances.First();
             workflowInstance.SubmitForm(firstElement.Id, firstElement.FormInstanceId);
-            Thread.Sleep(1 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
@@ -511,7 +513,8 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2000);
+            Wait(workflowInstance, CMMNCaseStates.Terminated);
+
             Assert.Equal(2, workflowInstance.WorkflowElementInstances.Count());
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Terminated), workflowInstance.StateHistories.ElementAt(1).State);
@@ -519,8 +522,7 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(0).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(1).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(2).State);
+            Assert.True(workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.Any(st => st.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated)) == true);
         }
 
         [Fact]
@@ -561,7 +563,8 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -601,9 +604,8 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", CMMNTaskStates.Active);
             workflowInstance.MakeTransition(CMMNTransitions.Terminate);
-            Thread.Sleep(2 * 1000);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Terminated), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -640,11 +642,12 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(500);
+            Wait(workflowInstance, "1", CMMNTaskStates.Active);
             workflowInstance.MakeTransition(CMMNTransitions.Suspend);
-            Thread.Sleep(500);
+            Wait(workflowInstance, "1", CMMNTaskStates.Suspended);
             workflowInstance.MakeTransition(CMMNTransitions.Resume);
-            Thread.Sleep(2000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Suspended), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(2).State);
@@ -654,7 +657,7 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Suspended), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(3).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(4).State);
-        }        
+        }
 
         [Fact]
         public void When_Reactivate_Failed_CaseInstance()
@@ -685,14 +688,15 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(1000);
+            Wait(workflowInstance, CMMNCaseStates.Failed);
             workflowEngine.Reactivate(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(1000);
+            Wait(workflowInstance, CMMNCaseStates.Failed, 2);
 
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstance.StateHistories.ElementAt(1).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(2).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstance.StateHistories.ElementAt(3).State);
+            var workflowInstanceStateHistories = workflowInstance.StateHistories.ToList();
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstanceStateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstanceStateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstanceStateHistories.ElementAt(2).State);
+            Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Failed), workflowInstanceStateHistories.ElementAt(3).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Failed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
@@ -729,7 +733,7 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             workflowInstance.MakeTransition(CMMNTransitions.Close);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
@@ -784,7 +788,7 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
 
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
@@ -801,13 +805,11 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(2).State);
             Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.ElementAt(2).TransitionHistories.ElementAt(0).Transition);
-            Assert.Equal(CMMNTransitions.Start, workflowInstance.WorkflowElementInstances.ElementAt(2).TransitionHistories.ElementAt(1).Transition);
-            Assert.Equal(CMMNTransitions.ParentExit, workflowInstance.WorkflowElementInstances.ElementAt(2).TransitionHistories.ElementAt(2).Transition);
+            Assert.True(workflowInstance.WorkflowElementInstances.ElementAt(2).TransitionHistories.Any(t => t.Transition == CMMNTransitions.ParentExit) == true);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories.ElementAt(0).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories.ElementAt(1).State);
-            Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated), workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories.ElementAt(2).State);
+            Assert.True(workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories.Any(t => t.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Terminated)) == true);
         }
-        
+
         [Fact]
         public void When_Execute_Stage_With_One_Task()
         {
@@ -826,7 +828,8 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
@@ -869,7 +872,7 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(4, workflowInstance.WorkflowElementInstances.Count());
             Assert.Equal(2, workflowInstance.ExecutionHistories.Count());
             Assert.NotNull(workflowInstance.ExecutionHistories.First());
@@ -920,12 +923,12 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(500);
+            Wait(workflowInstance, "1", CMMNTaskStates.Failed);
             workflowInstance.MakeTransition(workflowInstance.WorkflowElementInstances.First().Id, CMMNTransitions.Reactivate);
-            Thread.Sleep(500);
+            Wait(workflowInstance, "1", CMMNTaskStates.Failed, 2);
             workflowInstance.MakeTransition(CMMNTransitions.Terminate);
-            Thread.Sleep(1000);
-            
+            Wait(workflowInstance, CMMNCaseStates.Terminated);
+
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Terminated), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -964,7 +967,8 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -986,9 +990,9 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", "Available");
             workflowInstance.MakeTransition(workflowInstance.WorkflowElementInstances.First().Id, CMMNTransitions.Terminate);
-            Thread.Sleep(1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -1012,7 +1016,8 @@ namespace CaseManagement.CMMN.Tests
                 new CaseManagementCallbackProcessHandler(serviceCollection.BuildServiceProvider())
             });
             var workflowDefinition = CMMNWorkflowBuilder.New("templateId", "Case with one task")
-                .AddCMMNProcessTask("1", "First Task", (c) => {
+                .AddCMMNProcessTask("1", "First Task", (c) =>
+                {
                     c.SetIsBlocking(true);
                     c.SetProcessRef("long");
                 })
@@ -1032,11 +1037,12 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "2", "Available");
             workflowInstance.MakeTransition(workflowInstance.WorkflowElementInstances.Last().Id, CMMNTransitions.Suspend);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "2", "Suspended");
             workflowInstance.MakeTransition(workflowInstance.WorkflowElementInstances.Last().Id, CMMNTransitions.Resume);
-            Thread.Sleep(2 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -1066,7 +1072,8 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(3 * 1000);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
+
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -1095,15 +1102,16 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(100);
+            Wait(workflowInstance, "1", "Available", 2);
             workflowInstance.MakeTransition(workflowInstance.WorkflowElementInstances.Last().Id, CMMNTransitions.Suspend);
-            Thread.Sleep(2000);
+            Wait(workflowInstance, "1", "Suspended");
+            Wait(workflowInstance, "1", "Completed");
             Assert.Equal(Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Suspended), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(1).State);
             workflowInstance.MakeTransition(workflowInstance.WorkflowElementInstances.Last().Id, CMMNTransitions.Resume);
-            Thread.Sleep(2500);
+            Wait(workflowInstance, CMMNCaseStates.Completed);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Completed), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(0).State);
@@ -1145,13 +1153,13 @@ namespace CaseManagement.CMMN.Tests
             });
             var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
-            Thread.Sleep(500);
+            Wait(workflowInstance, "1", "Available");
             var caseFileItemInstance = repository.GetCaseFileItemInstance(workflowInstance.WorkflowElementInstances.First().Id).Result;
             var tmpPath = Path.Combine(caseFileItemInstance.Id, "tmp.txt");
             File.WriteAllText(tmpPath, "tmp");
-            Thread.Sleep(500);
+            Wait(workflowInstance, "2", CMMNTaskStates.Completed);
             workflowInstance.MakeTransition(CMMNTransitions.Terminate);
-            Thread.Sleep(500);
+            Wait(workflowInstance, CMMNCaseStates.Terminated);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CMMNCaseStates), CMMNCaseStates.Terminated), workflowInstance.StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(0).State);
@@ -1160,5 +1168,36 @@ namespace CaseManagement.CMMN.Tests
         }
 
         #endregion
+
+        private void Wait(CMMNWorkflowInstance workflowInstance, CMMNCaseStates caseState, int nbInstances = 1)
+        {
+            var lst = workflowInstance.StateHistories.ToList().Where(c => c.State == Enum.GetName(typeof(CMMNCaseStates), caseState));
+            if (lst.Count() < nbInstances)
+            {
+                Thread.Sleep(100);
+                Wait(workflowInstance, caseState, nbInstances);
+            }
+        }
+
+        private void Wait(CMMNWorkflowInstance workflowInstance, string eltDefId, CMMNTaskStates state, int nbInstances = 1)
+        {
+            Wait(workflowInstance, eltDefId, Enum.GetName(typeof(CMMNTaskStates), state));
+        }
+
+        private void Wait(CMMNWorkflowInstance workflowInstance, string eltDefId, string state, int nbInstances = 1)
+        {
+            var instances = workflowInstance.WorkflowElementInstances.Where(w => w.WorkflowElementDefinitionId == eltDefId);
+            if (instances.Count() < nbInstances)
+            {
+                Thread.Sleep(100);
+                Wait(workflowInstance, eltDefId, state);
+            }
+
+            if (!instances.Any(s => s.State == state))
+            {
+                Thread.Sleep(100);
+                Wait(workflowInstance, eltDefId, state);
+            }
+        }
     }
 }

@@ -2,20 +2,28 @@
 <cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:case="https://github.com/simpleidserver/CaseManagement" id="caseWithCaseFileItem" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
   <cmmn:caseFileItemDefinition id="CaseFileItemDefinition_1gxrx35" name="Document" definitionType="https://github.com/simpleidserver/casemanagement/directory" />
   <cmmn:case id="testCase" name="One Process Task Case">
-    <cmmn:casePlanModel id="CasePlanModel_1" name="Case with one fail process task">
-      <cmmn:planItem id="PlanItem_0s8tly3" definitionRef="ProcessTask_1xtzetd" />
-      <cmmn:processTask id="ProcessTask_1xtzetd" name="Fail task" processRef="failtask" />
+    <cmmn:casePlanModel id="CasePlanModel_1" name="Case with one repetition rule">
+      <cmmn:planItem id="PlanItem_0s8tly3" definitionRef="ProcessTask_1ci0zd0">
+        <cmmn:itemControl id="PlanItemControl_08o9hxk">
+          <cmmn:repetitionRule id="RepetitionRule_1a5vcca">
+            <cmmn:condition>context.GetNumberVariable("increment") &lt; 2</cmmn:condition>            
+          </cmmn:repetitionRule>
+        </cmmn:itemControl>
+      </cmmn:planItem>
+      <cmmn:processTask id="ProcessTask_1ci0zd0" name="Repetition Task" processRef="incrementtask">
+        <cmmn:parameterMapping sourceRef="increment" targetRef="increment" />
+      </cmmn:processTask>
     </cmmn:casePlanModel>
   </cmmn:case>
   <cmmndi:CMMNDI>
     <cmmndi:CMMNDiagram id="CMMNDiagram_1">
       <cmmndi:Size width="500" height="500" />
       <cmmndi:CMMNShape id="DI_CasePlanModel_1" cmmnElementRef="CasePlanModel_1">
-        <dc:Bounds x="156" y="99" width="479" height="153" />
+        <dc:Bounds x="156" y="99" width="491" height="151" />
         <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
-      <cmmndi:CMMNShape id="PlanItem_04jxc5w_di" cmmnElementRef="PlanItem_0s8tly3">
-        <dc:Bounds x="340" y="136" width="100" height="80" />
+      <cmmndi:CMMNShape id="PlanItem_02e3sof_di" cmmnElementRef="PlanItem_0s8tly3">
+        <dc:Bounds x="215" y="136" width="100" height="80" />
         <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
     </cmmndi:CMMNDiagram>

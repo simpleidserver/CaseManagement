@@ -10,7 +10,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         protected override Task Run(ProcessorParameter parameter, CancellationToken token)
         {
-            parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Complete);
+            parameter.WorkflowInstance.MakeTransitionComplete(parameter.WorkflowElementInstance.Id);
             return Task.CompletedTask;
         }
 

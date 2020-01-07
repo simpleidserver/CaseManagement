@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.Lock;
 using Microsoft.Extensions.Logging;
@@ -41,13 +42,20 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent
                 {
                     await QueueProvider.Dequeue(QueueName);
                     var workflowInstance = runningTask.Aggregate as CMMNWorkflowInstance;
-                    if (string.IsNullOrWhiteSpace(message.CaseInstanceElementId))
+                    try
                     {
-                        workflowInstance.MakeTransition(message.Transition);
+                        if (string.IsNullOrWhiteSpace(message.CaseInstanceElementId))
+                        {
+                            workflowInstance.MakeTransition(message.Transition);
+                        }
+                        else if (workflowInstance.WorkflowElementInstances.Any(i => i.Id == message.CaseInstanceElementId))
+                        {
+                            workflowInstance.MakeTransition(message.CaseInstanceElementId, message.Transition);
+                        }
                     }
-                    else if(workflowInstance.WorkflowElementInstances.Any(i => i.Id == message.CaseInstanceElementId))
+                    catch(AggregateValidationException)
                     {
-                        workflowInstance.MakeTransition(message.CaseInstanceElementId, message.Transition);
+                        // TODO : AJOUTER LOG.
                     }
                 }
 

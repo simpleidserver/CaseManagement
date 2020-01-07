@@ -116,7 +116,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
                 if (DateTime.UtcNow >= date)
                 {
-                    parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Occur);
+                    parameter.WorkflowInstance.MakeTransitionOccur(parameter.WorkflowElementInstance.Id);
                     continueExecution = false;
                 }
             }

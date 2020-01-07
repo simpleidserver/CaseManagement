@@ -5,6 +5,6 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
     public interface IActivateCommandHandler
     {
-        Task<bool> Handle(ActivateCommand command);
+        Task Handle(ActivateCommand command);
     }
 }

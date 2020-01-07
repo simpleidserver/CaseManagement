@@ -37,6 +37,11 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                     {
                         Id = "failtask",
                         AssemblyQualifiedName = typeof(FailTask).AssemblyQualifiedName
+                    },
+                    new CaseManagementProcessAggregate
+                    {
+                        Id = "incrementtask",
+                        AssemblyQualifiedName = typeof(IncrementTask).AssemblyQualifiedName
                     }
                 })
                 .AddForms(new List<FormAggregate>

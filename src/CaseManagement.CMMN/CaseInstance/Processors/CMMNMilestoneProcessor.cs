@@ -1,7 +1,6 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using static CaseManagement.CMMN.CaseInstance.Processors.Listeners.CMMNCriterionListener;
@@ -26,33 +25,38 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
         {
             bool isSuspend = false;
             bool continueExecution = true;
-            KeyValuePair<Task, CriterionListener>? kvp = null;
+            ListenEntryCriteriaResult entryCriteriaResult = null;
             var initListener = new Action(() =>
             {
-                kvp = CMMNCriterionListener.ListenEntryCriteriasBg(parameter);
-                if (kvp != null)
+                entryCriteriaResult = CMMNCriterionListener.ListenEntryCriteriasBg(parameter);
+                if (entryCriteriaResult != null)
                 {
-                    kvp.Value.Key.ContinueWith((o) =>
+                    if (entryCriteriaResult.IsCriteriaSatisfied)
                     {
-                        o.Wait();
-                        if (parameter.WorkflowElementInstance.State == Enum.GetName(typeof(CMMNMilestoneStates), CMMNMilestoneStates.Available))
+                        parameter.WorkflowInstance.MakeTransitionOccur(parameter.WorkflowElementInstance.Id);
+                        continueExecution = false;
+                    }
+                    else
+                    {
+                        entryCriteriaResult.Task.ContinueWith((o) =>
                         {
-                            parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Occur);
+                            o.Wait();
+                            parameter.WorkflowInstance.MakeTransitionOccur(parameter.WorkflowElementInstance.Id);
                             continueExecution = false;
-                        }
-                    });
+                        });
+                    }
                 }
             });
             var resetListener = new Action(() =>
             {
-                if (kvp != null)
+                if (entryCriteriaResult != null && !entryCriteriaResult.IsCriteriaSatisfied)
                 {
-                    if (kvp.Value.Key.IsCanceled || kvp.Value.Key.IsCompleted || kvp.Value.Key.IsFaulted)
+                    if (entryCriteriaResult.Task.IsCanceled || entryCriteriaResult.Task.IsCompleted || entryCriteriaResult.Task.IsFaulted)
                     {
-                        kvp.Value.Key.Dispose();
+                        entryCriteriaResult.Task.Dispose();
                     }
 
-                    kvp.Value.Value.Unsubscribe();
+                    entryCriteriaResult.Listener.Unsubscribe();
                 }
             });
             initListener();
@@ -86,11 +90,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             });
             while (continueExecution)
             {
-                Thread.Sleep(100);
                 if (isSuspend)
                 {
+                    Thread.Sleep(100);
                     continue;
-                }                
+                }
             }
 
             parentSuspendEvtListener.Unsubscribe();

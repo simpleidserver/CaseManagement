@@ -2,8 +2,10 @@
 using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using static CaseManagement.CMMN.CaseInstance.Processors.Listeners.CMMNCriterionListener;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors
 {
@@ -27,11 +29,12 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         private async Task<ProcessorParameter> HandleTask(ProcessorParameter parameter, CancellationTokenSource tokenSource)
         {
+            var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
             CMMNCriterionListener.ListenEntryCriterias(parameter);
             var isManuallyActivated = CMMNManualActivationListener.Listen(parameter);
-            if (!isManuallyActivated && parameter.WorkflowElementInstance.State == Enum.GetName(typeof(CMMNTaskStates), CMMNTaskStates.Available))
+            if (!isManuallyActivated)
             {
-                parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Start);
+                parameter.WorkflowInstance.MakeTransitionStart(parameter.WorkflowElementInstance.Id);
             }
 
             bool isSuspend = false;
@@ -86,28 +89,30 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 isTerminate = true;
                 tokenSource.Cancel();
             });
-            var kvp = CMMNCriterionListener.ListenExitCriterias(parameter);
-            if (kvp != null)
+            KeyValuePair<Task, CriterionListener>? kvp = null;
+            try
             {
-                try
+                kvp = CMMNCriterionListener.ListenExitCriterias(parameter);
+                if (kvp != null)
                 {
                     kvp.Value.Key.ContinueWith((r) =>
                     {
                         r.Wait();
-                        parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Exit);
+                        parameter.WorkflowInstance.MakeTransitionExit(parameter.WorkflowElementInstance.Id);
                     });
                 }
-                catch (TerminateCaseInstanceElementException)
-                {
-                    parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Exit);
-                }
+            }
+            catch (TerminateCaseInstanceElementException)
+            {
+                parameter.WorkflowInstance.MakeTransitionExit(parameter.WorkflowElementInstance.Id);
+                return parameter;
             }
 
             while (continueExecution)
             {
-                Thread.Sleep(100);
                 if (isSuspend)
                 {
+                    Thread.Sleep(100);
                     continue;
                 }
 
@@ -131,8 +136,17 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     }
                     catch (Exception)
                     {
-                        parameter.WorkflowInstance.MakeTransition(parameter.WorkflowElementInstance.Id, CMMNTransitions.Fault);
-                        isSuspend = false;
+                        parameter.WorkflowInstance.MakeTransitionFault(parameter.WorkflowElementInstance.Id);
+                        // NOTE : If the task doesn't belong to a stage then exit the loop.
+                        if (string.IsNullOrWhiteSpace(parameter.WorkflowElementInstance.ParentId))
+                        {
+                            continueExecution = false;
+                        }
+                        else
+                        {
+                            isSuspend = true;
+                        }
+
                         Unsubscribe();
                     }
                 }
