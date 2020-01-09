@@ -2,7 +2,7 @@
 	Check result returned by /case-instances
 	
 Scenario: Launch caseWithOneTask and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -18,7 +18,7 @@ Scenario: Launch caseWithOneTask and check his status is completed
 	Then JSON 'state'='Completed'
 	
 Scenario: Launch caseWithOneLongProcessTask and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneLongProcessTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneLongProcessTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -42,7 +42,7 @@ Scenario: Launch caseWithOneLongProcessTask and check his status is completed
 	Then JSON 'elements[0].state_histories[2].state'='Completed'
 	
 Scenario: Launch caseWithTwoStages and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithTwoStages.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithTwoStages.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -89,7 +89,7 @@ Scenario: Launch caseWithTwoStages and check his status is completed
 	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1fd01pl')].state_histories[2].state'='Completed'
 
 Scenario: Launch caseWithOneHumanTask and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneHumanTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneHumanTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -119,7 +119,7 @@ Scenario: Launch caseWithOneHumanTask and check his status is completed
 	Then JSON 'elements[0].state_histories[2].state'='Completed'
 
 Scenario: Launch caseWithOneManualActivationTask and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneManualActivationTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneManualActivationTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -149,7 +149,7 @@ Scenario: Launch caseWithOneManualActivationTask and check his status is complet
 	Then JSON 'elements[0].state_histories[3].state'='Completed'
 
 Scenario: Launch caseWithRepetitionRule and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithRepetitionRule.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithRepetitionRule.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -179,7 +179,7 @@ Scenario: Launch caseWithRepetitionRule and check his status is completed
 	Then JSON 'elements[1].state_histories[2].state'='Completed'
 
 Scenario: Launch caseWithOneSEntry and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneSEntry.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneSEntry.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -221,7 +221,7 @@ Scenario: Launch caseWithOneSEntry and check his status is completed
 	Then JSON 'elements[3].state_histories[2].state'='Completed'
 
 Scenario: Launch caseWithOneTimerEventListener and check his status is completed
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneTimerEventListener.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneTimerEventListener.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -253,7 +253,7 @@ Scenario: Launch caseWithOneTimerEventListener and check his status is completed
 	Then JSON 'elements[2].state_histories[1].state'='Completed'
 
 Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (scope = ProcessTask)
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneLongProcessTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneLongProcessTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -287,7 +287,7 @@ Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (
 	Then JSON 'elements[0].state_histories[4].state'='Completed'
 
 Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (scope = Case Instance)
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneLongProcessTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneLongProcessTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -323,7 +323,7 @@ Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (
 	Then JSON 'elements[0].state_histories[4].state'='Completed'
 
 Scenario: Reactive failed caseWithTwoStages and check his status is failed (scope = Stage)
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithTwoStages.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithTwoStages.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -383,7 +383,7 @@ Scenario: Reactive failed caseWithTwoStages and check his status is failed (scop
 
 
 Scenario: Reactivate failed caseWithOneFailProcessTask and check his status is failed (scope = Case Instance)
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneFailProcessTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneFailProcessTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -415,7 +415,7 @@ Scenario: Reactivate failed caseWithOneFailProcessTask and check his status is f
 	Then JSON 'elements[0].state_histories[4].state'='Failed'
 	
 Scenario: Terminate caseWithOneLongProcessTask and check his status is terminated
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneLongProcessTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneLongProcessTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'

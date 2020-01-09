@@ -4,6 +4,7 @@
     {
         public static class RouteNames
         {
+            public const string CaseFiles = "case-files";
             public const string CaseDefinitions = "case-definitions";
             public const string CaseInstances = "case-instances";
             public const string CaseProcesses = "case-processes";

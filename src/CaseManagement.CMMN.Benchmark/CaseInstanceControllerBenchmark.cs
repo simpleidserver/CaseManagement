@@ -104,10 +104,11 @@ namespace CaseManagement.CMMN.Benchmark
 
         public async Task PollCaseInstanceCompleted(string id)
         {
+            const int MS = 400;
             var httpResult = await _client.GetAsync($"http://localhost/case-instances/{id}");
             if (!httpResult.IsSuccessStatusCode)
             {
-                Thread.Sleep(2);
+                Thread.Sleep(MS);
                 await PollCaseInstanceCompleted(id);
                 return;
             }
@@ -116,7 +117,7 @@ namespace CaseManagement.CMMN.Benchmark
             var jObj = JsonConvert.DeserializeObject<JObject>(json);
             if (!jObj.ContainsKey("state"))
             {
-                Thread.Sleep(2);
+                Thread.Sleep(MS);
                 await PollCaseInstanceCompleted(id);
                 return;
             }

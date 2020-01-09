@@ -49,7 +49,7 @@ namespace CaseManagement.CMMN.Parser
             return strBuilder.ToString();
         }
 
-        private static CMMNWorkflowDefinition BuildWorkflowDefinition(tCase tCase, string fileName)
+        private static CMMNWorkflowDefinition BuildWorkflowDefinition(tCase tCase, string caseFileId)
         {
             var planModel = tCase.casePlanModel;
             var planItems = BuildPlanItems(planModel);
@@ -60,7 +60,7 @@ namespace CaseManagement.CMMN.Parser
             }
 
             var result = builder.Build();
-            result.CmmnDefinition = fileName;
+            result.CaseFileId = caseFileId;
             return result;
         }
         

@@ -22,6 +22,8 @@ namespace CaseManagement.CMMN.Tests
 {
     public class WorkflowEngineFixture
     {
+        private const int MS = 400;
+
         #region Task
 
         #region PlanItemControl
@@ -1174,7 +1176,7 @@ namespace CaseManagement.CMMN.Tests
             var lst = workflowInstance.StateHistories.ToList().Where(c => c.State == Enum.GetName(typeof(CMMNCaseStates), caseState));
             if (lst.Count() < nbInstances)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(MS);
                 Wait(workflowInstance, caseState, nbInstances);
             }
         }
@@ -1189,13 +1191,13 @@ namespace CaseManagement.CMMN.Tests
             var instances = workflowInstance.WorkflowElementInstances.Where(w => w.WorkflowElementDefinitionId == eltDefId);
             if (instances.Count() < nbInstances)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(MS);
                 Wait(workflowInstance, eltDefId, state);
             }
 
             if (!instances.Any(s => s.State == state))
             {
-                Thread.Sleep(100);
+                Thread.Sleep(MS);
                 Wait(workflowInstance, eltDefId, state);
             }
         }

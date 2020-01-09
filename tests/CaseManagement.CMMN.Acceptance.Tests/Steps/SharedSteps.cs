@@ -16,6 +16,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
     [Binding]
     public class SharedSteps
     {
+        private const int MS = 400;
         private static Semaphore _obj = new Semaphore(initialCount: 1, maximumCount: 1);
         private readonly ScenarioContext _scenarioContext;
         private static CustomWebApplicationFactory<FakeStartup> _factory;
@@ -70,7 +71,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             var jObj = JsonConvert.DeserializeObject<JObject>(json);
             if (jObj == null)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(MS);
                 await WhenPollHTTPGETRequest(url, key, value);
                 return;
             }
@@ -78,7 +79,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             var token = jObj.SelectToken(key);
             if (token == null || token.ToString() != value)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(MS);
                 await WhenPollHTTPGETRequest(url, key, value);
                 return;
             }

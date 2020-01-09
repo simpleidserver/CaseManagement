@@ -20,13 +20,6 @@ namespace CaseManagement.CMMN.Apis
         {
             _queryRepository = queryRepository;
         }
-
-        [HttpGet("cmmndefinitions")]
-        public async Task<IActionResult> GetCMMNDefinitions()
-        {
-            var result = await _queryRepository.GetCMMDefinitions();
-            return new OkObjectResult(result);
-        }
                 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
@@ -59,6 +52,8 @@ namespace CaseManagement.CMMN.Apis
                 {
                     { "id", r.Id },
                     { "name", r.Name },
+                    { "description", r.Description },
+                    { "case_file", r.CaseFileId },
                     { "create_datetime", r.CreateDateTime }
                 })) }
             };
@@ -70,6 +65,8 @@ namespace CaseManagement.CMMN.Apis
             {
                 { "id", def.Id },
                 { "name", def.Name },
+                { "description", def.Description },
+                { "case_file", def.CaseFileId },
                 { "create_datetime", def.CreateDateTime }
             };
         }
@@ -79,7 +76,7 @@ namespace CaseManagement.CMMN.Apis
             int startIndex;
             int count;
             string orderBy;
-            string cmmnDefinition;
+            string caseFile;
             FindOrders findOrder;
             var parameter = new FindWorkflowDefinitionsParameter();
             if (query.TryGet("start_index", out startIndex))
@@ -102,9 +99,9 @@ namespace CaseManagement.CMMN.Apis
                 parameter.Order = findOrder;
             }
 
-            if (query.TryGet("cmmn_definition", out cmmnDefinition))
+            if (query.TryGet("case_file", out caseFile))
             {
-                parameter.CMMNDefinition = cmmnDefinition;
+                parameter.CaseFileId = caseFile;
             }
 
             return parameter;

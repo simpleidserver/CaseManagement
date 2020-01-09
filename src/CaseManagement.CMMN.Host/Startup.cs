@@ -1,6 +1,7 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Host.Delegates;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Host
 {
@@ -27,28 +29,41 @@ namespace CaseManagement.CMMN.Host
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            builder.AddDefinitions(c =>
-            {
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn"))
+            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
+            builder.AddDefinitions(files)
+                .AddCaseProcesses(new List<ProcessAggregate>
                 {
-                    c.ImportDefinition(file);
-                }
-            })
-            .AddForms(new List<FormAggregate>
-            {
-                new FormAggregate
-                {
-                    Id = "createMeetingForm",
-                    Elements = new List<FormElement>
+                    new CaseManagementProcessAggregate
                     {
-                        new FormElement
+                        Id = "longtask",
+                        AssemblyQualifiedName = typeof(LongTask).AssemblyQualifiedName
+                    },
+                    new CaseManagementProcessAggregate
+                    {
+                        Id = "failtask",
+                        AssemblyQualifiedName = typeof(FailTask).AssemblyQualifiedName
+                    },
+                    new CaseManagementProcessAggregate
+                    {
+                        Id = "incrementtask",
+                        AssemblyQualifiedName = typeof(IncrementTask).AssemblyQualifiedName
+                    }
+                })
+                .AddForms(new List<FormAggregate>
+                {
+                    new FormAggregate
+                    {
+                        Id = "form",
+                        Elements = new List<FormElement>
                         {
-                            Id = "name",
-                            Type = FormElementTypes.TXT
+                            new FormElement
+                            {
+                                Id = "name",
+                                Type = FormElementTypes.TXT
+                            }
                         }
                     }
-                }
-            });
+                });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

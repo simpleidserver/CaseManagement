@@ -10,10 +10,31 @@
     <ProjectReference Include="..\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Cmmns\caseWithTimerEventListener.cmmn">
+    <None Update="Cmmns\caseWithOneFailProcessTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Cmmns\firstDiagram.cmmn">
+    <None Update="Cmmns\caseWithOneHumanTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithOneLongProcessTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithOneManualActivationTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithOneSEntry.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithOneTask.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithOneTimerEventListener.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithRepetitionRule.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Cmmns\caseWithTwoStages.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

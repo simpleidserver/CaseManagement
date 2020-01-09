@@ -32,9 +32,9 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<CMMNWorkflowDefinition>> Find(FindWorkflowDefinitionsParameter parameter)
         {
             IQueryable<CMMNWorkflowDefinition> result = _definitions.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(parameter.CMMNDefinition))
+            if (!string.IsNullOrWhiteSpace(parameter.CaseFileId))
             {
-                result = result.Where(r => r.CmmnDefinition == parameter.CMMNDefinition);
+                result = result.Where(r => r.CaseFileId == parameter.CaseFileId);
             }
 
             if (MAPPING_WORKFLOWDEFINITION_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
@@ -51,11 +51,6 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 TotalLength = totalLength,
                 Content = (ICollection<CMMNWorkflowDefinition>)result.ToList()
             });
-        }
-
-        public Task<ICollection<string>> GetCMMDefinitions()
-        {
-            return Task.FromResult((ICollection<string>)_definitions.Select(d => d.CmmnDefinition).Distinct().ToList());
         }
     }
 }

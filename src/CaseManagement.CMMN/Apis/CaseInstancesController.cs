@@ -4,6 +4,8 @@ using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
+using CaseManagement.CMMN.Persistence.Parameters;
+using CaseManagement.CMMN.Persistence.Responses;
 using CaseManagement.Workflow.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -45,15 +47,13 @@ namespace CaseManagement.CMMN.Apis
             _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
         }
 
-        /*
         [HttpGet(".search")]
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query;
-            var result = await _processFlowInstanceQueryRepository.Find(ExtractFindWorkflowInstanceParameter(query));
+            var result = await _cmmnWorkflowInstanceQueryRepository.Find(ExtractFindParameter(query));
             return new OkObjectResult(ToDto(result));
         }
-        */
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCaseInstanceCommand createCaseInstance)
@@ -471,6 +471,17 @@ namespace CaseManagement.CMMN.Apis
             }
         }
 
+        private static JObject ToDto(FindResponse<CMMNWorkflowInstance> resp)
+        {
+            return new JObject
+            {
+                { "start_index", resp.StartIndex },
+                { "total_length", resp.TotalLength },
+                { "count", resp.Count },
+                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
+            };
+        }
+
         private static JObject ToDto(CMMNWorkflowInstance workflowInstance)
         {
             var result = new JObject
@@ -589,6 +600,42 @@ namespace CaseManagement.CMMN.Apis
             {
                 StatusCode = (int)statusCode
             };
+        }
+
+        private static FindWorkflowInstanceParameter ExtractFindParameter(IQueryCollection query)
+        {
+            int startIndex;
+            int count;
+            string orderBy;
+            FindOrders findOrder;
+            string caseDefinitionId;
+            var parameter = new FindWorkflowInstanceParameter();
+            if (query.TryGet("start_index", out startIndex))
+            {
+                parameter.StartIndex = startIndex;
+            }
+
+            if (query.TryGet("count", out count))
+            {
+                parameter.Count = count;
+            }
+
+            if (query.TryGet("order_by", out orderBy))
+            {
+                parameter.OrderBy = orderBy;
+            }
+
+            if (query.TryGet("order", out findOrder))
+            {
+                parameter.Order = findOrder;
+            }
+
+            if (query.TryGet("case_definition_id", out caseDefinitionId))
+            {
+                parameter.CaseDefinitionId = caseDefinitionId;
+            }
+
+            return parameter;
         }
 
         /*

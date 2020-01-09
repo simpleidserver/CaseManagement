@@ -18,7 +18,7 @@ namespace CaseManagement.CMMN.Domains
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string CmmnDefinition { get; set; }
+        public string CaseFileId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public ICollection<CMMNCriterion> ExitCriterias { get; set; }
         public ICollection<CMMNWorkflowElementDefinition> Elements { get; set; }
@@ -30,7 +30,11 @@ namespace CaseManagement.CMMN.Domains
 
         public static CMMNWorkflowDefinition New(string id, string name, string description, ICollection<CMMNWorkflowElementDefinition> elements)
         {
-            return new CMMNWorkflowDefinition(id, name, description, elements);
+            var result = new CMMNWorkflowDefinition(id, name, description, elements)
+            {
+                CreateDateTime = DateTime.UtcNow
+            };
+            return result;
         }
 
         private CMMNWorkflowElementDefinition GetElement(ICollection<CMMNWorkflowElementDefinition> elements, string id)

@@ -31,7 +31,7 @@ Scenario: Suspend unknown case instance and check error is returned
 	Then JSON 'errors.bad_request[0]'='case instance doesn't exist'
 
 Scenario: Suspend unknown case element instance and check error is returned
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -53,7 +53,7 @@ Scenario: Reactivate unknown case instance and check error is returned
 	Then JSON 'errors.bad_request[0]'='case instance doesn't exist'
 
 Scenario: Reactivate unknown case element instance and check error is returned
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -68,7 +68,7 @@ Scenario: Reactivate unknown case element instance and check error is returned
 	Then JSON 'errors.bad_request[0]'='case instance element doesn't exist'
 
 Scenario: Reactivate not failed case instance and check error is returned
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'
@@ -90,7 +90,7 @@ Scenario: Activate unknown case instance and check error is returned
 	Then JSON 'errors.bad_request[0]'='case instance doesn't exist'
 
 Scenario: Activate unknown case element instance and check error is returned
-	When execute HTTP GET request 'http://localhost/case-definitions/.search?cmmn_definition=caseWithOneManualActivationTask.cmmn'
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneManualActivationTask.cmmn'
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'defid'
 	And execute HTTP POST JSON request 'http://localhost/case-instances'

@@ -2,6 +2,6 @@
 {
     public class FindWorkflowDefinitionsParameter : BaseFindParameter
     {
-        public string CMMNDefinition { get; set; }
+        public string CaseFileId { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using CaseManagement.CMMN.CaseInstance.Repositories;
 using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Domains.CaseFile;
 using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
@@ -17,6 +18,7 @@ using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -60,9 +62,14 @@ namespace Microsoft.Extensions.DependencyInjection
             var definitions = new List<CMMNWorkflowDefinition>();
             var caseProcesses = new List<ProcessAggregate>();
             var activations = new List<CaseActivationAggregate>();
-            var instances = new List<CMMNWorkflowInstance>();
+            var instances = new ConcurrentBag<CMMNWorkflowInstance>();
             var roles = new List<RoleAggregate>();
             var formInstances = new List<FormInstanceAggregate>();
+            var files = new List<CaseFileDefinitionAggregate>();
+            var forms = new List<FormAggregate>();
+            services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
+            services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
+            services.AddSingleton<ICMMNWorkflowFileQueryRepository>(new InMemoryCMMNWorkflowFileQueryRepository(files));
             services.AddSingleton<IFormInstanceCommandRepository>(new InMemoryFormInstanceCommandRepository(formInstances));
             services.AddSingleton<IFormInstanceQueryRepository>(new InMemoryFormInstanceQueryRepository(formInstances));
             services.AddSingleton<ICMMNWorkflowDefinitionQueryRepository>(new InMemoryCMMNWorkflowDefinitionQueryRepository(definitions));

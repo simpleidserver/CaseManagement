@@ -1,0 +1,96 @@
+<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <ul>
+            <li><div class="mat-h1"><a [routerLink]="['/casefiles']">{{ "CASE_FILES" | translate }}</a></div></li>
+            <li class="separator"><div class="mat-h1">\</div></li>
+            <li><div class="mat-h1">{{ "CASE_FILE" | translate }}</div></li>
+        </ul>
+    </div>
+</div>
+<div fxLayout="row">
+    <div fxFlexOffset="10%" fxFlex="80%">
+        <div fxLayout="column" fxLayoutGap="5px">
+            <div fxLayout="row">
+                <mat-card fxFlex="50%">
+                    <mat-card-header>
+                        <mat-card-title>{{ "CASE_FILE_INFORMATION" | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div *ngIf="isCaseFileLoading" class="center-spinner">
+                            <mat-spinner></mat-spinner>
+                        </div>
+                        <div *ngIf="!isCaseFileLoading && !isCaseFileErrorLoadOccured">
+                            <div fxLayout="column">
+                                <mat-form-field>
+                                    <mat-label>{{ "CASE_FILE_IDENTIFIER" | translate }}</mat-label>
+                                    <input matInput [value]="caseFile.Id" disabled />
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>{{ "CASE_FILE_NAME" | translate }}</mat-label>
+                                    <input matInput [value]="caseFile.Name" disabled />
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>{{ "CASE_FILE_DESCRIPTION" | translate }}</mat-label>
+                                    <input matInput [value]="caseFile.Description" disabled />
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>{{ "CASE_FILE_CREATE_DATETIME" | translate }}</mat-label>
+                                    <input matInput [value]="caseFile.CreateDateTime" disabled />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div *ngIf="isCaseDefinitionErrorLoadOccured" class="error">
+                            <p>{{ "ERROR_LOAD_CASE_FILE" | translate }}</p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+                <mat-card fxFlex="50%">
+                    <mat-card-header>
+                        <mat-card-title>{{ "CASE_DEFINITIONS" | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="mat-elevation-z8 overflow-hidden">
+                            <table mat-table class="full-width" [dataSource]="caseDefinitions" matSort>
+                                <ng-container matColumnDef="Name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_DEFINITION_NAME" | translate }}</th>
+                                    <td mat-cell *matCellDef="let caseDefinition">{{caseDefinition.Name}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Actions">
+                                    <th mat-header-cell *matHeaderCellDef>{{ "CASE_DEFINITION_ACTIONS" | translate }}</th>
+                                    <td mat-cell *matCellDef="let caseDefinition">
+                                        <button mat-icon-button [routerLink]="['/casefiles/' + caseDefinition.CaseFile + '/' + caseDefinition.Id ]">
+                                            <mat-icon>visibility</mat-icon>
+                                        </button>
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+                            <div *ngIf="isCaseDefinitionsLoading" class="center-spinner">
+                                <mat-spinner></mat-spinner>
+                            </div>
+                            <div *ngIf="isCaseDefinitionsErrorLoadOccured" class="error">
+                                <p>{{ "ERROR_LOAD_CASE_DEFINITIONS" | translate }}</p>
+                            </div>
+                            <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>{{ "CASE_FILE_SCHEMA" | translate }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isCaseFileLoading" class="center-spinner">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                    <div *ngIf="isCaseFileErrorLoadOccured" class="error">
+                        <p>{{ "ERROR_LOAD_CASE_FILE" | translate }}</p>
+                    </div>
+                    <div id="canvas" style="height: 300px;"></div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

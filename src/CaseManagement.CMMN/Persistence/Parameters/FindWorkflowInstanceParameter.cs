@@ -7,6 +7,6 @@
 
         }
 
-        public string ProcessFlowTemplateId { get; set; }
+        public string CaseDefinitionId { get; set; }
     }
 }
