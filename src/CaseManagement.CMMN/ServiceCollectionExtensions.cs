@@ -67,6 +67,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var formInstances = new List<FormInstanceAggregate>();
             var files = new List<CaseFileDefinitionAggregate>();
             var forms = new List<FormAggregate>();
+            var workflowDefinitionStatisticAggregates = new ConcurrentBag<CMMNWorkflowDefinitionStatisticAggregate>();
             services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
             services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
             services.AddSingleton<ICMMNWorkflowFileQueryRepository>(new InMemoryCMMNWorkflowFileQueryRepository(files));
@@ -79,6 +80,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICMMNActivationCommandRepository>(new InMemoryCMMNActivationCommandRepository(activations));
             services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
             services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
+            services.AddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(workflowDefinitionStatisticAggregates));
+            services.AddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(workflowDefinitionStatisticAggregates));
             return services;
         }
 
@@ -100,15 +103,17 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddEventHandlers(this IServiceCollection services)
         {
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementCreatedEvent>, CMMNWorkflowElementCreatedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementFinishedEvent>, CMMNWorkflowElementFinishedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementInstanceFormCreatedEvent>, CMMNWorkflowElementInstanceFormCreatedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementInstanceFormSubmittedEvent>, CMMNWorkflowElementInstanceFormSubmittedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementStartedEvent>, CMMNWorkflowElementStartedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementTransitionRaisedEvent>, CMMNWorkflowElementTransitionRaisedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceCreatedEvent>, CMMNWorkflowInstanceCreatedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceVariableAddedEvent>, CMMNWorkflowInstanceVariableAddedEventHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowTransitionRaisedEvent>, CMMNWorkflowTransitionRaisedEventHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceCreatedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementCreatedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementCreatedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementFinishedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementInstanceFormCreatedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementInstanceFormSubmittedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementStartedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementTransitionRaisedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceCreatedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceVariableAddedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CMMNWorkflowTransitionRaisedEvent>, WorkflowInstanceHandler>();
             return services;
         }
 

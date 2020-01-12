@@ -15,12 +15,14 @@ namespace CaseManagement.CMMN.Apis
     public class CaseDefinitionsController : Controller
     {
         private readonly ICMMNWorkflowDefinitionQueryRepository _queryRepository;
+        private readonly IStatisticQueryRepository _staticQueryRepository;
 
-        public CaseDefinitionsController(ICMMNWorkflowDefinitionQueryRepository queryRepository)
+        public CaseDefinitionsController(ICMMNWorkflowDefinitionQueryRepository queryRepository, IStatisticQueryRepository statisticQueryRepository)
         {
             _queryRepository = queryRepository;
+            _staticQueryRepository = statisticQueryRepository;
         }
-                
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
@@ -28,6 +30,22 @@ namespace CaseManagement.CMMN.Apis
             if (result == null)
             {
                 return new NotFoundResult();
+            }
+
+            return new OkObjectResult(ToDto(result));
+        }
+
+        [HttpGet("{id}/history")]
+        public async Task<IActionResult> GetHistory(string id)
+        {
+            var result = await _staticQueryRepository.FindById(id);
+            if (result == null)
+            {
+                result = new CMMNWorkflowDefinitionStatisticAggregate
+                {
+                    WorkflowDefinitionId = id,
+                    NbInstances = 0
+                };
             }
 
             return new OkObjectResult(ToDto(result));
@@ -68,6 +86,22 @@ namespace CaseManagement.CMMN.Apis
                 { "description", def.Description },
                 { "case_file", def.CaseFileId },
                 { "create_datetime", def.CreateDateTime }
+            };
+        }
+
+        private static JObject ToDto(CMMNWorkflowDefinitionStatisticAggregate def)
+        {
+            return new JObject
+            {
+                { "id", def.WorkflowDefinitionId },
+                { "nb_instances", def.NbInstances },
+                { "elements", new JArray(def.Statistics.Select(s =>
+                    new JObject
+                    {
+                        { "nb_instances", s.NbInstances },
+                        { "element", s.ElementDefinitionId }
+                    }
+                ))}
             };
         }
 

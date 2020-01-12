@@ -55,6 +55,18 @@ namespace CaseManagement.CMMN.Apis
             return new OkObjectResult(ToDto(result));
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            var result = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(id);
+            if (result == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkObjectResult(ToDto(result));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCaseInstanceCommand createCaseInstance)
         {
@@ -91,18 +103,6 @@ namespace CaseManagement.CMMN.Apis
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
-        {
-            var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(id);
-            if (flowInstance == null)
-            {
-                return new NotFoundResult();
-            }
-
-            return new OkObjectResult(ToDto(flowInstance));
         }
 
         [HttpGet("{id}/suspend")]

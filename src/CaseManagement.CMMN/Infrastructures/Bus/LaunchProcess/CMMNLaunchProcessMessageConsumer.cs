@@ -40,7 +40,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
         {
             var message = JsonConvert.DeserializeObject<LaunchProcessMessage>(queueMessage);
             var cancellationTokenSource = new CancellationTokenSource();
-            var lockId = message.ProcessFlowId;
+            var lockId = $"{QUEUE_NAME}-{message.ProcessFlowId}";
             await QueueProvider.Dequeue(QueueName);
             if (!await _distributedLock.AcquireLock(lockId))
             {

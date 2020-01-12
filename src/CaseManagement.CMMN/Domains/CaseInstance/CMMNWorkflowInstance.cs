@@ -337,7 +337,8 @@ namespace CaseManagement.CMMN.Domains
         {
             lock(DomainEvents)
             {
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, transition, DateTime.UtcNow);
+                var elt = WorkflowElementInstances.First(e => e.Id == elementId);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, transition, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -358,7 +359,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Enable, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Enable, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -379,7 +380,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.AddChild, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.AddChild, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -400,7 +401,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Start, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Start, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -421,7 +422,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Fault, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Fault, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -437,7 +438,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
                 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Exit, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Exit, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -458,7 +459,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Occur, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Occur, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -474,7 +475,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
                 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentExit, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.ParentExit, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -495,7 +496,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Reactivate, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Reactivate, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -516,7 +517,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentSuspend, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.ParentSuspend, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -537,7 +538,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Suspend, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Suspend, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -558,7 +559,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentResume, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.ParentResume, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -579,7 +580,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Resume, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Resume, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -600,7 +601,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.ParentTerminate, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.ParentTerminate, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -621,7 +622,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, CMMNTransitions.Complete, DateTime.UtcNow);
+                var evt = new CMMNWorkflowElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.WorkflowElementDefinitionId, CMMNTransitions.Complete, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -897,6 +898,22 @@ namespace CaseManagement.CMMN.Domains
         }
 
         #endregion
+
+        public override bool Equals(object obj)
+        {
+            var workflowInstance = obj as CMMNWorkflowInstance;
+            if (workflowInstance == null)
+            {
+                return false;
+            }
+
+            return workflowInstance.GetHashCode() == this.GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
         public override object Clone()
         {

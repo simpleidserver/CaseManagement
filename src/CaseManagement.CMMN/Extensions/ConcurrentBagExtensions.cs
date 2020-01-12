@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using CaseManagement.CMMN.Domains;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Extensions
 {
@@ -6,19 +8,23 @@ namespace CaseManagement.CMMN.Extensions
     {
         public static void Remove<T>(this ConcurrentBag<T> bag, T item)
         {
+            var lst = new List<T>();
             while (bag.Count > 0)
             {
                 T result;
                 bag.TryTake(out result);
-
                 if (result.Equals(item))
                 {
                     break;
                 }
 
-                bag.Add(result);
+                lst.Add(result);
             }
 
+            foreach(var l in lst)
+            {
+                bag.Add(l);
+            }
         }
     }
 }

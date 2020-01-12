@@ -28,6 +28,11 @@
     .finished:not(.djs-connection) .djs-visual > :nth-child(1) {
         stroke: rgb(255, 116, 0) !important;
     }
+
+    .nb-instances {
+        background-color: rgb(149, 117, 205);
+        border: 1px solid black;
+    }
 }
 
 @mixin component-themes($theme) {

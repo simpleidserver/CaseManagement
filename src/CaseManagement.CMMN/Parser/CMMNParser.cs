@@ -53,7 +53,7 @@ namespace CaseManagement.CMMN.Parser
         {
             var planModel = tCase.casePlanModel;
             var planItems = BuildPlanItems(planModel);
-            var builder = CMMNWorkflowBuilder.New(Guid.NewGuid().ToString(), tCase.name);
+            var builder = CMMNWorkflowBuilder.New(Guid.NewGuid().ToString(), tCase.casePlanModel.name);
             foreach (var planItem in planItems)
             {
                 builder.AddCMMNPlanItem(planItem);

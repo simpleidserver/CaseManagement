@@ -1,7 +1,7 @@
 <mat-toolbar>
     <a class="no-style" [routerLink]="['/home']">{{ "WEBSITE_TITLE" | translate }}</a>
     <span class="navigation-spacer"></span>
-    <button mat-button [routerLink]="['/casefiles']">{{ "CASE_FILES" | translate }}</button>
+    <button mat-button [routerLink]="['/casedefinitions']">{{ "CASE_DEFINITIONS" | translate }}</button>
     <button mat-button [matMenuTriggerFor]="languages">{{ "LANGUAGES" | translate }}</button>
     <mat-menu #languages="matMenu">
         <button mat-menu-item (click)="chooseLanguage('fr')">{{ "FRENCH" | translate }}</button>

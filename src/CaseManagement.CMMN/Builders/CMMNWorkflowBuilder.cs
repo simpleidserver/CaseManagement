@@ -99,7 +99,7 @@ namespace CaseManagement.CMMN.Builders
 
         public CMMNWorkflowDefinition Build()
         {
-            var result = CMMNWorkflowDefinition.New(_processFlowTemplateId, _processFlowTemplateId, "", _elements);
+            var result = CMMNWorkflowDefinition.New(_processFlowTemplateId, _processFlowName, _processFlowName, _elements);
             result.ExitCriterias = _exitCriterias;
             return result;
         }

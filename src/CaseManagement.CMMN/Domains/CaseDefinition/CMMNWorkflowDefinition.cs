@@ -13,12 +13,14 @@ namespace CaseManagement.CMMN.Domains
             Description = description;
             Elements = elements;
             ExitCriterias = new List<CMMNCriterion>();
+            CaseInstanceIds = new List<string>();
         }
-
+        
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string CaseFileId { get; set; }
+        public ICollection<string> CaseInstanceIds { get; set; }
         public DateTime CreateDateTime { get; set; }
         public ICollection<CMMNCriterion> ExitCriterias { get; set; }
         public ICollection<CMMNWorkflowElementDefinition> Elements { get; set; }

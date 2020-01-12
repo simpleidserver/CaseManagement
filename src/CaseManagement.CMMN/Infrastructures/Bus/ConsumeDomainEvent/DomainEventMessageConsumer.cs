@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,13 +70,14 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent
             var domainEvtMessage = JsonConvert.DeserializeObject<DomainEventMessage>(queueMessage);
             var type = Type.GetType(domainEvtMessage.AssemblyQualifiedName);
             var concreteType = typeof(IDomainEventHandler<>).MakeGenericType(type);
-            var evtHandler = _serviceProvider.GetService(concreteType);
+            var arrayConcreteType = typeof(IEnumerable<>).MakeGenericType(concreteType);
+            var evtHandlers = (IEnumerable<object>)_serviceProvider.GetService(arrayConcreteType);
             var domainEvt = JsonConvert.DeserializeObject(domainEvtMessage.Content, type);
             var castDomainEvt = (DomainEvent)domainEvt;
-            return HandleDomainEvent(castDomainEvt, concreteType, evtHandler);
+            return HandleDomainEvent(castDomainEvt, concreteType, evtHandlers);
         }
 
-        private async Task HandleDomainEvent(DomainEvent domainEvent, Type concreteType, object evtHandler)
+        private async Task HandleDomainEvent(DomainEvent domainEvent, Type concreteType, IEnumerable<object> evtHandlers)
         {
             var flowInstance = await _processFlowInstanceQueryRepository.FindFlowInstanceById(domainEvent.AggregateId);
             if ((flowInstance == null && domainEvent.Version > 0) || (flowInstance != null && (flowInstance.Version + 1) != domainEvent.Version))
@@ -86,9 +88,8 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent
             }
 
             await _queueProvider.Dequeue(QueueName);
-            Debug.WriteLine($"Start event : {domainEvent.GetType()} {domainEvent.Version} {JsonConvert.SerializeObject(domainEvent)}");
             _logger.LogDebug($"Start event : {domainEvent.GetType()} {domainEvent.Version} {JsonConvert.SerializeObject(domainEvent)}");
-            var lockId = $"domain-event-{domainEvent.AggregateId}-{domainEvent.Version}";
+            var lockId = $"{QUEUE_NAME}-{domainEvent.Id}";
             if (!await _distributedLock.AcquireLock(lockId))
             {
                 _logger.LogDebug($"The domain event {lockId} is locked !");
@@ -97,8 +98,11 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent
 
             try
             {
-                var task = (Task)concreteType.GetMethod("Handle").Invoke(evtHandler, new object[] { domainEvent, _cancellationTokenSource.Token });
-                await task;
+                foreach(var evtHandler in evtHandlers)
+                {
+                    var task = (Task)concreteType.GetMethod("Handle").Invoke(evtHandler, new object[] { domainEvent, _cancellationTokenSource.Token });
+                    await task;
+                }
             }
             finally
             {
