@@ -3,5 +3,6 @@
     public class FindWorkflowDefinitionsParameter : BaseFindParameter
     {
         public string CaseFileId { get; set; }
+        public string Text { get; set; }
     }
 }

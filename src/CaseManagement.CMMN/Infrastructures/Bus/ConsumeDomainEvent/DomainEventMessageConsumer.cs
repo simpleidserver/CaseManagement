@@ -16,7 +16,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent
     public class DomainEventMessageConsumer : IMessageConsumer
     {
         private readonly ILogger _logger;
-        private readonly ICMMNWorkflowInstanceQueryRepository _processFlowInstanceQueryRepository;
+        private readonly IWorkflowInstanceQueryRepository _processFlowInstanceQueryRepository;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDistributedLock _distributedLock;
         private readonly BusOptions _options;
@@ -24,7 +24,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent
         private CancellationTokenSource _cancellationTokenSource;
         private Task _currentTask;
 
-        public DomainEventMessageConsumer(ILogger<DomainEventMessageConsumer> logger, ICMMNWorkflowInstanceQueryRepository processFlowInstanceQueryRepository, IServiceProvider serviceProvider, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options)
+        public DomainEventMessageConsumer(ILogger<DomainEventMessageConsumer> logger, IWorkflowInstanceQueryRepository processFlowInstanceQueryRepository, IServiceProvider serviceProvider, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options)
         {
             _logger = logger;
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;

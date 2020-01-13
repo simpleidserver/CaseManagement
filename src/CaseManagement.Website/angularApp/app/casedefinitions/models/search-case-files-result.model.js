@@ -1,34 +1,22 @@
-var SearchCaseDefinitionItem = (function () {
-    function SearchCaseDefinitionItem() {
+import { CaseFile } from './case-file.model';
+var SearchCaseFilesResult = (function () {
+    function SearchCaseFilesResult() {
     }
-    SearchCaseDefinitionItem.fromJson = function (json) {
-        var result = new SearchCaseDefinitionItem();
-        result.CreateDateTime = json["create_datetime"];
-        result.Id = json["id"];
-        result.Name = json["name"];
-        return result;
-    };
-    return SearchCaseDefinitionItem;
-}());
-export { SearchCaseDefinitionItem };
-var SearchCaseDefinitionsResult = (function () {
-    function SearchCaseDefinitionsResult() {
-    }
-    SearchCaseDefinitionsResult.fromJson = function (json) {
-        var result = new SearchCaseDefinitionsResult();
+    SearchCaseFilesResult.fromJson = function (json) {
+        var result = new SearchCaseFilesResult();
         result.StartIndex = json["start_index"];
         result.Count = json["count"];
         result.TotalLength = json["total_length"];
         var content = [];
         if (json["content"]) {
             json["content"].forEach(function (c) {
-                content.push(SearchCaseDefinitionItem.fromJson(c));
+                content.push(CaseFile.fromJson(c));
             });
         }
         result.Content = content;
         return result;
     };
-    return SearchCaseDefinitionsResult;
+    return SearchCaseFilesResult;
 }());
-export { SearchCaseDefinitionsResult };
-//# sourceMappingURL=search-case-definitions-result.model.js.map
+export { SearchCaseFilesResult };
+//# sourceMappingURL=search-case-files-result.model.js.map

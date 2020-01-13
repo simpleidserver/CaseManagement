@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddCMIS(this IServiceCollection services)
         {
-            services.AddTransient<ICaseFileItemRepository, CMISDirectoryCaseFileItemRepository>();
+            // services.AddTransient<ICaseFileItemRepository, CMISDirectoryCaseFileItemRepository>();
             services.AddSingleton<ICMISSessionFactory, CMISSessionFactory>();
             return services;
         }

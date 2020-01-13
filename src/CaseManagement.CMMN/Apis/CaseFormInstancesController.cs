@@ -26,9 +26,17 @@ namespace CaseManagement.CMMN.Apis
             _roleQueryRepository = roleQueryRepository;
         }
 
+        [HttpGet(".search")]
+        public async Task<IActionResult> Search()
+        {
+            var query = HttpContext.Request.Query;
+            var result = await _formInstanceQueryRepository.Find(ExtractFindFormInstanceParameter(query, null));
+            return new OkObjectResult(ToDto(result));
+        }
+
         [HttpGet(".me/search")]
         [Authorize("IsConnected")]
-        public async Task<IActionResult> Search()
+        public async Task<IActionResult> SearchMyCaseFormInstances()
         {
             var nameIdentifier = this.GetNameIdentifier();
             var userRoles = await _roleQueryRepository.FindRolesByUser(nameIdentifier);
@@ -48,8 +56,14 @@ namespace CaseManagement.CMMN.Apis
                 { "content", new JArray(resp.Content.Select(r => {
                     var result = new JObject
                     {
+                        { "id", r.Id },
                         { "create_datetime", r.CreateDateTime },
                         { "update_datetime", r.UpdateDateTime },
+                        { "performer", r.RoleId },
+                        { "case_definition_id", r.CaseDefinitionId },
+                        { "case_instance_id", r.CaseElementInstanceId },
+                        { "case_element_definition_id", r.CaseElementDefinitionId },
+                        { "case_element_instance_id", r.CaseElementInstanceId },
                         { "status", Enum.GetName(typeof(FormInstanceStatus), r.Status).ToLowerInvariant() },
                         { "form_id", r.FormId }
                     };
@@ -89,11 +103,17 @@ namespace CaseManagement.CMMN.Apis
 
         private static FindFormInstanceParameter ExtractFindFormInstanceParameter(IQueryCollection query, IEnumerable<string> roleIds)
         {
+            string caseDefinitionId;
             var parameter = new FindFormInstanceParameter
             {
                 RoleIds = roleIds
             };
-            // parameter.ExtractFindParameter(query);
+            parameter.ExtractFindParameter(query);
+            if (query.TryGet("case_definition_id", out caseDefinitionId))
+            {
+                parameter.CaseDefinitionId = caseDefinitionId;
+            }
+
             return parameter;
         }
     }

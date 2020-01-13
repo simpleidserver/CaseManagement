@@ -8,7 +8,7 @@ Intel Core i7-8750H CPU 2.20GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical 
 Job=InProcess  Toolchain=InProcessEmitToolchain  
 
 ```
-|                Method |       Mean |     Error |    StdDev | Gen 0 | Gen 1 | Gen 2 | Allocated |
-|---------------------- |-----------:|----------:|----------:|------:|------:|------:|----------:|
-| CreateCaseWithOneTask |   2.904 ms | 0.1368 ms | 0.3968 ms |     - |     - |     - |    7.2 KB |
-| LaunchCaseWithOneTask | 107.478 ms | 2.0267 ms | 1.8958 ms |     - |     - |     - |    7.2 KB |
+|                Method |       Mean |     Error |    StdDev |     Median |     Gen 0 | Gen 1 | Gen 2 | Allocated |
+|---------------------- |-----------:|----------:|----------:|-----------:|----------:|------:|------:|----------:|
+| CreateCaseWithOneTask |   2.571 ms | 0.1334 ms | 0.3651 ms |   2.455 ms |         - |     - |     - |    7.2 KB |
+| LaunchCaseWithOneTask | 106.767 ms | 1.1383 ms | 1.0648 ms | 106.901 ms | 3000.0000 |     - |     - |    7.2 KB |

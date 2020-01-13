@@ -5,8 +5,6 @@ import { map } from 'rxjs/operators';
 import { CaseFile } from '../models/case-file.model';
 import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
 
-const url = "http://localhost:54942";
-
 @Injectable()
 export class CaseFilesService {
     constructor(private http: HttpClient) { }
@@ -14,7 +12,7 @@ export class CaseFilesService {
     search(startIndex: number, count: number, order: string, direction: string): Observable<SearchCaseFilesResult>{
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = url + "/case-files/.search?start_index=" + startIndex + "&count=" + count;
+        let targetUrl = process.env.API_URL + "/case-files/.search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -31,7 +29,7 @@ export class CaseFilesService {
     get(id: string): Observable<CaseFile> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = url + "/case-files/" + id;
+        let targetUrl = process.env.API_URL + "/case-files/" + id;
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return CaseFile.fromJson(res);
         }));

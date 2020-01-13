@@ -5,8 +5,10 @@ namespace CaseManagement.CMMN.Persistence
 {
     public interface IStatisticCommandRepository
     {
-        void Update(CMMNWorkflowDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate);
-        void Add(CMMNWorkflowDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate);
+        void Update(CaseDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate);
+        void Add(CaseDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate);
+        void Update(DailyStatisticAggregate caseDailyStatistic);
+        void Add(DailyStatisticAggregate caseDailyStatistic);
         Task<int> SaveChanges();
     }
 }

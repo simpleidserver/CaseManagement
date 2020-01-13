@@ -9,7 +9,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNMilestoneProcessor : IProcessor
     {
-        public CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.Milestone;
+        public CaseElementTypes Type => CaseElementTypes.Milestone;
 
         public Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 {
                     if (entryCriteriaResult.IsCriteriaSatisfied)
                     {
-                        parameter.WorkflowInstance.MakeTransitionOccur(parameter.WorkflowElementInstance.Id);
+                        parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
                         continueExecution = false;
                     }
                     else
@@ -41,7 +41,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                         entryCriteriaResult.Task.ContinueWith((o) =>
                         {
                             o.Wait();
-                            parameter.WorkflowInstance.MakeTransitionOccur(parameter.WorkflowElementInstance.Id);
+                            parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
                             continueExecution = false;
                         });
                     }

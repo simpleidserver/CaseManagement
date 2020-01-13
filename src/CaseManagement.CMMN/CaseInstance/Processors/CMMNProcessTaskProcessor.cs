@@ -19,11 +19,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             _caseLaunchProcessCommandHandler = caseLaunchProcessCommandHandler;
         }
 
-        public override CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.ProcessTask;
+        public override CaseElementTypes Type => CaseElementTypes.ProcessTask;
 
         protected override async Task Run(ProcessorParameter parameter, CancellationToken token)
         {
-            var planItem = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
+            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId) as PlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             if (processTask.IsBlocking)
             {
@@ -42,26 +42,26 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         private async Task HandleProcess(ProcessorParameter parameter, CancellationToken token)
         {
-            var planItem = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
+            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId) as PlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             var parameters = new Dictionary<string, string>();
             var processRef = processTask.ProcessRef;
             if (string.IsNullOrWhiteSpace(processRef))
             {
-                processRef = ExpressionParser.GetStringEvaluation(processTask.ProcessRefExpression.Body, parameter.WorkflowInstance);
+                processRef = ExpressionParser.GetStringEvaluation(processTask.ProcessRefExpression.Body, parameter.CaseInstance);
             }
 
             foreach (var mapping in processTask.Mappings)
             {
-                if (!parameter.WorkflowInstance.ContainsVariable(mapping.SourceRef.Name))
+                if (!parameter.CaseInstance.ContainsVariable(mapping.SourceRef.Name))
                 {
                     continue;
                 }
 
-                var variableValue = parameter.WorkflowInstance.GetVariable(mapping.SourceRef.Name);
+                var variableValue = parameter.CaseInstance.GetVariable(mapping.SourceRef.Name);
                 if (mapping.Transformation != null)
                 {
-                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.WorkflowInstance, (i) =>
+                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.CaseInstance, (i) =>
                     {
                         i.SetVariable("sourceValue", variableValue);
                     });
@@ -84,7 +84,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
         
         private Task HandleLaunchCaseProcessCallback(ProcessorParameter parameter, CaseProcessResponse caseProcessResponse, CancellationToken token)
         {
-            var planItem = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId) as CMMNPlanItemDefinition;
+            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId) as PlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             foreach (var mapping in processTask.Mappings)
             {
@@ -96,16 +96,16 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 string vv = caseProcessResponse.Parameters[mapping.SourceRef.Name];
                 if (mapping.Transformation != null)
                 {
-                    vv = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.WorkflowInstance, (i) =>
+                    vv = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.CaseInstance, (i) =>
                     {
                         i.SetVariable("sourceValue", vv);
                     });
                 }
 
-                parameter.WorkflowInstance.SetVariable(mapping.TargetRef.Name, vv);
+                parameter.CaseInstance.SetVariable(mapping.TargetRef.Name, vv);
             }
 
-            parameter.WorkflowInstance.MakeTransitionComplete(parameter.WorkflowElementInstance.Id);
+            parameter.CaseInstance.MakeTransitionComplete(parameter.CaseElementInstance.Id);
             return Task.CompletedTask;
         }
     }

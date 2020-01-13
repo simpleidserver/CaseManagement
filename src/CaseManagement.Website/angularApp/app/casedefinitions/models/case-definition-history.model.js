@@ -1,35 +1,29 @@
-var CasePlanModel = (function () {
-    function CasePlanModel() {
+var CaseElementDefinitionHistory = (function () {
+    function CaseElementDefinitionHistory() {
     }
-    CasePlanModel.fromJson = function (json) {
-        var result = new CasePlanModel();
-        result.Id = json["id"];
-        result.Name = json["name"];
+    CaseElementDefinitionHistory.fromJson = function (json) {
+        var result = new CaseElementDefinitionHistory();
+        result.Element = json["element"];
+        result.NbInstances = json["nb_instances"];
         return result;
     };
-    return CasePlanModel;
+    return CaseElementDefinitionHistory;
 }());
-export { CasePlanModel };
-var CaseDefinition = (function () {
-    function CaseDefinition() {
-        this.CasePlanModels = [];
+export { CaseElementDefinitionHistory };
+var CaseDefinitionHistory = (function () {
+    function CaseDefinitionHistory() {
+        this.Elements = [];
     }
-    CaseDefinition.fromJson = function (json) {
-        var result = new CaseDefinition();
+    CaseDefinitionHistory.fromJson = function (json) {
+        var result = new CaseDefinitionHistory();
         result.Id = json["id"];
-        result.Name = json["name"];
-        result.CreateDateTime = json["create_datetime"];
-        result.Xml = json["xml"];
-        var casePlanModels = [];
-        if (json["cases"]) {
-            json["cases"].forEach(function (c) {
-                casePlanModels.push(CasePlanModel.fromJson(c));
-            });
-        }
-        result.CasePlanModels = casePlanModels;
+        result.NbInstances = json["nb_instances"];
+        json["elements"].forEach(function (sh) {
+            result.Elements.push(CaseElementDefinitionHistory.fromJson(sh));
+        });
         return result;
     };
-    return CaseDefinition;
+    return CaseDefinitionHistory;
 }());
-export { CaseDefinition };
-//# sourceMappingURL=case-def.model.js.map
+export { CaseDefinitionHistory };
+//# sourceMappingURL=case-definition-history.model.js.map

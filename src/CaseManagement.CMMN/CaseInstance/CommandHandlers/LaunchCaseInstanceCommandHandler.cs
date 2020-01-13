@@ -20,7 +20,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(launchCaseInstanceCommand.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(launchCaseInstanceCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CaseInstance>(launchCaseInstanceCommand.CaseInstanceId, Domains.CaseInstance.GetStreamName(launchCaseInstanceCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CaseInstanceId);

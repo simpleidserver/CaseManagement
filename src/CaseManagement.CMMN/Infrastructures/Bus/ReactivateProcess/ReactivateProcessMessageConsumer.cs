@@ -12,18 +12,18 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
+namespace CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess
 {
     public class ReactivateProcessMessageConsumer : BaseMessageConsumer
     {
         private readonly ILogger _logger;
         private readonly IDistributedLock _distributedLock;
-        private readonly ICMMNWorkflowEngine _workflowEngine;
+        private readonly ICaseEngine _workflowEngine;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly ICMMNWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
+        private readonly IWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
 
-        public ReactivateProcessMessageConsumer(ILogger<ReactivateProcessMessageConsumer> logger, IDistributedLock distributedLock, ICMMNWorkflowEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, ICMMNWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public ReactivateProcessMessageConsumer(ILogger<ReactivateProcessMessageConsumer> logger, IDistributedLock distributedLock, ICaseEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, IWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;
@@ -48,13 +48,13 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
             }
             
             await QueueProvider.Dequeue(QueueName);
-            var workflowInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(message.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(message.CaseInstanceId));
-            var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(workflowInstance.WorkflowDefinitionId);
+            var workflowInstance = await _eventStoreRepository.GetLastAggregate<Domains.CaseInstance>(message.CaseInstanceId, Domains.CaseInstance.GetStreamName(message.CaseInstanceId));
+            var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(workflowInstance.CaseDefinitionId);
             var task = new Task(async () => await HandleLaunchProcess(workflowDefinition, workflowInstance, message.CaseInstanceId, lockId, cancellationTokenSource.Token));
             return new RunningTask(message.CaseInstanceId, task, workflowInstance, cancellationTokenSource);
         }
 
-        private async Task HandleLaunchProcess(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, string taskId, string lockId, CancellationToken token)
+        private async Task HandleLaunchProcess(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, string taskId, string lockId, CancellationToken token)
         {
             Debug.WriteLine($"Reactivate process {lockId}");
             try
@@ -79,7 +79,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
 
         private async void HandleEventRaised(object sender, DomainEventArgs e)
         {
-            var workflowInstance = sender as CMMNWorkflowInstance;
+            var workflowInstance = sender as Domains.CaseInstance;
             await _commitAggregateHelper.Commit(workflowInstance, new List<DomainEvent> { e.DomainEvt }, workflowInstance.Version, workflowInstance.GetStreamName());
         }
     }

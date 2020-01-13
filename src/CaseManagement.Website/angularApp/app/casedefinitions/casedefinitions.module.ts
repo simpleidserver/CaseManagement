@@ -11,7 +11,9 @@ import * as fromListCaseDefinitionsReducer from './list/list-reducer';
 import { ListCaseDefinitionsComponent } from './list/list.component';
 import { CaseDefinitionsService } from './services/casedefinitions.service';
 import { CaseFilesService } from './services/casefiles.service';
+import { CaseFormInstancesService } from './services/caseforminstances.service';
 import { CaseInstancesService } from './services/caseinstances.service';
+import { CaseActivationsService } from './services/caseactivations.service';
 import { ViewCaseDefinitionEffects } from './view/view-effects';
 import * as fromCaseDefinitionReducer from './view/view-reducer';
 import { ViewCaseDefinitionComponent } from './view/view.component';
@@ -26,7 +28,9 @@ import { ViewCaseDefinitionComponent } from './view/view.component';
         StoreModule.forRoot({
             caseDefinitions: fromListCaseDefinitionsReducer.reducer,
             caseDefinition: fromCaseDefinitionReducer.caseDefinitionReducer,
-            caseInstances: fromCaseDefinitionReducer.caseInstancesReducer
+            caseInstances: fromCaseDefinitionReducer.caseInstancesReducer,
+            formInstances: fromCaseDefinitionReducer.formInstancesReducer,
+            caseActivations: fromCaseDefinitionReducer.caseActivationsReducer
         }),
         StoreDevtoolsModule.instrument({
             maxAge: 10
@@ -40,7 +44,9 @@ import { ViewCaseDefinitionComponent } from './view/view.component';
     providers: [
         CaseFilesService,
         CaseDefinitionsService,
-        CaseInstancesService
+        CaseInstancesService,
+        CaseFormInstancesService,
+        CaseActivationsService
     ]
 })
 

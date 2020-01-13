@@ -10,5 +10,6 @@ namespace CaseManagement.CMMN.Persistence.Parameters
         }
 
         public IEnumerable<string> RoleIds { get; set; }
+        public string CaseDefinitionId { get; set; }
     }
 }

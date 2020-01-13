@@ -28,23 +28,23 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 
             public void Listen()
             {
-                _parameter.WorkflowInstance.EventRaised += HandlePlanItemChanged;
+                _parameter.CaseInstance.EventRaised += HandlePlanItemChanged;
             }
 
             public void Unsubscribe()
             {
-                _parameter.WorkflowInstance.EventRaised -= HandlePlanItemChanged;
+                _parameter.CaseInstance.EventRaised -= HandlePlanItemChanged;
             }
 
             private void HandlePlanItemChanged(object sender, DomainEventArgs args)
             {
-                var evt = args.DomainEvt as CMMNWorkflowElementTransitionRaisedEvent;
+                var evt = args.DomainEvt as CaseElementTransitionRaisedEvent;
                 if (evt == null)
                 {
                     return;
                 }
 
-                if (evt.ElementId == _parameter.WorkflowElementInstance.Id && evt.Transition == _transition)
+                if (evt.CaseElementId == _parameter.CaseElementInstance.Id && evt.Transition == _transition)
                 {
                     _callback();
                     Unsubscribe();

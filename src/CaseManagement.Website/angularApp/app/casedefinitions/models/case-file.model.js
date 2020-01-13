@@ -1,35 +1,16 @@
-var CasePlanModel = (function () {
-    function CasePlanModel() {
+var CaseFile = (function () {
+    function CaseFile() {
     }
-    CasePlanModel.fromJson = function (json) {
-        var result = new CasePlanModel();
+    CaseFile.fromJson = function (json) {
+        var result = new CaseFile();
         result.Id = json["id"];
         result.Name = json["name"];
-        return result;
-    };
-    return CasePlanModel;
-}());
-export { CasePlanModel };
-var CaseDefinition = (function () {
-    function CaseDefinition() {
-        this.CasePlanModels = [];
-    }
-    CaseDefinition.fromJson = function (json) {
-        var result = new CaseDefinition();
-        result.Id = json["id"];
-        result.Name = json["name"];
+        result.Description = json["description"];
+        result.Payload = json["payload"];
         result.CreateDateTime = json["create_datetime"];
-        result.Xml = json["xml"];
-        var casePlanModels = [];
-        if (json["cases"]) {
-            json["cases"].forEach(function (c) {
-                casePlanModels.push(CasePlanModel.fromJson(c));
-            });
-        }
-        result.CasePlanModels = casePlanModels;
         return result;
     };
-    return CaseDefinition;
+    return CaseFile;
 }());
-export { CaseDefinition };
-//# sourceMappingURL=case-def.model.js.map
+export { CaseFile };
+//# sourceMappingURL=case-file.model.js.map

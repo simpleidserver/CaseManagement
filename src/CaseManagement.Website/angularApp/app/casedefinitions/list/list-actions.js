@@ -1,22 +1,22 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["CASEDEFSLOAD"] = "[CaseDefs] Load";
-    ActionTypes["CASEDEFSLOADED"] = "[CaseDefs] Loaded";
-    ActionTypes["ERRORLOADCASEDEFS"] = "[CaseDefs] Error Load";
+    ActionTypes["CASEDEFINITIONSLOAD"] = "[CaseDefinitions] Load";
+    ActionTypes["CASEDEFINITIONSLOADED"] = "[CaseDefinitions] Loaded";
+    ActionTypes["ERRORLOADCASEDEFINITIONS"] = "[CaseDefinitions] Error Load";
 })(ActionTypes || (ActionTypes = {}));
-var LoadCaseDefsAction = (function () {
-    function LoadCaseDefsAction() {
-        this.type = ActionTypes.CASEDEFSLOAD;
+var LoadCaseDefinitionsAction = (function () {
+    function LoadCaseDefinitionsAction() {
+        this.type = ActionTypes.CASEDEFINITIONSLOAD;
     }
-    return LoadCaseDefsAction;
+    return LoadCaseDefinitionsAction;
 }());
-export { LoadCaseDefsAction };
-var CaseDefsLoadedAction = (function () {
-    function CaseDefsLoadedAction(result) {
+export { LoadCaseDefinitionsAction };
+var CaseDefinitionsLoadedAction = (function () {
+    function CaseDefinitionsLoadedAction(result) {
         this.result = result;
-        this.type = ActionTypes.CASEDEFSLOADED;
+        this.type = ActionTypes.CASEDEFINITIONSLOADED;
     }
-    return CaseDefsLoadedAction;
+    return CaseDefinitionsLoadedAction;
 }());
-export { CaseDefsLoadedAction };
-//# sourceMappingURL=list-case-defs-actions.js.map
+export { CaseDefinitionsLoadedAction };
+//# sourceMappingURL=list-actions.js.map

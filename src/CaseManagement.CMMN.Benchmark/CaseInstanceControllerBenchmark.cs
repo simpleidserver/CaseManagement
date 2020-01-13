@@ -15,6 +15,7 @@ namespace CaseManagement.CMMN.Benchmark
     [RPlotExporter]
     public class CaseInstanceControllerBenchmark
     {
+        private const int MS = 400;
         private HttpClient _client;
 
         [GlobalSetup]
@@ -97,6 +98,7 @@ namespace CaseManagement.CMMN.Benchmark
             var httpResult = await _client.GetAsync($"http://localhost/case-instances/{id}");
             if (!httpResult.IsSuccessStatusCode)
             {
+                Thread.Sleep(MS);
                 await PollCaseInstanceCreated(id);
                 return;
             }
@@ -104,7 +106,6 @@ namespace CaseManagement.CMMN.Benchmark
 
         public async Task PollCaseInstanceCompleted(string id)
         {
-            const int MS = 400;
             var httpResult = await _client.GetAsync($"http://localhost/case-instances/{id}");
             if (!httpResult.IsSuccessStatusCode)
             {

@@ -6,6 +6,6 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
     public interface ICreateCaseInstanceCommandHandler
     {
-        Task<CMMNWorkflowInstance> Handle(CreateCaseInstanceCommand command);
+        Task<Domains.CaseInstance> Handle(CreateCaseInstanceCommand command);
     }
 }

@@ -17,17 +17,17 @@
         </div>
         <mat-list *ngIf="!isErrorLoadOccured && !isLoading">
             <mat-list-item>
-                <h4 mat-line>{{ "CASE_DEFINITION_NAME" | translate}}</h4>
+                <h4 mat-line>{{ "NAME" | translate}}</h4>
                 <p mat-line>{{ caseDefinition.Name }}</p>
                 <mat-divider></mat-divider>
             </mat-list-item>
             <mat-list-item>
-                <h4 mat-line>{{ "CASE_DEFINITION_CREATE_DATEITME" | translate}}</h4>
+                <h4 mat-line>{{ "CREATE_DATEITME" | translate}}</h4>
                 <p mat-line>{{ caseDefinition.CreateDateTime | date:'medium' }}</p>
                 <mat-divider></mat-divider>
             </mat-list-item>
             <mat-list-item>
-                <h4 mat-line>{{ "CASE_DEFINITION_NB_INSTANCES" | translate}}</h4>
+                <h4 mat-line>{{ "NB_INSTANCES" | translate}}</h4>
                 <p mat-line>{{ caseDefinitionHistory.NbInstances }}</p>
                 <mat-divider></mat-divider>
             </mat-list-item>
@@ -46,43 +46,109 @@
             </div>
             <div>                
                 <mat-card>
-                    <button mat-raised-button color="primary" (click)="createInstance()">{{ "CREATE_INSTANCE" | translate }}</button>
-                    <div class="mat-elevation-z8 overflow-hidden">
-                        <table mat-table class="full-width" [dataSource]="caseInstances" matSort>
-                            <ng-container matColumnDef="id">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_ID" | translate }}</th>
-                                <td mat-cell *matCellDef="let case">
-                                    <a class="no-style" [routerLink]="['/casedefinitions/' + case.Id]">{{case.Id}}</a>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="state">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_STATE" | translate }}</th>
-                                <td mat-cell *matCellDef="let case">
-                                    <mat-chip-list>
-                                        <mat-chip>{{ case.State }}</mat-chip>
-                                    </mat-chip-list>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="create_datetime">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_CREATE_DATETIME" | translate }}</th>
-                                <td mat-cell *matCellDef="let case">{{case.CreateDateTime | date:'medium'}} </td>
-                            </ng-container>
-                            <ng-container matColumnDef="actions">
-                                <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let caseInstance">
-                                    <button mat-icon-button (click)="launchCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Active'">
-                                        <mat-icon>play_arrow</mat-icon>
-                                    </button>
-                                </td>
-                            </ng-container>
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                        </table>
-                        <div *ngIf="isCaseInstancesErrorLoadOccured" class="error">
-                            <p>{{ "ERROR_LOAD_CASE_INSTANCES" | translate }}</p>
-                        </div>
-                        <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-                    </div>
+                    <mat-card-content>
+                        <button mat-raised-button color="primary" (click)="createInstance()">{{ "CREATE_INSTANCE" | translate }}</button>
+                        <mat-tab-group>
+                            <mat-tab label="{{'CASE_INSTANCES' | translate}}">
+                                <div class="mat-elevation-z8 overflow-hidden">
+                                    <table mat-table class="full-width" [dataSource]="caseInstances" matSort #caseInstancesSort="matSort">
+                                        <ng-container matColumnDef="id">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "ID" | translate }}</th>
+                                            <td mat-cell *matCellDef="let case">
+                                                <a class="no-style" [routerLink]="['/casedefinitions/' + case.Id]">{{case.Id}}</a>
+                                            </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="state">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "STATE" | translate }}</th>
+                                            <td mat-cell *matCellDef="let case">
+                                                <mat-chip-list>
+                                                    <mat-chip>{{ case.State }}</mat-chip>
+                                                </mat-chip-list>
+                                            </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="create_datetime">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CREATE_DATETIME" | translate }}</th>
+                                            <td mat-cell *matCellDef="let case">{{case.CreateDateTime | date:'medium'}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="actions">
+                                            <th mat-header-cell *matHeaderCellDef></th>
+                                            <td mat-cell *matCellDef="let caseInstance">
+                                                <button mat-icon-button (click)="launchCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Active'">
+                                                    <mat-icon>play_arrow</mat-icon>
+                                                </button>
+                                            </td>
+                                        </ng-container>
+                                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                    </table>
+                                    <div *ngIf="isCaseInstancesErrorLoadOccured" class="error">
+                                        <p>{{ "ERROR_LOAD_CASE_INSTANCES" | translate }}</p>
+                                    </div>
+                                    <mat-paginator #caseInstancesPaginator [length]="caseInstancesLength" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                                </div>
+                            </mat-tab>
+                            <mat-tab label="{{ 'CASE_FORM_INSTANCES' | translate}}">
+                                <div class="mat-elevation-z8 overflow-hidden">
+                                    <table mat-table class="full-width" [dataSource]="caseFormInstances" matSort #formInstancesSort="matSort">
+                                        <ng-container matColumnDef="form_id">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "FORM_ID" | translate }}</th>
+                                            <td mat-cell *matCellDef="let formInstance">{{ formInstance.FormId }}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="case_instance_id">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_ID" | translate }}</th>
+                                            <td mat-cell *matCellDef="let formInstance">{{ formInstance.CaseInstanceId }}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="performer">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "PERFORMER" | translate }}</th>
+                                            <td mat-cell *matCellDef="let formInstance">{{ formInstance.Performer }}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="update_datetime">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "UPDATE_DATETIME" | translate }}</th>
+                                            <td mat-cell *matCellDef="let formInstance">{{ formInstance.UpdateDateTime | date:'medium' }}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="create_datetime">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CREATE_DATETIME" | translate }}</th>
+                                            <td mat-cell *matCellDef="let formInstance">{{ formInstance.CreateDateTime | date:'medium'}} </td>
+                                        </ng-container>
+                                        <tr mat-header-row *matHeaderRowDef="formInstanceDisplayedColumns"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: formInstanceDisplayedColumns;"></tr>
+                                    </table>
+                                    <div *ngIf="isCaseFormInstancesErrorLoadOccured" class="error">
+                                        <p>{{ "ERROR_LOAD_FORM_INSTANCES" | translate }}</p>
+                                    </div>
+                                    <mat-paginator #formInstancesPaginator [length]="formInstancesLength" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                                </div>
+                            </mat-tab>
+                            <mat-tab label="{{ 'CASE_ACTIVATIONS' | translate}}">
+                                <div class="mat-elevation-z8 overflow-hidden">
+                                    <table mat-table class="full-width" [dataSource]="caseActivations" matSort #caseActivationsSort="matSort">
+                                        <ng-container matColumnDef="case_instance_name">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "ELEMENT_NAME" | translate }}</th>
+                                            <td mat-cell *matCellDef="let caseActivation">{{ caseActivation.CaseInstanceName }}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="case_instance_id">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CASE_INSTANCE_ID" | translate }}</th>
+                                            <td mat-cell *matCellDef="let caseActivation">{{ caseActivation.CaseInstanceId }}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="performer">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "PERFORMER" | translate }}</th>
+                                            <td mat-cell *matCellDef="let caseActivation">{{ caseActivation.Performer }}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="create_datetime">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "CREATE_DATETIME" | translate }}</th>
+                                            <td mat-cell *matCellDef="let caseActivation">{{ caseActivation.CreateDateTime | date:'medium'}} </td>
+                                        </ng-container>
+                                        <tr mat-header-row *matHeaderRowDef="caseActivationDisplayedColumns"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: caseActivationDisplayedColumns;"></tr>
+                                    </table>
+                                    <div *ngIf="isCaseActivationsErrorLoadOccured" class="error">
+                                        <p>{{ "ERROR_LOAD_CASE_ACTIVATIONS" | translate }}</p>
+                                    </div>
+                                    <mat-paginator #caseActivationsPaginator [length]="caseActivationsLength" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                                </div>
+                            </mat-tab>
+                        </mat-tab-group>
+                    </mat-card-content>
                 </mat-card>
             </div>
         </div>

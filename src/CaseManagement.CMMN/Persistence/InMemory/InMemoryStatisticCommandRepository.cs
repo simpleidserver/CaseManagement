@@ -8,23 +8,36 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 {
     public class InMemoryStatisticCommandRepository : IStatisticCommandRepository
     {
-        private readonly ConcurrentBag<CMMNWorkflowDefinitionStatisticAggregate> _workflowDefinitionStatistics;
+        private readonly ConcurrentBag<CaseDefinitionStatisticAggregate> _workflowDefinitionStatistics;
+        private readonly ConcurrentBag<DailyStatisticAggregate> _caseDailyStatistics;
 
-        public InMemoryStatisticCommandRepository(ConcurrentBag<CMMNWorkflowDefinitionStatisticAggregate> workflowDefinitionStatistics)
+        public InMemoryStatisticCommandRepository(ConcurrentBag<CaseDefinitionStatisticAggregate> workflowDefinitionStatistics, ConcurrentBag<DailyStatisticAggregate> caseDailyStatistics)
         {
             _workflowDefinitionStatistics = workflowDefinitionStatistics;
+            _caseDailyStatistics = caseDailyStatistics;
         }
 
-        public void Update(CMMNWorkflowDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate)
+        public void Add(CaseDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate)
         {
-            var wf = _workflowDefinitionStatistics.First(w => w.WorkflowDefinitionId == cmmnWorkflowDefinitionStatisticAggregate.WorkflowDefinitionId);
+            _workflowDefinitionStatistics.Add((CaseDefinitionStatisticAggregate)cmmnWorkflowDefinitionStatisticAggregate.Clone());
+        }
+
+        public void Update(CaseDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate)
+        {
+            var wf = _workflowDefinitionStatistics.First(w => w.CaseDefinitionId == cmmnWorkflowDefinitionStatisticAggregate.CaseDefinitionId);
             _workflowDefinitionStatistics.Remove(wf);
-            _workflowDefinitionStatistics.Add((CMMNWorkflowDefinitionStatisticAggregate)wf.Clone());
+            _workflowDefinitionStatistics.Add((CaseDefinitionStatisticAggregate)wf.Clone());
         }
 
-        public void Add(CMMNWorkflowDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate)
+        public void Add(DailyStatisticAggregate caseDailyStatistic)
         {
-            _workflowDefinitionStatistics.Add((CMMNWorkflowDefinitionStatisticAggregate)cmmnWorkflowDefinitionStatisticAggregate.Clone());
+            _caseDailyStatistics.Add((DailyStatisticAggregate)caseDailyStatistic.Clone());
+        }
+
+        public void Update(DailyStatisticAggregate caseDailyStatistic)
+        {
+            _caseDailyStatistics.Remove(caseDailyStatistic);
+            _caseDailyStatistics.Add(caseDailyStatistic);
         }
 
         public Task<int> SaveChanges()

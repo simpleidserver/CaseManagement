@@ -1,16 +1,4 @@
-var SearchCaseDefinitionItem = (function () {
-    function SearchCaseDefinitionItem() {
-    }
-    SearchCaseDefinitionItem.fromJson = function (json) {
-        var result = new SearchCaseDefinitionItem();
-        result.CreateDateTime = json["create_datetime"];
-        result.Id = json["id"];
-        result.Name = json["name"];
-        return result;
-    };
-    return SearchCaseDefinitionItem;
-}());
-export { SearchCaseDefinitionItem };
+import { CaseDefinition } from './case-definition.model';
 var SearchCaseDefinitionsResult = (function () {
     function SearchCaseDefinitionsResult() {
     }
@@ -22,7 +10,7 @@ var SearchCaseDefinitionsResult = (function () {
         var content = [];
         if (json["content"]) {
             json["content"].forEach(function (c) {
-                content.push(SearchCaseDefinitionItem.fromJson(c));
+                content.push(CaseDefinition.fromJson(c));
             });
         }
         result.Content = content;

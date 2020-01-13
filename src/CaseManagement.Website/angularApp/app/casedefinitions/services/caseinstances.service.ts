@@ -5,8 +5,6 @@ import { map } from 'rxjs/operators';
 import { CaseInstance } from '../models/case-instance.model';
 import { SearchCaseInstancesResult } from '../models/search-case-instances.model';
 
-const url = "http://localhost:54942";
-
 @Injectable()
 export class CaseInstancesService {
     constructor(private http: HttpClient) { }
@@ -14,7 +12,7 @@ export class CaseInstancesService {
     search(caseDefinitionId: string, startIndex: number, count: number, order: string, direction: string): Observable<SearchCaseInstancesResult>{
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = url + "/case-instances/.search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
+        let targetUrl = process.env.API_URL + "/case-instances/.search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -32,7 +30,7 @@ export class CaseInstancesService {
     get(id: string): Observable<CaseInstance> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = url + "/case-instances/" + id;
+        let targetUrl = process.env.API_URL + "/case-instances/" + id;
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return CaseInstance.fromJson(res);
         }));
@@ -40,7 +38,7 @@ export class CaseInstancesService {
 
     create(caseDefId: string): Observable<CaseInstance> {
         const request = JSON.stringify({ case_definition_id: caseDefId });
-        let targetUrl = url + "/case-instances";
+        let targetUrl = process.env.API_URL + "/case-instances";
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -50,7 +48,7 @@ export class CaseInstancesService {
     }
 
     launch(caseInstanceId : string) {
-        let targetUrl = url + "/case-instances/" + caseInstanceId + "/launch";
+        let targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/launch";
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         return this.http.get(targetUrl, { headers: headers });

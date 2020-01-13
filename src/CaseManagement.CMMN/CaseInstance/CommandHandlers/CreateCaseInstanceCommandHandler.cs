@@ -9,16 +9,16 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
     public class CreateCaseInstanceCommandHandler : ICreateCaseInstanceCommandHandler
     {
-        private readonly ICMMNWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
+        private readonly IWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public CreateCaseInstanceCommandHandler(ICMMNWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, ICommitAggregateHelper commitAggregateHelper)
+        public CreateCaseInstanceCommandHandler(IWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, ICommitAggregateHelper commitAggregateHelper)
         {
             _cmmnWorkflowDefinitionQueryRepository = cmmnWorkflowDefinitionQueryRepository;
             _commitAggregateHelper = commitAggregateHelper;
         }
 
-        public async Task<CMMNWorkflowInstance> Handle(CreateCaseInstanceCommand command)
+        public async Task<Domains.CaseInstance> Handle(CreateCaseInstanceCommand command)
         {
             var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(command.CaseDefinitionId);
             if (workflowDefinition == null)
@@ -26,7 +26,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 throw new UnknownCaseDefinitionException();
             }
             
-            var workflowInstance = CMMNWorkflowInstance.New(workflowDefinition);
+            var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
             await _commitAggregateHelper.Commit(workflowInstance, workflowInstance.GetStreamName());
             return workflowInstance;
         }

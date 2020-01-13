@@ -17,7 +17,7 @@ export class ListCaseDefinitionsEffects {
         .pipe(
             ofType(ActionTypes.CASEDEFINITIONSLOAD),
             mergeMap((evt:any) => {
-                return this.caseDefinitionsService.search(evt.startIndex, evt.count, evt.order, evt.direction)
+                return this.caseDefinitionsService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
                     .pipe(
                         map(casefiles => { return { type: ActionTypes.CASEDEFINITIONSLOADED, result: casefiles }; }),
                         catchError(() => of({ type: ActionTypes.ERRORLOADCASEDEFINITIONS }))

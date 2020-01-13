@@ -4,15 +4,15 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class ProcessorParameter
     {
-        public ProcessorParameter(CMMNWorkflowDefinition workflowDefinition, CMMNWorkflowInstance workflowInstance, CMMNWorkflowElementInstance workflowElementInstance)
+        public ProcessorParameter(CaseDefinition caseDefinition, Domains.CaseInstance caseInstance, CaseElementInstance caseElementInstance)
         {
-            WorkflowDefinition = workflowDefinition;
-            WorkflowInstance = workflowInstance;
-            WorkflowElementInstance = workflowElementInstance;
+            CaseDefinition = caseDefinition;
+            CaseInstance = caseInstance;
+            CaseElementInstance = caseElementInstance;
         }
 
-        public CMMNWorkflowDefinition WorkflowDefinition { get; set; }
-        public CMMNWorkflowInstance WorkflowInstance { get; set; }
-        public CMMNWorkflowElementInstance WorkflowElementInstance { get; set; }
+        public CaseDefinition CaseDefinition { get; set; }
+        public Domains.CaseInstance CaseInstance { get; set; }
+        public CaseElementInstance CaseElementInstance { get; set; }
     }
 }

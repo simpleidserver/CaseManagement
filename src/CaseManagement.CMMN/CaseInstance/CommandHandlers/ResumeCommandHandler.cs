@@ -21,7 +21,7 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 
         public async Task Handle(ResumeCommand resumeCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<CMMNWorkflowInstance>(resumeCommand.CaseInstanceId, CMMNWorkflowInstance.GetStreamName(resumeCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CaseInstance>(resumeCommand.CaseInstanceId, Domains.CaseInstance.GetStreamName(resumeCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(resumeCommand.CaseInstanceId);

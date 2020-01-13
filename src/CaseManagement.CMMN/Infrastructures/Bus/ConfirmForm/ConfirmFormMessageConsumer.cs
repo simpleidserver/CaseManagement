@@ -4,7 +4,6 @@ using CaseManagement.Workflow.Infrastructure.Lock;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
@@ -40,8 +39,8 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
                 if (runningTask != null)
                 {
                     await QueueProvider.Dequeue(QueueName);
-                    var workflowInstance = runningTask.Aggregate as CMMNWorkflowInstance;
-                    workflowInstance.SubmitForm(message.CaseElementInstanceId, message.FormInstanceId);
+                    var workflowInstance = runningTask.Aggregate as Domains.CaseInstance;
+                    workflowInstance.SubmitForm(message.CaseElementInstanceId, message.FormInstanceId, message.FormValues);
                 }
 
                 return null;

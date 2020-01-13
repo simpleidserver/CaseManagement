@@ -39,6 +39,7 @@
         "@ngrx/store-devtools": "^7.4.0",
         "@ngx-translate/core": "^11.0.1",
         "@ngx-translate/http-loader": "^4.0.0",
+        "@swimlane/ngx-charts": "^13.0.1",
         "@types/leaflet": "^1.5.1",
         "angular-oauth2-oidc": "^5.0.2",
         "bootstrap": "4.3.1",

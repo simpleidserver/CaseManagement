@@ -11,18 +11,23 @@ import { Component, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { ActionTypes } from './list-case-defs-actions';
-var ListCaseDefsComponent = (function () {
-    function ListCaseDefsComponent(store) {
+import { ActionTypes } from './list-actions';
+import { FormBuilder } from '@angular/forms';
+var ListCaseDefinitionsComponent = (function () {
+    function ListCaseDefinitionsComponent(store, formBuilder) {
         this.store = store;
+        this.formBuilder = formBuilder;
         this.caseDefinitions = [];
-        this.displayedColumns = ['Id', 'Name', 'CreateDateTime', 'Actions'];
+        this.displayedColumns = ['name', 'create_datetime'];
+        this.searchForm = this.formBuilder.group({
+            text: ''
+        });
     }
-    ListCaseDefsComponent.prototype.ngOnInit = function () {
+    ListCaseDefinitionsComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.isLoading = true;
         this.isErrorLoadOccured = false;
-        this.subscription = this.store.pipe(select('caseDefs')).subscribe(function (st) {
+        this.subscription = this.store.pipe(select('caseDefinitions')).subscribe(function (st) {
             if (!st) {
                 return;
             }
@@ -35,16 +40,23 @@ var ListCaseDefsComponent = (function () {
         });
         this.refresh();
     };
-    ListCaseDefsComponent.prototype.ngAfterViewInit = function () {
+    ListCaseDefinitionsComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
     };
-    ListCaseDefsComponent.prototype.refresh = function () {
+    ListCaseDefinitionsComponent.prototype.onSubmit = function (evt) {
+        if (!evt) {
+            return;
+        }
+        this.refresh();
+    };
+    ListCaseDefinitionsComponent.prototype.refresh = function () {
         var request = {
-            type: ActionTypes.CASEDEFSLOAD,
+            type: ActionTypes.CASEDEFINITIONSLOAD,
             order: this.sort.active,
             direction: this.sort.direction,
-            count: this.paginator.pageSize
+            count: this.paginator.pageSize,
+            text: this.searchForm.get('text').value
         };
         if (this.paginator.pageIndex && this.paginator.pageSize) {
             request['startIndex'] = this.paginator.pageIndex * this.paginator.pageSize;
@@ -61,26 +73,26 @@ var ListCaseDefsComponent = (function () {
         this.isLoading = true;
         this.store.dispatch(request);
     };
-    ListCaseDefsComponent.prototype.ngOnDestroy = function () {
+    ListCaseDefinitionsComponent.prototype.ngOnDestroy = function () {
         this.subscription.unsubscribe();
     };
     __decorate([
         ViewChild(MatPaginator),
         __metadata("design:type", MatPaginator)
-    ], ListCaseDefsComponent.prototype, "paginator", void 0);
+    ], ListCaseDefinitionsComponent.prototype, "paginator", void 0);
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], ListCaseDefsComponent.prototype, "sort", void 0);
-    ListCaseDefsComponent = __decorate([
+    ], ListCaseDefinitionsComponent.prototype, "sort", void 0);
+    ListCaseDefinitionsComponent = __decorate([
         Component({
-            selector: 'list-case-defs',
-            templateUrl: './list-case-defs.component.html',
-            styleUrls: ['./list-case-defs.component.scss']
+            selector: 'list-case-files',
+            templateUrl: './list.component.html',
+            styleUrls: ['./list.component.scss']
         }),
-        __metadata("design:paramtypes", [Store])
-    ], ListCaseDefsComponent);
-    return ListCaseDefsComponent;
+        __metadata("design:paramtypes", [Store, FormBuilder])
+    ], ListCaseDefinitionsComponent);
+    return ListCaseDefinitionsComponent;
 }());
-export { ListCaseDefsComponent };
-//# sourceMappingURL=list-case-defs.component.js.map
+export { ListCaseDefinitionsComponent };
+//# sourceMappingURL=list.component.js.map

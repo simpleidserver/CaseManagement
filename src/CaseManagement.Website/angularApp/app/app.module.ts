@@ -11,9 +11,9 @@ import { AppComponent } from './app.component';
 import { routes } from './app.routes';
 import { NavigationModule } from './common/navigation.module';
 import { HomeModule } from './home/home.module';
+import { AuthGuard } from './infrastructure/auth-guard.service';
 import { MaterialModule } from './shared/material.module';
 import { SharedModule } from './shared/shared.module';
-import { AuthGuard } from './infrastructure/auth-guard.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -46,7 +46,9 @@ export function createTranslateLoader(http: HttpClient) {
 
     bootstrap: [AppComponent],
 
-    providers: [AuthGuard]
+    providers: [
+        AuthGuard
+    ]
 })
 
 export class AppModule { }

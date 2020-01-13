@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { ActionTypes } from './list-case-defs-actions';
+import { ActionTypes } from './list-actions';
 var initialCaseDefsAction = {
     content: null,
     isLoading: true,
@@ -18,13 +18,13 @@ var initialCaseDefsAction = {
 export function reducer(state, action) {
     if (state === void 0) { state = initialCaseDefsAction; }
     switch (action.type) {
-        case ActionTypes.CASEDEFSLOADED:
+        case ActionTypes.CASEDEFINITIONSLOADED:
             var caseDefsLoadedAction = action;
             state.content = caseDefsLoadedAction.result;
             state.isLoading = false;
             state.isErrorLoadOccured = false;
             return __assign({}, state);
-        case ActionTypes.ERRORLOADCASEDEFS:
+        case ActionTypes.ERRORLOADCASEDEFINITIONS:
             state.isErrorLoadOccured = true;
             state.isLoading = false;
             return __assign({}, state);
@@ -32,4 +32,4 @@ export function reducer(state, action) {
             return state;
     }
 }
-//# sourceMappingURL=list-case-defs-reducer.js.map
+//# sourceMappingURL=list-reducer.js.map

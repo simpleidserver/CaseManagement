@@ -5,6 +5,7 @@ import { merge } from 'rxjs';
 import { CaseDefinition } from '../models/case-definition.model';
 import { ActionTypes } from './list-actions';
 import * as fromListCaseDefsState from './list-states';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'list-case-files',
@@ -20,10 +21,14 @@ export class ListCaseDefinitionsComponent implements OnInit, OnDestroy {
     length: number;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-
+    searchForm : FormGroup;
     subscription: any;
 	
-    constructor(private store: Store<fromListCaseDefsState.ListCaseDefinitionsState>) { }
+    constructor(private store: Store<fromListCaseDefsState.ListCaseDefinitionsState>, private formBuilder: FormBuilder) {
+        this.searchForm = this.formBuilder.group({
+            text: ''
+        });
+    }
 
     ngOnInit() {
 		this.isLoading = true;		
@@ -47,12 +52,21 @@ export class ListCaseDefinitionsComponent implements OnInit, OnDestroy {
         merge(this.sort.sortChange, this.paginator.page).subscribe(() => this.refresh());
     }
 
+    onSubmit(evt: any) {
+        if (!evt) {
+            return;
+        }
+
+        this.refresh();
+    }
+
     refresh() {
         let request: any = {
             type: ActionTypes.CASEDEFINITIONSLOAD,
             order: this.sort.active,
             direction: this.sort.direction,
-            count: this.paginator.pageSize
+            count: this.paginator.pageSize,
+            text: this.searchForm.get('text').value
         };
         if (this.paginator.pageIndex && this.paginator.pageSize) {
             request['startIndex'] = this.paginator.pageIndex * this.paginator.pageSize;

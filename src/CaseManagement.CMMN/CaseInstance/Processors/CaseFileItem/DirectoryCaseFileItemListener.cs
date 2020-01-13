@@ -20,13 +20,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.CaseFileItem
 
         public async Task Start(ProcessorParameter parameter, CancellationToken token)
         {
-            var result = await _caseFileItemRepository.GetCaseFileItemInstance(parameter.WorkflowElementInstance.Id);
+            var result = await _caseFileItemRepository.GetCaseFileItemInstance(parameter.CaseElementInstance.Id);
             string tmpDirectory;
             if (result == null)
             {
                 tmpDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 Directory.CreateDirectory(tmpDirectory);
-                await _caseFileItemRepository.AddCaseFileItem(parameter.WorkflowElementInstance.Id, tmpDirectory);
+                await _caseFileItemRepository.AddCaseFileItem(parameter.CaseElementInstance.Id, tmpDirectory);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.CaseFileItem
 
         private void HandleFileCreated(ProcessorParameter parameter)
         {
-            parameter.WorkflowInstance.MakeTransitionAddChild(parameter.WorkflowElementInstance.Id);
+            parameter.CaseInstance.MakeTransitionAddChild(parameter.CaseElementInstance.Id);
         }
     }
 }

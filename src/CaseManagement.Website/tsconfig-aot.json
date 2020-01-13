@@ -19,5 +19,8 @@
   "angularCompilerOptions": {
     "entryModule": "./angularApp/app/app.module#AppModule",
     "skipMetadataEmit": true
-  }
+  },
+  "files": [
+    "./angularApp/app/custom-typings.d.ts"
+  ]
 }

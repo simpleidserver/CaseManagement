@@ -9,4 +9,10 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="angularApp\app\casedefinitions\models\case-translation.model.js">
+      <DependentUpon>case-translation.model.ts</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties tsconfig-aot_1json__JsonSchema="http://json.schemastore.org/azure-iot-edge-deployment-template-2.0" /></VisualStudio></ProjectExtensions>
 </Project>

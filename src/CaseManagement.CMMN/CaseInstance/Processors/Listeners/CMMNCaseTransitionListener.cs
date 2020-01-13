@@ -6,7 +6,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 {
     public static class CMMNCaseTransitionListener
     {
-        public static EventListener Listen(CMMNWorkflowInstance instance, CMMNTransitions transition, Action callback)
+        public static EventListener Listen(Domains.CaseInstance instance, CMMNTransitions transition, Action callback)
         {
             var evtListener = new EventListener(instance, transition, callback);
             evtListener.Listen();
@@ -15,11 +15,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 
         public class EventListener
         {
-            private readonly CMMNWorkflowInstance _instance;
+            private readonly Domains.CaseInstance _instance;
             private readonly CMMNTransitions _transition;
             private readonly Action _callback;
 
-            public EventListener(CMMNWorkflowInstance instance, CMMNTransitions transition, Action callback)
+            public EventListener(Domains.CaseInstance instance, CMMNTransitions transition, Action callback)
             {
                 _instance = instance;
                 _transition = transition;
@@ -38,7 +38,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 
             private void HandlePlanItemChanged(object sender, DomainEventArgs args)
             {
-                var evt = args.DomainEvt as CMMNWorkflowTransitionRaisedEvent;
+                var evt = args.DomainEvt as CaseTransitionRaisedEvent;
                 if (evt == null)
                 {
                     return;

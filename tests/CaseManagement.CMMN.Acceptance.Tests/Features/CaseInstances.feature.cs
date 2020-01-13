@@ -86,8 +86,8 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 5
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 6
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 7
@@ -129,8 +129,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 21
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 22
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 23
@@ -188,8 +188,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 45
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithTwoStages.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithTwoStages.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 46
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 47
@@ -321,8 +321,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 92
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneHumanTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneHumanTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 93
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 94
@@ -397,8 +397,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 122
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneManualActivationTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneManualActivationTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 123
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 124
@@ -470,8 +470,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 152
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithRepetitionRule.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithRepetitionRule.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 153
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 154
@@ -541,8 +541,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 182
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneSEntry.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneSEntry.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 183
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 184
@@ -636,8 +636,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 224
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneTimerEventListener.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneTimerEventListener.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 225
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 226
@@ -714,8 +714,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 256
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 257
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 258
@@ -800,8 +800,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 290
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 291
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 292
@@ -885,8 +885,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 326
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithTwoStages.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithTwoStages.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 327
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 328
@@ -1056,8 +1056,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 386
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneFailProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneFailProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 387
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 388
@@ -1133,8 +1133,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 418
- testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?cmmn_definiti" +
-                    "on=caseWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("execute HTTP GET request \'http://localhost/case-definitions/.search?case_file=cas" +
+                    "eWithOneLongProcessTask.cmmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 419
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 420

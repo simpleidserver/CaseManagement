@@ -12,28 +12,28 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { CaseDefinitionsService } from '../services/casedefinitions.service';
-import { ActionTypes } from './list-case-defs-actions';
-var ListCaseDefsEffects = (function () {
-    function ListCaseDefsEffects(actions$, caseDefinitionsService) {
+import { ActionTypes } from './list-actions';
+var ListCaseDefinitionsEffects = (function () {
+    function ListCaseDefinitionsEffects(actions$, caseDefinitionsService) {
         var _this = this;
         this.actions$ = actions$;
         this.caseDefinitionsService = caseDefinitionsService;
-        this.loadCaseDefs$ = this.actions$
-            .pipe(ofType(ActionTypes.CASEDEFSLOAD), mergeMap(function (evt) {
-            return _this.caseDefinitionsService.search(evt.startIndex, evt.count, evt.order, evt.direction)
-                .pipe(map(function (casedefs) { return { type: ActionTypes.CASEDEFSLOADED, result: casedefs }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADCASEDEFS }); }));
+        this.loadCaseFiles$ = this.actions$
+            .pipe(ofType(ActionTypes.CASEDEFINITIONSLOAD), mergeMap(function (evt) {
+            return _this.caseDefinitionsService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
+                .pipe(map(function (casefiles) { return { type: ActionTypes.CASEDEFINITIONSLOADED, result: casefiles }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADCASEDEFINITIONS }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], ListCaseDefsEffects.prototype, "loadCaseDefs$", void 0);
-    ListCaseDefsEffects = __decorate([
+    ], ListCaseDefinitionsEffects.prototype, "loadCaseFiles$", void 0);
+    ListCaseDefinitionsEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
             CaseDefinitionsService])
-    ], ListCaseDefsEffects);
-    return ListCaseDefsEffects;
+    ], ListCaseDefinitionsEffects);
+    return ListCaseDefinitionsEffects;
 }());
-export { ListCaseDefsEffects };
-//# sourceMappingURL=list-case-defs-effects.js.map
+export { ListCaseDefinitionsEffects };
+//# sourceMappingURL=list-effects.js.map

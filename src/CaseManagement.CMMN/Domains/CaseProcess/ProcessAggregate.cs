@@ -15,7 +15,6 @@ namespace CaseManagement.CMMN.Domains
 
         public string Id { get; set; }
         public string ImplementationType { get; set; }
-
         public ICollection<string> Inputs { get; set; }
         public ICollection<string> Outputs { get; set; }
 

@@ -7,13 +7,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
     {
         public static bool Listen(ProcessorParameter parameter)
         {
-            var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
-            if (!parameter.WorkflowInstance.IsManualActivationRuleSatisfied(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition))
+            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
+            if (!parameter.CaseInstance.IsManualActivationRuleSatisfied(parameter.CaseElementInstance.Id, parameter.CaseDefinition))
             {
                 return false;
             }
             
-            parameter.WorkflowInstance.MakeTransitionEnable(parameter.WorkflowElementInstance.Id);
+            parameter.CaseInstance.MakeTransitionEnable(parameter.CaseElementInstance.Id);
             var resetEvent = new ManualResetEvent(false);
             var manualStartListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ManualStart, () =>
             {

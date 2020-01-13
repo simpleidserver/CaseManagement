@@ -1,4 +1,4 @@
-﻿namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
+﻿namespace CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess
 {
     public class ReactivateProcessMessage
     {

@@ -8,8 +8,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
-
 const helpers = require('./webpack.helpers');
+
+const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
+const API_URL = process.env.API_URL = "http://localhost:54942";
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -131,6 +133,15 @@ module.exports = {
             exclude: /System.import/
         }),
 
+        new webpack.DefinePlugin({
+            'ENV': JSON.stringify(ENV),
+            'API_URL': JSON.stringify(API_URL),
+            'process.env': {
+                'ENV': JSON.stringify(ENV),
+                'API_URL': JSON.stringify(API_URL)
+            }
+        }),
+        /*,
         new WorkboxPlugin.GenerateSW({
             // include: [/\.html$/, /\.js$/],
             // importWorkboxFrom: 'local',
@@ -151,5 +162,6 @@ module.exports = {
                 }
             }]
         })
+        */
     ]
 };

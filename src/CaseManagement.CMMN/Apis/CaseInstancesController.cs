@@ -31,9 +31,9 @@ namespace CaseManagement.CMMN.Apis
         private readonly ICloseCommandHandler _closeCommandHandler;
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
         private readonly IActivateCommandHandler _activateCommandHandler;
-        private readonly ICMMNWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
+        private readonly IWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, IWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
@@ -471,7 +471,7 @@ namespace CaseManagement.CMMN.Apis
             }
         }
 
-        private static JObject ToDto(FindResponse<CMMNWorkflowInstance> resp)
+        private static JObject ToDto(FindResponse<Domains.CaseInstance> resp)
         {
             return new JObject
             {
@@ -482,13 +482,13 @@ namespace CaseManagement.CMMN.Apis
             };
         }
 
-        private static JObject ToDto(CMMNWorkflowInstance workflowInstance)
+        private static JObject ToDto(Domains.CaseInstance workflowInstance)
         {
             var result = new JObject
             {
                 { "id", workflowInstance.Id },
                 { "create_datetime", workflowInstance.CreateDateTime},
-                { "definition_id", workflowInstance.WorkflowDefinitionId },
+                { "definition_id", workflowInstance.CaseDefinitionId },
                 { "context", ToDto(workflowInstance.ExecutionContext) },
                 { "state", workflowInstance.State }
             };
@@ -520,7 +520,7 @@ namespace CaseManagement.CMMN.Apis
                 {
                     { "start_datetime", executionHistory.StartDateTime },
                     { "end_datetime", executionHistory.EndDateTime },
-                    { "id", executionHistory.WorkflowElementDefinitionId }
+                    { "id", executionHistory.CaseElementDefinitionId }
                 });
             }
 
@@ -536,14 +536,14 @@ namespace CaseManagement.CMMN.Apis
             return result;
         }
 
-        private static JObject ToDto(CMMNWorkflowElementInstance elt)
+        private static JObject ToDto(CaseElementInstance elt)
         {
             var result = new JObject
             {
                 { "id", elt.Id },
                 { "version", elt.Version },
                 { "create_datetime", elt.CreateDateTime},
-                { "definition_id", elt.WorkflowElementDefinitionId },
+                { "definition_id", elt.CaseElementDefinitionId },
                 { "form_instanceid", elt.FormInstanceId },
                 { "state", elt.State }
             };
@@ -572,7 +572,7 @@ namespace CaseManagement.CMMN.Apis
             return result;
         }
 
-        private static JObject ToDto(CMMNWorkflowInstanceExecutionContext context)
+        private static JObject ToDto(CaseInstanceExecutionContext context)
         {
             var jObj = new JObject();
             foreach (var kvp in context.Variables)

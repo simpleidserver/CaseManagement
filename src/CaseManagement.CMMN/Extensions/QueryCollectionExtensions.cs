@@ -58,6 +58,24 @@ namespace CaseManagement.CMMN.Extensions
             return true;
         }
 
+        public static bool TryGet(this IQueryCollection queryCollection, string name, out DateTime value)
+        {
+            value = default(DateTime);
+            if (queryCollection.ContainsKey(name))
+            {
+                DateTime result;
+                if (DateTime.TryParse(queryCollection[name].ToArray().First(), out result))
+                {
+                    value = result;
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
         public static bool TryGet(this IQueryCollection queryCollection, string name, out string value)
         {
             value = null;

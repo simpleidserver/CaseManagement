@@ -16,11 +16,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             _caseFileItemListeners = caseFileItemListeners;
         }
 
-        public CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.CaseFileItem;
+        public CaseElementTypes Type => CaseElementTypes.CaseFileItem;
 
         public async Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
-            var caseFile = parameter.WorkflowInstance.GetWorkflowElementDefinition(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition) as CMMNCaseFileItemDefinition;
+            var caseFile = parameter.CaseInstance.GetWorkflowElementDefinition(parameter.CaseElementInstance.Id, parameter.CaseDefinition) as CaseFileItemDefinition;
             var caseFileItemListener = _caseFileItemListeners.First(c => c.CaseFileItemType == caseFile.Definition);
             await caseFileItemListener.Start(parameter, token);
             return parameter;

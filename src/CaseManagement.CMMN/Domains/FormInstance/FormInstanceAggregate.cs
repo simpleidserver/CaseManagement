@@ -17,6 +17,10 @@ namespace CaseManagement.CMMN.Domains
 
         public string Id { get; set; }
         public string FormId { get; set; }
+        public string CaseDefinitionId { get; set; }
+        public string CaseInstanceId { get; set; }
+        public string CaseElementDefinitionId { get; set; }
+        public string CaseElementInstanceId { get; set; }
         public ICollection<Translation> Titles { get; set; }
         public ICollection<FormInstanceElement> Content { get; set; }
         public FormInstanceStatus Status { get; set; }
@@ -39,6 +43,22 @@ namespace CaseManagement.CMMN.Domains
             return new FormInstanceAggregate(id, formId);
         }
 
+        public override bool Equals(object obj)
+        {
+            var target = obj as FormInstanceAggregate;
+            if (target == null)
+            {
+                return false;
+            }
+
+            return target.GetHashCode() == this.GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
         public object Clone()
         {
             return new FormInstanceAggregate(Id, FormId)
@@ -48,7 +68,13 @@ namespace CaseManagement.CMMN.Domains
                 Status = Status,
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
-                Titles = Titles.Select(n => (Translation)n.Clone()).ToList()
+                Titles = Titles.Select(n => (Translation)n.Clone()).ToList(),
+                CaseDefinitionId = CaseDefinitionId,
+                CaseElementDefinitionId = CaseElementDefinitionId,
+                CaseElementInstanceId = CaseElementInstanceId,
+                CaseInstanceId = CaseInstanceId,
+                Id =  Id,
+                FormId = FormId
             };
         }
     }

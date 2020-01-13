@@ -14,10 +14,10 @@ namespace CaseManagement.CMMN.Apis
     [Route(CMMNConstants.RouteNames.CaseDefinitions)]
     public class CaseDefinitionsController : Controller
     {
-        private readonly ICMMNWorkflowDefinitionQueryRepository _queryRepository;
+        private readonly IWorkflowDefinitionQueryRepository _queryRepository;
         private readonly IStatisticQueryRepository _staticQueryRepository;
 
-        public CaseDefinitionsController(ICMMNWorkflowDefinitionQueryRepository queryRepository, IStatisticQueryRepository statisticQueryRepository)
+        public CaseDefinitionsController(IWorkflowDefinitionQueryRepository queryRepository, IStatisticQueryRepository statisticQueryRepository)
         {
             _queryRepository = queryRepository;
             _staticQueryRepository = statisticQueryRepository;
@@ -41,9 +41,9 @@ namespace CaseManagement.CMMN.Apis
             var result = await _staticQueryRepository.FindById(id);
             if (result == null)
             {
-                result = new CMMNWorkflowDefinitionStatisticAggregate
+                result = new CaseDefinitionStatisticAggregate
                 {
-                    WorkflowDefinitionId = id,
+                    CaseDefinitionId = id,
                     NbInstances = 0
                 };
             }
@@ -59,7 +59,7 @@ namespace CaseManagement.CMMN.Apis
             return new OkObjectResult(ToDto(result));
         }
 
-        private static JObject ToDto(FindResponse<CMMNWorkflowDefinition> resp)
+        private static JObject ToDto(FindResponse<CaseDefinition> resp)
         {
             return new JObject
             {
@@ -77,7 +77,7 @@ namespace CaseManagement.CMMN.Apis
             };
         }
 
-        private static JObject ToDto(CMMNWorkflowDefinition def)
+        private static JObject ToDto(CaseDefinition def)
         {
             return new JObject
             {
@@ -89,17 +89,17 @@ namespace CaseManagement.CMMN.Apis
             };
         }
 
-        private static JObject ToDto(CMMNWorkflowDefinitionStatisticAggregate def)
+        private static JObject ToDto(CaseDefinitionStatisticAggregate def)
         {
             return new JObject
             {
-                { "id", def.WorkflowDefinitionId },
+                { "id", def.CaseDefinitionId },
                 { "nb_instances", def.NbInstances },
                 { "elements", new JArray(def.Statistics.Select(s =>
                     new JObject
                     {
                         { "nb_instances", s.NbInstances },
-                        { "element", s.ElementDefinitionId }
+                        { "element", s.CaseElementDefinitionId }
                     }
                 ))}
             };
@@ -107,35 +107,18 @@ namespace CaseManagement.CMMN.Apis
 
         private static FindWorkflowDefinitionsParameter ExtractFindParameter(IQueryCollection query)
         {
-            int startIndex;
-            int count;
-            string orderBy;
             string caseFile;
-            FindOrders findOrder;
+            string text;
             var parameter = new FindWorkflowDefinitionsParameter();
-            if (query.TryGet("start_index", out startIndex))
-            {
-                parameter.StartIndex = startIndex;
-            }
-
-            if (query.TryGet("count", out count))
-            {
-                parameter.Count = count;
-            }
-
-            if (query.TryGet("order_by", out orderBy))
-            {
-                parameter.OrderBy = orderBy;
-            }
-
-            if (query.TryGet("order", out findOrder))
-            {
-                parameter.Order = findOrder;
-            }
-
+            parameter.ExtractFindParameter(query);
             if (query.TryGet("case_file", out caseFile))
             {
                 parameter.CaseFileId = caseFile;
+            }
+
+            if (query.TryGet("text", out text))
+            {
+                parameter.Text = text;
             }
 
             return parameter;

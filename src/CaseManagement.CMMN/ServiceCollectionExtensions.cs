@@ -11,9 +11,10 @@ using CaseManagement.CMMN.Domains.CaseFile;
 using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
-using CaseManagement.CMMN.Infrastructures.Bus.ConsumeCMMNTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
+using CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
+using CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.Workflow.Infrastructure;
@@ -25,9 +26,9 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static CMMNServerBuilder AddCMMN(this IServiceCollection services)
+        public static ServerBuilder AddCMMN(this IServiceCollection services)
         {
-            var builder = new CMMNServerBuilder(services);
+            var builder = new ServerBuilder(services);
             services.AddWorkflow()
                 .AddInfrastructure()
                 .AddInMemoryPersistence()
@@ -43,45 +44,47 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
-            services.AddTransient<ICMMNWorkflowEngine, CMMNWorkflowEngine>();
+            services.AddTransient<ICaseEngine, CaseEngine>();
             return services;
         }
 
         private static IServiceCollection AddBus(this IServiceCollection services)
         {
-            services.AddTransient<IMessageConsumer, CMMNLaunchProcessMessageConsumer>();
+            services.AddTransient<IMessageConsumer, LaunchProcessMessageConsumer>();
             services.AddTransient<IMessageConsumer, ReactivateProcessMessageConsumer>();
             services.AddTransient<IMessageConsumer, DomainEventMessageConsumer>();
-            services.AddTransient<IMessageConsumer, CMMNTransitionEventMessageConsumer>();
+            services.AddTransient<IMessageConsumer, TransitionEventMessageConsumer>();
             services.AddTransient<IMessageConsumer, ConfirmFormMessageConsumer>();
             return services;
         }
 
         private static IServiceCollection AddInMemoryPersistence(this IServiceCollection services)
         {
-            var definitions = new List<CMMNWorkflowDefinition>();
+            var definitions = new List<CaseDefinition>();
             var caseProcesses = new List<ProcessAggregate>();
-            var activations = new List<CaseActivationAggregate>();
-            var instances = new ConcurrentBag<CMMNWorkflowInstance>();
+            var activations = new ConcurrentBag<CaseActivationAggregate>();
+            var instances = new ConcurrentBag<CaseInstance>();
             var roles = new List<RoleAggregate>();
-            var formInstances = new List<FormInstanceAggregate>();
+            var formInstances = new ConcurrentBag<FormInstanceAggregate>();
             var files = new List<CaseFileDefinitionAggregate>();
             var forms = new List<FormAggregate>();
-            var workflowDefinitionStatisticAggregates = new ConcurrentBag<CMMNWorkflowDefinitionStatisticAggregate>();
+            var workflowDefinitionStatisticAggregates = new ConcurrentBag<CaseDefinitionStatisticAggregate>();
+            var caseDailyStatistics = new ConcurrentBag<DailyStatisticAggregate>();
             services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
             services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
-            services.AddSingleton<ICMMNWorkflowFileQueryRepository>(new InMemoryCMMNWorkflowFileQueryRepository(files));
+            services.AddSingleton<IWorkflowFileQueryRepository>(new InMemoryWorkflowFileQueryRepository(files));
             services.AddSingleton<IFormInstanceCommandRepository>(new InMemoryFormInstanceCommandRepository(formInstances));
             services.AddSingleton<IFormInstanceQueryRepository>(new InMemoryFormInstanceQueryRepository(formInstances));
-            services.AddSingleton<ICMMNWorkflowDefinitionQueryRepository>(new InMemoryCMMNWorkflowDefinitionQueryRepository(definitions));
-            services.AddSingleton<ICMMNWorkflowInstanceQueryRepository>(new InMemoryCMMNWorkflowInstanceQueryRepository(instances));
-            services.AddSingleton<ICMMNWorkflowInstanceCommandRepository>(new InMemoryCMMNWorkflowInstanceCommandRepository(instances));
+            services.AddSingleton<IWorkflowDefinitionQueryRepository>(new InMemoryWorkflowDefinitionQueryRepository(definitions));
+            services.AddSingleton<IWorkflowInstanceQueryRepository>(new InMemoryWorkflowInstanceQueryRepository(instances));
+            services.AddSingleton<IWorkflowInstanceCommandRepository>(new InMemoryWorkflowInstanceCommandRepository(instances));
             services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
-            services.AddSingleton<ICMMNActivationCommandRepository>(new InMemoryCMMNActivationCommandRepository(activations));
+            services.AddSingleton<IActivationCommandRepository>(new InMemoryActivationCommandRepository(activations));
+            services.AddSingleton<IActivationQueryRepository>(new InMemoryActivationQueryRepository(activations));
             services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
             services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
-            services.AddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(workflowDefinitionStatisticAggregates));
-            services.AddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(workflowDefinitionStatisticAggregates));
+            services.AddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(workflowDefinitionStatisticAggregates, caseDailyStatistics));
+            services.AddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(workflowDefinitionStatisticAggregates, caseDailyStatistics));
             return services;
         }
 
@@ -103,17 +106,24 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddEventHandlers(this IServiceCollection services)
         {
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceCreatedEvent>, StatisticHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementCreatedEvent>, StatisticHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementCreatedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementFinishedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementInstanceFormCreatedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementInstanceFormSubmittedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementStartedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowElementTransitionRaisedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceCreatedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowInstanceVariableAddedEvent>, WorkflowInstanceHandler>();
-            services.AddTransient<IDomainEventHandler<CMMNWorkflowTransitionRaisedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementTransitionRaisedEvent>, CaseActivationHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, FormInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, FormInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementTransitionRaisedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CaseTransitionRaisedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CaseInstanceCreatedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementCreatedEvent>, StatisticHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementCreatedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementFinishedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementStartedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseElementTransitionRaisedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseInstanceCreatedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseInstanceVariableAddedEvent>, WorkflowInstanceHandler>();
+            services.AddTransient<IDomainEventHandler<CaseTransitionRaisedEvent>, WorkflowInstanceHandler>();
             return services;
         }
 

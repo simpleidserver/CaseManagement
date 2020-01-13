@@ -11,11 +11,11 @@ namespace CaseManagement.CMMN.Parser
 {
     public class CMMNParser
     {
-        public static ICollection<CMMNWorkflowDefinition> ExtractWorkflowDefinition(string path)
+        public static ICollection<CaseDefinition> ExtractWorkflowDefinition(string path)
         {
             var cmmnTxt = File.ReadAllText(path);
             var fileName = Path.GetFileName(path);
-            var result = new List<CMMNWorkflowDefinition>();
+            var result = new List<CaseDefinition>();
             var definitions = ParseWSDL(cmmnTxt);
             foreach(var cmmnCase in definitions.@case)
             {
@@ -49,11 +49,11 @@ namespace CaseManagement.CMMN.Parser
             return strBuilder.ToString();
         }
 
-        private static CMMNWorkflowDefinition BuildWorkflowDefinition(tCase tCase, string caseFileId)
+        private static CaseDefinition BuildWorkflowDefinition(tCase tCase, string caseFileId)
         {
             var planModel = tCase.casePlanModel;
             var planItems = BuildPlanItems(planModel);
-            var builder = CMMNWorkflowBuilder.New(Guid.NewGuid().ToString(), tCase.casePlanModel.name);
+            var builder = WorkflowBuilder.New(Guid.NewGuid().ToString(), tCase.casePlanModel.name);
             foreach (var planItem in planItems)
             {
                 builder.AddCMMNPlanItem(planItem);
@@ -64,12 +64,12 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
         
-        private static CMMNSEntry BuildSEntry(tSentry sEntry)
+        private static SEntry BuildSEntry(tSentry sEntry)
         {
-            var result = new CMMNSEntry(sEntry.name);
+            var result = new SEntry(sEntry.name);
             if (sEntry.ifPart != null)
             {
-                result.IfPart = new CMMNIfPart
+                result.IfPart = new IfPart
                 {
                     Condition = sEntry.ifPart.condition.Text.First()
                 };
@@ -84,7 +84,7 @@ namespace CaseManagement.CMMN.Parser
                         var planItemOnPart = onPart as tPlanItemOnPart;
                         var name = Enum.GetName(typeof(PlanItemTransition), planItemOnPart.standardEvent);
                         var standardEvt = (CMMNTransitions)Enum.Parse(typeof(CMMNTransitions), name, true);
-                        result.PlanItemOnParts.Add(new CMMNPlanItemOnPart
+                        result.PlanItemOnParts.Add(new PlanItemOnPart
                         {
                             SourceRef = planItemOnPart.sourceRef,
                             StandardEvent = standardEvt
@@ -96,49 +96,49 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
 
-        private static CMMNPlanItemDefinition BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef)
+        private static PlanItemDefinition BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef)
         {
             if (planItemDef is tProcessTask)
             {
-                return CMMNPlanItemDefinition.New(id, name, BuildProcessTask((tProcessTask)planItemDef));
+                return PlanItemDefinition.New(id, name, BuildProcessTask((tProcessTask)planItemDef));
             }
 
             if (planItemDef is tHumanTask)
             {
-                return CMMNPlanItemDefinition.New(id, name, BuildHumanTask((tHumanTask)planItemDef));
+                return PlanItemDefinition.New(id, name, BuildHumanTask((tHumanTask)planItemDef));
             }
 
             if (planItemDef is tTask)
             {
-                return CMMNPlanItemDefinition.New(id, name, BuildTask((tTask)planItemDef));
+                return PlanItemDefinition.New(id, name, BuildTask((tTask)planItemDef));
             }
 
             if (planItemDef is tTimerEventListener)
             {
-                return CMMNPlanItemDefinition.New(id, name, BuildTimerEventListener((tTimerEventListener)planItemDef));
+                return PlanItemDefinition.New(id, name, BuildTimerEventListener((tTimerEventListener)planItemDef));
             }
 
             if (planItemDef is tMilestone)
             {
-                return CMMNPlanItemDefinition.New(id, name, BuildMilestone((tMilestone)planItemDef));
+                return PlanItemDefinition.New(id, name, BuildMilestone((tMilestone)planItemDef));
             }
 
             if (planItemDef is tStage)
             {
-                return CMMNPlanItemDefinition.New(id, name, BuildStage((tStage)planItemDef));
+                return PlanItemDefinition.New(id, name, BuildStage((tStage)planItemDef));
             }
 
             return null;
         }
 
-        private static CMMNProcessTask BuildProcessTask(tProcessTask processTask)
+        private static ProcessTask BuildProcessTask(tProcessTask processTask)
         {
-            var result = new CMMNProcessTask(processTask.name) { IsBlocking = processTask.isBlocking };
+            var result = new ProcessTask(processTask.name) { IsBlocking = processTask.isBlocking };
             if (processTask.parameterMapping != null)
             {
                 foreach (var pm in processTask.parameterMapping)
                 {
-                    result.Mappings.Add(new CMMNParameterMapping
+                    result.Mappings.Add(new ParameterMapping
                     {
                         SourceRef = new CMMNParameter { Name = pm.sourceRef },
                         TargetRef = new CMMNParameter { Name = pm.targetRef },
@@ -166,9 +166,9 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
 
-        private static CMMNHumanTask BuildHumanTask(tHumanTask humanTask)
+        private static HumanTask BuildHumanTask(tHumanTask humanTask)
         {
-            return new CMMNHumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking };
+            return new HumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking };
         }
 
         private static CMMNTask BuildTask(tTask task)
@@ -176,9 +176,9 @@ namespace CaseManagement.CMMN.Parser
             return new CMMNTask(task.name);
         }
 
-        private static CMMNTimerEventListener BuildTimerEventListener(tTimerEventListener timerEventListener)
+        private static TimerEventListener BuildTimerEventListener(tTimerEventListener timerEventListener)
         {
-            var result = new CMMNTimerEventListener(timerEventListener.name);
+            var result = new TimerEventListener(timerEventListener.name);
             if (timerEventListener.timerExpression != null)
             {
                 result.TimerExpression = new CMMNExpression(timerEventListener.timerExpression.language)
@@ -190,15 +190,15 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
 
-        private static CMMNMilestone BuildMilestone(tMilestone milestone)
+        private static Milestone BuildMilestone(tMilestone milestone)
         {
-            return new CMMNMilestone(milestone.name);
+            return new Milestone(milestone.name);
         }
 
-        private static CMMNStageDefinition BuildStage(tStage stage)
+        private static StageDefinition BuildStage(tStage stage)
         {
             var planItems = BuildPlanItems(stage);
-            var result = new CMMNStageDefinition(stage.name);
+            var result = new StageDefinition(stage.name);
             foreach (var planItem in planItems)
             {
                 result.Elements.Add(planItem);
@@ -207,9 +207,9 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
 
-        private static List<CMMNPlanItemDefinition> BuildPlanItems(tStage stage)
+        private static List<PlanItemDefinition> BuildPlanItems(tStage stage)
         {
-            var planItems = new List<CMMNPlanItemDefinition>();
+            var planItems = new List<PlanItemDefinition>();
             foreach (var planItem in stage.planItem)
             {
                 var planItemDef = stage.Items.First(i => i.id == planItem.definitionRef);
@@ -219,7 +219,7 @@ namespace CaseManagement.CMMN.Parser
                     foreach (var entryCriterion in planItem.entryCriterion)
                     {
                         var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
-                        flowInstanceElt.EntryCriterions.Add(new CMMNCriterion(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
+                        flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
                     }
                 }
 
@@ -228,7 +228,7 @@ namespace CaseManagement.CMMN.Parser
                     foreach (var exitCriteria in planItem.exitCriterion)
                     {
                         var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
-                        flowInstanceElt.ExitCriterions.Add(new CMMNCriterion(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
+                        flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
                     }
                 }
 
@@ -236,7 +236,7 @@ namespace CaseManagement.CMMN.Parser
                 {
                     if (planItem.itemControl.manualActivationRule != null)
                     {
-                        var manualActivationRule = new CMMNManualActivationRule(planItem.itemControl.manualActivationRule.name);
+                        var manualActivationRule = new ManualActivationRule(planItem.itemControl.manualActivationRule.name);
                         var condition = planItem.itemControl.manualActivationRule.condition;
                         if (condition != null && condition.Text.Any())
                         {
@@ -247,7 +247,7 @@ namespace CaseManagement.CMMN.Parser
                     }
                     else if (planItem.itemControl.repetitionRule != null)
                     {
-                        var repetitionRule = new CMMNRepetitionRule(planItem.itemControl.repetitionRule.name);
+                        var repetitionRule = new RepetitionRule(planItem.itemControl.repetitionRule.name);
                         var condition = planItem.itemControl.repetitionRule.condition;
                         if (condition != null && condition.Text.Any())
                         {

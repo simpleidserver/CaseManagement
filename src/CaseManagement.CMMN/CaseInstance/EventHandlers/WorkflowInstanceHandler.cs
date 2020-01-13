@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Domains.Events;
+﻿using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.Workflow.Infrastructure;
 using System.Collections.Generic;
@@ -8,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.EventHandlers
 {
-    public class WorkflowInstanceHandler : IDomainEventHandler<CMMNWorkflowInstanceCreatedEvent>, IDomainEventHandler<CMMNWorkflowElementCreatedEvent>, IDomainEventHandler<CMMNWorkflowElementFinishedEvent>,
-        IDomainEventHandler<CMMNWorkflowElementInstanceFormCreatedEvent>, IDomainEventHandler<CMMNWorkflowElementInstanceFormSubmittedEvent>, IDomainEventHandler<CMMNWorkflowElementStartedEvent>,
-        IDomainEventHandler<CMMNWorkflowElementTransitionRaisedEvent>, IDomainEventHandler<CMMNWorkflowTransitionRaisedEvent>, IDomainEventHandler<CMMNWorkflowInstanceVariableAddedEvent>
+    public class WorkflowInstanceHandler : IDomainEventHandler<CaseInstanceCreatedEvent>, IDomainEventHandler<CaseElementCreatedEvent>, IDomainEventHandler<CaseElementFinishedEvent>,
+        IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, IDomainEventHandler<CaseElementStartedEvent>,
+        IDomainEventHandler<CaseElementTransitionRaisedEvent>, IDomainEventHandler<CaseTransitionRaisedEvent>, IDomainEventHandler<CaseInstanceVariableAddedEvent>
     {
-        private readonly ICMMNWorkflowInstanceCommandRepository _cmmnWorkflowInstanceCommandRepository;
-        private readonly ICMMNWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
+        private readonly IWorkflowInstanceCommandRepository _cmmnWorkflowInstanceCommandRepository;
+        private readonly IWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public WorkflowInstanceHandler(ICMMNWorkflowInstanceCommandRepository cmmnWorkflowInstanceCommandRepository, ICMMNWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public WorkflowInstanceHandler(IWorkflowInstanceCommandRepository cmmnWorkflowInstanceCommandRepository, IWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _cmmnWorkflowInstanceCommandRepository = cmmnWorkflowInstanceCommandRepository;
             _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
         }
 
-        public async Task Handle(CMMNWorkflowInstanceCreatedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseInstanceCreatedEvent @event, CancellationToken cancellationToken)
         {
-            var processFlowInstance = CMMNWorkflowInstance.New(new List<DomainEvent>
+            var processFlowInstance = Domains.CaseInstance.New(new List<DomainEvent>
             {
                 @event
             });
@@ -31,7 +30,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowElementCreatedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseElementCreatedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);
@@ -39,7 +38,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowElementFinishedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseElementFinishedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);
@@ -47,7 +46,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowElementInstanceFormCreatedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseElementInstanceFormCreatedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);
@@ -55,7 +54,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowElementInstanceFormSubmittedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseElementInstanceFormSubmittedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);
@@ -63,7 +62,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowElementStartedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseElementStartedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);
@@ -71,7 +70,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowElementTransitionRaisedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseElementTransitionRaisedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);
@@ -79,7 +78,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowTransitionRaisedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseTransitionRaisedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);
@@ -87,7 +86,7 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
             await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
         }
 
-        public async Task Handle(CMMNWorkflowInstanceVariableAddedEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(CaseInstanceVariableAddedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);

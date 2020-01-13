@@ -7,6 +7,8 @@ import { CaseDefinitionsService } from '../services/casedefinitions.service';
 import { CaseFilesService } from '../services/casefiles.service';
 import { CaseInstancesService } from '../services/caseinstances.service';
 import { ActionTypes } from './view-actions';
+import { CaseFormInstancesService } from '../services/caseforminstances.service';
+import { CaseActivationsService } from '../services/caseactivations.service';
 
 @Injectable()
 export class ViewCaseDefinitionEffects {
@@ -14,7 +16,9 @@ export class ViewCaseDefinitionEffects {
         private actions$: Actions,
         private caseDefinitionsService: CaseDefinitionsService,
         private caseFileService: CaseFilesService,
-        private caseInstancesService: CaseInstancesService
+        private caseInstancesService: CaseInstancesService,
+        private formInstancesService: CaseFormInstancesService,
+        private caseActivationsService: CaseActivationsService
     ) { }
 
     @Effect()
@@ -44,6 +48,30 @@ export class ViewCaseDefinitionEffects {
                 return this.caseInstancesService.search(evt.id, evt.startIndex, evt.count, evt.order, evt.direction).pipe(
                     map(caseInstances => { return { type: ActionTypes.CASEINSTANCESLOADED, result: caseInstances }; }),
                     catchError(() => of({ type: ActionTypes.ERRORLOADCASEDEFINITION }))
+                );
+            })
+    );
+
+    @Effect()
+    loadFormInstances$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.CASEINSTANCESLOAD),
+            mergeMap((evt: any) => {
+                return this.formInstancesService.search(evt.id, evt.startIndex, evt.count, evt.order, evt.direction).pipe(
+                    map(formInstances => { return { type: ActionTypes.CASEFORMINSTANCESLOADED, result: formInstances }; }),
+                    catchError(() => of({ type: ActionTypes.ERRORLOADCASEFORMINSTANCES }))
+                );
+            })
+    );
+
+    @Effect()
+    loadCaseActivations$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.CASEACTIVATIONSLOAD),
+            mergeMap((evt: any) => {
+                return this.caseActivationsService.search(evt.id, evt.startIndex, evt.count, evt.order, evt.direction).pipe(
+                    map(caseActivations => { return { type: ActionTypes.CASEACTIVATIONSLOADED, result: caseActivations }; }),
+                    catchError(() => of({ type: ActionTypes.ERRORLOADCASEACTIVATIONS }))
                 );
             })
         );

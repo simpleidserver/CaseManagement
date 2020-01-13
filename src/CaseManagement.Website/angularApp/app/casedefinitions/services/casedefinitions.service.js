@@ -10,22 +10,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { CaseDefinition } from '../models/case-def.model';
+import { CaseDefinitionHistory } from '../models/case-definition-history.model';
+import { CaseDefinition } from '../models/case-definition.model';
 import { SearchCaseDefinitionsResult } from '../models/search-case-definitions-result.model';
-var url = "http://localhost:54942";
 var CaseDefinitionsService = (function () {
     function CaseDefinitionsService(http) {
         this.http = http;
     }
-    CaseDefinitionsService.prototype.search = function (startIndex, count, order, direction) {
+    CaseDefinitionsService.prototype.search = function (startIndex, count, order, direction, text) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = url + "/case-definitions/.search?start_index=" + startIndex + "&count=" + count;
+        var targetUrl = process.env.API_URL + "/case-definitions/.search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
         if (direction) {
             targetUrl = targetUrl + "&order=" + direction;
+        }
+        if (text) {
+            targetUrl = targetUrl + "&text=" + text;
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return SearchCaseDefinitionsResult.fromJson(res);
@@ -34,9 +37,17 @@ var CaseDefinitionsService = (function () {
     CaseDefinitionsService.prototype.get = function (id) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = url + "/case-definitions/" + id;
+        var targetUrl = process.env.API_URL + "/case-definitions/" + id;
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return CaseDefinition.fromJson(res);
+        }));
+    };
+    CaseDefinitionsService.prototype.getHistory = function (id) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        var targetUrl = process.env.API_URL + "/case-definitions/" + id + "/history";
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            return CaseDefinitionHistory.fromJson(res);
         }));
     };
     CaseDefinitionsService = __decorate([

@@ -10,7 +10,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNTimerEventListenerProcessor : IProcessor
     {
-        public CMMNWorkflowElementTypes Type => CMMNWorkflowElementTypes.TimerEventListener;
+        public CaseElementTypes Type => CaseElementTypes.TimerEventListener;
 
         public Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
@@ -24,7 +24,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         private async Task<ProcessorParameter> HandleTask(ProcessorParameter parameter)
         {
-            var timerEventListener = (parameter.WorkflowInstance.GetWorkflowElementDefinition(parameter.WorkflowElementInstance.Id, parameter.WorkflowDefinition) as CMMNPlanItemDefinition).PlanItemDefinitionTimerEventListener;
+            var timerEventListener = (parameter.CaseInstance.GetWorkflowElementDefinition(parameter.CaseElementInstance.Id, parameter.CaseDefinition) as PlanItemDefinition).PlanItemDefinitionTimerEventListener;
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
             var time = ISO8601Parser.ParseTime(timerEventListener.TimerExpression.Body);
             var currentDateTime = DateTime.UtcNow;
@@ -48,8 +48,8 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                         var subParameter = parameter;
                         if (i > 0)
                         {
-                            var newInstance = parameter.WorkflowInstance.CreateWorkflowElementInstance(parameter.WorkflowElementInstance.WorkflowElementDefinitionId, parameter.WorkflowElementInstance.WorkflowElementDefinitionType);
-                            subParameter = new ProcessorParameter(parameter.WorkflowDefinition, parameter.WorkflowInstance, newInstance);
+                            var newInstance = parameter.CaseInstance.CreateWorkflowElementInstance(parameter.CaseElementInstance.CaseElementDefinitionId, parameter.CaseElementInstance.CaseElementDefinitionType);
+                            subParameter = new ProcessorParameter(parameter.CaseDefinition, parameter.CaseInstance, newInstance);
                         }
 
                         taskLst.Add(BuildTask(subParameter, currentDateTime));
@@ -116,7 +116,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
                 if (DateTime.UtcNow >= date)
                 {
-                    parameter.WorkflowInstance.MakeTransitionOccur(parameter.WorkflowElementInstance.Id);
+                    parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
                     continueExecution = false;
                 }
             }

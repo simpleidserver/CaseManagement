@@ -7,7 +7,7 @@ namespace CaseManagement.CMMN.Infrastructures
 {
     public static class ExpressionParser
     {
-        public static bool IsValid(string expressionBody, CMMNWorkflowInstance flowInstance)
+        public static bool IsValid(string expressionBody, Domains.CaseInstance flowInstance)
         {
             var decodedExpressionBody = HttpUtility.HtmlDecode(expressionBody);
             var interpreter = new Interpreter().SetVariable("context", flowInstance);
@@ -15,7 +15,7 @@ namespace CaseManagement.CMMN.Infrastructures
             return (bool)parsedExpression.Invoke();
         }
 
-        public static string GetStringEvaluation(string expressionBody, CMMNWorkflowInstance flowInstance)
+        public static string GetStringEvaluation(string expressionBody, Domains.CaseInstance flowInstance)
         {
             var decodedExpressionBody = HttpUtility.HtmlDecode(expressionBody);
             var interpreter = new Interpreter().SetVariable("context", flowInstance);
@@ -23,7 +23,7 @@ namespace CaseManagement.CMMN.Infrastructures
             return (string)parsedExpression.Invoke();
         }
 
-        public static string GetStringEvaluation(string expressionBody, CMMNWorkflowInstance flowInstance, Action<Interpreter> callback)
+        public static string GetStringEvaluation(string expressionBody, Domains.CaseInstance flowInstance, Action<Interpreter> callback)
         {
             var decodedExpressionBody = HttpUtility.HtmlDecode(expressionBody);
             var interpreter = new Interpreter();

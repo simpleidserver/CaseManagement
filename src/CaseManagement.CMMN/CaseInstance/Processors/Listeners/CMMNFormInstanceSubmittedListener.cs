@@ -7,11 +7,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 {
     public class FormInstanceSubmittedListener
     {
-        private readonly CMMNWorkflowInstance _workflowInstance;
-        private readonly CMMNWorkflowElementInstance _workflowElementInstance;
+        private readonly Domains.CaseInstance _workflowInstance;
+        private readonly CaseElementInstance _workflowElementInstance;
         private readonly ManualResetEvent _manualResetEvent;
 
-        public FormInstanceSubmittedListener(CMMNWorkflowInstance workflowInstance, CMMNWorkflowElementInstance workflowElementInstance, ManualResetEvent manualResetEvent)
+        public FormInstanceSubmittedListener(Domains.CaseInstance workflowInstance, CaseElementInstance workflowElementInstance, ManualResetEvent manualResetEvent)
         {
             _workflowInstance = workflowInstance;
             _workflowElementInstance = workflowElementInstance;
@@ -31,13 +31,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
 
         private void HandleFormInstanceSubmitted(object obj, DomainEventArgs args)
         {
-            var evt = args.DomainEvt as CMMNWorkflowElementInstanceFormSubmittedEvent;
+            var evt = args.DomainEvt as CaseElementInstanceFormSubmittedEvent;
             if (evt == null)
             {
                 return;
             }
 
-            if (evt.ElementId == _workflowElementInstance.Id)
+            if (evt.CaseElementId == _workflowElementInstance.Id)
             {
                 Unsubscribe();
                 _manualResetEvent.Set();
@@ -50,7 +50,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
         public static FormInstanceSubmittedListener Listen(ProcessorParameter parameter)
         {
             var manualResetEvent = new ManualResetEvent(false);
-            var criterionListener = new FormInstanceSubmittedListener(parameter.WorkflowInstance, parameter.WorkflowElementInstance, manualResetEvent);
+            var criterionListener = new FormInstanceSubmittedListener(parameter.CaseInstance, parameter.CaseElementInstance, manualResetEvent);
             criterionListener.Listen();
             return criterionListener;
         }

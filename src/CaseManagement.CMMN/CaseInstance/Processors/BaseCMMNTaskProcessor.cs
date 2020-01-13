@@ -11,7 +11,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public abstract class BaseCMMNTaskProcessor : IProcessor
     {
-        public abstract CMMNWorkflowElementTypes Type { get; }
+        public abstract CaseElementTypes Type { get; }
 
         public Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
@@ -29,12 +29,12 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
         private async Task<ProcessorParameter> HandleTask(ProcessorParameter parameter, CancellationTokenSource tokenSource)
         {
-            var planItemDefinition = parameter.WorkflowDefinition.GetElement(parameter.WorkflowElementInstance.WorkflowElementDefinitionId);
+            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
             CMMNCriterionListener.ListenEntryCriterias(parameter);
             var isManuallyActivated = CMMNManualActivationListener.Listen(parameter);
             if (!isManuallyActivated)
             {
-                parameter.WorkflowInstance.MakeTransitionStart(parameter.WorkflowElementInstance.Id);
+                parameter.CaseInstance.MakeTransitionStart(parameter.CaseElementInstance.Id);
             }
 
             bool isSuspend = false;
@@ -98,13 +98,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     kvp.Value.Key.ContinueWith((r) =>
                     {
                         r.Wait();
-                        parameter.WorkflowInstance.MakeTransitionExit(parameter.WorkflowElementInstance.Id);
+                        parameter.CaseInstance.MakeTransitionExit(parameter.CaseElementInstance.Id);
                     });
                 }
             }
             catch (TerminateCaseInstanceElementException)
             {
-                parameter.WorkflowInstance.MakeTransitionExit(parameter.WorkflowElementInstance.Id);
+                parameter.CaseInstance.MakeTransitionExit(parameter.CaseElementInstance.Id);
                 return parameter;
             }
 
@@ -136,9 +136,9 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     }
                     catch (Exception)
                     {
-                        parameter.WorkflowInstance.MakeTransitionFault(parameter.WorkflowElementInstance.Id);
+                        parameter.CaseInstance.MakeTransitionFault(parameter.CaseElementInstance.Id);
                         // NOTE : If the task doesn't belong to a stage then exit the loop.
-                        if (string.IsNullOrWhiteSpace(parameter.WorkflowElementInstance.ParentId))
+                        if (string.IsNullOrWhiteSpace(parameter.CaseElementInstance.ParentId))
                         {
                             continueExecution = false;
                         }
