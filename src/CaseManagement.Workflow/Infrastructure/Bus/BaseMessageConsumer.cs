@@ -38,9 +38,9 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
             var token = CancellationTokenSource.Token;
             while (!token.IsCancellationRequested)
             {
+                await Task.Delay(Options.IdleTimeInMs);
                 if (TaskPool.NbTasks() > Options.MaxConcurrentTask)
                 {
-                    await Task.Delay(Options.IdleTimeInMs);
                     continue;
                 }
 

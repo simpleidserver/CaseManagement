@@ -3,6 +3,7 @@ import { select, Store } from '@ngrx/store';
 import { DailyStatistic } from '../models/dailystatistic.model';
 import { ActionTypes } from './home-actions';
 import * as fromHomeSates from './home-states';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-home-component',
@@ -162,9 +163,10 @@ export class HomeComponent implements OnInit, OnDestroy {
             "series": []
         }
     ];
-    constructor(private statisticStore: Store<fromHomeSates.StatisticState>, private weekStatisticStore: Store<fromHomeSates.WeekStatisticsState>, private monthStatisticStore: Store<fromHomeSates.MonthStatisticsState>) { }
+    constructor(private statisticStore: Store<fromHomeSates.StatisticState>, private weekStatisticStore: Store<fromHomeSates.WeekStatisticsState>, private monthStatisticStore: Store<fromHomeSates.MonthStatisticsState>, private datePipe: DatePipe) { }
 
     ngOnInit() {
+        let self = this;
         this.statisticSubscription = this.statisticStore.pipe(select('statistic')).subscribe((st: fromHomeSates.StatisticState) => {
             if (!st) {
                 return;
@@ -273,43 +275,43 @@ export class HomeComponent implements OnInit, OnDestroy {
                 ];
                 st.content.Content.forEach(function (elt: DailyStatistic) {
                     caseWeekResult[0].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbActiveCases
                     });
                     caseWeekResult[1].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbCompletedCases
                     });
                     caseWeekResult[2].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbTerminatedCases
                     });
                     caseWeekResult[3].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbFailedCases
                     });
                     caseWeekResult[4].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbSuspendedCases
                     });
                     caseWeekResult[5].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbClosedCases
                     });
                     formWeekResult[0].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbCreatedForms
                     });
                     formWeekResult[1].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbConfirmedForms
                     });
                     activationWeekResult[0].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbCreatedForms
                     });
                     activationWeekResult[1].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbConfirmedForms
                     });
                 });
@@ -373,43 +375,43 @@ export class HomeComponent implements OnInit, OnDestroy {
                 ];
                 st.content.Content.forEach(function (elt: DailyStatistic) {
                     caseMonthResult[0].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbActiveCases
                     });
                     caseMonthResult[1].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbCompletedCases
                     });
                     caseMonthResult[2].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbTerminatedCases
                     });
                     caseMonthResult[3].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbFailedCases
                     });
                     caseMonthResult[4].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbSuspendedCases
                     });
                     caseMonthResult[5].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbClosedCases
                     });
                     formMonthResult[0].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbCreatedForms
                     });
                     formMonthResult[1].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbConfirmedForms
                     });
                     activationMonthResult[0].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbCreatedForms
                     });
                     activationMonthResult[1].series.push({
-                        "name": elt.DateTime,
+                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbConfirmedForms
                     });
                 });

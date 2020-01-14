@@ -47,7 +47,7 @@
             <div>                
                 <mat-card>
                     <mat-card-content>
-                        <button mat-raised-button color="primary" (click)="createInstance()">{{ "CREATE_INSTANCE" | translate }}</button>
+                        <button mat-raised-button color="primary" (click)="launchCaseInstance()">{{ "LAUNCH_INSTANCE" | translate }}</button>
                         <mat-tab-group>
                             <mat-tab label="{{'CASE_INSTANCES' | translate}}">
                                 <div class="mat-elevation-z8 overflow-hidden">
@@ -73,8 +73,17 @@
                                         <ng-container matColumnDef="actions">
                                             <th mat-header-cell *matHeaderCellDef></th>
                                             <td mat-cell *matCellDef="let caseInstance">
-                                                <button mat-icon-button (click)="launchCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Active'">
+                                                <button mat-icon-button (click)="reactivateCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed'">
+                                                    <mat-icon>cached</mat-icon>
+                                                </button>
+                                                <button mat-icon-button (click)="suspendCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Active'">
+                                                    <mat-icon>stop</mat-icon>
+                                                </button>
+                                                <button mat-icon-button (click)="resumeCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Suspended'">
                                                     <mat-icon>play_arrow</mat-icon>
+                                                </button>
+                                                <button mat-icon-button (click)="closeCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed'">
+                                                    <mat-icon>close</mat-icon>
                                                 </button>
                                             </td>
                                         </ng-container>

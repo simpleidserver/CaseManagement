@@ -3,6 +3,7 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
+import { CaseActivation } from '../models/case-activation.model';
 import { CaseDefinitionHistory, CaseElementDefinitionHistory } from '../models/case-definition-history.model';
 import { CaseDefinition } from '../models/case-definition.model';
 import { CaseFormInstance } from '../models/case-form-instance.model';
@@ -10,7 +11,6 @@ import { CaseInstance } from '../models/case-instance.model';
 import { CaseInstancesService } from '../services/caseinstances.service';
 import { ActionTypes } from './view-actions';
 import * as fromViewCaseDefStates from './view-states';
-import { CaseActivation } from '../models/case-activation.model';
 let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
 
 @Component({
@@ -154,14 +154,34 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
         }
     }
 
-    createInstance() {
-        this.caseInstancesService.create(this.route.snapshot.params['id']).subscribe(() => {
+    launchCaseInstance() {
+        this.caseInstancesService.create(this.route.snapshot.params['id']).subscribe((caseInstance: CaseInstance) => {
+            this.caseInstancesService.launch(caseInstance.Id).subscribe(() => {
+                this.refresh();
+            });
+        });
+    }
+
+    reactivateCaseInstance(caseInstance: CaseInstance) {
+        this.caseInstancesService.reactivateCaseInstance(caseInstance.Id).subscribe(() => {
             this.refresh();
         });
     }
 
-    launchCaseInstance(caseInstance: CaseInstance) {
-        this.caseInstancesService.launch(caseInstance.Id).subscribe(() => {
+    suspendCaseInstance(caseInstance: CaseInstance) {
+        this.caseInstancesService.suspendCaseInstance(caseInstance.Id).subscribe(() => {
+            this.refresh();
+        });
+    }
+
+    resumeCaseInstance(caseInstance: CaseInstance) {
+        this.caseInstancesService.resumeCaseInstance(caseInstance.Id).subscribe(() => {
+            this.refresh();
+        });
+    }
+
+    closeCaseInstance(caseInstance: CaseInstance) {
+        this.caseInstancesService.closeCaseInstance(caseInstance.Id).subscribe(() => {
             this.refresh();
         });
     }

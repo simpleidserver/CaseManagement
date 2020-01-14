@@ -53,4 +53,32 @@ export class CaseInstancesService {
         headers = headers.set('Accept', 'application/json');
         return this.http.get(targetUrl, { headers: headers });
     }
+
+    reactivateCaseInstance(caseInstanceId: string) {
+        let targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/reactivate";
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers });
+    }
+
+    suspendCaseInstance(caseInstanceId: string) {
+        let targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/suspend";
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers });
+    }
+
+    resumeCaseInstance(caseInstanceId: string) {
+        let targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/resume";
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers });
+    }
+
+    closeCaseInstance(caseInstanceId: string) {
+        let targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/close";
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers });
+    }
 }
