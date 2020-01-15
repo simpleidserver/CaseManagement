@@ -427,22 +427,6 @@ namespace CaseManagement.CMMN.Domains
                 DomainEvents.Add(evt);
             }
         }
-
-        public void MakeTransitionExit(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-                
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Exit, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
         
         public void MakeTransitionOccur(string elementId)
         {
@@ -460,22 +444,6 @@ namespace CaseManagement.CMMN.Domains
                 }
 
                 var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Occur, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionParentExit(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-                
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.ParentExit, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -596,12 +564,33 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsActive())
+                if(!elt.CanBeTerminated())
                 {
                     return;
                 }
 
                 var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.ParentTerminate, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionTerminate(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsActive())
+                {
+                    return;
+                }
+
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Terminate, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -813,7 +802,6 @@ namespace CaseManagement.CMMN.Domains
                     state = CaseStates.Completed;
                     break;
                 case CMMNTransitions.Terminate:
-                case CMMNTransitions.Exit:
                     if (State != Enum.GetName(typeof(CaseStates), CaseStates.Active))
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>

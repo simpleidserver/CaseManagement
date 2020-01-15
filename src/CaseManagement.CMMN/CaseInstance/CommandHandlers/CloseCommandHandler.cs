@@ -3,6 +3,8 @@ using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using CaseManagement.Workflow.Infrastructure.EvtStore;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
@@ -26,8 +28,16 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
                 throw new UnknownCaseInstanceException(closeCommand.CaseInstanceId);
             }
 
-            caseInstance.MakeTransition(CMMNTransitions.Close);
-            await _queueProvider.QueueTransition(caseInstance.Id, null, CMMNTransitions.Close);
+            if (caseInstance.State == Enum.GetName(typeof(CaseStates), CaseStates.Suspended))
+            {
+                caseInstance.MakeTransition(CMMNTransitions.Close);
+                await _queueProvider.QueueTransition(caseInstance.Id, null, CMMNTransitions.Close);
+            }
+            else
+            {
+                caseInstance.MakeTransition(CMMNTransitions.Close);
+                await _queueProvider.QueueEvent(caseInstance.DomainEvents.Last());
+            }
         }
     }
 }

@@ -9,58 +9,17 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.EventHandlers
 {
-    public class StatisticHandler : IDomainEventHandler<CaseInstanceCreatedEvent>, IDomainEventHandler<CaseElementCreatedEvent>, IDomainEventHandler<CaseTransitionRaisedEvent>, IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, IDomainEventHandler<CaseElementTransitionRaisedEvent>
+    public class StatisticHandler : IDomainEventHandler<CaseTransitionRaisedEvent>, IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, IDomainEventHandler<CaseElementTransitionRaisedEvent>
     {
         private readonly IStatisticCommandRepository _staticicCommandRepository;
         private readonly IStatisticQueryRepository _statisticQueryRepository;
-        private readonly IWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public StatisticHandler(IStatisticCommandRepository statisticCommandRepository, IStatisticQueryRepository statisticQueryRepository, IWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public StatisticHandler(IStatisticCommandRepository statisticCommandRepository, IStatisticQueryRepository statisticQueryRepository)
         {
             _staticicCommandRepository = statisticCommandRepository;
             _statisticQueryRepository = statisticQueryRepository;
-            _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
         }
-
-        public async Task Handle(CaseInstanceCreatedEvent @event, CancellationToken cancellationToken)
-        {
-            var stat = await _statisticQueryRepository.FindById(@event.CaseDefinitionId);
-            if (stat == null)
-            {
-                _staticicCommandRepository.Add(new CaseDefinitionStatisticAggregate
-                {
-                    NbInstances = 1,
-                    CaseDefinitionId  = @event.CaseDefinitionId
-                });
-            }
-            else
-            {
-                stat.NbInstances++;
-                _staticicCommandRepository.Update(stat);
-            }
-
-            await _staticicCommandRepository.SaveChanges();
-        }
-
-        public async Task Handle(CaseElementCreatedEvent @event, CancellationToken cancellationToken)
-        {            
-            var workflowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
-            var stat = await _statisticQueryRepository.FindById(workflowInstance.CaseDefinitionId);
-            var statElt = stat.Statistics.FirstOrDefault(s => s.CaseElementDefinitionId == @event.CaseElementDefinitionId);
-            if (statElt == null)
-            {
-                statElt = new CaseElementDefinitionStatistic { CaseElementDefinitionId = @event.CaseElementDefinitionId, NbInstances = 1 };
-                stat.Statistics.Add(statElt);
-            }
-            else
-            {
-                statElt.NbInstances++;
-                _staticicCommandRepository.Update(stat);
-            }
-
-            await _staticicCommandRepository.SaveChanges();
-        }
-
+        
         public async Task Handle(CaseTransitionRaisedEvent @event, CancellationToken cancellationToken)
         {
             var searchDailyCaseStatistics = await _statisticQueryRepository.FindDailyStatistics(new FindDailyStatisticsParameter

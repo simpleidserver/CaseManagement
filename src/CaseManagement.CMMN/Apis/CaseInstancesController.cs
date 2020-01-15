@@ -31,9 +31,9 @@ namespace CaseManagement.CMMN.Apis
         private readonly ICloseCommandHandler _closeCommandHandler;
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
         private readonly IActivateCommandHandler _activateCommandHandler;
-        private readonly IWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
+        private readonly ICaseInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, IWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, ICaseInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;

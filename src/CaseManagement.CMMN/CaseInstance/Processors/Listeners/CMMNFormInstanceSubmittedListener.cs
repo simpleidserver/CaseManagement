@@ -1,6 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
-using System.Diagnostics;
 using System.Threading;
 
 namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
@@ -9,24 +8,34 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
     {
         private readonly Domains.CaseInstance _workflowInstance;
         private readonly CaseElementInstance _workflowElementInstance;
-        private readonly ManualResetEvent _manualResetEvent;
+        private readonly CancellationToken _cancellationToken;
+        private bool _continueExecution;
 
-        public FormInstanceSubmittedListener(Domains.CaseInstance workflowInstance, CaseElementInstance workflowElementInstance, ManualResetEvent manualResetEvent)
+        public FormInstanceSubmittedListener(Domains.CaseInstance workflowInstance, CaseElementInstance workflowElementInstance, CancellationToken cancellationToken)
         {
             _workflowInstance = workflowInstance;
             _workflowElementInstance = workflowElementInstance;
-            _manualResetEvent = manualResetEvent;
+            _cancellationToken = cancellationToken;
         }
 
         public void Listen()
         {
+            _continueExecution = true;
             _workflowInstance.EventRaised += HandleFormInstanceSubmitted;
-            _manualResetEvent.WaitOne();
+            while (_continueExecution)
+            {
+                Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
+                if (_cancellationToken.IsCancellationRequested)
+                {
+                    _continueExecution = false;
+                }
+            }
         }
 
         public void Unsubscribe()
         {
             _workflowInstance.EventRaised -= HandleFormInstanceSubmitted;
+            _continueExecution = false;
         }
 
         private void HandleFormInstanceSubmitted(object obj, DomainEventArgs args)
@@ -40,17 +49,15 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
             if (evt.CaseElementId == _workflowElementInstance.Id)
             {
                 Unsubscribe();
-                _manualResetEvent.Set();
             }
         }
     }
 
     public class CMMNFormInstanceSubmittedListener
     {
-        public static FormInstanceSubmittedListener Listen(ProcessorParameter parameter)
+        public static FormInstanceSubmittedListener Listen(ProcessorParameter parameter, CancellationToken token)
         {
-            var manualResetEvent = new ManualResetEvent(false);
-            var criterionListener = new FormInstanceSubmittedListener(parameter.CaseInstance, parameter.CaseElementInstance, manualResetEvent);
+            var criterionListener = new FormInstanceSubmittedListener(parameter.CaseInstance, parameter.CaseElementInstance, token);
             criterionListener.Listen();
             return criterionListener;
         }

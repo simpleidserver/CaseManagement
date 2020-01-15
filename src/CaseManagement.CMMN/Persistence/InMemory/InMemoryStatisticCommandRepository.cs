@@ -8,25 +8,13 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 {
     public class InMemoryStatisticCommandRepository : IStatisticCommandRepository
     {
-        private readonly ConcurrentBag<CaseDefinitionStatisticAggregate> _workflowDefinitionStatistics;
         private readonly ConcurrentBag<DailyStatisticAggregate> _caseDailyStatistics;
+        private readonly ConcurrentBag<PerformanceStatisticAggregate> _performanceStatistics;
 
-        public InMemoryStatisticCommandRepository(ConcurrentBag<CaseDefinitionStatisticAggregate> workflowDefinitionStatistics, ConcurrentBag<DailyStatisticAggregate> caseDailyStatistics)
+        public InMemoryStatisticCommandRepository(ConcurrentBag<DailyStatisticAggregate> caseDailyStatistics, ConcurrentBag<PerformanceStatisticAggregate> performanceStatistics)
         {
-            _workflowDefinitionStatistics = workflowDefinitionStatistics;
             _caseDailyStatistics = caseDailyStatistics;
-        }
-
-        public void Add(CaseDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate)
-        {
-            _workflowDefinitionStatistics.Add((CaseDefinitionStatisticAggregate)cmmnWorkflowDefinitionStatisticAggregate.Clone());
-        }
-
-        public void Update(CaseDefinitionStatisticAggregate cmmnWorkflowDefinitionStatisticAggregate)
-        {
-            var wf = _workflowDefinitionStatistics.First(w => w.CaseDefinitionId == cmmnWorkflowDefinitionStatisticAggregate.CaseDefinitionId);
-            _workflowDefinitionStatistics.Remove(wf);
-            _workflowDefinitionStatistics.Add((CaseDefinitionStatisticAggregate)wf.Clone());
+            _performanceStatistics = performanceStatistics;
         }
 
         public void Add(DailyStatisticAggregate caseDailyStatistic)
@@ -38,6 +26,27 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         {
             _caseDailyStatistics.Remove(caseDailyStatistic);
             _caseDailyStatistics.Add(caseDailyStatistic);
+        }
+
+        public void Add(PerformanceStatisticAggregate performanceStatistic)
+        {
+            _performanceStatistics.Add(performanceStatistic);
+        }
+
+        public Task KeepLastRecords(int nbRecords, string machineName)
+        {
+            var lst = _performanceStatistics.Where(m => m.MachineName == machineName).OrderByDescending(p => p.CaptureDateTime).Skip(nbRecords).Select(s => new
+            {
+                CaptureDateTime = s.CaptureDateTime,
+                MachineName = s.MachineName
+            });
+            foreach(var record in lst)
+            {
+                var existingRecord = _performanceStatistics.First(v => v.MachineName == record.MachineName && v.CaptureDateTime == record.CaptureDateTime);
+                _performanceStatistics.Remove(existingRecord);
+            }
+
+            return Task.CompletedTask;
         }
 
         public Task<int> SaveChanges()

@@ -29,7 +29,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
             public CriterionListener Listener { get; set; }
         }
 
-        public static void ListenEntryCriterias(ProcessorParameter parameter)
+        public static void ListenEntryCriterias(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
             var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
             var entryCriterion = planItemDefinition.EntryCriterions.ToList();
@@ -43,12 +43,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
                 return;
             }
 
-            var manualResetEvent = new ManualResetEvent(false);
-            var criterionListener = new CriterionListener(parameter, manualResetEvent, entryCriterion);
+            var criterionListener = new CriterionListener(parameter, cancellationToken, entryCriterion);
             criterionListener.Listen();
         }
 
-        public static ListenEntryCriteriaResult ListenEntryCriteriasBg(ProcessorParameter parameter)
+        public static ListenEntryCriteriaResult ListenEntryCriteriasBg(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
             var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
             var entryCriterion = planItemDefinition.EntryCriterions.ToList();
@@ -62,23 +61,22 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
                 return new ListenEntryCriteriaResult(true);
             }
 
-            var manualResetEvent = new ManualResetEvent(false);
-            var criterionListener = new CriterionListener(parameter, manualResetEvent, entryCriterion);
+            var criterionListener = new CriterionListener(parameter, cancellationToken, entryCriterion);
             var task = new Task(() =>
             {
                 criterionListener.Listen();
-            }, TaskCreationOptions.LongRunning);
+            }, cancellationToken, TaskCreationOptions.LongRunning);
             task.Start();
             return new ListenEntryCriteriaResult(task, criterionListener);
         }
 
-        public static KeyValuePair<Task, CriterionListener>? ListenExitCriterias(ProcessorParameter parameter)
+        public static KeyValuePair<Task, CriterionListener>? ListenExitCriterias(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
             var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
-            return ListenExitCriterias(parameter, planItemDefinition.ExitCriterions.ToList());
+            return ListenExitCriterias(parameter, planItemDefinition.ExitCriterions.ToList(), cancellationToken);
         }
 
-        public static KeyValuePair<Task, CriterionListener>? ListenExitCriterias(ProcessorParameter parameter, ICollection<Criteria> criterias)
+        public static KeyValuePair<Task, CriterionListener>? ListenExitCriterias(ProcessorParameter parameter, ICollection<Criteria> criterias, CancellationToken cancellationToken)
         {
             if (!criterias.Any())
             {
@@ -90,8 +88,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
                 throw new TerminateCaseInstanceElementException();
             }
 
-            var manualResetEvent = new ManualResetEvent(false);
-            var criterionListener = new CriterionListener(parameter, manualResetEvent, criterias);
+            var criterionListener = new CriterionListener(parameter, cancellationToken, criterias);
             var task = new Task(() =>
             {
                 criterionListener.Listen();
@@ -103,25 +100,35 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
         public class CriterionListener
         {
             private readonly ProcessorParameter _parameter;
-            private readonly ManualResetEvent _manualResetEvent;
+            private readonly CancellationToken _cancellationToken;
             private readonly ICollection<Criteria> _criterions;
+            private bool _continueExecution;
 
-            public CriterionListener(ProcessorParameter parameter, ManualResetEvent manualResetEvent, ICollection<Criteria> criterions)
+            public CriterionListener(ProcessorParameter parameter, CancellationToken cancellationToken, ICollection<Criteria> criterions)
             {
                 _parameter = parameter;
-                _manualResetEvent = manualResetEvent;
+                _cancellationToken = cancellationToken;
                 _criterions = criterions;
             }
 
             public void Listen()
             {
+                _continueExecution = true;
                 _parameter.CaseInstance.EventRaised += HandlePlanItemChanged;
-                _manualResetEvent.WaitOne();
+                while (_continueExecution)
+                {
+                    Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
+                    if (_cancellationToken.IsCancellationRequested)
+                    {
+                        _continueExecution = false;
+                    }
+                }
             }
 
             public void Unsubscribe()
             {
                 _parameter.CaseInstance.EventRaised -= HandlePlanItemChanged;
+                _continueExecution = false;
             }
 
             private void HandlePlanItemChanged(object obj, DomainEventArgs args)
@@ -141,7 +148,6 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
                 if (_criterions.Any(c => _parameter.CaseInstance.IsCriteriaSatisfied(c, _parameter.CaseElementInstance.Version)))
                 {
                     Unsubscribe();
-                    _manualResetEvent.Set();
                 }
             }
         }

@@ -378,7 +378,6 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(2).State);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories.ElementAt(0).State);
-            Assert.Single(workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories);
         }
 
         #endregion
@@ -436,7 +435,7 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Active), workflowInstance.WorkflowElementInstances.First(i => i.CaseElementDefinitionId == "1").StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Completed), workflowInstance.WorkflowElementInstances.First(i => i.CaseElementDefinitionId == "1").StateHistories.ElementAt(2).State);
             Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.First(i => i.CaseElementDefinitionId == "2").TransitionHistories.ElementAt(0).Transition);
-            Assert.True(workflowInstance.WorkflowElementInstances.First(i => i.CaseElementDefinitionId == "2").TransitionHistories.Any(t => t.Transition == CMMNTransitions.Exit) == true);
+            Assert.True(workflowInstance.WorkflowElementInstances.First(i => i.CaseElementDefinitionId == "2").TransitionHistories.Any(t => t.Transition == CMMNTransitions.Terminate) == true);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.First(i => i.CaseElementDefinitionId == "2").StateHistories.ElementAt(0).State);
             Assert.True(workflowInstance.WorkflowElementInstances.First(i => i.CaseElementDefinitionId == "2").StateHistories.Any(t => t.State == (Enum.GetName(typeof(TaskStates), TaskStates.Terminated))) == true);
         }
@@ -802,12 +801,12 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Completed), workflowInstance.WorkflowElementInstances.ElementAt(0).StateHistories.ElementAt(2).State);
             Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.ElementAt(1).TransitionHistories.ElementAt(0).Transition);
             Assert.Equal(CMMNTransitions.Start, workflowInstance.WorkflowElementInstances.ElementAt(1).TransitionHistories.ElementAt(1).Transition);
-            Assert.Equal(CMMNTransitions.Exit, workflowInstance.WorkflowElementInstances.ElementAt(1).TransitionHistories.ElementAt(2).Transition);
+            Assert.Equal(CMMNTransitions.Terminate, workflowInstance.WorkflowElementInstances.ElementAt(1).TransitionHistories.ElementAt(2).Transition);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Active), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Terminated), workflowInstance.WorkflowElementInstances.ElementAt(1).StateHistories.ElementAt(2).State);
             Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.ElementAt(2).TransitionHistories.ElementAt(0).Transition);
-            Assert.True(workflowInstance.WorkflowElementInstances.ElementAt(2).TransitionHistories.Any(t => t.Transition == CMMNTransitions.ParentExit) == true);
+            Assert.True(workflowInstance.WorkflowElementInstances.ElementAt(2).TransitionHistories.Any(t => t.Transition == CMMNTransitions.ParentTerminate) == true);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories.ElementAt(0).State);
             Assert.True(workflowInstance.WorkflowElementInstances.ElementAt(2).StateHistories.Any(t => t.State == Enum.GetName(typeof(TaskStates), TaskStates.Terminated)) == true);
         }

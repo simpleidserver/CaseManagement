@@ -55,6 +55,36 @@ namespace CaseManagement.CMMN.Domains
             return new CaseElementInstance(Guid.NewGuid().ToString(), DateTime.UtcNow, workflowElementDefinition.Id, workflowElementDefinition.Type, 0, null);
         }
 
+        public bool CanBeTerminated()
+        {
+            lock (_lock)
+            {
+                switch (CaseElementDefinitionType)
+                {
+                    case CaseElementTypes.HumanTask:
+                    case CaseElementTypes.ProcessTask:
+                    case CaseElementTypes.Stage:
+                    case CaseElementTypes.Task:
+                        if (State == Enum.GetName(typeof(TaskStates), TaskStates.Terminated) || State == Enum.GetName(typeof(TaskStates), TaskStates.Completed))
+                        {
+                            return false;
+                        }
+
+                        return true;
+                    case CaseElementTypes.Milestone:
+                    case CaseElementTypes.TimerEventListener:
+                        if (State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Completed) || State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Terminated))
+                        {
+                            return false;
+                        }
+
+                        return true;
+                }
+
+                return false;
+            }
+        }
+
         public bool IsAvailable()
         {
             lock (_lock)
@@ -361,19 +391,7 @@ namespace CaseManagement.CMMN.Domains
 
                             taskState = TaskStates.Completed;
                             break;
-                        case CMMNTransitions.Exit:
-                        case CMMNTransitions.ParentExit:
-                            taskState = TaskStates.Terminated;
-                            break;
                         case CMMNTransitions.ParentTerminate:
-                            if (State != Enum.GetName(typeof(TaskStates), TaskStates.Active))
-                            {
-                                throw new AggregateValidationException(new Dictionary<string, string>
-                                {
-                                    { "transition", "planitem instance is not active" }
-                                });
-                            }
-
                             taskState = TaskStates.Terminated;
                             break;
                         case CMMNTransitions.ParentSuspend:

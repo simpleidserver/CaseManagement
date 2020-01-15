@@ -40,8 +40,6 @@
                                     </ngx-charts-pie-chart>
                                 </div>
                             </div>
-                            <!-- AFFICHER LE NOMBRE DE PROCESSUS EN COURS D EXECUTION ??? -->
-                            <!-- AFFICHER LE NOMBRE DE NOEUDS ??? -->
                         </mat-card-content>
                     </mat-card>
                     <mat-card>
@@ -165,8 +163,17 @@
             </div>
             <div fxFlex="30%">
                 <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>{{ "DEPLOYED" | translate }}</mat-card-title>
+                    </mat-card-header>
                     <mat-card-content>
-
+                        <mat-list>
+                            <mat-list-item>
+                                <h4 mat-line>{{ "CASE_DEFINITIONS" | translate}}</h4>
+                                <h2>10</h2>
+                                <!-- Display number of case definitions -->
+                            </mat-list-item>
+                        </mat-list>
                     </mat-card-content>
                 </mat-card>
             </div>

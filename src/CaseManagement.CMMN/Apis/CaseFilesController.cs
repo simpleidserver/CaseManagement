@@ -14,9 +14,9 @@ namespace CaseManagement.CMMN.Apis
     [Route(CMMNConstants.RouteNames.CaseFiles)]
     public class CaseFilesController : Controller
     {
-        private readonly IWorkflowFileQueryRepository _queryRepository;
+        private readonly ICaseFileQueryRepository _queryRepository;
 
-        public CaseFilesController(IWorkflowFileQueryRepository queryRepository)
+        public CaseFilesController(ICaseFileQueryRepository queryRepository)
         {
             _queryRepository = queryRepository;
         }

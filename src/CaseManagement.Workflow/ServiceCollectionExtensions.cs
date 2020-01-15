@@ -13,7 +13,6 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddWorkflow(this IServiceCollection services)
         {
-            services.AddMvc();
             services.AddHostedService<BusHostedService>();
             services.AddNEventStore()
                 .AddEventStores()

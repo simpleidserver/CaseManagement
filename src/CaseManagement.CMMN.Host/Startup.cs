@@ -21,18 +21,17 @@ namespace CaseManagement.CMMN.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
+            services.AddMvc();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddAuthorization(policy =>
             {
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
-            var builder = services.AddCMMN();
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
-            builder.AddDefinitions(files)
+            services.AddCMMN().AddDefinitions(files)
                 .AddCaseProcesses(new List<ProcessAggregate>
                 {
                     new CaseManagementProcessAggregate

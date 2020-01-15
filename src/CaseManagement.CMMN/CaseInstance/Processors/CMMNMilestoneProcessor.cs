@@ -15,38 +15,23 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
         {
             var task = new Task<ProcessorParameter>(() =>
             {
-                return HandleTask(parameter);
+                return HandleTask(parameter, new CancellationTokenSource());
             }, token, TaskCreationOptions.LongRunning);
             task.Start();
             return task;
         }
 
-        private ProcessorParameter HandleTask(ProcessorParameter parameter)
+        private ProcessorParameter HandleTask(ProcessorParameter parameter, CancellationTokenSource tokenSource)
         {
             bool isSuspend = false;
             bool continueExecution = true;
+            CMMNPlanItemTransitionListener.EventListener parentSuspendEvtListener = null;
+            CMMNPlanItemTransitionListener.EventListener parentResumeEvtListener = null;
+            CMMNPlanItemTransitionListener.EventListener parentTerminateEvtListener = null;
+            CMMNPlanItemTransitionListener.EventListener suspendEvtListener = null;
+            CMMNPlanItemTransitionListener.EventListener resumeEvtListener = null;
+            CMMNPlanItemTransitionListener.EventListener terminateEvtListener = null;
             ListenEntryCriteriaResult entryCriteriaResult = null;
-            var initListener = new Action(() =>
-            {
-                entryCriteriaResult = CMMNCriterionListener.ListenEntryCriteriasBg(parameter);
-                if (entryCriteriaResult != null)
-                {
-                    if (entryCriteriaResult.IsCriteriaSatisfied)
-                    {
-                        parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
-                        continueExecution = false;
-                    }
-                    else
-                    {
-                        entryCriteriaResult.Task.ContinueWith((o) =>
-                        {
-                            o.Wait();
-                            parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
-                            continueExecution = false;
-                        });
-                    }
-                }
-            });
             var resetListener = new Action(() =>
             {
                 if (entryCriteriaResult != null && !entryCriteriaResult.IsCriteriaSatisfied)
@@ -59,51 +44,104 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     entryCriteriaResult.Listener.Unsubscribe();
                 }
             });
-            initListener();
-            var parentSuspendEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentSuspend, () =>
+            try
             {
-                isSuspend = true;
-                resetListener();
-            });
-            var parentResumeEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentResume, () =>
-            {
-                isSuspend = false;
-                initListener();
-            });
-            var parentTerminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentTerminate, () =>
-            {
-                continueExecution = false;
-            });
-            var suspendEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Suspend, () =>
-            {
-                isSuspend = true;
-                resetListener();
-            });
-            var resumeEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Resume, () =>
-            {
-                isSuspend = false;
-                initListener();
-            });
-            var terminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Terminate, () =>
-            {
-                continueExecution = false;
-            });
-            while (continueExecution)
-            {
-                if (isSuspend)
+                parentTerminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentTerminate, () =>
                 {
-                    Thread.Sleep(100);
-                    continue;
+                    continueExecution = false;
+                    tokenSource.Cancel();
+                });
+                var initListener = new Action(() =>
+                {
+                    entryCriteriaResult = CMMNCriterionListener.ListenEntryCriteriasBg(parameter, tokenSource.Token);
+                    if (entryCriteriaResult != null)
+                    {
+                        if (entryCriteriaResult.IsCriteriaSatisfied)
+                        {
+                            parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
+                            continueExecution = false;
+                        }
+                        else
+                        {
+                            entryCriteriaResult.Task.ContinueWith((o) =>
+                            {
+                                o.Wait();
+                                parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
+                                continueExecution = false;
+                            });
+                        }
+                    }
+                });
+                initListener();
+                parentSuspendEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentSuspend, () =>
+                {
+                    isSuspend = true;
+                    resetListener();
+                });
+                parentResumeEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.ParentResume, () =>
+                {
+                    isSuspend = false;
+                    initListener();
+                });
+                suspendEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Suspend, () =>
+                {
+                    isSuspend = true;
+                    resetListener();
+                });
+                resumeEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Resume, () =>
+                {
+                    isSuspend = false;
+                    initListener();
+                });
+                terminateEvtListener = CMMNPlanItemTransitionListener.Listen(parameter, CMMNTransitions.Terminate, () =>
+                {
+                    continueExecution = false;
+                    tokenSource.Cancel();
+                });
+                while (continueExecution)
+                {
+                    Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
+                    if (isSuspend)
+                    {
+                        continue;
+                    }
                 }
             }
+            finally
+            {
+                if (parentSuspendEvtListener != null)
+                {
+                    parentSuspendEvtListener.Unsubscribe();
+                }
+                
+                if (parentResumeEvtListener != null)
+                {
+                    parentResumeEvtListener.Unsubscribe();
+                }
 
-            parentSuspendEvtListener.Unsubscribe();
-            parentResumeEvtListener.Unsubscribe();
-            parentTerminateEvtListener.Unsubscribe();
-            suspendEvtListener.Unsubscribe();
-            resumeEvtListener.Unsubscribe();
-            terminateEvtListener.Unsubscribe();
-            resetListener();
+                if (parentTerminateEvtListener != null)
+                {
+                    parentTerminateEvtListener.Unsubscribe();
+                }
+
+                if (suspendEvtListener != null)
+                {
+                    suspendEvtListener.Unsubscribe();
+                }
+
+                if (resumeEvtListener != null)
+                {
+                    resumeEvtListener.Unsubscribe();
+                }
+
+                if (terminateEvtListener != null)
+                {
+                    terminateEvtListener.Unsubscribe();
+                }
+
+                resetListener();
+            }
+
             return parameter;
         }
     }

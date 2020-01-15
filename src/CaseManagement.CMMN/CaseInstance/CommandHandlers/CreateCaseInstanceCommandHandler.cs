@@ -9,10 +9,10 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
 {
     public class CreateCaseInstanceCommandHandler : ICreateCaseInstanceCommandHandler
     {
-        private readonly IWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
+        private readonly ICaseDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public CreateCaseInstanceCommandHandler(IWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, ICommitAggregateHelper commitAggregateHelper)
+        public CreateCaseInstanceCommandHandler(ICaseDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, ICommitAggregateHelper commitAggregateHelper)
         {
             _cmmnWorkflowDefinitionQueryRepository = cmmnWorkflowDefinitionQueryRepository;
             _commitAggregateHelper = commitAggregateHelper;

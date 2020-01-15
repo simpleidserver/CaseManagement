@@ -11,10 +11,10 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
         IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, IDomainEventHandler<CaseElementStartedEvent>,
         IDomainEventHandler<CaseElementTransitionRaisedEvent>, IDomainEventHandler<CaseTransitionRaisedEvent>, IDomainEventHandler<CaseInstanceVariableAddedEvent>
     {
-        private readonly IWorkflowInstanceCommandRepository _cmmnWorkflowInstanceCommandRepository;
-        private readonly IWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
+        private readonly ICaseInstanceCommandRepository _cmmnWorkflowInstanceCommandRepository;
+        private readonly ICaseInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public WorkflowInstanceHandler(IWorkflowInstanceCommandRepository cmmnWorkflowInstanceCommandRepository, IWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public WorkflowInstanceHandler(ICaseInstanceCommandRepository cmmnWorkflowInstanceCommandRepository, ICaseInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _cmmnWorkflowInstanceCommandRepository = cmmnWorkflowInstanceCommandRepository;
             _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;

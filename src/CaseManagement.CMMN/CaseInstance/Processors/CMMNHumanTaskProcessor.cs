@@ -17,10 +17,9 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             parameter.CaseInstance.CreateFormInstance(parameter.CaseElementInstance.Id, humanTask.FormId, humanTask.PerformerRef);
             if (humanTask.IsBlocking)
             {
-                _listener = CMMNFormInstanceSubmittedListener.Listen(parameter);
+                _listener = CMMNFormInstanceSubmittedListener.Listen(parameter, token);
             }
 
-            // parameter.CaseInstance.MakeTransition(parameter.CaseElementInstance.Id, CMMNTransitions.Complete);
             return Task.CompletedTask;
         }
 

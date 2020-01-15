@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator, MatSort, MatSelectChange } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
@@ -20,7 +20,9 @@ let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
     encapsulation: ViewEncapsulation.None
 })
 export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
+    selectedTimer: string = "4000";
     isLoading: boolean;
+    isCanvasInit: boolean;
     isErrorLoadOccured: boolean;
     isCaseInstancesErrorLoadOccured: boolean;
     isCaseFormInstancesErrorLoadOccured: boolean;
@@ -32,7 +34,11 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
         Id: null,
         Name: null
     };
-    caseDefinitionHistory: CaseDefinitionHistory;
+    caseDefinitionHistory: CaseDefinitionHistory = {
+        Elements: [],
+        Id: null,
+        NbInstances: null
+    };
     caseInstances: CaseInstance[];
     caseFormInstances: CaseFormInstance[];
     caseActivations: CaseActivation[];
@@ -75,11 +81,11 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            if (this.isLoading == true && !st.isLoading) {
-                this.isLoading = st.isLoading;
-                this.isErrorLoadOccured = st.isErrorLoadOccured;
-                this.caseDefinitionHistory = st.caseDefinitionHistory;
+            this.isLoading = st.isLoading;
+            this.isErrorLoadOccured = st.isErrorLoadOccured;
+            if (this.isCanvasInit == false && !st.isLoading) {
                 if (st.caseDefinition) {
+                    this.caseDefinitionHistory = st.caseDefinitionHistory;
                     this.caseDefinition = st.caseDefinition;
                     viewer.importXML(st.caseFile.Payload, function (err: any) {
                         if (err) {
@@ -89,10 +95,11 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
                         var canvas = viewer.get('canvas');
                         self.updateCanvas(viewer, st.caseDefinitionHistory);
                         canvas.zoom('fit-viewport');
+                        self.isCanvasInit = true;
                     });
                 }
             }
-            else if (this.isLoading == false && st.caseDefinitionHistory) {
+            else if (this.isCanvasInit == true && st.caseDefinitionHistory) {
                 self.caseDefinitionHistory = st.caseDefinitionHistory;
                 self.updateCanvas(viewer, st.caseDefinitionHistory);
             }
@@ -132,10 +139,16 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
         });
         this.interval = setInterval(() => {
             this.refresh();
-        }, 5000);
-        this.isLoading = true;
-        this.isErrorLoadOccured = false;
+        }, 4000);
+        this.isCanvasInit = false;
         this.refresh();
+    }
+
+    selectTimer(evt: MatSelectChange) {
+        clearInterval(this.interval);
+        this.interval = setInterval(() => {
+            this.refresh();
+        }, evt.value);
     }
 
     updateCanvas(viewer: any, caseDefinitionHistory: CaseDefinitionHistory) {
@@ -198,6 +211,8 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
             type: ActionTypes.CASEDEFINITIONLOAD,
             id: id
         };
+        this.isLoading = true;
+        this.isErrorLoadOccured = false;
         this.caseDefinitionStore.dispatch(loadCaseDefinition);
         this.refreshCaseInstances();
         this.refreshFormInstances();

@@ -12,10 +12,10 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
     {
         private readonly IActivationCommandRepository _cmmnActivationCommandRepository;
         private readonly IActivationQueryRepository _cmmnActivationQueryRepository;
-        private readonly IWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
-        private readonly IWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
+        private readonly ICaseInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
+        private readonly ICaseDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
 
-        public CaseActivationHandler(IWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository, IActivationQueryRepository cmmnActivationQueryRepository, IActivationCommandRepository cmmnActivationCommandRepository, IWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository)
+        public CaseActivationHandler(ICaseInstanceQueryRepository cmmnWorkflowInstanceQueryRepository, IActivationQueryRepository cmmnActivationQueryRepository, IActivationCommandRepository cmmnActivationCommandRepository, ICaseDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository)
         {
             _cmmnActivationCommandRepository = cmmnActivationCommandRepository;
             _cmmnActivationQueryRepository = cmmnActivationQueryRepository;

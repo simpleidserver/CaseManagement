@@ -16,13 +16,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
         {
             var task = new Task<ProcessorParameter>(() =>
             {
-                return HandleTask(parameter).Result;
+                return HandleTask(parameter, new CancellationTokenSource()).Result;
             }, token, TaskCreationOptions.LongRunning);
             task.Start();
             return task;
         }
 
-        private async Task<ProcessorParameter> HandleTask(ProcessorParameter parameter)
+        private async Task<ProcessorParameter> HandleTask(ProcessorParameter parameter, CancellationTokenSource tokenSource)
         {
             var timerEventListener = (parameter.CaseInstance.GetWorkflowElementDefinition(parameter.CaseElementInstance.Id, parameter.CaseDefinition) as PlanItemDefinition).PlanItemDefinitionTimerEventListener;
             var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(timerEventListener.TimerExpression.Body);
@@ -108,7 +108,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
             });
             while (continueExecution)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
                 if (isSuspend)
                 {
                     continue;

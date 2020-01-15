@@ -24,12 +24,17 @@ namespace CaseManagement.CMMN
         public ServerBuilder AddDefinitions(List<string> pathLst)
         {
             var caseFiles = new List<CaseFileDefinitionAggregate>();
-            var caseDefinitions = new List<CaseDefinition>();
+            var caseDefinitions = new ConcurrentBag<CaseDefinition>();
+            var caseDefinitionHistories = new ConcurrentBag<CaseDefinitionHistoryAggregate>();
             foreach(var path in pathLst)
             {
                 var cmmnTxt = File.ReadAllText(path);
                 var caseDefinition = CMMNParser.ExtractWorkflowDefinition(path);
-                caseDefinitions.AddRange(caseDefinition);
+                foreach(var cd in caseDefinition)
+                {
+                    caseDefinitions.Add(cd);
+                }
+
                 caseFiles.Add(new CaseFileDefinitionAggregate
                 {
                     Payload = cmmnTxt,
@@ -40,8 +45,9 @@ namespace CaseManagement.CMMN
                 });
             }
 
-            _services.AddSingleton<IWorkflowFileQueryRepository>(new InMemoryWorkflowFileQueryRepository(caseFiles));
-            _services.AddSingleton<IWorkflowDefinitionQueryRepository>(new InMemoryWorkflowDefinitionQueryRepository(caseDefinitions));
+            _services.AddSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(caseFiles));
+            _services.AddSingleton<ICaseDefinitionCommandRepository>(new InMemoryCaseDefinitionCommandRepository(caseDefinitions, caseDefinitionHistories));
+            _services.AddSingleton<ICaseDefinitionQueryRepository>(new InMemoryCaseDefinitionQueryRepository(caseDefinitions, caseDefinitionHistories));
             return this;
         }
 
@@ -60,9 +66,9 @@ namespace CaseManagement.CMMN
 
         public ServerBuilder AddStatistics(ConcurrentBag<DailyStatisticAggregate> statistics)
         {
-            var caseDefinitionStatistics = new ConcurrentBag<CaseDefinitionStatisticAggregate>();
-            _services.AddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(caseDefinitionStatistics, statistics));
-            _services.AddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(caseDefinitionStatistics, statistics));
+            var performanceStatistics = new ConcurrentBag<PerformanceStatisticAggregate>();
+            _services.AddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(statistics, performanceStatistics));
+            _services.AddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(statistics, performanceStatistics));
             return this;
         }
 

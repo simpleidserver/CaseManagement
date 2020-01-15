@@ -9,13 +9,7 @@
 </div>
 <div fxLayout="row">
     <div fxFlex="20%">
-        <div *ngIf="isErrorLoadOccured" class="error">
-            <p>{{ "ERROR_LOAD_CASE_DEFINITION" | translate }}</p>
-        </div>
-        <div *ngIf="isLoading">
-            <mat-spinner></mat-spinner>
-        </div>
-        <mat-list *ngIf="!isErrorLoadOccured && !isLoading">
+        <mat-list>
             <mat-list-item>
                 <h4 mat-line>{{ "NAME" | translate}}</h4>
                 <p mat-line>{{ caseDefinition.Name }}</p>
@@ -47,7 +41,23 @@
             <div>                
                 <mat-card>
                     <mat-card-content>
-                        <button mat-raised-button color="primary" (click)="launchCaseInstance()">{{ "LAUNCH_INSTANCE" | translate }}</button>
+                        <div fxLayout="row">
+                            <div fxFlex="80%">
+                                <button mat-raised-button color="primary" (click)="launchCaseInstance()">{{ "LAUNCH_INSTANCE" | translate }}</button>
+                            </div>
+                            <div fxFlex="20%">
+                                <mat-form-field>
+                                    <mat-label>{{ "SELECT_REFRESH_TIME_MS" | translate }}</mat-label>
+                                    <mat-select [(value)]="selectedTimer" (selectionChange)="selectTimer($event)">
+                                        <mat-option value="100">{{ "100_MS" | translate }}</mat-option>
+                                        <mat-option value="1000">{{ "1000_MS" | translate }}</mat-option>
+                                        <mat-option value="2000">{{ "2000_MS" | translate }}</mat-option>
+                                        <mat-option value="4000">{{ "4000_MS" | translate }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-spinner *ngIf="isLoading" diameter="20" class="loadingSpinner"></mat-spinner>
+                            </div>
+                        </div>
                         <mat-tab-group>
                             <mat-tab label="{{'CASE_INSTANCES' | translate}}">
                                 <div class="mat-elevation-z8 overflow-hidden">
@@ -55,7 +65,7 @@
                                         <ng-container matColumnDef="id">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "ID" | translate }}</th>
                                             <td mat-cell *matCellDef="let case">
-                                                <a class="no-style" [routerLink]="['/casedefinitions/' + case.Id]">{{case.Id}}</a>
+                                                <a class="no-style" [routerLink]="['/caseinstances/' + case.Id]">{{case.Id}}</a>
                                             </td>
                                         </ng-container>
                                         <ng-container matColumnDef="state">
@@ -82,7 +92,7 @@
                                                 <button mat-icon-button (click)="resumeCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Suspended'">
                                                     <mat-icon>play_arrow</mat-icon>
                                                 </button>
-                                                <button mat-icon-button (click)="closeCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed'">
+                                                <button mat-icon-button (click)="closeCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed' || caseInstance.State == 'Suspended' ">
                                                     <mat-icon>close</mat-icon>
                                                 </button>
                                             </td>

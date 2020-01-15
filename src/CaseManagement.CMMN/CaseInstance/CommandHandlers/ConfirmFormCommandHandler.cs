@@ -18,9 +18,9 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
         private readonly IFormQueryRepository _formQueryRepository;
         private readonly IEventStoreRepository _eventStoreRepository;
         private readonly IRoleQueryRepository _roleQueryRepository;
-        private readonly IWorkflowDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
+        private readonly ICaseDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
 
-        public ConfirmFormCommandHandler(IQueueProvider queueProvider, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository, IRoleQueryRepository roleQueryRepository, IWorkflowDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository)
+        public ConfirmFormCommandHandler(IQueueProvider queueProvider, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository, IRoleQueryRepository roleQueryRepository, ICaseDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository)
         {
             _queueProvider = queueProvider;
             _formQueryRepository = formQueryRepository;

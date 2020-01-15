@@ -14,13 +14,11 @@ namespace CaseManagement.CMMN.Apis
     [Route(CMMNConstants.RouteNames.CaseDefinitions)]
     public class CaseDefinitionsController : Controller
     {
-        private readonly IWorkflowDefinitionQueryRepository _queryRepository;
-        private readonly IStatisticQueryRepository _staticQueryRepository;
+        private readonly ICaseDefinitionQueryRepository _queryRepository;
 
-        public CaseDefinitionsController(IWorkflowDefinitionQueryRepository queryRepository, IStatisticQueryRepository statisticQueryRepository)
+        public CaseDefinitionsController(ICaseDefinitionQueryRepository queryRepository)
         {
             _queryRepository = queryRepository;
-            _staticQueryRepository = statisticQueryRepository;
         }
         
         [HttpGet("{id}")]
@@ -38,10 +36,10 @@ namespace CaseManagement.CMMN.Apis
         [HttpGet("{id}/history")]
         public async Task<IActionResult> GetHistory(string id)
         {
-            var result = await _staticQueryRepository.FindById(id);
+            var result = await _queryRepository.FindHistoryById(id);
             if (result == null)
             {
-                result = new CaseDefinitionStatisticAggregate
+                result = new CaseDefinitionHistoryAggregate
                 {
                     CaseDefinitionId = id,
                     NbInstances = 0
@@ -89,7 +87,7 @@ namespace CaseManagement.CMMN.Apis
             };
         }
 
-        private static JObject ToDto(CaseDefinitionStatisticAggregate def)
+        private static JObject ToDto(CaseDefinitionHistoryAggregate def)
         {
             return new JObject
             {

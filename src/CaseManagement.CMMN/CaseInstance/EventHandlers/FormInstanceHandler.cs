@@ -13,9 +13,9 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
         private readonly IFormInstanceCommandRepository _formInstanceCommandRepository;
         private readonly IFormInstanceQueryRepository _formInstanceQueryRepository;
         private readonly IFormQueryRepository _formQueryRepository;
-        private readonly IWorkflowInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
+        private readonly ICaseInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
 
-        public FormInstanceHandler(IFormInstanceCommandRepository formInstanceCommandRepository, IFormInstanceQueryRepository formInstanceQueryRepository, IFormQueryRepository formQueryRepository, IWorkflowInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
+        public FormInstanceHandler(IFormInstanceCommandRepository formInstanceCommandRepository, IFormInstanceQueryRepository formInstanceQueryRepository, IFormQueryRepository formQueryRepository, ICaseInstanceQueryRepository cmmnWorkflowInstanceQueryRepository)
         {
             _formInstanceCommandRepository = formInstanceCommandRepository;
             _formInstanceQueryRepository = formInstanceQueryRepository;

@@ -1,6 +1,6 @@
 export class StateHistory {
     State: string;
-    DateTime: Date;
+    DateTime: string;
 
     public static fromJson(json: any): StateHistory{
         let result = new StateHistory();
@@ -12,7 +12,7 @@ export class StateHistory {
 
 export class TransitionHistory {
     Transition: string;
-    DateTime: Date;
+    DateTime: string;
 
     public static fromJson(json: any): TransitionHistory {
         let result = new TransitionHistory();
@@ -104,6 +104,9 @@ export class CaseInstance {
         });
         json["execution_histories"].forEach(function (eh: any) {
             result.ExecutionHistories.push(ExecutionHistory.fromJson(eh));
+        });
+        json["elements"].forEach(function (elt: any) {
+            result.Elements.push(CaseElementInstance.fromJson(elt));
         });
         return result;
     }
