@@ -252,6 +252,33 @@ Scenario: Launch caseWithOneTimerEventListener and check his status is completed
 	Then JSON 'elements[2].state_histories[0].state'='Available'
 	Then JSON 'elements[2].state_histories[1].state'='Completed'
 
+Scenario: Launch caseWithOneBlockedSEntry and check his status is active
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneBlockedSEntry.cmmn'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value    |
+	| case_definition_id | $defid$  |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
+	And poll 'http://localhost/case-instances/$insid$', until '$.elements[?(@.definition_id == 'PlanItem_18sdiyp')].state'='Completed'
+	And extract JSON from body
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/terminate'
+	And poll 'http://localhost/case-instances/$insid$', until 'state'='Terminated'
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'state'='Active'
+	Then JSON 'state_histories[0].state'='Active'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0s8tly3')].state_histories[0].state'='Available'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0s8tly3')].transition_histories[0].transition'='Create'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_18sdiyp')].state_histories[0].state'='Available'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_18sdiyp')].state_histories[1].state'='Active'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_18sdiyp')].state_histories[2].state'='Completed'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_18sdiyp')].transition_histories[0].transition'='Create'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_18sdiyp')].transition_histories[1].transition'='Start'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_18sdiyp')].transition_histories[2].transition'='Complete'
+
 Scenario: Suspend caseWithOneLongProcessTask and check his status is suspended (scope = ProcessTask)
 	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneLongProcessTask.cmmn'
 	And extract JSON from body
@@ -380,8 +407,7 @@ Scenario: Reactive failed caseWithTwoStages and check his status is failed (scop
 	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1fd01pl')].state_histories[0].state'='Available'
 	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1fd01pl')].state_histories[1].state'='Active'
 	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1fd01pl')].state_histories[2].state'='Completed'
-
-
+	
 Scenario: Reactivate failed caseWithOneFailProcessTask and check his status is failed (scope = Case Instance)
 	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneFailProcessTask.cmmn'
 	And extract JSON from body

@@ -9,12 +9,12 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
 
         public override IEnumerable<CaseFileItem> GetChildren()
         {
-            foreach(var file in Directory.EnumerateFiles(Id))
+            foreach(var file in Directory.EnumerateFiles(Value))
             {
                 yield return new FileCaseFileItem(file);
             }
 
-            foreach(var directory in Directory.EnumerateDirectories(Id))
+            foreach(var directory in Directory.EnumerateDirectories(Value))
             {
                 yield return new DirectoryCaseFileItem(directory);
             }

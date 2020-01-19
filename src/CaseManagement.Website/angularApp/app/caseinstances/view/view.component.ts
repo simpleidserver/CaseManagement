@@ -83,10 +83,12 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
                         elt.htmlContainer.onclick = function (evt: any) {
                             let eltdefinitionid = evt.target.getAttribute('data-eltdefinitionid');
                             let elementInstances = groupedElements.get(eltdefinitionid);
-                            self.dialog.open(CaseElementInstanceDialog, {
-                                width: '800px',
-                                data: elementInstances
-                            });
+                            if (elementInstances) {
+                                self.dialog.open(CaseElementInstanceDialog, {
+                                    width: '800px',
+                                    data: elementInstances
+                                });
+                            }
                         };
                     });
                     canvas.zoom('fit-viewport');

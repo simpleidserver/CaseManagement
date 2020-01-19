@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Repositories;
-using CaseManagement.CMMN.Domains;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,55 +17,66 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.CaseFileItem
         public const string CASE_FILE_ITEM_TYPE = "https://github.com/simpleidserver/casemanagement/directory";
         public string CaseFileItemType => CASE_FILE_ITEM_TYPE;
 
-        public async Task Start(ProcessorParameter parameter, CancellationToken token)
+        public Task Start(ProcessorParameter parameter, CancellationToken token)
         {
-            var result = await _caseFileItemRepository.GetCaseFileItemInstance(parameter.CaseElementInstance.Id);
-            string tmpDirectory;
-            if (result == null)
-            {
-                tmpDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                Directory.CreateDirectory(tmpDirectory);
-                await _caseFileItemRepository.AddCaseFileItem(parameter.CaseElementInstance.Id, tmpDirectory);
-            }
-            else
-            {
-                tmpDirectory = result.Id;
-            }
-
-            BuildTask(tmpDirectory, parameter, token);
+            return BuildTask(parameter, token);
         }
 
-        private Task BuildTask(string directoryPath, ProcessorParameter processorParameter, CancellationToken token)
+        private Task BuildTask(ProcessorParameter processorParameter, CancellationToken token)
         {
-            var task = new Task(() => HandleTask(directoryPath, processorParameter, token), token, TaskCreationOptions.LongRunning);
+            var task = new Task(async () => await HandleTask(processorParameter, token), token, TaskCreationOptions.LongRunning);
             task.Start();
             return task;
         }
 
-        private void HandleTask(string directoryPath, ProcessorParameter processorParameter, CancellationToken token)
+        private async Task HandleTask(ProcessorParameter processorParameter, CancellationToken token)
         {
-            var cancellationTokenSource = new CancellationTokenSource();
-            var fileSystemWatcher = new FileSystemWatcher
+            bool isNewDirectory = false;
+            var result = await _caseFileItemRepository.FindByCaseElementInstance(processorParameter.CaseElementInstance.Id);
+            string tmpDirectory;
+            if (result == null)
             {
-                Path = directoryPath
-            };
-            fileSystemWatcher.Created += (s, e) => HandleFileCreated(processorParameter);
-            fileSystemWatcher.EnableRaisingEvents = true;
-            while (!cancellationTokenSource.Token.IsCancellationRequested)
+                isNewDirectory = true;
+                tmpDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                Directory.CreateDirectory(tmpDirectory);
+            }
+            else
             {
-                Thread.Sleep(1000);
-                try
-                {
-                    token.ThrowIfCancellationRequested();
-                }
-                catch
-                {
-                    cancellationTokenSource.Cancel();
-                }
+                tmpDirectory = result.Value;
             }
 
-            fileSystemWatcher.EnableRaisingEvents = false;
-            fileSystemWatcher.Dispose();
+            var fileSystemWatcher = new FileSystemWatcher
+            {
+                Path = tmpDirectory
+            };
+            try
+            {
+                var cancellationTokenSource = new CancellationTokenSource();
+                fileSystemWatcher.Created += (s, e) => HandleFileCreated(processorParameter);
+                fileSystemWatcher.EnableRaisingEvents = true;
+                if (isNewDirectory)
+                {
+                    await _caseFileItemRepository.AddCaseFileItem(processorParameter.CaseInstance.Id, processorParameter.CaseElementInstance.Id, processorParameter.CaseElementInstance.CaseElementDefinitionId, tmpDirectory);
+                }
+
+                while (!cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
+                    try
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+                    catch
+                    {
+                        cancellationTokenSource.Cancel();
+                    }
+                }
+            }
+            finally
+            {
+                fileSystemWatcher.EnableRaisingEvents = false;
+                fileSystemWatcher.Dispose();
+            }
         }
 
         private void HandleFileCreated(ProcessorParameter parameter)

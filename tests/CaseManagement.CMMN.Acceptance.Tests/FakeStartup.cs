@@ -23,6 +23,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests
             {
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
+            services.AddMvc();
             var builder = services.AddCMMN();
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
             builder.AddDefinitions(files)
@@ -78,7 +79,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseAuthentication();
-            app.UseCMMN();
+            app.UseMvc();
         }
     }
 

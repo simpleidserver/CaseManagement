@@ -111,7 +111,7 @@ namespace CaseManagement.CMMN.Host
         {
             app.UseAuthentication();
             app.UseCors("AllowAll");
-            app.UseCMMN();
+            app.UseMvc();
         }
     }
 }

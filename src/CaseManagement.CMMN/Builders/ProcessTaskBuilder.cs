@@ -32,5 +32,16 @@ namespace CaseManagement.CMMN.Builders
             });
             return this;
         }
+
+        public ProcessTaskBuilder AddCaseInstanceIdInputMapping()
+        {
+            var cmmnTask = (WorkflowElementDefinition as PlanItemDefinition).PlanItemDefinitionProcessTask;
+            cmmnTask.Mappings.Add(new ParameterMapping
+            {
+                SourceRef = new CMMNParameter { Name = CMMNConstants.StandardProcessMappingVariables.CaseInstanceId },
+                TargetRef = new CMMNParameter { Name = CMMNConstants.StandardProcessMappingVariables.CaseInstanceId }
+            });
+            return this;
+        }
     }
 }

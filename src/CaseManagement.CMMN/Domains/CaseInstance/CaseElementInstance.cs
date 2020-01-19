@@ -79,6 +79,13 @@ namespace CaseManagement.CMMN.Domains
                         }
 
                         return true;
+                    case CaseElementTypes.CaseFileItem:
+                        if (State == Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Discarded))
+                        {
+                            return false;
+                        }
+
+                        return true;
                 }
 
                 return false;

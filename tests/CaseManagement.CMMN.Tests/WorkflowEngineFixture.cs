@@ -10,7 +10,6 @@ using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.CMMN.Tests.Delegates;
 using CaseManagement.Workflow.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1155,8 +1154,8 @@ namespace CaseManagement.CMMN.Tests
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
             Wait(workflowInstance, "1", "Available");
-            var caseFileItemInstance = repository.GetCaseFileItemInstance(workflowInstance.WorkflowElementInstances.First().Id).Result;
-            var tmpPath = Path.Combine(caseFileItemInstance.Id, "tmp.txt");
+            var caseFileItemInstance = repository.FindByCaseElementInstance(workflowInstance.WorkflowElementInstances.First().Id).Result;
+            var tmpPath = Path.Combine(caseFileItemInstance.Value, "tmp.txt");
             File.WriteAllText(tmpPath, "tmp");
             Wait(workflowInstance, "2", TaskStates.Completed);
             workflowInstance.MakeTransition(CMMNTransitions.Terminate);
@@ -1166,6 +1165,123 @@ namespace CaseManagement.CMMN.Tests
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Active), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(1).State);
             Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Completed), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(2).State);
+        }
+
+        [Fact]
+        public void When_Execute_ProcessTask_And_Set_ContentFile_Into_Variable()
+        {
+            var serviceCollection = new ServiceCollection();
+            var repository = new InMemoryDirectoryCaseFileItemRepository();
+            serviceCollection.AddSingleton<ICaseFileItemRepository>(repository);
+            var processQueryRepository = new InMemoryProcessQueryRepository(new List<ProcessAggregate>
+            {
+                new CaseManagementProcessAggregate
+                {
+                    AssemblyQualifiedName = typeof(ReadCasefileTask).AssemblyQualifiedName,
+                    Id = "readcase"
+                }
+            });
+            var caseLaunchProcessCommandHandler = new CaseLaunchProcessCommandHandler(processQueryRepository, new List<ICaseProcessHandler>
+            {
+                new CaseManagementCallbackProcessHandler(serviceCollection.BuildServiceProvider())
+            });
+            var workflowDefinition = WorkflowBuilder.New("templateId", "Case with one task")
+                .AddCaseFileItem("1", "1", (cb) =>
+                {
+                    cb.SetDefinition("https://github.com/simpleidserver/casemanagement/directory");
+                })
+                .AddCMMNProcessTask("2", "First Task", (c) => {
+                    c.SetProcessRef("readcase");
+                    c.SetIsBlocking(true);
+                    c.AddCaseInstanceIdInputMapping();
+                    c.AddMapping("contentFile", "contentFile");
+                    c.AddEntryCriterion("entry", (cb) =>
+                    {
+                        cb.AddOnPart(new PlanItemOnPart { SourceRef = "1", StandardEvent = CMMNTransitions.AddChild });
+                    });
+                })
+                .Build();
+            var workflowEngine = new CaseEngine(new List<IProcessor>
+            {
+                new CMMNCaseFileItemProcessor(new []
+                {
+                    new DirectoryCaseFileItemListener(repository)
+                }),
+                new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
+            });
+            var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
+            workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
+            Wait(workflowInstance, "1", "Available");
+            var caseFileItemInstance = repository.FindByCaseElementInstance(workflowInstance.WorkflowElementInstances.First().Id).Result;
+            var tmpPath = Path.Combine(caseFileItemInstance.Value, "tmp.txt");
+            File.WriteAllText(tmpPath, "tmp");
+            Wait(workflowInstance, "2", TaskStates.Completed);
+            workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+            Wait(workflowInstance, CaseStates.Terminated);
+            Assert.Equal("tmp", workflowInstance.ExecutionContext.Variables["contentFile"]);
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Terminated), workflowInstance.StateHistories.ElementAt(1).State);
+            Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.First().TransitionHistories.ElementAt(0).Transition);
+            Assert.Equal(CMMNTransitions.AddChild, workflowInstance.WorkflowElementInstances.First().TransitionHistories.ElementAt(1).Transition);
+            Assert.Equal(CMMNTransitions.ParentTerminate, workflowInstance.WorkflowElementInstances.First().TransitionHistories.ElementAt(2).Transition);
+            Assert.Equal(Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Available), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Available), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Available), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(2).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Active), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Completed), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(2).State);
+        }
+
+        [Fact]
+        public void When_Execute_CaseFileItem_And_OneFailedTask()
+        {
+            var serviceCollection = new ServiceCollection();
+            var repository = new InMemoryDirectoryCaseFileItemRepository();
+            serviceCollection.AddSingleton<ICaseFileItemRepository>(repository);
+            var processQueryRepository = new InMemoryProcessQueryRepository(new List<ProcessAggregate>
+            {
+                new CaseManagementProcessAggregate
+                {
+                    AssemblyQualifiedName = typeof(FailedTask).AssemblyQualifiedName,
+                    Id = "failedtask"
+                }
+            });
+            var caseLaunchProcessCommandHandler = new CaseLaunchProcessCommandHandler(processQueryRepository, new List<ICaseProcessHandler>
+            {
+                new CaseManagementCallbackProcessHandler(serviceCollection.BuildServiceProvider())
+            });
+            var workflowDefinition = WorkflowBuilder.New("templateId", "Case with one task")
+                .AddCaseFileItem("1", "1", (cb) =>
+                {
+                    cb.SetDefinition("https://github.com/simpleidserver/casemanagement/directory");
+                })
+                .AddCMMNProcessTask("2", "First Task", (c) => {
+                    c.SetProcessRef("failedtask");
+                    c.SetIsBlocking(true);
+                    c.AddEntryCriterion("entry", (cb) =>
+                    {
+                        cb.AddOnPart(new PlanItemOnPart { SourceRef = "1", StandardEvent = CMMNTransitions.AddChild });
+                    });
+                })
+                .Build();
+            var workflowEngine = new CaseEngine(new List<IProcessor>
+            {
+                new CMMNCaseFileItemProcessor(new []
+                {
+                    new DirectoryCaseFileItemListener(repository)
+                }),
+                new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
+            });
+            var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
+            workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
+            Wait(workflowInstance, "1", "Available");
+            var caseFileItemInstance = repository.FindByCaseElementInstance(workflowInstance.WorkflowElementInstances.First().Id).Result;
+            var tmpPath = Path.Combine(caseFileItemInstance.Value, "tmp.txt");
+            File.WriteAllText(tmpPath, "tmp");
+            Wait(workflowInstance, "2", TaskStates.Failed);
+            workflowEngine.Reactivate(workflowDefinition, workflowInstance, CancellationToken.None);
+            Wait(workflowInstance, CaseStates.Failed, 2);
+            string sss = "";
         }
 
         #endregion

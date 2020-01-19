@@ -3,7 +3,11 @@
     public static class CMMNConstants
     {
         public const int WAIT_INTERVAL_MS = 20;
-        public const int MONITORING_INTERVAL_MS = 1000;
+
+        public static class StandardProcessMappingVariables
+        {
+            public const string CaseInstanceId = "$caseinstanceid$";
+        }
 
         public static class RouteNames
         {

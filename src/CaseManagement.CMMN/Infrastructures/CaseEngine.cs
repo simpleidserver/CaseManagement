@@ -118,37 +118,37 @@ namespace CaseManagement.CMMN.Infrastructures
             createListener.Listen();
             var repetitionListener = new RepetitionListener(workflowDefinition, workflowInstance);
             repetitionListener.Listen();
-            foreach (var element in workflowDefinition.Elements)
+            if (reactivate)
             {
-                if (!reactivate)
+                lock (workflowInstance.WorkflowElementInstances)
+                {
+                    workflowInstance.MakeTransition(CMMNTransitions.Reactivate);
+                    foreach (var elt in workflowInstance.WorkflowElementInstances.Where(w => w.IsActive()))
+                    {
+                        var parameter = new ProcessorParameter(workflowDefinition, workflowInstance, workflowInstance.GetWorkflowElementInstance(elt.Id));
+                        var processor = _cmmnPlanItemProcessors.First(p => p.Type == elt.CaseElementDefinitionType);
+                        processor.Handle(parameter, cancellationTokenSource.Token).ContinueWith((obj) =>
+                        {
+                            var result = obj.Result;
+                            if (result.CaseInstance.IsRepetitionRuleSatisfied(result.CaseElementInstance.CaseElementDefinitionId, result.CaseDefinition, false))
+                            {
+                                result.CaseInstance.CreateWorkflowElementInstance(result.CaseElementInstance.CaseElementDefinitionId, result.CaseElementInstance.CaseElementDefinitionType);
+                                return;
+                            }
+
+                            if (result.CaseElementInstance.IsComplete())
+                            {
+                                result.CaseInstance.FinishElement(result.CaseElementInstance.CaseElementDefinitionId);
+                            }
+                        });
+                    }
+                }
+            }
+            else
+            {
+                foreach (var element in workflowDefinition.Elements)
                 {
                     workflowInstance.CreateWorkflowElementInstance(element);
-                }
-                else
-                {
-                    lock(workflowInstance.WorkflowElementInstances)
-                    {
-                        workflowInstance.MakeTransition(CMMNTransitions.Reactivate);
-                        foreach (var elt in workflowInstance.WorkflowElementInstances.Where(w => w.IsActive()))
-                        {
-                            var parameter = new ProcessorParameter(workflowDefinition, workflowInstance, workflowInstance.GetWorkflowElementInstance(elt.Id));
-                            var processor = _cmmnPlanItemProcessors.First(p => p.Type == elt.CaseElementDefinitionType);
-                            processor.Handle(parameter, cancellationTokenSource.Token).ContinueWith((obj) =>
-                            {
-                                var result = obj.Result;
-                                if (result.CaseInstance.IsRepetitionRuleSatisfied(result.CaseElementInstance.CaseElementDefinitionId, result.CaseDefinition, false))
-                                {
-                                    result.CaseInstance.CreateWorkflowElementInstance(result.CaseElementInstance.CaseElementDefinitionId, result.CaseElementInstance.CaseElementDefinitionType);
-                                    return;
-                                }
-
-                                if (result.CaseElementInstance.IsComplete())
-                                {
-                                    result.CaseInstance.FinishElement(result.CaseElementInstance.CaseElementDefinitionId);
-                                }
-                            });
-                        }
-                    }
                 }
             }
 

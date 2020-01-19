@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseInstance.Repositories
 {
     public interface ICaseFileItemRepository
     {
-        Task<CaseFileItem> GetCaseFileItemInstance(string id);
-        Task AddCaseFileItem(string instanceId, string id);
+        Task<CaseFileItem> FindByCaseElementInstance(string caseElementInstanceId);
+        Task<IEnumerable<CaseFileItem>> FindByCaseInstance(string caseInstanceId);
+
+        Task AddCaseFileItem(string caseInstanceId, string caseElementInstanceId, string caseElementDefinitionId, string id);
     }
 }

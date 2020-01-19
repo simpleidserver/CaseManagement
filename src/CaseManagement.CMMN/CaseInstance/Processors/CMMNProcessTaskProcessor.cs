@@ -4,7 +4,6 @@ using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,27 +52,30 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 
             foreach (var mapping in processTask.Mappings)
             {
-                if (!parameter.CaseInstance.ContainsVariable(mapping.SourceRef.Name))
-                {
-                    continue;
-                }
 
-                var variableValue = parameter.CaseInstance.GetVariable(mapping.SourceRef.Name);
-                if (mapping.Transformation != null)
+                string variableValue;
+                if (mapping.SourceRef.Name == CMMNConstants.StandardProcessMappingVariables.CaseInstanceId)
                 {
-                    variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.CaseInstance, (i) =>
+                    variableValue = parameter.CaseInstance.Id;
+                }
+                else
+                {
+                    if (!parameter.CaseInstance.ContainsVariable(mapping.SourceRef.Name))
                     {
-                        i.SetVariable("sourceValue", variableValue);
-                    });
+                        continue;
+                    }
+
+                    variableValue = parameter.CaseInstance.GetVariable(mapping.SourceRef.Name);
+                    if (mapping.Transformation != null)
+                    {
+                        variableValue = ExpressionParser.GetStringEvaluation(mapping.Transformation.Body, parameter.CaseInstance, (i) =>
+                        {
+                            i.SetVariable("sourceValue", variableValue);
+                        });
+                    }
                 }
 
                 parameters.Add(mapping.TargetRef.Name, variableValue);
-            }
-
-            if (!string.IsNullOrWhiteSpace(processTask.SourceRef))
-            {
-                // var caseFileItem = pf.GetCaseFileItem(processTask.SourceRef);
-                // parameters.Add("caseFileItem", JsonConvert.SerializeObject(caseFileItem));
             }
             
             await _caseLaunchProcessCommandHandler.Handle(new LaunchCaseProcessCommand(processRef, parameters), (resp) =>
