@@ -169,9 +169,12 @@
                     <mat-card-content>
                         <mat-list>
                             <mat-list-item>
+                                <h4 mat-line>{{ "CASE_FILES" | translate }}</h4>
+                                <h2>{{ nbCaseFiles }}</h2>
+                            </mat-list-item>
+                            <mat-list-item>
                                 <h4 mat-line>{{ "CASE_DEFINITIONS" | translate}}</h4>
-                                <h2>10</h2>
-                                <!-- Display number of case definitions -->
+                                <h2>{{ nbCaseDefinitions }}</h2>
                             </mat-list-item>
                         </mat-list>
                     </mat-card-content>

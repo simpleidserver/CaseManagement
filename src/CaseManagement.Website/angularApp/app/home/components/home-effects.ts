@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
+import { Observable } from 'rxjs/Rx';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { StatisticService } from '../services/statistic.service';
 import { ActionTypes } from './home-actions';
+import { CaseDefinitionsService } from '../../casedefinitions/services/casedefinitions.service';
+import { CaseFilesService } from '../../casedefinitions/services/casefiles.service';
 
 function getFirstDayOfMonth() {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
@@ -25,7 +28,9 @@ function getDate(d : Date) {
 export class HomeEffects {
     constructor(
         private actions$: Actions,
-        private statisticService: StatisticService
+        private statisticService: StatisticService,
+        private caseDefinitionsService: CaseDefinitionsService,
+        private caseFilesService: CaseFilesService
     ) { }
 
     @Effect()
@@ -70,5 +75,17 @@ export class HomeEffects {
                     );
             }
             )
-        );
+    );
+
+    @Effect()
+    loadDeployed = this.actions$
+        .pipe(
+            ofType(ActionTypes.DEPLOYEDLOAD),
+            mergeMap(() => {
+                return Observable.forkJoin([this.caseDefinitionsService.count(), this.caseFilesService.count()]).pipe(
+                    map(responses => { return { type: ActionTypes.DEPLOYEDLOADED, nbCaseDefinitions: responses[0], nbCaseFiles: responses[1] }; }),
+                    catchError(() => of({ type: ActionTypes.ERRORLOADDEPLOYED }))
+                );
+            })
+    );
 }

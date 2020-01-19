@@ -14,6 +14,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     statisticSubscription: any;
     weekSubscription: any;
     monthSubscription: any;
+    deployedSubscription: any;
+    nbCaseDefinitions: number = 0;
+    nbCaseFiles: number = 0;
     viewPie: any[] = [300, 300];
     viewChart: any[] = [500, 300];
     caseStatistic: any[] = [
@@ -163,7 +166,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             "series": []
         }
     ];
-    constructor(private statisticStore: Store<fromHomeSates.StatisticState>, private weekStatisticStore: Store<fromHomeSates.WeekStatisticsState>, private monthStatisticStore: Store<fromHomeSates.MonthStatisticsState>, private datePipe: DatePipe) { }
+    constructor(private statisticStore: Store<fromHomeSates.StatisticState>, private weekStatisticStore: Store<fromHomeSates.WeekStatisticsState>, private monthStatisticStore: Store<fromHomeSates.MonthStatisticsState>, private deployedStore : Store<fromHomeSates.DeployedState>, private datePipe: DatePipe) { }
 
     ngOnInit() {
         let self = this;
@@ -421,6 +424,12 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.activationMonthStatistic = activationMonthResult;
             }
         });        
+        this.deployedSubscription = this.deployedStore.pipe(select('deployed')).subscribe((st: fromHomeSates.DeployedState) => {
+            if (st.nbCaseDefinitions) {
+                this.nbCaseDefinitions = st.nbCaseDefinitions.Count;
+                this.nbCaseFiles = st.nbCaseFiles.Count;
+            }
+        });
         this.refresh();
     }
 
@@ -436,9 +445,13 @@ export class HomeComponent implements OnInit, OnDestroy {
             type: ActionTypes.SEARCHMONTHSTATISTICS,
             count: 100
         };
+        let loadDeployedRequest: any = {
+            type: ActionTypes.DEPLOYEDLOAD
+        };
         this.statisticStore.dispatch(loadStatisticRequest);
         this.weekStatisticStore.dispatch(loadWeekStatisticsRequest);
         this.monthStatisticStore.dispatch(loadMonthStatisticsRequest);
+        this.deployedStore.dispatch(loadDeployedRequest);
     }
 
     ngOnDestroy() {

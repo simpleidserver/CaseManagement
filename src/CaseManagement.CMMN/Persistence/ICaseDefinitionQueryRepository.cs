@@ -10,5 +10,6 @@ namespace CaseManagement.CMMN.Persistence
         Task<CaseDefinition> FindById(string id);
         Task<FindResponse<CaseDefinition>> Find(FindWorkflowDefinitionsParameter parameter);
         Task<CaseDefinitionHistoryAggregate> FindHistoryById(string id);
+        Task<int> Count();
     }
 }

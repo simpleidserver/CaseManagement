@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CaseFile } from '../models/case-file.model';
 import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
+import { CountResult } from '../models/count-result.model';
 
 @Injectable()
 export class CaseFilesService {
@@ -32,6 +33,15 @@ export class CaseFilesService {
         let targetUrl = process.env.API_URL + "/case-files/" + id;
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return CaseFile.fromJson(res);
+        }));
+    }
+    
+    count(): Observable<CountResult> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        let targetUrl = process.env.API_URL + "/case-files/.count";
+        return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
+            return CountResult.fromJson(res);
         }));
     }
 }

@@ -11,7 +11,7 @@
   "THIS_WEEK": "Cette semaine",
   "THIS_MONTH": "Ce mois-ci",
   "DEPLOYED": "Déployé",
-  "CASE_DEFINITIONS": "Définition des cases",
+  "CASE_DEFINITIONS": "Définitions de case",
   "PERFORMANCES": "Performance",
   "NB_THREADS": "Nombre de threads",
   "MEMORY_CONSUMED_MB": "Consommation de la mémoire en MB",
@@ -39,5 +39,15 @@
   "STATE_HISTORIES": "Historique des états",
   "TRANSITION_HISTORIES": "Historique des transitions",
   "TRANSITION": "Transition",
-  "DATETIME": "Date"
+  "DATETIME": "Date",
+  "CASE_FILES": "Fichiers de case",
+  "100_MS": "0.1 second",
+  "1000_MS": "1 seconde",
+  "2000_MS": "2 secondes",
+  "4000_MS": "4 secondes",
+  "REACTIVATE": "Réactiver",
+  "STOP": "Arrêter",
+  "RESUME": "Reprendre",
+  "CLOSE": "Fermer",
+  "EXECUTION_CONTEXT":  "Contexte d'exécution"
 }

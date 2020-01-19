@@ -13,6 +13,8 @@ import * as fromHomeReducer from './components/home-reducer';
 import { HomeComponent } from './components/home.component';
 import { HomeRoutes } from './home.routes';
 import { StatisticService } from './services/statistic.service';
+import { CaseFilesService } from '../casedefinitions/services/casefiles.service';
+import { CaseDefinitionsService } from '../casedefinitions/services/casedefinitions.service';
 
 @NgModule({
     imports: [
@@ -27,7 +29,8 @@ import { StatisticService } from './services/statistic.service';
         StoreModule.forRoot({
             statistic: fromHomeReducer.statisticReducer,
             weekStatistics: fromHomeReducer.weekStatisticsReducer,
-            monthStatistics: fromHomeReducer.monthStatisticsReducer
+            monthStatistics: fromHomeReducer.monthStatisticsReducer,
+            deployed: fromHomeReducer.deployedReducer
         }),
         StoreDevtoolsModule.instrument({
             maxAge: 10
@@ -44,6 +47,8 @@ import { StatisticService } from './services/statistic.service';
 
     providers: [
         StatisticService,
+        CaseFilesService,
+        CaseDefinitionsService,
         DatePipe
     ]
 })

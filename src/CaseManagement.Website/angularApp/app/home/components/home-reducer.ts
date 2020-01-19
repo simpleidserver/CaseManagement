@@ -1,5 +1,5 @@
-import { ActionsUnion, ActionTypes, MonthStatisticsLoadedAction, StatisticLoadedAction, WeekStatisticsLoadedAction } from './home-actions';
-import { MonthStatisticsState, StatisticState, WeekStatisticsState } from './home-states';
+import { ActionsUnion, ActionTypes, MonthStatisticsLoadedAction, StatisticLoadedAction, WeekStatisticsLoadedAction, DeployedLoadedAction } from './home-actions';
+import { MonthStatisticsState, StatisticState, WeekStatisticsState, DeployedState } from './home-states';
 
 const initialStatisticAction: StatisticState = {
     content: null,
@@ -17,6 +17,13 @@ const initialMonthStatisticAction: MonthStatisticsState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
+};
+
+const initalDeployedState: DeployedState = {
+    isErrorLoadOccured: false,
+    isLoading: true,
+    nbCaseDefinitions: null,
+    nbCaseFiles : null
 };
 
 export function statisticReducer(state = initialStatisticAction, action: ActionsUnion) {
@@ -62,6 +69,24 @@ export function monthStatisticsReducer(state = initialMonthStatisticAction, acti
             state.isErrorLoadOccured = false;
             return { ...state };
         case ActionTypes.ERRORMONTHSTATISTICS:
+            state.isErrorLoadOccured = true;
+            state.isLoading = false;
+            return { ...state };
+        default:
+            return state;
+    }
+}
+
+export function deployedReducer(state = initalDeployedState, action: ActionsUnion) {
+    switch (action.type) {
+        case ActionTypes.DEPLOYEDLOADED:
+            let deployedLoadedAction = <DeployedLoadedAction>action;
+            state.nbCaseDefinitions = deployedLoadedAction.nbCaseDefinitions;
+            state.nbCaseFiles = deployedLoadedAction.nbCaseFiles;
+            state.isLoading = false;
+            state.isErrorLoadOccured = false;
+            return { ...state };
+        case ActionTypes.ERRORLOADDEPLOYED:
             state.isErrorLoadOccured = true;
             state.isLoading = false;
             return { ...state };

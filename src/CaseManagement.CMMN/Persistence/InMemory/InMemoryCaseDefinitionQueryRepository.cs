@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             if (!string.IsNullOrWhiteSpace(parameter.Text))
             {
-                result = result.Where(r => r.Name.Contains(parameter.Text));
+                result = result.Where(r => r.Name.IndexOf(parameter.Text, StringComparison.InvariantCultureIgnoreCase) >= 0);
             }
 
             int totalLength = result.Count();
@@ -64,6 +65,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<CaseDefinitionHistoryAggregate> FindHistoryById(string id)
         {
             return Task.FromResult(_caseDefinitionHistories.FirstOrDefault(w => w.CaseDefinitionId == id));
+        }
+
+        public Task<int> Count()
+        {
+            return Task.FromResult(_definitions.Count());
         }
     }
 }

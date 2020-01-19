@@ -46,5 +46,10 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 Content = (ICollection<CaseFileDefinitionAggregate>)result.ToList()
             });
         }
+
+        public Task<int> Count()
+        {
+            return Task.FromResult(_caseFileDefinitions.Count());
+        }
     }
 }

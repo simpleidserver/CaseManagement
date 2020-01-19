@@ -7,33 +7,37 @@
         </ul>
     </div>
 </div>
-<div fxLayout="row">
+<div fxLayout="row" fxLayoutGap="10px">
     <div fxFlex="20%">
-        <mat-list>
-            <mat-list-item>
-                <h4 mat-line>{{ "ID" | translate}}</h4>
-                <p mat-line>{{ caseInstance.Id }}</p>
-                <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line>{{ "CREATE_DATETIME" | translate}}</h4>
-                <p mat-line>{{ caseInstance.CreateDateTime | date:'medium' }}</p>
-                <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line>{{ "STATE" | translate}}</h4>
-                <p mat-line>
-                    <mat-chip-list>
-                        <mat-chip>{{ caseInstance.State }}</mat-chip>
-                    </mat-chip-list>
-                </p>
-                <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line>{{ "CASE_DEFINITION_IDENTIFIER" | translate}}</h4>
-                <p mat-line><a [routerLink]="['/casedefinitions/' + caseInstance.DefinitionId]">{{ caseInstance.DefinitionId }}</a></p>
-            </mat-list-item>
-        </mat-list>
+        <mat-card>
+            <mat-card-content>
+                <mat-list>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "ID" | translate}}</h4>
+                        <p mat-line>{{ caseInstance.Id }}</p>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "CREATE_DATETIME" | translate}}</h4>
+                        <p mat-line>{{ caseInstance.CreateDateTime | date:'medium' }}</p>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "STATE" | translate}}</h4>
+                        <p mat-line>
+                            <mat-chip-list>
+                                <mat-chip>{{ caseInstance.State }}</mat-chip>
+                            </mat-chip-list>
+                        </p>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "CASE_DEFINITION_IDENTIFIER" | translate}}</h4>
+                        <p mat-line><a [routerLink]="['/casedefinitions/' + caseInstance.DefinitionId]">{{ caseInstance.DefinitionId }}</a></p>
+                    </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+        </mat-card>
     </div>
     <div fxFlex="80%">
         <div fxLayout="column">
@@ -42,9 +46,21 @@
                     <div id="canvas" style="height: 300px;"></div>
                 </div>
             </div>
-            <div>
-                <div fxLayout="row" fxLayoutGap="10px">
-                    <mat-card fxFlex="50%">
+            <div class="row" fxLayoutGap="10px">
+                <div fxFlex="50%">
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>{{ "EXECUTION_CONTEXT" | translate }}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <mat-list *ngFor="let record of caseInstanceContext">
+                                <mat-list-item>{{ "Variable : " + record.name +" = " + record.value }}</mat-list-item>
+                            </mat-list>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div fxLayout="column" fxFlex="50%" fxLayoutGap="10px">
+                    <mat-card>
                         <mat-card-header>
                             <mat-card-title>{{ "STATE_HISTORIES" | translate }}</mat-card-title>
                         </mat-card-header>
@@ -69,7 +85,7 @@
                             </div>
                         </mat-card-content>
                     </mat-card>
-                    <mat-card fxFlex="50%">
+                    <mat-card>
                         <mat-card-header>
                             <mat-card-title>{{ "TRANSITION_HISTORIES" | translate }}</mat-card-title>
                         </mat-card-header>

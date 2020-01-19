@@ -15,6 +15,7 @@ let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
 })
 export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
     caseInstanceSubscription: any;
+    caseInstanceContext: any[] = [];
     caseInstance: CaseInstance = {
         Context: null,
         CreateDateTime: null,
@@ -44,6 +45,16 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
         this.caseInstanceSubscription = this.caseInstanceStore.pipe(select('caseInstance')).subscribe((st: fromViewCaseInstanceStates.ViewCaseInstanceState) => {
             if (st.caseInstance) {
                 this.caseInstance = st.caseInstance;
+                this.caseInstanceContext = [];
+                if (this.caseInstance.Context) {
+                    for (let record in this.caseInstance.Context) {
+                        this.caseInstanceContext.push({
+                            name: record,
+                            value: this.caseInstance.Context[record]
+                        });
+                    }
+                }
+
                 viewer.importXML(st.caseFile.Payload, function (err: any) {
                     if (err) {
                         return;

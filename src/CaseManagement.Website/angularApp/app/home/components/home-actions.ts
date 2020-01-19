@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { DailyStatistic } from '../models/dailystatistic.model';
 import { SearchDailyStatisticsResult } from '../models/search-dailystatistics-result.model';
+import { CountResult } from '../../casedefinitions/models/count-result.model';
 
 export enum ActionTypes {
     STATISTICLOAD = "[Statistic] Load",
@@ -12,6 +13,9 @@ export enum ActionTypes {
     SEARCHMONTHSTATISTICS = "[SearchMonthStatistic] Load",
     MONTHSTATISTICSLOADED = "[SearchMonthStatistic] Loaded",
     ERRORMONTHSTATISTICS = "[SearchMonthStatistic] Error Load",
+    DEPLOYEDLOAD = "[Deployed] Load",
+    DEPLOYEDLOADED = "[Deployed] Loaded",
+    ERRORLOADDEPLOYED = "[Deployed] Error Load"
 }
 
 export class LoadStatisticAction implements Action {
@@ -44,4 +48,14 @@ export class MonthStatisticsLoadedAction implements Action {
     constructor(public result: SearchDailyStatisticsResult) { }
 }
 
-export type ActionsUnion = LoadStatisticAction | StatisticLoadedAction | LoadWeekStatisticsAction | WeekStatisticsLoadedAction | LoadMonthStatisticsAction | MonthStatisticsLoadedAction;
+export class LoadDeployedAction implements Action {
+    type = ActionTypes.DEPLOYEDLOAD
+    constructor() { }
+}
+
+export class DeployedLoadedAction implements Action {
+    type = ActionTypes.DEPLOYEDLOADED
+    constructor(public nbCaseDefinitions: CountResult, public nbCaseFiles: CountResult) { }
+}
+
+export type ActionsUnion = LoadStatisticAction | StatisticLoadedAction | LoadWeekStatisticsAction | WeekStatisticsLoadedAction | LoadMonthStatisticsAction | MonthStatisticsLoadedAction | LoadDeployedAction | DeployedLoadedAction;

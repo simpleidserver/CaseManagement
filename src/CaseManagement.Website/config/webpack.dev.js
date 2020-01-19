@@ -126,7 +126,8 @@ module.exports = {
         new CopyWebpackPlugin([
             { from: './angularApp/*.webmanifest', to: 'assets', flatten: true },
             { from: './angularApp/images/*.*', to: 'assets/images', flatten: true },
-            { from: './angularApp/i18n/*.*', to: 'assets/i18n', flatten: true }
+            { from: './angularApp/i18n/*.*', to: 'assets/i18n', flatten: true },
+            { from: './angularApp/fonts/*.*', to: 'assets/fonts', flatten: true }
         ]),
 
         new FilterWarningsPlugin({

@@ -9,5 +9,6 @@ namespace CaseManagement.CMMN.Persistence
     {
         Task<CaseFileDefinitionAggregate> FindById(string id);
         Task<FindResponse<CaseFileDefinitionAggregate>> Find(FindCaseDefinitionFilesParameter parameter);
+        Task<int> Count();
     }
 }

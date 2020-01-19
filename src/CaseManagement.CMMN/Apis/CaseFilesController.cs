@@ -21,6 +21,16 @@ namespace CaseManagement.CMMN.Apis
             _queryRepository = queryRepository;
         }
 
+        [HttpGet(".count")]
+        public async Task<IActionResult> Count()
+        {
+            var result = await _queryRepository.Count();
+            return new OkObjectResult(new
+            {
+                count = result
+            });
+        }
+
         [HttpGet(".search")]
         public async Task<IActionResult> Search()
         {

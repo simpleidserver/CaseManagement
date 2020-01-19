@@ -7,29 +7,33 @@
         </ul>
     </div>
 </div>
-<div fxLayout="row">
+<div fxLayout="row" fxLayoutGap="10px">
     <div fxFlex="20%">
-        <mat-list>
-            <mat-list-item>
-                <h4 mat-line>{{ "NAME" | translate}}</h4>
-                <p mat-line>{{ caseDefinition.Name }}</p>
-                <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line>{{ "CREATE_DATEITME" | translate}}</h4>
-                <p mat-line>{{ caseDefinition.CreateDateTime | date:'medium' }}</p>
-                <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line>{{ "NB_INSTANCES" | translate}}</h4>
-                <p mat-line>{{ caseDefinitionHistory.NbInstances }}</p>
-                <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line>{{ "CASE_DEFINITION_FILE" | translate}}</h4>
-                <p mat-line><a href="#">{{ caseDefinition.CaseFile }}</a></p>
-            </mat-list-item>
-        </mat-list>
+        <mat-card>
+            <mat-card-content>
+                <mat-list>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "NAME" | translate}}</h4>
+                        <p mat-line>{{ caseDefinition.Name }}</p>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "CREATE_DATETIME" | translate}}</h4>
+                        <p mat-line>{{ caseDefinition.CreateDateTime | date:'medium' }}</p>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "NB_INSTANCES" | translate}}</h4>
+                        <p mat-line>{{ caseDefinitionHistory.NbInstances }}</p>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h4 mat-line>{{ "CASE_DEFINITION_FILE" | translate}}</h4>
+                        <p mat-line><a href="#">{{ caseDefinition.CaseFile }}</a></p>
+                    </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+        </mat-card>
     </div>
     <div fxFlex="80%">
         <div fxLayout="column">
@@ -83,16 +87,16 @@
                                         <ng-container matColumnDef="actions">
                                             <th mat-header-cell *matHeaderCellDef></th>
                                             <td mat-cell *matCellDef="let caseInstance">
-                                                <button mat-icon-button (click)="reactivateCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed'">
+                                                <button mat-icon-button (click)="reactivateCaseInstance(caseInstance)" matTooltip="{{ 'REACTIVATE' | translate }}" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed'">
                                                     <mat-icon>cached</mat-icon>
                                                 </button>
-                                                <button mat-icon-button (click)="suspendCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Active'">
+                                                <button mat-icon-button (click)="suspendCaseInstance(caseInstance)" matTooltip="{{ 'STOP' | translate }}"  *ngIf="caseInstance.State == 'Active'">
                                                     <mat-icon>stop</mat-icon>
                                                 </button>
-                                                <button mat-icon-button (click)="resumeCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Suspended'">
+                                                <button mat-icon-button (click)="resumeCaseInstance(caseInstance)" matTooltip="{{ 'RESUME' | translate }}" *ngIf="caseInstance.State == 'Suspended'">
                                                     <mat-icon>play_arrow</mat-icon>
                                                 </button>
-                                                <button mat-icon-button (click)="closeCaseInstance(caseInstance)" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed' || caseInstance.State == 'Suspended' ">
+                                                <button mat-icon-button (click)="closeCaseInstance(caseInstance)" matTooltip="{{ 'CLOSE' | translate }}" *ngIf="caseInstance.State == 'Failed' || caseInstance.State == 'Terminated' || caseInstance.State == 'Completed' || caseInstance.State == 'Suspended' ">
                                                     <mat-icon>close</mat-icon>
                                                 </button>
                                             </td>
