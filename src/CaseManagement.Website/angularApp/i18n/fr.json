@@ -49,5 +49,7 @@
   "STOP": "Arrêter",
   "RESUME": "Reprendre",
   "CLOSE": "Fermer",
-  "EXECUTION_CONTEXT":  "Contexte d'exécution"
+  "EXECUTION_CONTEXT": "Contexte d'exécution",
+  "CASE_FILE_ITEMS": "Fichiers liés à l'instance du case",
+  "VALUE": "Valeur"
 }

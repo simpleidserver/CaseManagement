@@ -17,6 +17,12 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
+        public SEntryBuilder AddOnPart(CaseFileItemOnPart itemPart)
+        {
+            _sEntry.FileItemOnParts.Add(itemPart);
+            return this;
+        }
+
         public SEntryBuilder SetIfPart(string condition)
         {
             _sEntry.IfPart = new IfPart { Condition = condition };

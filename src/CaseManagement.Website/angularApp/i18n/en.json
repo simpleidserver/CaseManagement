@@ -49,5 +49,7 @@
   "STOP": "Stop",
   "RESUME": "Resume",
   "CLOSE": "Close",
-  "EXECUTION_CONTEXT": "Execution context"
+  "EXECUTION_CONTEXT": "Execution context",
+  "CASE_FILE_ITEMS": "Case file items",
+  "VALUE": "Value"
 }

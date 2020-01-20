@@ -149,10 +149,9 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         }
 
         [When("add a file into the folder '(.*)'")]
-        public void ThenAddATileIntoFolder(string key)
+        public void ThenAddFileIntoFolder(string key)
         {
-            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
-            var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
+            var currentValue = Parse(key);
             File.WriteAllText(Path.Combine(currentValue, $"{Guid.NewGuid().ToString()}.txt"), Guid.NewGuid().ToString());
         }
 

@@ -1,4 +1,4 @@
-﻿using CaseManagement.Workflow.Infrastructure;
+﻿using CaseManagement.CMMN.Infrastructures;
 using System.Diagnostics;
 
 namespace CaseManagement.CMMN.Domains.Events

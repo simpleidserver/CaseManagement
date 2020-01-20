@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
+    <ProjectReference Include="..\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Cmmns\CaseWithOneTask.cmmn">

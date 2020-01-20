@@ -145,6 +145,7 @@ namespace CaseManagement.CMMN.Domains
         public bool IsCriteriaSatisfied(Criteria criteria, int version)
         {
             var planItemOnParts = criteria.SEntry.PlanItemOnParts;
+            var caseItemOnParts = criteria.SEntry.FileItemOnParts;
             lock(WorkflowElementInstances)
             {
                 foreach (var planItemOnPart in planItemOnParts)
@@ -157,6 +158,21 @@ namespace CaseManagement.CMMN.Domains
 
                     var transitionHistories = source.TransitionHistories.ToList();
                     if (!transitionHistories.Any(t => t.Transition == planItemOnPart.StandardEvent))
+                    {
+                        return false;
+                    }
+                }
+
+                foreach(var caseItemOnPart in caseItemOnParts)
+                {
+                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CaseElementDefinitionId == caseItemOnPart.SourceRef);
+                    if (source == null)
+                    {
+                        return false;
+                    }
+
+                    var transitionHistories = source.TransitionHistories.ToList();
+                    if (!transitionHistories.Any(t => t.Transition == caseItemOnPart.StandardEvent))
                     {
                         return false;
                     }

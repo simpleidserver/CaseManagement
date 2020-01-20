@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CaseInstance } from '../models/case-instance.model';
 import { SearchCaseInstancesResult } from '../models/search-case-instances.model';
+import { CaseFileItem } from '../models/case-file-item.model';
 
 @Injectable()
 export class CaseInstancesService {
@@ -33,6 +34,20 @@ export class CaseInstancesService {
         let targetUrl = process.env.API_URL + "/case-instances/" + id;
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return CaseInstance.fromJson(res);
+        }));
+    }
+
+    getCaseFileItems(id: string): Observable<CaseFileItem[]> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        let targetUrl = process.env.API_URL + "/case-instances/" + id + "/casefileitems";
+        return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
+            let result: CaseFileItem[] = [];
+            res["casefileitems"].forEach(function (cf: any) {
+                result.push(CaseFileItem.fromJson(cf));
+            });
+
+            return result;
         }));
     }
 

@@ -5,7 +5,7 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
 {
     public class DirectoryCaseFileItem : CaseFileItem
     {
-        public DirectoryCaseFileItem(string id) : base(id) { }
+        public DirectoryCaseFileItem(string id) : base(id, CMMNConstants.ContentManagementTypes.DIRECTORY) { }
 
         public override IEnumerable<CaseFileItem> GetChildren()
         {

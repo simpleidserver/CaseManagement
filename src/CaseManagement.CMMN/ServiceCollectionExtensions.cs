@@ -10,15 +10,20 @@ using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.CaseFile;
 using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent;
+using CaseManagement.CMMN.Infrastructures.Bus.InMemory;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
 using CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess;
+using CaseManagement.CMMN.Infrastructures.EvtStore;
+using CaseManagement.CMMN.Infrastructures.EvtStore.InMemory;
+using CaseManagement.CMMN.Infrastructures.Lock;
+using CaseManagement.CMMN.Infrastructures.Lock.InMemory;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
-using CaseManagement.Workflow.Infrastructure;
-using CaseManagement.Workflow.Infrastructure.Bus;
+using NEventStore;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -27,37 +32,39 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static ServerBuilder AddCMMN(this IServiceCollection services)
+        internal static ServerBuilder AddCMMNEngine(this IServiceCollection services)
         {
             var builder = new ServerBuilder(services);
-            services.AddWorkflow()
-                .AddInfrastructure()
-                .AddInMemoryPersistence()
-                .AddCommandHandlers()
+            services.AddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
+            services.AddTransient<ICaseEngine, CaseEngine>()
+                .AddCommon()
                 .AddEventHandlers()
                 .AddProcessHandlers()
                 .AddProcessors()
-                .AddCaseFileItemRepositories()
                 .AddBus();
             return builder;
         }
 
-        public static ServerBuilder AddCMMN(this IServiceCollection services, Action<CMMNServerOptions> serverOptions)
+        internal static ServerBuilder AddCMMNEngine(this IServiceCollection services, Action<CMMNServerOptions> serverOptions)
         {
             services.Configure(serverOptions);
-            return services.AddCMMN();
+            return services.AddCMMNEngine();
         }
 
-
-        private static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddCommon(this IServiceCollection services)
         {
-            services.AddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
-            services.AddTransient<ICaseEngine, CaseEngine>();
+            var wireup = Wireup.Init().UsingInMemoryPersistence().Build();
+            services.AddSingleton(wireup);
+            services.AddSingleton<IRunningTaskPool, RunningTaskPool>();
+            services.AddSingleton<IQueueProvider, InMemoryQueueProvider>();
+            services.AddTransient<ICommitAggregateHelper, CommitAggregateHelper>()
+                .AddInMemoryPersistence();
             return services;
         }
 
-        private static IServiceCollection AddBus(this IServiceCollection services)
+        public static IServiceCollection AddBus(this IServiceCollection services)
         {
+            services.AddSingleton<IDistributedLock, InMemoryDistributedLock>();
             services.AddTransient<IMessageConsumer, PerformanceMonitoringService>();
             services.AddTransient<IMessageConsumer, LaunchProcessMessageConsumer>();
             services.AddTransient<IMessageConsumer, ReactivateProcessMessageConsumer>();
@@ -67,7 +74,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddInMemoryPersistence(this IServiceCollection services)
+        public static IServiceCollection AddInMemoryPersistence(this IServiceCollection services)
         {
             var definitions = new ConcurrentBag<CaseDefinition>();
             var caseProcesses = new List<ProcessAggregate>();
@@ -96,10 +103,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
             services.AddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(caseDailyStatistics, performances));
             services.AddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(caseDailyStatistics, performances));
+            services.AddSingleton<ICaseFileItemRepository, InMemoryDirectoryCaseFileItemRepository>();
+            services.AddTransient<IEventStoreRepository, InMemoryEventStoreRepository>();
+            services.AddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
             return services;
         }
 
-        private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
+        public static IServiceCollection AddCommandHandlers(this IServiceCollection services)
         {
             services.AddTransient<ICloseCommandHandler, CloseCommandHandler>();
             services.AddTransient<IReactivateCommandHandler, ReactivateCommandHandler>();
@@ -107,15 +117,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ILaunchCaseInstanceCommandHandler, LaunchCaseInstanceCommandHandler>();
             services.AddTransient<ICreateCaseInstanceCommandHandler, CreateCaseInstanceCommandHandler>();
             services.AddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
-            services.AddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
-            services.AddTransient<IStopCaseInstanceCommandHandler, StopCaseInstanceCommandHandler>();
             services.AddTransient<IActivateCommandHandler, ActivateCommandHandler>();
             services.AddTransient<ITerminateCommandHandler, TerminateCommandHandler>();
             services.AddTransient<ISuspendCommandHandler, SuspendCommandHandler>();
             return services;
         }
 
-        private static IServiceCollection AddEventHandlers(this IServiceCollection services)
+        public static IServiceCollection AddEventHandlers(this IServiceCollection services)
         {
             services.AddTransient<IDomainEventHandler<CaseInstanceCreatedEvent>, CaseDefinitionHistoryHandler>();
             services.AddTransient<IDomainEventHandler<CaseElementCreatedEvent>, CaseDefinitionHistoryHandler>();
@@ -138,7 +146,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddProcessors(this IServiceCollection services)
+        public static IServiceCollection AddProcessors(this IServiceCollection services)
         {
             services.AddTransient<IProcessor, CMMNCaseFileItemProcessor>();
             services.AddTransient<IProcessor, CMMNHumanTaskProcessor>();
@@ -151,13 +159,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddCaseFileItemRepositories(this IServiceCollection services)
-        {
-            services.AddTransient<ICaseFileItemRepository, InMemoryDirectoryCaseFileItemRepository>();
-            return services;
-        }
-
-        private static IServiceCollection AddProcessHandlers(this IServiceCollection services)
+        public static IServiceCollection AddProcessHandlers(this IServiceCollection services)
         {
             services.AddTransient<ICaseProcessHandler, CaseManagementCallbackProcessHandler>();
             return services;

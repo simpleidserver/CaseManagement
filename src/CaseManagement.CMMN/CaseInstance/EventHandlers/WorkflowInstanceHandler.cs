@@ -1,6 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains.Events;
+using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Infrastructure;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

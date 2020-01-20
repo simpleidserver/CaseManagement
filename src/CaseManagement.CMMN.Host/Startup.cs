@@ -31,7 +31,9 @@ namespace CaseManagement.CMMN.Host
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
-            services.AddCMMN().AddDefinitions(files)
+            services.AddCMMNApi();
+            services.AddCMMNEngine()
+                .AddDefinitions(files)
                 .AddCaseProcesses(new List<ProcessAggregate>
                 {
                     new CaseManagementProcessAggregate

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Domains.Events;
+using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Persistence;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Domains.Events;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Infrastructure;
 
 namespace CaseManagement.CMMN.CaseInstance.EventHandlers
 {

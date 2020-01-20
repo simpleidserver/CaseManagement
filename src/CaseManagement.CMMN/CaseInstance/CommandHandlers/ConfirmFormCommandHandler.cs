@@ -1,10 +1,11 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Commands;
 using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Infrastructures.Bus;
+using CaseManagement.CMMN.Infrastructures.EvtStore;
 using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Infrastructure;
 using CaseManagement.Workflow.Infrastructure.Bus;
-using CaseManagement.Workflow.Infrastructure.EvtStore;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;

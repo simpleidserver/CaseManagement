@@ -19,7 +19,7 @@ namespace CaseManagement.CMMN.Parser
             var definitions = ParseWSDL(cmmnTxt);
             foreach(var cmmnCase in definitions.@case)
             {
-                result.Add(BuildWorkflowDefinition(cmmnCase, fileName));
+                result.Add(BuildWorkflowDefinition(cmmnCase, definitions, fileName));
             }
             
             return result;
@@ -49,11 +49,23 @@ namespace CaseManagement.CMMN.Parser
             return strBuilder.ToString();
         }
 
-        private static CaseDefinition BuildWorkflowDefinition(tCase tCase, string caseFileId)
+        private static CaseDefinition BuildWorkflowDefinition(tCase tCase, tDefinitions definitions, string caseFileId)
         {
             var planModel = tCase.casePlanModel;
             var planItems = BuildPlanItems(planModel);
             var builder = WorkflowBuilder.New(Guid.NewGuid().ToString(), tCase.casePlanModel.name);
+            if (tCase.caseFileModel != null)
+            {
+                foreach(var caseFileItem in tCase.caseFileModel.caseFileItem)
+                {
+                    var caseFileItemDef = definitions.caseFileItemDefinition.First(c => c.id == caseFileItem.definitionRef.ToString());
+                    builder.AddCaseFileItem(caseFileItem.id, caseFileItemDef.name, (cb) =>
+                    {
+                        cb.SetDefinition(caseFileItemDef.definitionType);
+                    });
+                }
+            }
+
             foreach (var planItem in planItems)
             {
                 builder.AddCMMNPlanItem(planItem);
@@ -87,6 +99,17 @@ namespace CaseManagement.CMMN.Parser
                         result.PlanItemOnParts.Add(new PlanItemOnPart
                         {
                             SourceRef = planItemOnPart.sourceRef,
+                            StandardEvent = standardEvt
+                        });
+                    }
+                    else if (onPart is tCaseFileItemOnPart)
+                    {
+                        var caseFileItemOnPart = onPart as tCaseFileItemOnPart;
+                        var name = Enum.GetName(typeof(CaseFileItemTransition), caseFileItemOnPart.standardEvent);
+                        var standardEvt = (CMMNTransitions)Enum.Parse(typeof(CMMNTransitions), name, true);
+                        result.FileItemOnParts.Add(new CaseFileItemOnPart
+                        {
+                            SourceRef = caseFileItemOnPart.sourceRef,
                             StandardEvent = standardEvt
                         });
                     }
@@ -168,7 +191,7 @@ namespace CaseManagement.CMMN.Parser
 
         private static HumanTask BuildHumanTask(tHumanTask humanTask)
         {
-            return new HumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking };
+            return new HumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking, PerformerRef = humanTask.performerRef };
         }
 
         private static CMMNTask BuildTask(tTask task)

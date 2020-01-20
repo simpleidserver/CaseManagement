@@ -1,9 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures.EvtStore;
+using CaseManagement.CMMN.Infrastructures.Lock;
 using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Infrastructure;
-using CaseManagement.Workflow.Infrastructure.Bus;
-using CaseManagement.Workflow.Infrastructure.EvtStore;
-using CaseManagement.Workflow.Infrastructure.Lock;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;

@@ -5,6 +5,7 @@ const initialCaseInstanceAction: ViewCaseInstanceState = {
     caseInstance: null,
     caseDefinition: null,
     caseFile: null,
+    caseFileItems: [],
     isErrorLoadOccured: false,
     isLoading: true
 };
@@ -16,6 +17,7 @@ export function caseInstanceReducer(state = initialCaseInstanceAction, action: A
             state.caseInstance = caseDefsLoadedAction.caseInstance;
             state.caseDefinition = caseDefsLoadedAction.caseDefinition;
             state.caseFile = caseDefsLoadedAction.caseFile;
+            state.caseFileItems = caseDefsLoadedAction.caseFileItems;
             state.isLoading = false;
             state.isErrorLoadOccured = false;
             return { ...state };

@@ -5,6 +5,7 @@ import { select, Store } from '@ngrx/store';
 import { CaseElementInstance, CaseInstance, StateHistory, TransitionHistory } from '../../casedefinitions/models/case-instance.model';
 import { ActionTypes } from './view-actions';
 import * as fromViewCaseInstanceStates from './view-states';
+import { CaseFileItem } from '../../casedefinitions/models/case-file-item.model';
 let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
 
 @Component({
@@ -16,6 +17,7 @@ let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
 export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
     caseInstanceSubscription: any;
     caseInstanceContext: any[] = [];
+    caseFileItems: CaseFileItem[] = [];
     caseInstance: CaseInstance = {
         Context: null,
         CreateDateTime: null,
@@ -29,8 +31,10 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
     };
     displayStateHistoriesColumns: string[] = ['state', 'datetime'];
     displayTransitionHistoriesColumns: string[] = ['transition', 'datetime'];
+    displayCaseFileItemsColumns: string[] = ['value', 'datetime'];
     @ViewChild('caseInstanceStateHistoriesSort') caseInstanceStateHistoriesSort: MatSort;
     @ViewChild('caseInstanceTransitionHistoriesSort') caseInstanceTransitionHistoriesSort: MatSort;
+    @ViewChild('caseFileItemsSort') caseFileItemsSort: MatSort;
 
     constructor(private caseInstanceStore: Store<fromViewCaseInstanceStates.ViewCaseInstanceState>, private route: ActivatedRoute, private dialog : MatDialog) { }
 
@@ -45,6 +49,7 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
         this.caseInstanceSubscription = this.caseInstanceStore.pipe(select('caseInstance')).subscribe((st: fromViewCaseInstanceStates.ViewCaseInstanceState) => {
             if (st.caseInstance) {
                 this.caseInstance = st.caseInstance;
+                this.caseFileItems = st.caseFileItems;
                 this.caseInstanceContext = [];
                 if (this.caseInstance.Context) {
                     for (let record in this.caseInstance.Context) {
@@ -101,6 +106,7 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
     ngAfterViewInit() {
         this.caseInstanceStateHistoriesSort.sortChange.subscribe(() => this.sortCaseInstanceStateHistories());
         this.caseInstanceTransitionHistoriesSort.sortChange.subscribe(() => this.sortCaseInstanceTransitionHistories());
+        this.caseFileItemsSort.sortChange.subscribe(() => this.sortCaseFileItems());
     }
 
     sortCaseInstanceStateHistories() {
@@ -147,6 +153,29 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
             }
         });
         this.caseInstance.TransitionHistories = [...this.caseInstance.TransitionHistories];
+    }
+
+    sortCaseFileItems() {
+        let active = this.caseFileItemsSort.active;
+        let direction = this.caseFileItemsSort.direction;
+        this.caseFileItems.sort(function (a: CaseFileItem, b: CaseFileItem) {
+            if (active == "value") {
+                if (direction == "asc") {
+                    return a.Value.localeCompare(b.Value);
+                }
+
+                return b.Value.localeCompare(a.Value);
+            }
+
+            if (active == "datetime") {
+                if (direction == "asc") {
+                    return new Date(a.CreateDateTime).getTime() - new Date(b.CreateDateTime).getTime();
+                }
+
+                return new Date(b.CreateDateTime).getTime() - new Date(a.CreateDateTime).getTime();
+            }
+        });
+        this.caseFileItems = [...this.caseFileItems];
     }
 
     refresh() {

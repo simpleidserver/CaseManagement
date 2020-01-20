@@ -62,7 +62,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = result.ToList()
+                Content = result.Select(r => (DailyStatisticAggregate)r.Clone()).ToList()
             });
         }
 
@@ -109,7 +109,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = content.ToList()
+                Content = content.Select(c => (PerformanceStatisticAggregate)c.Clone()).ToList()
             });
         }
     }

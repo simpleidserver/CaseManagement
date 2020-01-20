@@ -24,9 +24,9 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
             services.AddMvc();
-            var builder = services.AddCMMN();
+            services.AddCMMNApi();
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
-            builder.AddDefinitions(files)
+            services.AddCMMNEngine().AddDefinitions(files)
                 .AddCaseProcesses(new List<ProcessAggregate>
                 {
                     new CaseManagementProcessAggregate
@@ -59,21 +59,19 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                             }
                         }
                     }
-                });
-            /*
-            .AddRoles(new List<RoleAggregate>
-            {
-                new RoleAggregate
+                })
+                .AddRoles(new List<RoleAggregate>
                 {
-                    Id = "admin",
-                    Name = "admin",
-                    UserIds = new List<string>
+                    new RoleAggregate
                     {
-                        "thabart"
+                        Id = "admin",
+                        Name = "admin",
+                        UserIds = new List<string>
+                        {
+                            "thabart"
+                        }
                     }
-                }
-            });
-            */
+                });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

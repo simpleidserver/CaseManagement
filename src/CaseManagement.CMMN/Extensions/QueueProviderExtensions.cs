@@ -1,14 +1,15 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
-using CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
+using CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
-using CaseManagement.Workflow.Infrastructure.Bus.StopProcess;
+using CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent;
 
 namespace CaseManagement.Workflow.Infrastructure.Bus
 {
@@ -36,12 +37,6 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
         {
             var message = new ReactivateProcessMessage(caseInstanceId);
             return queueProvider.Queue(ReactivateProcessMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
-        }
-
-        public static Task QueueStopProcess(this IQueueProvider queueProvider, string processId)
-        {
-            var message = new StopProcessMessage(processId);
-            return queueProvider.Queue(StopProcessMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
         }
 
         public static Task QueueSubmitForm(this IQueueProvider queueProvider, string caseInstanceId, string caseElementInstanceId, string formInstanceId, Dictionary<string, string> formValues)

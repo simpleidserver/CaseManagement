@@ -5,7 +5,7 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
 {
     public class FileCaseFileItem : CaseFileItem
     {
-        public FileCaseFileItem(string id) : base(id)
+        public FileCaseFileItem(string id) : base(id, CMMNConstants.ContentManagementTypes.FILE)
         {
         }
 

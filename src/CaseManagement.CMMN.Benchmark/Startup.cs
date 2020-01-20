@@ -21,9 +21,9 @@ namespace CaseManagement.CMMN.Benchmark
             {
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
-            var builder = services.AddCMMN();
+            services.AddCMMNApi();
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
-            builder.AddDefinitions(files);
+            services.AddCMMNEngine().AddDefinitions(files);
             services.AddLogging(b =>
             {
                 b.AddFilter("Microsoft", LogLevel.Error);
@@ -34,7 +34,8 @@ namespace CaseManagement.CMMN.Benchmark
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseCMMN();
+            app.UseAuthentication();
+            app.UseMvc();
         }
     }
 

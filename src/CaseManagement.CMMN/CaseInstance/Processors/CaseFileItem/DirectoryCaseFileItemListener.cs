@@ -14,7 +14,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.CaseFileItem
             _caseFileItemRepository = caseFileItemRepository;
         }
 
-        public const string CASE_FILE_ITEM_TYPE = "https://github.com/simpleidserver/casemanagement/directory";
+        public const string CASE_FILE_ITEM_TYPE = CMMNConstants.ContentManagementTypes.DIRECTORY;
         public string CaseFileItemType => CASE_FILE_ITEM_TYPE;
 
         public Task Start(ProcessorParameter parameter, CancellationToken token)

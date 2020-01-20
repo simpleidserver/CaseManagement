@@ -252,6 +252,71 @@ Scenario: Launch caseWithOneTimerEventListener and check his status is completed
 	Then JSON 'elements[2].state_histories[0].state'='Available'
 	Then JSON 'elements[2].state_histories[1].state'='Completed'
 
+Scenario: Launch caseWithOneCaseFileItem and check his status is completed
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneCaseFileItem.cmmn'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value    |
+	| case_definition_id | $defid$  |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
+	And poll 'http://localhost/case-instances/$insid$/casefileitems', until 'casefileitems[0].type'='https://github.com/simpleidserver/casemanagement/directory'
+	And extract JSON from body
+	And extract 'casefileitems[0].value' from JSON body into 'directory'
+	And add a file into the folder '$directory$'
+	And poll 'http://localhost/case-instances/$insid$', until '$.elements[?(@.definition_id == 'PlanItem_0uxcsmm')].state'='Completed'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/terminate'
+	And poll 'http://localhost/case-instances/$insid$', until 'state'='Terminated'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'state'='Terminated'
+	Then JSON 'state_histories[0].state'='Active'
+	Then JSON 'state_histories[1].state'='Terminated'
+	Then JSON '$.elements[?(@.definition_id == 'CaseFileItem_05yrrad')].transition_histories[0].transition'='Create'
+	Then JSON '$.elements[?(@.definition_id == 'CaseFileItem_05yrrad')].transition_histories[1].transition'='AddChild'
+	Then JSON '$.elements[?(@.definition_id == 'CaseFileItem_05yrrad')].transition_histories[2].transition'='ParentTerminate'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0uxcsmm')].transition_histories[0].transition'='Create'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0uxcsmm')].transition_histories[1].transition'='Start'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0uxcsmm')].transition_histories[2].transition'='Complete'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0uxcsmm')].state_histories[0].state'='Available'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0uxcsmm')].state_histories[1].state'='Active'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_0uxcsmm')].state_histories[2].state'='Completed'
+
+Scenario: Launch caseWithOneHumanTaskAndRole and check his status is completed
+	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneHumanTaskAndRole.cmmn'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value    |
+	| case_definition_id | $defid$  |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
+	And poll 'http://localhost/case-instances/$insid$', until 'elements[0].transition_histories[1].transition'='Start'
+	And extract JSON from body
+	And extract 'elements[0].id' from JSON body into 'eltid'
+	And authenticate as 'thabart'
+	And execute HTTP POST JSON request 'http://localhost/case-instances/$insid$/confirm/$eltid$'
+	| Key  | Value |
+	| name | name  |
+	And poll 'http://localhost/case-instances/$insid$', until 'state'='Completed'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'state'='Completed'
+	Then JSON 'state_histories[0].state'='Active'
+	Then JSON 'state_histories[1].state'='Completed'
+	Then JSON 'elements[0].transition_histories[0].transition'='Create'
+	Then JSON 'elements[0].transition_histories[1].transition'='Start'
+	Then JSON 'elements[0].transition_histories[2].transition'='Complete'
+	Then JSON 'elements[0].state_histories[0].state'='Available'
+	Then JSON 'elements[0].state_histories[1].state'='Active'
+	Then JSON 'elements[0].state_histories[2].state'='Completed'
+
+
 Scenario: Launch caseWithOneBlockedSEntry and check his status is active
 	When execute HTTP GET request 'http://localhost/case-definitions/.search?case_file=caseWithOneBlockedSEntry.cmmn'
 	And extract JSON from body

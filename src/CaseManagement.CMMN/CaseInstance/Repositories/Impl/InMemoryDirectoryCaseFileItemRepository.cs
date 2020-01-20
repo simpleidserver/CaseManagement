@@ -32,7 +32,8 @@ namespace CaseManagement.CMMN.CaseInstance.Repositories
                 CaseInstanceId = caseInstanceId,
                 CaseElementInstanceId = caseElementInstanceId,
                 CaseElementDefinitionId = caseElementDefinitionId,
-                Value = value
+                Value = value,
+                CreateDateTime = DateTime.UtcNow
             });
             return Task.CompletedTask;
         }

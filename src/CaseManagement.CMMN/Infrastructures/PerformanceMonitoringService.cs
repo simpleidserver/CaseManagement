@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Infrastructure.Bus;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
@@ -10,6 +11,7 @@ namespace CaseManagement.CMMN.Infrastructures
 {
     public class PerformanceMonitoringService : IMessageConsumer
     {
+        private readonly ILogger _logger;
         private readonly IStatisticCommandRepository _statisticCommandRepository;
         private readonly CMMNServerOptions _options;
         private CancellationTokenSource _cancellationTokenSource;
@@ -17,8 +19,9 @@ namespace CaseManagement.CMMN.Infrastructures
 
         public string QueueName => "performance";
 
-        public PerformanceMonitoringService(IStatisticCommandRepository statisticCommandRepository, IOptions<CMMNServerOptions> options)
+        public PerformanceMonitoringService(ILogger<PerformanceMonitoringService> logger, IStatisticCommandRepository statisticCommandRepository, IOptions<CMMNServerOptions> options)
         {
+            _logger = logger;
             _statisticCommandRepository = statisticCommandRepository;
             _options = options.Value;
         }

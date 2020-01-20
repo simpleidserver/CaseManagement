@@ -140,7 +140,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors.Listeners
                 }
 
                 var sourcePlanItemInstance = _parameter.CaseInstance.GetWorkflowElementInstance(evt.CaseElementId);
-                if (!_criterions.Any(e => e.SEntry.PlanItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.CaseElementDefinitionId && p.StandardEvent == evt.Transition)))
+                if (!_criterions.Any(e => e.SEntry.PlanItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.CaseElementDefinitionId && p.StandardEvent == evt.Transition) || e.SEntry.FileItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.CaseElementDefinitionId && p.StandardEvent == evt.Transition)))
                 {
                     return;
                 }
