@@ -10,14 +10,12 @@ namespace CaseManagement.ConsoleApp
         static void Main(string[] args)
         {
             Console.WriteLine("Start CaseManagement engine");
-            using (var caseJobServer = new CaseJobServer(s =>
-            {
-                s.AddLogging(c => c.AddConsole());
-            }))
-            {
-                Console.WriteLine("Press a key to quit");
-                Console.ReadKey();
-            }
+            var serviceCollection = new ServiceCollection();
+            var caseJobServer = new CaseJobServer(serviceCollection);
+            caseJobServer.Start();
+            Console.WriteLine("Press a key to quit");
+            caseJobServer.Stop();
+            Console.ReadKey();
         }
     }
 }

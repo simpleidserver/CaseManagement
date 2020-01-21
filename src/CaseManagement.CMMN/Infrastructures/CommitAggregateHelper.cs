@@ -14,14 +14,14 @@ namespace CaseManagement.CMMN.Infrastructures
         private readonly IStoreEvents _storeEvents;
         private readonly IQueueProvider _queueProvider;
         private readonly IAggregateSnapshotStore _aggregateSnapshotStore;
-        private readonly SnapshotConfiguration _snapshotConfiguration;
+        private readonly CMMNServerOptions _serverOptions;
 
-        public CommitAggregateHelper(IStoreEvents storeEvents, IQueueProvider queueProvider, IAggregateSnapshotStore aggregateSnapshotStore, IOptions<SnapshotConfiguration> options)
+        public CommitAggregateHelper(IStoreEvents storeEvents, IQueueProvider queueProvider, IAggregateSnapshotStore aggregateSnapshotStore, IOptions<CMMNServerOptions> options)
         {
             _storeEvents = storeEvents;
             _queueProvider = queueProvider;
             _aggregateSnapshotStore = aggregateSnapshotStore;
-            _snapshotConfiguration = options.Value;
+            _serverOptions = options.Value;
         }
 
         public async Task Commit<T>(T aggregate, string streamName) where T : BaseAggregate
@@ -44,7 +44,7 @@ namespace CaseManagement.CMMN.Infrastructures
                 await _queueProvider.QueueEvent(evt);
             }
 
-            if (((aggregate.Version - 1) % _snapshotConfiguration.SnapshotFrequency) == 0)
+            if (((aggregate.Version - 1) % _serverOptions.SnapshotFrequency) == 0)
             {
                 await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, aggregate));
             }
@@ -67,7 +67,7 @@ namespace CaseManagement.CMMN.Infrastructures
                 await _queueProvider.QueueEvent(evt);
             }
 
-            if (((aggregateVersion - 1) % _snapshotConfiguration.SnapshotFrequency) == 0)
+            if (((aggregateVersion - 1) % _serverOptions.SnapshotFrequency) == 0)
             {
                 await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, aggregate));
             }

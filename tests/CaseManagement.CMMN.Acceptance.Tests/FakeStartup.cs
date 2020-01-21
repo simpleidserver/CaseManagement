@@ -1,5 +1,6 @@
 ﻿using CaseManagement.CMMN.Acceptance.Tests.Delegates;
 using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
+using CaseManagement.CMMN.AspNetCore;
 using CaseManagement.CMMN.Domains;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,6 +25,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
             services.AddMvc();
+            services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
             services.AddCMMNEngine().AddDefinitions(files)

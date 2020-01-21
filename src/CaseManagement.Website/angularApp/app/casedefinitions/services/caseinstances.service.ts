@@ -13,7 +13,7 @@ export class CaseInstancesService {
     search(caseDefinitionId: string, startIndex: number, count: number, order: string, direction: string): Observable<SearchCaseInstancesResult>{
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/case-instances/.search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
+        let targetUrl = process.env.API_URL + "/case-instances/search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }

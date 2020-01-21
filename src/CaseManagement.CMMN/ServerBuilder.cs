@@ -45,37 +45,37 @@ namespace CaseManagement.CMMN
                 });
             }
 
-            _services.AddSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(caseFiles));
-            _services.AddSingleton<ICaseDefinitionCommandRepository>(new InMemoryCaseDefinitionCommandRepository(caseDefinitions, caseDefinitionHistories));
-            _services.AddSingleton<ICaseDefinitionQueryRepository>(new InMemoryCaseDefinitionQueryRepository(caseDefinitions, caseDefinitionHistories));
+            _services.TryUpdateSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(caseFiles));
+            _services.TryUpdateSingleton<ICaseDefinitionCommandRepository>(new InMemoryCaseDefinitionCommandRepository(caseDefinitions, caseDefinitionHistories));
+            _services.TryUpdateSingleton<ICaseDefinitionQueryRepository>(new InMemoryCaseDefinitionQueryRepository(caseDefinitions, caseDefinitionHistories));
             return this;
         }
 
         public ServerBuilder AddCaseProcesses(ICollection<ProcessAggregate> caseProcesses)
         {
-            _services.AddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
+            _services.TryUpdateSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
             return this;
         }
 
         public ServerBuilder AddForms(ICollection<FormAggregate> forms)
         {
-            _services.AddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
-            _services.AddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
+            _services.TryUpdateSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
+            _services.TryUpdateSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
             return this;
         }
 
         public ServerBuilder AddStatistics(ConcurrentBag<DailyStatisticAggregate> statistics)
         {
             var performanceStatistics = new ConcurrentBag<PerformanceStatisticAggregate>();
-            _services.AddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(statistics, performanceStatistics));
-            _services.AddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(statistics, performanceStatistics));
+            _services.TryUpdateSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(statistics, performanceStatistics));
+            _services.TryUpdateSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(statistics, performanceStatistics));
             return this;
         }
 
         public ServerBuilder AddRoles(ICollection<RoleAggregate> roles)
         {
-            _services.AddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
-            _services.AddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
+            _services.TryUpdateSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
+            _services.TryUpdateSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
             return this;
         }
     }

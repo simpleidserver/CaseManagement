@@ -21,7 +21,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess
         private readonly IEventStoreRepository _eventStoreRepository;
         private readonly ICaseDefinitionQueryRepository _cmmnWorkflowDefinitionQueryRepository;
 
-        public LaunchProcessMessageConsumer(ILogger<LaunchProcessMessageConsumer> logger, IDistributedLock distributedLock, ICaseEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, ICaseDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public LaunchProcessMessageConsumer(ILogger<LaunchProcessMessageConsumer> logger, IDistributedLock distributedLock, ICaseEngine workflowEngine, ICommitAggregateHelper commitAggregateHelper, IEventStoreRepository eventStoreRepository, ICaseDefinitionQueryRepository cmmnWorkflowDefinitionQueryRepository, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<CMMNServerOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;

@@ -14,7 +14,7 @@ export class CaseDefinitionsService {
     search(startIndex: number, count: number, order: string, direction: string, text: string): Observable<SearchCaseDefinitionsResult>{
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/case-definitions/.search?start_index=" + startIndex + "&count=" + count;
+        let targetUrl = process.env.API_URL + "/case-definitions/search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -53,7 +53,7 @@ export class CaseDefinitionsService {
     count(): Observable<CountResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/case-definitions/.count";
+        let targetUrl = process.env.API_URL + "/case-definitions/count";
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return CountResult.fromJson(res);
         }));        

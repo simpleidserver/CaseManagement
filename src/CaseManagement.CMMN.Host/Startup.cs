@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+using CaseManagement.CMMN.AspNetCore;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Host.Delegates;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -31,6 +32,7 @@ namespace CaseManagement.CMMN.Host
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
+            services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
             services.AddCMMNEngine()
                 .AddDefinitions(files)

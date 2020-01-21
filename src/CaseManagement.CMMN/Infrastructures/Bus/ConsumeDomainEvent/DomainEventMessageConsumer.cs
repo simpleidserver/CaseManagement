@@ -1,7 +1,6 @@
 ﻿using CaseManagement.CMMN.Infrastructures.Lock;
 using CaseManagement.CMMN.Persistence;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,18 +16,16 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent
         private readonly ICaseInstanceQueryRepository _processFlowInstanceQueryRepository;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDistributedLock _distributedLock;
-        private readonly BusOptions _options;
         private IQueueProvider _queueProvider;
         private CancellationTokenSource _cancellationTokenSource;
         private Task _currentTask;
 
-        public DomainEventMessageConsumer(ILogger<DomainEventMessageConsumer> logger, ICaseInstanceQueryRepository processFlowInstanceQueryRepository, IServiceProvider serviceProvider, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options)
+        public DomainEventMessageConsumer(ILogger<DomainEventMessageConsumer> logger, ICaseInstanceQueryRepository processFlowInstanceQueryRepository, IServiceProvider serviceProvider, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider)
         {
             _logger = logger;
             _processFlowInstanceQueryRepository = processFlowInstanceQueryRepository;
             _serviceProvider = serviceProvider;
             _distributedLock = distributedLock;
-            _options = options.Value;
             _queueProvider = queueProvider;
         }
         

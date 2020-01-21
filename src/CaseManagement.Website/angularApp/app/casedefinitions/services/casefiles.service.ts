@@ -13,7 +13,7 @@ export class CaseFilesService {
     search(startIndex: number, count: number, order: string, direction: string): Observable<SearchCaseFilesResult>{
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/case-files/.search?start_index=" + startIndex + "&count=" + count;
+        let targetUrl = process.env.API_URL + "/case-files/search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -39,7 +39,7 @@ export class CaseFilesService {
     count(): Observable<CountResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/case-files/.count";
+        let targetUrl = process.env.API_URL + "/case-files/count";
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return CountResult.fromJson(res);
         }));

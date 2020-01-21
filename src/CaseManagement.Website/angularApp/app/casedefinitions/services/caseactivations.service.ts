@@ -11,7 +11,7 @@ export class CaseActivationsService {
     search(caseDefinitionId: string, startIndex: number, count: number, order: string, direction: string): Observable<SearchCaseActivationsResult>{
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/case-activations/.search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
+        let targetUrl = process.env.API_URL + "/case-activations/search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }

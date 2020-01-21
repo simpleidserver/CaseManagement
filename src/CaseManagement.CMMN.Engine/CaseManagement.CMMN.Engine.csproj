@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
-    <Description>CaseManagement engine.</Description>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
-  </ItemGroup>
-</Project>

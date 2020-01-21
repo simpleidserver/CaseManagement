@@ -7,18 +7,18 @@ namespace CaseManagement.CMMN.Infrastructures.Bus
 {
     public abstract class BaseMessageConsumer : IMessageConsumer
     {
-        public BaseMessageConsumer(IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options)
+        public BaseMessageConsumer(IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<CMMNServerOptions> serverOptions)
         {
             TaskPool = taskPool;
             QueueProvider = queueProvider;
-            Options = options.Value;
+            ServerOptions = serverOptions.Value;
         }
 
         protected CancellationTokenSource CancellationTokenSource { get; private set; }
         protected Task CurrentTask { get; private set; }
         protected IRunningTaskPool TaskPool { get; private set; }
-        protected BusOptions Options;
         protected IQueueProvider QueueProvider { get; private set; }
+        public CMMNServerOptions ServerOptions { get; private set; }
 
         public void Start()
         {
@@ -38,8 +38,8 @@ namespace CaseManagement.CMMN.Infrastructures.Bus
             var token = CancellationTokenSource.Token;
             while (!token.IsCancellationRequested)
             {
-                await Task.Delay(Options.IdleTimeInMs);
-                if (TaskPool.NbTasks() > Options.MaxConcurrentTask)
+                await Task.Delay(ServerOptions.BlockThreadMS);
+                if (TaskPool.NbTasks() > ServerOptions.MaxConcurrentTask)
                 {
                     continue;
                 }

@@ -18,7 +18,7 @@ export class StatisticService {
     searchPerformances(startIndex: number, count: number, order: string, direction: string, startDateTime: string): Observable<SearchPerformancesResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/statistics/performances/.search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
+        let targetUrl = process.env.API_URL + "/statistics/performances/search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }

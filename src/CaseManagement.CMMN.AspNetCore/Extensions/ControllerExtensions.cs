@@ -8,8 +8,7 @@ namespace CaseManagement.CMMN.AspNetCore.Extensions
     {
         public static string GetNameIdentifier(this Controller controller)
         {
-            var name = (controller.User.Identity as ClaimsIdentity).Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            return name;
+            return (controller.User.Identity as ClaimsIdentity).Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
         }
     }
 }

@@ -4,9 +4,11 @@
     {
         public CMMNServerOptions()
         {
+            MaxConcurrentTask = 20;
             PerformanceIntervalInSeconds = 4;
             BlockThreadMS = 20;
             MaxNbPerformanceRecords = 10;
+            SnapshotFrequency = 100;
         }
 
         /// <summary>
@@ -21,5 +23,13 @@
         /// Set the maximum number of records (performance).
         /// </summary>
         public int MaxNbPerformanceRecords { get; set; }
+        /// <summary>
+        /// Set the maximum of concurrent tasks.
+        /// </summary>
+        public int MaxConcurrentTask { get; set; }
+        /// <summary>
+        /// Set the snapshot frequency.
+        /// </summary>
+        public int SnapshotFrequency { get; set; }
     }
 }

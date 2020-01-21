@@ -12,7 +12,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent
         private readonly ILogger _logger;
         private readonly IDistributedLock _distributedLock;
 
-        public TransitionEventMessageConsumer(ILogger<TransitionEventMessageConsumer> logger, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<BusOptions> options) : base(taskPool, queueProvider, options)
+        public TransitionEventMessageConsumer(ILogger<TransitionEventMessageConsumer> logger, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<CMMNServerOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;

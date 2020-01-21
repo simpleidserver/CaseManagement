@@ -1,14 +1,14 @@
 ``` ini
 
-BenchmarkDotNet=v0.12.0, OS=Windows 10.0.18362
-Intel Core i7-8750H CPU 2.20GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+BenchmarkDotNet=v0.12.0, OS=Windows 10.0.18362, VM=VMware
+Intel Core i5-6440HQ CPU 2.60GHz (Skylake), 1 CPU, 4 logical and 4 physical cores
 .NET Core SDK=3.0.100
-  [Host] : .NET Core 2.2.5 (CoreCLR 4.6.27617.05, CoreFX 4.6.27618.01), X64 RyuJIT DEBUG
+  [Host] : .NET Core 2.2.8 (CoreCLR 4.6.28207.03, CoreFX 4.6.28208.02), X64 RyuJIT DEBUG  [AttachedDebugger]
 
 Job=InProcess  Toolchain=InProcessEmitToolchain  
 
 ```
-|                Method |       Mean |     Error |    StdDev |     Median |     Gen 0 | Gen 1 | Gen 2 | Allocated |
-|---------------------- |-----------:|----------:|----------:|-----------:|----------:|------:|------:|----------:|
-| CreateCaseWithOneTask |   2.571 ms | 0.1334 ms | 0.3651 ms |   2.455 ms |         - |     - |     - |    7.2 KB |
-| LaunchCaseWithOneTask | 106.767 ms | 1.1383 ms | 1.0648 ms | 106.901 ms | 3000.0000 |     - |     - |    7.2 KB |
+|                Method |     Mean |    Error |   StdDev |   Median |     Gen 0 | Gen 1 | Gen 2 | Allocated |
+|---------------------- |---------:|---------:|---------:|---------:|----------:|------:|------:|----------:|
+| CreateCaseWithOneTask | 123.9 ms |  8.83 ms | 25.05 ms | 116.1 ms |         - |     - |     - |   8.61 KB |
+| LaunchCaseWithOneTask | 392.8 ms | 28.68 ms | 81.35 ms | 385.4 ms | 1000.0000 |     - |     - |   8.61 KB |

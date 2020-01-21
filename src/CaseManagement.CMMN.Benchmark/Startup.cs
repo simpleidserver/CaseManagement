@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.Benchmark.Middlewares;
+﻿using CaseManagement.CMMN.AspNetCore;
+using CaseManagement.CMMN.Benchmark.Middlewares;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -15,14 +16,16 @@ namespace CaseManagement.CMMN.Benchmark
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCustomAuthentication(opts => { });
             services.AddAuthorization(policy =>
             {
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
             });
+            services.AddMvc();
+            services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
-            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
             services.AddCMMNEngine().AddDefinitions(files);
             services.AddLogging(b =>
             {

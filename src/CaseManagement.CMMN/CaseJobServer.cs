@@ -5,44 +5,36 @@ using System.Collections.Generic;
 
 namespace CaseManagement.CMMN
 {
-    public class CaseJobServer : IDisposable
+    public class CaseJobServer
     {
         private readonly Action<CMMNServerOptions> _action;
-        private readonly Action<IServiceCollection> _serviceCallback;
+        private readonly IServiceCollection _serviceCollection;
         private IEnumerable<IMessageConsumer> _messageConsumers;
 
-        public CaseJobServer(Action<IServiceCollection> serviceCallback = null)
+        public CaseJobServer(IServiceCollection serviceCollection)
         {
-            _serviceCallback = serviceCallback;
-            Start();
+            _serviceCollection = serviceCollection;
         }
 
-        public CaseJobServer(Action<CMMNServerOptions> action = null, Action<IServiceCollection> serviceCallback = null)
+        public CaseJobServer(IServiceCollection serviceCollection, Action<CMMNServerOptions> action = null)
         {
+            _serviceCollection = serviceCollection;
             _action = action;
-            _serviceCallback = serviceCallback;
-            Start();
         }
 
-        private void Start()
+        public void Start()
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging();
             if (_action != null)
             {
-                serviceCollection.AddCMMNEngine(_action);
+                _serviceCollection.AddCMMNEngine(_action);
             }
             else
             {
-                serviceCollection.AddCMMNEngine(act => { });
+                _serviceCollection.AddCMMNEngine(act => { });
             }
 
-            if (_serviceCallback != null)
-            {
-                _serviceCallback(serviceCollection);
-            }
-
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            _serviceCollection.AddLogging();
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
             _messageConsumers = serviceProvider.GetServices<IMessageConsumer>();
             foreach(var messageConsumer in _messageConsumers)
             {
@@ -50,7 +42,7 @@ namespace CaseManagement.CMMN
             }
         }
 
-        public void Dispose()
+        public void Stop()
         {
             foreach(var messageConsumer in _messageConsumers)
             {

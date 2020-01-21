@@ -9,7 +9,7 @@ namespace CaseManagement.CMMN.CMIS
     {
         private readonly ICMISSessionFactory _cmisSessionFactory;
 
-        public CMISDocumentCaseFileItem(ICMISSessionFactory cmisSessionFactory, string id) : base(id)
+        public CMISDocumentCaseFileItem(ICMISSessionFactory cmisSessionFactory, string id) : base(id, string.Empty)
         {
             _cmisSessionFactory = cmisSessionFactory;
         }

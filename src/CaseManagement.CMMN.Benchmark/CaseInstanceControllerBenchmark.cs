@@ -28,7 +28,7 @@ namespace CaseManagement.CMMN.Benchmark
         [Benchmark]
         public async Task CreateCaseWithOneTask()
         {
-            var httpResult = await _client.GetAsync("http://localhost/case-definitions/.search?cmmn_definition=CaseWithOneTask.cmmn");
+            var httpResult = await _client.GetAsync("http://localhost/case-definitions/search?cmmn_definition=CaseWithOneTask.cmmn");
             var searchResult = JsonConvert.DeserializeObject<JObject>(await httpResult.Content.ReadAsStringAsync());
             var caseDefinitionId = searchResult.SelectToken("content[0].id").ToString();
             var createCaseInstance = new CreateCaseInstanceCommand
@@ -50,7 +50,7 @@ namespace CaseManagement.CMMN.Benchmark
         [Benchmark]
         public async Task LaunchCaseWithOneTask()
         {
-            var httpResult = await _client.GetAsync("http://localhost/case-definitions/.search?cmmn_definition=CaseWithOneTask.cmmn");
+            var httpResult = await _client.GetAsync("http://localhost/case-definitions/search?cmmn_definition=CaseWithOneTask.cmmn");
             var searchResult = JsonConvert.DeserializeObject<JObject>(await httpResult.Content.ReadAsStringAsync());
             var caseDefinitionId = searchResult.SelectToken("content[0].id").ToString();
             var createCaseInstance = new CreateCaseInstanceCommand
@@ -69,29 +69,6 @@ namespace CaseManagement.CMMN.Benchmark
             await _client.GetAsync($"http://localhost/case-instances/{id}/launch");
             await PollCaseInstanceCompleted(id);
         }
-
-        /*
-        [Benchmark]
-        public async Task LaunchEventListener2Seconds()
-        {
-            var cmd = new CreateCaseInstanceCommand
-            {
-                CaseDefinitionId = "caseWithTimerEventListener",
-                CasesId = "Case_0d1ujq8"
-            };
-            var httpRequestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost/case-instances"),
-                Content = new StringContent(JsonConvert.SerializeObject(cmd), Encoding.UTF8, "application/json")
-            };
-            var httpResult = await _client.SendAsync(httpRequestMessage);
-            var json = await httpResult.Content.ReadAsStringAsync();
-            var id = JsonConvert.DeserializeObject<JObject>(json)["id"].ToString();
-            await _client.GetAsync($"http://localhost/case-instances/{id}/launch");
-            await PollCaseInstanceCompleted(id);
-        }
-        */
 
         public async Task PollCaseInstanceCreated(string id)
         {

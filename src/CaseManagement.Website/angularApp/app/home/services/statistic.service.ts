@@ -21,7 +21,7 @@ export class StatisticService {
     search(startIndex: number, count: number, order: string, direction: string, startDate: string, endDate: string): Observable<SearchDailyStatisticsResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        let targetUrl = process.env.API_URL + "/statistics/.search?start_index=" + startIndex + "&count=" + count;
+        let targetUrl = process.env.API_URL + "/statistics/search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
