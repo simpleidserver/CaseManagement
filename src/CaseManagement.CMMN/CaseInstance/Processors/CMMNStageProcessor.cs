@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.CaseInstance.Exceptions;
 using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,13 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
 {
     public class CMMNStageProcessor : IProcessor
     {
+        private readonly ILogger _logger;
         public CaseElementTypes Type => CaseElementTypes.Stage;
+
+        public CMMNStageProcessor(ILogger<CMMNStageProcessor> logger)
+        {
+            _logger = logger;
+        }
 
         public Task<ProcessorParameter> Handle(ProcessorParameter parameter, CancellationToken token)
         {
@@ -163,6 +170,11 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                     }
                     catch (OperationCanceledException)
                     {
+                        continueExecution = false;
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogError(ex.ToString());
                         continueExecution = false;
                     }
                 }

@@ -9,6 +9,8 @@ using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.CMMN.Tests.Delegates;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,7 +36,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetManualActivationRule("activation", new CMMNExpression("language", "true"));
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List <IProcessor>
             {
                 new CMMNTaskProcessor()
             });
@@ -74,7 +77,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetRepetitionRule("activation", new CMMNExpression("language", "context.GetNumberVariable(\"increment\") &lt;= 2"));
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -125,7 +129,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetRepetitionRule("activation", null);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
                 new CMMNTaskProcessor()
@@ -176,7 +181,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -203,7 +209,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetManualActivationRule("activation", new CMMNExpression("language", "true"));
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNTaskProcessor()
             });
@@ -250,7 +257,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -288,7 +296,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -355,7 +364,8 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
                 new CMMNTaskProcessor()
@@ -413,7 +423,8 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
                 new CMMNTaskProcessor()
@@ -453,7 +464,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetPerformerRef("performer");
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNHumanTaskProcessor()
             });
@@ -505,7 +517,8 @@ namespace CaseManagement.CMMN.Tests
                     cb.AddOnPart(new PlanItemOnPart { SourceRef = "1", StandardEvent = CMMNTransitions.Complete });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
                 new CMMNTaskProcessor()
@@ -555,7 +568,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetRepetitionRule("activation", null);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
                 new CMMNTaskProcessor()
@@ -597,7 +611,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -635,7 +650,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -681,7 +697,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -726,7 +743,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetIsBlocking(true);
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
@@ -779,11 +797,12 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
                 new CMMNTaskProcessor(),
-                new CMMNStageProcessor()
+                new CMMNStageProcessor(new Mock<ILogger<CMMNStageProcessor>>().Object)
             });
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
@@ -820,10 +839,11 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNTaskProcessor(),
-                new CMMNStageProcessor()
+                new CMMNStageProcessor(new Mock<ILogger<CMMNStageProcessor>>().Object)
             });
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
@@ -864,10 +884,11 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
-                new CMMNStageProcessor()
+                new CMMNStageProcessor(new Mock<ILogger<CMMNStageProcessor>>().Object)
             });
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
@@ -915,9 +936,10 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
-                new CMMNStageProcessor(),
+                new CMMNStageProcessor(new Mock<ILogger<CMMNStageProcessor>>().Object),
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler)
             });
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
@@ -959,7 +981,8 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNTaskProcessor(),
                 new CMMNMilestoneProcessor()
@@ -983,7 +1006,8 @@ namespace CaseManagement.CMMN.Tests
             var workflowDefinition = WorkflowBuilder.New("templateId", "Case with one task")
                 .AddCMMNMilestone("1", "Milestone", (c) => { })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNMilestoneProcessor()
             });
@@ -1028,7 +1052,8 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNTaskProcessor(),
                 new CMMNProcessTaskProcessor(caseLaunchProcessCommandHandler),
@@ -1065,7 +1090,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetTimer(new CMMNExpression { Language = "", Body = "R5/P0Y0M0DT0H0M2S" });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNTimerEventListenerProcessor()
             });
@@ -1095,7 +1121,8 @@ namespace CaseManagement.CMMN.Tests
                     c.SetTimer(new CMMNExpression { Language = "", Body = "R2/P0Y0M0DT0H0M4S" });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNTimerEventListenerProcessor()
             });
@@ -1142,7 +1169,8 @@ namespace CaseManagement.CMMN.Tests
                 })
                 .Build();
             var repository = new InMemoryDirectoryCaseFileItemRepository();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNCaseFileItemProcessor(new []
                 {
@@ -1200,7 +1228,8 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNCaseFileItemProcessor(new []
                 {
@@ -1263,7 +1292,8 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNCaseFileItemProcessor(new []
                 {
@@ -1313,7 +1343,8 @@ namespace CaseManagement.CMMN.Tests
                     });
                 })
                 .Build();
-            var workflowEngine = new CaseEngine(new List<IProcessor>
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
             {
                 new CMMNCaseFileItemProcessor(new []
                 {

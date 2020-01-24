@@ -1,8 +1,5 @@
-﻿
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
+﻿using CaseManagement.CMMN.Extensions;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 

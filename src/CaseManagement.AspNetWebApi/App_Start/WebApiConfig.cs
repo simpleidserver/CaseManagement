@@ -1,7 +1,6 @@
 ﻿using CaseManagement.AspNetWebApi.Infrastructures;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Diagnostics;
 using System.Web.Http;
 using Unity;
 using Unity.Lifetime;

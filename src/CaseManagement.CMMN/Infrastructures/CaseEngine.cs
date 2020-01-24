@@ -3,6 +3,7 @@ using CaseManagement.CMMN.CaseInstance.Processors;
 using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,12 @@ namespace CaseManagement.CMMN.Infrastructures
 {
     public class CaseEngine : ICaseEngine
     {
+        private readonly ILogger _logger;
         private readonly IEnumerable<IProcessor> _cmmnPlanItemProcessors;
 
-        public CaseEngine(IEnumerable<IProcessor> cmmnPlanItemProcessors)
+        public CaseEngine(ILogger<CaseEngine> logger, IEnumerable<IProcessor> cmmnPlanItemProcessors)
         {
+            _logger = logger;
             _cmmnPlanItemProcessors = cmmnPlanItemProcessors;
         }
 
@@ -176,6 +179,11 @@ namespace CaseManagement.CMMN.Infrastructures
                 }
                 catch (OperationCanceledException)
                 {
+                    continueExecution = false;
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
                     continueExecution = false;
                 }
             }

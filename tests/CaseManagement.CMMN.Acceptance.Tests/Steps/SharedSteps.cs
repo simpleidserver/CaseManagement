@@ -17,8 +17,8 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
     public class SharedSteps
     {
         private const int MS = 400;
-        private static Semaphore _obj = new Semaphore(initialCount: 1, maximumCount: 1);
         private readonly ScenarioContext _scenarioContext;
+        private static object _obj = new object();
         private static CustomWebApplicationFactory<FakeStartup> _factory;
         private static HttpClient _client;
 
@@ -30,18 +30,22 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         [BeforeScenario]
         public void BeforeScenario()
         {
-            _obj.WaitOne();
-            _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
+            lock(_obj)
             {
-                c.AddSingleton(_scenarioContext);
-            });
-            _client = _factory.CreateClient();
+                if (_factory == null)
+                {
+                    _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
+                    {
+                        c.AddSingleton(_scenarioContext);
+                    });
+                    _client = _factory.CreateClient();
+                }
+            }
         }
 
         [AfterScenario]
         public void AfterScenario()
         {
-            _obj.Release();
         }
 
         [When("execute HTTP GET request '(.*)'")]
