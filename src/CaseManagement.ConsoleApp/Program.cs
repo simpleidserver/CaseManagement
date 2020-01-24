@@ -1,6 +1,5 @@
 ﻿using CaseManagement.CMMN;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
 
 namespace CaseManagement.ConsoleApp

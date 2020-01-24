@@ -1,0 +1,13 @@
+[Unit]
+Description=Case management website
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.Website/bin/Debug/netcoreapp2.2/CaseManagement.Website.dll --server.urls="http://*:51724"
+KillMode=process
+TimeoutStopSec=5s
+Restart=always
+WorkingDirectory=/src/CaseManagement/src/CaseManagement.Website
+
+[Install]
+WantedBy=multi-user.target

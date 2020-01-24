@@ -6,6 +6,8 @@ using CaseManagement.CMMN.Host.Delegates;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,7 +20,14 @@ namespace CaseManagement.CMMN.Host
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env) { }
+        private readonly IHostingEnvironment _env;
+        private readonly IConfiguration _configuration;
+
+        public Startup(IHostingEnvironment env, IConfiguration configuration) 
+        {
+            _env = env;
+            _configuration = configuration;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -31,7 +40,7 @@ namespace CaseManagement.CMMN.Host
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
+            var files = Directory.EnumerateFiles(Path.Combine(_env.ContentRootPath, "Cmmns"), "*.cmmn").ToList();
             services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
             services.AddCMMNEngine()
@@ -109,10 +118,20 @@ namespace CaseManagement.CMMN.Host
                         NbCreatedActivation = 1
                     }
                 });
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            if (_configuration.GetChildren().Any(i => i.Key == "pathBase"))
+            {
+                app.UsePathBase(_configuration["pathBase"]);
+            }
+
+            app.UseForwardedHeaders();
             app.UseAuthentication();
             app.UseCors("AllowAll");
             app.UseMvc();

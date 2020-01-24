@@ -46,14 +46,6 @@ task pack -depends compile {
 }
 
 task test {
-    Push-Location -Path $base_dir\tests\CaseManagement.Workflow.Tests
-
-    try {
-        exec { & dotnet test -c $config --no-build --no-restore }
-    } finally {
-        Pop-Location
-    }
-
     Push-Location -Path $base_dir\tests\CaseManagement.CMMN.Tests
 
     try {

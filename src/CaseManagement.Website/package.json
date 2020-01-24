@@ -8,8 +8,10 @@
     "scripts": {
         "start": "concurrently \"webpack-dev-server --env=dev --open --hot --inline --port 8080\" \"dotnet run\" ",
         "webpack-dev": "webpack --env=dev",
+        "webpack-azure": "webpack --env=azure",
         "webpack-production": "webpack --env=prod",
         "build": "npm run webpack-dev",
+        "build-azure": "npm run webpack-azure",
         "build-dev": "npm run webpack-dev",
         "build-production": "npm run webpack-production",
         "watch-webpack-dev": "webpack --env=dev --watch --color",

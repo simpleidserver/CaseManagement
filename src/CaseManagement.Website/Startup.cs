@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,15 +12,7 @@ namespace CaseManagement.Website
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-        }
+        public Startup() { }
 
         public IConfigurationRoot Configuration { get; }
 
@@ -40,16 +33,22 @@ namespace CaseManagement.Website
 
             // Add framework services.
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseForwardedHeaders();
             var angularRoutes = new[] {
                  "/home",
                  "/about",
                  "/casedefinitions",
-                 "/caseinstances"
+                 "/caseinstances",
+                 "/performances"
              };
 
             app.Use(async (context, next) =>
