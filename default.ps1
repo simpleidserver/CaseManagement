@@ -42,7 +42,8 @@ task compile -depends clean {
  
 task pack -depends compile {
 	exec { dotnet pack $source_dir\CaseManagement.CMMN\CaseManagement.CMMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.Workflow\CaseManagement.Workflow.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNet\CaseManagement.CMMN.AspNet.csproj -c $config --no-build $versionSuffix --output $result_dir }
 }
 
 task test {
