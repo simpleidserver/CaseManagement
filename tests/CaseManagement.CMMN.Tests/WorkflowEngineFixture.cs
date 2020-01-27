@@ -1381,6 +1381,109 @@ namespace CaseManagement.CMMN.Tests
 
         #endregion
 
+        #region Discretionary items
+
+        [Fact]
+        public void When_Activate_One_Discretionary_Task()
+        {
+            var workflowDefinition = WorkflowBuilder.New("templateId", "Case with one task")
+                .AddDiscretionaryTask("1", "First Task", (c) => 
+                {
+                    c.SetManualActivationRule("activation", new CMMNExpression("language", "true"));
+                }, (cb) =>
+                {
+                    
+                })
+                .Build();
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
+            {
+                new CMMNTaskProcessor()
+            });
+            var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
+            workflowInstance.ConfirmTableItem("1", "user");
+            workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
+            Wait(workflowInstance, "1", "Enabled");
+            workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+            Wait(workflowInstance, CaseStates.Terminated);
+
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Terminated), workflowInstance.StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Enabled), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Terminated), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(2).State);
+            Assert.Equal(CMMNTransitions.Create, workflowInstance.WorkflowElementInstances.First().TransitionHistories.ElementAt(0).Transition);
+            Assert.Equal(CMMNTransitions.Enable, workflowInstance.WorkflowElementInstances.First().TransitionHistories.ElementAt(1).Transition);
+            Assert.Equal(CMMNTransitions.ParentTerminate, workflowInstance.WorkflowElementInstances.First().TransitionHistories.ElementAt(2).Transition);
+        }
+
+        [Fact]
+        public void When_Suspend_Case_With_One_Discrete_Task()
+        {
+            var workflowDefinition = WorkflowBuilder.New("templateId", "Case with one task")
+                .AddCMMNTask("1", "First Task", (c) =>
+                {
+                    c.SetManualActivationRule("activation", new CMMNExpression("language", "true"));
+                })
+                .AddDiscretionaryTask("2", "Second Task", (c) =>
+                {
+                    c.SetManualActivationRule("activation", new CMMNExpression("language", "true"));
+                }, (cb) => { })
+                .Build();
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
+            {
+                new CMMNTaskProcessor()
+            });
+            var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
+            workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
+            workflowInstance.MakeTransition(CMMNTransitions.Suspend);
+            Wait(workflowInstance, CaseStates.Suspended);
+            workflowInstance.ConfirmTableItem("2", "user");
+            workflowInstance.MakeTransition(CMMNTransitions.Resume);
+            Wait(workflowInstance, CaseStates.Active);
+            Wait(workflowInstance, "2", "Enabled");
+            workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+            Wait(workflowInstance, CaseStates.Terminated);
+
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Suspended), workflowInstance.StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Active), workflowInstance.StateHistories.ElementAt(2).State);
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Terminated), workflowInstance.StateHistories.ElementAt(3).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Enabled), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Terminated), workflowInstance.WorkflowElementInstances.First().StateHistories.ElementAt(2).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Available), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Enabled), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(1).State);
+            Assert.Equal(Enum.GetName(typeof(TaskStates), TaskStates.Terminated), workflowInstance.WorkflowElementInstances.Last().StateHistories.ElementAt(2).State);
+        }
+
+        [Fact]
+        public void When_Execute_One_Case_With_One_Discretionary_Task()
+        {
+            var workflowDefinition = WorkflowBuilder.New("templateId", "Case with one task")
+                .AddDiscretionaryTask("1", "First Task", (c) =>
+                {
+                    c.SetManualActivationRule("activation", new CMMNExpression("language", "true"));
+                }, (cb) => { })
+                .Build();
+            var logger = new Mock<ILogger<CaseEngine>>();
+            var workflowEngine = new CaseEngine(logger.Object, new List<IProcessor>
+            {
+                new CMMNTaskProcessor()
+            });
+            var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
+            workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
+            workflowInstance.MakeTransition(CMMNTransitions.Terminate);
+            Wait(workflowInstance, CaseStates.Terminated);
+
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
+            Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Terminated), workflowInstance.StateHistories.ElementAt(1).State);
+            Assert.True(0 == workflowInstance.WorkflowElementInstances.Count());
+        }
+
+        #endregion
+
         private void Wait(Domains.CaseInstance workflowInstance, CaseStates caseState, int nbInstances = 1)
         {
             var lst = workflowInstance.StateHistories.ToList().Where(c => c.State == Enum.GetName(typeof(CaseStates), caseState));

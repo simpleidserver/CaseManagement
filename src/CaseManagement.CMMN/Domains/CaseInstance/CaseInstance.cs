@@ -1,6 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.Workflow.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,17 +18,15 @@ namespace CaseManagement.CMMN.Domains
 
     public class CaseInstance : BaseAggregate
     {
-        private object _lock;
-
         public CaseInstance()
         {
             ExecutionContext = new CaseInstanceExecutionContext();
+            ElementPlanificationLst = new List<CaseElementInstancePlanification>();
             StateHistories = new List<CaseInstanceHistory>();
             TransitionHistories = new List<CaseInstanceTransitionHistory>();
             ExecutionHistories = new List<CaseElementExecutionHistory>();
             WorkflowElementInstances = new List<CaseElementInstance>();
             DomainEvents = new List<DomainEvent>();
-            _lock = new object();
         }
 
         public CaseInstance(string id, DateTime createDateTime, string workflowDefinitionId) : base()
@@ -43,6 +40,7 @@ namespace CaseManagement.CMMN.Domains
         public DateTime CreateDateTime { get; set; }
         public string State { get; set; }
         public CaseInstanceExecutionContext ExecutionContext { get; set; }
+        public ICollection<CaseElementInstancePlanification> ElementPlanificationLst { get; set; }
         public ICollection<CaseInstanceHistory> StateHistories { get; set; }
         public ICollection<CaseInstanceTransitionHistory> TransitionHistories { get; set; }
         public ICollection<CaseElementExecutionHistory> ExecutionHistories { get; set; }
@@ -53,7 +51,7 @@ namespace CaseManagement.CMMN.Domains
 
         public bool ContainsVariable(string key)
         {
-            lock(ExecutionContext)
+            lock (ExecutionContext)
             {
                 return ExecutionContext.ContainsVariable(key);
             }
@@ -61,7 +59,7 @@ namespace CaseManagement.CMMN.Domains
 
         public string GetVariable(string key)
         {
-            lock(ExecutionContext)
+            lock (ExecutionContext)
             {
                 return ExecutionContext.GetVariable(key);
             }
@@ -146,7 +144,7 @@ namespace CaseManagement.CMMN.Domains
         {
             var planItemOnParts = criteria.SEntry.PlanItemOnParts;
             var caseItemOnParts = criteria.SEntry.FileItemOnParts;
-            lock(WorkflowElementInstances)
+            lock (WorkflowElementInstances)
             {
                 foreach (var planItemOnPart in planItemOnParts)
                 {
@@ -163,7 +161,7 @@ namespace CaseManagement.CMMN.Domains
                     }
                 }
 
-                foreach(var caseItemOnPart in caseItemOnParts)
+                foreach (var caseItemOnPart in caseItemOnParts)
                 {
                     var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CaseElementDefinitionId == caseItemOnPart.SourceRef);
                     if (source == null)
@@ -192,7 +190,7 @@ namespace CaseManagement.CMMN.Domains
 
         public bool IsWorkflowElementDefinitionFinished(string elementDefinitionId)
         {
-            lock(ExecutionHistories)
+            lock (ExecutionHistories)
             {
                 var executionHistory = ExecutionHistories.FirstOrDefault(e => e.CaseElementDefinitionId == elementDefinitionId);
                 if (executionHistory == null || executionHistory.EndDateTime == null)
@@ -217,7 +215,7 @@ namespace CaseManagement.CMMN.Domains
 
         public CaseElementDefinition GetWorkflowElementDefinition(string id, CaseDefinition workflowDefinition)
         {
-            lock(WorkflowElementInstances)
+            lock (WorkflowElementInstances)
             {
                 var elementInstance = WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
                 if (elementInstance == null)
@@ -231,7 +229,7 @@ namespace CaseManagement.CMMN.Domains
 
         public CaseElementInstance GetWorkflowElementInstance(string id)
         {
-            lock(WorkflowElementInstances)
+            lock (WorkflowElementInstances)
             {
                 return WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
             }
@@ -239,7 +237,7 @@ namespace CaseManagement.CMMN.Domains
 
         public CaseElementInstance GetWorkflowElementInstance(string workflowItemDefinitionId, int version)
         {
-            lock(WorkflowElementInstances)
+            lock (WorkflowElementInstances)
             {
                 return WorkflowElementInstances.FirstOrDefault(p => p.CaseElementDefinitionId == workflowItemDefinitionId && p.Version == version);
             }
@@ -247,7 +245,7 @@ namespace CaseManagement.CMMN.Domains
 
         public ICollection<CaseElementInstance> GetWorkflowElementInstancesByParentId(string parentId)
         {
-            lock(WorkflowElementInstances)
+            lock (WorkflowElementInstances)
             {
                 return WorkflowElementInstances.Where(e => e.ParentId == parentId).ToList();
             }
@@ -255,11 +253,16 @@ namespace CaseManagement.CMMN.Domains
 
         public CaseElementInstance GetLastWorkflowElementInstance(string workflowItemDefinitionId)
         {
-            lock(WorkflowElementInstances)
+            lock (WorkflowElementInstances)
             {
                 var result = WorkflowElementInstances.Where(p => p.CaseElementDefinitionId == workflowItemDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
                 return result;
             }
+        }
+
+        public bool IsPlanned(string caseElementDefinitionId)
+        {
+            return ElementPlanificationLst.Any(e => e.CaseElementDefinitionId == caseElementDefinitionId);
         }
 
         public string GetStreamName()
@@ -267,10 +270,15 @@ namespace CaseManagement.CMMN.Domains
             return GetStreamName(Id);
         }
 
+        public bool IsRunning()
+        {
+            return State == Enum.GetName(typeof(CaseStates), CaseStates.Active) || State == Enum.GetName(typeof(CaseStates), CaseStates.Suspended);
+        }
+       
         #endregion
 
         #region Commands
-        
+
         public CaseElementInstance CreateWorkflowElementInstance(CaseElementDefinition workflowElementDefinition, string parentId = null)
         {
             return CreateWorkflowElementInstance(workflowElementDefinition.Id, workflowElementDefinition.Type, parentId);
@@ -299,7 +307,7 @@ namespace CaseManagement.CMMN.Domains
 
         public void SubmitForm(string elementId, string formInstanceId, Dictionary<string, string> formValues)
         {
-            lock(DomainEvents)
+            lock (DomainEvents)
             {
                 var evt = new CaseElementInstanceFormSubmittedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, formInstanceId, formValues, DateTime.UtcNow);
                 Handle(evt);
@@ -310,7 +318,7 @@ namespace CaseManagement.CMMN.Domains
 
         public void StartElement(string elementDefinitionId)
         {
-            lock(DomainEvents)
+            lock (DomainEvents)
             {
                 var evt = new CaseElementStartedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementDefinitionId, DateTime.UtcNow);
                 Handle(evt);
@@ -320,7 +328,7 @@ namespace CaseManagement.CMMN.Domains
 
         public void FinishElement(string elementDefinitionId)
         {
-            lock(DomainEvents)
+            lock (DomainEvents)
             {
                 var evt = new CaseElementFinishedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementDefinitionId, DateTime.UtcNow);
                 Handle(evt);
@@ -330,13 +338,13 @@ namespace CaseManagement.CMMN.Domains
 
         public void MakeTransition(CMMNTransitions transition)
         {
-            lock(DomainEvents)
+            lock (DomainEvents)
             {
                 var evt = new CaseTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, transition, DateTime.UtcNow);
                 Handle(evt);
                 if (transition == CMMNTransitions.Reactivate)
                 {
-                    foreach(var elt in WorkflowElementInstances)
+                    foreach (var elt in WorkflowElementInstances)
                     {
                         if (elt.IsFail())
                         {
@@ -351,7 +359,7 @@ namespace CaseManagement.CMMN.Domains
 
         public void MakeTransition(string elementId, CMMNTransitions transition)
         {
-            lock(DomainEvents)
+            lock (DomainEvents)
             {
                 var elt = WorkflowElementInstances.First(e => e.Id == elementId);
                 var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, transition, DateTime.UtcNow);
@@ -404,7 +412,7 @@ namespace CaseManagement.CMMN.Domains
 
         public void MakeTransitionStart(string elementId)
         {
-            lock(DomainEvents)
+            lock (DomainEvents)
             {
                 var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
                 if (elt == null)
@@ -443,7 +451,7 @@ namespace CaseManagement.CMMN.Domains
                 DomainEvents.Add(evt);
             }
         }
-        
+
         public void MakeTransitionOccur(string elementId)
         {
             lock (DomainEvents)
@@ -580,7 +588,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if(!elt.CanBeTerminated())
+                if (!elt.CanBeTerminated())
                 {
                     return;
                 }
@@ -643,6 +651,26 @@ namespace CaseManagement.CMMN.Domains
             lock (DomainEvents)
             {
                 var evt = new CaseInstanceVariableAddedEvent(Guid.NewGuid().ToString(), Id, Version + 1, key, value);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void Plan(string caseElementDefinitionId, IEnumerable<string> userRoles)
+        {
+            lock (DomainEvents)
+            {
+                var evt = new CaseElementPlannedEvent(Guid.NewGuid().ToString(), Id, Version + 1, caseElementDefinitionId, userRoles);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void ConfirmTableItem(string caseElementDefinitionId, string user)
+        {
+            lock(DomainEvents)
+            {
+                var evt = new CaseElementPlanificationConfirmedEvent(Guid.NewGuid().ToString(), Id, Version + 1, caseElementDefinitionId, user, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -726,6 +754,16 @@ namespace CaseManagement.CMMN.Domains
             {
                 Handle((CaseTransitionRaisedEvent)obj);
             }
+
+            if (obj is CaseElementPlannedEvent)
+            {
+                Handle((CaseElementPlannedEvent)obj);
+            }
+
+            if (obj is CaseElementPlanificationConfirmedEvent)
+            {
+                Handle((CaseElementPlanificationConfirmedEvent)obj);
+            }
         }
 
         private void Handle(CaseInstanceCreatedEvent evt)
@@ -786,6 +824,27 @@ namespace CaseManagement.CMMN.Domains
         {
             var executionHistory = ExecutionHistories.First(e => e.CaseElementDefinitionId == evt.CaseElementDefinitionId);
             executionHistory.EndDateTime = evt.EndDateTime;
+            Version++;
+            RaiseEvent(evt);
+        }
+
+        private void Handle(CaseElementPlannedEvent evt)
+        {
+            Version++;
+            RaiseEvent(evt);
+        }
+
+        private void Handle(CaseElementPlanificationConfirmedEvent evt)
+        {
+            if (ElementPlanificationLst.Any(e => e.CaseElementDefinitionId == evt.CaseElementDefinitionId))
+            {
+                throw new AggregateValidationException(new Dictionary<string, string>
+                {
+                    { "confirm", "case element is already planned" }
+                });
+            }
+
+            ElementPlanificationLst.Add(new CaseElementInstancePlanification(evt.User, evt.CaseElementDefinitionId, evt.CreateDateTime));
             Version++;
             RaiseEvent(evt);
         }
@@ -930,7 +989,8 @@ namespace CaseManagement.CMMN.Domains
                 TransitionHistories = TransitionHistories == null ? null : TransitionHistories.Select(t => (CaseInstanceTransitionHistory)t.Clone()).ToList(),
                 Version = Version,
                 CaseDefinitionId = CaseDefinitionId,
-                WorkflowElementInstances = WorkflowElementInstances == null ? null : WorkflowElementInstances.Select(w => (CaseElementInstance)w.Clone()).ToList()
+                WorkflowElementInstances = WorkflowElementInstances == null ? null : WorkflowElementInstances.Select(w => (CaseElementInstance)w.Clone()).ToList(),
+                ElementPlanificationLst = ElementPlanificationLst.Select(w => (CaseElementInstancePlanification)w.Clone()).ToList()
             };
         }
 

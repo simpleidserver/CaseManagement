@@ -51,6 +51,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 result = result.Where(r => r.Name.IndexOf(parameter.Text, StringComparison.InvariantCultureIgnoreCase) >= 0);
             }
 
+            if (!string.IsNullOrWhiteSpace(parameter.CaseOwner))
+            {
+                result = result.Where(r => r.CaseOwner == parameter.CaseOwner);
+            }
+
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
             return Task.FromResult(new FindResponse<CaseDefinition>

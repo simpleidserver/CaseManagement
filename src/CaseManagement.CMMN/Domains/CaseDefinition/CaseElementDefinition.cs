@@ -30,6 +30,14 @@ namespace CaseManagement.CMMN.Domains
         /// An ExitCriterion represents the condition for a PlanItem to terminate. [0...*]
         /// </summary>
         public ICollection<Criteria> ExitCriterions { get; set; }
+        /// <summary>
+        /// Get or set the table item.
+        /// </summary>
+        public TableItem TableItem { get; set; }
+        public bool IsDiscrete()
+        {
+            return TableItem != null;
+        }
 
         public void SetManualActivationRule(ManualActivationRule activationRule)
         {

@@ -316,6 +316,52 @@ Scenario: Launch caseWithOneHumanTaskAndRole and check his status is completed
 	Then JSON 'elements[0].state_histories[1].state'='Active'
 	Then JSON 'elements[0].state_histories[2].state'='Completed'
 
+Scenario: Launch caseWithOneDiscretionaryItem and check his status is completed (table item is not confirmed)
+	When execute HTTP GET request 'http://localhost/case-definitions/search?case_file=caseWithOneDiscretionaryItem.cmmn'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value    |
+	| case_definition_id | $defid$  |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
+	And poll 'http://localhost/case-instances/$insid$', until 'state'='Completed'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'state'='Completed'
+	Then JSON 'state_histories[0].state'='Active'
+	Then JSON 'state_histories[1].state'='Completed'
+
+Scenario: Launch caseWithOneDiscretionaryItem and check his status is completed (table item is confirmed)
+	When execute HTTP GET request 'http://localhost/case-definitions/search?case_file=caseWithOneDiscretionaryItem.cmmn'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-instances'
+	| Key                | Value    |
+	| case_definition_id | $defid$  |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
+	And poll 'http://localhost/case-instances/$insid$', until 'state'='Completed'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/confirmplanitem/PlanItem_1gs5ns9'
+	And execute HTTP GET request 'http://localhost/case-instances/$insid$/reactivate'
+	And poll 'http://localhost/case-instances/$insid$', until 'state_histories[3].state'='Completed'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'state'='Completed'
+	Then JSON 'state_histories[0].state'='Active'
+	Then JSON 'state_histories[1].state'='Completed'
+	Then JSON 'state_histories[2].state'='Active'
+	Then JSON 'state_histories[3].state'='Completed'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].state_histories[0].state'='Available'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].state_histories[1].state'='Active'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].state_histories[2].state'='Completed'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].transition_histories[0].transition'='Create'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].transition_histories[1].transition'='Start'
+	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].transition_histories[2].transition'='Complete'
 
 Scenario: Launch caseWithOneBlockedSEntry and check his status is active
 	When execute HTTP GET request 'http://localhost/case-definitions/search?case_file=caseWithOneBlockedSEntry.cmmn'

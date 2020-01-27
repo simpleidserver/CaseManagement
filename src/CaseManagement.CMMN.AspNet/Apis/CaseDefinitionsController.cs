@@ -122,6 +122,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         {
             string caseFile;
             string text;
+            string caseOwner;
             var parameter = new FindWorkflowDefinitionsParameter();
             parameter.ExtractFindParameter(query);
             if (query.TryGet("case_file", out caseFile))
@@ -132,6 +133,11 @@ namespace CaseManagement.CMMN.AspNet.Apis
             if (query.TryGet("text", out text))
             {
                 parameter.Text = text;
+            }
+
+            if (query.TryGet("caseowner", out caseOwner))
+            {
+                parameter.CaseOwner = caseOwner;
             }
 
             return parameter;

@@ -13,14 +13,17 @@ namespace CaseManagement.CMMN.Tests
             var secondPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithTwoStages.cmmn");
             var thirdPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneManualActivationTask.cmmn");
             var fourthPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneSEntry.cmmn");
+            var fifthPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneDiscretionaryItem.cmmn");
             var firstResult = CMMNParser.ExtractWorkflowDefinition(firstPath);
             var secondResult = CMMNParser.ExtractWorkflowDefinition(secondPath);
             var thirdResult = CMMNParser.ExtractWorkflowDefinition(thirdPath);
             var fourthResult = CMMNParser.ExtractWorkflowDefinition(fourthPath);
+            var fifthResult = CMMNParser.ExtractWorkflowDefinition(fifthPath);
             Assert.NotNull(firstResult);
             Assert.NotNull(secondResult);
             Assert.NotNull(thirdResult);
             Assert.NotNull(fourthResult);
+            Assert.NotNull(fifthResult);
         }
     }
 }

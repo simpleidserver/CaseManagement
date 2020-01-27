@@ -50,9 +50,9 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent
                             workflowInstance.MakeTransition(message.CaseInstanceElementId, message.Transition);
                         }
                     }
-                    catch(AggregateValidationException)
+                    catch(AggregateValidationException ex)
                     {
-                        // TODO : AJOUTER LOG.
+                        _logger.LogError(ex.ToString());
                     }
                 }
 

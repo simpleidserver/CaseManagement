@@ -17,6 +17,9 @@
     <None Update="Cmmns\CaseWithOneManualActivationTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Cmmns\CaseWithOneDiscretionaryItem.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\CaseWithOneSEntry.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

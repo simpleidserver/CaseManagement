@@ -12,6 +12,7 @@ using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
+using CaseManagement.CMMN.Infrastructures.Bus.ConfirmTableItem;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.InMemory;
@@ -78,6 +79,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ISuspendCommandHandler, SuspendCommandHandler>();
             services.TryAddTransient<ITerminateCommandHandler, TerminateCommandHandler>();
             services.TryAddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
+            services.TryAddTransient<IConfirmTableItemCommandHandler, ConfirmTableItemCommandHandler>();
             return services;
         }
 
@@ -101,6 +103,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<IMessageConsumer, DomainEventMessageConsumer>();
             services.TryAddTransient<IMessageConsumer, TransitionEventMessageConsumer>();
             services.TryAddTransient<IMessageConsumer, ConfirmFormMessageConsumer>();
+            services.TryAddTransient<IMessageConsumer, ConfirmTableItemMessageConsumer>();
             return services;
         }
 
@@ -159,6 +162,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<IDomainEventHandler<CaseInstanceCreatedEvent>, WorkflowInstanceHandler>();
             services.TryAddTransient<IDomainEventHandler<CaseInstanceVariableAddedEvent>, WorkflowInstanceHandler>();
             services.TryAddTransient<IDomainEventHandler<CaseTransitionRaisedEvent>, WorkflowInstanceHandler>();
+            services.TryAddTransient<IDomainEventHandler<CaseElementPlanificationConfirmedEvent>, WorkflowInstanceHandler>();
             return services;
         }
 

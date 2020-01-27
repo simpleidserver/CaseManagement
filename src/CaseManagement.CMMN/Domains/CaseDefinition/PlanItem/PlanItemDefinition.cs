@@ -4,6 +4,7 @@
     {
         public PlanItemDefinition(string id, string name) : base(id, name) { }
 
+        public bool IsDiscretionary { get; set; }
         /// <summary>
         /// Reference to the corresponding PlanItemDefinition object. [1...1]
         /// </summary>

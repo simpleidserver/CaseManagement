@@ -33,10 +33,11 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         private readonly ICloseCommandHandler _closeCommandHandler;
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
         private readonly IActivateCommandHandler _activateCommandHandler;
+        private readonly IConfirmTableItemCommandHandler _confirmTableItemCommandHandler;
         private readonly ICaseInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
         private readonly ICaseFileItemRepository _caseFileItemRepository;
 
-        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, ICaseInstanceQueryRepository cmmnWorkflowInstanceQueryRepository, ICaseFileItemRepository caseFileItemRepository)
+        public CaseInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, IConfirmTableItemCommandHandler confirmTableItemCommandHandler, ICaseInstanceQueryRepository cmmnWorkflowInstanceQueryRepository, ICaseFileItemRepository caseFileItemRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
@@ -47,6 +48,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             _closeCommandHandler = closeCommandHandler;
             _confirmFormCommandHandler = confirmFormCommandHandler;
             _activateCommandHandler = activateCommandHandler;
+            _confirmTableItemCommandHandler = confirmTableItemCommandHandler;
             _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
             _caseFileItemRepository = caseFileItemRepository;
         }
@@ -98,7 +100,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 }, HttpStatusCode.NotFound, Request);
             }
         }
-
+        
         [HttpGet("{id}/launch")]
         public async Task<IActionResult> Launch(string id)
         {
@@ -468,6 +470,49 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/confirmplanitem/{elt}")]
+        [Authorize("IsConnected")]
+        public async Task<IActionResult> ConfirmPlanItem(string id, string elt)
+        {
+            try
+            {
+                await _confirmTableItemCommandHandler.Handle(new ConfirmTableItemCommand { CaseInstanceId = id, CaseElementDefinitionId = elt, User = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseElementDefinitionException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnauthorizedCaseWorkerException)
+            {
+                return ToError(new Dictionary<string, string>
+                {
+                    { "unauthorized_request", "you're not authorized to confirm the human task" }
+                }, HttpStatusCode.Unauthorized, Request);
             }
             catch (AggregateValidationException ex)
             {

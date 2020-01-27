@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +37,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess
         {
             var message = JsonConvert.DeserializeObject<ReactivateProcessMessage>(queueMessage);
             var cancellationTokenSource = new CancellationTokenSource();
-            var lockId = message.CaseInstanceId;
+            var lockId = $"{QUEUE_NAME}-{message.CaseInstanceId}";
             if (!await _distributedLock.AcquireLock(lockId))
             {
                 _logger.LogDebug($"The process flow {lockId} is locked !");
@@ -54,7 +53,6 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess
 
         private async Task HandleLaunchProcess(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, string taskId, string lockId, CancellationToken token)
         {
-            Debug.WriteLine($"Reactivate process {lockId}");
             try
             {
                 try

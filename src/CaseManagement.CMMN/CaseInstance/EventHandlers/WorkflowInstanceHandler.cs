@@ -9,7 +9,8 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
 {
     public class WorkflowInstanceHandler : IDomainEventHandler<CaseInstanceCreatedEvent>, IDomainEventHandler<CaseElementCreatedEvent>, IDomainEventHandler<CaseElementFinishedEvent>,
         IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, IDomainEventHandler<CaseElementStartedEvent>,
-        IDomainEventHandler<CaseElementTransitionRaisedEvent>, IDomainEventHandler<CaseTransitionRaisedEvent>, IDomainEventHandler<CaseInstanceVariableAddedEvent>
+        IDomainEventHandler<CaseElementTransitionRaisedEvent>, IDomainEventHandler<CaseTransitionRaisedEvent>, IDomainEventHandler<CaseInstanceVariableAddedEvent>,
+        IDomainEventHandler<CaseElementPlanificationConfirmedEvent>
     {
         private readonly ICaseInstanceCommandRepository _cmmnWorkflowInstanceCommandRepository;
         private readonly ICaseInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
@@ -87,6 +88,14 @@ namespace CaseManagement.CMMN.CaseInstance.EventHandlers
         }
 
         public async Task Handle(CaseInstanceVariableAddedEvent @event, CancellationToken cancellationToken)
+        {
+            var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
+            flowInstance.Handle(@event);
+            _cmmnWorkflowInstanceCommandRepository.Update(flowInstance);
+            await _cmmnWorkflowInstanceCommandRepository.SaveChanges();
+        }
+
+        public async Task Handle(CaseElementPlanificationConfirmedEvent @event, CancellationToken cancellationToken)
         {
             var flowInstance = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(@event.AggregateId);
             flowInstance.Handle(@event);

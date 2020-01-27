@@ -4,26 +4,26 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
+namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmTableItem
 {
-    public class ConfirmFormMessageConsumer : BaseMessageConsumer
+    public class ConfirmTableItemMessageConsumer : BaseMessageConsumer
     {
         private readonly ILogger _logger;
         private readonly IDistributedLock _distributedLock;
 
-        public ConfirmFormMessageConsumer(ILogger<ConfirmFormMessageConsumer> logger, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<CMMNServerOptions> options) : base(taskPool, queueProvider, options)
+        public ConfirmTableItemMessageConsumer(ILogger<ConfirmTableItemMessageConsumer> logger, IDistributedLock distributedLock, IRunningTaskPool taskPool, IQueueProvider queueProvider, IOptions<CMMNServerOptions> options) : base(taskPool, queueProvider, options)
         {
             _logger = logger;
             _distributedLock = distributedLock;
         }
 
         public override string QueueName => QUEUE_NAME;
-        public const string QUEUE_NAME = "confirm-form";
+        public const string QUEUE_NAME = "confirm-tableitem";
 
         protected override async Task<RunningTask> Execute(string queueMessage)
         {
-            var message = JsonConvert.DeserializeObject<ConfirmFormMessage>(queueMessage);
-            var lockId = $"{QUEUE_NAME}-{message.CaseInstanceId}-{message.CaseElementInstanceId}";
+            var message = JsonConvert.DeserializeObject<ConfirmTableItemMessage>(queueMessage);
+            var lockId = $"{QueueName}-{message.CaseInstanceId}-{message.CaseElementDefinitionId}";
             if (!await _distributedLock.AcquireLock(lockId))
             {
                 _logger.LogDebug($"The received event {lockId} is locked !");
@@ -38,7 +38,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm
                 {
                     await QueueProvider.Dequeue(QueueName);
                     var workflowInstance = runningTask.Aggregate as Domains.CaseInstance;
-                    workflowInstance.SubmitForm(message.CaseElementInstanceId, message.FormInstanceId, message.FormValues);
+                    workflowInstance.ConfirmTableItem(message.CaseElementDefinitionId, message.User);
                 }
 
                 return null;

@@ -44,9 +44,38 @@ namespace CaseManagement.CMMN.Infrastructures
 
         private void HandleTask(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, CancellationTokenSource cancellationTokenSource, bool reactivate = false)
         {
-            var children = workflowDefinition.Elements.Select(e => e.Id);
             bool continueExecution = true;
             bool isSuspend = false;
+            var evtHandler = new EventHandler<DomainEventArgs>((sender, e) =>
+            {
+                var evt = e.DomainEvt as CaseElementPlanificationConfirmedEvent;
+                if (evt == null)
+                {
+                    return;
+                }
+
+                var elt = workflowDefinition.GetElement(evt.CaseElementDefinitionId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                var thread = new Thread(() =>
+                {
+                    while (isSuspend)
+                    {
+                        Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
+                        if (!continueExecution)
+                        {
+                            return;
+                        }
+                    }
+
+                    workflowInstance.CreateWorkflowElementInstance(elt);
+                });
+                thread.Start();
+            });
+            workflowInstance.EventRaised += evtHandler;
             var suspendListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Suspend, () =>
             {
                 lock (workflowInstance.WorkflowElementInstances)
@@ -149,9 +178,26 @@ namespace CaseManagement.CMMN.Infrastructures
             }
             else
             {
-                foreach (var element in workflowDefinition.Elements)
+                foreach (var element in workflowDefinition.Elements.Where(e => !e.IsDiscrete()))
                 {
                     workflowInstance.CreateWorkflowElementInstance(element);
+                }
+            }
+
+            foreach(var element in workflowDefinition.Elements.Where(e => e.IsDiscrete()))
+            {
+                if (workflowInstance.IsPlanned(element.Id) && workflowInstance.GetLastWorkflowElementInstance(element.Id) == null)
+                {
+                    workflowInstance.CreateWorkflowElementInstance(element);
+                }
+            }
+
+            var children = workflowDefinition.Elements.Where(c => !c.IsDiscrete()).Select(e => e.Id).ToList();
+            foreach(var child in workflowDefinition.Elements.Where(c => c.IsDiscrete()).Select(c => c.Id))
+            {
+                if (workflowInstance.IsPlanned(child))
+                {
+                    children.Add(child);
                 }
             }
 
@@ -188,6 +234,7 @@ namespace CaseManagement.CMMN.Infrastructures
                 }
             }
 
+            workflowInstance.EventRaised -= evtHandler;
             closeListener.Unsubscribe();
             resumeListener.Unsubscribe();
             suspendListener.Unsubscribe();

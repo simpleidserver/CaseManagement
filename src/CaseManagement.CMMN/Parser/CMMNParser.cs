@@ -70,7 +70,8 @@ namespace CaseManagement.CMMN.Parser
             {
                 builder.AddCMMNPlanItem(planItem);
             }
-
+            
+            builder.SetCaseOwner(tCase.caseOwner);
             var result = builder.Build();
             result.CaseFileId = caseFileId;
             return result;
@@ -233,55 +234,137 @@ namespace CaseManagement.CMMN.Parser
         private static List<PlanItemDefinition> BuildPlanItems(tStage stage)
         {
             var planItems = new List<PlanItemDefinition>();
-            foreach (var planItem in stage.planItem)
+            if (stage.planItem != null)
             {
-                var planItemDef = stage.Items.First(i => i.id == planItem.definitionRef);
-                var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
-                if (planItem.entryCriterion != null)
+                foreach (var planItem in stage.planItem)
                 {
-                    foreach (var entryCriterion in planItem.entryCriterion)
+                    var planItemDef = stage.Items.First(i => i.id == planItem.definitionRef);
+                    var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
+                    if (planItem.entryCriterion != null)
                     {
-                        var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
-                        flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
-                    }
-                }
-
-                if (planItem.exitCriterion != null)
-                {
-                    foreach (var exitCriteria in planItem.exitCriterion)
-                    {
-                        var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
-                        flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
-                    }
-                }
-
-                if (planItem.itemControl != null)
-                {
-                    if (planItem.itemControl.manualActivationRule != null)
-                    {
-                        var manualActivationRule = new ManualActivationRule(planItem.itemControl.manualActivationRule.name);
-                        var condition = planItem.itemControl.manualActivationRule.condition;
-                        if (condition != null && condition.Text.Any())
+                        foreach (var entryCriterion in planItem.entryCriterion)
                         {
-                            manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
+                            var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
+                            flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
                         }
-
-                        flowInstanceElt.SetManualActivationRule(manualActivationRule);
                     }
-                    else if (planItem.itemControl.repetitionRule != null)
+
+                    if (planItem.exitCriterion != null)
                     {
-                        var repetitionRule = new RepetitionRule(planItem.itemControl.repetitionRule.name);
-                        var condition = planItem.itemControl.repetitionRule.condition;
-                        if (condition != null && condition.Text.Any())
+                        foreach (var exitCriteria in planItem.exitCriterion)
                         {
-                            repetitionRule.Condition = new CMMNExpression(condition.language, condition.Text.First());
+                            var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
+                            flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
                         }
-
-                        flowInstanceElt.SetRepetitionRule(repetitionRule);
                     }
-                }
 
-                planItems.Add(flowInstanceElt);
+                    if (planItem.itemControl != null)
+                    {
+                        if (planItem.itemControl.manualActivationRule != null)
+                        {
+                            var manualActivationRule = new ManualActivationRule(planItem.itemControl.manualActivationRule.name);
+                            var condition = planItem.itemControl.manualActivationRule.condition;
+                            if (condition != null && condition.Text.Any())
+                            {
+                                manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
+                            }
+
+                            flowInstanceElt.SetManualActivationRule(manualActivationRule);
+                        }
+                        else if (planItem.itemControl.repetitionRule != null)
+                        {
+                            var repetitionRule = new RepetitionRule(planItem.itemControl.repetitionRule.name);
+                            var condition = planItem.itemControl.repetitionRule.condition;
+                            if (condition != null && condition.Text.Any())
+                            {
+                                repetitionRule.Condition = new CMMNExpression(condition.language, condition.Text.First());
+                            }
+
+                            flowInstanceElt.SetRepetitionRule(repetitionRule);
+                        }
+                    }
+
+                    planItems.Add(flowInstanceElt);
+                }
+            }
+
+            if (stage.planningTable != null)
+            {
+                foreach (var planItem in stage.planningTable.Items)
+                {
+                    var discretionaryItem = planItem as tDiscretionaryItem;
+                    if (discretionaryItem == null)
+                    {
+                        continue;
+                    }
+
+                    var planItemDef = stage.Items.First(i => i.id == discretionaryItem.definitionRef);
+                    var flowInstanceElt = BuildPlanItem(planItem.id, planItemDef.name, planItemDef);
+                    if (discretionaryItem.entryCriterion != null)
+                    {
+                        foreach (var entryCriterion in discretionaryItem.entryCriterion)
+                        {
+                            var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
+                            flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
+                        }
+                    }
+
+                    if (discretionaryItem.exitCriterion != null)
+                    {
+                        foreach (var exitCriteria in discretionaryItem.exitCriterion)
+                        {
+                            var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
+                            flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
+                        }
+                    }
+
+                    if (discretionaryItem.itemControl != null)
+                    {
+                        if (discretionaryItem.itemControl.manualActivationRule != null)
+                        {
+                            var manualActivationRule = new ManualActivationRule(discretionaryItem.itemControl.manualActivationRule.name);
+                            var condition = discretionaryItem.itemControl.manualActivationRule.condition;
+                            if (condition != null && condition.Text.Any())
+                            {
+                                manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
+                            }
+
+                            flowInstanceElt.SetManualActivationRule(manualActivationRule);
+                        }
+                        else if (discretionaryItem.itemControl.repetitionRule != null)
+                        {
+                            var repetitionRule = new RepetitionRule(discretionaryItem.itemControl.repetitionRule.name);
+                            var condition = discretionaryItem.itemControl.repetitionRule.condition;
+                            if (condition != null && condition.Text.Any())
+                            {
+                                repetitionRule.Condition = new CMMNExpression(condition.language, condition.Text.First());
+                            }
+
+                            flowInstanceElt.SetRepetitionRule(repetitionRule);
+                        }
+                    }
+
+                    var tableItem = new TableItem();
+                    if (!string.IsNullOrWhiteSpace(discretionaryItem.authorizedRoleRefs))
+                    {
+                        tableItem.AuthorizedRoleRef = discretionaryItem.authorizedRoleRefs;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(discretionaryItem.applicabilityRuleRefs))
+                    {
+                        var splitted = discretionaryItem.applicabilityRuleRefs.Split(',');
+                        var applicabilityRule = stage.planningTable.applicabilityRule.First(a => splitted.Contains(a.id));
+                        tableItem.ApplicabilityRuleRef = new ApplicabilityRule
+                        {
+                            ContextRef = applicabilityRule.contextRef,
+                            Expression = applicabilityRule.condition == null ? null : applicabilityRule.condition.Text.First(),
+                            Name = applicabilityRule.name
+                        };
+                    }
+
+                    flowInstanceElt.TableItem = tableItem;
+                    planItems.Add(flowInstanceElt);
+                }
             }
 
             return planItems;

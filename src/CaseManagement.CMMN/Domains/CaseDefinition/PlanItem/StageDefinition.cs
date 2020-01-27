@@ -6,6 +6,7 @@ namespace CaseManagement.CMMN.Domains
     {
         public StageDefinition(string name)
         {
+            Name = name;
             Elements = new List<CaseElementDefinition>();
         }
 

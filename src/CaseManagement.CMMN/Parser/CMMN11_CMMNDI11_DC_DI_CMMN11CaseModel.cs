@@ -1718,7 +1718,8 @@ public partial class tTextAnnotation : tArtifact {
 [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
 [System.Xml.Serialization.XmlRootAttribute("case", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
 public partial class tCase : tCmmnElement {
-    
+    private string caseOwnerField;
+
     private tCaseFile caseFileModelField;
     
     private tStage casePlanModelField;
@@ -1791,6 +1792,19 @@ public partial class tCase : tCmmnElement {
         }
         set {
             this.nameField = value;
+        }
+    }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "caseowner", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public string caseOwner
+    {
+        get
+        {
+            return this.caseOwnerField;
+        }
+        set
+        {
+            this.caseOwnerField = value;
         }
     }
 }

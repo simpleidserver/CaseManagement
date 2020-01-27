@@ -19,6 +19,7 @@ namespace CaseManagement.CMMN.Domains
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string CaseOwner { get; set; }
         public string CaseFileId { get; set; }
         public ICollection<string> CaseInstanceIds { get; set; }
         public DateTime CreateDateTime { get; set; }
@@ -30,14 +31,16 @@ namespace CaseManagement.CMMN.Domains
             return GetElement(Elements, id);
         }
 
-        public static CaseDefinition New(string id, string name, string description, ICollection<CaseElementDefinition> elements)
+        public static CaseDefinition New(string id, string name, string description, ICollection<CaseElementDefinition> elements, string caseOwner = null)
         {
             var result = new CaseDefinition(id, name, description, elements)
             {
-                CreateDateTime = DateTime.UtcNow
+                CreateDateTime = DateTime.UtcNow,
+                CaseOwner = caseOwner
             };
             return result;
         }
+
 
         private CaseElementDefinition GetElement(ICollection<CaseElementDefinition> elements, string id)
         {

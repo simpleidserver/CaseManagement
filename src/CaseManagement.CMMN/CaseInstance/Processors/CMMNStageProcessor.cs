@@ -61,7 +61,7 @@ namespace CaseManagement.CMMN.CaseInstance.Processors
                 }
 
                 var cmmnStageDefinition = (parameter.CaseInstance.GetWorkflowElementDefinition(parameter.CaseElementInstance.Id, parameter.CaseDefinition) as PlanItemDefinition).Stage;
-                foreach (var elt in cmmnStageDefinition.Elements)
+                foreach (var elt in cmmnStageDefinition.Elements.Where(e => e.TableItem == null))
                 {
                     parameter.CaseInstance.CreateWorkflowElementInstance(elt, parameter.CaseElementInstance.Id);
                 }

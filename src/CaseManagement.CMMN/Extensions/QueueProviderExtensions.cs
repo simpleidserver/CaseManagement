@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
+using CaseManagement.CMMN.Infrastructures.Bus.ConfirmTableItem;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
@@ -42,6 +43,12 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
         public static Task QueueSubmitForm(this IQueueProvider queueProvider, string caseInstanceId, string caseElementInstanceId, string formInstanceId, Dictionary<string, string> formValues)
         {
             var message = new ConfirmFormMessage(caseInstanceId, caseElementInstanceId, formInstanceId, formValues);
+            return queueProvider.Queue(ConfirmFormMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
+        }
+
+        public static Task QueueConfirmTableItem(this IQueueProvider queueProvider, string caseInstanceId, string caseElementDefinitionId, string user)
+        {
+            var message = new ConfirmTableItemMessage(caseInstanceId, caseElementDefinitionId, user);
             return queueProvider.Queue(ConfirmFormMessageConsumer.QUEUE_NAME, JsonConvert.SerializeObject(message));
         }
     }
