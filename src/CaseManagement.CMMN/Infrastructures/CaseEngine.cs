@@ -186,9 +186,16 @@ namespace CaseManagement.CMMN.Infrastructures
 
             foreach(var element in workflowDefinition.Elements.Where(e => e.IsDiscrete()))
             {
-                if (workflowInstance.IsPlanned(element.Id) && workflowInstance.GetLastWorkflowElementInstance(element.Id) == null)
+                if (workflowInstance.IsPlanned(element.Id))
                 {
-                    workflowInstance.CreateWorkflowElementInstance(element);
+                    if (workflowInstance.GetLastWorkflowElementInstance(element.Id) == null)
+                    {
+                        workflowInstance.CreateWorkflowElementInstance(element);
+                    }
+                }
+                else if (!workflowInstance.IsInPlanning(element.Id))
+                {
+                    workflowInstance.CreateTableItem(element.Id, element.TableItem.AuthorizedRoleRef);
                 }
             }
 

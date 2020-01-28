@@ -1401,6 +1401,7 @@ namespace CaseManagement.CMMN.Tests
                 new CMMNTaskProcessor()
             });
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
+            workflowInstance.CreateTableItem("1", "user");
             workflowInstance.ConfirmTableItem("1", "user");
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
             Wait(workflowInstance, "1", "Enabled");
@@ -1438,13 +1439,12 @@ namespace CaseManagement.CMMN.Tests
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
             workflowEngine.Start(workflowDefinition, workflowInstance, CancellationToken.None);
             workflowInstance.MakeTransition(CMMNTransitions.Suspend);
-            Wait(workflowInstance, CaseStates.Suspended);
+            WaitPlanification(workflowInstance, "2");
             workflowInstance.ConfirmTableItem("2", "user");
             workflowInstance.MakeTransition(CMMNTransitions.Resume);
-            Wait(workflowInstance, CaseStates.Active);
             Wait(workflowInstance, "2", "Enabled");
             workflowInstance.MakeTransition(CMMNTransitions.Terminate);
-            Wait(workflowInstance, CaseStates.Terminated);
+            Wait(workflowInstance, "2", "Terminated");
 
             Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Active), workflowInstance.StateHistories.ElementAt(0).State);
             Assert.Equal(Enum.GetName(typeof(CaseStates), CaseStates.Suspended), workflowInstance.StateHistories.ElementAt(1).State);
@@ -1483,6 +1483,16 @@ namespace CaseManagement.CMMN.Tests
         }
 
         #endregion
+
+        private void WaitPlanification(Domains.CaseInstance workflowInstance, string caseElementDefinitionId)
+        {
+            var planification = workflowInstance.ElementPlanificationLst.FirstOrDefault(e => e.CaseElementDefinitionId == caseElementDefinitionId);
+            if (planification == null)
+            {
+                Thread.Sleep(MS);
+                WaitPlanification(workflowInstance, caseElementDefinitionId);
+            }
+        }
 
         private void Wait(Domains.CaseInstance workflowInstance, CaseStates caseState, int nbInstances = 1)
         {

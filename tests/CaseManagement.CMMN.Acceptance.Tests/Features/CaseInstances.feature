@@ -328,11 +328,14 @@ Scenario: Launch caseWithOneDiscretionaryItem and check his status is completed 
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
 	And poll 'http://localhost/case-instances/$insid$', until 'state'='Completed'
 	And extract JSON from body
+	And execute HTTP GET request 'http://localhost/case-planifications/search?case_instance_id=$insid$'
+	And extract JSON from body into 'caseInstancesSearch'
 	
 	Then HTTP status code equals to '200'
 	Then JSON 'state'='Completed'
 	Then JSON 'state_histories[0].state'='Active'
 	Then JSON 'state_histories[1].state'='Completed'
+	Then extract JSON 'caseInstancesSearch', JSON 'content[0].case_element_id'='PlanItem_1gs5ns9'
 
 Scenario: Launch caseWithOneDiscretionaryItem and check his status is completed (table item is confirmed)
 	When execute HTTP GET request 'http://localhost/case-definitions/search?case_file=caseWithOneDiscretionaryItem.cmmn'
@@ -345,10 +348,14 @@ Scenario: Launch caseWithOneDiscretionaryItem and check his status is completed 
 	And extract 'id' from JSON body into 'insid'
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/launch'	
 	And poll 'http://localhost/case-instances/$insid$', until 'state'='Completed'
+	And execute HTTP GET request 'http://localhost/case-planifications/search?case_instance_id=$insid$'
+	And extract JSON from body into 'firstCaseInstancesSearch'
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/confirmplanitem/PlanItem_1gs5ns9'
 	And execute HTTP GET request 'http://localhost/case-instances/$insid$/reactivate'
 	And poll 'http://localhost/case-instances/$insid$', until 'state_histories[3].state'='Completed'
 	And extract JSON from body
+	And execute HTTP GET request 'http://localhost/case-planifications/search?case_instance_id=$insid$'
+	And extract JSON from body into 'secondCaseInstancesSearch'
 	
 	Then HTTP status code equals to '200'
 	Then JSON 'state'='Completed'
@@ -362,6 +369,8 @@ Scenario: Launch caseWithOneDiscretionaryItem and check his status is completed 
 	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].transition_histories[0].transition'='Create'
 	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].transition_histories[1].transition'='Start'
 	Then JSON '$.elements[?(@.definition_id == 'PlanItem_1gs5ns9')].transition_histories[2].transition'='Complete'
+	Then extract JSON 'firstCaseInstancesSearch', JSON 'content[0].case_element_id'='PlanItem_1gs5ns9'
+	And extract JSON 'secondCaseInstancesSearch', JSON doesn't exist 'content[0].case_element_id'
 
 Scenario: Launch caseWithOneBlockedSEntry and check his status is active
 	When execute HTTP GET request 'http://localhost/case-definitions/search?case_file=caseWithOneBlockedSEntry.cmmn'

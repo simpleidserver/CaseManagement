@@ -120,6 +120,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var caseDefinitionHistories = new ConcurrentBag<CaseDefinitionHistoryAggregate>();
             var caseDailyStatistics = new ConcurrentBag<DailyStatisticAggregate>();
             var performances = new ConcurrentBag<PerformanceStatisticAggregate>();
+            var casePlanifications = new ConcurrentBag<CasePlanificationAggregate>();
             services.TryAddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
             services.TryAddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
             services.TryAddSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(files));
@@ -136,6 +137,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
             services.TryAddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(caseDailyStatistics, performances));
             services.TryAddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(caseDailyStatistics, performances));
+            services.TryAddSingleton<ICasePlanificationCommandRepository>(new InMemoryCasePlanificationCommandRepository(casePlanifications));
+            services.TryAddSingleton<ICasePlanificationQueryRepository>(new InMemoryCasePlanificationQueryRepository(casePlanifications));
             services.TryAddSingleton<ICaseFileItemRepository, InMemoryDirectoryCaseFileItemRepository>();
             services.TryAddTransient<IEventStoreRepository, InMemoryEventStoreRepository>();
             services.TryAddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
@@ -163,6 +166,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<IDomainEventHandler<CaseInstanceVariableAddedEvent>, WorkflowInstanceHandler>();
             services.TryAddTransient<IDomainEventHandler<CaseTransitionRaisedEvent>, WorkflowInstanceHandler>();
             services.TryAddTransient<IDomainEventHandler<CaseElementPlanificationConfirmedEvent>, WorkflowInstanceHandler>();
+            services.TryAddTransient<IDomainEventHandler<CaseElementPlannedEvent>, WorkflowInstanceHandler>();
+            services.TryAddTransient<IDomainEventHandler<CaseElementPlanificationConfirmedEvent>, CasePlanificationHandler>();
+            services.TryAddTransient<IDomainEventHandler<CaseElementPlannedEvent>, CasePlanificationHandler>();
             return services;
         }
 

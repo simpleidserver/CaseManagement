@@ -17,6 +17,7 @@
             public const string CaseProcesses = "case-processes";
             public const string CaseFormInstances = "case-form-instances";
             public const string CaseActivations = "case-activations";
+            public const string CasePlanifications = "case-planifications";
             public const string Statistics = "statistics";
         }
 

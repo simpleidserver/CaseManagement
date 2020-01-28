@@ -90,7 +90,37 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
 
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
-        
+
+        [When("poll '(.*)', until '(.*)' doesn't exist")]
+        public async Task WhenPollDoesntExist(string url, string key)
+        {
+            url = Parse(url);
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url)
+            };
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            var json = await httpResponseMessage.Content.ReadAsStringAsync();
+            var jObj = JsonConvert.DeserializeObject<JObject>(json);
+            if (jObj == null)
+            {
+                Thread.Sleep(MS);
+                await WhenPollDoesntExist(url, key);
+                return;
+            }
+
+            var token = jObj.SelectToken(key);
+            if (token != null)
+            {
+                Thread.Sleep(MS);
+                await WhenPollDoesntExist(url, key);
+                return;
+            }
+
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
         [When("execute HTTP POST JSON request '(.*)'")]
         public async Task WhenExecuteHTTPPostJSONRequest(string url, Table table)
         {
@@ -200,6 +230,13 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         {
             var jsonHttpBody = _scenarioContext[jsonKey] as JObject;
             Assert.NotNull(jsonHttpBody.SelectToken(key));
+        }
+
+        [Then("extract JSON '(.*)', JSON doesn't exist '(.*)'")]
+        public void ThenExtractJSONDoesntExist(string jsonKey, string key)
+        {
+            var jsonHttpBody = _scenarioContext[jsonKey] as JObject;
+            Assert.Null(jsonHttpBody.SelectToken(key));
         }
 
         [Then("JSON exists '(.*)'")]

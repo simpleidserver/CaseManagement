@@ -262,6 +262,11 @@ namespace CaseManagement.CMMN.Domains
 
         public bool IsPlanned(string caseElementDefinitionId)
         {
+            return ElementPlanificationLst.Any(e => e.CaseElementDefinitionId == caseElementDefinitionId && e.IsConfirmed);
+        }
+
+        public bool IsInPlanning(string caseElementDefinitionId)
+        {
             return ElementPlanificationLst.Any(e => e.CaseElementDefinitionId == caseElementDefinitionId);
         }
 
@@ -656,11 +661,11 @@ namespace CaseManagement.CMMN.Domains
             }
         }
 
-        public void Plan(string caseElementDefinitionId, IEnumerable<string> userRoles)
+        public void CreateTableItem(string caseElementDefinitionId, string userRole)
         {
             lock (DomainEvents)
             {
-                var evt = new CaseElementPlannedEvent(Guid.NewGuid().ToString(), Id, Version + 1, caseElementDefinitionId, userRoles);
+                var evt = new CaseElementPlannedEvent(Guid.NewGuid().ToString(), Id, Version + 1, caseElementDefinitionId, userRole, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -830,21 +835,41 @@ namespace CaseManagement.CMMN.Domains
 
         private void Handle(CaseElementPlannedEvent evt)
         {
+            if (ElementPlanificationLst.Any(e => e.CaseElementDefinitionId == evt.CaseElementDefinitionId))
+            {
+                throw new AggregateValidationException(new Dictionary<string, string>
+                {
+                    { "tableitem", "case element already exists in the list of possible planned items" }
+                });
+            }
+
+            ElementPlanificationLst.Add(new CaseElementInstancePlanification(evt.CaseElementDefinitionId, evt.CreateDateTime));
             Version++;
             RaiseEvent(evt);
         }
 
         private void Handle(CaseElementPlanificationConfirmedEvent evt)
         {
-            if (ElementPlanificationLst.Any(e => e.CaseElementDefinitionId == evt.CaseElementDefinitionId))
+            var elt = ElementPlanificationLst.FirstOrDefault(e => e.CaseElementDefinitionId == evt.CaseElementDefinitionId);
+            if (elt == null)
             {
                 throw new AggregateValidationException(new Dictionary<string, string>
                 {
-                    { "confirm", "case element is already planned" }
+                    { "tableitem", "case element doesn't exist in the list of possible planned items" }
                 });
             }
 
-            ElementPlanificationLst.Add(new CaseElementInstancePlanification(evt.User, evt.CaseElementDefinitionId, evt.CreateDateTime));
+            if (elt.IsConfirmed)
+            {
+                throw new AggregateValidationException(new Dictionary<string, string>
+                {
+                    { "tableitem", "case element is already planned" }
+                });
+            }
+
+            elt.IsConfirmed = true;
+            elt.ConfirmationDateTime = evt.CreateDateTime;
+            elt.User = evt.User;
             Version++;
             RaiseEvent(evt);
         }

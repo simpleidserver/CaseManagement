@@ -4,9 +4,8 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CaseElementInstancePlanification : ICloneable
     {
-        public CaseElementInstancePlanification(string user, string caseElementDefinitionId, DateTime createDateTime)
+        public CaseElementInstancePlanification(string caseElementDefinitionId, DateTime createDateTime)
         {
-            User = user;
             CaseElementDefinitionId = caseElementDefinitionId;
             CreateDateTime = createDateTime;
         }
@@ -14,10 +13,17 @@ namespace CaseManagement.CMMN.Domains
         public string User { get; set; }
         public string CaseElementDefinitionId { get; set; }
         public DateTime CreateDateTime { get; set; }
+        public DateTime? ConfirmationDateTime { get; set; }
+        public bool IsConfirmed { get; set; }
 
         public object Clone()
         {
-            return new CaseElementInstancePlanification(User, CaseElementDefinitionId, CreateDateTime);
+            return new CaseElementInstancePlanification(CaseElementDefinitionId, CreateDateTime)
+            {
+                User = User,
+                ConfirmationDateTime = ConfirmationDateTime,
+                IsConfirmed = IsConfirmed
+            };
         }
     }
 }
