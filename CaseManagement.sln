@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.CMMN.AspNet"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.CMMN.AspNetCore", "src\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj", "{A33A6BDF-FD00-4EFE-BA3F-A73BC63CB321}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.Performance", "src\CaseManagement.Performance\CaseManagement.Performance.csproj", "{8EC2090C-1BF1-4557-B62E-EB088699ED8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{A33A6BDF-FD00-4EFE-BA3F-A73BC63CB321}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A33A6BDF-FD00-4EFE-BA3F-A73BC63CB321}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A33A6BDF-FD00-4EFE-BA3F-A73BC63CB321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EC2090C-1BF1-4557-B62E-EB088699ED8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EC2090C-1BF1-4557-B62E-EB088699ED8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EC2090C-1BF1-4557-B62E-EB088699ED8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EC2090C-1BF1-4557-B62E-EB088699ED8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{2AF59449-01BC-447B-8156-B285278E7956} = {4A5D2E88-20E8-4A3F-8527-A4934BC0E11F}
 		{11F22F1F-2F25-4F13-9F2F-195AFC99B584} = {CD2E7CFE-4E9C-4308-A0D3-41CD5AD90FD8}
 		{A33A6BDF-FD00-4EFE-BA3F-A73BC63CB321} = {CD2E7CFE-4E9C-4308-A0D3-41CD5AD90FD8}
+		{8EC2090C-1BF1-4557-B62E-EB088699ED8A} = {D16A3E6D-32B6-44CF-9941-A9BDB9DFC6A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2CFBF2E-D493-42F7-B339-01A3070C2B5E}

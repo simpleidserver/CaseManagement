@@ -1,0 +1,12 @@
+<mat-toolbar>
+    <a class="no-style" [routerLink]="['/home']">
+        <img src="/assets/images/logo.svg" />
+    </a>
+    <span class="navigation-spacer"></span>
+    <button mat-button [routerLink]="['/performances']">{{ "PERFORMANCES" | translate }}</button>
+    <button mat-button [matMenuTriggerFor]="languages">{{ "LANGUAGES" | translate }}</button>
+    <mat-menu #languages="matMenu">
+        <button mat-menu-item (click)="chooseLanguage('fr')">{{ "FRENCH" | translate }}</button>
+        <button mat-menu-item (click)="chooseLanguage('en')">{{ "ENGLISH" | translate }}</button>
+    </mat-menu>
+</mat-toolbar>
