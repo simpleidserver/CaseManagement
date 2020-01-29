@@ -4,6 +4,7 @@ using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -25,6 +26,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
 
         [HttpGet]
+        [Authorize("get_statistic")]
         public async Task<IActionResult> Get()
         {
             var currentDateTime = DateTime.UtcNow.Date;
@@ -50,6 +52,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
 
         [HttpGet("search")]
+        [Authorize("get_statistic")]
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
@@ -58,6 +61,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
 
         [HttpGet("performances")]
+        [Authorize("get_performance")]
         public async Task<IActionResult> GetPerformances()
         {
             var result = await _statisticQueryRepository.GetMachineNames();
@@ -65,6 +69,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
 
         [HttpGet("performances/search")]
+        [Authorize("get_performance")]
         public async Task<IActionResult> SearchPerformances()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
@@ -82,6 +87,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
             };
         }
+
         private static JObject ToDto(FindResponse<PerformanceStatisticAggregate> resp)
         {
             return new JObject

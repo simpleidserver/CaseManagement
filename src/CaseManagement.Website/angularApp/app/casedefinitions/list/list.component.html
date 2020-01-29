@@ -8,6 +8,7 @@
         <div fxLayout="column" fxLayoutGap="10px">
             <mat-card>
                 <mat-card-content>
+                    <button mat-raised-button color="primary" [routerLink]="['/casedefinitions/add']">{{ 'ADD_CASE_DEFINITION' | translate }}</button>
                     <form [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
                         <mat-form-field class="full-width">
                             <input matInput placeholder="{{ 'ENTER_CASE_DEFINITION_NAME' | translate }}" name="text" formControlName="text" />

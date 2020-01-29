@@ -7,11 +7,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
-const WorkboxPlugin = require('workbox-webpack-plugin');
-const helpers = require('./webpack.helpers');
 
 const ENV = process.env.ENV = process.env.NODE_ENV = 'azure';
 const API_URL = process.env.API_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementapi";
+const BASE_URL = process.env.BASE_URL || '/performance/';
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -33,7 +32,7 @@ module.exports = {
         path: ROOT + '/wwwroot/',
         filename: 'dist/[name].bundle.js',
         chunkFilename: 'dist/[id].chunk.js',
-        publicPath: '/'
+        publicPath: BASE_URL
     },
 
     resolve: {
@@ -120,11 +119,13 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             inject: 'body',
-            template: 'angularApp/index.html'
+            template: 'angularApp/index.ejs',
+            templateParameters: {
+                baseUrl: BASE_URL
+            }
         }),
 
         new CopyWebpackPlugin([
-            { from: './angularApp/*.webmanifest', to: 'assets', flatten: true },
             { from: './angularApp/images/*.*', to: 'assets/images', flatten: true },
             { from: './angularApp/i18n/*.*', to: 'assets/i18n', flatten: true },
             { from: './angularApp/fonts/*.*', to: 'assets/fonts', flatten: true }
@@ -139,30 +140,9 @@ module.exports = {
             'API_URL': JSON.stringify(API_URL),
             'process.env': {
                 'ENV': JSON.stringify(ENV),
-                'API_URL': JSON.stringify(API_URL)
+                'API_URL': JSON.stringify(API_URL),
+                'BASE_URL': JSON.stringify(BASE_URL)
             }
-        }),
-        /*,
-        new WorkboxPlugin.GenerateSW({
-            // include: [/\.html$/, /\.js$/],
-            // importWorkboxFrom: 'local',
-            navigateFallback: '/index.html',
-            clientsClaim: true,
-            skipWaiting: true,
-            runtimeCaching: [{
-                urlPattern: /^http:\/\/localhost:3001/,
-                handler: 'networkFirst',
-                options: {
-                    cacheName: 'bankcv-api'
-                }
-            }, {
-                urlPattern: /^http:\/\/localhost:3000/,
-                handler: 'networkFirst',
-                options: {
-                    cacheName: 'identity-api'
-                }
-            }]
         })
-        */
     ]
 };

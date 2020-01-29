@@ -16,7 +16,8 @@ import { MaterialModule } from './shared/material.module';
 import { SharedModule } from './shared/shared.module';
 
 export function createTranslateLoader(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+    let url = process.env.BASE_URL + 'assets/i18n/';
+    return new TranslateHttpLoader(http, url, '.json');
 }
 
 @NgModule({
@@ -46,9 +47,7 @@ export function createTranslateLoader(http: HttpClient) {
 
     bootstrap: [AppComponent],
 
-    providers: [
-        AuthGuard
-    ]
+    providers: [ AuthGuard ]
 })
 
 export class AppModule { }

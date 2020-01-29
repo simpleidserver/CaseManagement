@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-navigation',
@@ -8,13 +10,48 @@ import { TranslateService } from '@ngx-translate/core';
 })
 
 export class NavigationComponent implements OnInit {
-    constructor(private translateService: TranslateService) { }
+    url: string = process.env.BASE_URL + "assets/images/logo.svg";
+    isConnected: boolean = false;
+    name: string;
+    roles: any;
+
+    constructor(private translateService: TranslateService, private oauthService: OAuthService, private router: Router) { }
 
     chooseLanguage(lng: string) {
         this.translateService.use(lng);
     }
 
-    ngOnInit() {
+    login() {
+        this.oauthService.initImplicitFlow();
+        return false;
+    }
 
+    disconnect() {
+        this.oauthService.logOut();
+        this.router.navigate(['/home']);
+        return false;
+    }
+
+    init() {
+        var claims: any = this.oauthService.getIdentityClaims();
+        if (!claims) {
+            this.isConnected = false;
+            return;
+        }
+
+        this.name = claims.given_name;
+        this.roles = claims.role;
+        this.isConnected = true;
+    }
+
+    ngOnInit() {
+        this.init();
+        this.oauthService.events.subscribe((e: any) => {
+            if (e.type === "logout") {
+                this.isConnected = false;
+            } else if (e.type === "token_received") {
+                this.init();
+            }
+        });
     }
 }

@@ -21,7 +21,8 @@ import { AuthGuard } from './infrastructure/auth-guard.service';
 import { MaterialModule } from './shared/material.module';
 import { SharedModule } from './shared/shared.module';
 export function createTranslateLoader(http) {
-    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+    var url = process.env.BASE_URL + 'assets/i18n/';
+    return new TranslateHttpLoader(http, url, '.json');
 }
 var AppModule = (function () {
     function AppModule() {

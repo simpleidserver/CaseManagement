@@ -1,22 +1,22 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["CASEDEFINITIONSLOAD"] = "[CaseDefinitions] Load";
-    ActionTypes["CASEDEFINITIONSLOADED"] = "[CaseDefinitions] Loaded";
-    ActionTypes["ERRORLOADCASEDEFINITIONS"] = "[CaseDefinitions] Error Load";
+    ActionTypes["PERFORMANCESLOAD"] = "[Performances] Load";
+    ActionTypes["PERFORMANCESLOADED"] = "[Performances] Loaded";
+    ActionTypes["ERRORLOADPERFORMANCES"] = "[CaseDefinitions] Error Load";
 })(ActionTypes || (ActionTypes = {}));
-var LoadCaseDefinitionsAction = (function () {
-    function LoadCaseDefinitionsAction() {
-        this.type = ActionTypes.CASEDEFINITIONSLOAD;
+var LoadPerformancesAction = (function () {
+    function LoadPerformancesAction() {
+        this.type = ActionTypes.PERFORMANCESLOAD;
     }
-    return LoadCaseDefinitionsAction;
+    return LoadPerformancesAction;
 }());
-export { LoadCaseDefinitionsAction };
-var CaseDefinitionsLoadedAction = (function () {
-    function CaseDefinitionsLoadedAction(result) {
+export { LoadPerformancesAction };
+var PerformancesLoadedAction = (function () {
+    function PerformancesLoadedAction(result) {
         this.result = result;
-        this.type = ActionTypes.CASEDEFINITIONSLOADED;
+        this.type = ActionTypes.PERFORMANCESLOADED;
     }
-    return CaseDefinitionsLoadedAction;
+    return PerformancesLoadedAction;
 }());
-export { CaseDefinitionsLoadedAction };
+export { PerformancesLoadedAction };
 //# sourceMappingURL=list-actions.js.map

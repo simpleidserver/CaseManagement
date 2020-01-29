@@ -94,7 +94,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseDefinitionException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case definition doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
@@ -111,7 +111,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
@@ -128,18 +128,18 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -156,25 +156,25 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseInstanceElementException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -191,18 +191,18 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -220,25 +220,25 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseInstanceElementException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -255,18 +255,18 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -283,25 +283,25 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseInstanceElementException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -318,25 +318,25 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseInstanceElementException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -353,25 +353,25 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseInstanceElementException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -388,18 +388,18 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -417,32 +417,32 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseInstanceElementException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (UnauthorizedCaseWorkerException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "unauthorized_request", "you're not authorized to confirm the human task" }
                 }, HttpStatusCode.Unauthorized, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -459,25 +459,25 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseInstanceElementException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -495,32 +495,32 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
             catch (UnknownCaseInstanceException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnknownCaseElementDefinitionException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (UnauthorizedCaseWorkerException)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "unauthorized_request", "you're not authorized to confirm the human task" }
                 }, HttpStatusCode.Unauthorized, Request);
             }
             catch (AggregateValidationException ex)
             {
-                return ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
             catch (Exception ex)
             {
-                return ToError(new Dictionary<string, string>
+                return this.ToError(new Dictionary<string, string>
                 {
                     { "invalid_request", ex.Message }
                 }, HttpStatusCode.BadRequest, Request);
@@ -668,25 +668,6 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
 
             return jObj;
-        }
-
-        private static ActionResult ToError(ICollection<KeyValuePair<string, string>> errors, HttpStatusCode statusCode, HttpRequest request)
-        {
-            var problemDetails = new ValidationProblemDetails
-            {
-                Instance = request.Path,
-                Status = (int)statusCode,
-                Detail = "Please refer to the errors property for additional details."
-            };
-            foreach (var kvp in errors.GroupBy(e => e.Key))
-            {
-                problemDetails.Errors.Add(kvp.Key, kvp.Select(s => s.Value).ToArray());
-            }
-
-            return new BadRequestObjectResult(problemDetails)
-            {
-                StatusCode = (int)statusCode
-            };
         }
 
 

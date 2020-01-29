@@ -1,0 +1,12 @@
+﻿<mat-drawer-container fxFlexFill>
+    <mat-drawer mode="side" opened>
+        <mat-list>
+            <mat-list-item><a [routerLink]="['/cases/casefiles']">{{ 'CASE_FILES' | translate }}</a></mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>{{ 'CASE_DEFINITIONS' | translate }}</mat-list-item>
+        </mat-list>
+    </mat-drawer>
+    <mat-drawer-content>
+        <router-outlet></router-outlet>
+    </mat-drawer-content>
+</mat-drawer-container>

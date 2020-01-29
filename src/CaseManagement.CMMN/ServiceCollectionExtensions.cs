@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN;
+using CaseManagement.CMMN.CaseFile.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.CommandHandlers;
 using CaseManagement.CMMN.CaseInstance.EventHandlers;
 using CaseManagement.CMMN.CaseInstance.Processors;
@@ -69,6 +70,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
         {
+            services.TryAddTransient<IUpdateCaseFileCommandHandler, UpdateCaseFileCommandHandler>();
+            services.TryAddTransient<IAddCaseFileCommandHandler, AddCaseFileCommandHandler>();
+            services.TryAddTransient<IUploadCaseFilesCommandHandler, UploadCaseFilesCommandHandler>();
             services.TryAddTransient<IActivateCommandHandler, ActivateCommandHandler>();
             services.TryAddTransient<ICloseCommandHandler, CloseCommandHandler>();
             services.TryAddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
@@ -115,7 +119,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var instances = new ConcurrentBag<CaseInstance>();
             var roles = new List<RoleAggregate>();
             var formInstances = new ConcurrentBag<FormInstanceAggregate>();
-            var files = new List<CaseFileDefinitionAggregate>();
+            var files = new ConcurrentBag<CaseFileDefinitionAggregate>();
             var forms = new List<FormAggregate>();
             var caseDefinitionHistories = new ConcurrentBag<CaseDefinitionHistoryAggregate>();
             var caseDailyStatistics = new ConcurrentBag<DailyStatisticAggregate>();
@@ -139,6 +143,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(caseDailyStatistics, performances));
             services.TryAddSingleton<ICasePlanificationCommandRepository>(new InMemoryCasePlanificationCommandRepository(casePlanifications));
             services.TryAddSingleton<ICasePlanificationQueryRepository>(new InMemoryCasePlanificationQueryRepository(casePlanifications));
+            services.TryAddSingleton<ICaseFileCommandRepository>(new InMemoryCaseFileCommandRepository(files));
             services.TryAddSingleton<ICaseFileItemRepository, InMemoryDirectoryCaseFileItemRepository>();
             services.TryAddTransient<IEventStoreRepository, InMemoryEventStoreRepository>();
             services.TryAddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();

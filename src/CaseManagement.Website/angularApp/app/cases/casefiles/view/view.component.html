@@ -1,0 +1,48 @@
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <ul>
+            <li><div class="mat-h1"><a [routerLink]="['/cases/casefiles']">{{ "CASE_FILES" | translate }}</a></div></li>
+            <li class="separator"><div class="mat-h1">\</div></li>
+            <li><div class="mat-h1">{{ 'CASE_FILE' | translate }}</div></li>
+        </ul>
+    </div>
+</div>
+<div fxLayout="row" fxLayoutGap="10px" fxFlexFill>
+    <mat-card fxFlex="20%">
+        <mat-card-content>
+            <form [formGroup]="saveForm" (ngSubmit)="onSave(saveForm.value)">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="{{ 'ID' | translate }}" name="id" formControlName="id" />
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="{{ 'CREATE_DATETIME' | translate }}" name="createDateTime" formControlName="createDateTime" readonly />
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="{{ 'UPDATE_DATETIME' | translate }}" name="updateDateTime" formControlName="updateDateTime" readonly />
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="{{ 'ENTER_CASE_FILE_NAME' | translate }}" name="name" formControlName="name" />
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <textarea matInput placeholder="{{ 'ENTER_CASE_FILE_DESCRIPTION' | translate }}" name="description" formControlName="description"></textarea>
+                </mat-form-field>
+                <button mat-raised-button color="primary">{{ 'SAVE' | translate }}</button>
+            </form>
+        </mat-card-content>
+    </mat-card>
+    <div fxFlex="60%">
+        <div class="cpp-properties-tab-bar">
+            <ul class="cpp-properties-tabs-links">
+                <li class="cpp-properties-tab-link cpp-active" [class.cpp-active]="isEditorDisplayed" (click)="navigate(true)">
+                    <a href data-tab-target>{{ 'EDITOR' | translate }}</a>
+                </li>
+                <li class="cpp-properties-tab-link" [class.cpp-active]="!isEditorDisplayed" (click)="navigate(false)">
+                    <a href data-tab-target>{{ 'XML' | translate }}</a>
+                </li>
+            </ul>
+        </div>
+        <div id="canvas" [style.display]="isEditorDisplayed ? 'block' : 'none'" fxFlexFill></div>
+        <ngx-monaco-editor [style.display]="isEditorDisplayed ? 'none' : 'block'" style="height: 500px" [options]="editorOptions" [(ngModel)]="xml" (ngModelChange)="onXmlChange($event)"></ngx-monaco-editor>
+    </div>
+    <div id="properties" fxFlex="20%"></div>
+</div>

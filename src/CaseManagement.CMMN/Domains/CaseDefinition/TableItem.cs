@@ -1,6 +1,8 @@
-﻿namespace CaseManagement.CMMN.Domains
+﻿using System;
+
+namespace CaseManagement.CMMN.Domains
 {
-    public class TableItem
+    public class TableItem : ICloneable
     {
         public TableItem()
         {
@@ -16,5 +18,14 @@
         /// If the condition of the ApplicabilityRule object evaluates to "true" then the TableItem is applicable for planning, otherwise it is not.
         /// </value>
         public ApplicabilityRule ApplicabilityRuleRef { get; set; }
+
+        public object Clone()
+        {
+            return new TableItem
+            {
+                AuthorizedRoleRef = AuthorizedRoleRef,
+                ApplicabilityRuleRef = ApplicabilityRuleRef == null ? null : (ApplicabilityRule)ApplicabilityRuleRef.Clone()
+            };
+        }
     }
 }

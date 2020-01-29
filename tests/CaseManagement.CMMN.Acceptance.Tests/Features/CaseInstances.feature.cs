@@ -93,14 +93,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 7
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table6.AddRow(new string[] {
+            table7.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 8
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table6, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table7, "And ");
 #line 11
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 12
@@ -136,14 +136,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 23
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table7.AddRow(new string[] {
+            table8.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 24
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table7, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table8, "And ");
 #line 27
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 28
@@ -195,14 +195,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 47
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table8.AddRow(new string[] {
+            table9.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 48
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table8, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table9, "And ");
 #line 51
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 52
@@ -328,14 +328,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 94
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table9.AddRow(new string[] {
+            table10.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 95
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table9, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table10, "And ");
 #line 98
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 99
@@ -350,15 +350,15 @@ this.ScenarioInitialize(scenarioInfo);
 #line 103
  testRunner.And("extract \'elements[0].id\' from JSON body into \'eltid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table10.AddRow(new string[] {
+            table11.AddRow(new string[] {
                         "name",
                         "name"});
 #line 104
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances/$insid$/confirm/$" +
-                    "eltid$\'", ((string)(null)), table10, "And ");
+                    "eltid$\'", ((string)(null)), table11, "And ");
 #line 107
  testRunner.And("poll \'http://localhost/case-instances/$insid$\', until \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 108
@@ -404,14 +404,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 124
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table11.AddRow(new string[] {
+            table12.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 125
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table11, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table12, "And ");
 #line 128
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 129
@@ -477,14 +477,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 154
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table12.AddRow(new string[] {
+            table13.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 155
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table12, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table13, "And ");
 #line 158
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 159
@@ -548,14 +548,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 184
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table13.AddRow(new string[] {
+            table14.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 185
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table13, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table14, "And ");
 #line 188
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 189
@@ -643,14 +643,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 226
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 227
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table14, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table15, "And ");
 #line 230
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 231
@@ -718,14 +718,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 258
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 259
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table15, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table16, "And ");
 #line 262
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 263
@@ -806,14 +806,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 291
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table16.AddRow(new string[] {
+            table17.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 292
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table16, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table17, "And ");
 #line 295
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 296
@@ -830,15 +830,15 @@ this.ScenarioInitialize(scenarioInfo);
 #line 301
  testRunner.And("authenticate as \'thabart\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table17.AddRow(new string[] {
+            table18.AddRow(new string[] {
                         "name",
                         "name"});
 #line 302
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances/$insid$/confirm/$" +
-                    "eltid$\'", ((string)(null)), table17, "And ");
+                    "eltid$\'", ((string)(null)), table18, "And ");
 #line 305
  testRunner.And("poll \'http://localhost/case-instances/$insid$\', until \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 306
@@ -887,14 +887,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 322
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table18.AddRow(new string[] {
+            table19.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 323
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table18, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table19, "And ");
 #line 326
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 327
@@ -945,14 +945,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 343
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table20 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table19.AddRow(new string[] {
+            table20.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 344
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table19, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table20, "And ");
 #line 347
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 348
@@ -1038,14 +1038,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 378
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table20 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table21 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table20.AddRow(new string[] {
+            table21.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 379
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table20, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table21, "And ");
 #line 382
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 383
@@ -1115,14 +1115,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 405
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table21 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table22 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table21.AddRow(new string[] {
+            table22.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 406
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table21, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table22, "And ");
 #line 409
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 410
@@ -1201,14 +1201,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 439
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table22 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table23 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table22.AddRow(new string[] {
+            table23.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 440
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table22, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table23, "And ");
 #line 443
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 444
@@ -1286,14 +1286,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 475
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table23 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table23.AddRow(new string[] {
+            table24.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 476
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table23, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table24, "And ");
 #line 479
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 480
@@ -1457,14 +1457,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 534
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table24.AddRow(new string[] {
+            table25.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 535
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table24, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table25, "And ");
 #line 538
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 539
@@ -1534,14 +1534,14 @@ this.ScenarioInitialize(scenarioInfo);
 #line 566
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table25.AddRow(new string[] {
+            table26.AddRow(new string[] {
                         "case_definition_id",
                         "$defid$"});
 #line 567
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table25, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-instances\'", ((string)(null)), table26, "And ");
 #line 570
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 571

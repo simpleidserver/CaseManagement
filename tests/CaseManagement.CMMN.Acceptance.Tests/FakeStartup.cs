@@ -23,6 +23,10 @@ namespace CaseManagement.CMMN.Acceptance.Tests
             services.AddAuthorization(policy =>
             {
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("get_statistic", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("get_performance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("get_casedefinition", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("add_casefile", p => p.RequireAuthenticatedUser());
             });
             services.AddMvc();
             services.AddHostedService<BusHostedService>();

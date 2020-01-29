@@ -10,38 +10,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { DailyStatistic } from '../models/dailystatistic.model';
-import { SearchDailyStatisticsResult } from '../models/search-dailystatistics-result.model';
+import { SearchPerformancesResult } from '../models/search-performances-result.model';
 var StatisticService = (function () {
     function StatisticService(http) {
         this.http = http;
     }
-    StatisticService.prototype.get = function () {
+    StatisticService.prototype.getPerformances = function () {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = process.env.API_URL + "/statistics";
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return DailyStatistic.fromJson(res);
-        }));
+        var targetUrl = process.env.API_URL + "/statistics/performances";
+        return this.http.get(targetUrl, { headers: headers });
     };
-    StatisticService.prototype.search = function (startIndex, count, order, direction, startDate, endDate) {
+    StatisticService.prototype.searchPerformances = function (startIndex, count, order, direction, startDateTime) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = process.env.API_URL + "/statistics/.search?start_index=" + startIndex + "&count=" + count;
+        var targetUrl = process.env.API_URL + "/statistics/performances/search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
         if (direction) {
             targetUrl = targetUrl + "&order=" + direction;
         }
-        if (startDate) {
-            targetUrl = targetUrl + "&start_datetime=" + startDate;
-        }
-        if (endDate) {
-            targetUrl = targetUrl + "&end_datetime=" + endDate;
+        if (startDateTime) {
+            targetUrl = targetUrl + "&start_datetime=" + startDateTime;
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchDailyStatisticsResult.fromJson(res);
+            return SearchPerformancesResult.fromJson(res);
         }));
     };
     StatisticService = __decorate([

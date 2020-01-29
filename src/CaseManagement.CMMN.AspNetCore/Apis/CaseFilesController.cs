@@ -1,14 +1,20 @@
 ﻿using CaseManagement.CMMN.AspNetCore.Extensions;
+using CaseManagement.CMMN.CaseFile.CommandHandlers;
+using CaseManagement.CMMN.CaseFile.Commands;
+using CaseManagement.CMMN.CaseFile.Exceptions;
 using CaseManagement.CMMN.Domains.CaseFile;
 using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.AspNetCore.Apis
@@ -17,13 +23,20 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     public class CaseFilesController : Controller
     {
         private readonly ICaseFileQueryRepository _queryRepository;
+        private readonly IUploadCaseFilesCommandHandler _uploadCaseFilesCommandHandler;
+        private readonly IAddCaseFileCommandHandler _addCaseFileCommandHandler;
+        private readonly IUpdateCaseFileCommandHandler _updateCaseFileCommandHandler;
 
-        public CaseFilesController(ICaseFileQueryRepository queryRepository)
+        public CaseFilesController(ICaseFileQueryRepository queryRepository, IUploadCaseFilesCommandHandler uploadCaseFilesCommandHandler, IAddCaseFileCommandHandler addCaseFileCommandHandler, IUpdateCaseFileCommandHandler updateCaseFileCommandHandler)
         {
             _queryRepository = queryRepository;
+            _uploadCaseFilesCommandHandler = uploadCaseFilesCommandHandler;
+            _addCaseFileCommandHandler = addCaseFileCommandHandler;
+            _updateCaseFileCommandHandler = updateCaseFileCommandHandler;
         }
 
         [HttpGet("count")]
+        [Authorize("get_statistic")]
         public async Task<IActionResult> Count()
         {
             var result = await _queryRepository.Count();
@@ -32,6 +45,78 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             {
                 count = result
             });
+        }
+
+        [HttpPost]
+        [Authorize("add_casefile")]
+        public async Task<IActionResult> Create([FromBody] AddCaseFileCommand parameter)
+        {
+            try
+            {
+                parameter.NameIdentifier = this.GetNameIdentifier();
+                var result = await _addCaseFileCommandHandler.Handle(parameter);
+                var jObj = new JObject
+                {
+                    { "id", result }
+                };
+                return new ContentResult
+                {
+                    StatusCode = (int)HttpStatusCode.Created,
+                    Content = jObj.ToString()
+                };
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPost("upload")]
+        [Authorize("add_casefile")]
+        public async Task<IActionResult> Upload([FromBody] UploadCaseFilesCommand parameter)
+        {
+            try
+            {
+                parameter.NameIdentifier = this.GetNameIdentifier();
+                var result = await _uploadCaseFilesCommandHandler.Handle(parameter);
+                var jObj = new JObject
+                {
+                    { "ids", new JArray(result) }
+                };
+                return new ContentResult
+                {
+                    StatusCode = (int)HttpStatusCode.Created,
+                    Content = jObj.ToString()
+                };
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
+        {
+            try
+            {
+                parameter.Id = id;
+                parameter.NameIdentifier = this.GetNameIdentifier();
+                await _updateCaseFileCommandHandler.Handle(parameter);
+                return new OkResult();
+            }
+            catch(UnknownCaseFileException)
+            {
+                return new NotFoundResult();
+            }
+            catch(UnauthorizedCaseFileException)
+            {
+                return new UnauthorizedResult();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
         }
 
         [HttpGet("search")]
@@ -61,14 +146,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 { "start_index", resp.StartIndex },
                 { "total_length", resp.TotalLength },
                 { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => new JObject
-                {
-                    { "id", r.Id },
-                    { "name", r.Name },
-                    { "description", r.Description },
-                    { "payload", r.Payload },
-                    { "create_datetime", r.CreateDateTime }
-                })) }
+                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
             };
         }
 
@@ -80,35 +158,25 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 { "name", resp.Name },
                 { "description", resp.Description },
                 { "payload", resp.Payload },
-                { "create_datetime", resp.CreateDateTime }
+                { "create_datetime", resp.CreateDateTime },
+                { "update_datetime", resp.UpdateDateTime }
             };
         }
 
         private static FindCaseDefinitionFilesParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
-            int startIndex;
-            int count;
-            string orderBy;
-            FindOrders findOrder;
+            string owner;
+            string text;
             var parameter = new FindCaseDefinitionFilesParameter();
-            if (query.TryGet("start_index", out startIndex))
+            parameter.ExtractFindParameter(query);
+            if (query.TryGet("owner", out owner))
             {
-                parameter.StartIndex = startIndex;
+                parameter.Owner = owner;
             }
 
-            if (query.TryGet("count", out count))
+            if (query.TryGet("text", out text))
             {
-                parameter.Count = count;
-            }
-
-            if (query.TryGet("order_by", out orderBy))
-            {
-                parameter.OrderBy = orderBy;
-            }
-
-            if (query.TryGet("order", out findOrder))
-            {
-                parameter.Order = findOrder;
+                parameter.Text = text;
             }
 
             return parameter;

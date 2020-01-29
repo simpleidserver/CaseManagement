@@ -1,0 +1,185 @@
+﻿<div fxLayout="row">
+    <div fxFlex="90%" fxFlexOffset="5%">
+        <div fxLayout="row" fxLayoutGap="10px">
+            <div fxFlex="70%">
+                <div fxLayout="column" fxLayoutGap="10px">
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>{{ "RIGHT_NOW" | translate }}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
+                                <div fxFlex="30%">
+                                    <h4 class="mat-h4">{{ "CASE_STATUS" | translate }}</h4>
+                                    <ngx-charts-pie-chart [view]="viewPie"
+                                                          [results]="caseStatistic"
+                                                          [scheme]="caseStatisticColorScheme"
+                                                          [legend]="false"
+                                                          [labels]="true"
+                                                          [doughnut]="false">
+                                    </ngx-charts-pie-chart>
+                                </div>
+                                <div fxFlex="30%">
+                                    <h4 class="mat-h4">{{ "FORM_STATUS" | translate }}</h4>
+                                    <ngx-charts-pie-chart [view]="viewPie"
+                                                          [results]="formStatistic"
+                                                          [scheme]="formStatisticColorScheme"
+                                                          [legend]="false"
+                                                          [labels]="true"
+                                                          [doughnut]="false">
+                                    </ngx-charts-pie-chart>
+                                </div>
+                                <div fxFlex="30%">
+                                    <h4 class="mat-h4">{{ "ACTIVATION_STATUS" | translate }}</h4>
+                                    <ngx-charts-pie-chart [view]="viewPie"
+                                                          [results]="activationStatistic"
+                                                          [scheme]="activationStatisticColorScheme"
+                                                          [legend]="false"
+                                                          [labels]="true"
+                                                          [doughnut]="false">
+                                    </ngx-charts-pie-chart>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>{{ "METRICS" | translate }}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <mat-tab-group>
+                                <mat-tab label="{{ 'THIS_WEEK' | translate }}">
+                                    <div fxLayout="column" fxLayoutGap="10px">
+                                        <div fxLayout="row" fxLayoutGap="10px">
+                                            <div fxFlex="50%">
+                                                <h4 class="mat-h4">{{ "CASE_STATUS" | translate }}</h4>
+                                                <ngx-charts-line-chart [view]="viewChart"
+                                                                       [showXAxisLabel]="true"
+                                                                       [showYAxisLabel]="true"
+                                                                       [xAxis]="true"
+                                                                       [yAxis]="true"
+                                                                       [xAxisLabel]="Date"
+                                                                       [yAxisLabel]="State"
+                                                                       [timeline]="true"
+                                                                       [legend]="false"
+                                                                       [results]="caseWeekStatistic"
+                                                                       [scheme]="caseStatisticColorScheme">
+
+                                                </ngx-charts-line-chart>
+                                            </div>
+                                            <div fxFlex="50%">
+                                                <h4 class="mat-h4">{{ "FORM_STATUS" | translate }}</h4>
+                                                <ngx-charts-line-chart [view]="viewChart"
+                                                                       [showXAxisLabel]="true"
+                                                                       [showYAxisLabel]="true"
+                                                                       [xAxis]="true"
+                                                                       [yAxis]="true"
+                                                                       [xAxisLabel]="Date"
+                                                                       [yAxisLabel]="State"
+                                                                       [timeline]="true"
+                                                                       [legend]="false"
+                                                                       [results]="formWeekStatistic"
+                                                                       [scheme]="formStatisticColorScheme">
+
+                                                </ngx-charts-line-chart>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="mat-h4">{{ "ACTIVATION_STATUS" | translate }}</h4>
+                                            <ngx-charts-line-chart [view]="viewChart"
+                                                                   [showXAxisLabel]="true"
+                                                                   [showYAxisLabel]="true"
+                                                                   [xAxis]="true"
+                                                                   [yAxis]="true"
+                                                                   [xAxisLabel]="Date"
+                                                                   [yAxisLabel]="State"
+                                                                   [timeline]="true"
+                                                                   [legend]="false"
+                                                                   [results]="activationWeekStatistic"
+                                                                   [scheme]="activationStatisticColorScheme">
+
+                                            </ngx-charts-line-chart>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                                <mat-tab label="{{ 'THIS_MONTH' | translate }}">
+                                    <div fxLayout="column" fxLayoutGap="10px">
+                                        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
+                                            <div fxFlex="50%">
+                                                <h4 class="mat-h4">{{ "CASE_STATUS" | translate }}</h4>
+                                                <ngx-charts-line-chart [view]="viewChart"
+                                                                       [showXAxisLabel]="true"
+                                                                       [showYAxisLabel]="true"
+                                                                       [xAxis]="true"
+                                                                       [yAxis]="true"
+                                                                       [xAxisLabel]="Date"
+                                                                       [yAxisLabel]="State"
+                                                                       [timeline]="true"
+                                                                       [legend]="false"
+                                                                       [results]="caseMonthStatistic"
+                                                                       [scheme]="caseStatisticColorScheme">
+
+                                                </ngx-charts-line-chart>
+                                            </div>
+                                            <div fxFlex="50%">
+                                                <h4 class="mat-h4">{{ "FORM_STATUS" | translate }}</h4>
+                                                <ngx-charts-line-chart [view]="viewChart"
+                                                                       [showXAxisLabel]="true"
+                                                                       [showYAxisLabel]="true"
+                                                                       [xAxis]="true"
+                                                                       [yAxis]="true"
+                                                                       [xAxisLabel]="Date"
+                                                                       [yAxisLabel]="State"
+                                                                       [timeline]="true"
+                                                                       [legend]="false"
+                                                                       [results]="formMonthStatistic"
+                                                                       [scheme]="formStatisticColorScheme">
+
+                                                </ngx-charts-line-chart>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="mat-h4">{{ "ACTIVATION_STATUS" | translate }}</h4>
+                                            <ngx-charts-line-chart [view]="viewChart"
+                                                                   [showXAxisLabel]="true"
+                                                                   [showYAxisLabel]="true"
+                                                                   [xAxis]="true"
+                                                                   [yAxis]="true"
+                                                                   [xAxisLabel]="Date"
+                                                                   [yAxisLabel]="State"
+                                                                   [timeline]="true"
+                                                                   [legend]="false"
+                                                                   [results]="activationMonthStatistic"
+                                                                   [scheme]="activationStatisticColorScheme">
+
+                                            </ngx-charts-line-chart>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                            </mat-tab-group>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+            <div fxFlex="30%">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>{{ "DEPLOYED" | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-list>
+                            <mat-list-item>
+                                <h4 mat-line>{{ "CASE_FILES" | translate }}</h4>
+                                <h2>{{ nbCaseFiles }}</h2>
+                            </mat-list-item>
+                            <mat-list-item>
+                                <h4 mat-line>{{ "CASE_DEFINITIONS" | translate}}</h4>
+                                <h2>{{ nbCaseDefinitions }}</h2>
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

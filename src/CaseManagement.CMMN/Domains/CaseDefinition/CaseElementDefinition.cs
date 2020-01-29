@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CaseElementDefinition
+    public class CaseElementDefinition : ICloneable
     {
         public CaseElementDefinition(string id, string name)
         {
@@ -34,6 +36,21 @@ namespace CaseManagement.CMMN.Domains
         /// Get or set the table item.
         /// </summary>
         public TableItem TableItem { get; set; }
+
+        public object Clone()
+        {
+            return new CaseElementDefinition(Id, Name)
+            {
+                Type = Type,
+                ActivationRule = ActivationRule,
+                ManualActivationRule = ManualActivationRule == null ? null : (ManualActivationRule)ManualActivationRule.Clone(),
+                RepetitionRule = RepetitionRule == null ? null : (RepetitionRule)RepetitionRule.Clone(),
+                EntryCriterions = EntryCriterions.Select(e => (Criteria)e.Clone()).ToList(),
+                ExitCriterions = ExitCriterions.Select(e => (Criteria)e.Clone()).ToList(),
+                TableItem = TableItem == null ? null : (TableItem)TableItem.Clone()
+            };
+        }
+
         public bool IsDiscrete()
         {
             return TableItem != null;

@@ -1,6 +1,8 @@
-﻿namespace CaseManagement.CMMN.Domains
+﻿using System;
+
+namespace CaseManagement.CMMN.Domains
 {
-    public class ApplicabilityRule
+    public class ApplicabilityRule : ICloneable
     {
         /// <summary>
         /// The name of the ApplicabilityRule.
@@ -17,5 +19,15 @@
         /// for planning based on the TableItem).
         /// </summary>
         public string Expression { get; set; }
+
+        public object Clone()
+        {
+            return new ApplicabilityRule
+            {
+                Name = Name,
+                ContextRef = ContextRef,
+                Expression = Expression
+            };
+        }
     }
 }

@@ -15,16 +15,16 @@ var initialCaseDefsAction = {
     isLoading: true,
     isErrorLoadOccured: false
 };
-export function reducer(state, action) {
+export function performancesReducer(state, action) {
     if (state === void 0) { state = initialCaseDefsAction; }
     switch (action.type) {
-        case ActionTypes.CASEDEFINITIONSLOADED:
+        case ActionTypes.PERFORMANCESLOADED:
             var caseDefsLoadedAction = action;
             state.content = caseDefsLoadedAction.result;
             state.isLoading = false;
             state.isErrorLoadOccured = false;
             return __assign({}, state);
-        case ActionTypes.ERRORLOADCASEDEFINITIONS:
+        case ActionTypes.ERRORLOADPERFORMANCES:
             state.isErrorLoadOccured = true;
             state.isLoading = false;
             return __assign({}, state);

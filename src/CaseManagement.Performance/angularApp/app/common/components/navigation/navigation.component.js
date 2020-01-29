@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 var NavigationComponent = (function () {
     function NavigationComponent(translateService) {
         this.translateService = translateService;
+        this.url = process.env.BASE_URL + "/assets/images/logo.svg";
     }
     NavigationComponent.prototype.chooseLanguage = function (lng) {
         this.translateService.use(lng);

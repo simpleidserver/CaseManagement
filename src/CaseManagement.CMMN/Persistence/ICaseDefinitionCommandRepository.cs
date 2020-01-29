@@ -8,6 +8,8 @@ namespace CaseManagement.CMMN.Persistence
         void Update(CaseDefinition workflowDefinition);
         void Update(CaseDefinitionHistoryAggregate cmmnWorkflowDefinitionStatisticAggregate);
         void Add(CaseDefinitionHistoryAggregate cmmnWorkflowDefinitionStatisticAggregate);
+        void Add(CaseDefinition workflowDefinition);
+        void Delete(CaseDefinition workflowDefinition);
         Task<int> SaveChanges();
     }
 }

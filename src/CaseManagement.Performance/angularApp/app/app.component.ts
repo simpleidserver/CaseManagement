@@ -1,6 +1,9 @@
-﻿import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+﻿import { Component, ViewEncapsulation, OnInit, Inject, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { authConfig } from './auth.config';
+import { OAuthService, NullValidationHandler, OAuthStorage } from 'angular-oauth2-oidc';
+import { DOCUMENT } from '@angular/common';
 interface BreadCrumbItem {
     name: string,
     index: number,
@@ -25,13 +28,107 @@ export class AppComponent implements OnInit {
     sessionCheckTimer: any;
     iFrameName: string;
 
-    constructor(translate: TranslateService, private router: Router) {
+    constructor(translate: TranslateService, private router: Router, private oauthService: OAuthService, @Inject(DOCUMENT) private document: any, private ngZone: NgZone, private storage: OAuthStorage) {
         translate.setDefaultLang('fr');
         translate.use('fr');
+        this.iFrameName = "casemanagement-performance-idserver";
+        this.configureWithNewConfigApi();
     }
 
     ngOnInit(): void {
         this.listenRouting();
+    }
+
+    private configureWithNewConfigApi() {
+        authConfig.redirectUri = this.document.location.origin;
+        this.oauthService.configure(authConfig);
+        this.oauthService.tokenValidationHandler = new NullValidationHandler();
+        this.oauthService.loadDiscoveryDocument().then((d: any) => {
+            let issuer = d.info.discoveryDocument.issuer;
+            let checkSessionIframe = d.info.discoveryDocument.check_session_iframe;
+            this.initSessionCheck(issuer.toLowerCase(), checkSessionIframe.toLowerCase());
+            return this.oauthService.tryLogin();
+        });
+    }
+
+    private initSessionCheck(issuer: string, checkSessionIFrame: string): void {
+        const existingIframe = document.getElementById(this.iFrameName);
+        if (existingIframe) {
+            document.body.removeChild(existingIframe);
+        }
+
+        const iframe = document.createElement('iframe');
+        iframe.id = this.iFrameName;
+
+        this.setupSessionCheckEventListener(issuer);
+
+        const url = checkSessionIFrame;
+        iframe.setAttribute('src', url);
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        this.startSessionCheckTimer(issuer);
+    }
+
+    private startSessionCheckTimer(issuer: string): void {
+        this.stopSessionCheckTimer();
+        this.ngZone.runOutsideAngular(() => {
+            this.sessionCheckTimer = setInterval(
+                this.checkSession.bind(this, issuer),
+                3000
+            );
+        });
+    }
+
+    private checkSession(issuer: string): void {
+        const iframe: any = document.getElementById(this.iFrameName);
+        if (!iframe) {
+            console.log('checkSession did not find iframe');
+            return;
+        }
+
+        const sessionState = this.storage.getItem('session_state');
+        if (!sessionState) {
+            this.stopSessionCheckTimer();
+        }
+
+        const message = this.oauthService.clientId + ' ' + sessionState;
+        iframe.contentWindow.postMessage(message, issuer);
+    }
+
+    private setupSessionCheckEventListener(issuer: string): void {
+        this.removeSessionCheckEventListener();
+        this.sessionCheckEventListener = (e: MessageEvent) => {
+            const origin = e.origin.toLowerCase();
+            if (!issuer.startsWith(origin)) {
+                console.log('sessionCheckEventListener', 'wrong origin', origin, 'expected', issuer);
+            }
+
+            switch (e.data) {
+                case 'changed':
+                case 'error':
+                    this.stopSessionCheckTimer();
+                    this.oauthService.logOut(true);
+                    break;
+            }
+        };
+
+        this.ngZone.runOutsideAngular(() => {
+            window.addEventListener('message', this.sessionCheckEventListener);
+        });
+    }
+
+    private stopSessionCheckTimer(): void {
+        if (this.sessionCheckTimer) {
+            clearInterval(this.sessionCheckTimer);
+            this.sessionCheckTimer = null;
+        }
+    }
+
+    private removeSessionCheckEventListener(): void {
+        if (this.sessionCheckEventListener) {
+            window.removeEventListener('message', this.sessionCheckEventListener);
+            this.sessionCheckEventListener = null;
+        }
     }
 
     private listenRouting() {

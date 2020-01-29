@@ -51,5 +51,12 @@
   "CLOSE": "Fermer",
   "EXECUTION_CONTEXT": "Contexte d'exécution",
   "CASE_FILE_ITEMS": "Fichiers liés à l'instance du case",
-  "VALUE": "Valeur"
+  "VALUE": "Valeur",
+  "HOME": "Accueil",
+  "AUTHENTICATE": "Authentifier",
+  "WELCOME": "Bienvenue {{name}}",
+  "DISCONNECT": "Se déconnecter",
+  "STATISTICS": "Statistiques",
+  "NOT_FOUND": "404 : Page n'existe pas",
+  "NOT_AUTHORIZED": "401 : Vous n'êtes pas autorisé"
 }

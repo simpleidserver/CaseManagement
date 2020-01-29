@@ -4,6 +4,7 @@ using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -24,6 +25,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpGet("count")]
+        [Authorize("get_statistic")]
         public async Task<IActionResult> Count()
         {
             var result = await _queryRepository.Count();
@@ -34,6 +36,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpGet("{id}")]
+        [Authorize("get_casedefinition")]
         public async Task<IActionResult> Get(string id)
         {
             var result = await _queryRepository.FindById(id);
@@ -46,6 +49,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpGet("{id}/history")]
+        [Authorize("get_casedefinition")]
         public async Task<IActionResult> GetHistory(string id)
         {
             var result = await _queryRepository.FindHistoryById(id);
@@ -62,6 +66,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpGet("search")]
+        [Authorize("get_casedefinition")]
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();

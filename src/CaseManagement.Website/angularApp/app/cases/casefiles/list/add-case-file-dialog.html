@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>{{ "ADD_CASE_FILE" | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="addCaseFileForm" (ngSubmit)="onSubmit(addCaseFileForm.value)">
+        <div fxLayout="column">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="{{ 'ENTER_THE_NAME' }}" name="name" formControlName="name" />
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+                <textarea matInput placeholder="{{ 'ENTER_THE_DESCRIPTION' }}" name="description" formControlName="description"></textarea>
+            </mat-form-field>
+        </div>
+        <button mat-raised-button color="primary">{{ 'SUBMIT' | translate }}</button>
+    </form>
+</div>

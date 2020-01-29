@@ -1,10 +1,20 @@
-<mat-toolbar>
+<mat-toolbar class="header-toolbar">
     <a class="no-style" [routerLink]="['/home']">
-        <img src="/assets/images/logo.svg" />
+        <img src={{url}} />
     </a>
     <span class="navigation-spacer"></span>
-    <button mat-button [routerLink]="['/casedefinitions']">{{ "CASE_DEFINITIONS" | translate }}</button>
-    <button mat-button [routerLink]="['/performances']">{{ "PERFORMANCES" | translate }}</button>
+    <div *ngIf="isConnected">
+        <button mat-button [routerLink]="['/cases']" *ngIf="roles.includes('businessanalyst')">{{ "CASES" | translate }}</button>
+        <button mat-button [matMenuTriggerFor]="welcomeMenu">
+            {{ "WELCOME" | translate:{name:name} }}
+        </button>
+        <mat-menu #welcomeMenu="matMenu">
+            <button mat-menu-item (click)="disconnect()">{{ "DISCONNECT" | translate }}</button>
+        </mat-menu>
+    </div>
+    <div *ngIf="!isConnected">
+        <button mat-raised-button color="primary" (click)="login()">{{ "AUTHENTICATE" | translate }}</button>
+    </div>
     <button mat-button [matMenuTriggerFor]="languages">{{ "LANGUAGES" | translate }}</button>
     <mat-menu #languages="matMenu">
         <button mat-menu-item (click)="chooseLanguage('fr')">{{ "FRENCH" | translate }}</button>

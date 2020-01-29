@@ -5,12 +5,10 @@ import { Observable } from "rxjs";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private authService: OAuthService, private router: Router) {
-
-    }
+    constructor(private authService: OAuthService, private router: Router) { }
 
     canActivate(next: ActivatedRouteSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        let claims : any = this.authService.getIdentityClaims();
+        let claims: any = this.authService.getIdentityClaims();
         if (!claims) {
             this.router.navigate(['/status/404']);
             return false;

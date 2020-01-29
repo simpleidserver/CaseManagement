@@ -23,7 +23,7 @@ namespace CaseManagement.CMMN
 
         public ServerBuilder AddDefinitions(List<string> pathLst)
         {
-            var caseFiles = new List<CaseFileDefinitionAggregate>();
+            var caseFiles = new ConcurrentBag<CaseFileDefinitionAggregate>();
             var caseDefinitions = new ConcurrentBag<CaseDefinition>();
             var caseDefinitionHistories = new ConcurrentBag<CaseDefinitionHistoryAggregate>();
             foreach(var path in pathLst)
@@ -46,6 +46,7 @@ namespace CaseManagement.CMMN
             }
 
             _services.TryUpdateSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(caseFiles));
+            _services.TryUpdateSingleton<ICaseFileCommandRepository>(new InMemoryCaseFileCommandRepository(caseFiles));
             _services.TryUpdateSingleton<ICaseDefinitionCommandRepository>(new InMemoryCaseDefinitionCommandRepository(caseDefinitions, caseDefinitionHistories));
             _services.TryUpdateSingleton<ICaseDefinitionQueryRepository>(new InMemoryCaseDefinitionQueryRepository(caseDefinitions, caseDefinitionHistories));
             return this;

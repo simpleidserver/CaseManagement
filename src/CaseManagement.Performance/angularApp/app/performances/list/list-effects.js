@@ -11,29 +11,29 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { CaseDefinitionsService } from '../services/casedefinitions.service';
+import { StatisticService } from '../services/statistic.service';
 import { ActionTypes } from './list-actions';
-var ListCaseDefinitionsEffects = (function () {
-    function ListCaseDefinitionsEffects(actions$, caseDefinitionsService) {
+var ListPerformancesEffects = (function () {
+    function ListPerformancesEffects(actions$, statisticService) {
         var _this = this;
         this.actions$ = actions$;
-        this.caseDefinitionsService = caseDefinitionsService;
-        this.loadCaseFiles$ = this.actions$
-            .pipe(ofType(ActionTypes.CASEDEFINITIONSLOAD), mergeMap(function (evt) {
-            return _this.caseDefinitionsService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
-                .pipe(map(function (casefiles) { return { type: ActionTypes.CASEDEFINITIONSLOADED, result: casefiles }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADCASEDEFINITIONS }); }));
+        this.statisticService = statisticService;
+        this.loadPerformances$ = this.actions$
+            .pipe(ofType(ActionTypes.PERFORMANCESLOAD), mergeMap(function (evt) {
+            return _this.statisticService.searchPerformances(evt.startIndex, evt.count, evt.order, evt.direction, evt.startDateTime)
+                .pipe(map(function (casefiles) { return { type: ActionTypes.PERFORMANCESLOADED, result: casefiles }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADPERFORMANCES }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], ListCaseDefinitionsEffects.prototype, "loadCaseFiles$", void 0);
-    ListCaseDefinitionsEffects = __decorate([
+    ], ListPerformancesEffects.prototype, "loadPerformances$", void 0);
+    ListPerformancesEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            CaseDefinitionsService])
-    ], ListCaseDefinitionsEffects);
-    return ListCaseDefinitionsEffects;
+            StatisticService])
+    ], ListPerformancesEffects);
+    return ListPerformancesEffects;
 }());
-export { ListCaseDefinitionsEffects };
+export { ListPerformancesEffects };
 //# sourceMappingURL=list-effects.js.map

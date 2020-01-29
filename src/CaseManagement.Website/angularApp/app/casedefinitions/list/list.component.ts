@@ -12,7 +12,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
     templateUrl: './list.component.html',  
     styleUrls: ['./list.component.scss']
 })
-
 export class ListCaseDefinitionsComponent implements OnInit, OnDestroy {
     isLoading: boolean;
     caseDefinitions: CaseDefinition[] = [];

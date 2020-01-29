@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './infrastructure/auth-guard.service';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'casedefinitions', loadChildren: './casedefinitions/casedefinitions.module#CaseDefinitionsModule' },
-    { path: 'caseinstances', loadChildren: './caseinstances/caseinstances.module#CaseInstancesModule' },
-    { path: 'performances', loadChildren: './performances/performances.module#PerformancesModule' },
+    { path: 'home', loadChildren: './home/home.module#HomeModule' },
+    { path: 'cases', loadChildren: './cases/cases.module#CasesModule', canActivate: [AuthGuard], data: { role: 'businessanalyst' } },
+    { path: 'status', loadChildren: './status/status.module#StatusModule' },
     { path: '**', redirectTo: '/status/404' }
 ];

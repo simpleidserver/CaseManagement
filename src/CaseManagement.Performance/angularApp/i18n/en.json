@@ -51,5 +51,12 @@
   "CLOSE": "Close",
   "EXECUTION_CONTEXT": "Execution context",
   "CASE_FILE_ITEMS": "Case file items",
-  "VALUE": "Value"
+  "VALUE": "Value",
+  "HOME": "Home",
+  "AUTHENTICATE": "Authenticate",
+  "WELCOME": "Welcome {{name}}",
+  "DISCONNECT": "Disconnect",
+  "STATISTICS": "Statistics",
+  "NOT_FOUND": "404 : Page not found",
+  "NOT_AUTHORIZED": "401 : You're not authorized"
 }

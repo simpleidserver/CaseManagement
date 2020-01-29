@@ -3,18 +3,21 @@
 using CaseManagement.CMMN.AspNetCore;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Host.Delegates;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace CaseManagement.CMMN.Host
 {
@@ -32,10 +35,33 @@ namespace CaseManagement.CMMN.Host
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = ExtractKey("openid_puk.txt"),
+                    ValidAudiences = new List<string>
+                    {
+                        "http://localhost:60000"
+                    },
+                    ValidIssuers = new List<string>
+                    {
+                        "http://localhost:60000"
+                    }
+                };
+            });
             services.AddAuthorization(policy =>
             {
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("get_statistic", p => p.RequireRole("admin"));
+                policy.AddPolicy("get_performance", p => p.RequireRole("admin"));
+                policy.AddPolicy("get_casedefinition", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("add_casefile", p => p.RequireRole("businessanalyst"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
@@ -135,6 +161,22 @@ namespace CaseManagement.CMMN.Host
             app.UseAuthentication();
             app.UseCors("AllowAll");
             app.UseMvc();
+        }
+
+        private RsaSecurityKey ExtractKey(string fileName)
+        {
+            var json = File.ReadAllText(Path.Combine(_env.ContentRootPath, fileName));
+            var dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            using (var rsa = RSA.Create())
+            {
+                var rsaParameters = new RSAParameters
+                {
+                    Modulus = Convert.FromBase64String(dic["n"].ToString()),
+                    Exponent = Convert.FromBase64String(dic["e"].ToString())
+                };
+                rsa.ImportParameters(rsaParameters);
+                return new RsaSecurityKey(rsa);
+            }
         }
     }
 }

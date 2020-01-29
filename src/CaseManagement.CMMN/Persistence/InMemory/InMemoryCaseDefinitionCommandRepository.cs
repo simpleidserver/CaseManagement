@@ -19,7 +19,14 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public void Update(CaseDefinition workflowDefinition)
         {
-            throw new System.NotImplementedException();
+            var wf = _caseDefinitions.First(w => w.Id == workflowDefinition.Id);
+            _caseDefinitions.Remove(wf);
+            _caseDefinitions.Add((CaseDefinition)wf.Clone());
+        }
+
+        public void Add(CaseDefinition workflowDefinition)
+        {
+            _caseDefinitions.Add((CaseDefinition)workflowDefinition.Clone());
         }
 
         public void Add(CaseDefinitionHistoryAggregate caseDefinitionHistory)
@@ -32,6 +39,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             var wf = _caseDefinitionHistories.First(w => w.CaseDefinitionId == caseDefinitionHistory.CaseDefinitionId);
             _caseDefinitionHistories.Remove(wf);
             _caseDefinitionHistories.Add((CaseDefinitionHistoryAggregate)wf.Clone());
+        }
+
+        public void Delete(CaseDefinition workflowDefinition)
+        {
+            _caseDefinitions.Remove(_caseDefinitions.First(c => c.Id == workflowDefinition.Id));
         }
 
         public Task<int> SaveChanges()

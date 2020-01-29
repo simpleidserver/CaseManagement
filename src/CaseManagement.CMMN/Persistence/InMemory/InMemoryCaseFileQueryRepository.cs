@@ -2,6 +2,8 @@
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,11 +16,13 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         {
             { "id", "Id" },
             { "name", "Name" },
-            { "description", "Description" }
+            { "description", "Description" },
+            { "create_datetime", "CreateDateTime" },
+            { "update_datetime", "UpdateDateTime" }
         };
-        private ICollection<CaseFileDefinitionAggregate> _caseFileDefinitions;
+        private ConcurrentBag<CaseFileDefinitionAggregate> _caseFileDefinitions;
 
-        public InMemoryCaseFileQueryRepository(ICollection<CaseFileDefinitionAggregate> caseFileDefinitions)
+        public InMemoryCaseFileQueryRepository(ConcurrentBag<CaseFileDefinitionAggregate> caseFileDefinitions)
         {
             _caseFileDefinitions = caseFileDefinitions;
         }
@@ -34,6 +38,16 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             if (MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+            }
+
+            if (!string.IsNullOrWhiteSpace(parameter.Owner))
+            {
+                result = result.Where(r => r.Owner == parameter.Owner);
+            }
+
+            if (!string.IsNullOrWhiteSpace(parameter.Text))
+            {
+                result = result.Where(r => r.Name.IndexOf(parameter.Text, StringComparison.InvariantCultureIgnoreCase) >= 0);
             }
 
             int totalLength = result.Count();

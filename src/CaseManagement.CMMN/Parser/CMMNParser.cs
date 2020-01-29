@@ -17,11 +17,17 @@ namespace CaseManagement.CMMN.Parser
             var fileName = Path.GetFileName(path);
             var result = new List<CaseDefinition>();
             var definitions = ParseWSDL(cmmnTxt);
-            foreach(var cmmnCase in definitions.@case)
+            return ExtractWorkflowDefinition(definitions, fileName);
+        }
+
+        public static ICollection<CaseDefinition> ExtractWorkflowDefinition(tDefinitions definitions, string caseFileId)
+        {
+            var result = new List<CaseDefinition>();
+            foreach (var cmmnCase in definitions.@case)
             {
-                result.Add(BuildWorkflowDefinition(cmmnCase, definitions, fileName));
+                result.Add(BuildWorkflowDefinition(cmmnCase, definitions, caseFileId));
             }
-            
+
             return result;
         }
 
@@ -53,7 +59,7 @@ namespace CaseManagement.CMMN.Parser
         {
             var planModel = tCase.casePlanModel;
             var planItems = BuildPlanItems(planModel);
-            var builder = WorkflowBuilder.New(Guid.NewGuid().ToString(), tCase.casePlanModel.name);
+            var builder = WorkflowBuilder.New(tCase.casePlanModel.id, tCase.casePlanModel.name);
             if (tCase.caseFileModel != null)
             {
                 foreach(var caseFileItem in tCase.caseFileModel.caseFileItem)

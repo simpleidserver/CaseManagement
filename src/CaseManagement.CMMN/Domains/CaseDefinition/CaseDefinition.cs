@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class CaseDefinition
+    public class CaseDefinition : ICloneable
     {
         public CaseDefinition(string id, string name, string description, ICollection<CaseElementDefinition> elements)
         {
@@ -13,7 +13,6 @@ namespace CaseManagement.CMMN.Domains
             Description = description;
             Elements = elements;
             ExitCriterias = new List<Criteria>();
-            CaseInstanceIds = new List<string>();
         }
         
         public string Id { get; set; }
@@ -21,7 +20,6 @@ namespace CaseManagement.CMMN.Domains
         public string Description { get; set; }
         public string CaseOwner { get; set; }
         public string CaseFileId { get; set; }
-        public ICollection<string> CaseInstanceIds { get; set; }
         public DateTime CreateDateTime { get; set; }
         public ICollection<Criteria> ExitCriterias { get; set; }
         public ICollection<CaseElementDefinition> Elements { get; set; }
@@ -61,6 +59,33 @@ namespace CaseManagement.CMMN.Domains
             }
 
             return null;
+        }
+
+        public object Clone()
+        {
+            return new CaseDefinition(Id, Name, Description, Elements.Select(e => (CaseElementDefinition)e.Clone()).ToList())
+            {
+                CaseFileId = CaseFileId,
+                CaseOwner = CaseOwner,
+                ExitCriterias = ExitCriterias.Select(e => (Criteria)e.Clone()).ToList(),
+                CreateDateTime = CreateDateTime
+            };
+        }
+
+        public override bool Equals(object obj)
+        {
+            var target = obj as CaseDefinition;
+            if (target == null)
+            {
+                return false;
+            }
+
+            return target.GetHashCode() == GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
         }
     }
 }
