@@ -96,6 +96,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpPut("{id}")]
+        [Authorize("update_casefile")]
         public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
         {
             try

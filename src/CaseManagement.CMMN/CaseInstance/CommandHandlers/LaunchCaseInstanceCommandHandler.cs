@@ -25,6 +25,11 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             {
                 throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CaseInstanceId);
             }
+
+            if (caseInstance.CaseOwner != launchCaseInstanceCommand.NameIdentifier)
+            {
+                throw new UnauthorizedCaseWorkerException(launchCaseInstanceCommand.NameIdentifier, caseInstance.Id, null);
+            }
             
             await _queueProvider.QueueLaunchProcess(caseInstance.Id);
         }

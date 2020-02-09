@@ -7,5 +7,6 @@ namespace CaseManagement.CMMN.CaseInstance.Commands
     {
         [DataMember(Name = "case_definition_id")]
         public string CaseDefinitionId { get; set; }
+        public string NameIdentifier { get; set; }
     }
 }

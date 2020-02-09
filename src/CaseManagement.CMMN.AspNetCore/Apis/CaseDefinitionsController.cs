@@ -81,14 +81,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 { "start_index", resp.StartIndex },
                 { "total_length", resp.TotalLength },
                 { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => new JObject
-                {
-                    { "id", r.Id },
-                    { "name", r.Name },
-                    { "description", r.Description },
-                    { "case_file", r.CaseFileId },
-                    { "create_datetime", r.CreateDateTime }
-                })) }
+                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
             };
         }
 
@@ -124,6 +117,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         {
             string caseFile;
             string text;
+            string caseOwner;
             var parameter = new FindWorkflowDefinitionsParameter();
             parameter.ExtractFindParameter(query);
             if (query.TryGet("case_file", out caseFile))
@@ -134,6 +128,11 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             if (query.TryGet("text", out text))
             {
                 parameter.Text = text;
+            }
+
+            if (query.TryGet("owner", out caseOwner))
+            {
+                parameter.CaseOwner = caseOwner;
             }
 
             return parameter;

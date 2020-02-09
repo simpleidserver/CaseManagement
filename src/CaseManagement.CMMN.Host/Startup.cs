@@ -62,6 +62,9 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("get_performance", p => p.RequireRole("admin"));
                 policy.AddPolicy("get_casedefinition", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("add_casefile", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("update_casefile", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("add_case_instance", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("launch_case_intance", p => p.RequireRole("businessanalyst"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()

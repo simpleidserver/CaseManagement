@@ -37,6 +37,7 @@ namespace CaseManagement.CMMN.Domains
         }
 
         public string CaseDefinitionId { get; set; }
+        public string CaseOwner { get; set; }
         public DateTime CreateDateTime { get; set; }
         public string State { get; set; }
         public CaseInstanceExecutionContext ExecutionContext { get; set; }
@@ -1015,7 +1016,8 @@ namespace CaseManagement.CMMN.Domains
                 Version = Version,
                 CaseDefinitionId = CaseDefinitionId,
                 WorkflowElementInstances = WorkflowElementInstances == null ? null : WorkflowElementInstances.Select(w => (CaseElementInstance)w.Clone()).ToList(),
-                ElementPlanificationLst = ElementPlanificationLst.Select(w => (CaseElementInstancePlanification)w.Clone()).ToList()
+                ElementPlanificationLst = ElementPlanificationLst.Select(w => (CaseElementInstancePlanification)w.Clone()).ToList(),
+                CaseOwner = CaseOwner
             };
         }
 

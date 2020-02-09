@@ -81,16 +81,25 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
 
         [HttpPost]
+        [Authorize("add_case_instance")]
         public async Task<IActionResult> Create([FromBody] CreateCaseInstanceCommand createCaseInstance)
         {
             try
             {
+                createCaseInstance.NameIdentifier = this.GetNameIdentifier();
                 var result = await _createCaseInstanceCommandHandler.Handle(createCaseInstance);
                 return new ContentResult
                 {
                     StatusCode = (int)HttpStatusCode.Created,
                     Content = ToDto(result).ToString()
                 };
+            }
+            catch(UnauthorizedCaseWorkerException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "unauthorized_request", "you're not authorized to create the case instance" }
+                }, HttpStatusCode.Unauthorized, Request);
             }
             catch (UnknownCaseDefinitionException)
             {
@@ -102,12 +111,20 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
         
         [HttpGet("{id}/launch")]
+        [Authorize("launch_case_intance")]
         public async Task<IActionResult> Launch(string id)
         {
             try
             {
-                await _launchCaseInstanceCommandHandler.Handle(new LaunchCaseInstanceCommand { CaseInstanceId = id });
+                await _launchCaseInstanceCommandHandler.Handle(new LaunchCaseInstanceCommand { CaseInstanceId = id, NameIdentifier = this.GetNameIdentifier() });
                 return new OkResult();
+            }
+            catch (UnauthorizedCaseWorkerException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "unauthorized_request", "you're not authorized to launch the case instance" }
+                }, HttpStatusCode.Unauthorized, Request);
             }
             catch (UnknownCaseInstanceException)
             {

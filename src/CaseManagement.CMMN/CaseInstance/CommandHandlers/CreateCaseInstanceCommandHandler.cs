@@ -24,8 +24,14 @@ namespace CaseManagement.CMMN.CaseInstance.CommandHandlers
             {
                 throw new UnknownCaseDefinitionException();
             }
+
+            if (workflowDefinition.CaseOwner != command.NameIdentifier)
+            {
+                throw new UnauthorizedCaseWorkerException(command.NameIdentifier, null, null);
+            }
             
             var workflowInstance = Domains.CaseInstance.New(workflowDefinition);
+            workflowInstance.CaseOwner = command.NameIdentifier;
             await _commitAggregateHelper.Commit(workflowInstance, workflowInstance.GetStreamName());
             return workflowInstance;
         }
