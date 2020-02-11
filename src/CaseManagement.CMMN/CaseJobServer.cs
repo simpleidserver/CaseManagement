@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Infrastructures.Bus;
+﻿using CaseManagement.CMMN.Infrastructures;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace CaseManagement.CMMN
     {
         private readonly Action<CMMNServerOptions> _action;
         private readonly IServiceCollection _serviceCollection;
-        private IEnumerable<IMessageConsumer> _messageConsumers;
+        private IEnumerable<IJob> _jobs;
 
         public CaseJobServer(IServiceCollection serviceCollection)
         {
@@ -35,8 +35,8 @@ namespace CaseManagement.CMMN
 
             _serviceCollection.AddLogging();
             var serviceProvider = _serviceCollection.BuildServiceProvider();
-            _messageConsumers = serviceProvider.GetServices<IMessageConsumer>();
-            foreach(var messageConsumer in _messageConsumers)
+            _jobs = serviceProvider.GetServices<IJob>();
+            foreach(var messageConsumer in _jobs)
             {
                 messageConsumer.Start();
             }
@@ -44,7 +44,7 @@ namespace CaseManagement.CMMN
 
         public void Stop()
         {
-            foreach(var messageConsumer in _messageConsumers)
+            foreach(var messageConsumer in _jobs)
             {
                 messageConsumer.Stop();
             }

@@ -1,9 +1,9 @@
 import { RouterModule } from '@angular/router';
-import { ListCaseDefinitionsComponent } from './list/list.component';
-import { ViewCaseDefinitionComponent } from './view/view.component';
+import { ListCaseInstancesComponent } from './list/list.component';
+import { ViewCaseInstanceComponent } from './view/view.component';
 var routes = [
-    { path: '', component: ListCaseDefinitionsComponent },
-    { path: ':id', component: ViewCaseDefinitionComponent }
+    { path: '', component: ListCaseInstancesComponent },
+    { path: ':id', component: ViewCaseInstanceComponent }
 ];
-export var CaseDefinitionsRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=casedefinitions.routes.js.map
+export var CaseInstancesRoutes = RouterModule.forChild(routes);
+//# sourceMappingURL=caseinstances.routes.js.map

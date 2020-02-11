@@ -1,6 +1,6 @@
-﻿using CaseManagement.CMMN.CaseInstance.Exceptions;
-using CaseManagement.CMMN.CaseInstance.Processors;
-using CaseManagement.CMMN.CaseInstance.Processors.Listeners;
+﻿using CaseManagement.CMMN.CasePlanInstance.Exceptions;
+using CaseManagement.CMMN.CasePlanInstance.Processors;
+using CaseManagement.CMMN.CasePlanInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
 using Microsoft.Extensions.Logging;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static CaseManagement.CMMN.CaseInstance.Processors.Listeners.CMMNCriterionListener;
+using static CaseManagement.CMMN.CasePlanInstance.Processors.Listeners.CriteriaListener;
 
 namespace CaseManagement.CMMN.Infrastructures
 {
@@ -24,7 +24,7 @@ namespace CaseManagement.CMMN.Infrastructures
             _cmmnPlanItemProcessors = cmmnPlanItemProcessors;
         }
 
-        public Task Start(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, CancellationToken cancellationToken)
+        public Task Start(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var cancellationTokenSource = new CancellationTokenSource();
@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.Infrastructures
             return task;
         }
 
-        public Task Reactivate(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, CancellationToken cancellationToken)
+        public Task Reactivate(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var cancellationTokenSource = new CancellationTokenSource();
@@ -42,41 +42,11 @@ namespace CaseManagement.CMMN.Infrastructures
             return task;
         }
 
-        private void HandleTask(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, CancellationTokenSource cancellationTokenSource, bool reactivate = false)
+        private void HandleTask(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, CancellationTokenSource cancellationTokenSource, bool reactivate = false)
         {
             bool continueExecution = true;
             bool isSuspend = false;
-            var evtHandler = new EventHandler<DomainEventArgs>((sender, e) =>
-            {
-                var evt = e.DomainEvt as CaseElementPlanificationConfirmedEvent;
-                if (evt == null)
-                {
-                    return;
-                }
-
-                var elt = workflowDefinition.GetElement(evt.CaseElementDefinitionId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var thread = new Thread(() =>
-                {
-                    while (isSuspend)
-                    {
-                        Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
-                        if (!continueExecution)
-                        {
-                            return;
-                        }
-                    }
-
-                    workflowInstance.CreateWorkflowElementInstance(elt);
-                });
-                thread.Start();
-            });
-            workflowInstance.EventRaised += evtHandler;
-            var suspendListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Suspend, () =>
+            var suspendListener = CasePlanInstanceTransitionListener.Listen(workflowInstance, CMMNTransitions.Suspend, () =>
             {
                 lock (workflowInstance.WorkflowElementInstances)
                 {
@@ -89,7 +59,7 @@ namespace CaseManagement.CMMN.Infrastructures
                     isSuspend = true;
                 }
             });
-            var resumeListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Resume, () =>
+            var resumeListener = CasePlanInstanceTransitionListener.Listen(workflowInstance, CMMNTransitions.Resume, () =>
             {
                 lock(workflowInstance.WorkflowElementInstances)
                 {
@@ -102,7 +72,7 @@ namespace CaseManagement.CMMN.Infrastructures
                     isSuspend = false;
                 }
             });
-            var terminateListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Terminate, () =>
+            var terminateListener = CasePlanInstanceTransitionListener.Listen(workflowInstance, CMMNTransitions.Terminate, () =>
             {
                 lock(workflowInstance.WorkflowElementInstances)
                 {
@@ -115,7 +85,7 @@ namespace CaseManagement.CMMN.Infrastructures
                     continueExecution = false;
                 }
             });
-            var closeListener = CMMNCaseTransitionListener.Listen(workflowInstance, CMMNTransitions.Close, () =>
+            var closeListener = CasePlanInstanceTransitionListener.Listen(workflowInstance, CMMNTransitions.Close, () =>
             {
                 lock (workflowInstance.WorkflowElementInstances)
                 {
@@ -131,7 +101,7 @@ namespace CaseManagement.CMMN.Infrastructures
             KeyValuePair<Task, CriterionListener>? kvp = null;
             try
             {
-                kvp = CMMNCriterionListener.ListenExitCriterias(new ProcessorParameter(null, workflowInstance, new CaseElementInstance(null, DateTime.UtcNow, null, CaseElementTypes.Stage, 0, null)), workflowDefinition.ExitCriterias.ToList(), cancellationTokenSource.Token);
+                kvp = CriteriaListener.ListenExitCriterias(new ProcessorParameter(null, workflowInstance, new CaseElementInstance(null, DateTime.UtcNow, null, CaseElementTypes.Stage, 0, null)), workflowDefinition.ExitCriterias.ToList(), cancellationTokenSource.Token);
                 if (kvp != null)
                 {
                     kvp.Value.Key.ContinueWith((r) =>
@@ -178,36 +148,13 @@ namespace CaseManagement.CMMN.Infrastructures
             }
             else
             {
-                foreach (var element in workflowDefinition.Elements.Where(e => !e.IsDiscrete()))
+                foreach (var element in workflowDefinition.Elements)
                 {
                     workflowInstance.CreateWorkflowElementInstance(element);
                 }
             }
 
-            foreach(var element in workflowDefinition.Elements.Where(e => e.IsDiscrete()))
-            {
-                if (workflowInstance.IsPlanned(element.Id))
-                {
-                    if (workflowInstance.GetLastWorkflowElementInstance(element.Id) == null)
-                    {
-                        workflowInstance.CreateWorkflowElementInstance(element);
-                    }
-                }
-                else if (!workflowInstance.IsInPlanning(element.Id))
-                {
-                    workflowInstance.CreateTableItem(element.Id, element.TableItem.AuthorizedRoleRef);
-                }
-            }
-
-            var children = workflowDefinition.Elements.Where(c => !c.IsDiscrete()).Select(e => e.Id).ToList();
-            foreach(var child in workflowDefinition.Elements.Where(c => c.IsDiscrete()).Select(c => c.Id))
-            {
-                if (workflowInstance.IsPlanned(child))
-                {
-                    children.Add(child);
-                }
-            }
-
+            var children = workflowDefinition.Elements.Select(e => e.Id).ToList();
             while (continueExecution)
             {
                 Thread.Sleep(CMMNConstants.WAIT_INTERVAL_MS);
@@ -241,7 +188,6 @@ namespace CaseManagement.CMMN.Infrastructures
                 }
             }
 
-            workflowInstance.EventRaised -= evtHandler;
             closeListener.Unsubscribe();
             resumeListener.Unsubscribe();
             suspendListener.Unsubscribe();
@@ -262,12 +208,12 @@ namespace CaseManagement.CMMN.Infrastructures
 
         private class CreateListener
         {
-            private readonly CaseDefinition _workflowDefinition;
-            private readonly Domains.CaseInstance _workflowInstance;
+            private readonly CasePlanAggregate _workflowDefinition;
+            private readonly Domains.CasePlanInstanceAggregate _workflowInstance;
             private readonly IEnumerable<IProcessor> _processors;
             private readonly CancellationToken _token;
 
-            public CreateListener(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, IEnumerable<IProcessor> processors, CancellationToken token)
+            public CreateListener(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, IEnumerable<IProcessor> processors, CancellationToken token)
             {
                 _workflowDefinition = workflowDefinition;
                 _workflowInstance = workflowInstance;
@@ -326,10 +272,10 @@ namespace CaseManagement.CMMN.Infrastructures
 
         private class RepetitionListener
         {
-            private readonly CaseDefinition _workflowDefinition;
-            private readonly Domains.CaseInstance _workflowInstance;
+            private readonly CasePlanAggregate _workflowDefinition;
+            private readonly Domains.CasePlanInstanceAggregate _workflowInstance;
 
-            public RepetitionListener(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance)
+            public RepetitionListener(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance)
             {
                 _workflowDefinition = workflowDefinition;
                 _workflowInstance = workflowInstance;

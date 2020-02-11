@@ -1,19 +1,18 @@
-var CaseActivation = (function () {
-    function CaseActivation() {
+var CaseFileItem = (function () {
+    function CaseFileItem() {
     }
-    CaseActivation.fromJson = function (json) {
-        var result = new CaseActivation();
-        result.CaseDefinitionId = json["case_definition_id"];
+    CaseFileItem.fromJson = function (json) {
+        var result = new CaseFileItem();
+        result.ElementDefinitionId = json["element_definition_id"];
+        result.ElementInstanceId = json["element_instance_id"];
         result.CaseInstanceId = json["case_instance_id"];
-        result.CaseInstanceName = json["case_instance_name"];
-        result.CaseElementId = json["case_element_id"];
-        result.CaseElementInstanceId = json["case_element_instance_id"];
-        result.CaseElementName = json["case_element_name"];
+        result.Value = json["value"];
+        result.Id = json["id"];
+        result.Type = json["type"];
         result.CreateDateTime = json["create_datetime"];
-        result.Performer = json["performer"];
         return result;
     };
-    return CaseActivation;
+    return CaseFileItem;
 }());
-export { CaseActivation };
-//# sourceMappingURL=case-activation.model.js.map
+export { CaseFileItem };
+//# sourceMappingURL=case-file-item.model.js.map

@@ -60,35 +60,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             return new OkObjectResult(ToDto(result));
         }
 
-        [HttpGet("performances")]
-        [Authorize("get_performance")]
-        public async Task<IActionResult> GetPerformances()
-        {
-            var result = await _statisticQueryRepository.GetMachineNames();
-            return new OkObjectResult(result);
-        }
-
-        [HttpGet("performances/search")]
-        [Authorize("get_performance")]
-        public async Task<IActionResult> SearchPerformances()
-        {
-            var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _statisticQueryRepository.FindPerformanceStatistics(ExtractFindPerformanceParameter(query));
-            return new OkObjectResult(ToDto(result));
-        }
-
         private static JObject ToDto(FindResponse<DailyStatisticAggregate> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
-            };
-        }
-
-        private static JObject ToDto(FindResponse<PerformanceStatisticAggregate> resp)
         {
             return new JObject
             {
@@ -117,17 +89,6 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             };
         }
 
-        private static JObject ToDto(PerformanceStatisticAggregate performanceStatistic)
-        {
-            return new JObject
-            {
-                { "datetime", performanceStatistic.CaptureDateTime },
-                { "machine_name", performanceStatistic.MachineName },
-                { "nb_working_threads", performanceStatistic.NbWorkingThreads },
-                { "memory_consumed_mb", performanceStatistic.MemoryConsumedMB }
-            };
-        }
-
         private static FindDailyStatisticsParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
             DateTime startDateTime;
@@ -142,31 +103,6 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             if (query.TryGet("end_datetime", out endDateTime))
             {
                 parameter.EndDateTime = endDateTime;
-            }
-
-            return parameter;
-        }
-
-        private static FindPerformanceStatisticsParameter ExtractFindPerformanceParameter(IEnumerable<KeyValuePair<string, string>> query)
-        {
-            string machineName;
-            DateTime startDateTime;
-            string groupBy;
-            var parameter = new FindPerformanceStatisticsParameter();
-            parameter.ExtractFindParameter(query);
-            if (query.TryGet("machine_name", out machineName))
-            {
-                parameter.MachineName = machineName;
-            }
-
-            if (query.TryGet("start_datetime", out startDateTime))
-            {
-                parameter.StartDateTime = startDateTime;
-            }
-
-            if (query.TryGet("group_by", out groupBy))
-            {
-                parameter.GroupBy = groupBy;
             }
 
             return parameter;

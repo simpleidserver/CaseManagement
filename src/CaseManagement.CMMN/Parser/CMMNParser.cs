@@ -11,21 +11,12 @@ namespace CaseManagement.CMMN.Parser
 {
     public class CMMNParser
     {
-        public static ICollection<CaseDefinition> ExtractWorkflowDefinition(string path)
+        public static ICollection<CasePlanAggregate> ExtractCasePlans(tDefinitions definitions, CaseFileAggregate caseFile)
         {
-            var cmmnTxt = File.ReadAllText(path);
-            var fileName = Path.GetFileName(path);
-            var result = new List<CaseDefinition>();
-            var definitions = ParseWSDL(cmmnTxt);
-            return ExtractWorkflowDefinition(definitions, fileName);
-        }
-
-        public static ICollection<CaseDefinition> ExtractWorkflowDefinition(tDefinitions definitions, string caseFileId)
-        {
-            var result = new List<CaseDefinition>();
+            var result = new List<CasePlanAggregate>();
             foreach (var cmmnCase in definitions.@case)
             {
-                result.Add(BuildWorkflowDefinition(cmmnCase, definitions, caseFileId));
+                result.Add(BuildWorkflowDefinition(cmmnCase, definitions, caseFile));
             }
 
             return result;
@@ -55,11 +46,11 @@ namespace CaseManagement.CMMN.Parser
             return strBuilder.ToString();
         }
 
-        private static CaseDefinition BuildWorkflowDefinition(tCase tCase, tDefinitions definitions, string caseFileId)
+        private static CasePlanAggregate BuildWorkflowDefinition(tCase tCase, tDefinitions definitions, CaseFileAggregate caseFile)
         {
             var planModel = tCase.casePlanModel;
             var planItems = BuildPlanItems(planModel);
-            var builder = WorkflowBuilder.New(tCase.casePlanModel.id, tCase.casePlanModel.name);
+            var builder = WorkflowBuilder.New(tCase.casePlanModel.id, tCase.casePlanModel.name, string.Empty, caseFile);
             if (tCase.caseFileModel != null)
             {
                 foreach(var caseFileItem in tCase.caseFileModel.caseFileItem)
@@ -77,9 +68,8 @@ namespace CaseManagement.CMMN.Parser
                 builder.AddCMMNPlanItem(planItem);
             }
             
-            builder.SetCaseOwner(tCase.caseOwner);
+            builder.SetCaseOwner(caseFile.Owner);
             var result = builder.Build();
-            result.CaseFileId = caseFileId;
             return result;
         }
         

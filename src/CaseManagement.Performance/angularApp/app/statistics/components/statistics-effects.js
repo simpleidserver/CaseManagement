@@ -15,7 +15,7 @@ import { Observable } from 'rxjs/Rx';
 import { CaseDefinitionsService } from '../services/casedefinitions.service';
 import { CaseFilesService } from '../services/casefiles.service';
 import { StatisticService } from '../services/statistic.service';
-import { ActionTypes } from './home-actions';
+import { ActionTypes } from './statistics-actions';
 function getFirstDayOfMonth() {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     return getDate(new Date(y, m, 1));
@@ -28,8 +28,8 @@ function getCurrentMonday() {
 function getDate(d) {
     return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
 }
-var HomeEffects = (function () {
-    function HomeEffects(actions$, statisticService, caseDefinitionsService, caseFilesService) {
+var StatisticsEffects = (function () {
+    function StatisticsEffects(actions$, statisticService, caseDefinitionsService, caseFilesService) {
         var _this = this;
         this.actions$ = actions$;
         this.statisticService = statisticService;
@@ -60,27 +60,27 @@ var HomeEffects = (function () {
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], HomeEffects.prototype, "loadStatistic", void 0);
+    ], StatisticsEffects.prototype, "loadStatistic", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], HomeEffects.prototype, "searchWeekStatistics", void 0);
+    ], StatisticsEffects.prototype, "searchWeekStatistics", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], HomeEffects.prototype, "searchMonthStatistics", void 0);
+    ], StatisticsEffects.prototype, "searchMonthStatistics", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], HomeEffects.prototype, "loadDeployed", void 0);
-    HomeEffects = __decorate([
+    ], StatisticsEffects.prototype, "loadDeployed", void 0);
+    StatisticsEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
             StatisticService,
             CaseDefinitionsService,
             CaseFilesService])
-    ], HomeEffects);
-    return HomeEffects;
+    ], StatisticsEffects);
+    return StatisticsEffects;
 }());
-export { HomeEffects };
-//# sourceMappingURL=home-effects.js.map
+export { StatisticsEffects };
+//# sourceMappingURL=statistics-effects.js.map

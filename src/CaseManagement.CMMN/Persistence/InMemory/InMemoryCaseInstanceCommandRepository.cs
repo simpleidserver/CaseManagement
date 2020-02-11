@@ -5,25 +5,25 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
 {
-    public class InMemoryCaseInstanceCommandRepository : ICaseInstanceCommandRepository
+    public class InMemoryCaseInstanceCommandRepository : ICasePlanInstanceCommandRepository
     {
-        private ConcurrentBag<Domains.CaseInstance> _instances;
+        private ConcurrentBag<Domains.CasePlanInstanceAggregate> _instances;
 
-        public InMemoryCaseInstanceCommandRepository(ConcurrentBag<Domains.CaseInstance> instances)
+        public InMemoryCaseInstanceCommandRepository(ConcurrentBag<Domains.CasePlanInstanceAggregate> instances)
         {
             _instances = instances;
         }
 
-        public void Add(Domains.CaseInstance workflowInstance)
+        public void Add(Domains.CasePlanInstanceAggregate workflowInstance)
         {
-            _instances.Add((Domains.CaseInstance)workflowInstance.Clone());
+            _instances.Add((Domains.CasePlanInstanceAggregate)workflowInstance.Clone());
         }
 
-        public void Update(Domains.CaseInstance workflowInstance)
+        public void Update(Domains.CasePlanInstanceAggregate workflowInstance)
         {
             var instance = _instances.First(i => i.Id == workflowInstance.Id);
             _instances.Remove(instance);
-            _instances.Add((Domains.CaseInstance)workflowInstance.Clone());
+            _instances.Add((Domains.CasePlanInstanceAggregate)workflowInstance.Clone());
         }
 
         public Task<int> SaveChanges()

@@ -2,7 +2,7 @@
 <cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:case="https://github.com/simpleidserver/CaseManagement" id="caseWithCaseFileItem" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
   <cmmn:caseFileItemDefinition id="CaseFileItemDefinition_1gxrx35" name="Document" definitionType="https://github.com/simpleidserver/casemanagement/directory" />
   <cmmn:case id="testCase" name="One Process Task Case">
-    <cmmn:casePlanModel id="CasePlanModel_1" name="Case with two stages">
+    <cmmn:casePlanModel id="CaseWithTwoStages" name="Case with two stages">
       <cmmn:planItem id="PlanItem_1291396" definitionRef="Stage_11w2ejg" />
       <cmmn:planItem id="PlanItem_0ctfxhw" definitionRef="Stage_0g6dn20">
         <cmmn:entryCriterion id="EntryCriterion_04sy0mh" sentryRef="Sentry_01n2xjp" />

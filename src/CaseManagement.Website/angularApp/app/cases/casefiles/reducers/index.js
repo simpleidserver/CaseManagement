@@ -1,22 +1,22 @@
-export var ActionTypes;
-(function (ActionTypes) {
-    ActionTypes["CASEDEFINITIONSLOAD"] = "[CaseDefinitions] Load";
-    ActionTypes["CASEDEFINITIONSLOADED"] = "[CaseDefinitions] Loaded";
-    ActionTypes["ERRORLOADCASEDEFINITIONS"] = "[CaseDefinitions] Error Load";
-})(ActionTypes || (ActionTypes = {}));
-var LoadCaseDefinitionsAction = (function () {
-    function LoadCaseDefinitionsAction() {
-        this.type = ActionTypes.CASEDEFINITIONSLOAD;
+import { createSelector } from '@ngrx/store';
+import * as fromGet from './get.reducer';
+import * as fromSearch from './search.reducer';
+export var selectSearch = function (state) { return state.search; };
+export var selectGet = function (state) { return state.get; };
+export var selectSearchResults = createSelector(selectSearch, function (state) {
+    if (!state || state.content == null) {
+        return [];
     }
-    return LoadCaseDefinitionsAction;
-}());
-export { LoadCaseDefinitionsAction };
-var CaseDefinitionsLoadedAction = (function () {
-    function CaseDefinitionsLoadedAction(result) {
-        this.result = result;
-        this.type = ActionTypes.CASEDEFINITIONSLOADED;
+    return state.content.Content;
+});
+export var selectGetResult = createSelector(selectGet, function (state) {
+    if (!state) {
+        return null;
     }
-    return CaseDefinitionsLoadedAction;
-}());
-export { CaseDefinitionsLoadedAction };
-//# sourceMappingURL=list-actions.js.map
+    return state.content;
+});
+export var appReducer = {
+    search: fromSearch.searchReducer,
+    get: fromGet.getReducer
+};
+//# sourceMappingURL=index.js.map

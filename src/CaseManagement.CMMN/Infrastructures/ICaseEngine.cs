@@ -6,7 +6,7 @@ namespace CaseManagement.CMMN.Infrastructures
 {
     public interface ICaseEngine
     {
-        Task Start(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, CancellationToken cancellationToken);
-        Task Reactivate(CaseDefinition workflowDefinition, Domains.CaseInstance workflowInstance, CancellationToken cancellationToken);
+        Task Start(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken cancellationToken);
+        Task Reactivate(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken cancellationToken);
     }
 }

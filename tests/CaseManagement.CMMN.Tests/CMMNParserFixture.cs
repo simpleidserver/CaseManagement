@@ -1,4 +1,5 @@
-﻿using CaseManagement.CMMN.Parser;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Parser;
 using System.IO;
 using Xunit;
 
@@ -14,11 +15,12 @@ namespace CaseManagement.CMMN.Tests
             var thirdPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneManualActivationTask.cmmn");
             var fourthPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneSEntry.cmmn");
             var fifthPath = Path.Combine(Directory.GetCurrentDirectory(), "Cmmns", "CaseWithOneDiscretionaryItem.cmmn");
-            var firstResult = CMMNParser.ExtractWorkflowDefinition(firstPath);
-            var secondResult = CMMNParser.ExtractWorkflowDefinition(secondPath);
-            var thirdResult = CMMNParser.ExtractWorkflowDefinition(thirdPath);
-            var fourthResult = CMMNParser.ExtractWorkflowDefinition(fourthPath);
-            var fifthResult = CMMNParser.ExtractWorkflowDefinition(fifthPath);
+            var caseFile = new CaseFileAggregate();
+            var firstResult = CMMNParser.ExtractCasePlans(CMMNParser.ParseWSDL(File.ReadAllText(firstPath)), caseFile);
+            var secondResult = CMMNParser.ExtractCasePlans(CMMNParser.ParseWSDL(File.ReadAllText(secondPath)), caseFile);
+            var thirdResult = CMMNParser.ExtractCasePlans(CMMNParser.ParseWSDL(File.ReadAllText(thirdPath)), caseFile);
+            var fourthResult = CMMNParser.ExtractCasePlans(CMMNParser.ParseWSDL(File.ReadAllText(fourthPath)), caseFile);
+            var fifthResult = CMMNParser.ExtractCasePlans(CMMNParser.ParseWSDL(File.ReadAllText(fifthPath)), caseFile);
             Assert.NotNull(firstResult);
             Assert.NotNull(secondResult);
             Assert.NotNull(thirdResult);

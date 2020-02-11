@@ -1,7 +1,7 @@
 import { RouterModule } from '@angular/router';
 import { HomeComponent } from './components/home.component';
 var routes = [
-    { path: 'home', component: HomeComponent }
+    { path: '', component: HomeComponent }
 ];
 export var HomeRoutes = RouterModule.forChild(routes);
 //# sourceMappingURL=home.routes.js.map

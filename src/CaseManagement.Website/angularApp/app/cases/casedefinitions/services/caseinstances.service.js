@@ -10,16 +10,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { CaseFile } from '../models/case-file.model';
-import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
-var CaseFilesService = (function () {
-    function CaseFilesService(http) {
+import { SearchCaseInstancesResult } from '../models/search-case-instances.model';
+import { CaseInstance } from '../models/case-instance.model';
+import { OAuthService } from 'angular-oauth2-oidc';
+var CaseInstancesService = (function () {
+    function CaseInstancesService(http, oauthService) {
         this.http = http;
+        this.oauthService = oauthService;
     }
-    CaseFilesService.prototype.search = function (startIndex, count, order, direction) {
+    CaseInstancesService.prototype.search = function (caseDefinitionId, startIndex, count, order, direction) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = process.env.API_URL + "/case-files/.search?start_index=" + startIndex + "&count=" + count;
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-instances/search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -27,22 +30,77 @@ var CaseFilesService = (function () {
             targetUrl = targetUrl + "&order=" + direction;
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchCaseFilesResult.fromJson(res);
+            var result = SearchCaseInstancesResult.fromJson(res);
+            return result;
         }));
     };
-    CaseFilesService.prototype.get = function (id) {
+    CaseInstancesService.prototype.create = function (caseDefId) {
+        var request = JSON.stringify({ case_definition_id: caseDefId });
+        var targetUrl = process.env.API_URL + "/case-instances";
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = process.env.API_URL + "/case-files/" + id;
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return CaseFile.fromJson(res);
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        return this.http.post(targetUrl, request, { headers: headers }).pipe(map(function (res) {
+            return CaseInstance.fromJson(res);
         }));
     };
-    CaseFilesService = __decorate([
+    CaseInstancesService.prototype.launch = function (caseInstanceId) {
+        var targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/launch";
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        return this.http.get(targetUrl, { headers: headers });
+    };
+    CaseInstancesService.prototype.reactivateCaseInstance = function (caseInstanceId) {
+        var targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/reactivate";
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        return this.http.get(targetUrl, { headers: headers });
+    };
+    CaseInstancesService.prototype.suspendCaseInstance = function (caseInstanceId) {
+        var targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/suspend";
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        return this.http.get(targetUrl, { headers: headers });
+    };
+    CaseInstancesService.prototype.resumeCaseInstance = function (caseInstanceId) {
+        var targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/resume";
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        return this.http.get(targetUrl, { headers: headers });
+    };
+    CaseInstancesService.prototype.closeCaseInstance = function (caseInstanceId) {
+        var targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/close";
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        return this.http.get(targetUrl, { headers: headers });
+    };
+    CaseInstancesService.prototype.getCaseFileItems = function (caseInstanceId) {
+        var targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId + "/casefileitems";
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        return this.http.get(targetUrl, { headers: headers });
+    };
+    CaseInstancesService.prototype.get = function (caseInstanceId) {
+        var targetUrl = process.env.API_URL + "/case-instances/" + caseInstanceId;
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            var result = CaseInstance.fromJson(res);
+            return result;
+        }));
+    };
+    CaseInstancesService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [HttpClient])
-    ], CaseFilesService);
-    return CaseFilesService;
+        __metadata("design:paramtypes", [HttpClient, OAuthService])
+    ], CaseInstancesService);
+    return CaseInstancesService;
 }());
-export { CaseFilesService };
-//# sourceMappingURL=casefiles.service.js.map
+export { CaseInstancesService };
+//# sourceMappingURL=caseinstances.service.js.map

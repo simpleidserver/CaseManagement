@@ -57,23 +57,6 @@ namespace CaseManagement.CMMN.AspNet.Controllers
             return Ok(ToDto(result));
         }
 
-        [HttpGet]
-        [Route("performances")]
-        public async Task<IHttpActionResult> GetPerformances()
-        {
-            var result = await _statisticQueryRepository.GetMachineNames();
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("performances/search")]
-        public async Task<IHttpActionResult> SearchPerformances()
-        {
-            var query = this.Request.GetQueryNameValuePairs();
-            var result = await _statisticQueryRepository.FindPerformanceStatistics(ExtractFindPerformanceParameter(query));
-            return Ok(ToDto(result));
-        }
-
         private static JObject ToDto(FindResponse<DailyStatisticAggregate> resp)
         {
             return new JObject
@@ -84,7 +67,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
                 { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
             };
         }
-        private static JObject ToDto(FindResponse<PerformanceStatisticAggregate> resp)
+        private static JObject ToDto(FindResponse<PerformanceAggregate> resp)
         {
             return new JObject
             {
@@ -113,7 +96,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
             };
         }
 
-        private static JObject ToDto(PerformanceStatisticAggregate performanceStatistic)
+        private static JObject ToDto(PerformanceAggregate performanceStatistic)
         {
             return new JObject
             {
@@ -143,12 +126,12 @@ namespace CaseManagement.CMMN.AspNet.Controllers
             return parameter;
         }
 
-        private static FindPerformanceStatisticsParameter ExtractFindPerformanceParameter(IEnumerable<KeyValuePair<string, string>> query)
+        private static FindPerformanceParameter ExtractFindPerformanceParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
             string machineName;
             DateTime startDateTime;
             string groupBy;
-            var parameter = new FindPerformanceStatisticsParameter();
+            var parameter = new FindPerformanceParameter();
             parameter.ExtractFindParameter(query);
             if (query.TryGet("machine_name", out machineName))
             {

@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.CaseFile;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
@@ -55,7 +55,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
             return Ok(ToDto(result));
         }
 
-        private static JObject ToDto(FindResponse<CaseFileDefinitionAggregate> resp)
+        private static JObject ToDto(FindResponse<CaseFileAggregate> resp)
         {
             return new JObject
             {
@@ -73,7 +73,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
             };
         }
 
-        private static JObject ToDto(CaseFileDefinitionAggregate resp)
+        private static JObject ToDto(CaseFileAggregate resp)
         {
             return new JObject
             {
@@ -85,13 +85,13 @@ namespace CaseManagement.CMMN.AspNet.Apis
             };
         }
 
-        private static FindCaseDefinitionFilesParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
+        private static FindCaseFilesParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
             int startIndex;
             int count;
             string orderBy;
             FindOrders findOrder;
-            var parameter = new FindCaseDefinitionFilesParameter();
+            var parameter = new FindCaseFilesParameter();
             if (query.TryGet("start_index", out startIndex))
             {
                 parameter.StartIndex = startIndex;

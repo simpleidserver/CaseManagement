@@ -5,7 +5,7 @@
     <cmmn:caseFileModel id="CaseFileModel_0kx68dd">
       <cmmn:caseFileItem id="CaseFileItem_05yrrad" definitionRef="CaseFileItemDefinition_15j8b12" />
     </cmmn:caseFileModel>
-    <cmmn:casePlanModel id="CasePlanModel_1" name="Case with one CaseFileItem">
+    <cmmn:casePlanModel id="CaseWithOneCaseFileItem" name="Case with one CaseFileItem">
       <cmmn:planItem id="PlanItem_0uxcsmm" definitionRef="Task_0o0sb1m">
         <cmmn:entryCriterion id="EntryCriterion_067zx53" sentryRef="Sentry_0zlsby7" />
       </cmmn:planItem>

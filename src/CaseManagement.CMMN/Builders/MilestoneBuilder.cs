@@ -4,7 +4,7 @@ namespace CaseManagement.CMMN.Builders
 {
     public class MilestoneBuilder : WorkflowElementBuilder
     {
-        public MilestoneBuilder(CaseElementDefinition workflowElementDef) : base(workflowElementDef)
+        public MilestoneBuilder(CasePlanElement workflowElementDef) : base(workflowElementDef)
         {
         }
     }

@@ -15,16 +15,17 @@ namespace CaseManagement.CMMN.Infrastructures.Bus
             _runningTasks = new List<RunningTask>();
         }
 
-        public int NbTasks()
-        {
-            return _runningTasks.Count();
-        }
-
         public void RemoveTask(string processId)
         {
             lock(_runningTasks)
             {
-                _runningTasks.Remove(_runningTasks.First(a => a.ProcessId == processId));
+                var runningTask = _runningTasks.FirstOrDefault(a => a.ProcessId == processId);
+                if (runningTask == null)
+                {
+                    return;
+                }
+
+                _runningTasks.Remove(runningTask);
             }
         }
 

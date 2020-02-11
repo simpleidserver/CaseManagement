@@ -1,35 +1,39 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { ActionTypes } from './list-actions';
-var initialCaseDefsAction = {
-    content: null,
-    isLoading: true,
-    isErrorLoadOccured: false
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-export function reducer(state, action) {
-    if (state === void 0) { state = initialCaseDefsAction; }
-    switch (action.type) {
-        case ActionTypes.CASEDEFINITIONSLOADED:
-            var caseDefsLoadedAction = action;
-            state.content = caseDefsLoadedAction.result;
-            state.isLoading = false;
-            state.isErrorLoadOccured = false;
-            return __assign({}, state);
-        case ActionTypes.ERRORLOADCASEDEFINITIONS:
-            state.isErrorLoadOccured = true;
-            state.isLoading = false;
-            return __assign({}, state);
-        default:
-            return state;
+import { Injectable } from '@angular/core';
+import { Actions, Effect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
+import { ActionTypes } from '../actions/case-activations';
+import { CaseActivationsService } from '../services/caseactivations.service';
+var CaseActivationsEffects = (function () {
+    function CaseActivationsEffects(actions$, caseActivationsService) {
+        var _this = this;
+        this.actions$ = actions$;
+        this.caseActivationsService = caseActivationsService;
+        this.loadCaseInstances$ = this.actions$
+            .pipe(ofType(ActionTypes.START_SEARCH), mergeMap(function (evt) {
+            return _this.caseActivationsService.search(evt.id, evt.startIndex, evt.count, evt.order, evt.direction)
+                .pipe(map(function (casefiles) { return { type: ActionTypes.COMPLETE_SEARCH, content: casefiles }; }), catchError(function () { return of({ type: ActionTypes.COMPLETE_SEARCH }); }));
+        }));
     }
-}
-//# sourceMappingURL=list-reducer.js.map
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], CaseActivationsEffects.prototype, "loadCaseInstances$", void 0);
+    CaseActivationsEffects = __decorate([
+        Injectable(),
+        __metadata("design:paramtypes", [Actions,
+            CaseActivationsService])
+    ], CaseActivationsEffects);
+    return CaseActivationsEffects;
+}());
+export { CaseActivationsEffects };
+//# sourceMappingURL=case-activations.js.map

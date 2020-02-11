@@ -9,40 +9,60 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { map } from 'rxjs/operators';
-import { CaseFile } from '../models/case-file.model';
-import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
-var CaseFilesService = (function () {
-    function CaseFilesService(http) {
+import { CaseDefinitionHistory } from '../models/case-definition-history.model';
+import { CaseDefinition } from '../models/case-definition.model';
+import { SearchCaseDefinitionsResult } from '../models/search-case-definitions-result.model';
+var CaseDefinitionsService = (function () {
+    function CaseDefinitionsService(http, oauthService) {
         this.http = http;
+        this.oauthService = oauthService;
     }
-    CaseFilesService.prototype.search = function (startIndex, count, order, direction) {
+    CaseDefinitionsService.prototype.search = function (startIndex, count, order, direction, text, owner) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = process.env.API_URL + "/case-files/.search?start_index=" + startIndex + "&count=" + count;
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-definitions/search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
         if (direction) {
             targetUrl = targetUrl + "&order=" + direction;
         }
+        if (text) {
+            targetUrl = targetUrl + "&text=" + text;
+        }
+        if (owner) {
+            targetUrl = targetUrl + "&owner=" + owner;
+        }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchCaseFilesResult.fromJson(res);
+            return SearchCaseDefinitionsResult.fromJson(res);
         }));
     };
-    CaseFilesService.prototype.get = function (id) {
+    CaseDefinitionsService.prototype.get = function (id) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = process.env.API_URL + "/case-files/" + id;
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-definitions/" + id;
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return CaseFile.fromJson(res);
+            return CaseDefinition.fromJson(res);
         }));
     };
-    CaseFilesService = __decorate([
+    CaseDefinitionsService.prototype.getHistory = function (id) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-definitions/" + id + "/history";
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            return CaseDefinitionHistory.fromJson(res);
+        }));
+    };
+    CaseDefinitionsService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [HttpClient])
-    ], CaseFilesService);
-    return CaseFilesService;
+        __metadata("design:paramtypes", [HttpClient, OAuthService])
+    ], CaseDefinitionsService);
+    return CaseDefinitionsService;
 }());
-export { CaseFilesService };
-//# sourceMappingURL=casefiles.service.js.map
+export { CaseDefinitionsService };
+//# sourceMappingURL=casedefinitions.service.js.map

@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.CaseInstance.Repositories;
-using CaseManagement.CMMN.CMIS;
+﻿using CaseManagement.CMMN.CMIS;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

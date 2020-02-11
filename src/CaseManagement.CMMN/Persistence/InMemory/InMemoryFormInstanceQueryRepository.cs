@@ -15,7 +15,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         {
             { "form_id", "FormId" },
             { "performer", "RoleId" },
-            { "case_instance_id", "CaseInstanceId" },
+            { "case_instance_id", "CasePlanInstanceId" },
             { "create_datetime", "CreateDateTime" },
             { "update_datetime", "UpdateDateTime" }
         };
@@ -37,12 +37,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             if (parameter.RoleIds != null && parameter.RoleIds.Any())
             {
-                result = result.Where(fi => parameter.RoleIds.Contains(fi.RoleId));
-            }
-
-            if (!string.IsNullOrWhiteSpace(parameter.CaseDefinitionId))
-            {
-                result = result.Where(c => c.CaseDefinitionId == parameter.CaseDefinitionId);
+                result = result.Where(fi => parameter.RoleIds.Contains(fi.PerformerRole));
             }
 
             int totalLength = result.Count();

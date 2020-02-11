@@ -9,16 +9,25 @@
             public const string CaseInstanceId = "$caseinstanceid$";
         }
 
+        public static class QueueNames
+        {
+            public const string CaseFiles = "casefiles";
+            public const string CasePlanInstances = "caseplaninstances";
+            public const string CasePlans = "caseplans";
+            public const string FormInstances = "forminstances";
+            public const string CaseWorkerTasks = "caseworkertasks";
+        }
+
         public static class RouteNames
         {
             public const string CaseFiles = "case-files";
-            public const string CaseDefinitions = "case-definitions";
-            public const string CaseInstances = "case-instances";
+            public const string CasePlans = "case-plans";
+            public const string CasePlanInstances = "case-plan-instances";
             public const string CaseProcesses = "case-processes";
             public const string CaseFormInstances = "case-form-instances";
-            public const string CaseActivations = "case-activations";
-            public const string CasePlanifications = "case-planifications";
+            public const string CaseWorkerTasks = "case-worker-tasks";
             public const string Statistics = "statistics";
+            public const string Performances = "performances";
         }
 
         public static class ProcessImplementationTypes

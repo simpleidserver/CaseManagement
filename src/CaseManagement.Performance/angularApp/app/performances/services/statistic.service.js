@@ -11,19 +11,23 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { SearchPerformancesResult } from '../models/search-performances-result.model';
+import { OAuthService } from 'angular-oauth2-oidc';
 var StatisticService = (function () {
-    function StatisticService(http) {
+    function StatisticService(http, oauthService) {
         this.http = http;
+        this.oauthService = oauthService;
     }
     StatisticService.prototype.getPerformances = function () {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/statistics/performances";
         return this.http.get(targetUrl, { headers: headers });
     };
     StatisticService.prototype.searchPerformances = function (startIndex, count, order, direction, startDateTime) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/statistics/performances/search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
@@ -40,7 +44,7 @@ var StatisticService = (function () {
     };
     StatisticService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [HttpClient])
+        __metadata("design:paramtypes", [HttpClient, OAuthService])
     ], StatisticService);
     return StatisticService;
 }());

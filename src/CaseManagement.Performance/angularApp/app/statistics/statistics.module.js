@@ -14,42 +14,42 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { HomeEffects } from './components/home-effects';
-import * as fromHomeReducer from './components/home-reducer';
-import { HomeComponent } from './components/home.component';
-import { HomeRoutes } from './home.routes';
+import { StatisticsEffects } from './components/statistics-effects';
+import * as fromStatisticsReducer from './components/statistics-reducer';
+import { StatisticsComponent } from './components/statistics.component';
+import { StatisticsRoutes } from './statistics.routes';
 import { CaseDefinitionsService } from './services/casedefinitions.service';
 import { CaseFilesService } from './services/casefiles.service';
 import { StatisticService } from './services/statistic.service';
-var HomeModule = (function () {
-    function HomeModule() {
+var StatisticsModule = (function () {
+    function StatisticsModule() {
     }
-    HomeModule = __decorate([
+    StatisticsModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
                 NgxChartsModule,
                 FormsModule,
                 HttpClientModule,
-                HomeRoutes,
+                StatisticsRoutes,
                 MaterialModule,
                 SharedModule,
-                EffectsModule.forRoot([HomeEffects]),
+                EffectsModule.forRoot([StatisticsEffects]),
                 StoreModule.forRoot({
-                    statistic: fromHomeReducer.statisticReducer,
-                    weekStatistics: fromHomeReducer.weekStatisticsReducer,
-                    monthStatistics: fromHomeReducer.monthStatisticsReducer,
-                    deployed: fromHomeReducer.deployedReducer
+                    statistic: fromStatisticsReducer.statisticReducer,
+                    weekStatistics: fromStatisticsReducer.weekStatisticsReducer,
+                    monthStatistics: fromStatisticsReducer.monthStatisticsReducer,
+                    deployed: fromStatisticsReducer.deployedReducer
                 }),
                 StoreDevtoolsModule.instrument({
                     maxAge: 10
                 })
             ],
             declarations: [
-                HomeComponent
+                StatisticsComponent
             ],
             exports: [
-                HomeComponent
+                StatisticsComponent
             ],
             providers: [
                 StatisticService,
@@ -58,8 +58,8 @@ var HomeModule = (function () {
                 DatePipe
             ]
         })
-    ], HomeModule);
-    return HomeModule;
+    ], StatisticsModule);
+    return StatisticsModule;
 }());
-export { HomeModule };
-//# sourceMappingURL=home.module.js.map
+export { StatisticsModule };
+//# sourceMappingURL=statistics.module.js.map

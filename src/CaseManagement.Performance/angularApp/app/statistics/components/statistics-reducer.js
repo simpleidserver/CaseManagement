@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { ActionTypes } from './home-actions';
+import { ActionTypes } from './statistics-actions';
 var initialStatisticAction = {
     content: null,
     isLoading: true,
@@ -100,4 +100,4 @@ export function deployedReducer(state, action) {
             return state;
     }
 }
-//# sourceMappingURL=home-reducer.js.map
+//# sourceMappingURL=statistics-reducer.js.map

@@ -4,7 +4,7 @@ namespace CaseManagement.CMMN.Builders
 {
     public class TimerEventListenerBuilder : WorkflowElementBuilder
     {
-        public TimerEventListenerBuilder(CaseElementDefinition workflowElementDef) : base(workflowElementDef)
+        public TimerEventListenerBuilder(CasePlanElement workflowElementDef) : base(workflowElementDef)
         {
         }
 

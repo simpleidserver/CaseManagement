@@ -1,9 +1,10 @@
 import { RouterModule } from '@angular/router';
-import { ListCaseDefinitionsComponent } from './list/list.component';
-import { ViewCaseDefinitionComponent } from './view/view.component';
+import { CasesComponent } from './cases.component';
 var routes = [
-    { path: '', component: ListCaseDefinitionsComponent },
-    { path: ':id', component: ViewCaseDefinitionComponent }
+    { path: '', redirectTo: 'casefiles', pathMatch: 'full' },
+    { path: 'casefiles', component: CasesComponent, loadChildren: './casefiles/casefiles.module#CaseFilesModule' },
+    { path: 'casedefinitions', component: CasesComponent, loadChildren: './casedefinitions/casedefinitions.module#CaseDefinitionsModule' },
+    { path: 'caseinstances', component: CasesComponent, loadChildren: './caseinstances/caseinstances.module#CaseInstancesModule' }
 ];
-export var CaseDefinitionsRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=casedefinitions.routes.js.map
+export var CasesRoutes = RouterModule.forChild(routes);
+//# sourceMappingURL=cases.routes.js.map

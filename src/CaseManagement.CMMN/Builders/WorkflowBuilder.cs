@@ -6,17 +6,20 @@ namespace CaseManagement.CMMN.Builders
 {
     public class WorkflowBuilder
     {
-        private readonly string _processFlowTemplateId;
-        private readonly string _processFlowName;
-        private ICollection<CaseElementDefinition> _elements { get; set; }
+        private readonly string _casePlanId;
+        private readonly string _name;
+        private readonly string _description;
+        private readonly CaseFileAggregate _caseFile;
+        private ICollection<CasePlanElement> _elements { get; set; }
         private ICollection<Criteria> _exitCriterias { get; set; }
         private string _caseOwner;
 
-        private WorkflowBuilder(string processFlowTemplateId, string processFlowName)
+        private WorkflowBuilder(string casePlanId, string name, string description, CaseFileAggregate caseFile)
         {
-            _processFlowTemplateId = processFlowTemplateId;
-            _processFlowName = processFlowName;
-            _elements = new List<CaseElementDefinition>();
+            _casePlanId = casePlanId;
+            _name = name;
+            _caseFile = caseFile;
+            _elements = new List<CasePlanElement>();
             _exitCriterias = new List<Criteria>();
         }
 
@@ -164,16 +167,15 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
-        public CaseDefinition Build()
+        public CasePlanAggregate Build()
         {
-            var result = CaseDefinition.New(_processFlowTemplateId, _processFlowName, _processFlowName, _elements, _caseOwner);
-            result.ExitCriterias = _exitCriterias;
+            var result = CasePlanAggregate.New(_casePlanId, _name, _description, _caseOwner, _caseFile.Id, _caseFile.Version, _exitCriterias, _elements);
             return result;
         }
 
-        public static WorkflowBuilder New(string id, string name)
+        public static WorkflowBuilder New(string id, string name, string description, CaseFileAggregate caseFile)
         {
-            return new WorkflowBuilder(id, name);
+            return new WorkflowBuilder(id, name, description, caseFile);
         }
     }
 }

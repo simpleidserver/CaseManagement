@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.CaseInstance.Repositories;
+﻿using CaseManagement.CMMN.CasePlanInstance.Repositories;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
 using CaseManagement.CMMN.Infrastructures;
 using System;

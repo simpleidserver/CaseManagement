@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { ActionTypes } from './home-actions';
+import { ActionTypes } from './statistics-actions';
 import { DatePipe } from '@angular/common';
-var HomeComponent = (function () {
-    function HomeComponent(statisticStore, weekStatisticStore, monthStatisticStore, deployedStore, datePipe) {
+var StatisticsComponent = (function () {
+    function StatisticsComponent(statisticStore, weekStatisticStore, monthStatisticStore, deployedStore, datePipe) {
         this.statisticStore = statisticStore;
         this.weekStatisticStore = weekStatisticStore;
         this.monthStatisticStore = monthStatisticStore;
@@ -170,7 +170,7 @@ var HomeComponent = (function () {
             }
         ];
     }
-    HomeComponent.prototype.ngOnInit = function () {
+    StatisticsComponent.prototype.ngOnInit = function () {
         var _this = this;
         var self = this;
         this.statisticSubscription = this.statisticStore.pipe(select('statistic')).subscribe(function (st) {
@@ -430,7 +430,7 @@ var HomeComponent = (function () {
         });
         this.refresh();
     };
-    HomeComponent.prototype.refresh = function () {
+    StatisticsComponent.prototype.refresh = function () {
         var loadStatisticRequest = {
             type: ActionTypes.STATISTICLOAD
         };
@@ -450,20 +450,20 @@ var HomeComponent = (function () {
         this.monthStatisticStore.dispatch(loadMonthStatisticsRequest);
         this.deployedStore.dispatch(loadDeployedRequest);
     };
-    HomeComponent.prototype.ngOnDestroy = function () {
+    StatisticsComponent.prototype.ngOnDestroy = function () {
         this.statisticSubscription.unsubscribe();
         this.weekSubscription.unsubscribe();
         this.monthSubscription.unsubscribe();
     };
-    HomeComponent = __decorate([
+    StatisticsComponent = __decorate([
         Component({
-            selector: 'app-home-component',
-            templateUrl: './home.component.html',
-            styleUrls: ['./home.component.scss']
+            selector: 'statistics-home-component',
+            templateUrl: './statistics.component.html',
+            styleUrls: ['./statistics.component.scss']
         }),
         __metadata("design:paramtypes", [Store, Store, Store, Store, DatePipe])
-    ], HomeComponent);
-    return HomeComponent;
+    ], StatisticsComponent);
+    return StatisticsComponent;
 }());
-export { HomeComponent };
-//# sourceMappingURL=home.component.js.map
+export { StatisticsComponent };
+//# sourceMappingURL=statistics.component.js.map

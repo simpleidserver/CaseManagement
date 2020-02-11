@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using CaseManagement.CMMN.Infrastructures;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class FormAggregate
+    public class FormAggregate : BaseAggregate
     {
         public FormAggregate()
         {
@@ -10,8 +11,20 @@ namespace CaseManagement.CMMN.Domains
             Elements = new List<FormElement>();
         }
 
-        public string Id { get; set; }
         public ICollection<Translation> Titles { get; set; }
         public ICollection<FormElement> Elements { get; set; }
+
+        public override object Clone()
+        {
+            return new FormAggregate
+            {
+                Id =  Id
+            };
+        }
+
+        public override void Handle(object obj)
+        {
+
+        }
     }
 }

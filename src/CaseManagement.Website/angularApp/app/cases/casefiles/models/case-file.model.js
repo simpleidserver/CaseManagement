@@ -8,6 +8,7 @@ var CaseFile = (function () {
         result.Description = json["description"];
         result.Payload = json["payload"];
         result.CreateDateTime = json["create_datetime"];
+        result.UpdateDateTime = json["update_datetime"];
         return result;
     };
     return CaseFile;

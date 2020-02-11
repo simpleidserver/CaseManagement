@@ -1,73 +1,35 @@
 ﻿using CaseManagement.CMMN.CaseFile.Commands;
-using CaseManagement.CMMN.Domains.CaseFile;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.CMMN.Parser;
-using CaseManagement.CMMN.Persistence;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseFile.CommandHandlers
 {
     public class AddCaseFileCommandHandler : IAddCaseFileCommandHandler
     {
+        private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly CMMNServerOptions _options;
-        private readonly ICaseDefinitionCommandRepository _caseDefinitionCommandRepository;
-        private readonly ICaseFileCommandRepository _caseFileCommandRepository;
 
-        public AddCaseFileCommandHandler(IOptions<CMMNServerOptions> options, ICaseDefinitionCommandRepository caseDefinitionCommandRepository, ICaseFileCommandRepository caseFileCommandRepository)
+        public AddCaseFileCommandHandler(ICommitAggregateHelper commitAggregateHelper, IOptions<CMMNServerOptions> options)
         {
+            _commitAggregateHelper = commitAggregateHelper;
             _options = options.Value;
-            _caseDefinitionCommandRepository = caseDefinitionCommandRepository;
-            _caseFileCommandRepository = caseFileCommandRepository;
         }
 
-        public async Task<string> Handle(AddCaseFileCommand uploadCaseFileCommand)
+        public async Task<string> Handle(AddCaseFileCommand addCaseFileCommand)
         {
-            Validate(uploadCaseFileCommand);
-            var caseFileId = Guid.NewGuid().ToString();
-            var tDefinitions = CMMNParser.ParseWSDL(_options.DefaultCMMNSchema);
-            foreach (var record in CMMNParser.ExtractWorkflowDefinition(tDefinitions, caseFileId))
+            var payload = addCaseFileCommand.Payload;
+            if (string.IsNullOrWhiteSpace(addCaseFileCommand.Payload))
             {
-                record.CaseOwner = uploadCaseFileCommand.NameIdentifier;
-                _caseDefinitionCommandRepository.Add(record);
+                payload = _options.DefaultCMMNSchema;
             }
 
-            _caseFileCommandRepository.Add(new CaseFileDefinitionAggregate
-            {
-                Id = caseFileId,
-                CreateDateTime = DateTime.UtcNow,
-                UpdateDateTime = DateTime.UtcNow,
-                Description = uploadCaseFileCommand.Description,
-                Name = uploadCaseFileCommand.Name,
-                Payload = _options.DefaultCMMNSchema,
-                Owner = uploadCaseFileCommand.NameIdentifier
-            });
-
-            await _caseDefinitionCommandRepository.SaveChanges();
-            await _caseFileCommandRepository.SaveChanges();
-            return caseFileId;
-        }
-
-        private void Validate(AddCaseFileCommand addCaseFileCommand)
-        {
-            var errors = new Dictionary<string, string>();
-            if (string.IsNullOrWhiteSpace(addCaseFileCommand.Name))
-            {
-                throw new AggregateValidationException(new Dictionary<string, string>
-                {
-                    { "validation", "name must be specified" }
-                });
-            }
-
-            if (string.IsNullOrWhiteSpace(addCaseFileCommand.Description))
-            {
-                throw new AggregateValidationException(new Dictionary<string, string>
-                {
-                    { "validation", "description must be specified" }
-                });
-            }
+            // TODO : AJOUTER UNE QUEUE POUR CASEFILE.
+            var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, addCaseFileCommand.NameIdentifier, payload);
+            var streamName = CaseFileAggregate.GetStreamName(caseFile.Id);
+            await _commitAggregateHelper.Commit(caseFile, streamName, CMMNConstants.QueueNames.CaseFiles);
+            return caseFile.Id;
         }
     }
 }

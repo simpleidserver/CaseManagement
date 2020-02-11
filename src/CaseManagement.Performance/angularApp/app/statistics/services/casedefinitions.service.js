@@ -11,13 +11,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { CountResult } from '../models/count-result.model';
+import { OAuthService } from 'angular-oauth2-oidc';
 var CaseDefinitionsService = (function () {
-    function CaseDefinitionsService(http) {
+    function CaseDefinitionsService(http, oauthService) {
         this.http = http;
+        this.oauthService = oauthService;
     }
     CaseDefinitionsService.prototype.count = function () {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-definitions/count";
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return CountResult.fromJson(res);
@@ -25,7 +28,7 @@ var CaseDefinitionsService = (function () {
     };
     CaseDefinitionsService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [HttpClient])
+        __metadata("design:paramtypes", [HttpClient, OAuthService])
     ], CaseDefinitionsService);
     return CaseDefinitionsService;
 }());

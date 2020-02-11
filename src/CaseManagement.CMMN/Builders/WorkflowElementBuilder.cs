@@ -5,12 +5,12 @@ namespace CaseManagement.CMMN.Builders
 {
     public class WorkflowElementBuilder
     {
-        public WorkflowElementBuilder(CaseElementDefinition workflowElementDef)
+        public WorkflowElementBuilder(CasePlanElement workflowElementDef)
         {
             WorkflowElementDefinition = workflowElementDef;
         }
 
-        protected CaseElementDefinition WorkflowElementDefinition { get; private set; }
+        protected CasePlanElement WorkflowElementDefinition { get; private set; }
 
         public WorkflowElementBuilder AddEntryCriterion(string name, Action<SEntryBuilder> callback)
         {

@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.AspNetCore.Controllers
 {
-    [Route(CMMNConstants.RouteNames.CaseInstances)]
+    [Route(CMMNConstants.RouteNames.CaseProcesses)]
     public class CaseProcessesController : Controller
     {
     }

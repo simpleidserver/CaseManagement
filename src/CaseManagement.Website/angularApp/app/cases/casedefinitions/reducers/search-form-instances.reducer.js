@@ -1,22 +1,28 @@
-export var ActionTypes;
-(function (ActionTypes) {
-    ActionTypes["CASEDEFINITIONSLOAD"] = "[CaseDefinitions] Load";
-    ActionTypes["CASEDEFINITIONSLOADED"] = "[CaseDefinitions] Loaded";
-    ActionTypes["ERRORLOADCASEDEFINITIONS"] = "[CaseDefinitions] Error Load";
-})(ActionTypes || (ActionTypes = {}));
-var LoadCaseDefinitionsAction = (function () {
-    function LoadCaseDefinitionsAction() {
-        this.type = ActionTypes.CASEDEFINITIONSLOAD;
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+import * as fromActions from '../actions/case-form-instances';
+export var initialState = {
+    content: null,
+    isLoading: true,
+    isErrorLoadOccured: false
+};
+export function searchReducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case fromActions.ActionTypes.COMPLETE_SEARCH:
+            state.content = action.content;
+            return __assign({}, state);
+        default:
+            return state;
     }
-    return LoadCaseDefinitionsAction;
-}());
-export { LoadCaseDefinitionsAction };
-var CaseDefinitionsLoadedAction = (function () {
-    function CaseDefinitionsLoadedAction(result) {
-        this.result = result;
-        this.type = ActionTypes.CASEDEFINITIONSLOADED;
-    }
-    return CaseDefinitionsLoadedAction;
-}());
-export { CaseDefinitionsLoadedAction };
-//# sourceMappingURL=list-actions.js.map
+}
+//# sourceMappingURL=search-form-instances.reducer.js.map

@@ -1,22 +1,62 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["CASEDEFINITIONSLOAD"] = "[CaseDefinitions] Load";
-    ActionTypes["CASEDEFINITIONSLOADED"] = "[CaseDefinitions] Loaded";
-    ActionTypes["ERRORLOADCASEDEFINITIONS"] = "[CaseDefinitions] Error Load";
+    ActionTypes["START_SEARCH"] = "[CaseInstances] START_SEARCH";
+    ActionTypes["COMPLETE_SEARCH"] = "[CaseInstances] COMPLETE_SEARCH";
+    ActionTypes["START_GET"] = "[CaseInstances] START_GET";
+    ActionTypes["COMPLETE_GET"] = "[CaseInstances] COMPLETE_GET";
+    ActionTypes["START_GET_FILE_ITEMS"] = "[CaseInstances] START_GET_FILE_ITEMS";
+    ActionTypes["COMPLETE_GET_FILE_ITEMS"] = "[CaseInstances] COMPLETE_GET_FILE_ITEMS";
 })(ActionTypes || (ActionTypes = {}));
-var LoadCaseDefinitionsAction = (function () {
-    function LoadCaseDefinitionsAction() {
-        this.type = ActionTypes.CASEDEFINITIONSLOAD;
+var StartFetch = (function () {
+    function StartFetch(id, startIndex, count, order, direction) {
+        this.id = id;
+        this.startIndex = startIndex;
+        this.count = count;
+        this.order = order;
+        this.direction = direction;
+        this.type = ActionTypes.START_SEARCH;
     }
-    return LoadCaseDefinitionsAction;
+    return StartFetch;
 }());
-export { LoadCaseDefinitionsAction };
-var CaseDefinitionsLoadedAction = (function () {
-    function CaseDefinitionsLoadedAction(result) {
-        this.result = result;
-        this.type = ActionTypes.CASEDEFINITIONSLOADED;
+export { StartFetch };
+var CompleteFetch = (function () {
+    function CompleteFetch(content) {
+        this.content = content;
+        this.type = ActionTypes.COMPLETE_SEARCH;
     }
-    return CaseDefinitionsLoadedAction;
+    return CompleteFetch;
 }());
-export { CaseDefinitionsLoadedAction };
-//# sourceMappingURL=list-actions.js.map
+export { CompleteFetch };
+var StartGet = (function () {
+    function StartGet(id) {
+        this.id = id;
+        this.type = ActionTypes.START_GET;
+    }
+    return StartGet;
+}());
+export { StartGet };
+var CompleteGet = (function () {
+    function CompleteGet(content) {
+        this.content = content;
+        this.type = ActionTypes.COMPLETE_GET;
+    }
+    return CompleteGet;
+}());
+export { CompleteGet };
+var StartGetFileItems = (function () {
+    function StartGetFileItems(id) {
+        this.id = id;
+        this.type = ActionTypes.START_GET_FILE_ITEMS;
+    }
+    return StartGetFileItems;
+}());
+export { StartGetFileItems };
+var CompleteGetFileItems = (function () {
+    function CompleteGetFileItems(content) {
+        this.content = content;
+        this.type = ActionTypes.COMPLETE_GET_FILE_ITEMS;
+    }
+    return CompleteGetFileItems;
+}());
+export { CompleteGetFileItems };
+//# sourceMappingURL=case-instances.js.map

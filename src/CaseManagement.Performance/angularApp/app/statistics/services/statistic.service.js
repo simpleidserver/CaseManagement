@@ -12,13 +12,16 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { DailyStatistic } from '../models/dailystatistic.model';
 import { SearchDailyStatisticsResult } from '../models/search-dailystatistics-result.model';
+import { OAuthService } from 'angular-oauth2-oidc';
 var StatisticService = (function () {
-    function StatisticService(http) {
+    function StatisticService(http, oauthService) {
         this.http = http;
+        this.oauthService = oauthService;
     }
     StatisticService.prototype.get = function () {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/statistics";
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return DailyStatistic.fromJson(res);
@@ -27,6 +30,7 @@ var StatisticService = (function () {
     StatisticService.prototype.search = function (startIndex, count, order, direction, startDate, endDate) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/statistics/search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
@@ -46,7 +50,7 @@ var StatisticService = (function () {
     };
     StatisticService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [HttpClient])
+        __metadata("design:paramtypes", [HttpClient, OAuthService])
     ], StatisticService);
     return StatisticService;
 }());

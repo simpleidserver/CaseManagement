@@ -12,128 +12,90 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
+import * as caseFilesActions from '../../casefiles/actions/case-files';
+import * as caseActivationsActions from '../actions/case-activations';
+import * as caseDefinitionsActions from '../actions/case-definitions';
+import * as caseFormInstancesActions from '../actions/case-form-instances';
+import * as caseInstancesActions from '../actions/case-instances';
+import { CaseDefinition } from '../models/case-definition.model';
+import * as fromCaseDefinitions from '../reducers';
 import { CaseInstancesService } from '../services/caseinstances.service';
-import { ActionTypes } from './view-actions';
-var CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
 var ViewCaseDefinitionComponent = (function () {
-    function ViewCaseDefinitionComponent(caseDefinitionStore, caseInstancesStore, formInstancesStore, caseActivationsStore, route, caseInstancesService) {
+    function ViewCaseDefinitionComponent(caseDefinitionStore, route, caseInstancesService) {
         this.caseDefinitionStore = caseDefinitionStore;
-        this.caseInstancesStore = caseInstancesStore;
-        this.formInstancesStore = formInstancesStore;
-        this.caseActivationsStore = caseActivationsStore;
         this.route = route;
         this.caseInstancesService = caseInstancesService;
-        this.caseDefinition = {
-            CaseFile: null,
-            CreateDateTime: null,
-            Description: null,
-            Id: null,
-            Name: null
-        };
+        this.selectedTimer = "4000";
+        this.caseDefinition$ = new CaseDefinition();
+        this.caseInstances$ = new Array();
+        this.caseFormInstances$ = new Array();
+        this.caseActivations$ = new Array();
         this.displayedColumns = ['id', 'state', 'create_datetime', 'actions'];
         this.formInstanceDisplayedColumns = ['form_id', 'case_instance_id', 'performer', 'update_datetime', 'create_datetime'];
         this.caseActivationDisplayedColumns = ['case_instance_name', 'case_instance_id', 'performer', 'create_datetime'];
-        this.caseDefinitionHistory = {
-            Id: null,
-            Elements: [],
-            NbInstances: 0
-        };
     }
     ViewCaseDefinitionComponent.prototype.ngOnInit = function () {
         var _this = this;
-        var viewer = new CmmnViewer({
-            container: "#canvas",
-            keyboard: {
-                bindTo: window
+        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectGetResult)).subscribe(function (caseDefinition) {
+            _this.caseDefinition$ = caseDefinition;
+            if (_this.caseDefinition$.CaseFile) {
+                var loadCaseFile = new caseFilesActions.StartGet(_this.caseDefinition$.CaseFile);
+                _this.caseDefinitionStore.dispatch(loadCaseFile);
             }
         });
-        var self = this;
-        this.subscription = this.caseDefinitionStore.pipe(select('caseDefinition')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            if (_this.isLoading == true && !st.isLoading) {
-                _this.isLoading = st.isLoading;
-                _this.isErrorLoadOccured = st.isErrorLoadOccured;
-                _this.caseDefinitionHistory = st.caseDefinitionHistory;
-                if (st.caseDefinition) {
-                    _this.caseDefinition = st.caseDefinition;
-                    viewer.importXML(st.caseFile.Payload, function (err) {
-                        if (err) {
-                            return;
-                        }
-                        var canvas = viewer.get('canvas');
-                        self.updateCanvas(viewer, st.caseDefinitionHistory);
-                        canvas.zoom('fit-viewport');
-                    });
-                }
-            }
-            else if (_this.isLoading == false && st.caseDefinitionHistory) {
-                self.caseDefinitionHistory = st.caseDefinitionHistory;
-                self.updateCanvas(viewer, st.caseDefinitionHistory);
-            }
+        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchInstancesResult)).subscribe(function (searchCaseInstancesResult) {
+            _this.caseInstances$ = searchCaseInstancesResult.Content;
+            _this.caseInstancesLength = searchCaseInstancesResult.TotalLength;
         });
-        this.subscriptionCaseInstances = this.caseInstancesStore.pipe(select('caseInstances')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            _this.isCaseInstancesErrorLoadOccured = st.isErrorLoadOccured;
-            if (st.content) {
-                _this.caseInstances = st.content.Content;
-                _this.caseInstancesLength = st.content.TotalLength;
-            }
+        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchFormInstancesResult)).subscribe(function (searchCaseFormInstancesResult) {
+            _this.caseFormInstances$ = searchCaseFormInstancesResult.Content;
+            _this.formInstancesLength = searchCaseFormInstancesResult.TotalLength;
         });
-        this.subscriptionFormInstances = this.formInstancesStore.pipe(select('formInstances')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            _this.isCaseFormInstancesErrorLoadOccured = st.isErrorLoadOccured;
-            if (st.content) {
-                _this.caseFormInstances = st.content.Content;
-                _this.formInstancesLength = st.content.TotalLength;
-            }
-        });
-        this.subscriptionCaseActivations = this.caseActivationsStore.pipe(select('caseActivations')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            _this.isCaseActivationsErrorLoadOccured = st.isErrorLoadOccured;
-            if (st.content) {
-                _this.caseActivations = st.content.Content;
-                _this.caseActivationsLength = st.content.TotalLength;
-            }
+        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchCaseActivationsResult)).subscribe(function (searchCaseActivationsResult) {
+            _this.caseActivations$ = searchCaseActivationsResult.Content;
+            _this.caseActivationsLength = searchCaseActivationsResult.TotalLength;
         });
         this.interval = setInterval(function () {
             _this.refresh();
-        }, 5000);
-        this.isLoading = true;
-        this.isErrorLoadOccured = false;
+        }, 4000);
         this.refresh();
     };
-    ViewCaseDefinitionComponent.prototype.updateCanvas = function (viewer, caseDefinitionHistory) {
-        if (caseDefinitionHistory.Elements.length > 0) {
-            var overlays = viewer.get('overlays');
-            caseDefinitionHistory.Elements.forEach(function (elt) {
-                overlays.remove(elt.Element);
-                overlays.add(elt.Element, "note", {
-                    position: {
-                        top: -5,
-                        right: -5
-                    },
-                    html: '<div class="nb-instances">' + elt.NbInstances + '</div>'
-                });
-            });
-        }
-    };
-    ViewCaseDefinitionComponent.prototype.createInstance = function () {
+    ViewCaseDefinitionComponent.prototype.selectTimer = function (evt) {
         var _this = this;
-        this.caseInstancesService.create(this.route.snapshot.params['id']).subscribe(function () {
+        clearInterval(this.interval);
+        this.interval = setInterval(function () {
+            _this.refresh();
+        }, evt.value);
+    };
+    ViewCaseDefinitionComponent.prototype.launchCaseInstance = function () {
+        var _this = this;
+        this.caseInstancesService.create(this.route.snapshot.params['id']).subscribe(function (caseInstance) {
+            _this.caseInstancesService.launch(caseInstance.Id).subscribe(function () {
+                _this.refresh();
+            });
+        });
+    };
+    ViewCaseDefinitionComponent.prototype.reactivateCaseInstance = function (caseInstance) {
+        var _this = this;
+        this.caseInstancesService.reactivateCaseInstance(caseInstance.Id).subscribe(function () {
             _this.refresh();
         });
     };
-    ViewCaseDefinitionComponent.prototype.launchCaseInstance = function (caseInstance) {
+    ViewCaseDefinitionComponent.prototype.suspendCaseInstance = function (caseInstance) {
         var _this = this;
-        this.caseInstancesService.launch(caseInstance.Id).subscribe(function () {
+        this.caseInstancesService.suspendCaseInstance(caseInstance.Id).subscribe(function () {
+            _this.refresh();
+        });
+    };
+    ViewCaseDefinitionComponent.prototype.resumeCaseInstance = function (caseInstance) {
+        var _this = this;
+        this.caseInstancesService.resumeCaseInstance(caseInstance.Id).subscribe(function () {
+            _this.refresh();
+        });
+    };
+    ViewCaseDefinitionComponent.prototype.closeCaseInstance = function (caseInstance) {
+        var _this = this;
+        this.caseInstancesService.closeCaseInstance(caseInstance.Id).subscribe(function () {
             _this.refresh();
         });
     };
@@ -144,90 +106,53 @@ var ViewCaseDefinitionComponent = (function () {
         merge(this.caseActivationsSort.sortChange, this.caseActivationsPaginator.page).subscribe(function () { return _this.refreshCaseActivations(); });
     };
     ViewCaseDefinitionComponent.prototype.refresh = function () {
-        var id = this.route.snapshot.params['id'];
-        var loadCaseDefinition = {
-            type: ActionTypes.CASEDEFINITIONLOAD,
-            id: id
-        };
-        this.caseDefinitionStore.dispatch(loadCaseDefinition);
+        this.refreshCaseDefinition();
         this.refreshCaseInstances();
         this.refreshFormInstances();
         this.refreshCaseActivations();
     };
+    ViewCaseDefinitionComponent.prototype.refreshCaseDefinition = function () {
+        var id = this.route.snapshot.params['id'];
+        var loadCaseDefinition = new caseDefinitionsActions.StartGet(id);
+        this.caseDefinitionStore.dispatch(loadCaseDefinition);
+    };
     ViewCaseDefinitionComponent.prototype.refreshCaseInstances = function () {
-        var loadCaseInstances = {
-            type: ActionTypes.CASEINSTANCESLOAD,
-            id: this.route.snapshot.params['id'],
-            order: this.caseInstancesSort.active,
-            direction: this.caseInstancesSort.direction,
-            count: this.caseInstancesPaginator.pageSize
-        };
+        var startIndex = 0;
+        var count = 5;
         if (this.caseInstancesPaginator.pageIndex && this.caseInstancesPaginator.pageSize) {
-            loadCaseInstances['startIndex'] = this.caseInstancesPaginator.pageIndex * this.caseInstancesPaginator.pageSize;
-        }
-        else {
-            loadCaseInstances['startIndex'] = 0;
+            startIndex = this.caseInstancesPaginator.pageIndex * this.caseInstancesPaginator.pageSize;
         }
         if (this.caseInstancesPaginator.pageSize) {
-            loadCaseInstances['count'] = this.caseInstancesPaginator.pageSize;
+            count = this.caseInstancesPaginator.pageSize;
         }
-        else {
-            loadCaseInstances['count'] = 5;
-        }
-        this.isCaseInstancesErrorLoadOccured = false;
-        this.caseInstancesStore.dispatch(loadCaseInstances);
+        var loadCaseInstances = new caseInstancesActions.StartFetch(this.route.snapshot.params['id'], startIndex, count, this.caseInstancesSort.active, this.caseInstancesSort.direction);
+        this.caseDefinitionStore.dispatch(loadCaseInstances);
     };
     ViewCaseDefinitionComponent.prototype.refreshFormInstances = function () {
-        var loadFormInstances = {
-            type: ActionTypes.CASEFORMINSTANCESLOAD,
-            id: this.route.snapshot.params['id'],
-            order: this.formInstancesSort.active,
-            direction: this.formInstancesSort.direction,
-            count: this.formInstancesPaginator.pageSize
-        };
-        if (this.formInstancesPaginator.pageIndex && this.formInstancesPaginator.pageSize) {
-            loadFormInstances['startIndex'] = this.formInstancesPaginator.pageIndex * this.formInstancesPaginator.pageSize;
-        }
-        else {
-            loadFormInstances['startIndex'] = 0;
-        }
+        var startIndex = 0;
+        var count = 5;
         if (this.formInstancesPaginator.pageSize) {
-            loadFormInstances['count'] = this.formInstancesPaginator.pageSize;
+            count = this.formInstancesPaginator.pageSize;
         }
-        else {
-            loadFormInstances['count'] = 5;
+        if (this.formInstancesPaginator.pageIndex && this.formInstancesPaginator.pageSize) {
+            startIndex = this.formInstancesPaginator.pageIndex * this.formInstancesPaginator.pageSize;
         }
-        this.isCaseFormInstancesErrorLoadOccured = false;
-        this.formInstancesStore.dispatch(loadFormInstances);
+        var loadFormInstances = new caseFormInstancesActions.StartFetch(this.route.snapshot.params['id'], this.formInstancesSort.active, this.formInstancesSort.direction, count, startIndex);
+        this.caseDefinitionStore.dispatch(loadFormInstances);
     };
     ViewCaseDefinitionComponent.prototype.refreshCaseActivations = function () {
-        var loadCaseActivations = {
-            type: ActionTypes.CASEACTIVATIONSLOAD,
-            id: this.route.snapshot.params['id'],
-            order: this.caseActivationsSort.active,
-            direction: this.caseActivationsSort.direction,
-            count: this.caseActivationsPaginator.pageSize
-        };
-        if (this.caseActivationsPaginator.pageIndex && this.caseActivationsPaginator.pageSize) {
-            loadCaseActivations['startIndex'] = this.caseActivationsPaginator.pageIndex * this.caseActivationsPaginator.pageSize;
-        }
-        else {
-            loadCaseActivations['startIndex'] = 0;
-        }
+        var count = 5;
+        var startIndex = 0;
         if (this.caseActivationsPaginator.pageSize) {
-            loadCaseActivations['count'] = this.caseActivationsPaginator.pageSize;
+            count = this.caseActivationsPaginator.pageSize;
         }
-        else {
-            loadCaseActivations['count'] = 5;
+        if (this.caseActivationsPaginator.pageIndex && this.caseActivationsPaginator.pageSize) {
+            startIndex = this.caseActivationsPaginator.pageIndex * this.caseActivationsPaginator.pageSize;
         }
-        this.isCaseActivationsErrorLoadOccured = false;
-        this.caseInstancesStore.dispatch(loadCaseActivations);
+        var loadCaseActivations = new caseActivationsActions.StartFetch(this.route.snapshot.params['id'], this.caseActivationsSort.active, this.caseActivationsSort.direction, count, startIndex);
+        this.caseDefinitionStore.dispatch(loadCaseActivations);
     };
     ViewCaseDefinitionComponent.prototype.ngOnDestroy = function () {
-        this.subscription.unsubscribe();
-        this.subscriptionCaseInstances.unsubscribe();
-        this.subscriptionFormInstances.unsubscribe();
-        this.subscriptionCaseActivations.unsubscribe();
         clearInterval(this.interval);
     };
     __decorate([
@@ -261,7 +186,7 @@ var ViewCaseDefinitionComponent = (function () {
             styleUrls: ['./view.component.scss'],
             encapsulation: ViewEncapsulation.None
         }),
-        __metadata("design:paramtypes", [Store, Store, Store, Store, ActivatedRoute, CaseInstancesService])
+        __metadata("design:paramtypes", [Store, ActivatedRoute, CaseInstancesService])
     ], ViewCaseDefinitionComponent);
     return ViewCaseDefinitionComponent;
 }());

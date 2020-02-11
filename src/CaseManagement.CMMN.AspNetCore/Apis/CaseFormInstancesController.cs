@@ -4,7 +4,6 @@ using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -31,19 +30,15 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _formInstanceQueryRepository.Find(ExtractFindFormInstanceParameter(query, null));
+            var result = await _formInstanceQueryRepository.Find(ExtractFindFormInstanceParameter(query));
             return new OkObjectResult(ToDto(result));
         }
 
         [HttpGet("me/search")]
-        [Authorize("IsConnected")]
         public async Task<IActionResult> SearchMyCaseFormInstances()
         {
-            var nameIdentifier = this.GetNameIdentifier();
-            var userRoles = await _roleQueryRepository.FindRolesByUser(nameIdentifier);
-            var roleIds = userRoles.Select(r => r.Id);
             var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _formInstanceQueryRepository.Find(ExtractFindFormInstanceParameter(query, roleIds));
+            var result = await _formInstanceQueryRepository.Find(ExtractFindFormInstanceParameter(query));
             return new OkObjectResult(ToDto(result));
         }
 
@@ -60,39 +55,20 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                         { "id", r.Id },
                         { "create_datetime", r.CreateDateTime },
                         { "update_datetime", r.UpdateDateTime },
-                        { "performer", r.RoleId },
-                        { "case_definition_id", r.CaseDefinitionId },
-                        { "case_instance_id", r.CaseElementInstanceId },
-                        { "case_element_definition_id", r.CaseElementDefinitionId },
-                        { "case_element_instance_id", r.CaseElementInstanceId },
-                        { "status", Enum.GetName(typeof(FormInstanceStatus), r.Status).ToLowerInvariant() },
-                        { "form_id", r.FormId }
+                        { "performer", r.PerformerRole },
+                        { "case_plan_instance_id", r.CasePlanInstanceId },
+                        { "case_plan_element_instance_id", r.CaseElementInstanceId },
+                        { "form_id", r.FormId },
+                        { "status", Enum.GetName(typeof(FormInstanceStatus), r.Status).ToLower() }
                     };
-                    foreach(var title in r.Titles)
-                    {
-                        result.Add($"title#{title.Language}", title.Value);
-                    }
-
                     var content = new JArray();
                     foreach(var formElt in r.Content)
                     {
                         var record = new JObject
                         {
                             { "form_element_id", formElt.FormElementId },
-                            { "is_required", formElt.IsRequired },
-                            { "value", formElt.Value },
-                            { "type", Enum.GetName(typeof(FormElementTypes), formElt.Type).ToLowerInvariant() }
+                            { "value", formElt.Value }
                         };
-                        foreach(var name in formElt.Names)
-                        {
-                            record.Add($"name#{name.Language}", name.Value);
-                        }
-
-                        foreach(var description in formElt.Descriptions)
-                        {
-                            record.Add($"description#{description.Language}", description.Value);
-                        }
-
                         content.Add(record);
                     }
 
@@ -102,19 +78,10 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             };
         }
 
-        private static FindFormInstanceParameter ExtractFindFormInstanceParameter(IEnumerable<KeyValuePair<string, string>> query, IEnumerable<string> roleIds)
+        private static FindFormInstanceParameter ExtractFindFormInstanceParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
-            string caseDefinitionId;
-            var parameter = new FindFormInstanceParameter
-            {
-                RoleIds = roleIds
-            };
+            var parameter = new FindFormInstanceParameter();
             parameter.ExtractFindParameter(query);
-            if (query.TryGet("case_definition_id", out caseDefinitionId))
-            {
-                parameter.CaseDefinitionId = caseDefinitionId;
-            }
-
             return parameter;
         }
     }

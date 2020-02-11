@@ -9,15 +9,49 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { Router } from '@angular/router';
 var NavigationComponent = (function () {
-    function NavigationComponent(translateService) {
+    function NavigationComponent(translateService, oauthService, router) {
         this.translateService = translateService;
-        this.url = process.env.BASE_URL + "/assets/images/logo.svg";
+        this.oauthService = oauthService;
+        this.router = router;
+        this.url = process.env.BASE_URL + "assets/images/logo.svg";
+        this.isConnected = false;
     }
     NavigationComponent.prototype.chooseLanguage = function (lng) {
         this.translateService.use(lng);
     };
+    NavigationComponent.prototype.login = function () {
+        this.oauthService.initImplicitFlow();
+        return false;
+    };
+    NavigationComponent.prototype.disconnect = function () {
+        this.oauthService.logOut();
+        this.router.navigate(['/home']);
+        return false;
+    };
+    NavigationComponent.prototype.init = function () {
+        var claims = this.oauthService.getIdentityClaims();
+        if (!claims) {
+            this.isConnected = false;
+            return;
+        }
+        this.name = claims.given_name;
+        this.roles = claims.role;
+        this.isConnected = true;
+    };
     NavigationComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.init();
+        this.oauthService.events.subscribe(function (e) {
+            if (e.type === "logout") {
+                _this.isConnected = false;
+            }
+            else if (e.type === "token_received") {
+                _this.init();
+            }
+        });
     };
     NavigationComponent = __decorate([
         Component({
@@ -25,7 +59,7 @@ var NavigationComponent = (function () {
             templateUrl: 'navigation.component.html',
             styleUrls: ['./navigation.component.scss']
         }),
-        __metadata("design:paramtypes", [TranslateService])
+        __metadata("design:paramtypes", [TranslateService, OAuthService, Router])
     ], NavigationComponent);
     return NavigationComponent;
 }());

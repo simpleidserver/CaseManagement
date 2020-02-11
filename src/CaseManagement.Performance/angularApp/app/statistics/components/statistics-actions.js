@@ -74,4 +74,4 @@ var DeployedLoadedAction = (function () {
     return DeployedLoadedAction;
 }());
 export { DeployedLoadedAction };
-//# sourceMappingURL=home-actions.js.map
+//# sourceMappingURL=statistics-actions.js.map

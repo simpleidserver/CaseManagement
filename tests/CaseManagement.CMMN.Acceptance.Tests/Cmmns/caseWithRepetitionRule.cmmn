@@ -2,7 +2,7 @@
 <cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:case="https://github.com/simpleidserver/CaseManagement" id="caseWithCaseFileItem" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
   <cmmn:caseFileItemDefinition id="CaseFileItemDefinition_1gxrx35" name="Document" definitionType="https://github.com/simpleidserver/casemanagement/directory" />
   <cmmn:case id="testCase" name="One Process Task Case">
-    <cmmn:casePlanModel id="CasePlanModel_1" name="Case with one repetition rule">
+    <cmmn:casePlanModel id="CaseWithRepetitionRule" name="Case with one repetition rule">
       <cmmn:planItem id="PlanItem_0s8tly3" definitionRef="ProcessTask_1ci0zd0">
         <cmmn:itemControl id="PlanItemControl_08o9hxk">
           <cmmn:repetitionRule id="RepetitionRule_1a5vcca">

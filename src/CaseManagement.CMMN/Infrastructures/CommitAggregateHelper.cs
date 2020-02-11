@@ -12,19 +12,19 @@ namespace CaseManagement.CMMN.Infrastructures
     public class CommitAggregateHelper : ICommitAggregateHelper
     {
         private readonly IStoreEvents _storeEvents;
-        private readonly IQueueProvider _queueProvider;
+        private readonly IMessageBroker _messageBroker;
         private readonly IAggregateSnapshotStore _aggregateSnapshotStore;
         private readonly CMMNServerOptions _serverOptions;
 
-        public CommitAggregateHelper(IStoreEvents storeEvents, IQueueProvider queueProvider, IAggregateSnapshotStore aggregateSnapshotStore, IOptions<CMMNServerOptions> options)
+        public CommitAggregateHelper(IStoreEvents storeEvents, IMessageBroker messageBroker, IAggregateSnapshotStore aggregateSnapshotStore, IOptions<CMMNServerOptions> options)
         {
             _storeEvents = storeEvents;
-            _queueProvider = queueProvider;
+            _messageBroker = messageBroker;
             _aggregateSnapshotStore = aggregateSnapshotStore;
             _serverOptions = options.Value;
         }
 
-        public async Task Commit<T>(T aggregate, string streamName) where T : BaseAggregate
+        public async Task Commit<T>(T aggregate, string streamName, string queueName) where T : BaseAggregate
         {
             using (var evtStream = _storeEvents.OpenStream(streamName, streamName, int.MinValue, int.MaxValue))
             {
@@ -41,7 +41,7 @@ namespace CaseManagement.CMMN.Infrastructures
 
             foreach (var evt in aggregate.DomainEvents)
             {
-                await _queueProvider.QueueEvent(evt);
+                await _messageBroker.QueueEvent(evt, queueName);
             }
 
             if (((aggregate.Version - 1) % _serverOptions.SnapshotFrequency) == 0)
@@ -50,7 +50,7 @@ namespace CaseManagement.CMMN.Infrastructures
             }
         }
 
-        public async Task Commit<T>(T aggregate, ICollection<DomainEvent> evts, int aggregateVersion, string streamName) where T : BaseAggregate
+        public async Task Commit<T>(T aggregate, ICollection<DomainEvent> evts, int aggregateVersion, string streamName, string queueName) where T : BaseAggregate
         {
             using (var evtStream = _storeEvents.OpenStream(streamName, streamName, int.MinValue, int.MaxValue))
             {
@@ -64,7 +64,7 @@ namespace CaseManagement.CMMN.Infrastructures
 
             foreach (var evt in evts)
             {
-                await _queueProvider.QueueEvent(evt);
+                await _messageBroker.QueueEvent(evt, queueName);
             }
 
             if (((aggregateVersion - 1) % _serverOptions.SnapshotFrequency) == 0)

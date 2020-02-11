@@ -1,21 +1,20 @@
-﻿using System;
+﻿using CaseManagement.CMMN.Infrastructures;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class RoleAggregate : ICloneable
+    public class RoleAggregate : BaseAggregate
     {
         public RoleAggregate()
         {
             UserIds = new List<string>();
         }
 
-        public string Id { get; set; }
         public string Name { get; set; }
         public ICollection<string> UserIds { get; set; }
 
-        public object Clone()
+        public override object Clone()
         {
             return new RoleAggregate
             {
@@ -23,6 +22,10 @@ namespace CaseManagement.CMMN.Domains
                 Name = Name,
                 UserIds = UserIds.ToList()
             };
+        }
+
+        public override void Handle(object obj)
+        {
         }
     }
 }

@@ -25,14 +25,19 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("get_statistic", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("get_performance", p => p.RequireAuthenticatedUser());
-                policy.AddPolicy("get_casedefinition", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("get_caseplan", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("add_casefile", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("update_casefile", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("publish_casefile", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("add_case_instance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("launch_case_intance", p => p.RequireAuthenticatedUser());
             });
             services.AddMvc();
             services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
-            services.AddCMMNEngine().AddDefinitions(files)
+            services.AddCMMNEngine()
+                .AddDefinitions(files, "thabart")
                 .AddCaseProcesses(new List<ProcessAggregate>
                 {
                     new CaseManagementProcessAggregate

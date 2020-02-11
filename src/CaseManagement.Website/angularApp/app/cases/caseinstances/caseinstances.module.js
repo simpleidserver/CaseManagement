@@ -9,57 +9,41 @@ import { NgModule } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { MaterialModule } from '../shared/material.module';
-import { SharedModule } from '../shared/shared.module';
-import { CaseDefinitionsRoutes } from './casedefinitions.routes';
-import { ListCaseDefinitionsEffects } from './list/list-effects';
-import * as fromListCaseDefinitionsReducer from './list/list-reducer';
-import { ListCaseDefinitionsComponent } from './list/list.component';
-import { CaseDefinitionsService } from './services/casedefinitions.service';
-import { CaseFilesService } from './services/casefiles.service';
-import { CaseFormInstancesService } from './services/caseforminstances.service';
-import { CaseInstancesService } from './services/caseinstances.service';
-import { CaseActivationsService } from './services/caseactivations.service';
-import { ViewCaseDefinitionEffects } from './view/view-effects';
-import * as fromCaseDefinitionReducer from './view/view-reducer';
-import { ViewCaseDefinitionComponent } from './view/view.component';
-var CaseDefinitionsModule = (function () {
-    function CaseDefinitionsModule() {
+import { MaterialModule } from '../../shared/material.module';
+import { SharedModule } from '../../shared/shared.module';
+import { CaseDefinitionsEffects } from '../casedefinitions/effects/case-definitions';
+import { CaseInstancesEffects } from '../casedefinitions/effects/case-instances';
+import { CaseDefinitionsService } from '../casedefinitions/services/casedefinitions.service';
+import { CaseInstancesService } from '../casedefinitions/services/caseinstances.service';
+import { CaseFilesEffects } from '../casefiles/effects/case-files';
+import { CaseFilesService } from '../casefiles/services/casefiles.service';
+import { CaseInstancesRoutes } from './caseinstances.routes';
+import { ListCaseInstancesComponent } from './list/list.component';
+import * as reducers from './reducers';
+import { CaseElementInstanceDialog, ViewCaseInstanceComponent } from './view/view.component';
+var CaseInstancesModule = (function () {
+    function CaseInstancesModule() {
     }
-    CaseDefinitionsModule = __decorate([
+    CaseInstancesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
-                CaseDefinitionsRoutes,
+                CaseInstancesRoutes,
                 SharedModule,
                 MaterialModule,
-                EffectsModule.forRoot([ListCaseDefinitionsEffects, ViewCaseDefinitionEffects]),
-                StoreModule.forRoot({
-                    caseDefinitions: fromListCaseDefinitionsReducer.reducer,
-                    caseDefinition: fromCaseDefinitionReducer.caseDefinitionReducer,
-                    caseInstances: fromCaseDefinitionReducer.caseInstancesReducer,
-                    formInstances: fromCaseDefinitionReducer.formInstancesReducer,
-                    caseActivations: fromCaseDefinitionReducer.caseActivationsReducer
-                }),
+                EffectsModule.forRoot([CaseDefinitionsEffects, CaseInstancesEffects, CaseFilesEffects]),
+                StoreModule.forRoot(reducers.appReducer),
                 StoreDevtoolsModule.instrument({
                     maxAge: 10
                 })
             ],
-            entryComponents: [],
-            declarations: [
-                ListCaseDefinitionsComponent,
-                ViewCaseDefinitionComponent
+            entryComponents: [CaseElementInstanceDialog],
+            declarations: [ViewCaseInstanceComponent, ListCaseInstancesComponent, CaseElementInstanceDialog
             ],
-            providers: [
-                CaseFilesService,
-                CaseDefinitionsService,
-                CaseInstancesService,
-                CaseFormInstancesService,
-                CaseActivationsService
-            ]
+            providers: [CaseInstancesService, CaseDefinitionsService, CaseFilesService]
         })
-    ], CaseDefinitionsModule);
-    return CaseDefinitionsModule;
+    ], CaseInstancesModule);
+    return CaseInstancesModule;
 }());
-export { CaseDefinitionsModule };
-//# sourceMappingURL=casedefinitions.module.js.map
+export { CaseInstancesModule };
+//# sourceMappingURL=caseinstances.module.js.map

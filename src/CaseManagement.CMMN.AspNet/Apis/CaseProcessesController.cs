@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.AspNet.Controllers
 { 
-    [RoutePrefix(CMMNConstants.RouteNames.CaseInstances)]
+    [RoutePrefix(CMMNConstants.RouteNames.CaseProcesses)]
     public class CaseProcessesController : ApiController
     {
     }

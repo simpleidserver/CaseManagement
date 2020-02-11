@@ -7,263 +7,324 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator, MatSort } from '@angular/material';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+import { Component, Inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialog, MatDialogRef, MatSort, MAT_DIALOG_DATA } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { merge } from 'rxjs';
-import { CaseInstancesService } from '../services/caseinstances.service';
-import { ActionTypes } from './view-actions';
+import { CaseInstance } from '../../casedefinitions/models/case-instance.model';
+import * as fromCaseFileActions from '../../casefiles/actions/case-files';
+import * as fromCaseInstanceActions from '../../casedefinitions/actions/case-instances';
+import * as fromCaseDefinitionActions from '../../casedefinitions/actions/case-definitions';
+import * as fromCaseInstances from '../reducers';
 var CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
-var ViewCaseDefinitionComponent = (function () {
-    function ViewCaseDefinitionComponent(caseDefinitionStore, caseInstancesStore, formInstancesStore, caseActivationsStore, route, caseInstancesService) {
-        this.caseDefinitionStore = caseDefinitionStore;
-        this.caseInstancesStore = caseInstancesStore;
-        this.formInstancesStore = formInstancesStore;
-        this.caseActivationsStore = caseActivationsStore;
+var ViewCaseInstanceComponent = (function () {
+    function ViewCaseInstanceComponent(caseInstanceStore, route, dialog) {
+        this.caseInstanceStore = caseInstanceStore;
         this.route = route;
-        this.caseInstancesService = caseInstancesService;
-        this.caseDefinition = {
-            CaseFile: null,
-            CreateDateTime: null,
-            Description: null,
-            Id: null,
-            Name: null
-        };
-        this.displayedColumns = ['id', 'state', 'create_datetime', 'actions'];
-        this.formInstanceDisplayedColumns = ['form_id', 'case_instance_id', 'performer', 'update_datetime', 'create_datetime'];
-        this.caseActivationDisplayedColumns = ['case_instance_name', 'case_instance_id', 'performer', 'create_datetime'];
-        this.caseDefinitionHistory = {
-            Id: null,
-            Elements: [],
-            NbInstances: 0
-        };
+        this.dialog = dialog;
+        this.caseInstanceContextLst$ = new Array();
+        this.caseFileItems$ = new Array();
+        this.caseInstance$ = new CaseInstance();
+        this.displayStateHistoriesColumns = ['state', 'datetime'];
+        this.displayTransitionHistoriesColumns = ['transition', 'datetime'];
+        this.displayCaseFileItemsColumns = ['value', 'datetime'];
     }
-    ViewCaseDefinitionComponent.prototype.ngOnInit = function () {
+    ViewCaseInstanceComponent.prototype.ngOnInit = function () {
         var _this = this;
+        var self = this;
         var viewer = new CmmnViewer({
             container: "#canvas",
             keyboard: {
                 bindTo: window
             }
         });
-        var self = this;
-        this.subscription = this.caseDefinitionStore.pipe(select('caseDefinition')).subscribe(function (st) {
-            if (!st) {
+        this.caseInstanceStore.pipe(select(fromCaseInstances.selectCaseFileItemsResult)).subscribe(function (st) {
+            _this.caseFileItems$ = st;
+        });
+        this.caseInstanceStore.pipe(select(fromCaseInstances.selectCaseFileResult)).subscribe(function (st) {
+            if (!st || !st.Payload) {
                 return;
             }
-            if (_this.isLoading == true && !st.isLoading) {
-                _this.isLoading = st.isLoading;
-                _this.isErrorLoadOccured = st.isErrorLoadOccured;
-                _this.caseDefinitionHistory = st.caseDefinitionHistory;
-                if (st.caseDefinition) {
-                    _this.caseDefinition = st.caseDefinition;
-                    viewer.importXML(st.caseFile.Payload, function (err) {
-                        if (err) {
-                            return;
+            viewer.importXML(st.Payload, function () {
+                var canvas = viewer.get('canvas');
+                var overlays = viewer.get('overlays');
+                var groupedElements = new Map();
+                self.caseInstance$.Elements.forEach(function (elt) {
+                    if (!groupedElements.has(elt.DefinitionId)) {
+                        groupedElements.set(elt.DefinitionId, [elt]);
+                    }
+                    else {
+                        groupedElements.get(elt.DefinitionId).push(elt);
+                    }
+                });
+                groupedElements.forEach(function (values, key) {
+                    overlays.remove(key);
+                    var id = overlays.add(key, "note", {
+                        position: {
+                            top: -5,
+                            right: -5
+                        },
+                        html: '<div class="nb-instances" data-eltdefinitionid="' + key + '">' + values.length + '</div>'
+                    });
+                    var elt = overlays.get(id);
+                    elt.htmlContainer.onclick = function (evt) {
+                        var eltdefinitionid = evt.target.getAttribute('data-eltdefinitionid');
+                        var elementInstances = groupedElements.get(eltdefinitionid);
+                        if (elementInstances) {
+                            self.dialog.open(CaseElementInstanceDialog, {
+                                width: '800px',
+                                data: elementInstances
+                            });
                         }
-                        var canvas = viewer.get('canvas');
-                        self.updateCanvas(viewer, st.caseDefinitionHistory);
-                        canvas.zoom('fit-viewport');
+                    };
+                });
+                canvas.zoom('fit-viewport');
+            });
+        });
+        this.caseInstanceStore.pipe(select(fromCaseInstances.selectCaseDefinitionResult)).subscribe(function (st) {
+            if (!st || !st.CaseFile) {
+                return;
+            }
+            var loadCaseFileRequest = new fromCaseFileActions.StartGet(st.CaseFile);
+            _this.caseInstanceStore.dispatch(loadCaseFileRequest);
+        });
+        this.caseInstanceStore.pipe(select(fromCaseInstances.selectCaseInstanceResult)).subscribe(function (st) {
+            if (!st || !st.Id) {
+                return;
+            }
+            _this.caseInstance$ = st;
+            _this.caseInstanceContextLst$ = [];
+            if (_this.caseInstance$.Context) {
+                for (var record in _this.caseInstance$.Context) {
+                    _this.caseInstanceContextLst$.push({
+                        name: record,
+                        value: _this.caseInstance$.Context[record]
                     });
                 }
             }
-            else if (_this.isLoading == false && st.caseDefinitionHistory) {
-                self.caseDefinitionHistory = st.caseDefinitionHistory;
-                self.updateCanvas(viewer, st.caseDefinitionHistory);
-            }
+            var loadCaseDefinitionRequest = new fromCaseDefinitionActions.StartGet(st.DefinitionId);
+            _this.caseInstanceStore.dispatch(loadCaseDefinitionRequest);
         });
-        this.subscriptionCaseInstances = this.caseInstancesStore.pipe(select('caseInstances')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            _this.isCaseInstancesErrorLoadOccured = st.isErrorLoadOccured;
-            if (st.content) {
-                _this.caseInstances = st.content.Content;
-                _this.caseInstancesLength = st.content.TotalLength;
-            }
-        });
-        this.subscriptionFormInstances = this.formInstancesStore.pipe(select('formInstances')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            _this.isCaseFormInstancesErrorLoadOccured = st.isErrorLoadOccured;
-            if (st.content) {
-                _this.caseFormInstances = st.content.Content;
-                _this.formInstancesLength = st.content.TotalLength;
-            }
-        });
-        this.subscriptionCaseActivations = this.caseActivationsStore.pipe(select('caseActivations')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            _this.isCaseActivationsErrorLoadOccured = st.isErrorLoadOccured;
-            if (st.content) {
-                _this.caseActivations = st.content.Content;
-                _this.caseActivationsLength = st.content.TotalLength;
-            }
-        });
-        this.interval = setInterval(function () {
-            _this.refresh();
-        }, 5000);
-        this.isLoading = true;
-        this.isErrorLoadOccured = false;
         this.refresh();
     };
-    ViewCaseDefinitionComponent.prototype.updateCanvas = function (viewer, caseDefinitionHistory) {
-        if (caseDefinitionHistory.Elements.length > 0) {
-            var overlays = viewer.get('overlays');
-            caseDefinitionHistory.Elements.forEach(function (elt) {
-                overlays.remove(elt.Element);
-                overlays.add(elt.Element, "note", {
-                    position: {
-                        top: -5,
-                        right: -5
-                    },
-                    html: '<div class="nb-instances">' + elt.NbInstances + '</div>'
-                });
-            });
-        }
-    };
-    ViewCaseDefinitionComponent.prototype.createInstance = function () {
+    ViewCaseInstanceComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
-        this.caseInstancesService.create(this.route.snapshot.params['id']).subscribe(function () {
-            _this.refresh();
+        this.caseInstanceStateHistoriesSort.sortChange.subscribe(function () { return _this.sortCaseInstanceStateHistories(); });
+        this.caseInstanceTransitionHistoriesSort.sortChange.subscribe(function () { return _this.sortCaseInstanceTransitionHistories(); });
+        this.caseFileItemsSort.sortChange.subscribe(function () { return _this.sortCaseFileItems(); });
+    };
+    ViewCaseInstanceComponent.prototype.sortCaseInstanceStateHistories = function () {
+        var active = this.caseInstanceStateHistoriesSort.active;
+        var direction = this.caseInstanceStateHistoriesSort.direction;
+        this.caseInstance$.StateHistories.sort(function (a, b) {
+            if (active == "state") {
+                if (direction == "asc") {
+                    return a.State.localeCompare(b.State);
+                }
+                return b.State.localeCompare(a.State);
+            }
+            if (active == "datetime") {
+                if (direction == "asc") {
+                    return new Date(a.DateTime).getTime() - new Date(b.DateTime).getTime();
+                }
+                return new Date(b.DateTime).getTime() - new Date(a.DateTime).getTime();
+            }
         });
+        this.caseInstance$.StateHistories = __spreadArrays(this.caseInstance$.StateHistories);
     };
-    ViewCaseDefinitionComponent.prototype.launchCaseInstance = function (caseInstance) {
-        var _this = this;
-        this.caseInstancesService.launch(caseInstance.Id).subscribe(function () {
-            _this.refresh();
+    ViewCaseInstanceComponent.prototype.sortCaseInstanceTransitionHistories = function () {
+        var active = this.caseInstanceTransitionHistoriesSort.active;
+        var direction = this.caseInstanceTransitionHistoriesSort.direction;
+        this.caseInstance$.TransitionHistories.sort(function (a, b) {
+            if (active == "transition") {
+                if (direction == "asc") {
+                    return a.Transition.localeCompare(b.Transition);
+                }
+                return b.Transition.localeCompare(a.Transition);
+            }
+            if (active == "datetime") {
+                if (direction == "asc") {
+                    return new Date(a.DateTime).getTime() - new Date(b.DateTime).getTime();
+                }
+                return new Date(b.DateTime).getTime() - new Date(a.DateTime).getTime();
+            }
         });
+        this.caseInstance$.TransitionHistories = __spreadArrays(this.caseInstance$.TransitionHistories);
     };
-    ViewCaseDefinitionComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        merge(this.caseInstancesSort.sortChange, this.caseInstancesPaginator.page).subscribe(function () { return _this.refreshCaseInstances(); });
-        merge(this.formInstancesSort.sortChange, this.formInstancesPaginator.page).subscribe(function () { return _this.refreshFormInstances(); });
-        merge(this.caseActivationsSort.sortChange, this.caseActivationsPaginator.page).subscribe(function () { return _this.refreshCaseActivations(); });
+    ViewCaseInstanceComponent.prototype.sortCaseFileItems = function () {
+        var active = this.caseFileItemsSort.active;
+        var direction = this.caseFileItemsSort.direction;
+        this.caseFileItems$.sort(function (a, b) {
+            if (active == "value") {
+                if (direction == "asc") {
+                    return a.Value.localeCompare(b.Value);
+                }
+                return b.Value.localeCompare(a.Value);
+            }
+            if (active == "datetime") {
+                if (direction == "asc") {
+                    return new Date(a.CreateDateTime).getTime() - new Date(b.CreateDateTime).getTime();
+                }
+                return new Date(b.CreateDateTime).getTime() - new Date(a.CreateDateTime).getTime();
+            }
+        });
+        this.caseFileItems$ = __spreadArrays(this.caseFileItems$);
     };
-    ViewCaseDefinitionComponent.prototype.refresh = function () {
-        var id = this.route.snapshot.params['id'];
-        var loadCaseDefinition = {
-            type: ActionTypes.CASEDEFINITIONLOAD,
-            id: id
-        };
-        this.caseDefinitionStore.dispatch(loadCaseDefinition);
-        this.refreshCaseInstances();
-        this.refreshFormInstances();
-        this.refreshCaseActivations();
+    ViewCaseInstanceComponent.prototype.refresh = function () {
+        var loadCaseInstance = new fromCaseInstanceActions.StartGet(this.route.snapshot.params['id']);
+        this.caseInstanceStore.dispatch(loadCaseInstance);
     };
-    ViewCaseDefinitionComponent.prototype.refreshCaseInstances = function () {
-        var loadCaseInstances = {
-            type: ActionTypes.CASEINSTANCESLOAD,
-            id: this.route.snapshot.params['id'],
-            order: this.caseInstancesSort.active,
-            direction: this.caseInstancesSort.direction,
-            count: this.caseInstancesPaginator.pageSize
-        };
-        if (this.caseInstancesPaginator.pageIndex && this.caseInstancesPaginator.pageSize) {
-            loadCaseInstances['startIndex'] = this.caseInstancesPaginator.pageIndex * this.caseInstancesPaginator.pageSize;
-        }
-        else {
-            loadCaseInstances['startIndex'] = 0;
-        }
-        if (this.caseInstancesPaginator.pageSize) {
-            loadCaseInstances['count'] = this.caseInstancesPaginator.pageSize;
-        }
-        else {
-            loadCaseInstances['count'] = 5;
-        }
-        this.isCaseInstancesErrorLoadOccured = false;
-        this.caseInstancesStore.dispatch(loadCaseInstances);
-    };
-    ViewCaseDefinitionComponent.prototype.refreshFormInstances = function () {
-        var loadFormInstances = {
-            type: ActionTypes.CASEFORMINSTANCESLOAD,
-            id: this.route.snapshot.params['id'],
-            order: this.formInstancesSort.active,
-            direction: this.formInstancesSort.direction,
-            count: this.formInstancesPaginator.pageSize
-        };
-        if (this.formInstancesPaginator.pageIndex && this.formInstancesPaginator.pageSize) {
-            loadFormInstances['startIndex'] = this.formInstancesPaginator.pageIndex * this.formInstancesPaginator.pageSize;
-        }
-        else {
-            loadFormInstances['startIndex'] = 0;
-        }
-        if (this.formInstancesPaginator.pageSize) {
-            loadFormInstances['count'] = this.formInstancesPaginator.pageSize;
-        }
-        else {
-            loadFormInstances['count'] = 5;
-        }
-        this.isCaseFormInstancesErrorLoadOccured = false;
-        this.formInstancesStore.dispatch(loadFormInstances);
-    };
-    ViewCaseDefinitionComponent.prototype.refreshCaseActivations = function () {
-        var loadCaseActivations = {
-            type: ActionTypes.CASEACTIVATIONSLOAD,
-            id: this.route.snapshot.params['id'],
-            order: this.caseActivationsSort.active,
-            direction: this.caseActivationsSort.direction,
-            count: this.caseActivationsPaginator.pageSize
-        };
-        if (this.caseActivationsPaginator.pageIndex && this.caseActivationsPaginator.pageSize) {
-            loadCaseActivations['startIndex'] = this.caseActivationsPaginator.pageIndex * this.caseActivationsPaginator.pageSize;
-        }
-        else {
-            loadCaseActivations['startIndex'] = 0;
-        }
-        if (this.caseActivationsPaginator.pageSize) {
-            loadCaseActivations['count'] = this.caseActivationsPaginator.pageSize;
-        }
-        else {
-            loadCaseActivations['count'] = 5;
-        }
-        this.isCaseActivationsErrorLoadOccured = false;
-        this.caseInstancesStore.dispatch(loadCaseActivations);
-    };
-    ViewCaseDefinitionComponent.prototype.ngOnDestroy = function () {
-        this.subscription.unsubscribe();
-        this.subscriptionCaseInstances.unsubscribe();
-        this.subscriptionFormInstances.unsubscribe();
-        this.subscriptionCaseActivations.unsubscribe();
-        clearInterval(this.interval);
+    ViewCaseInstanceComponent.prototype.ngOnDestroy = function () {
     };
     __decorate([
-        ViewChild('caseInstancesSort'),
+        ViewChild('caseInstanceStateHistoriesSort'),
         __metadata("design:type", MatSort)
-    ], ViewCaseDefinitionComponent.prototype, "caseInstancesSort", void 0);
+    ], ViewCaseInstanceComponent.prototype, "caseInstanceStateHistoriesSort", void 0);
     __decorate([
-        ViewChild('formInstancesSort'),
+        ViewChild('caseInstanceTransitionHistoriesSort'),
         __metadata("design:type", MatSort)
-    ], ViewCaseDefinitionComponent.prototype, "formInstancesSort", void 0);
+    ], ViewCaseInstanceComponent.prototype, "caseInstanceTransitionHistoriesSort", void 0);
     __decorate([
-        ViewChild('caseActivationsSort'),
+        ViewChild('caseFileItemsSort'),
         __metadata("design:type", MatSort)
-    ], ViewCaseDefinitionComponent.prototype, "caseActivationsSort", void 0);
-    __decorate([
-        ViewChild('caseInstancesPaginator'),
-        __metadata("design:type", MatPaginator)
-    ], ViewCaseDefinitionComponent.prototype, "caseInstancesPaginator", void 0);
-    __decorate([
-        ViewChild('formInstancesPaginator'),
-        __metadata("design:type", MatPaginator)
-    ], ViewCaseDefinitionComponent.prototype, "formInstancesPaginator", void 0);
-    __decorate([
-        ViewChild('caseActivationsPaginator'),
-        __metadata("design:type", MatPaginator)
-    ], ViewCaseDefinitionComponent.prototype, "caseActivationsPaginator", void 0);
-    ViewCaseDefinitionComponent = __decorate([
+    ], ViewCaseInstanceComponent.prototype, "caseFileItemsSort", void 0);
+    ViewCaseInstanceComponent = __decorate([
         Component({
-            selector: 'view-case-files',
+            selector: 'view-case-instances',
             templateUrl: './view.component.html',
             styleUrls: ['./view.component.scss'],
             encapsulation: ViewEncapsulation.None
         }),
-        __metadata("design:paramtypes", [Store, Store, Store, Store, ActivatedRoute, CaseInstancesService])
-    ], ViewCaseDefinitionComponent);
-    return ViewCaseDefinitionComponent;
+        __metadata("design:paramtypes", [Store, ActivatedRoute, MatDialog])
+    ], ViewCaseInstanceComponent);
+    return ViewCaseInstanceComponent;
 }());
-export { ViewCaseDefinitionComponent };
+export { ViewCaseInstanceComponent };
+var ElementStateHistory = (function () {
+    function ElementStateHistory() {
+    }
+    return ElementStateHistory;
+}());
+var ElementTransitionHistory = (function () {
+    function ElementTransitionHistory() {
+    }
+    return ElementTransitionHistory;
+}());
+var CaseElementInstanceDialog = (function () {
+    function CaseElementInstanceDialog(dialogRef, data) {
+        this.dialogRef = dialogRef;
+        this.data = data;
+        this.definitionId = null;
+        this.stateHistories = [];
+        this.transitionHistories = [];
+        this.stateHistoriesColumns = ['id', 'state', 'datetime'];
+        this.transitionHistoriesColumns = ['id', 'transition', 'datetime'];
+        if (data.length > 0) {
+            this.definitionId = data[0].DefinitionId;
+            var self_1 = this;
+            data.forEach(function (d) {
+                d.StateHistories.forEach(function (sh) {
+                    var record = new ElementStateHistory();
+                    record.DateTime = sh.DateTime;
+                    record.State = sh.State;
+                    record.Id = d.Id;
+                    self_1.stateHistories.push(record);
+                });
+                d.TransitionHistories.forEach(function (th) {
+                    var record = new ElementTransitionHistory();
+                    record.DateTime = th.DateTime;
+                    record.Transition = th.Transition;
+                    record.Id = d.Id;
+                    self_1.transitionHistories.push(record);
+                });
+            });
+        }
+    }
+    CaseElementInstanceDialog.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.stateHistoriesSort.sortChange.subscribe(function () { return _this.sortStateHistories(); });
+        this.transitionHistoriesSort.sortChange.subscribe(function () { return _this.sortTransitionHistories(); });
+    };
+    CaseElementInstanceDialog.prototype.sortStateHistories = function () {
+        var active = this.stateHistoriesSort.active;
+        var direction = this.stateHistoriesSort.direction;
+        this.stateHistories.sort(function (a, b) {
+            if (active == "id") {
+                if (direction == "asc") {
+                    return a.Id.localeCompare(b.Id);
+                }
+                return b.Id.localeCompare(a.Id);
+            }
+            if (active == "state") {
+                if (direction == "asc") {
+                    return a.State.localeCompare(b.State);
+                }
+                return b.State.localeCompare(a.State);
+            }
+            if (active == "datetime") {
+                if (direction == "asc") {
+                    return new Date(a.DateTime).getTime() - new Date(b.DateTime).getTime();
+                }
+                return new Date(b.DateTime).getTime() - new Date(a.DateTime).getTime();
+            }
+        });
+        this.stateHistories = __spreadArrays(this.stateHistories);
+    };
+    CaseElementInstanceDialog.prototype.sortTransitionHistories = function () {
+        var active = this.transitionHistoriesSort.active;
+        var direction = this.transitionHistoriesSort.direction;
+        this.transitionHistories.sort(function (a, b) {
+            if (active == "id") {
+                if (direction == "asc") {
+                    return a.Id.localeCompare(b.Id);
+                }
+                return b.Id.localeCompare(a.Id);
+            }
+            if (active == "transition") {
+                if (direction == "asc") {
+                    return a.Transition.localeCompare(b.Transition);
+                }
+                return b.Transition.localeCompare(a.Transition);
+            }
+            if (active == "datetime") {
+                if (direction == "asc") {
+                    return new Date(a.DateTime).getTime() - new Date(b.DateTime).getTime();
+                }
+                return new Date(b.DateTime).getTime() - new Date(a.DateTime).getTime();
+            }
+        });
+        this.transitionHistories = __spreadArrays(this.transitionHistories);
+    };
+    CaseElementInstanceDialog.prototype.onNoClick = function () {
+        this.dialogRef.close();
+    };
+    __decorate([
+        ViewChild('stateHistoriesSort'),
+        __metadata("design:type", MatSort)
+    ], CaseElementInstanceDialog.prototype, "stateHistoriesSort", void 0);
+    __decorate([
+        ViewChild('transitionHistoriesSort'),
+        __metadata("design:type", MatSort)
+    ], CaseElementInstanceDialog.prototype, "transitionHistoriesSort", void 0);
+    CaseElementInstanceDialog = __decorate([
+        Component({
+            selector: 'case-element-instance-dialog',
+            templateUrl: 'case-element-instance-dialog.html',
+        }),
+        __param(1, Inject(MAT_DIALOG_DATA)),
+        __metadata("design:paramtypes", [MatDialogRef, Array])
+    ], CaseElementInstanceDialog);
+    return CaseElementInstanceDialog;
+}());
+export { CaseElementInstanceDialog };
 //# sourceMappingURL=view.component.js.map

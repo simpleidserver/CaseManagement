@@ -3,7 +3,7 @@ namespace CaseManagement.CMMN.Domains
 {
     public enum FormInstanceStatus
     {
-        Create = 0,
-        Complete = 1
+        Created = 0,
+        Completed = 1
     }
 }

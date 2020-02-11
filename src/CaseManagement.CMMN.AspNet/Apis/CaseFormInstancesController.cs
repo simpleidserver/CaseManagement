@@ -61,39 +61,20 @@ namespace CaseManagement.CMMN.AspNet.Apis
                         { "id", r.Id },
                         { "create_datetime", r.CreateDateTime },
                         { "update_datetime", r.UpdateDateTime },
-                        { "performer", r.RoleId },
-                        { "case_definition_id", r.CaseDefinitionId },
-                        { "case_instance_id", r.CaseElementInstanceId },
-                        { "case_element_definition_id", r.CaseElementDefinitionId },
-                        { "case_element_instance_id", r.CaseElementInstanceId },
-                        { "status", Enum.GetName(typeof(FormInstanceStatus), r.Status).ToLowerInvariant() },
-                        { "form_id", r.FormId }
+                        { "performer", r.PerformerRole },
+                        { "case_plan_instance_id", r.CasePlanInstanceId },
+                        { "case_plan_element_instance_id", r.CaseElementInstanceId },
+                        { "form_id", r.FormId },
+                        { "status", Enum.GetName(typeof(FormInstanceStatus), r.Status).ToLower() }
                     };
-                    foreach(var title in r.Titles)
-                    {
-                        result.Add($"title#{title.Language}", title.Value);
-                    }
-
                     var content = new JArray();
                     foreach(var formElt in r.Content)
                     {
                         var record = new JObject
                         {
                             { "form_element_id", formElt.FormElementId },
-                            { "is_required", formElt.IsRequired },
-                            { "value", formElt.Value },
-                            { "type", Enum.GetName(typeof(FormElementTypes), formElt.Type).ToLowerInvariant() }
+                            { "value", formElt.Value }
                         };
-                        foreach(var name in formElt.Names)
-                        {
-                            record.Add($"name#{name.Language}", name.Value);
-                        }
-
-                        foreach(var description in formElt.Descriptions)
-                        {
-                            record.Add($"description#{description.Language}", description.Value);
-                        }
-
                         content.Add(record);
                     }
 
@@ -105,17 +86,11 @@ namespace CaseManagement.CMMN.AspNet.Apis
 
         private static FindFormInstanceParameter ExtractFindFormInstanceParameter(IEnumerable<KeyValuePair<string, string>> query, IEnumerable<string> roleIds)
         {
-            string caseDefinitionId;
             var parameter = new FindFormInstanceParameter
             {
                 RoleIds = roleIds
             };
             parameter.ExtractFindParameter(query);
-            if (query.TryGet("case_definition_id", out caseDefinitionId))
-            {
-                parameter.CaseDefinitionId = caseDefinitionId;
-            }
-
             return parameter;
         }
     }

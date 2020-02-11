@@ -1,14 +1,11 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Domains.CaseFile;
 using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace CaseManagement.CMMN
 {
@@ -21,34 +18,30 @@ namespace CaseManagement.CMMN
             _services = services;
         }
 
-        public ServerBuilder AddDefinitions(List<string> pathLst)
+        public ServerBuilder AddDefinitions(List<string> pathLst, string caseOwner = null)
         {
-            var caseFiles = new ConcurrentBag<CaseFileDefinitionAggregate>();
-            var caseDefinitions = new ConcurrentBag<CaseDefinition>();
-            var caseDefinitionHistories = new ConcurrentBag<CaseDefinitionHistoryAggregate>();
+            var caseFiles = new ConcurrentBag<CaseFileAggregate>();
+            var caseDefinitions = new ConcurrentBag<CasePlanAggregate>();
             foreach(var path in pathLst)
             {
                 var cmmnTxt = File.ReadAllText(path);
-                var caseDefinition = CMMNParser.ExtractWorkflowDefinition(path);
+                var caseFile = CaseFileAggregate.New(path, path, 0, caseOwner, cmmnTxt);
+                caseFile.Update(path, path, cmmnTxt, caseOwner);
+                caseFile.Publish(caseOwner);
+                var tDefinitions = CMMNParser.ParseWSDL(cmmnTxt);
+                var caseDefinition = CMMNParser.ExtractCasePlans(tDefinitions, caseFile);
                 foreach(var cd in caseDefinition)
                 {
                     caseDefinitions.Add(cd);
                 }
 
-                caseFiles.Add(new CaseFileDefinitionAggregate
-                {
-                    Payload = cmmnTxt,
-                    CreateDateTime = DateTime.UtcNow,
-                    Description = caseDefinition.First().CaseFileId,
-                    Id = caseDefinition.First().CaseFileId,
-                    Name = caseDefinition.First().CaseFileId
-                });
+                caseFiles.Add(caseFile);
             }
 
             _services.TryUpdateSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(caseFiles));
             _services.TryUpdateSingleton<ICaseFileCommandRepository>(new InMemoryCaseFileCommandRepository(caseFiles));
-            _services.TryUpdateSingleton<ICaseDefinitionCommandRepository>(new InMemoryCaseDefinitionCommandRepository(caseDefinitions, caseDefinitionHistories));
-            _services.TryUpdateSingleton<ICaseDefinitionQueryRepository>(new InMemoryCaseDefinitionQueryRepository(caseDefinitions, caseDefinitionHistories));
+            _services.TryUpdateSingleton<ICasePlanCommandRepository>(new InMemoryCasePlanCommandRepository(caseDefinitions));
+            _services.TryUpdateSingleton<ICasePlanQueryRepository>(new InMemoryCasePlanQueryRepository(caseDefinitions));
             return this;
         }
 
@@ -67,9 +60,9 @@ namespace CaseManagement.CMMN
 
         public ServerBuilder AddStatistics(ConcurrentBag<DailyStatisticAggregate> statistics)
         {
-            var performanceStatistics = new ConcurrentBag<PerformanceStatisticAggregate>();
-            _services.TryUpdateSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(statistics, performanceStatistics));
-            _services.TryUpdateSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(statistics, performanceStatistics));
+            var performanceStatistics = new ConcurrentBag<PerformanceAggregate>();
+            _services.TryUpdateSingleton<IDailyStatisticCommandRepository>(new InMemoryDailyStatisticCommandRepository(statistics));
+            _services.TryUpdateSingleton<IStatisticQueryRepository>(new InMemoryDailyStatisticQueryRepository(statistics));
             return this;
         }
 

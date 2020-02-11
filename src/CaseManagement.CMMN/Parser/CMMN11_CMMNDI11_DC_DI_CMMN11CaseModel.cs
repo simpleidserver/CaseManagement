@@ -1794,19 +1794,6 @@ public partial class tCase : tCmmnElement {
             this.nameField = value;
         }
     }
-
-    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "caseowner", Namespace = "https://github.com/simpleidserver/CaseManagement")]
-    public string caseOwner
-    {
-        get
-        {
-            return this.caseOwnerField;
-        }
-        set
-        {
-            this.caseOwnerField = value;
-        }
-    }
 }
 
 /// <remarks/>

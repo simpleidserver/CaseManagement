@@ -6,60 +6,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { CaseDefinitionsRoutes } from './casedefinitions.routes';
-import { ListCaseDefinitionsEffects } from './list/list-effects';
-import * as fromListCaseDefinitionsReducer from './list/list-reducer';
-import { ListCaseDefinitionsComponent } from './list/list.component';
-import { CaseDefinitionsService } from './services/casedefinitions.service';
-import { CaseFilesService } from './services/casefiles.service';
-import { CaseFormInstancesService } from './services/caseforminstances.service';
-import { CaseInstancesService } from './services/caseinstances.service';
-import { CaseActivationsService } from './services/caseactivations.service';
-import { ViewCaseDefinitionEffects } from './view/view-effects';
-import * as fromCaseDefinitionReducer from './view/view-reducer';
-import { ViewCaseDefinitionComponent } from './view/view.component';
-var CaseDefinitionsModule = (function () {
-    function CaseDefinitionsModule() {
+import { CasesRoutes } from './cases.routes';
+import { CasesComponent } from './cases.component';
+var CasesModule = (function () {
+    function CasesModule() {
     }
-    CaseDefinitionsModule = __decorate([
+    CasesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
-                CaseDefinitionsRoutes,
                 SharedModule,
                 MaterialModule,
-                EffectsModule.forRoot([ListCaseDefinitionsEffects, ViewCaseDefinitionEffects]),
-                StoreModule.forRoot({
-                    caseDefinitions: fromListCaseDefinitionsReducer.reducer,
-                    caseDefinition: fromCaseDefinitionReducer.caseDefinitionReducer,
-                    caseInstances: fromCaseDefinitionReducer.caseInstancesReducer,
-                    formInstances: fromCaseDefinitionReducer.formInstancesReducer,
-                    caseActivations: fromCaseDefinitionReducer.caseActivationsReducer
-                }),
-                StoreDevtoolsModule.instrument({
-                    maxAge: 10
-                })
+                CasesRoutes
             ],
             entryComponents: [],
-            declarations: [
-                ListCaseDefinitionsComponent,
-                ViewCaseDefinitionComponent
-            ],
-            providers: [
-                CaseFilesService,
-                CaseDefinitionsService,
-                CaseInstancesService,
-                CaseFormInstancesService,
-                CaseActivationsService
-            ]
+            declarations: [CasesComponent],
+            providers: []
         })
-    ], CaseDefinitionsModule);
-    return CaseDefinitionsModule;
+    ], CasesModule);
+    return CasesModule;
 }());
-export { CaseDefinitionsModule };
-//# sourceMappingURL=casedefinitions.module.js.map
+export { CasesModule };
+//# sourceMappingURL=cases.module.js.map

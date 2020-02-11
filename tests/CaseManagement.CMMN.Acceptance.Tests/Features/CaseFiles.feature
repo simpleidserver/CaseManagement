@@ -10,7 +10,8 @@ Scenario: Add case file and check it is created
 	And extract 'id' from JSON body into 'casefileid'
 	And execute HTTP GET request 'http://localhost/case-files/$casefileid$'	
 	And extract JSON from body into 'casefile'
-	When execute HTTP GET request 'http://localhost/case-definitions/search?case_file=$casefileid$'
+	And execute HTTP GET request 'http://localhost/case-files/$casefileid$/publish'
+	And execute HTTP GET request 'http://localhost/case-plans/search?case_file=$casefileid$'
 	And extract JSON from body into 'casedefinition'
 	
 	Then extract JSON 'casefile', JSON 'name'='name'

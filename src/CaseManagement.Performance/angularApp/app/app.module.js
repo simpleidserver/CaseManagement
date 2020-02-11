@@ -52,9 +52,7 @@ var AppModule = (function () {
                 AppComponent
             ],
             bootstrap: [AppComponent],
-            providers: [
-                AuthGuard
-            ]
+            providers: [AuthGuard]
         })
     ], AppModule);
     return AppModule;

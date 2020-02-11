@@ -1,22 +1,22 @@
-import { CaseFile } from './case-file.model';
-var SearchCaseFilesResult = (function () {
-    function SearchCaseFilesResult() {
+import { CaseDefinition } from './case-definition.model';
+var SearchCaseDefinitionsResult = (function () {
+    function SearchCaseDefinitionsResult() {
     }
-    SearchCaseFilesResult.fromJson = function (json) {
-        var result = new SearchCaseFilesResult();
+    SearchCaseDefinitionsResult.fromJson = function (json) {
+        var result = new SearchCaseDefinitionsResult();
         result.StartIndex = json["start_index"];
         result.Count = json["count"];
         result.TotalLength = json["total_length"];
         var content = [];
         if (json["content"]) {
             json["content"].forEach(function (c) {
-                content.push(CaseFile.fromJson(c));
+                content.push(CaseDefinition.fromJson(c));
             });
         }
         result.Content = content;
         return result;
     };
-    return SearchCaseFilesResult;
+    return SearchCaseDefinitionsResult;
 }());
-export { SearchCaseFilesResult };
-//# sourceMappingURL=search-case-files-result.model.js.map
+export { SearchCaseDefinitionsResult };
+//# sourceMappingURL=search-case-definitions-result.model.js.map

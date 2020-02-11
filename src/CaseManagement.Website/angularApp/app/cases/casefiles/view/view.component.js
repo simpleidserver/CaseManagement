@@ -8,446 +8,137 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { ActionTypes } from './home-actions';
-var HomeComponent = (function () {
-    function HomeComponent(statisticStore, weekStatisticStore, monthStatisticStore) {
-        this.statisticStore = statisticStore;
-        this.weekStatisticStore = weekStatisticStore;
-        this.monthStatisticStore = monthStatisticStore;
-        this.viewPie = [300, 300];
-        this.viewChart = [500, 300];
-        this.caseStatistic = [
-            {
-                "name": "Active",
-                "value": 0
-            },
-            {
-                "name": "Completed",
-                "value": 0
-            },
-            {
-                "name": "Terminated",
-                "value": 0
-            },
-            {
-                "name": "Failed",
-                "value": 0
-            },
-            {
-                "name": "Suspended",
-                "value": 0
-            },
-            {
-                "name": "Closed",
-                "value": 0
-            }
-        ];
-        this.caseStatisticColorScheme = {
-            domain: ['#d3d3d3', '#008000', '#ffff00', '#FF0000', '#FFA500', '#808080']
-        };
-        this.caseWeekStatistic = [
-            {
-                "name": "Active",
-                "series": []
-            },
-            {
-                "name": "Completed",
-                "series": []
-            },
-            {
-                "name": "Terminated",
-                "series": []
-            },
-            {
-                "name": "Failed",
-                "series": []
-            },
-            {
-                "name": "Suspended",
-                "series": []
-            },
-            {
-                "name": "Closed",
-                "series": []
-            }
-        ];
-        this.caseMonthStatistic = [
-            {
-                "name": "Active",
-                "series": []
-            },
-            {
-                "name": "Completed",
-                "series": []
-            },
-            {
-                "name": "Terminated",
-                "series": []
-            },
-            {
-                "name": "Failed",
-                "series": []
-            },
-            {
-                "name": "Suspended",
-                "series": []
-            },
-            {
-                "name": "Closed",
-                "series": []
-            }
-        ];
-        this.formStatistic = [
-            {
-                "name": "Created",
-                "value": 0
-            },
-            {
-                "name": "Confirmed",
-                "value": 0
-            }
-        ];
-        this.formStatisticColorScheme = {
-            domain: ['#808080', '#008000']
-        };
-        this.formWeekStatistic = [
-            {
-                "name": "Created",
-                "series": []
-            },
-            {
-                "name": "Confirmed",
-                "series": []
-            }
-        ];
-        this.formMonthStatistic = [
-            {
-                "name": "Created",
-                "series": []
-            },
-            {
-                "name": "Confirmed",
-                "series": []
-            }
-        ];
-        this.activationStatisticColorScheme = {
-            domain: ['#808080', '#008000']
-        };
-        this.activationStatistic = [
-            {
-                "name": "Created",
-                "value": 0
-            },
-            {
-                "name": "Confirmed",
-                "value": 0
-            }
-        ];
-        this.activationWeekStatistic = [
-            {
-                "name": "Created",
-                "series": []
-            },
-            {
-                "name": "Confirmed",
-                "series": []
-            }
-        ];
-        this.activationMonthStatistic = [
-            {
-                "name": "Created",
-                "series": []
-            },
-            {
-                "name": "Confirmed",
-                "series": []
-            }
-        ];
+import { TranslateService } from '@ngx-translate/core';
+import { StartGet } from '../actions/case-files';
+import * as fromCaseFiles from '../reducers';
+import { CaseFilesService } from '../services/casefiles.service';
+var CmmnViewer = require('cmmn-js/lib/Modeler'), propertiesPanelModule = require('casemanagement-js-properties-panel'), propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'), caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement');
+var ViewCaseFilesComponent = (function () {
+    function ViewCaseFilesComponent(store, route, formBuilder, caseFilesService, snackBar, translateService) {
+        this.store = store;
+        this.route = route;
+        this.formBuilder = formBuilder;
+        this.caseFilesService = caseFilesService;
+        this.snackBar = snackBar;
+        this.translateService = translateService;
+        this.isEditorDisplayed = true;
+        this.editorOptions = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
+        this.saveForm = this.formBuilder.group({
+            id: new FormControl({ value: '', disabled: true }),
+            name: new FormControl({ value: '' }),
+            createDateTime: new FormControl({ value: '', disabled: true }),
+            updateDateTime: new FormControl({ value: '', disabled: true }),
+            description: new FormControl({ value: '' })
+        });
     }
-    HomeComponent.prototype.ngOnInit = function () {
+    ViewCaseFilesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.statisticSubscription = this.statisticStore.pipe(select('statistic')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            if (st.content) {
-                _this.caseStatistic = [
-                    {
-                        "name": "Active",
-                        "value": st.content.NbActiveCases
-                    },
-                    {
-                        "name": "Completed",
-                        "value": st.content.NbCompletedCases
-                    },
-                    {
-                        "name": "Terminated",
-                        "value": st.content.NbTerminatedCases
-                    },
-                    {
-                        "name": "Failed",
-                        "value": st.content.NbFailedCases
-                    },
-                    {
-                        "name": "Suspended",
-                        "value": st.content.NbSuspendedCases
-                    },
-                    {
-                        "name": "Closed",
-                        "value": st.content.NbClosedCases
-                    }
-                ];
-                _this.formStatistic = [
-                    {
-                        "name": "Created",
-                        "value": st.content.NbCreatedForms
-                    },
-                    {
-                        "name": "Confirmed",
-                        "value": st.content.NbConfirmedForms
-                    }
-                ];
-                _this.activationStatistic = [
-                    {
-                        "name": "Created",
-                        "value": st.content.NbCreatedActivation
-                    },
-                    {
-                        "name": "Confirmed",
-                        "value": st.content.NbConfirmedActivation
-                    }
-                ];
+        this.viewer = new CmmnViewer({
+            additionalModules: [
+                propertiesPanelModule,
+                propertiesProviderModule
+            ],
+            container: "#canvas",
+            keyboard: {
+                bindTo: window
+            },
+            propertiesPanel: {
+                parent: '#properties'
+            },
+            moddleExtensions: {
+                case: caseModdle
             }
         });
-        this.weekSubscription = this.weekStatisticStore.pipe(select('weekStatistics')).subscribe(function (st) {
-            if (!st) {
+        this.store.pipe(select(fromCaseFiles.selectGetResult)).subscribe(function (e) {
+            if (!e) {
                 return;
             }
-            if (st.content) {
-                var caseWeekResult_1 = [
-                    {
-                        "name": "Active",
-                        "series": []
-                    },
-                    {
-                        "name": "Completed",
-                        "series": []
-                    },
-                    {
-                        "name": "Terminated",
-                        "series": []
-                    },
-                    {
-                        "name": "Failed",
-                        "series": []
-                    },
-                    {
-                        "name": "Suspended",
-                        "series": []
-                    },
-                    {
-                        "name": "Closed",
-                        "series": []
-                    }
-                ];
-                var formWeekResult_1 = [
-                    {
-                        "name": "Created",
-                        "series": []
-                    },
-                    {
-                        "name": "Confirmed",
-                        "series": []
-                    }
-                ];
-                var activationWeekResult_1 = [
-                    {
-                        "name": "Created",
-                        "series": []
-                    },
-                    {
-                        "name": "Confirmed",
-                        "series": []
-                    }
-                ];
-                st.content.Content.forEach(function (elt) {
-                    caseWeekResult_1[0].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbActiveCases
-                    });
-                    caseWeekResult_1[1].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbCompletedCases
-                    });
-                    caseWeekResult_1[2].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbTerminatedCases
-                    });
-                    caseWeekResult_1[3].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbFailedCases
-                    });
-                    caseWeekResult_1[4].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbSuspendedCases
-                    });
-                    caseWeekResult_1[5].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbClosedCases
-                    });
-                    formWeekResult_1[0].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbCreatedForms
-                    });
-                    formWeekResult_1[1].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbConfirmedForms
-                    });
-                    activationWeekResult_1[0].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbCreatedForms
-                    });
-                    activationWeekResult_1[1].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbConfirmedForms
-                    });
-                });
-                _this.caseWeekStatistic = caseWeekResult_1;
-                _this.formWeekStatistic = formWeekResult_1;
-                _this.activationWeekStatistic = activationWeekResult_1;
-            }
-        });
-        this.monthSubscription = this.monthStatisticStore.pipe(select('monthStatistics')).subscribe(function (st) {
-            if (!st) {
-                return;
-            }
-            if (st.content) {
-                var caseMonthResult_1 = [
-                    {
-                        "name": "Active",
-                        "series": []
-                    },
-                    {
-                        "name": "Completed",
-                        "series": []
-                    },
-                    {
-                        "name": "Terminated",
-                        "series": []
-                    },
-                    {
-                        "name": "Failed",
-                        "series": []
-                    },
-                    {
-                        "name": "Suspended",
-                        "series": []
-                    },
-                    {
-                        "name": "Closed",
-                        "series": []
-                    }
-                ];
-                var formMonthResult_1 = [
-                    {
-                        "name": "Created",
-                        "series": []
-                    },
-                    {
-                        "name": "Confirmed",
-                        "series": []
-                    }
-                ];
-                var activationMonthResult_1 = [
-                    {
-                        "name": "Created",
-                        "series": []
-                    },
-                    {
-                        "name": "Confirmed",
-                        "series": []
-                    }
-                ];
-                st.content.Content.forEach(function (elt) {
-                    caseMonthResult_1[0].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbActiveCases
-                    });
-                    caseMonthResult_1[1].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbCompletedCases
-                    });
-                    caseMonthResult_1[2].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbTerminatedCases
-                    });
-                    caseMonthResult_1[3].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbFailedCases
-                    });
-                    caseMonthResult_1[4].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbSuspendedCases
-                    });
-                    caseMonthResult_1[5].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbClosedCases
-                    });
-                    formMonthResult_1[0].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbCreatedForms
-                    });
-                    formMonthResult_1[1].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbConfirmedForms
-                    });
-                    activationMonthResult_1[0].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbCreatedForms
-                    });
-                    activationMonthResult_1[1].series.push({
-                        "name": elt.DateTime,
-                        "value": elt.NbConfirmedForms
-                    });
-                });
-                _this.caseMonthStatistic = caseMonthResult_1;
-                _this.formMonthStatistic = formMonthResult_1;
-                _this.activationMonthStatistic = activationMonthResult_1;
-            }
+            _this.saveForm.controls['id'].setValue(e.Id);
+            _this.saveForm.controls['name'].setValue(e.Name);
+            _this.saveForm.controls['createDateTime'].setValue(e.CreateDateTime);
+            _this.saveForm.controls['updateDateTime'].setValue(e.UpdateDateTime);
+            _this.saveForm.controls['description'].setValue(e.Description);
+            _this.xml = e.Payload;
+            _this.viewer.importXML(e.Payload);
         });
         this.refresh();
     };
-    HomeComponent.prototype.refresh = function () {
-        var loadStatisticRequest = {
-            type: ActionTypes.STATISTICLOAD
-        };
-        var loadWeekStatisticsRequest = {
-            type: ActionTypes.SEARCHWEEKSTATISTICS,
-            count: 100
-        };
-        var loadMonthStatisticsRequest = {
-            type: ActionTypes.SEARCHMONTHSTATISTICS,
-            count: 100
-        };
-        this.statisticStore.dispatch(loadStatisticRequest);
-        this.weekStatisticStore.dispatch(loadWeekStatisticsRequest);
-        this.monthStatisticStore.dispatch(loadMonthStatisticsRequest);
+    ViewCaseFilesComponent.prototype.navigate = function (isEditorDisplayed) {
+        var self = this;
+        this.isEditorDisplayed = isEditorDisplayed;
+        if (!this.isEditorDisplayed) {
+            this.viewer.saveXML({}, function (e, x) {
+                if (e) {
+                    return;
+                }
+                self.xml = self.formatXML(x);
+            });
+        }
+        return false;
     };
-    HomeComponent.prototype.ngOnDestroy = function () {
-        this.statisticSubscription.unsubscribe();
-        this.weekSubscription.unsubscribe();
-        this.monthSubscription.unsubscribe();
+    ViewCaseFilesComponent.prototype.onXmlChange = function (evt) {
+        this.viewer.importXML(evt);
     };
-    HomeComponent = __decorate([
+    ViewCaseFilesComponent.prototype.onSave = function (form) {
+        var self = this;
+        this.viewer.saveXML({}, function (e, x) {
+            if (e) {
+                return;
+            }
+            var id = self.saveForm.get('id').value;
+            var cancel = self.translateService.instant('CANCEL');
+            self.caseFilesService.update(id, form.name, form.description, x).subscribe(function () {
+                self.snackBar.open(self.translateService.instant('CASE_FILE_SAVED'), cancel, {
+                    duration: 2000
+                });
+            }, function () {
+                self.snackBar.open(self.translateService.instant('ERROR_SAVE_CASE_FILE'), cancel, {
+                    duration: 2000
+                });
+            });
+        });
+    };
+    ViewCaseFilesComponent.prototype.refresh = function () {
+        var id = this.route.snapshot.params['id'];
+        var request = new StartGet(id);
+        this.store.dispatch(request);
+    };
+    ViewCaseFilesComponent.prototype.formatXML = function (xml) {
+        var PADDING = ' '.repeat(2);
+        var reg = /(>)(<)(\/*)/g;
+        var pad = 0;
+        xml = xml.replace(reg, '$1\r\n$2$3');
+        return xml.split('\r\n').map(function (node) {
+            var indent = 0;
+            if (node.match(/.+<\/\w[^>]*>$/)) {
+                indent = 0;
+            }
+            else if (node.match(/^<\/\w/) && pad > 0) {
+                pad -= 1;
+            }
+            else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+                indent = 1;
+            }
+            else {
+                indent = 0;
+            }
+            pad += indent;
+            return PADDING.repeat(pad - indent) + node;
+        }).join('\r\n');
+    };
+    ViewCaseFilesComponent = __decorate([
         Component({
-            selector: 'app-home-component',
-            templateUrl: './home.component.html',
-            styleUrls: ['./home.component.scss']
+            selector: 'view-case-file',
+            templateUrl: './view.component.html',
+            styleUrls: ['./view.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, Store, Store])
-    ], HomeComponent);
-    return HomeComponent;
+        __metadata("design:paramtypes", [Store, ActivatedRoute, FormBuilder, CaseFilesService, MatSnackBar, TranslateService])
+    ], ViewCaseFilesComponent);
+    return ViewCaseFilesComponent;
 }());
-export { HomeComponent };
-//# sourceMappingURL=home.component.js.map
+export { ViewCaseFilesComponent };
+//# sourceMappingURL=view.component.js.map

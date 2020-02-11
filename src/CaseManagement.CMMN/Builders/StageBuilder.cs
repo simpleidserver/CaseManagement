@@ -10,7 +10,7 @@ namespace CaseManagement.CMMN.Builders
         {
         }
 
-        public StageBuilder AddElement(CaseElementDefinition element)
+        public StageBuilder AddElement(CasePlanElement element)
         {
             var stage = (WorkflowElementDefinition as PlanItemDefinition).Stage;
             stage.Elements.Add(element);

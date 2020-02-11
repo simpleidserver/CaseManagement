@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.CaseFile;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
@@ -20,21 +20,21 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             { "create_datetime", "CreateDateTime" },
             { "update_datetime", "UpdateDateTime" }
         };
-        private ConcurrentBag<CaseFileDefinitionAggregate> _caseFileDefinitions;
+        private ConcurrentBag<CaseFileAggregate> _caseFileDefinitions;
 
-        public InMemoryCaseFileQueryRepository(ConcurrentBag<CaseFileDefinitionAggregate> caseFileDefinitions)
+        public InMemoryCaseFileQueryRepository(ConcurrentBag<CaseFileAggregate> caseFileDefinitions)
         {
             _caseFileDefinitions = caseFileDefinitions;
         }
 
-        public Task<CaseFileDefinitionAggregate> FindById(string id)
+        public Task<CaseFileAggregate> FindById(string id)
         {
             return Task.FromResult(_caseFileDefinitions.FirstOrDefault(c => c.Id == id));
         }
 
-        public Task<FindResponse<CaseFileDefinitionAggregate>> Find(FindCaseDefinitionFilesParameter parameter)
+        public Task<FindResponse<CaseFileAggregate>> Find(FindCaseFilesParameter parameter)
         {
-            IQueryable<CaseFileDefinitionAggregate> result = _caseFileDefinitions.AsQueryable();
+            IQueryable<CaseFileAggregate> result = _caseFileDefinitions.AsQueryable();
             if (MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
@@ -52,12 +52,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<CaseFileDefinitionAggregate>
+            return Task.FromResult(new FindResponse<CaseFileAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = (ICollection<CaseFileDefinitionAggregate>)result.ToList()
+                Content = (ICollection<CaseFileAggregate>)result.ToList()
             });
         }
 

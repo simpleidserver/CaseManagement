@@ -18,7 +18,7 @@ var CaseActivationsService = (function () {
     CaseActivationsService.prototype.search = function (caseDefinitionId, startIndex, count, order, direction) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        var targetUrl = process.env.API_URL + "/case-activations/.search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
+        var targetUrl = process.env.API_URL + "/case-activations/search?start_index=" + startIndex + "&count=" + count + "&case_definition_id=" + caseDefinitionId;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }

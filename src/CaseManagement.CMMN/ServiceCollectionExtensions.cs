@@ -1,24 +1,25 @@
 ﻿using CaseManagement.CMMN;
 using CaseManagement.CMMN.CaseFile.CommandHandlers;
-using CaseManagement.CMMN.CaseInstance.CommandHandlers;
-using CaseManagement.CMMN.CaseInstance.EventHandlers;
-using CaseManagement.CMMN.CaseInstance.Processors;
-using CaseManagement.CMMN.CaseInstance.Processors.CaseFileItem;
-using CaseManagement.CMMN.CaseInstance.Repositories;
+using CaseManagement.CMMN.CaseFile.EventHandlers;
+using CaseManagement.CMMN.CasePlan.EventHandlers;
+using CaseManagement.CMMN.CasePlanInstance.CommandHandlers;
+using CaseManagement.CMMN.CasePlanInstance.EventHandlers;
+using CaseManagement.CMMN.CasePlanInstance.Processors;
+using CaseManagement.CMMN.CasePlanInstance.Processors.CaseFileItem;
+using CaseManagement.CMMN.CasePlanInstance.Repositories;
 using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
+using CaseManagement.CMMN.CaseWorkerTask.EventHandlers;
+using CaseManagement.CMMN.DailyStatistic.EventHandlers;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Domains.CaseFile;
 using CaseManagement.CMMN.Domains.Events;
+using CaseManagement.CMMN.Domains.FormInstance.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus;
-using CaseManagement.CMMN.Infrastructures.Bus.ConfirmForm;
-using CaseManagement.CMMN.Infrastructures.Bus.ConfirmTableItem;
-using CaseManagement.CMMN.Infrastructures.Bus.ConsumeDomainEvent;
-using CaseManagement.CMMN.Infrastructures.Bus.ConsumeTransitionEvent;
 using CaseManagement.CMMN.Infrastructures.Bus.InMemory;
-using CaseManagement.CMMN.Infrastructures.Bus.LaunchProcess;
+using CaseManagement.CMMN.Infrastructures.Bus.LaunchCasePlanInstance;
 using CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess;
+using CaseManagement.CMMN.Infrastructures.Bus.Transition;
 using CaseManagement.CMMN.Infrastructures.EvtStore;
 using CaseManagement.CMMN.Infrastructures.EvtStore.InMemory;
 using CaseManagement.CMMN.Infrastructures.Lock;
@@ -42,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
             services.TryAddTransient<ICaseEngine, CaseEngine>()
                 .AddCommon()
-                .AddEventHandlers()
+                .AddMessageHandlers()
                 .AddProcessHandlers()
                 .AddProcessors()
                 .AddBus();
@@ -72,7 +73,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.TryAddTransient<IUpdateCaseFileCommandHandler, UpdateCaseFileCommandHandler>();
             services.TryAddTransient<IAddCaseFileCommandHandler, AddCaseFileCommandHandler>();
-            services.TryAddTransient<IUploadCaseFilesCommandHandler, UploadCaseFilesCommandHandler>();
+            services.TryAddTransient<IPublishCaseFileCommandHandler, PublishCaseFileCommandHandler>();
             services.TryAddTransient<IActivateCommandHandler, ActivateCommandHandler>();
             services.TryAddTransient<ICloseCommandHandler, CloseCommandHandler>();
             services.TryAddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
@@ -83,7 +84,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ISuspendCommandHandler, SuspendCommandHandler>();
             services.TryAddTransient<ITerminateCommandHandler, TerminateCommandHandler>();
             services.TryAddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
-            services.TryAddTransient<IConfirmTableItemCommandHandler, ConfirmTableItemCommandHandler>();
             return services;
         }
 
@@ -92,7 +92,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var wireup = Wireup.Init().UsingInMemoryPersistence().Build();
             services.TryAddSingleton<IStoreEvents>(wireup);
             services.TryAddSingleton<IRunningTaskPool>(new RunningTaskPool());
-            services.TryAddSingleton<IQueueProvider>(new InMemoryQueueProvider());
+            services.TryAddSingleton<IMessageBroker, InMemoryMessageBroker>();
             services.TryAddTransient<ICommitAggregateHelper, CommitAggregateHelper>()
                 .AddInMemoryPersistence();
             return services;
@@ -101,48 +101,41 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddBus(this IServiceCollection services)
         {
             services.TryAddSingleton<IDistributedLock, InMemoryDistributedLock>();
-            services.TryAddTransient<IMessageConsumer, PerformanceMonitoringService>();
-            services.TryAddTransient<IMessageConsumer, LaunchProcessMessageConsumer>();
-            services.TryAddTransient<IMessageConsumer, ReactivateProcessMessageConsumer>();
-            services.TryAddTransient<IMessageConsumer, DomainEventMessageConsumer>();
-            services.TryAddTransient<IMessageConsumer, TransitionEventMessageConsumer>();
-            services.TryAddTransient<IMessageConsumer, ConfirmFormMessageConsumer>();
-            services.TryAddTransient<IMessageConsumer, ConfirmTableItemMessageConsumer>();
+            services.TryAddTransient<IJob, PerformanceMonitoringJob>();
+            services.TryAddTransient<IJob, InMemoryMessageBroker>();
             return services;
         }
 
         private static IServiceCollection AddInMemoryPersistence(this IServiceCollection services)
         {
-            var definitions = new ConcurrentBag<CaseDefinition>();
+            var definitions = new ConcurrentBag<CasePlanAggregate>();
             var caseProcesses = new List<ProcessAggregate>();
-            var activations = new ConcurrentBag<CaseActivationAggregate>();
-            var instances = new ConcurrentBag<CaseInstance>();
+            var instances = new ConcurrentBag<CasePlanInstanceAggregate>();
             var roles = new List<RoleAggregate>();
             var formInstances = new ConcurrentBag<FormInstanceAggregate>();
-            var files = new ConcurrentBag<CaseFileDefinitionAggregate>();
+            var files = new ConcurrentBag<CaseFileAggregate>();
             var forms = new List<FormAggregate>();
-            var caseDefinitionHistories = new ConcurrentBag<CaseDefinitionHistoryAggregate>();
             var caseDailyStatistics = new ConcurrentBag<DailyStatisticAggregate>();
-            var performances = new ConcurrentBag<PerformanceStatisticAggregate>();
-            var casePlanifications = new ConcurrentBag<CasePlanificationAggregate>();
+            var caseWorkerTasks = new ConcurrentBag<CaseWorkerTaskAggregate>();
+            var performances = new ConcurrentBag<PerformanceAggregate>();
             services.TryAddSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
             services.TryAddSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
             services.TryAddSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(files));
             services.TryAddSingleton<IFormInstanceCommandRepository>(new InMemoryFormInstanceCommandRepository(formInstances));
             services.TryAddSingleton<IFormInstanceQueryRepository>(new InMemoryFormInstanceQueryRepository(formInstances));
-            services.TryAddSingleton<ICaseDefinitionCommandRepository>(new InMemoryCaseDefinitionCommandRepository(definitions, caseDefinitionHistories));
-            services.TryAddSingleton<ICaseDefinitionQueryRepository>(new InMemoryCaseDefinitionQueryRepository(definitions, caseDefinitionHistories));
-            services.TryAddSingleton<ICaseInstanceQueryRepository>(new InMemoryCaseInstanceQueryRepository(instances));
-            services.TryAddSingleton<ICaseInstanceCommandRepository>(new InMemoryCaseInstanceCommandRepository(instances));
+            services.TryAddSingleton<ICasePlanCommandRepository>(new InMemoryCasePlanCommandRepository(definitions));
+            services.TryAddSingleton<ICasePlanQueryRepository>(new InMemoryCasePlanQueryRepository(definitions));
+            services.TryAddSingleton<ICasePlanInstanceQueryRepository>(new InMemoryCaseInstanceQueryRepository(instances));
+            services.TryAddSingleton<ICasePlanInstanceCommandRepository>(new InMemoryCaseInstanceCommandRepository(instances));
             services.TryAddSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
-            services.TryAddSingleton<IActivationCommandRepository>(new InMemoryActivationCommandRepository(activations));
-            services.TryAddSingleton<IActivationQueryRepository>(new InMemoryActivationQueryRepository(activations));
+            services.TryAddSingleton<ICaseWorkerTaskCommandRepository>(new InMemoryCaseWorkerTaskCommandRepository(caseWorkerTasks));
+            services.TryAddSingleton<ICaseWorkerTaskQueryRepository>(new InMemoryCaseWorkerTaskQueryRepository(caseWorkerTasks));
             services.TryAddSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
             services.TryAddSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
-            services.TryAddSingleton<IStatisticCommandRepository>(new InMemoryStatisticCommandRepository(caseDailyStatistics, performances));
-            services.TryAddSingleton<IStatisticQueryRepository>(new InMemoryStatisticQueryRepository(caseDailyStatistics, performances));
-            services.TryAddSingleton<ICasePlanificationCommandRepository>(new InMemoryCasePlanificationCommandRepository(casePlanifications));
-            services.TryAddSingleton<ICasePlanificationQueryRepository>(new InMemoryCasePlanificationQueryRepository(casePlanifications));
+            services.TryAddSingleton<IDailyStatisticCommandRepository>(new InMemoryDailyStatisticCommandRepository(caseDailyStatistics));
+            services.TryAddSingleton<IStatisticQueryRepository>(new InMemoryDailyStatisticQueryRepository(caseDailyStatistics));
+            services.TryAddSingleton<IPerformanceCommandRepository>(new InMemoryPerformanceCommandRepository(performances));
+            services.TryAddSingleton<IPerformanceQueryRepository>(new InMemoryPerformanceQueryRepository(performances));
             services.TryAddSingleton<ICaseFileCommandRepository>(new InMemoryCaseFileCommandRepository(files));
             services.TryAddSingleton<ICaseFileItemRepository, InMemoryDirectoryCaseFileItemRepository>();
             services.TryAddTransient<IEventStoreRepository, InMemoryEventStoreRepository>();
@@ -150,30 +143,30 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddEventHandlers(this IServiceCollection services)
+        private static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
-            services.TryAddTransient<IDomainEventHandler<CaseInstanceCreatedEvent>, CaseDefinitionHistoryHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementCreatedEvent>, CaseDefinitionHistoryHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementTransitionRaisedEvent>, CaseActivationHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, FormInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, FormInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementTransitionRaisedEvent>, StatisticHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, StatisticHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, StatisticHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseTransitionRaisedEvent>, StatisticHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementCreatedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementFinishedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementInstanceFormCreatedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementInstanceFormSubmittedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementStartedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementTransitionRaisedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseInstanceCreatedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseInstanceVariableAddedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseTransitionRaisedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementPlanificationConfirmedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementPlannedEvent>, WorkflowInstanceHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementPlanificationConfirmedEvent>, CasePlanificationHandler>();
-            services.TryAddTransient<IDomainEventHandler<CaseElementPlannedEvent>, CasePlanificationHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<TransitionCommand>, TransitionCommandHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<ReactivateProcessCommand>, ReactivateProcessCommandHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<LaunchCasePlanInstanceCommand>, LaunchCasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CasePlanAddedEvent>, CasePlanEventHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseWorkerTaskAddedEvent>, CaseWorkerTaskHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseWorkerTaskConfirmedEvent>, CaseWorkerTaskHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFileAddedEvent>, CaseFileHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFileUpdatedEvent>, CaseFileHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFilePublishedEvent>, CaseFileHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<FormInstanceAddedEvent>, FormInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<FormInstanceSubmittedEvent>, FormInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseElementTransitionRaisedEvent>, StatisticCasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<FormInstanceAddedEvent>, StatisticFormInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<FormInstanceSubmittedEvent>, StatisticFormInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseTransitionRaisedEvent>, StatisticCasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseElementCreatedEvent>, CasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseElementFinishedEvent>, CasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseElementStartedEvent>, CasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseElementTransitionRaisedEvent>, CasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseInstanceCreatedEvent>, CasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseInstanceVariableAddedEvent>, CasePlanInstanceHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseTransitionRaisedEvent>, CasePlanInstanceHandler>();
             return services;
         }
 

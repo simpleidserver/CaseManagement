@@ -82,6 +82,9 @@ var CaseInstance = (function () {
         json["execution_histories"].forEach(function (eh) {
             result.ExecutionHistories.push(ExecutionHistory.fromJson(eh));
         });
+        json["elements"].forEach(function (elt) {
+            result.Elements.push(CaseElementInstance.fromJson(elt));
+        });
         return result;
     };
     return CaseInstance;

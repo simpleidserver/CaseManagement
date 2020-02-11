@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Infrastructures.Bus;
+﻿using CaseManagement.CMMN.Infrastructures;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Threading;
@@ -8,16 +8,16 @@ namespace CaseManagement.CMMN.AspNetCore
 {
     public class BusHostedService : IHostedService
     {
-        private readonly IEnumerable<IMessageConsumer> _messageConsumers;
+        private readonly IEnumerable<IJob> _jobs;
 
-        public BusHostedService(IEnumerable<IMessageConsumer> messageConsumers)
+        public BusHostedService(IEnumerable<IJob> jobs)
         {
-            _messageConsumers = messageConsumers;
+            _jobs = jobs;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            foreach(var messageConsumer in _messageConsumers)
+            foreach(var messageConsumer in _jobs)
             {
                 messageConsumer.Start();
             }
@@ -27,7 +27,7 @@ namespace CaseManagement.CMMN.AspNetCore
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            foreach(var messageConsumer in _messageConsumers)
+            foreach(var messageConsumer in _jobs)
             {
                 messageConsumer.Stop();
             }

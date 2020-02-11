@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.CaseInstance.Repositories;
+﻿using CaseManagement.CMMN.CasePlanInstance.Repositories;
 using PortCMIS.Client;
 using System.Collections.Generic;
 using System.IO;

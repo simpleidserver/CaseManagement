@@ -9,28 +9,28 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
 {
-    public class InMemoryCaseInstanceQueryRepository : ICaseInstanceQueryRepository
+    public class InMemoryCaseInstanceQueryRepository : ICasePlanInstanceQueryRepository
     {
         private static Dictionary<string, string> MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME = new Dictionary<string, string>
         {
             { "id", "Id" },
-            { "case_definition_id", "CaseDefinitionId" },
+            { "case_definition_id", "CasePlanId" },
             { "state", "State" },
             { "create_datetime", "CreateDateTime" },
         };
-        private ConcurrentBag<Domains.CaseInstance> _instances;
+        private ConcurrentBag<Domains.CasePlanInstanceAggregate> _instances;
 
-        public InMemoryCaseInstanceQueryRepository(ConcurrentBag<Domains.CaseInstance> instances)
+        public InMemoryCaseInstanceQueryRepository(ConcurrentBag<Domains.CasePlanInstanceAggregate> instances)
         {
             _instances = instances;
         }
 
-        public Task<FindResponse<Domains.CaseInstance>> Find(FindWorkflowInstanceParameter parameter)
+        public Task<FindResponse<Domains.CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter)
         {
-            IQueryable<Domains.CaseInstance> result = _instances.AsQueryable();
+            IQueryable<Domains.CasePlanInstanceAggregate> result = _instances.AsQueryable();
             if (!string.IsNullOrWhiteSpace(parameter.CaseDefinitionId))
             {
-                result = result.Where(r => r.CaseDefinitionId == parameter.CaseDefinitionId);
+                result = result.Where(r => r.CasePlanId == parameter.CaseDefinitionId);
             }
 
             if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
@@ -40,24 +40,24 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<Domains.CaseInstance>
+            return Task.FromResult(new FindResponse<Domains.CasePlanInstanceAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = (ICollection<Domains.CaseInstance>)result.ToList()
+                Content = (ICollection<Domains.CasePlanInstanceAggregate>)result.ToList()
             });
         }
 
-        public Task<Domains.CaseInstance> FindFlowInstanceById(string id)
+        public Task<Domains.CasePlanInstanceAggregate> FindFlowInstanceById(string id)
         {
             var result = _instances.FirstOrDefault(i => i.Id == id);
             if (result == null)
             {
-                return Task.FromResult((Domains.CaseInstance)null);
+                return Task.FromResult((Domains.CasePlanInstanceAggregate)null);
             }
 
-            return Task.FromResult(result.Clone() as Domains.CaseInstance);
+            return Task.FromResult(result.Clone() as Domains.CasePlanInstanceAggregate);
         }     
     }
 }

@@ -2,7 +2,7 @@
 using CaseManagement.CMMN.CaseFile.CommandHandlers;
 using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Exceptions;
-using CaseManagement.CMMN.Domains.CaseFile;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Persistence;
@@ -23,16 +23,16 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     public class CaseFilesController : Controller
     {
         private readonly ICaseFileQueryRepository _queryRepository;
-        private readonly IUploadCaseFilesCommandHandler _uploadCaseFilesCommandHandler;
         private readonly IAddCaseFileCommandHandler _addCaseFileCommandHandler;
         private readonly IUpdateCaseFileCommandHandler _updateCaseFileCommandHandler;
+        private readonly IPublishCaseFileCommandHandler _publishCaseFileCommandHandler;
 
-        public CaseFilesController(ICaseFileQueryRepository queryRepository, IUploadCaseFilesCommandHandler uploadCaseFilesCommandHandler, IAddCaseFileCommandHandler addCaseFileCommandHandler, IUpdateCaseFileCommandHandler updateCaseFileCommandHandler)
+        public CaseFilesController(ICaseFileQueryRepository queryRepository, IAddCaseFileCommandHandler addCaseFileCommandHandler, IUpdateCaseFileCommandHandler updateCaseFileCommandHandler, IPublishCaseFileCommandHandler publishCaseFileCommandHandler)
         {
             _queryRepository = queryRepository;
-            _uploadCaseFilesCommandHandler = uploadCaseFilesCommandHandler;
             _addCaseFileCommandHandler = addCaseFileCommandHandler;
             _updateCaseFileCommandHandler = updateCaseFileCommandHandler;
+            _publishCaseFileCommandHandler = publishCaseFileCommandHandler;
         }
 
         [HttpGet("count")]
@@ -41,7 +41,6 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         {
             var result = await _queryRepository.Count();
             return new OkObjectResult(new
-
             {
                 count = result
             });
@@ -71,30 +70,6 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
-        [HttpPost("upload")]
-        [Authorize("add_casefile")]
-        public async Task<IActionResult> Upload([FromBody] UploadCaseFilesCommand parameter)
-        {
-            try
-            {
-                parameter.NameIdentifier = this.GetNameIdentifier();
-                var result = await _uploadCaseFilesCommandHandler.Handle(parameter);
-                var jObj = new JObject
-                {
-                    { "ids", new JArray(result) }
-                };
-                return new ContentResult
-                {
-                    StatusCode = (int)HttpStatusCode.Created,
-                    Content = jObj.ToString()
-                };
-            }
-            catch (AggregateValidationException ex)
-            {
-                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
-            }
-        }
-
         [HttpPut("{id}")]
         [Authorize("update_casefile")]
         public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
@@ -102,7 +77,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             try
             {
                 parameter.Id = id;
-                parameter.NameIdentifier = this.GetNameIdentifier();
+                parameter.Performer = this.GetNameIdentifier();
                 await _updateCaseFileCommandHandler.Handle(parameter);
                 return new OkResult();
             }
@@ -111,6 +86,34 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 return new NotFoundResult();
             }
             catch(UnauthorizedCaseFileException)
+            {
+                return new UnauthorizedResult();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/publish")]
+        [Authorize("publish_casefile")]
+        public async Task<IActionResult> Publish(string id)
+        {
+            try
+            {
+                var cmd  = new PublishCaseFileCommand
+                {
+                    Id = id,
+                    Performer = this.GetNameIdentifier()
+                };
+                await _publishCaseFileCommandHandler.Handle(cmd);
+                return new OkResult();
+            }
+            catch (UnknownCaseFileException)
+            {
+                return new NotFoundResult();
+            }
+            catch (UnauthorizedCaseFileException)
             {
                 return new UnauthorizedResult();
             }
@@ -140,7 +143,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             return new OkObjectResult(ToDto(result));
         }
 
-        private static JObject ToDto(FindResponse<CaseFileDefinitionAggregate> resp)
+        private static JObject ToDto(FindResponse<CaseFileAggregate> resp)
         {
             return new JObject
             {
@@ -151,7 +154,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             };
         }
 
-        private static JObject ToDto(CaseFileDefinitionAggregate resp)
+        private static JObject ToDto(CaseFileAggregate resp)
         {
             return new JObject
             {
@@ -164,11 +167,11 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             };
         }
 
-        private static FindCaseDefinitionFilesParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
+        private static FindCaseFilesParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
             string owner;
             string text;
-            var parameter = new FindCaseDefinitionFilesParameter();
+            var parameter = new FindCaseFilesParameter();
             parameter.ExtractFindParameter(query);
             if (query.TryGet("owner", out owner))
             {

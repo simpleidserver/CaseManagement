@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.CaseFile;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -8,27 +8,27 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 {
     public class InMemoryCaseFileCommandRepository : ICaseFileCommandRepository
     {
-        private readonly ConcurrentBag<CaseFileDefinitionAggregate> _caseFiles;
+        private readonly ConcurrentBag<CaseFileAggregate> _caseFiles;
 
-        public InMemoryCaseFileCommandRepository(ConcurrentBag<CaseFileDefinitionAggregate> caseFiles)
+        public InMemoryCaseFileCommandRepository(ConcurrentBag<CaseFileAggregate> caseFiles)
         {
             _caseFiles = caseFiles;
         }
 
-        public void Delete(CaseFileDefinitionAggregate caseFile)
+        public void Delete(CaseFileAggregate caseFile)
         {
             _caseFiles.Remove(_caseFiles.First(a => a.Id == caseFile.Id));
         }
 
-        public void Add(CaseFileDefinitionAggregate caseFile)
+        public void Add(CaseFileAggregate caseFile)
         {
-            _caseFiles.Add((CaseFileDefinitionAggregate)caseFile.Clone());
+            _caseFiles.Add((CaseFileAggregate)caseFile.Clone());
         }
 
-        public void Update(CaseFileDefinitionAggregate caseFile)
+        public void Update(CaseFileAggregate caseFile)
         {
             _caseFiles.Remove(_caseFiles.First(a => a.Id == caseFile.Id));
-            _caseFiles.Add((CaseFileDefinitionAggregate)caseFile.Clone());
+            _caseFiles.Add((CaseFileAggregate)caseFile.Clone());
         }
 
         public Task<int> SaveChanges()

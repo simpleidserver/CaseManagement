@@ -1,22 +1,26 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["CASEDEFINITIONSLOAD"] = "[CaseDefinitions] Load";
-    ActionTypes["CASEDEFINITIONSLOADED"] = "[CaseDefinitions] Loaded";
-    ActionTypes["ERRORLOADCASEDEFINITIONS"] = "[CaseDefinitions] Error Load";
+    ActionTypes["START_SEARCH"] = "[CaseActivations] START_SEARCH";
+    ActionTypes["COMPLETE_SEARCH"] = "[CaseActivations] COMPLETE_SEARCH";
 })(ActionTypes || (ActionTypes = {}));
-var LoadCaseDefinitionsAction = (function () {
-    function LoadCaseDefinitionsAction() {
-        this.type = ActionTypes.CASEDEFINITIONSLOAD;
+var StartFetch = (function () {
+    function StartFetch(id, order, direction, count, startIndex) {
+        this.id = id;
+        this.order = order;
+        this.direction = direction;
+        this.count = count;
+        this.startIndex = startIndex;
+        this.type = ActionTypes.START_SEARCH;
     }
-    return LoadCaseDefinitionsAction;
+    return StartFetch;
 }());
-export { LoadCaseDefinitionsAction };
-var CaseDefinitionsLoadedAction = (function () {
-    function CaseDefinitionsLoadedAction(result) {
-        this.result = result;
-        this.type = ActionTypes.CASEDEFINITIONSLOADED;
+export { StartFetch };
+var CompleteFetch = (function () {
+    function CompleteFetch(content) {
+        this.content = content;
+        this.type = ActionTypes.COMPLETE_SEARCH;
     }
-    return CaseDefinitionsLoadedAction;
+    return CompleteFetch;
 }());
-export { CaseDefinitionsLoadedAction };
-//# sourceMappingURL=list-actions.js.map
+export { CompleteFetch };
+//# sourceMappingURL=case-activations.js.map

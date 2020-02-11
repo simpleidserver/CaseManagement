@@ -44,27 +44,27 @@ namespace CaseManagement.CMMN.Host
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    IssuerSigningKey = ExtractKey("openid_puk.txt"),
+                    IssuerSigningKey = ExtractKey("oauth_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "http://localhost:60000"
+                        "websiteGateway"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60000"
+                        "http://localhost:60001"
                     }
                 };
             });
             services.AddAuthorization(policy =>
             {
-                policy.AddPolicy("IsConnected", p => p.RequireAuthenticatedUser());
-                policy.AddPolicy("get_statistic", p => p.RequireRole("admin"));
-                policy.AddPolicy("get_performance", p => p.RequireRole("admin"));
-                policy.AddPolicy("get_casedefinition", p => p.RequireRole("businessanalyst"));
-                policy.AddPolicy("add_casefile", p => p.RequireRole("businessanalyst"));
-                policy.AddPolicy("update_casefile", p => p.RequireRole("businessanalyst"));
-                policy.AddPolicy("add_case_instance", p => p.RequireRole("businessanalyst"));
-                policy.AddPolicy("launch_case_intance", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("get_statistic", p => p.RequireClaim("scope", "get_statistic"));
+                policy.AddPolicy("get_performance", p => p.RequireClaim("scope", "get_performance"));
+                policy.AddPolicy("get_caseplan", p => p.RequireClaim("scope", "get_caseplan"));
+                policy.AddPolicy("add_casefile", p => p.RequireClaim("scope", "add_casefile"));
+                policy.AddPolicy("update_casefile", p => p.RequireClaim("scope", "update_casefile"));
+                policy.AddPolicy("publish_casefile", p => p.RequireClaim("scope", "publish_casefile"));
+                policy.AddPolicy("add_case_instance", p => p.RequireClaim("scope", "add_case_instance"));
+                policy.AddPolicy("launch_case_intance", p => p.RequireClaim("scope", "launch_case_intance"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
@@ -73,7 +73,7 @@ namespace CaseManagement.CMMN.Host
             services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
             services.AddCMMNEngine()
-                .AddDefinitions(files)
+                .AddDefinitions(files, "businessanalyst")
                 .AddCaseProcesses(new List<ProcessAggregate>
                 {
                     new CaseManagementProcessAggregate
