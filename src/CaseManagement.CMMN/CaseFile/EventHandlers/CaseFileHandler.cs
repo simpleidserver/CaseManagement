@@ -27,7 +27,7 @@ namespace CaseManagement.CMMN.CaseFile.EventHandlers
         public async Task Handle(CaseFileAddedEvent @event, CancellationToken cancellationToken)
         {
             var lockId = $"add-casefile-{@event.Id}";
-            if (await _distributedLock.AcquireLock(lockId))
+            if (!await _distributedLock.AcquireLock(lockId))
             {
                 return;
             }
@@ -50,7 +50,7 @@ namespace CaseManagement.CMMN.CaseFile.EventHandlers
         public async Task Handle(CaseFileUpdatedEvent @event, CancellationToken cancellationToken)
         {
             var lockId = $"update-casefile-{@event.Id}";
-            if (await _distributedLock.AcquireLock(lockId))
+            if (!await _distributedLock.AcquireLock(lockId))
             {
                 return;
             }
@@ -71,7 +71,7 @@ namespace CaseManagement.CMMN.CaseFile.EventHandlers
         public async Task Handle(CaseFilePublishedEvent @event, CancellationToken cancellationToken)
         {
             var lockId = $"publish-casefile-{@event.Id}";
-            if (await _distributedLock.AcquireLock(lockId))
+            if (!await _distributedLock.AcquireLock(lockId))
             {
                 return;
             }
@@ -81,7 +81,6 @@ namespace CaseManagement.CMMN.CaseFile.EventHandlers
                 var caseFile = await _caseFileQueryRepository.FindById(@event.AggregateId);
                 var result = caseFile.Publish(@event.Performer);
                 _caseFileCommandRepository.Update(caseFile);
-                _caseFileCommandRepository.Add(result);
                 await _caseFileCommandRepository.SaveChanges();
             }
             finally

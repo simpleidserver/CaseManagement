@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatPaginator, MatSort } from '@angular/material';
 import { select, Store } from '@ngrx/store';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { merge, Observable } from 'rxjs';
-import { StartFetch } from '../actions/case-files';
+import { merge } from 'rxjs';
+import { StartSearch } from '../actions/case-files';
 import { CaseFile } from '../models/case-file.model';
+import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
 import * as fromCaseFiles from '../reducers';
 import { AddCaseFileDialog } from './add-case-file-dialog';
 
@@ -15,23 +15,28 @@ import { AddCaseFileDialog } from './add-case-file-dialog';
     styleUrls: ['./list.component.scss']
 })
 export class ListCaseFilesComponent implements OnInit {
-    displayedColumns: string[] = ['name', 'create_datetime', 'update_datetime'];
+    displayedColumns: string[] = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     searchForm: FormGroup;
-    isLoading: boolean;
     length: number;
-    isErrorLoadOccured: boolean;
-    caseFiles$: Observable<CaseFile[]>;
+    caseFiles$: CaseFile[] = [];
 
-    constructor(private store: Store<fromCaseFiles.CaseFilesState>, private formBuilder: FormBuilder, private oauthService: OAuthService, private dialog: MatDialog) {
+    constructor(private store: Store<fromCaseFiles.CaseFilesState>, private formBuilder: FormBuilder,  private dialog: MatDialog) {
         this.searchForm = this.formBuilder.group({
             text: ''
         });
     }
 
     ngOnInit() {
-        this.caseFiles$ = this.store.pipe(select(fromCaseFiles.selectSearchResults));
+        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe((searchCaseFilesResult : SearchCaseFilesResult) => {
+            if (!searchCaseFilesResult) {
+                return;
+            }
+
+            this.caseFiles$ = searchCaseFilesResult.Content;
+            this.length = searchCaseFilesResult.TotalLength;
+        });
         this.refresh();
     }
 
@@ -63,8 +68,7 @@ export class ListCaseFilesComponent implements OnInit {
             count = this.paginator.pageSize;
         }
 
-        let claims : any = this.oauthService.getIdentityClaims();
-        let request = new StartFetch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, claims.sub);
+        let request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     }
 }

@@ -39,9 +39,7 @@ namespace CaseManagement.CMMN.Domains
                 DomainEvents.Add(evt);
             }
 
-            var next = (CaseFileAggregate)Clone();
-            next.Version++;
-            next.Id = BuildCaseFileIdentifier(FileId, next.Version);
+            var next = New(Name, Description, Version + 1, Owner, Payload, FileId);
             return next;
         }
 
@@ -56,12 +54,16 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CaseFileAggregate New(string name, string description, int version, string owner, string payload = null)
+        public static CaseFileAggregate New(string name, string description, int version, string owner, string payload = null, string fileId = null)
         {
             var result = new CaseFileAggregate();
             lock(result.DomainEvents)
             {
-                var fileId = Guid.NewGuid().ToString();
+                if (string.IsNullOrWhiteSpace(fileId))
+                {
+                    fileId = Guid.NewGuid().ToString();
+                }
+
                 var evt = new CaseFileAddedEvent(Guid.NewGuid().ToString(), BuildCaseFileIdentifier(fileId, version), version, fileId, name, description, DateTime.UtcNow, owner, payload);
                 result.Handle(evt);
                 result.DomainEvents.Add(evt);
@@ -113,6 +115,8 @@ namespace CaseManagement.CMMN.Domains
             CreateDateTime = caseFileAddedEvent.CreateDateTime;
             Owner = caseFileAddedEvent.Owner;
             Payload = caseFileAddedEvent.Payload;
+            Version = caseFileAddedEvent.Version;
+            Status = CaseFileStatus.Edited;
         }
 
         private void Handle(CaseFileUpdatedEvent caseFileUpdatedEvent)

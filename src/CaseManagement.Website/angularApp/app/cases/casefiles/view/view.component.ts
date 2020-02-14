@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { StartGet } from '../actions/case-files';
@@ -24,8 +24,9 @@ export class ViewCaseFilesComponent implements OnInit {
     saveForm: FormGroup;
     editorOptions: any = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
     viewer: any;
+    caseFile: CaseFile = new CaseFile();
 
-    constructor(private store: Store<fromCaseFiles.CaseFilesState>, private route: ActivatedRoute, private formBuilder: FormBuilder, private caseFilesService: CaseFilesService, private snackBar: MatSnackBar, private translateService : TranslateService) {
+    constructor(private store: Store<fromCaseFiles.CaseFilesState>, private route: ActivatedRoute, private formBuilder: FormBuilder, private caseFilesService: CaseFilesService, private snackBar: MatSnackBar, private translateService: TranslateService, private router: Router) {
         this.saveForm = this.formBuilder.group({
             id: new FormControl({ value: '', disabled: true }),
             name: new FormControl({ value: '' }),
@@ -64,6 +65,7 @@ export class ViewCaseFilesComponent implements OnInit {
             this.saveForm.controls['description'].setValue(e.Description);
             this.xml = e.Payload;
             this.viewer.importXML(e.Payload);
+            this.caseFile = e;
         });
         this.refresh();
     }
@@ -105,6 +107,23 @@ export class ViewCaseFilesComponent implements OnInit {
                 self.snackBar.open(self.translateService.instant('ERROR_SAVE_CASE_FILE'), cancel, {
                     duration: 2000
                 });
+            });
+        });
+    }
+
+    onPublish(e: any) {
+        e.preventDefault();
+        let self = this;
+        var id = self.route.snapshot.params['id'];
+        let cancel = self.translateService.instant('CANCEL');
+        self.caseFilesService.publish(id).subscribe((caseFileId : string) => {
+            self.snackBar.open(self.translateService.instant('PUBLISH_CASE_FILE'), cancel, {
+                duration: 2000
+            });
+            this.router.navigate(["/cases/casefiles/" + caseFileId]);
+        }, () => {
+            self.snackBar.open(self.translateService.instant('ERROR_PUBLISH_CASE_FILE'), cancel, {
+                duration: 2000
             });
         });
     }

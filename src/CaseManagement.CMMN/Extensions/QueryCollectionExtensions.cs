@@ -75,6 +75,24 @@ namespace CaseManagement.CMMN.Extensions
             return false;
         }
 
+        public static bool TryGet(this IEnumerable<KeyValuePair<string, string>> queryCollection, string name, out bool value)
+        {
+            value = false;
+            if (queryCollection.ContainsKey(name))
+            {
+                bool result;
+                if (bool.TryParse(queryCollection.Get(name).ToArray().First(), out result))
+                {
+                    value = result;
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
         public static bool TryGet(this IEnumerable<KeyValuePair<string, string>> queryCollection, string name, out string value)
         {
             value = null;

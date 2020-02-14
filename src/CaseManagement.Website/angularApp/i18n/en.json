@@ -51,5 +51,16 @@
   "TRANSITION_HISTORIES": "Transition history",
   "CASE_FILE_ITEMS": "Case file items",
   "VALUE": "Value",
-  "TRANSITION": "Transition"
+  "TRANSITION": "Transition",
+  "UNDO": "Undo",
+  "ERROR_ADD_CASE_FILE": "An error occured while trying to create the case file",
+  "CASES_FILE_ADDED": "The case file has been added",
+  "VERSION": "Version",
+  "STATUS": "Status",
+  "CASE_FILE_HISTORIES": "Case file history",
+  "PUBLISH_CASE_FILE": "The case file is published",
+  "ERROR_PUBLISH_CASE_FILE": "An error occured while trying to publish the case file",
+  "PUBLISH": "Publish",
+  "VIEW_CASE_FILE_HISTORY": "View case file history",
+  "EDIT_CASE_FILE": "Edit case file"
 }

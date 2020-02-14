@@ -18,7 +18,8 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             { "name", "Name" },
             { "description", "Description" },
             { "create_datetime", "CreateDateTime" },
-            { "update_datetime", "UpdateDateTime" }
+            { "update_datetime", "UpdateDateTime" },
+            { "version", "Version" }
         };
         private ConcurrentBag<CaseFileAggregate> _caseFileDefinitions;
 
@@ -35,6 +36,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<CaseFileAggregate>> Find(FindCaseFilesParameter parameter)
         {
             IQueryable<CaseFileAggregate> result = _caseFileDefinitions.AsQueryable();
+            if (parameter.TakeLatest)
+            {
+                result = result.OrderByDescending(r => r.Version);
+                result = result.GroupBy(r => r.FileId).Select(r => r.First());
+            }
+
             if (MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
@@ -48,6 +55,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             if (!string.IsNullOrWhiteSpace(parameter.Text))
             {
                 result = result.Where(r => r.Name.IndexOf(parameter.Text, StringComparison.InvariantCultureIgnoreCase) >= 0);
+            }
+
+            if (!string.IsNullOrWhiteSpace(parameter.CaseFileId))
+            {
+                result = result.Where(r => r.FileId == parameter.CaseFileId);
             }
 
             int totalLength = result.Count();

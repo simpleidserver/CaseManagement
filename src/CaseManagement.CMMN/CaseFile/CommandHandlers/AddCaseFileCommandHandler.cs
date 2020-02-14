@@ -25,8 +25,7 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
                 payload = _options.DefaultCMMNSchema;
             }
 
-            // TODO : AJOUTER UNE QUEUE POUR CASEFILE.
-            var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, addCaseFileCommand.NameIdentifier, payload);
+            var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, addCaseFileCommand.Owner, payload);
             var streamName = CaseFileAggregate.GetStreamName(caseFile.Id);
             await _commitAggregateHelper.Commit(caseFile, streamName, CMMNConstants.QueueNames.CaseFiles);
             return caseFile.Id;

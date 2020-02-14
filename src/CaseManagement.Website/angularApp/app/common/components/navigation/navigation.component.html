@@ -4,7 +4,11 @@
     </a>
     <span class="navigation-spacer"></span>
     <div *ngIf="isConnected">
-        <button mat-button [routerLink]="['/cases']" *ngIf="roles.includes('businessanalyst')">{{ "CASES" | translate }}</button>
+        <button mat-button *ngIf="roles.includes('businessanalyst')" [matMenuTriggerFor]="caseMenu">{{ "CASES" | translate }}</button>
+        <mat-menu #caseMenu="matMenu">
+            <button mat-menu-item [routerLink]="['/cases/casefiles']">{{ "CASE_FILES" | translate }}</button>
+            <button mat-menu-item [routerLink]="['/cases/casedefinitions']">{{ "CASE_DEFINITIONS" | translate }}</button>
+        </mat-menu>
         <button mat-button [matMenuTriggerFor]="welcomeMenu">
             {{ "WELCOME" | translate:{name:name} }}
         </button>

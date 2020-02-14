@@ -11,6 +11,7 @@ namespace CaseManagement.CMMN.CaseFile.Commands
         public string Description { get; set; }
         [DataMember(Name = "payload")]
         public string Payload { get; set; }
-        public string NameIdentifier { get; set; }
+        [DataMember(Name = "owner")]
+        public string Owner { get; set; }
     }
 }

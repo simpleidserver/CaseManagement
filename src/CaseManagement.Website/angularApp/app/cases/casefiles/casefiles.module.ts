@@ -16,6 +16,7 @@ import * as reducers from './reducers';
 import { CaseFilesService } from './services/casefiles.service';
 import { ViewCaseFilesComponent } from './view/view.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { HistoryCaseFileComponent } from './history/history.component';
 
 @NgModule({
     imports: [
@@ -34,7 +35,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
         })
     ],
     entryComponents: [ AddCaseFileDialog ],
-    declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent ],
+    declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent, HistoryCaseFileComponent ],
     exports: [ListCaseFilesComponent, ViewCaseFilesComponent ],
     providers: [ CaseFilesService ]
 })

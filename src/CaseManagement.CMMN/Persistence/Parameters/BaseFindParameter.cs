@@ -14,7 +14,5 @@
         public int Count { get; set; }
         public FindOrders Order { get; set; }
         public string OrderBy { get; set; }
-        public string Owner { get; set; }
-        public string Text { get; set; }
     }
 }

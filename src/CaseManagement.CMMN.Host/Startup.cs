@@ -65,6 +65,7 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("publish_casefile", p => p.RequireClaim("scope", "publish_casefile"));
                 policy.AddPolicy("add_case_instance", p => p.RequireClaim("scope", "add_case_instance"));
                 policy.AddPolicy("launch_case_intance", p => p.RequireClaim("scope", "launch_case_intance"));
+                policy.AddPolicy("get_casefile", p => p.RequireClaim("scope", "get_casefile"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
@@ -73,7 +74,6 @@ namespace CaseManagement.CMMN.Host
             services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
             services.AddCMMNEngine()
-                .AddDefinitions(files, "businessanalyst")
                 .AddCaseProcesses(new List<ProcessAggregate>
                 {
                     new CaseManagementProcessAggregate

@@ -53,14 +53,12 @@ namespace CaseManagement.Gateway.Website.Host
             });
             services.AddAuthorization(policy =>
             {
-                policy.AddPolicy("get_statistic", p => p.RequireAssertion(t =>
-                {
-                    return true;
-                }));
-                policy.AddPolicy("get_performance", p => p.RequireAssertion(t =>
-                {
-                    return true;
-                }));                
+                policy.AddPolicy("get_statistic", p => p.RequireRole("admin"));
+                policy.AddPolicy("get_performance", p => p.RequireRole("admin"));       
+                policy.AddPolicy("add_casefile", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("get_casefile", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("update_casefile", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("publish_casefile", p => p.RequireRole("businessanalyst"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()

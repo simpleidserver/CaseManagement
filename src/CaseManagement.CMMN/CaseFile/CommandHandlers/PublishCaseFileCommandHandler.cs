@@ -19,7 +19,7 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
             _commitAggregateHelper = commitAggregateHelper;
         }
 
-        public async Task<bool> Handle(PublishCaseFileCommand publishCaseFileCommand)
+        public async Task<string> Handle(PublishCaseFileCommand publishCaseFileCommand)
         {
             var caseFile = await _eventStoreRepository.GetLastAggregate<CaseFileAggregate>(publishCaseFileCommand.Id, CaseFileAggregate.GetStreamName(publishCaseFileCommand.Id));
             if (caseFile == null || string.IsNullOrWhiteSpace(caseFile.Id))
@@ -27,15 +27,16 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
                 throw new UnknownCaseFileException(publishCaseFileCommand.Id);
             }
 
-            caseFile.Publish(publishCaseFileCommand.Performer);
+            var newCaseFile = caseFile.Publish(publishCaseFileCommand.Performer);
             await _commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.Id), CMMNConstants.QueueNames.CaseFiles);
+            await _commitAggregateHelper.Commit(newCaseFile, CaseFileAggregate.GetStreamName(newCaseFile.Id), CMMNConstants.QueueNames.CaseFiles);
             var tDefinitions = CMMNParser.ParseWSDL(caseFile.Payload);
             foreach (var casePlan in CMMNParser.ExtractCasePlans(tDefinitions, caseFile))
             {
                 await _commitAggregateHelper.Commit(casePlan, CasePlanAggregate.GetStreamName(casePlan.Id), CMMNConstants.QueueNames.CasePlans);
             }
 
-            return true;
+            return newCaseFile.Id;
         }
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -52,7 +53,6 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         {
             try
             {
-                parameter.NameIdentifier = this.GetNameIdentifier();
                 var result = await _addCaseFileCommandHandler.Handle(parameter);
                 var jObj = new JObject
                 {
@@ -77,7 +77,6 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             try
             {
                 parameter.Id = id;
-                parameter.Performer = this.GetNameIdentifier();
                 await _updateCaseFileCommandHandler.Handle(parameter);
                 return new OkResult();
             }
@@ -95,19 +94,18 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
-        [HttpGet("{id}/publish")]
+        [HttpPost("{id}/publish")]
         [Authorize("publish_casefile")]
-        public async Task<IActionResult> Publish(string id)
+        public async Task<IActionResult> Publish(string id, [FromBody] PublishCaseFileCommand publishCaseFileCommand)
         {
             try
             {
-                var cmd  = new PublishCaseFileCommand
+                publishCaseFileCommand.Id = id;
+                var newCaseFileId = await _publishCaseFileCommandHandler.Handle(publishCaseFileCommand);
+                return new OkObjectResult(new JObject
                 {
-                    Id = id,
-                    Performer = this.GetNameIdentifier()
-                };
-                await _publishCaseFileCommandHandler.Handle(cmd);
-                return new OkResult();
+                    { "id", newCaseFileId }
+                });
             }
             catch (UnknownCaseFileException)
             {
@@ -124,6 +122,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpGet("search")]
+        [Authorize("get_casefile")]
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
@@ -132,6 +131,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpGet("{id}")]
+        [Authorize("get_casefile")]
         public async Task<IActionResult> Get(string id)
         {
             var result = await _queryRepository.FindById(id);
@@ -163,7 +163,11 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 { "description", resp.Description },
                 { "payload", resp.Payload },
                 { "create_datetime", resp.CreateDateTime },
-                { "update_datetime", resp.UpdateDateTime }
+                { "update_datetime", resp.UpdateDateTime },
+                { "version", resp.Version },
+                { "file_id", resp.FileId },
+                { "owner", resp.Owner },
+                { "status", Enum.GetName(typeof(CaseFileStatus), resp.Status).ToLowerInvariant() }
             };
         }
 
@@ -171,6 +175,8 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         {
             string owner;
             string text;
+            bool takeLatest = false;
+            string caseFileId;
             var parameter = new FindCaseFilesParameter();
             parameter.ExtractFindParameter(query);
             if (query.TryGet("owner", out owner))
@@ -181,6 +187,16 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             if (query.TryGet("text", out text))
             {
                 parameter.Text = text;
+            }
+
+            if (query.TryGet("take_latest", out takeLatest))
+            {
+                parameter.TakeLatest = takeLatest;
+            }
+
+            if (query.TryGet("case_file_id", out caseFileId))
+            {
+                parameter.CaseFileId = caseFileId;
             }
 
             return parameter;

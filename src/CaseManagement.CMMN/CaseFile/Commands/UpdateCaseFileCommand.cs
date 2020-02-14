@@ -12,6 +12,7 @@ namespace CaseManagement.CMMN.CaseFile.Commands
         public string Description { get; set; }
         [DataMember(Name = "payload")]
         public string Payload { get; set; }
+        [DataMember(Name = "performer")]
         public string Performer { get; set; }
     }
 }

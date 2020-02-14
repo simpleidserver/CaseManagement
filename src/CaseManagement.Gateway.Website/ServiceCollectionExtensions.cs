@@ -1,4 +1,7 @@
 ﻿using CaseManagement.Gateway.Website;
+using CaseManagement.Gateway.Website.CaseFile.CommandHandlers;
+using CaseManagement.Gateway.Website.CaseFile.QueryHandlers;
+using CaseManagement.Gateway.Website.CaseFile.Services;
 using CaseManagement.Gateway.Website.Performance.QueryHandlers;
 using CaseManagement.Gateway.Website.Performance.Services;
 using CaseManagement.Gateway.Website.Statistic.QueryHandlers;
@@ -21,6 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Configure(services, callback);
             services.AddStatistic()
                 .AddPerformance()
+                .AddCaseFile()
                 .AddToken();
             return services;
         }
@@ -30,8 +34,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<IGetStatisticQueryHandler, GetStatisticQueryHandler>();
             services.TryAddTransient<ISearchStatisticQueryHandler, SearchStatisticQueryHandler>();
             services.AddHttpClient<IStatisticService, StatisticService>()
-                .AddPolicyHandler(GetRetryPolicy())
-                .AddPolicyHandler(GetBreakerCircuitPolicy());
+                 .AddPolicyHandler(GetRetryPolicy())
+                 .AddPolicyHandler(GetBreakerCircuitPolicy());
             return services;
         }
 
@@ -40,6 +44,20 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<IGetPerformanceQueryHandler, GetPerformanceQueryHandler>();
             services.TryAddTransient<ISearchPerformanceQueryHandler, SearchPerformanceQueryHandler>();
             services.AddHttpClient<IPerformanceService, PerformanceService>()
+                 .AddPolicyHandler(GetRetryPolicy())
+                 .AddPolicyHandler(GetBreakerCircuitPolicy());
+            return services;
+        }
+
+        public static IServiceCollection AddCaseFile(this IServiceCollection services)
+        {
+            services.TryAddTransient<IGetCaseFileQueryHandler, GetCaseFileQueryHandler>();
+            services.TryAddTransient<IAddCaseFileCommandHandler, AddCaseFileCommandHandler>();
+            services.TryAddTransient<ISearchMyLatestCaseFileQueryHandler, SearchMyLatestCaseFileQueryHandler>();
+            services.TryAddTransient<IUpdateCaseFileCommandHandler, UpdateCaseFileCommandHandler>();
+            services.TryAddTransient<ISearchCaseFileHistoryQueryHandler, SearchCaseFileHistoryQueryHandler>();
+            services.TryAddTransient<IPublishCaseFileCommandHandler, PublishCaseFileCommandHandler>();
+            services.AddHttpClient<ICaseFileService, CaseFileService>()
                 .AddPolicyHandler(GetRetryPolicy())
                 .AddPolicyHandler(GetBreakerCircuitPolicy());
             return services;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, StartFetch, StartGet } from '../actions/case-files';
+import { ActionTypes, StartGet, StartSearch, StartSearchHistory } from '../actions/case-files';
 import { CaseFilesService } from '../services/casefiles.service';
 
 @Injectable()
@@ -13,11 +13,11 @@ export class CaseFilesEffects {
     ) { }
 
     @Effect()
-    loadCaseFiles$ = this.actions$
+    searchCaseFiles$ = this.actions$
         .pipe(
             ofType(ActionTypes.START_SEARCH),
-            mergeMap((evt: StartFetch) => {
-                return this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.user)
+            mergeMap((evt: StartSearch) => {
+                return this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
                     .pipe(
                         map(casefiles => { return { type: ActionTypes.COMPLETE_SEARCH, content: casefiles }; }),
                         catchError(() => of({ type: ActionTypes.COMPLETE_SEARCH }))
@@ -25,6 +25,20 @@ export class CaseFilesEffects {
             }
             )
     );
+
+    @Effect()
+    searchCaseFileHistories$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.START_SEARCH_HISTORY),
+            mergeMap((evt: StartSearchHistory) => {
+                return this.caseFilesService.searchCaseFileHistories(evt.caseFileId, evt.startIndex, evt.count, evt.order, evt.direction)
+                    .pipe(
+                        map(casefiles => { return { type: ActionTypes.COMPLETE_SEARCH_HISTORY, content: casefiles }; }),
+                        catchError(() => of({ type: ActionTypes.COMPLETE_SEARCH_HISTORY }))
+                    );
+            }
+            )
+    ); 
 
     @Effect()
     loadCaseFile$ = this.actions$

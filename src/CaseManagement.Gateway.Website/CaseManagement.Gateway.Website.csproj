@@ -17,7 +17,6 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CaseFile\QueryHandlers\" />
-    <Folder Include="Repositories\" />
+    <Folder Include="Persistence\" />
   </ItemGroup>
 </Project>

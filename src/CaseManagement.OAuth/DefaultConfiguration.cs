@@ -50,6 +50,11 @@ namespace CaseManagement.OAuth
             {
                 Name = "launch_case_intance",
                 IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "get_casefile",
+                IsExposedInConfigurationEdp = true
             }
         };
 
@@ -105,6 +110,10 @@ namespace CaseManagement.OAuth
                     new OAuthScope
                     {
                         Name = "launch_case_intance"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "get_casefile"
                     }
                 },
                 GrantTypes = new List<string>

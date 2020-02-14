@@ -51,5 +51,16 @@
   "TRANSITION_HISTORIES": "Historique des transitions",
   "CASE_FILE_ITEMS": "Fichiers du case",
   "VALUE": "Valeur",
-  "TRANSITION": "Transition"
+  "TRANSITION": "Transition",
+  "UNDO": "Annuler",
+  "ERROR_ADD_CASE_FILE": "Une erreur est survenue lors de la création du fichier",
+  "CASES_FILE_ADDED": "Le fichier de case a été ajouté",
+  "VERSION": "Version",
+  "STATUS": "Statut",
+  "CASE_FILE_HISTORIES": "Historique du fichier de case",
+  "PUBLISH_CASE_FILE": "Le fichier de case a été publié",
+  "ERROR_PUBLISH_CASE_FILE": "Une erreur est survenue durant la publication du fichier de case",
+  "PUBLISH": "Publier",
+  "VIEW_CASE_FILE_HISTORY": "Voir l'historique du fichier de case",
+  "EDIT_CASE_FILE": "Editer le fichier de case"
 }
