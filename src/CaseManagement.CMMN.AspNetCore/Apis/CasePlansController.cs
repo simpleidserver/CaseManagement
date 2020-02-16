@@ -86,6 +86,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             string text;
             string caseOwner;
             string casePlanId;
+            bool takeLatest = false;
             var parameter = new FindCasePlansParameter();
             parameter.ExtractFindParameter(query);
             if (query.TryGet("case_file", out caseFile))
@@ -106,6 +107,11 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             if (query.TryGet("case_plan_id", out casePlanId))
             {
                 parameter.CasePlanId = casePlanId;
+            }
+
+            if (query.TryGet("take_latest", out takeLatest))
+            {
+                parameter.TakeLatest = takeLatest;
             }
 
             return parameter;

@@ -2,7 +2,7 @@ import { createSelector } from '@ngrx/store';
 import { CaseFile } from '../../casefiles/models/case-file.model';
 import * as fromGetFile from '../../casefiles/reducers/get.reducer';
 import { CaseDefinitionHistory } from '../models/case-definition-history.model';
-import { CaseDefinition } from '../models/case-definition.model';
+import { CasePlan } from '../models/case-plan.model';
 import { SearchCaseActivationsResult } from '../models/search-case-activations-result.model';
 import { SearchCaseFormInstancesResult } from '../models/search-case-form-instances-result.model';
 import { SearchCaseInstancesResult } from '../models/search-case-instances.model';
@@ -35,21 +35,10 @@ export const selectSearchResults = createSelector(
     selectSearch,
     (state: fromSearch.State) => {
         if (!state || state.content == null) {
-            return [];
+            return null;
         }
 
-        return state.content.Content;
-    }
-);
-
-export const selectLengthResults = createSelector(
-    selectSearch,
-    (state: fromSearch.State) => {
-        if (!state || state.content == null) {
-            return 0;
-        }
-
-        return state.content.TotalLength;
+        return state.content;
     }
 );
 
@@ -57,7 +46,7 @@ export const selectGetResult = createSelector(
     selectGet,
     (state: fromGet.State) => {
         if (!state || !state.content) {
-            return new CaseDefinition();
+            return new CasePlan();
         }
 
         return state.content;

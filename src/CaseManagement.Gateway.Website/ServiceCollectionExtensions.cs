@@ -2,6 +2,8 @@
 using CaseManagement.Gateway.Website.CaseFile.CommandHandlers;
 using CaseManagement.Gateway.Website.CaseFile.QueryHandlers;
 using CaseManagement.Gateway.Website.CaseFile.Services;
+using CaseManagement.Gateway.Website.CasePlans.QueryHandlers;
+using CaseManagement.Gateway.Website.CasePlans.Services;
 using CaseManagement.Gateway.Website.Performance.QueryHandlers;
 using CaseManagement.Gateway.Website.Performance.Services;
 using CaseManagement.Gateway.Website.Statistic.QueryHandlers;
@@ -25,6 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddStatistic()
                 .AddPerformance()
                 .AddCaseFile()
+                .AddCasePlan()
                 .AddToken();
             return services;
         }
@@ -58,6 +61,15 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ISearchCaseFileHistoryQueryHandler, SearchCaseFileHistoryQueryHandler>();
             services.TryAddTransient<IPublishCaseFileCommandHandler, PublishCaseFileCommandHandler>();
             services.AddHttpClient<ICaseFileService, CaseFileService>()
+                .AddPolicyHandler(GetRetryPolicy())
+                .AddPolicyHandler(GetBreakerCircuitPolicy());
+            return services;
+        }
+
+        public static IServiceCollection AddCasePlan(this IServiceCollection services)
+        {
+            services.TryAddTransient<ISearchMyLatestCasePlanQueryHandler, SearchMyLatestCasePlanQueryHandler>();
+            services.AddHttpClient<ICasePlanService, CasePlanService>()
                 .AddPolicyHandler(GetRetryPolicy())
                 .AddPolicyHandler(GetBreakerCircuitPolicy());
             return services;

@@ -1,12 +1,12 @@
-export class CaseDefinition {
+export class CasePlan {
     Id: string;
     Name: string;
     Description: string;
     CaseFile: string;
     CreateDateTime: Date;
 
-    public static fromJson(json: any): CaseDefinition {
-        var result = new CaseDefinition();
+    public static fromJson(json: any): CasePlan {
+        var result = new CasePlan();
         result.Id = json["id"];
         result.Name = json["name"];
         result.Description = json["description"];

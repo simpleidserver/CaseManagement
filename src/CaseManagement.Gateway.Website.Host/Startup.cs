@@ -59,6 +59,7 @@ namespace CaseManagement.Gateway.Website.Host
                 policy.AddPolicy("get_casefile", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("update_casefile", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("publish_casefile", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("get_caseplan", p => p.RequireRole("businessanalyst"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()

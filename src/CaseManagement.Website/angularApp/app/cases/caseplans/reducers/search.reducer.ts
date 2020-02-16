@@ -1,10 +1,10 @@
-import * as fromActions from '../actions/case-definitions';
-import { SearchCaseDefinitionsResult } from "../models/search-case-definitions-result.model";
+import * as fromActions from '../actions/case-plans';
+import { SearchCasePlansResult } from "../models/search-case-plans-result.model";
 
 export interface State {
     isLoading: boolean;
     isErrorLoadOccured: boolean;
-    content: SearchCaseDefinitionsResult;
+    content: SearchCasePlansResult;
 }
 
 export const initialState: State = {

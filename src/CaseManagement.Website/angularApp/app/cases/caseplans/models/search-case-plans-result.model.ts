@@ -1,21 +1,21 @@
-import { CaseDefinition } from './case-definition.model';
+import { CasePlan } from './case-plan.model';
 
-export class SearchCaseDefinitionsResult {
+export class SearchCasePlansResult {
     StartIndex: number;
     Count: number;
     TotalLength: number;
-    Content: CaseDefinition[];
+    Content: CasePlan[];
 
-    public static fromJson(json: any): SearchCaseDefinitionsResult
+    public static fromJson(json: any): SearchCasePlansResult
     {
-        let result = new SearchCaseDefinitionsResult();
+        let result = new SearchCasePlansResult();
         result.StartIndex = json["start_index"];
         result.Count = json["count"];
         result.TotalLength = json["total_length"];
-        let content: CaseDefinition[] = [];
+        let content: CasePlan[] = [];
         if (json["content"]) {
             json["content"].forEach(function (c: any) {
-                content.push(CaseDefinition.fromJson(c));
+                content.push(CasePlan.fromJson(c));
             });
         }
 

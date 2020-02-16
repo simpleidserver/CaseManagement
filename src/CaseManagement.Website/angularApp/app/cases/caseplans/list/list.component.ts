@@ -2,37 +2,35 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, MatSort } from '@angular/material';
 import { select, Store } from '@ngrx/store';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { merge, Observable } from 'rxjs';
-import { StartFetch } from '../actions/case-definitions';
-import { CaseDefinition } from '../models/case-definition.model';
+import { merge } from 'rxjs';
+import { StartSearch } from '../actions/case-plans';
+import { CasePlan } from '../models/case-plan.model';
+import { SearchCasePlansResult } from '../models/search-case-plans-result.model';
 import * as fromCaseFiles from '../reducers';
 
 @Component({
-    selector: 'list-case-files',
+    selector: 'list-case-plans',
     templateUrl: './list.component.html',
     styleUrls: ['./list.component.scss']
 })
-export class ListCaseDefinitionsComponent implements OnInit {
+export class ListCasePlansComponent implements OnInit {
     displayedColumns: string[] = ['name', 'create_datetime', 'case_file'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     searchForm: FormGroup;
-    isLoading: boolean;
     length: number;
-    isErrorLoadOccured: boolean;
-    caseDefinitions$: Observable<CaseDefinition[]>;
+    casePlans$: CasePlan[] = [];
 
-    constructor(private store: Store<fromCaseFiles.CaseDefinitionsState>, private formBuilder: FormBuilder, private oauthService: OAuthService) {
+    constructor(private store: Store<fromCaseFiles.CaseDefinitionsState>, private formBuilder: FormBuilder) {
         this.searchForm = this.formBuilder.group({
             text: ''
         });
     }
 
     ngOnInit() {
-        this.caseDefinitions$ = this.store.pipe(select(fromCaseFiles.selectSearchResults));
-        this.store.pipe(select(fromCaseFiles.selectLengthResults)).subscribe((l : number) => {
-            this.length = l;
+        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe((l: SearchCasePlansResult) => {
+            this.casePlans$ = l.Content;
+            this.length = l.TotalLength;
         });
         this.refresh();
     }
@@ -56,8 +54,7 @@ export class ListCaseDefinitionsComponent implements OnInit {
             count = this.paginator.pageSize;
         }
 
-        let claims : any = this.oauthService.getIdentityClaims();
-        let request = new StartFetch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, claims.sub);
+        let request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     }
 }

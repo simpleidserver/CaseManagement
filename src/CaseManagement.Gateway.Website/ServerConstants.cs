@@ -7,6 +7,7 @@
             public const string Statistics = "statistics";
             public const string Performances = "performances";
             public const string CaseFiles = "case-files";
+            public const string CasePlans = "case-plans";
         }
     }
 }

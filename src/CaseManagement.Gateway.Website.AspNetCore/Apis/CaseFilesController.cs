@@ -4,6 +4,7 @@ using CaseManagement.Gateway.Website.CaseFile.Commands;
 using CaseManagement.Gateway.Website.CaseFile.DTOs;
 using CaseManagement.Gateway.Website.CaseFile.Queries;
 using CaseManagement.Gateway.Website.CaseFile.QueryHandlers;
+using CaseManagement.Gateway.Website.CasePlans.QueryHandlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -22,8 +23,8 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         private readonly IGetCaseFileQueryHandler _getCaseFileQueryHandler;
         private readonly IUpdateCaseFileCommandHandler _updateCaseFileCommandHandler;
         private readonly IPublishCaseFileCommandHandler _publishCaseFileCommandHandler;
-
-        public CaseFilesController(IAddCaseFileCommandHandler addCaseFileCommandHandler, ISearchMyLatestCaseFileQueryHandler searchMyLatestPublishedCaseFileQueryHandler, ISearchCaseFileHistoryQueryHandler searchCaseFileHistoryQueryHandler, IGetCaseFileQueryHandler getCaseFileQueryHandler, IUpdateCaseFileCommandHandler updateCaseFileCommandHandler, IPublishCaseFileCommandHandler  publishCaseFileCommandHandler)
+        
+        public CaseFilesController(IAddCaseFileCommandHandler addCaseFileCommandHandler, ISearchMyLatestCaseFileQueryHandler searchMyLatestPublishedCaseFileQueryHandler, ISearchCaseFileHistoryQueryHandler searchCaseFileHistoryQueryHandler, IGetCaseFileQueryHandler getCaseFileQueryHandler, IUpdateCaseFileCommandHandler updateCaseFileCommandHandler, IPublishCaseFileCommandHandler  publishCaseFileCommandHandler, ISearchMyLatestCasePlanQueryHandler searchMyLatestCasePlanQueryHandler)
         {
             _addCaseFileCommandHandler = addCaseFileCommandHandler;
             _searchMyLatestPublishedCaseFileQueryHandler = searchMyLatestPublishedCaseFileQueryHandler;

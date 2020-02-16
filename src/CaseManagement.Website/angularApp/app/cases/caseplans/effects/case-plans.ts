@@ -2,22 +2,22 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, StartFetch, StartGet } from '../actions/case-definitions';
-import { CaseDefinitionsService } from '../services/casedefinitions.service';
+import { ActionTypes, StartSearch, StartGet } from '../actions/case-plans';
+import { CasePlansService } from '../services/caseplans.service';
 
 @Injectable()
-export class CaseDefinitionsEffects {
+export class CasePlansEffects {
     constructor(
         private actions$: Actions,
-        private caseDefinitionsService: CaseDefinitionsService
+        private casePlansService: CasePlansService
     ) { }
 
     @Effect()
-    loadCaseDefinitions$ = this.actions$
+    searchCasePlans$ = this.actions$
         .pipe(
             ofType(ActionTypes.START_SEARCH),
-            mergeMap((evt: StartFetch) => {
-                return this.caseDefinitionsService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.user)
+            mergeMap((evt: StartSearch) => {
+                return this.casePlansService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
                     .pipe(
                         map(casefiles => { return { type: ActionTypes.COMPLETE_SEARCH, content: casefiles }; }),
                         catchError(() => of({ type: ActionTypes.COMPLETE_SEARCH }))
@@ -31,7 +31,7 @@ export class CaseDefinitionsEffects {
         .pipe(
             ofType(ActionTypes.START_GET),
             mergeMap((evt: StartGet) => {
-                return this.caseDefinitionsService.get(evt.id)
+                return this.casePlansService.get(evt.id)
                     .pipe(
                         map(casefiles => { return { type: ActionTypes.COMPLETE_GET, content: casefiles }; }),
                         catchError(() => of({ type: ActionTypes.COMPLETE_GET }))
@@ -45,7 +45,7 @@ export class CaseDefinitionsEffects {
         .pipe(
             ofType(ActionTypes.START_GET_HISTORY),
             mergeMap((evt: StartGet) => {
-                return this.caseDefinitionsService.getHistory(evt.id)
+                return this.casePlansService.getHistory(evt.id)
                     .pipe(
                         map(caseDefinitionHistory => { return { type: ActionTypes.COMPLETE_GET_HISTORY, content: caseDefinitionHistory }; }),
                         catchError(() => of({ type: ActionTypes.COMPLETE_GET_HISTORY }))

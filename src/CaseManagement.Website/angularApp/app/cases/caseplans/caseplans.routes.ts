@@ -1,11 +1,11 @@
 import { RouterModule, Routes } from '@angular/router';
-import { ListCaseDefinitionsComponent } from './list/list.component';
+import { ListCasePlansComponent } from './list/list.component';
 import { ViewCaseDefinitionComponent } from './view/view.component';
 
 
 const routes: Routes = [
-    { path: '', component: ListCaseDefinitionsComponent },
+    { path: '', component: ListCasePlansComponent },
     { path: ':id', component: ViewCaseDefinitionComponent }
 ];
 
-export const CaseDefinitionsRoutes = RouterModule.forChild(routes);
+export const CasePlansRoutes = RouterModule.forChild(routes);

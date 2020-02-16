@@ -33,6 +33,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<CasePlanAggregate>> Find(FindCasePlansParameter parameter)
         {
             IQueryable<CasePlanAggregate> result = _definitions.AsQueryable();
+            if (parameter.TakeLatest)
+            {
+                result = result.OrderByDescending(r => r.Version);
+                result = result.GroupBy(r => r.CasePlanId).Select(r => r.First());
+            }
+
             if (MAPPING_WORKFLOWDEFINITION_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_WORKFLOWDEFINITION_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

@@ -5,6 +5,11 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Persistence\**" />
+    <EmbeddedResource Remove="Persistence\**" />
+    <None Remove="Persistence\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="2.1.0" />
@@ -15,8 +20,5 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http" />
     <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Persistence\" />
   </ItemGroup>
 </Project>

@@ -1,10 +1,10 @@
-import * as fromActions from '../actions/case-definitions';
-import { CaseDefinitionHistory } from "../models/case-definition-history.model";
+import * as fromActions from '../actions/case-plans';
+import { CasePlan } from '../models/case-plan.model';
 
 export interface State {
     isLoading: boolean;
     isErrorLoadOccured: boolean;
-    content: CaseDefinitionHistory;
+    content: CasePlan;
 }
 
 export const initialState: State = {
@@ -15,7 +15,7 @@ export const initialState: State = {
 
 export function getReducer(state = initialState, action: fromActions.ActionsUnion) {
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_GET_HISTORY:
+        case fromActions.ActionTypes.COMPLETE_GET:
             state.content = action.content;
             return { ...state };
         default:

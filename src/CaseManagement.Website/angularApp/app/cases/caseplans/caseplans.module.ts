@@ -11,17 +11,17 @@ import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { CaseFilesEffects } from '../casefiles/effects/case-files';
 import { CaseFilesService } from '../casefiles/services/casefiles.service';
-import { CaseDefinitionsRoutes } from './casedefinitions.routes';
+import { CasePlansRoutes } from './caseplans.routes';
 import { CaseActivationsEffects } from './effects/case-activations';
-import { CaseDefinitionsEffects } from './effects/case-definitions';
 import { CaseFormInstancesEffects } from './effects/case-form-instances';
 import { CaseInstancesEffects } from './effects/case-instances';
-import { ListCaseDefinitionsComponent } from './list/list.component';
+import { CasePlansEffects } from './effects/case-plans';
+import { ListCasePlansComponent } from './list/list.component';
 import * as reducers from './reducers';
 import { CaseActivationsService } from './services/caseactivations.service';
-import { CaseDefinitionsService } from './services/casedefinitions.service';
 import { CaseFormInstancesService } from './services/caseforminstances.service';
 import { CaseInstancesService } from './services/caseinstances.service';
+import { CasePlansService } from './services/caseplans.service';
 import { ViewCaseDefinitionComponent } from './view/view.component';
 
 @NgModule({
@@ -31,19 +31,19 @@ import { ViewCaseDefinitionComponent } from './view/view.component';
         MonacoEditorModule.forRoot(),
         FormsModule,
         HttpClientModule,
-        CaseDefinitionsRoutes,
+        CasePlansRoutes,
         MaterialModule,
         SharedModule,
-        EffectsModule.forRoot([CaseDefinitionsEffects, CaseActivationsEffects, CaseFormInstancesEffects, CaseInstancesEffects, CaseFilesEffects]),
+        EffectsModule.forRoot([CasePlansEffects, CaseActivationsEffects, CaseFormInstancesEffects, CaseInstancesEffects, CaseFilesEffects]),
         StoreModule.forRoot(reducers.appReducer),
         StoreDevtoolsModule.instrument({
             maxAge: 10
         })
     ],
     entryComponents: [ ],
-    declarations: [ListCaseDefinitionsComponent, ViewCaseDefinitionComponent],
-    exports: [ListCaseDefinitionsComponent, ViewCaseDefinitionComponent],
-    providers: [CaseDefinitionsService, CaseActivationsService, CaseFormInstancesService, CaseInstancesService, CaseFilesService]
+    declarations: [ListCasePlansComponent, ViewCaseDefinitionComponent],
+    exports: [ListCasePlansComponent, ViewCaseDefinitionComponent],
+    providers: [CasePlansService, CaseActivationsService, CaseFormInstancesService, CaseInstancesService, CaseFilesService]
 })
 
-export class CaseDefinitionsModule { }
+export class CasePlansModule { }
