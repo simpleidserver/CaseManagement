@@ -5,7 +5,7 @@
   "FRENCH": "Français",
   "ENGLISH": "Anglais",
   "CASE_FILES": "Fichiers de case",
-  "CASE_DEFINITIONS": "Définitions de case",
+  "CASE_PLANS": "Plans de case",
   "CASE_INSTANCES": "Instances de case",
   "SEARCH": "Chercher",
   "ADD_CASE_FILE": "Ajouter un case",
@@ -26,9 +26,8 @@
   "CASE_FILE_SAVED": "Fichier de case est sauvegardé",
   "ERROR_SAVE_CASE_FILE": "Une erreur est survenue durant la sauvegarde du fichier de case",
   "CANCEL": "Annuler",
-  "ENTER_CASE_DEFINITION_NAME": "Saisir un nom",
+  "ENTER_CASE_PLAN_NAME": "Saisir un nom",
   "NAME": "Nom",
-  "CASE_DEFINITION_FILE": "Fichier de case",
   "LAUNCH_INSTANCE": "Lancer une instance",
   "CASE_FORM_INSTANCES": "Instances de formulaires",
   "CASE_ACTIVATIONS": "Activations",
@@ -62,5 +61,9 @@
   "ERROR_PUBLISH_CASE_FILE": "Une erreur est survenue durant la publication du fichier de case",
   "PUBLISH": "Publier",
   "VIEW_CASE_FILE_HISTORY": "Voir l'historique du fichier de case",
-  "EDIT_CASE_FILE": "Editer le fichier de case"
+  "EDIT_CASE_FILE": "Editer le fichier de case",
+  "VIEW_CASE_PLAN": "Voir le plan de case",
+  "VIEW_CASE_PLAN_HISTORY": "Voir l'historique du plan de case",
+  "VIEW_CASE_FILE": "Voir le fichier de case",
+  "EDIT_CASE_PLAN": "Edit the case plan"
 }

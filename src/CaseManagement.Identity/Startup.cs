@@ -45,7 +45,10 @@ namespace CaseManagement.Identity
             services.AddMvc();
             services.AddAuthorization(opts => opts.AddDefaultOAUTHAuthorizationPolicy());
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
-            services.AddSIDOpenID()
+            services.AddSIDOpenID(opt =>
+            {
+                
+            })
                 .AddClients(DefaultConfiguration.Clients)
                 .AddAcrs(DefaultConfiguration.AcrLst)
                 .AddUsers(DefaultConfiguration.Users)

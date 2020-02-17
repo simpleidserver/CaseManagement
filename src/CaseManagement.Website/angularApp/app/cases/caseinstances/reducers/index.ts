@@ -1,3 +1,4 @@
+/*
 import { createSelector } from '@ngrx/store';
 import { CaseDefinition } from '../../casedefinitions/models/case-definition.model';
 import { CaseFileItem } from '../../casedefinitions/models/case-file-item.model';
@@ -70,3 +71,4 @@ export const appReducer = {
     casedefinition: fromGetCaseDefinition.getReducer,
     casefileitems: fromGetCaseFileItems.getReducer
 };
+*/

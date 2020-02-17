@@ -14,7 +14,7 @@ import * as fromCaseFiles from '../reducers';
     styleUrls: ['./history.component.scss']
 })
 export class HistoryCaseFileComponent implements OnInit {
-    displayedColumns: string[] = ['name', 'version', 'status', 'create_datetime', 'update_datetime'];
+    displayedColumns: string[] = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     length: number;

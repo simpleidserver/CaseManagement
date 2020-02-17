@@ -11,5 +11,6 @@
         public string CasePlanInstanceId { get; set; }
         public string CasePlanElementInstanceId { get; set; }
         public string Performer { get; set; }
+        public bool BypassUserValidation { get; set;}
     }
 }

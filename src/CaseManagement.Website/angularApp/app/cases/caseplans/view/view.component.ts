@@ -5,11 +5,11 @@ import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
 import * as caseFilesActions from '../../casefiles/actions/case-files';
 import * as caseActivationsActions from '../actions/case-activations';
-import * as caseDefinitionsActions from '../actions/case-definitions';
+import * as caseDefinitionsActions from '../actions/case-plans';
 import * as caseFormInstancesActions from '../actions/case-form-instances';
 import * as caseInstancesActions from '../actions/case-instances';
 import { CaseActivation } from '../models/case-activation.model';
-import { CaseDefinition } from '../models/case-definition.model';
+import { CasePlan } from '../models/case-plan.model';
 import { CaseFormInstance } from '../models/case-form-instance.model';
 import { CaseInstance } from '../models/case-instance.model';
 import { SearchCaseActivationsResult } from '../models/search-case-activations-result.model';
@@ -26,7 +26,7 @@ import { CaseInstancesService } from '../services/caseinstances.service';
 })
 export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
     selectedTimer: string = "4000";
-    caseDefinition$: CaseDefinition = new CaseDefinition();
+    caseDefinition$: CasePlan = new CasePlan();
     caseInstances$: CaseInstance[] = new Array<CaseInstance>();
     caseFormInstances$:  CaseFormInstance[] = new Array<CaseFormInstance>();
     caseActivations$: CaseActivation[] = new Array<CaseActivation>();
@@ -47,7 +47,7 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
     constructor(private caseDefinitionStore: Store<fromCaseDefinitions.CaseDefinitionsState>, private route: ActivatedRoute, private caseInstancesService: CaseInstancesService) {  }
 
     ngOnInit() {
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectGetResult)).subscribe((caseDefinition: CaseDefinition) => {
+        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectGetResult)).subscribe((caseDefinition: CasePlan) => {
             this.caseDefinition$ = caseDefinition;
             if (this.caseDefinition$.CaseFile) {
                 let loadCaseFile = new caseFilesActions.StartGet(this.caseDefinition$.CaseFile);

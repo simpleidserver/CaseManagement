@@ -4,6 +4,8 @@ export class CasePlan {
     Description: string;
     CaseFile: string;
     CreateDateTime: Date;
+    Version: number;
+    Owner: string;
 
     public static fromJson(json: any): CasePlan {
         var result = new CasePlan();
@@ -12,6 +14,8 @@ export class CasePlan {
         result.Description = json["description"];
         result.CaseFile = json["case_file"];
         result.CreateDateTime = json["create_datetime"];
+        result.Version = json["version"];
+        result.Owner = json["owner"];
         return result;
     }
 }

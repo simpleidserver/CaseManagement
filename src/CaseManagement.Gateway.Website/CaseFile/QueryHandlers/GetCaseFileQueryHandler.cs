@@ -17,7 +17,7 @@ namespace CaseManagement.Gateway.Website.CaseFile.QueryHandlers
 
         public Task<CaseFileResponse> Handle(GetCaseFileQuery getCaseFileQuery)
         {
-            return _caseFileService.Get(getCaseFileQuery.CaseFileId);
+            return _caseFileService.GetMe(getCaseFileQuery.CaseFileId, getCaseFileQuery.IdentityToken);
         }
     }
 }

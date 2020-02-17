@@ -26,7 +26,7 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
                 throw new UnknownCaseFileException(command.Id);
             }
 
-            caseFile.Update(command.Name, command.Description, command.Payload, command.Performer);
+            caseFile.Update(command.Name, command.Description, command.Payload, command.Performer, command.BypassUserValidation);
             await _commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.Id), CMMNConstants.QueueNames.CaseFiles);
             return true;
         }

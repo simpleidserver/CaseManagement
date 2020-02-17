@@ -14,7 +14,7 @@ import * as fromCaseFiles from '../reducers';
     styleUrls: ['./list.component.scss']
 })
 export class ListCasePlansComponent implements OnInit {
-    displayedColumns: string[] = ['name', 'create_datetime', 'case_file'];
+    displayedColumns: string[] = ['name', 'version', 'create_datetime', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     searchForm: FormGroup;
@@ -29,6 +29,10 @@ export class ListCasePlansComponent implements OnInit {
 
     ngOnInit() {
         this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe((l: SearchCasePlansResult) => {
+            if (!l || !l.Content) {
+                return;
+            }
+
             this.casePlans$ = l.Content;
             this.length = l.TotalLength;
         });

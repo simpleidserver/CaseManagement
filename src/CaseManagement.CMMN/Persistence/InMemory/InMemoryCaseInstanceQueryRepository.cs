@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
+﻿using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
 using System.Collections.Concurrent;
@@ -14,7 +13,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         private static Dictionary<string, string> MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME = new Dictionary<string, string>
         {
             { "id", "Id" },
-            { "case_definition_id", "CasePlanId" },
+            { "case_plan_id", "CasePlanId" },
             { "state", "State" },
             { "create_datetime", "CreateDateTime" },
         };
@@ -28,9 +27,9 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<Domains.CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter)
         {
             IQueryable<Domains.CasePlanInstanceAggregate> result = _instances.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(parameter.CaseDefinitionId))
+            if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
             {
-                result = result.Where(r => r.CasePlanId == parameter.CaseDefinitionId);
+                result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
             }
 
             if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))

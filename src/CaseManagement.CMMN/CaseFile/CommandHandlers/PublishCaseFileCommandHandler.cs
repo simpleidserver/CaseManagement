@@ -27,7 +27,7 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
                 throw new UnknownCaseFileException(publishCaseFileCommand.Id);
             }
 
-            var newCaseFile = caseFile.Publish(publishCaseFileCommand.Performer);
+            var newCaseFile = caseFile.Publish(publishCaseFileCommand.Performer, publishCaseFileCommand.BypassUserValidation);
             await _commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.Id), CMMNConstants.QueueNames.CaseFiles);
             await _commitAggregateHelper.Commit(newCaseFile, CaseFileAggregate.GetStreamName(newCaseFile.Id), CMMNConstants.QueueNames.CaseFiles);
             var tDefinitions = CMMNParser.ParseWSDL(caseFile.Payload);

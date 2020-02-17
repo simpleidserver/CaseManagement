@@ -79,7 +79,7 @@ namespace CaseManagement.CMMN.CaseFile.EventHandlers
             try
             {
                 var caseFile = await _caseFileQueryRepository.FindById(@event.AggregateId);
-                var result = caseFile.Publish(@event.Performer);
+                caseFile.Handle(@event);
                 _caseFileCommandRepository.Update(caseFile);
                 await _caseFileCommandRepository.SaveChanges();
             }

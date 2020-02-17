@@ -7,6 +7,6 @@
 
         }
 
-        public string CaseDefinitionId { get; set; }
+        public string CasePlanId { get; set; }
     }
 }

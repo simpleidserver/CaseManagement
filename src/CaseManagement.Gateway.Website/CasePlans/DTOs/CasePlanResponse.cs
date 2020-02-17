@@ -16,5 +16,9 @@ namespace CaseManagement.Gateway.Website.CasePlans.DTOs
         public string CaseFileId { get; set; }
         [DataMember(Name = "create_datetime")]
         public DateTime CreateDateTime { get; set; }
+        [DataMember(Name = "version")]
+        public int Version { get; set; }
+        [DataMember(Name = "owner")]
+        public string Owner { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+/*
 import * as fromActions from '../../casedefinitions/actions/case-instances';
 import { CaseInstance } from '../../casedefinitions/models/case-instance.model';
 
@@ -22,3 +23,4 @@ export function getReducer(state = initialState, action: fromActions.ActionsUnio
             return state;
     }
 }
+*/

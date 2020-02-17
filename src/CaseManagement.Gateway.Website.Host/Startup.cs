@@ -60,6 +60,9 @@ namespace CaseManagement.Gateway.Website.Host
                 policy.AddPolicy("update_casefile", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("publish_casefile", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("get_caseplan", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("search_caseplaninstance", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("add_case_instance", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("launch_case_instance", p => p.RequireRole("businessanalyst"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()

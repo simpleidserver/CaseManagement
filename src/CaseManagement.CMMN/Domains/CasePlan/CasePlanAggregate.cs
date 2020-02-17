@@ -114,7 +114,8 @@ namespace CaseManagement.CMMN.Domains
             {
                 ExitCriterias = ExitCriterias.Select(e => (Criteria)e.Clone()).ToList(),
                 CreateDateTime = CreateDateTime,
-                Elements = Elements.Select(e => (CasePlanElement)e.Clone()).ToList()
+                Elements = Elements.Select(e => (CasePlanElement)e.Clone()).ToList(),
+                Version = Version
             };
         }
 

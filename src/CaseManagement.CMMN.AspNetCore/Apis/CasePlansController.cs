@@ -35,6 +35,24 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             });
         }
 
+        [HttpGet("me/{id}")]
+        [Authorize("me_get_caseplan")]
+        public async Task<IActionResult> GetMe(string id)
+        {
+            var result = await _queryRepository.FindById(id);
+            if (result == null)
+            {
+                return new NotFoundResult();
+            }
+
+            if (result.CaseOwner != this.GetNameIdentifier())
+            {
+                return new UnauthorizedResult();
+            }
+
+            return new OkObjectResult(ToDto(result));
+        }
+
         [HttpGet("{id}")]
         [Authorize("get_caseplan")]
         public async Task<IActionResult> Get(string id)
@@ -76,7 +94,9 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 { "name", def.Name },
                 { "description", def.Description },
                 { "case_file", def.CaseFileId },
-                { "create_datetime", def.CreateDateTime }
+                { "create_datetime", def.CreateDateTime },
+                { "version", def.Version },
+                { "owner", def.CaseOwner }
             };
         }
 

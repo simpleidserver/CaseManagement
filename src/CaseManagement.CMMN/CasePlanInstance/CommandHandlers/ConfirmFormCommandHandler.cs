@@ -38,8 +38,16 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
             }
 
             var form = await _formQueryRepository.FindFormById(formInstance.FormId);
-            var roles = await _roleQueryRepository.FindRolesByUser(confirmFormCommand.Performer);
-            formInstance.Submit(roles.Select(r => r.Name), form, confirmFormCommand.Content);
+            if (confirmFormCommand.BypassUserValidation)
+            {
+                formInstance.Submit(form, confirmFormCommand.Content);
+            }
+            else
+            {
+                var roles = await _roleQueryRepository.FindRolesByUser(confirmFormCommand.Performer);
+                formInstance.Submit(roles.Select(r => r.Name), form, confirmFormCommand.Content);
+            }
+
             await _commitAggregateHelper.Commit(formInstance, FormInstanceAggregate.GetStreamName(id), CMMNConstants.QueueNames.FormInstances);
             await _messageBroker.QueueTransition(confirmFormCommand.CasePlanInstanceId, confirmFormCommand.CasePlanElementInstanceId, CMMNTransitions.Complete);
         }

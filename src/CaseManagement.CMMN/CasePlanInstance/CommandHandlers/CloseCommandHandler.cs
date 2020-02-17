@@ -29,6 +29,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
                 throw new UnknownCaseInstanceException(closeCommand.CaseInstanceId);
             }
 
+            if (!closeCommand.BypassUserValidation && caseInstance.CaseOwner != closeCommand.Performer)
+            {
+                throw new UnauthorizedCaseWorkerException(closeCommand.Performer, closeCommand.CaseInstanceId, string.Empty);
+            }
+
             if (caseInstance.State == Enum.GetName(typeof(CaseStates), CaseStates.Suspended))
             {
                 caseInstance.MakeTransition(CMMNTransitions.Close);

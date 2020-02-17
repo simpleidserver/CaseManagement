@@ -20,27 +20,36 @@ namespace CaseManagement.CMMN.Domains
         public string Owner { get; set; }
         public CaseFileStatus Status { get; set; }
 
-        public void Update(string name, string description, string payload, string performer)
+        public void Update(string name, string description, string payload, string performer, bool byPassUserValidation)
         {
             lock(DomainEvents)
             {
+                if (!byPassUserValidation && Owner != performer)
+                {
+                    throw new UnauthorizedCaseFileException(performer, Id);
+                }
+
                 var evt = new CaseFileUpdatedEvent(Guid.NewGuid().ToString(), Id, Version, DateTime.UtcNow, name, description, payload, performer);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
         }
 
-        public CaseFileAggregate Publish(string performer)
+        public CaseFileAggregate Publish(string performer, bool byPassUserValidation)
         {
-            lock(DomainEvents)
+            lock (DomainEvents)
             {
+                if (!byPassUserValidation && Owner != performer)
+                {
+                    throw new UnauthorizedCaseFileException(performer, Id);
+                }
+
                 var evt = new CaseFilePublishedEvent(Guid.NewGuid().ToString(), Id, Version, performer);
                 Handle(evt);
                 DomainEvents.Add(evt);
+                var next = New(Name, Description, Version + 1, Owner, Payload, FileId);
+                return next;
             }
-
-            var next = New(Name, Description, Version + 1, Owner, Payload, FileId);
-            return next;
         }
 
         public static CaseFileAggregate New(List<DomainEvent> evts)
@@ -157,11 +166,6 @@ namespace CaseManagement.CMMN.Domains
                 });
             }
 
-            if (Owner != caseFileUpdatedEvent.Performer)
-            {
-                throw new UnauthorizedCaseFileException(caseFileUpdatedEvent.Performer, Id);
-            }
-
             UpdateDateTime = caseFileUpdatedEvent.UpdateDatetime;
             Name = caseFileUpdatedEvent.Name;
             Description = caseFileUpdatedEvent.Description;
@@ -170,11 +174,6 @@ namespace CaseManagement.CMMN.Domains
 
         private void Handle(CaseFilePublishedEvent caseFilePublishedEvent)
         {
-            if (Owner != caseFilePublishedEvent.Performer)
-            {
-                throw new UnauthorizedCaseFileException(caseFilePublishedEvent.Performer, Id);
-            }
-
             Status = CaseFileStatus.Published;
         }
 

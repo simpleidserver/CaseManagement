@@ -35,8 +35,16 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
                 throw new UnknownCaseActivationException();
             }
 
-            var roles = await _roleQueryRepository.FindRolesByUser(activateCommand.Performer);
-            activation.Confirm(roles.Select(r => r.Name));
+            if (activateCommand.BypassUserValidation)
+            {
+                activation.Confirm();
+            }
+            else
+            {
+                var roles = await _roleQueryRepository.FindRolesByUser(activateCommand.Performer);
+                activation.Confirm(roles.Select(r => r.Name));
+            }
+
             await _commitAggregateHelper.Commit(activation, CaseWorkerTaskAggregate.GetStreamName(id), CMMNConstants.QueueNames.CasePlanInstances);
             await _messageBroker.QueueTransition(activation.CasePlanInstanceId, activation.CasePlanElementInstanceId, CMMNTransitions.ManualStart);
         }

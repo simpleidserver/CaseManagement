@@ -4,6 +4,7 @@ using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -25,6 +26,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         }
 
         [HttpGet("search")]
+        [Authorize("get_caseworkertasks")]
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();

@@ -44,6 +44,14 @@ namespace CaseManagement.CMMN.Domains
                     throw new UnauthorizedCaseWorkerException(string.Empty, CasePlanInstanceId, CaseElementInstanceId);
                 }
 
+                Submit(form, jObj);
+            }
+        }
+
+        public void Submit(FormAggregate form, JObject jObj)
+        {
+            lock (DomainEvents)
+            {
                 var content = CheckConfirmForm(form, jObj);
                 var evt = new FormInstanceSubmittedEvent(Guid.NewGuid().ToString(), Id, Version + 1, content, DateTime.UtcNow);
                 Handle(evt);

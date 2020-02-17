@@ -40,7 +40,10 @@
                         <ng-container matColumnDef="actions">
                             <th mat-header-cell *matHeaderCellDef></th>
                             <td mat-cell *matCellDef="let case">
-                                <button mat-icon-button [routerLink]="['/cases/casefiles/' + case.Id]">
+                                <button *ngIf="case.Status == 'edited'" mat-icon-button matTooltip="{{ 'EDIT_CASE_FILE' | translate}}" [routerLink]="['/cases/casefiles/' + case.Id]">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button *ngIf="case.Status == 'published'" mat-icon-button matTooltip="{{ 'VIEW_CASE_FILE' | translate}}" [routerLink]="['/cases/casefiles/' + case.Id]">
                                     <mat-icon>visibility</mat-icon>
                                 </button>
                             </td>

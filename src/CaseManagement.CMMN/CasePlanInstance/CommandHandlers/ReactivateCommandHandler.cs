@@ -26,6 +26,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(reactivateCommand.CaseInstanceId);
+            }            
+
+            if (!reactivateCommand.BypassUserValidation && caseInstance.CaseOwner != reactivateCommand.Performer)
+            {
+                throw new UnauthorizedCaseWorkerException(reactivateCommand.Performer, reactivateCommand.CaseInstanceId, string.Empty);
             }
 
             if (!string.IsNullOrWhiteSpace(reactivateCommand.CaseInstanceElementId))

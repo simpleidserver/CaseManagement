@@ -5,7 +5,7 @@
   "FRENCH": "French",
   "ENGLISH": "English",
   "CASE_FILES": "Case files",
-  "CASE_DEFINITIONS": "Case definitions",
+  "CASE_PLANS": "Case plans",
   "CASE_INSTANCES": "Case instances",
   "SEARCH": "Search",
   "ADD_CASE_FILE": "Add case file",
@@ -26,9 +26,8 @@
   "CASE_FILE_SAVED": "Case file is saved",
   "ERROR_SAVE_CASE_FILE": "An error occured while trying to save the case file",
   "CANCEL": "Cancel",
-  "ENTER_CASE_DEFINITION_NAME": "Enter name",
+  "ENTER_CASE_PLAN_NAME": "Enter name",
   "NAME": "Name",
-  "CASE_DEFINITION_FILE": "Case file",
   "LAUNCH_INSTANCE": "Launch instance",
   "CASE_FORM_INSTANCES": "Form instances",
   "CASE_ACTIVATIONS": "Activations",
@@ -62,5 +61,9 @@
   "ERROR_PUBLISH_CASE_FILE": "An error occured while trying to publish the case file",
   "PUBLISH": "Publish",
   "VIEW_CASE_FILE_HISTORY": "View case file history",
-  "EDIT_CASE_FILE": "Edit case file"
+  "EDIT_CASE_FILE": "Edit case file",
+  "VIEW_CASE_PLAN": "View the case plan",
+  "VIEW_CASE_PLAN_HISTORY": "View the case plan history",
+  "VIEW_CASE_FILE": "View case file",
+  "EDIT_CASE_PLAN": "Editer le plan de case"
 }

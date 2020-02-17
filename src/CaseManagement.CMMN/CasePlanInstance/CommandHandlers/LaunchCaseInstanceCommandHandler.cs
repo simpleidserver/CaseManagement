@@ -20,15 +20,15 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 
         public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CasePlanInstanceAggregate>(launchCaseInstanceCommand.CaseInstanceId, Domains.CasePlanInstanceAggregate.GetStreamName(launchCaseInstanceCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CasePlanInstanceAggregate>(launchCaseInstanceCommand.CasePlanInstanceId, Domains.CasePlanInstanceAggregate.GetStreamName(launchCaseInstanceCommand.CasePlanInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
-                throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CaseInstanceId);
+                throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CasePlanInstanceId);
             }
 
-            if (caseInstance.CaseOwner != launchCaseInstanceCommand.NameIdentifier)
+            if (caseInstance.CaseOwner != launchCaseInstanceCommand.Performer)
             {
-                throw new UnauthorizedCaseWorkerException(launchCaseInstanceCommand.NameIdentifier, caseInstance.Id, null);
+                throw new UnauthorizedCaseWorkerException(launchCaseInstanceCommand.Performer, caseInstance.Id, null);
             }
             
             await _messageBroker.QueueLaunchProcess(caseInstance.Id);

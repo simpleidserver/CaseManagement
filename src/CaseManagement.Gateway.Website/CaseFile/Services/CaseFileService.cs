@@ -1,5 +1,4 @@
-﻿using CaseManagement.Gateway.Website.CaseFile.Commands;
-using CaseManagement.Gateway.Website.CaseFile.DTOs;
+﻿using CaseManagement.Gateway.Website.CaseFile.DTOs;
 using CaseManagement.Gateway.Website.Token;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -25,16 +24,15 @@ namespace CaseManagement.Gateway.Website.CaseFile.Services
             _serverOptions = serverOptions.Value;
         }
 
-        public async Task<string> Add(AddCaseFileCommand command)
+        public async Task<string> AddMe(AddCaseFileParameter command, string identityToken)
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files"),
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/me"),
                 Method = HttpMethod.Post,
                 Content = new StringContent(JsonConvert.SerializeObject(command).ToString(), Encoding.UTF8, "application/json")
             };
-            var token = await _tokenStore.GetValidToken(new[] { "add_casefile" });
-            request.Headers.Add("Authorization", $"Bearer {token}");
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
             var httpResponse = await _httpClient.SendAsync(request);
             var responseStr = await httpResponse.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<JObject>(responseStr)["id"].ToString();
@@ -60,42 +58,38 @@ namespace CaseManagement.Gateway.Website.CaseFile.Services
             return JsonConvert.DeserializeObject<FindResponse<CaseFileResponse>>(responseStr);
         }
 
-        public async Task<CaseFileResponse> Get(string caseFileId)
+        public async Task<CaseFileResponse> GetMe(string id, string identityToken)
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/{caseFileId}")
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/me/{id}")
             };
-            var token = await _tokenStore.GetValidToken(new[] { "get_casefile" });
-            request.Headers.Add("Authorization", $"Bearer {token}");
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
             var httpResponse = await _httpClient.SendAsync(request);
             var responseStr = await httpResponse.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<CaseFileResponse>(responseStr);
         }
 
-        public async Task Update(UpdateCaseFileCommand command)
+        public async Task UpdateMe(string id, UpdateCaseFileParameter command, string identityToken)
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/{command.CaseFileId}"),
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/me/{id}"),
                 Method = HttpMethod.Put,
                 Content = new StringContent(JsonConvert.SerializeObject(command).ToString(), Encoding.UTF8, "application/json")
             };
-            var token = await _tokenStore.GetValidToken(new[] { "update_casefile" });
-            request.Headers.Add("Authorization", $"Bearer {token}");
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
             await _httpClient.SendAsync(request);
         }
 
-        public async Task<string> Publish(PublishCaseFileCommand command)
+        public async Task<string> PublishMe(string id, string identityToken)
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/{command.CaseFileId}/publish"),
-                Method = HttpMethod.Post,
-                Content = new StringContent(JsonConvert.SerializeObject(command).ToString(), Encoding.UTF8, "application/json")
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/me/{id}/publish"),
+                Method = HttpMethod.Get
             };
-            var token = await _tokenStore.GetValidToken(new[] { "publish_casefile" });
-            request.Headers.Add("Authorization", $"Bearer {token}");
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
             var httpResponse = await _httpClient.SendAsync(request);
             var responseStr = await httpResponse.Content.ReadAsStringAsync();
             return JObject.Parse(responseStr)["id"].ToString();

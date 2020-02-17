@@ -62,7 +62,7 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let case">
                                     <button mat-icon-button matTooltip="{{ 'EDIT_CASE_FILE' | translate}}" [routerLink]="['/cases/casefiles/' + case.Id]">
-                                        <mat-icon>visibility</mat-icon>
+                                        <mat-icon>edit</mat-icon>
                                     </button>
                                     <button mat-icon-button matTooltip="{{ 'VIEW_CASE_FILE_HISTORY' | translate}}" [routerLink]="['/cases/casefiles/' + case.FileId + '/history']">
                                         <mat-icon>history</mat-icon>

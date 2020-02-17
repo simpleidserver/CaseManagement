@@ -34,12 +34,18 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             _publishCaseFileCommandHandler = publishCaseFileCommandHandler;
         }
 
+
         [HttpPost]
         [Authorize("add_casefile")]
-        public async Task<IActionResult> Add([FromBody] AddCaseFileCommand command)
+        public async Task<IActionResult> Add([FromBody] AddCaseFileParameter parameter)
         {
-            command.Owner = this.GetNameIdentifier();
-            var resut = await _addCaseFileCommandHandler.Handle(command);
+            var resut = await _addCaseFileCommandHandler.Handle(new AddCaseFileCommand
+            {
+                Description = parameter.Description,
+                Name = parameter.Name,
+                Payload = parameter.Payload,
+                IdentityToken = this.GetIdentityToken()
+            });
             return new ContentResult
             {
                 StatusCode = (int)HttpStatusCode.Created,
@@ -80,7 +86,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         [Authorize("get_casefile")]
         public async Task<IActionResult> GetCaseFile(string id)
         {
-            var result = await _getCaseFileQueryHandler.Handle(new GetCaseFileQuery { CaseFileId = id });
+            var result = await _getCaseFileQueryHandler.Handle(new GetCaseFileQuery { CaseFileId = id, IdentityToken = this.GetIdentityToken() });
             if (result.Owner != this.GetNameIdentifier())
             {
                 return new UnauthorizedResult();
@@ -94,7 +100,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand command)
         {
             command.CaseFileId = id;
-            command.Performer = this.GetNameIdentifier();
+            command.IdentityToken= this.GetIdentityToken();
             await _updateCaseFileCommandHandler.Handle(command);
             return new OkResult();
         }
@@ -103,7 +109,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         [Authorize("publish_casefile")]
         public async Task<IActionResult> Publish(string id)
         {
-            var result = await _publishCaseFileCommandHandler.Handle(new PublishCaseFileCommand { CaseFileId = id, Performer = this.GetNameIdentifier() });
+            var result = await _publishCaseFileCommandHandler.Handle(new PublishCaseFileCommand { CaseFileId = id, IdentityToken = this.GetIdentityToken() });
             return new OkObjectResult(new JObject
             {
                 { "id", result }

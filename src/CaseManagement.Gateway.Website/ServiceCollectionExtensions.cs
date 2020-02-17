@@ -69,6 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddCasePlan(this IServiceCollection services)
         {
             services.TryAddTransient<ISearchMyLatestCasePlanQueryHandler, SearchMyLatestCasePlanQueryHandler>();
+            services.TryAddTransient<IGetCasePlanQueryHandler, GetCasePlanQueryHandler>();
             services.AddHttpClient<ICasePlanService, CasePlanService>()
                 .AddPolicyHandler(GetRetryPolicy())
                 .AddPolicyHandler(GetBreakerCircuitPolicy());

@@ -14,10 +14,12 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
     public class CasePlansController : Controller
     {
         private readonly ISearchMyLatestCasePlanQueryHandler _searchMyLatestCasePlanQueryHandler;
-        
-        public CasePlansController(ISearchMyLatestCasePlanQueryHandler searchMyLatestCasePlanQueryHandler)
+        private readonly IGetCasePlanQueryHandler _getCasePlanQueryHandler;
+
+        public CasePlansController(ISearchMyLatestCasePlanQueryHandler searchMyLatestCasePlanQueryHandler, IGetCasePlanQueryHandler getCasePlanQueryHandler)
         {
             _searchMyLatestCasePlanQueryHandler = searchMyLatestCasePlanQueryHandler;
+            _getCasePlanQueryHandler = getCasePlanQueryHandler;
         }
 
         [HttpGet("me/search")]
@@ -28,6 +30,35 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             var nameIdentifier = this.GetNameIdentifier();
             var result = await _searchMyLatestCasePlanQueryHandler.Handle(new SearchMyLatestCasePlanQuery { Queries = query, NameIdentifier = nameIdentifier });
             return new OkObjectResult(ToDto(result));
+        }
+
+        [HttpGet("{id}")]
+        [Authorize("get_caseplan")]
+        public async Task<IActionResult> Get(string id)
+        {
+            var result = await _getCasePlanQueryHandler.Handle(id, this.GetIdentityToken());
+            return new OkObjectResult(ToDto(result));
+        }
+
+        [HttpGet("{id}/caseplaninstances/search")]
+        [Authorize("get_caseplan")]
+        public async Task<IActionResult> SearchCasePlanInstances(string id)
+        {
+            return null;
+        }
+
+        [HttpGet("{id}/forminstances/search")]
+        [Authorize("get_caseplan")]
+        public async Task<IActionResult> SearchCaseFormInstances(string id)
+        {
+            return null;
+        }
+
+        [HttpGet("{id}/caseworkertasks/search")]
+        [Authorize("get_caseplan")]
+        public async Task<IActionResult> SearchCaseWorkerTasks(string id)
+        {
+            return null;
         }
 
         private static JObject ToDto(FindResponse<CasePlanResponse> resp)
@@ -49,7 +80,9 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
                 { "name", def.Name },
                 { "description", def.Description },
                 { "case_file", def.CaseFileId },
-                { "create_datetime", def.CreateDateTime }
+                { "create_datetime", def.CreateDateTime },
+                { "version", def.Version },
+                { "owner", def.Owner }
             };
         }
     }

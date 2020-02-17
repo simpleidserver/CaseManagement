@@ -8,30 +8,30 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 {
     public class CreateCaseInstanceCommandHandler : ICreateCaseInstanceCommandHandler
     {
-        private readonly ICasePlanQueryRepository _cmmnWorkflowDefinitionQueryRepository;
+        private readonly ICasePlanQueryRepository _casePlanQueryRepository;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public CreateCaseInstanceCommandHandler(ICasePlanQueryRepository cmmnWorkflowDefinitionQueryRepository, ICommitAggregateHelper commitAggregateHelper)
+        public CreateCaseInstanceCommandHandler(ICasePlanQueryRepository casePlanQueryRepository, ICommitAggregateHelper commitAggregateHelper)
         {
-            _cmmnWorkflowDefinitionQueryRepository = cmmnWorkflowDefinitionQueryRepository;
+            _casePlanQueryRepository = casePlanQueryRepository;
             _commitAggregateHelper = commitAggregateHelper;
         }
 
         public async Task<Domains.CasePlanInstanceAggregate> Handle(CreateCaseInstanceCommand command)
         {
-            var workflowDefinition = await _cmmnWorkflowDefinitionQueryRepository.FindById(command.CasePlanId);
+            var workflowDefinition = await _casePlanQueryRepository.FindById(command.CasePlanId);
             if (workflowDefinition == null)
             {
                 throw new UnknownCaseDefinitionException();
             }
 
-            if (workflowDefinition.CaseOwner != command.NameIdentifier)
+            if (workflowDefinition.CaseOwner != command.Performer)
             {
-                throw new UnauthorizedCaseWorkerException(command.NameIdentifier, null, null);
+                throw new UnauthorizedCaseWorkerException(command.Performer, null, null);
             }
             
             var workflowInstance = Domains.CasePlanInstanceAggregate.New(workflowDefinition);
-            workflowInstance.CaseOwner = command.NameIdentifier;
+            workflowInstance.CaseOwner = command.Performer;
             await _commitAggregateHelper.Commit(workflowInstance, workflowInstance.GetStreamName(), CMMNConstants.QueueNames.CasePlanInstances);
             return workflowInstance;
         }

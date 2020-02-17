@@ -15,7 +15,7 @@ namespace CaseManagement.Gateway.Website.CaseFile.CommandHandlers
 
         public Task<string> Handle(PublishCaseFileCommand publishCommand)
         {
-            return _caseFileService.Publish(publishCommand);
+            return _caseFileService.PublishMe(publishCommand.CaseFileId, publishCommand.IdentityToken);
         }
     }
 }

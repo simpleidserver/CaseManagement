@@ -15,7 +15,12 @@ namespace CaseManagement.Gateway.Website.CaseFile.CommandHandlers
 
         public Task Handle(UpdateCaseFileCommand command)
         {
-            return _caseFileService.Update(command);
+            return _caseFileService.UpdateMe(command.CaseFileId, new DTOs.UpdateCaseFileParameter
+            {
+                Description = command.Description,
+                Name = command.Name,
+                Payload = command.Payload
+            }, command.IdentityToken);
         }
     }
 }

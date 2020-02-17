@@ -54,18 +54,143 @@ namespace CaseManagement.CMMN.Host
                         "http://localhost:60001"
                     }
                 };
+            })
+            .AddJwtBearer("IdentityServer", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = ExtractKey("openid_puk.txt"),
+                    ValidAudiences = new List<string>
+                    {
+                        "http://localhost:60000"
+                    },
+                    ValidIssuers = new List<string>
+                    {
+                        "http://localhost:60000"
+                    }
+                };
             });
             services.AddAuthorization(policy =>
             {
-                policy.AddPolicy("get_statistic", p => p.RequireClaim("scope", "get_statistic"));
-                policy.AddPolicy("get_performance", p => p.RequireClaim("scope", "get_performance"));
-                policy.AddPolicy("get_caseplan", p => p.RequireClaim("scope", "get_caseplan"));
+                // Case file
+                policy.AddPolicy("me_add_casefile", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
                 policy.AddPolicy("add_casefile", p => p.RequireClaim("scope", "add_casefile"));
+                policy.AddPolicy("me_update_casefile", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
                 policy.AddPolicy("update_casefile", p => p.RequireClaim("scope", "update_casefile"));
+                policy.AddPolicy("me_publish_casefile", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
                 policy.AddPolicy("publish_casefile", p => p.RequireClaim("scope", "publish_casefile"));
-                policy.AddPolicy("add_case_instance", p => p.RequireClaim("scope", "add_case_instance"));
-                policy.AddPolicy("launch_case_intance", p => p.RequireClaim("scope", "launch_case_intance"));
+                policy.AddPolicy("me_get_casefile", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
                 policy.AddPolicy("get_casefile", p => p.RequireClaim("scope", "get_casefile"));
+                // Form instances
+                policy.AddPolicy("get_forminstances", p => p.RequireClaim("scope", "get_forminstances"));
+                // Case plan instance
+                policy.AddPolicy("search_caseplaninstance", p => p.RequireClaim("scope", "search_caseplaninstance"));
+                policy.AddPolicy("me_get_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("get_caseplaninstance", p => p.RequireClaim("scope", "get_caseplaninstance"));
+                policy.AddPolicy("get_casefileitems", p => p.RequireClaim("scope", "get_casefileitems"));
+                policy.AddPolicy("me_add_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("add_caseplaninstance", p => p.RequireClaim("scope", "add_caseplaninstance"));
+                policy.AddPolicy("add_caseplaniteminstance", p => p.RequireClaim("scope", "add_caseplaniteminstance"));
+                policy.AddPolicy("me_launch_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("launch_caseplaninstance", p => p.RequireClaim("scope", "launch_caseplaninstance"));
+                policy.AddPolicy("me_close_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("close_caseplaninstance", p => p.RequireClaim("scope", "close_caseplaninstance"));
+                policy.AddPolicy("me_suspend_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("suspend_caseplaninstance", p => p.RequireClaim("scope", "suspend_caseplaninstance"));
+                policy.AddPolicy("me_reactivate_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("reactivate_caseplaninstance", p => p.RequireClaim("scope", "reactivate_caseplaninstance"));
+                policy.AddPolicy("me_resume_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("resume_caseplaninstance", p => p.RequireClaim("scope", "resume_caseplaninstance"));
+                policy.AddPolicy("me_terminate_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("terminate_caseplaninstance", p => p.RequireClaim("scope", "terminate_caseplaninstance"));
+                policy.AddPolicy("me_confirm_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("confirm_caseplaninstance", p => p.RequireClaim("scope", "confirm_caseplaninstance"));
+                policy.AddPolicy("me_activate_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("activate_caseplaninstance", p => p.RequireClaim("scope", "activate_caseplaninstance"));
+                // Case plan
+                policy.AddPolicy("me_get_caseplan", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
+                policy.AddPolicy("get_caseplan", p => p.RequireClaim("scope", "get_caseplan"));
+                // Case worker task
+                policy.AddPolicy("get_caseworkertasks", p => p.RequireClaim("scope", "get_caseworkertasks"));
+                // Performance
+                policy.AddPolicy("get_performance", p => p.RequireClaim("scope", "get_performance"));
+                // Statistic
+                policy.AddPolicy("get_statistic", p => p.RequireClaim("scope", "get_statistic"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()

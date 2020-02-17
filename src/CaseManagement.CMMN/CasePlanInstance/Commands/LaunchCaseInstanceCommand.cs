@@ -1,8 +1,11 @@
-﻿namespace CaseManagement.CMMN.CasePlanInstance.Commands
+﻿using System.Runtime.Serialization;
+
+namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
     public class LaunchCaseInstanceCommand
     {
-        public string CaseInstanceId { get; set; }
-        public string NameIdentifier { get; set; }
+        public bool BypassUserValidation { get; set; }
+        public string CasePlanInstanceId { get; set; }
+        public string Performer { get; set; }
     }
 }

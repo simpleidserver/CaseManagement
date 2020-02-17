@@ -8,5 +8,7 @@
         }
 
         public string CaseInstanceId { get; set; }
+        public bool BypassUserValidation { get; set; }
+        public string Performer { get; set; }
     }
 }

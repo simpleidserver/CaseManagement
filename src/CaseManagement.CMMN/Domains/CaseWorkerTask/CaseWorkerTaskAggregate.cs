@@ -80,6 +80,13 @@ namespace CaseManagement.CMMN.Domains
                     throw new UnauthorizedCaseWorkerException(string.Empty, CasePlanInstanceId, CasePlanElementInstanceId);
                 }
 
+                Confirm();
+            }
+        }
+        public void Confirm()
+        {
+            lock (DomainEvents)
+            {
                 var evt = new CaseWorkerTaskConfirmedEvent(Guid.NewGuid().ToString(), Id, Version + 1, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);

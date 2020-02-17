@@ -1,16 +1,16 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatDialog, MatDialogRef, MatSort, MAT_DIALOG_DATA } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
-import { select, Store } from '@ngrx/store';
-import { CaseElementInstance, CaseInstance, StateHistory, TransitionHistory } from '../../casedefinitions/models/case-instance.model';
-import * as fromCaseFileActions from '../../casefiles/actions/case-files';
-import * as fromCaseInstanceActions from '../../casedefinitions/actions/case-instances';
-import * as fromCaseDefinitionActions from '../../casedefinitions/actions/case-definitions';
-import * as fromCaseInstances from '../reducers';
-import { CaseFileItem } from '../../casedefinitions/models/case-file-item.model';
-import { CaseFile } from '../../casefiles/models/case-file.model';
-import { CaseDefinition } from '../../casedefinitions/models/case-definition.model';
-let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
+import { Component, /* Inject, */OnDestroy, OnInit, /*ViewChild,*/ ViewEncapsulation } from '@angular/core';
+// import { MatDialog, MatDialogRef, MatSort, MAT_DIALOG_DATA } from '@angular/material';
+// import { ActivatedRoute } from '@angular/router';
+// import { select, Store } from '@ngrx/store';
+// import { CaseElementInstance, CaseInstance, StateHistory, TransitionHistory } from '../../casedefinitions/models/case-instance.model';
+// import * as fromCaseFileActions from '../../casefiles/actions/case-files';
+// import * as fromCaseInstanceActions from '../../casedefinitions/actions/case-instances';
+// import * as fromCaseDefinitionActions from '../../casedefinitions/actions/case-definitions';
+// import * as fromCaseInstances from '../reducers';
+// import { CaseFileItem } from '../../casedefinitions/models/case-file-item.model';
+// import { CaseFile } from '../../casefiles/models/case-file.model';
+// import { CaseDefinition } from '../../casedefinitions/models/case-definition.model';
+// let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
 
 @Component({
     selector: 'view-case-instances',
@@ -19,6 +19,7 @@ let CmmnViewer = require('cmmn-js/lib/NavigatedViewer');
     encapsulation: ViewEncapsulation.None
 })
 export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
+    /*
     caseInstanceContextLst$: any[] = new Array();
     caseFileItems$: CaseFileItem[] = new Array<CaseFileItem>();
     caseInstance$: CaseInstance = new CaseInstance();
@@ -31,7 +32,9 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
 
     constructor(private caseInstanceStore: Store<fromCaseInstances.CaseInstancesState>, private route: ActivatedRoute, private dialog : MatDialog) { }
 
+    */
     ngOnInit() {
+        /*
         let self = this;
         let viewer = new CmmnViewer({
             container: "#canvas",
@@ -111,8 +114,10 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
             this.caseInstanceStore.dispatch(loadCaseDefinitionRequest);
         });
         this.refresh();
+        */
     }
 
+    /*
     ngAfterViewInit() {
         this.caseInstanceStateHistoriesSort.sortChange.subscribe(() => this.sortCaseInstanceStateHistories());
         this.caseInstanceTransitionHistoriesSort.sortChange.subscribe(() => this.sortCaseInstanceTransitionHistories());
@@ -192,11 +197,12 @@ export class ViewCaseInstanceComponent implements OnInit, OnDestroy {
         let loadCaseInstance = new fromCaseInstanceActions.StartGet(this.route.snapshot.params['id']);
         this.caseInstanceStore.dispatch(loadCaseInstance);
     }
-
+    */
     ngOnDestroy() {
     }
 }
 
+/*
 class ElementStateHistory {
     Id: string;
     State: string;
@@ -208,12 +214,14 @@ class ElementTransitionHistory {
     Transition: string;
     DateTime: string;
 }
+*/
 
 @Component({
     selector: 'case-element-instance-dialog',
     templateUrl: 'case-element-instance-dialog.html',
 })
 export class CaseElementInstanceDialog {
+    /*
     definitionId: string = null;
     stateHistories: ElementStateHistory[] = [];
     transitionHistories: ElementTransitionHistory[] = [];
@@ -316,4 +324,5 @@ export class CaseElementInstanceDialog {
     onNoClick() {
         this.dialogRef.close();
     }
+    */
 }

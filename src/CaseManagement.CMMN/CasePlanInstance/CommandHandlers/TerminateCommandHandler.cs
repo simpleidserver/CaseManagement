@@ -28,6 +28,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
                 throw new UnknownCaseInstanceException(terminateCommand.CaseInstanceId);
             }
 
+            if (!terminateCommand.BypassUserValidation && caseInstance.CaseOwner != terminateCommand.Performer)
+            {
+                throw new UnauthorizedCaseWorkerException(terminateCommand.Performer, terminateCommand.CaseInstanceId, string.Empty);
+            }
+
             if (!string.IsNullOrWhiteSpace(terminateCommand.CaseInstanceElementId))
             {
                 var elt = caseInstance.WorkflowElementInstances.FirstOrDefault(w => w.Id == terminateCommand.CaseInstanceElementId);

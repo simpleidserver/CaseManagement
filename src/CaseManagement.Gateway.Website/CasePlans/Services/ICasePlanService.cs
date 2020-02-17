@@ -7,5 +7,6 @@ namespace CaseManagement.Gateway.Website.CasePlans.Services
     public interface ICasePlanService
     {
         Task<FindResponse<CasePlanResponse>> Search(IEnumerable<KeyValuePair<string, string>> queries);
+        Task<CasePlanResponse> GetMe(string id, string identityToken);
     }
 }

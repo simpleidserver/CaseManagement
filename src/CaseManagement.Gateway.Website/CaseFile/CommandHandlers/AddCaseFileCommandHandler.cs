@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CaseManagement.Gateway.Website.CaseFile.Commands;
+using CaseManagement.Gateway.Website.CaseFile.DTOs;
 using CaseManagement.Gateway.Website.CaseFile.Services;
 
 namespace CaseManagement.Gateway.Website.CaseFile.CommandHandlers
@@ -15,7 +16,12 @@ namespace CaseManagement.Gateway.Website.CaseFile.CommandHandlers
 
         public Task<string> Handle(AddCaseFileCommand command)
         {
-            return _caseFileService.Add(command);
+            return _caseFileService.AddMe(new AddCaseFileParameter
+            {
+                Description = command.Description,
+                Name = command.Name,
+                Payload = command.Payload
+            }, command.IdentityToken);
         }
     }
 }
