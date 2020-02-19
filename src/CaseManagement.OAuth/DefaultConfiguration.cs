@@ -68,7 +68,17 @@ namespace CaseManagement.OAuth
             },
             new OAuthScope
             {
-                Name = "launch_case_instance",
+                Name = "launch_caseplaninstance",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "get_forminstances",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "get_caseworkertasks",
                 IsExposedInConfigurationEdp = true
             }
         };
@@ -140,7 +150,15 @@ namespace CaseManagement.OAuth
                     },
                     new OAuthScope
                     {
-                        Name = "launch_case_instance"
+                        Name = "launch_caseplaninstance"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "get_forminstances"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "get_caseworkertasks"
                     }
                 },
                 GrantTypes = new List<string>

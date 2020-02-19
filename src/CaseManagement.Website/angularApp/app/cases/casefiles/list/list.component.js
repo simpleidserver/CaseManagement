@@ -11,24 +11,30 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatPaginator, MatSort } from '@angular/material';
 import { select, Store } from '@ngrx/store';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { merge } from 'rxjs';
-import { StartFetch } from '../actions/case-files';
+import { StartSearch } from '../actions/case-files';
 import * as fromCaseFiles from '../reducers';
 import { AddCaseFileDialog } from './add-case-file-dialog';
 var ListCaseFilesComponent = (function () {
-    function ListCaseFilesComponent(store, formBuilder, oauthService, dialog) {
+    function ListCaseFilesComponent(store, formBuilder, dialog) {
         this.store = store;
         this.formBuilder = formBuilder;
-        this.oauthService = oauthService;
         this.dialog = dialog;
-        this.displayedColumns = ['name', 'create_datetime', 'update_datetime'];
+        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
+        this.caseFiles$ = [];
         this.searchForm = this.formBuilder.group({
             text: ''
         });
     }
     ListCaseFilesComponent.prototype.ngOnInit = function () {
-        this.caseFiles$ = this.store.pipe(select(fromCaseFiles.selectSearchResults));
+        var _this = this;
+        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe(function (searchCaseFilesResult) {
+            if (!searchCaseFilesResult) {
+                return;
+            }
+            _this.caseFiles$ = searchCaseFilesResult.Content;
+            _this.length = searchCaseFilesResult.TotalLength;
+        });
         this.refresh();
     };
     ListCaseFilesComponent.prototype.onSubmit = function () {
@@ -56,8 +62,7 @@ var ListCaseFilesComponent = (function () {
         if (this.paginator.pageSize) {
             count = this.paginator.pageSize;
         }
-        var claims = this.oauthService.getIdentityClaims();
-        var request = new StartFetch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, claims.sub);
+        var request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     };
     __decorate([
@@ -74,7 +79,7 @@ var ListCaseFilesComponent = (function () {
             templateUrl: './list.component.html',
             styleUrls: ['./list.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, FormBuilder, OAuthService, MatDialog])
+        __metadata("design:paramtypes", [Store, FormBuilder, MatDialog])
     ], ListCaseFilesComponent);
     return ListCaseFilesComponent;
 }());

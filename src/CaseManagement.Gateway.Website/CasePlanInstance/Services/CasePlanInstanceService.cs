@@ -70,7 +70,7 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
             return JsonConvert.DeserializeObject<CasePlanInstanceResponse>(responseStr);
         }
 
-        public async Task Launch(string casePlanInstanceId, string identityToken)
+        public async Task LaunchMe(string casePlanInstanceId, string identityToken)
         {
             var request = new HttpRequestMessage
             {
@@ -81,17 +81,59 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
             await _httpClient.SendAsync(request);
         }
 
-        public async Task<CasePlanInstanceResponse> Suspend(string id, string identityToken)
+        public async Task SuspendMe(string id, string identityToken)
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{id}"),
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{id}/suspend"),
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            var httpResponse = await _httpClient.SendAsync(request);
-            var responseStr = await httpResponse.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<CasePlanInstanceResponse>(responseStr);
+            await _httpClient.SendAsync(request);
+        }
+
+        public async Task ReactivateMe(string id, string identityToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{id}/reactivate"),
+                Method = HttpMethod.Get
+            };
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            await _httpClient.SendAsync(request);
+        }
+
+        public async Task ResumeMe(string id, string identityToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{id}/resume"),
+                Method = HttpMethod.Get
+            };
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            await _httpClient.SendAsync(request);
+        }
+
+        public async Task TerminateMe(string id, string identityToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{id}/terminate"),
+                Method = HttpMethod.Get
+            };
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            await _httpClient.SendAsync(request);
+        }
+
+        public async Task CloseMe(string id, string identityToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{id}/close"),
+                Method = HttpMethod.Get
+            };
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            await _httpClient.SendAsync(request);
         }
     }
 }

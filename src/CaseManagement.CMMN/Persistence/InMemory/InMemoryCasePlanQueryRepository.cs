@@ -37,7 +37,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             if (parameter.TakeLatest)
             {
                 result = result.OrderByDescending(r => r.Version);
-                result = result.GroupBy(r => r.CaseFileId).Select(r => r.First());
+                result = result.GroupBy(r => r.CasePlanId).Select(r => r.First());
             }
 
             if (MAPPING_WORKFLOWDEFINITION_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))

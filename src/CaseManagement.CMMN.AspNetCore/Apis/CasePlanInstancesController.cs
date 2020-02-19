@@ -768,6 +768,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             string orderBy;
             FindOrders findOrder;
             string casePlanId;
+            string owner;
             var parameter = new FindWorkflowInstanceParameter();
             if (query.TryGet("start_index", out startIndex))
             {
@@ -792,6 +793,11 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             if (query.TryGet("case_plan_id", out casePlanId))
             {
                 parameter.CasePlanId = casePlanId;
+            }
+
+            if(query.TryGet("owner", out owner))
+            {
+                parameter.CaseOwner = owner;
             }
 
             return parameter;

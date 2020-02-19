@@ -60,7 +60,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
                 if (parameter.CaseInstance.IsManualActivationRuleSatisfied(parameter.CaseElementInstance.Id, parameter.CaseDefinition))
                 {
-                    var caseworkertask = CaseWorkerTaskAggregate.New(string.Empty, parameter.CaseInstance.Id, parameter.CaseElementInstance.Id, CaseWorkerTaskTypes.ActivateCasePlanElement);
+                    var caseworkertask = CaseWorkerTaskAggregate.New(string.Empty, parameter.CaseInstance.CasePlanId, parameter.CaseInstance.Id, parameter.CaseElementInstance.Id, CaseWorkerTaskTypes.ActivateCasePlanElement);
                     _commitAggregateHelper.Commit(caseworkertask, CaseWorkerTaskAggregate.GetStreamName(caseworkertask.Id), CMMNConstants.QueueNames.CaseWorkerTasks).Wait();
                 }
 

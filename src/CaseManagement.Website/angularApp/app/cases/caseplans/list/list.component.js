@@ -11,36 +11,38 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatPaginator, MatSort } from '@angular/material';
 import { select, Store } from '@ngrx/store';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { merge } from 'rxjs';
-import { StartFetch } from '../actions/case-definitions';
+import { StartSearch } from '../actions/caseplan';
 import * as fromCaseFiles from '../reducers';
-var ListCaseDefinitionsComponent = (function () {
-    function ListCaseDefinitionsComponent(store, formBuilder, oauthService) {
+var ListCasePlansComponent = (function () {
+    function ListCasePlansComponent(store, formBuilder) {
         this.store = store;
         this.formBuilder = formBuilder;
-        this.oauthService = oauthService;
-        this.displayedColumns = ['name', 'create_datetime', 'case_file'];
+        this.displayedColumns = ['name', 'version', 'create_datetime', 'actions'];
+        this.casePlans$ = [];
         this.searchForm = this.formBuilder.group({
             text: ''
         });
     }
-    ListCaseDefinitionsComponent.prototype.ngOnInit = function () {
+    ListCasePlansComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.caseDefinitions$ = this.store.pipe(select(fromCaseFiles.selectSearchResults));
-        this.store.pipe(select(fromCaseFiles.selectLengthResults)).subscribe(function (l) {
-            _this.length = l;
+        this.store.pipe(select(fromCaseFiles.selectSearchResult)).subscribe(function (l) {
+            if (!l || !l.Content) {
+                return;
+            }
+            _this.casePlans$ = l.Content;
+            _this.length = l.TotalLength;
         });
         this.refresh();
     };
-    ListCaseDefinitionsComponent.prototype.onSubmit = function () {
+    ListCasePlansComponent.prototype.onSubmit = function () {
         this.refresh();
     };
-    ListCaseDefinitionsComponent.prototype.ngAfterViewInit = function () {
+    ListCasePlansComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
     };
-    ListCaseDefinitionsComponent.prototype.refresh = function () {
+    ListCasePlansComponent.prototype.refresh = function () {
         var startIndex = 0;
         var count = 5;
         if (this.paginator.pageIndex && this.paginator.pageSize) {
@@ -49,27 +51,26 @@ var ListCaseDefinitionsComponent = (function () {
         if (this.paginator.pageSize) {
             count = this.paginator.pageSize;
         }
-        var claims = this.oauthService.getIdentityClaims();
-        var request = new StartFetch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, claims.sub);
+        var request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     };
     __decorate([
         ViewChild(MatPaginator),
         __metadata("design:type", MatPaginator)
-    ], ListCaseDefinitionsComponent.prototype, "paginator", void 0);
+    ], ListCasePlansComponent.prototype, "paginator", void 0);
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], ListCaseDefinitionsComponent.prototype, "sort", void 0);
-    ListCaseDefinitionsComponent = __decorate([
+    ], ListCasePlansComponent.prototype, "sort", void 0);
+    ListCasePlansComponent = __decorate([
         Component({
-            selector: 'list-case-files',
+            selector: 'list-case-plans',
             templateUrl: './list.component.html',
             styleUrls: ['./list.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, FormBuilder, OAuthService])
-    ], ListCaseDefinitionsComponent);
-    return ListCaseDefinitionsComponent;
+        __metadata("design:paramtypes", [Store, FormBuilder])
+    ], ListCasePlansComponent);
+    return ListCasePlansComponent;
 }());
-export { ListCaseDefinitionsComponent };
+export { ListCasePlansComponent };
 //# sourceMappingURL=list.component.js.map

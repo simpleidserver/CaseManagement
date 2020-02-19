@@ -31,7 +31,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
             }
             
             var workflowInstance = Domains.CasePlanInstanceAggregate.New(workflowDefinition);
-            workflowInstance.CaseOwner = command.Performer;
             await _commitAggregateHelper.Commit(workflowInstance, workflowInstance.GetStreamName(), CMMNConstants.QueueNames.CasePlanInstances);
             return workflowInstance;
         }

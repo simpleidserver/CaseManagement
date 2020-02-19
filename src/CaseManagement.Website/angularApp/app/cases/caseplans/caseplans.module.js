@@ -15,24 +15,16 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { CaseFilesEffects } from '../casefiles/effects/case-files';
-import { CaseFilesService } from '../casefiles/services/casefiles.service';
-import { CaseDefinitionsRoutes } from './casedefinitions.routes';
-import { CaseActivationsEffects } from './effects/case-activations';
-import { CaseDefinitionsEffects } from './effects/case-definitions';
-import { CaseFormInstancesEffects } from './effects/case-form-instances';
-import { CaseInstancesEffects } from './effects/case-instances';
-import { ListCaseDefinitionsComponent } from './list/list.component';
+import { CasePlansRoutes } from './caseplans.routes';
+import { CasePlanEffects } from './effects/caseplan';
+import { ListCasePlansComponent } from './list/list.component';
 import * as reducers from './reducers';
-import { CaseActivationsService } from './services/caseactivations.service';
-import { CaseDefinitionsService } from './services/casedefinitions.service';
-import { CaseFormInstancesService } from './services/caseforminstances.service';
-import { CaseInstancesService } from './services/caseinstances.service';
+import { CasePlanService } from './services/caseplan.service';
 import { ViewCaseDefinitionComponent } from './view/view.component';
-var CaseDefinitionsModule = (function () {
-    function CaseDefinitionsModule() {
+var CasePlansModule = (function () {
+    function CasePlansModule() {
     }
-    CaseDefinitionsModule = __decorate([
+    CasePlansModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
@@ -40,22 +32,22 @@ var CaseDefinitionsModule = (function () {
                 MonacoEditorModule.forRoot(),
                 FormsModule,
                 HttpClientModule,
-                CaseDefinitionsRoutes,
+                CasePlansRoutes,
                 MaterialModule,
                 SharedModule,
-                EffectsModule.forRoot([CaseDefinitionsEffects, CaseActivationsEffects, CaseFormInstancesEffects, CaseInstancesEffects, CaseFilesEffects]),
+                EffectsModule.forRoot([CasePlanEffects]),
                 StoreModule.forRoot(reducers.appReducer),
                 StoreDevtoolsModule.instrument({
                     maxAge: 10
                 })
             ],
             entryComponents: [],
-            declarations: [ListCaseDefinitionsComponent, ViewCaseDefinitionComponent],
-            exports: [ListCaseDefinitionsComponent, ViewCaseDefinitionComponent],
-            providers: [CaseDefinitionsService, CaseActivationsService, CaseFormInstancesService, CaseInstancesService, CaseFilesService]
+            declarations: [ListCasePlansComponent, ViewCaseDefinitionComponent],
+            exports: [ListCasePlansComponent, ViewCaseDefinitionComponent],
+            providers: [CasePlanService]
         })
-    ], CaseDefinitionsModule);
-    return CaseDefinitionsModule;
+    ], CasePlansModule);
+    return CasePlansModule;
 }());
-export { CaseDefinitionsModule };
-//# sourceMappingURL=casedefinitions.module.js.map
+export { CasePlansModule };
+//# sourceMappingURL=caseplans.module.js.map

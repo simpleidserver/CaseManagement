@@ -8,5 +8,6 @@
         }
 
         public string CasePlanId { get; set; }
+        public string CaseOwner { get; set; }
     }
 }

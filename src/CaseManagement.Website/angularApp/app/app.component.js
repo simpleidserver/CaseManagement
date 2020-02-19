@@ -11,134 +11,32 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, NgZone, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { NullValidationHandler, OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
+import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
+import { Router } from '@angular/router';
 var AppComponent = (function () {
-    function AppComponent(translate, router, oauthService, document, ngZone, storage) {
-        this.router = router;
+    function AppComponent(route, translate, oauthService, document) {
+        this.route = route;
         this.oauthService = oauthService;
         this.document = document;
-        this.ngZone = ngZone;
-        this.storage = storage;
-        this.breadCrumbList = [];
         translate.setDefaultLang('fr');
         translate.use('fr');
-        this.iFrameName = "casemanagement-idserver";
-        this.configureWithNewConfigApi();
+        this.configureAuth();
     }
-    AppComponent.prototype.ngOnInit = function () {
-        this.listenRouting();
-    };
-    AppComponent.prototype.configureWithNewConfigApi = function () {
-        var _this = this;
+    AppComponent.prototype.configureAuth = function () {
         authConfig.redirectUri = this.document.location.origin;
         this.oauthService.configure(authConfig);
-        this.oauthService.tokenValidationHandler = new NullValidationHandler();
-        this.oauthService.loadDiscoveryDocument().then(function (d) {
-            var issuer = d.info.discoveryDocument.issuer;
-            var checkSessionIframe = d.info.discoveryDocument.check_session_iframe;
-            _this.initSessionCheck(issuer.toLowerCase(), checkSessionIframe.toLowerCase());
-            return _this.oauthService.tryLogin();
-        });
-    };
-    AppComponent.prototype.initSessionCheck = function (issuer, checkSessionIFrame) {
-        var existingIframe = document.getElementById(this.iFrameName);
-        if (existingIframe) {
-            document.body.removeChild(existingIframe);
-        }
-        var iframe = document.createElement('iframe');
-        iframe.id = this.iFrameName;
-        this.setupSessionCheckEventListener(issuer);
-        var url = checkSessionIFrame;
-        iframe.setAttribute('src', url);
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        this.startSessionCheckTimer(issuer);
-    };
-    AppComponent.prototype.startSessionCheckTimer = function (issuer) {
-        var _this = this;
-        this.stopSessionCheckTimer();
-        this.ngZone.runOutsideAngular(function () {
-            _this.sessionCheckTimer = setInterval(_this.checkSession.bind(_this, issuer), 3000);
-        });
-    };
-    AppComponent.prototype.checkSession = function (issuer) {
-        var iframe = document.getElementById(this.iFrameName);
-        if (!iframe) {
-            console.log('checkSession did not find iframe');
-            return;
-        }
-        var sessionState = this.storage.getItem('session_state');
-        if (!sessionState) {
-            this.stopSessionCheckTimer();
-        }
-        var message = this.oauthService.clientId + ' ' + sessionState;
-        iframe.contentWindow.postMessage(message, issuer);
-    };
-    AppComponent.prototype.setupSessionCheckEventListener = function (issuer) {
-        var _this = this;
-        this.removeSessionCheckEventListener();
-        this.sessionCheckEventListener = function (e) {
-            var origin = e.origin.toLowerCase();
-            if (!issuer.startsWith(origin)) {
-                console.log('sessionCheckEventListener', 'wrong origin', origin, 'expected', issuer);
-            }
-            switch (e.data) {
-                case 'changed':
-                case 'error':
-                    _this.stopSessionCheckTimer();
-                    _this.oauthService.logOut(true);
-                    break;
-            }
-        };
-        this.ngZone.runOutsideAngular(function () {
-            window.addEventListener('message', _this.sessionCheckEventListener);
-        });
-    };
-    AppComponent.prototype.stopSessionCheckTimer = function () {
-        if (this.sessionCheckTimer) {
-            clearInterval(this.sessionCheckTimer);
-            this.sessionCheckTimer = null;
-        }
-    };
-    AppComponent.prototype.removeSessionCheckEventListener = function () {
-        if (this.sessionCheckEventListener) {
-            window.removeEventListener('message', this.sessionCheckEventListener);
-            this.sessionCheckEventListener = null;
-        }
-    };
-    AppComponent.prototype.listenRouting = function () {
+        this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         var self = this;
-        var routerUrl;
-        var path;
-        var routerList;
-        this.router.events.subscribe(function (router) {
-            routerUrl = router.urlAfterRedirects;
-            if (!routerUrl || typeof routerUrl !== 'string') {
-                return;
+        this.oauthService.loadDiscoveryDocumentAndTryLogin();
+        this.sessionCheckTimer = setInterval(function () {
+            if (!self.oauthService.hasValidIdToken()) {
+                self.oauthService.logOut();
+                self.route.navigate(["/"]);
             }
-            path = '';
-            self.breadCrumbList.length = 0;
-            if (routerUrl.includes('filter')) {
-                return;
-            }
-            routerList = routerUrl.slice(1).split('/');
-            routerList.forEach(function (router, index) {
-                path += '/' + decodeURIComponent(router);
-                self.breadCrumbList.push({
-                    name: self.cleanUri(decodeURIComponent(router)),
-                    index: index,
-                    path: path,
-                    isLast: index === routerList.length - 1
-                });
-            });
-        });
-    };
-    AppComponent.prototype.cleanUri = function (uri) {
-        return uri.replace(/(\?.*)|(#.*)/g, "");
+        }, 3000);
     };
     AppComponent = __decorate([
         Component({
@@ -156,7 +54,7 @@ var AppComponent = (function () {
             encapsulation: ViewEncapsulation.None
         }),
         __param(3, Inject(DOCUMENT)),
-        __metadata("design:paramtypes", [TranslateService, Router, OAuthService, Object, NgZone, OAuthStorage])
+        __metadata("design:paramtypes", [Router, TranslateService, OAuthService, Object])
     ], AppComponent);
     return AppComponent;
 }());

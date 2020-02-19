@@ -12,6 +12,7 @@ namespace CaseManagement.CMMN.Domains
     public class CaseWorkerTaskAggregate : BaseAggregate
     {
         public string PerformerRole { get; set; }
+        public string CasePlanId { get; set; }
         public string CasePlanInstanceId { get; set; }
         public string CasePlanElementInstanceId { get; set; }
         public CaseWorkerTaskTypes TaskType { get; set; }
@@ -28,7 +29,11 @@ namespace CaseManagement.CMMN.Domains
                 CasePlanInstanceId = CasePlanInstanceId,
                 CasePlanElementInstanceId = CasePlanElementInstanceId,
                 TaskType = TaskType,
-                Status = Status
+                Status = Status,
+                CasePlanId = CasePlanId,
+                CreateDateTime = CreateDateTime,
+                UpdateDateTime = UpdateDateTime,
+                Version = Version
             };
         }
 
@@ -43,13 +48,13 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CaseWorkerTaskAggregate New(string performerRole, string casePlanInstanceId, string casePlanElementInstanceId, CaseWorkerTaskTypes type)
+        public static CaseWorkerTaskAggregate New(string performerRole, string casePlanId, string casePlanInstanceId, string casePlanElementInstanceId, CaseWorkerTaskTypes type)
         {
             var result = new CaseWorkerTaskAggregate();
             lock(result.DomainEvents)
             {
                 var id = BuildCaseWorkerTaskIdentifier(casePlanInstanceId, casePlanElementInstanceId);
-                var evt = new CaseWorkerTaskAddedEvent(Guid.NewGuid().ToString(), id, 0, performerRole, casePlanInstanceId, casePlanElementInstanceId, type, DateTime.UtcNow);
+                var evt = new CaseWorkerTaskAddedEvent(Guid.NewGuid().ToString(), id, 0, performerRole, casePlanId, casePlanInstanceId, casePlanElementInstanceId, type, DateTime.UtcNow);
                 result.Handle(evt);
                 result.DomainEvents.Add(evt);
                 return result;
@@ -115,6 +120,7 @@ namespace CaseManagement.CMMN.Domains
         {
             Id = caseWorkerTaskAddedEvent.AggregateId;
             Version = caseWorkerTaskAddedEvent.Version;
+            CasePlanId = caseWorkerTaskAddedEvent.CasePlanId;
             PerformerRole = caseWorkerTaskAddedEvent.PerformerRole;
             CasePlanInstanceId = caseWorkerTaskAddedEvent.CasePlanInstanceId;
             CasePlanElementInstanceId = caseWorkerTaskAddedEvent.CasePlanElementInstanceId;

@@ -30,7 +30,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _activationQueryRepository.Find(ExtractFindParameter(query, null));
+            var result = await _activationQueryRepository.Find(ExtractFindParameter(query));
             return new OkObjectResult(ToDto(result));
         }
 
@@ -44,10 +44,13 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 { "content", new JArray(resp.Content.Select(r => {
                     var result = new JObject
                     {
+                        { "case_plan_id", r.CasePlanId },
                         { "case_plan_instance_id", r.CasePlanInstanceId },
                         { "case_plan_element_instance_id", r.CasePlanElementInstanceId},
                         { "create_datetime", r.CreateDateTime },
+                        { "update_datetime", r.UpdateDateTime },
                         { "performer", r.PerformerRole },
+                        { "type", Enum.GetName(typeof(CaseWorkerTaskTypes), r.TaskType).ToLowerInvariant() },
                         { "status", Enum.GetName(typeof(CaseWorkerTaskStatus), r.Status).ToLowerInvariant() }
                     };
                     return result;
@@ -55,10 +58,16 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             };
         }
 
-        private static FindCaseWorkerTasksParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query, IEnumerable<string> roleIds)
+        private static FindCaseWorkerTasksParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
             var parameter = new FindCaseWorkerTasksParameter();
             parameter.ExtractFindParameter(query);
+            string casePlanId;
+            if (query.TryGet("case_plan_id", out casePlanId))
+            {
+                parameter.CasePlanId = casePlanId;
+            }
+
             return parameter;
         }
     }

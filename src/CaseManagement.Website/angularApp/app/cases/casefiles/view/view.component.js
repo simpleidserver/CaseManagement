@@ -10,23 +10,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { StartGet } from '../actions/case-files';
+import { CaseFile } from '../models/case-file.model';
 import * as fromCaseFiles from '../reducers';
 import { CaseFilesService } from '../services/casefiles.service';
 var CmmnViewer = require('cmmn-js/lib/Modeler'), propertiesPanelModule = require('casemanagement-js-properties-panel'), propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'), caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement');
 var ViewCaseFilesComponent = (function () {
-    function ViewCaseFilesComponent(store, route, formBuilder, caseFilesService, snackBar, translateService) {
+    function ViewCaseFilesComponent(store, route, formBuilder, caseFilesService, snackBar, translateService, router) {
         this.store = store;
         this.route = route;
         this.formBuilder = formBuilder;
         this.caseFilesService = caseFilesService;
         this.snackBar = snackBar;
         this.translateService = translateService;
+        this.router = router;
         this.isEditorDisplayed = true;
         this.editorOptions = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
+        this.caseFile = new CaseFile();
         this.saveForm = this.formBuilder.group({
             id: new FormControl({ value: '', disabled: true }),
             name: new FormControl({ value: '' }),
@@ -64,6 +67,7 @@ var ViewCaseFilesComponent = (function () {
             _this.saveForm.controls['description'].setValue(e.Description);
             _this.xml = e.Payload;
             _this.viewer.importXML(e.Payload);
+            _this.caseFile = e;
         });
         this.refresh();
     };
@@ -102,6 +106,23 @@ var ViewCaseFilesComponent = (function () {
             });
         });
     };
+    ViewCaseFilesComponent.prototype.onPublish = function (e) {
+        var _this = this;
+        e.preventDefault();
+        var self = this;
+        var id = self.route.snapshot.params['id'];
+        var cancel = self.translateService.instant('CANCEL');
+        self.caseFilesService.publish(id).subscribe(function (caseFileId) {
+            self.snackBar.open(self.translateService.instant('PUBLISH_CASE_FILE'), cancel, {
+                duration: 2000
+            });
+            _this.router.navigate(["/cases/casefiles/" + caseFileId]);
+        }, function () {
+            self.snackBar.open(self.translateService.instant('ERROR_PUBLISH_CASE_FILE'), cancel, {
+                duration: 2000
+            });
+        });
+    };
     ViewCaseFilesComponent.prototype.refresh = function () {
         var id = this.route.snapshot.params['id'];
         var request = new StartGet(id);
@@ -136,7 +157,7 @@ var ViewCaseFilesComponent = (function () {
             templateUrl: './view.component.html',
             styleUrls: ['./view.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, ActivatedRoute, FormBuilder, CaseFilesService, MatSnackBar, TranslateService])
+        __metadata("design:paramtypes", [Store, ActivatedRoute, FormBuilder, CaseFilesService, MatSnackBar, TranslateService, Router])
     ], ViewCaseFilesComponent);
     return ViewCaseFilesComponent;
 }());

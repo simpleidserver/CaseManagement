@@ -35,8 +35,8 @@
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let case">
-                                    <button mat-icon-button matTooltip="{{ 'EDIT_CASE_PLAN' | translate}}" [routerLink]="['/cases/caseplans/' + case.Id]">
-                                        <mat-icon>edit</mat-icon>
+                                    <button mat-icon-button matTooltip="{{ 'VIEW_CASE_PLAN' | translate}}" [routerLink]="['/cases/caseplans/' + case.Id]">
+                                        <mat-icon>visibility</mat-icon>
                                     </button>
                                     <button mat-icon-button matTooltip="{{ 'VIEW_CASE_PLAN_HISTORY' | translate}}" [routerLink]="['/cases/caseplans/' + case.CaseFile + '/history']">
                                         <mat-icon>history</mat-icon>

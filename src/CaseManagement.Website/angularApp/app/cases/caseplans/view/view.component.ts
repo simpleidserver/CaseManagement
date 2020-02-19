@@ -1,22 +1,22 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator, MatSelectChange, MatSort } from '@angular/material';
+import { MatPaginator, MatSelectChange, MatSort, MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import * as caseFilesActions from '../../casefiles/actions/case-files';
-import * as caseActivationsActions from '../actions/case-activations';
-import * as caseDefinitionsActions from '../actions/case-plans';
-import * as caseFormInstancesActions from '../actions/case-form-instances';
-import * as caseInstancesActions from '../actions/case-instances';
-import { CaseActivation } from '../models/case-activation.model';
-import { CasePlan } from '../models/case-plan.model';
-import { CaseFormInstance } from '../models/case-form-instance.model';
-import { CaseInstance } from '../models/case-instance.model';
-import { SearchCaseActivationsResult } from '../models/search-case-activations-result.model';
-import { SearchCaseFormInstancesResult } from '../models/search-case-form-instances-result.model';
-import { SearchCaseInstancesResult } from '../models/search-case-instances.model';
-import * as fromCaseDefinitions from '../reducers';
-import { CaseInstancesService } from '../services/caseinstances.service';
+import * as fromCaseInstance from '../actions/caseinstance';
+import * as fromCasePlan from '../actions/caseplan';
+import * as fromCaseWorker from '../actions/caseworker';
+import * as fromFormInstance from '../actions/forminstance';
+import { CasePlan } from '../models/caseplan.model';
+import { CasePlanInstance } from '../models/caseplaninstance.model';
+import { FormInstance } from '../models/forminstance.model';
+import { SearchCasePlanInstanceResult } from '../models/searchcaseplaninstanceresult.model';
+import { SearchFormInstanceResult } from '../models/searchforminstanceresult.model';
+import { SearchWorkerTaskResult } from '../models/searchworkertaskresult.model';
+import { WorkerTask } from '../models/workertask.model';
+import * as fromCasePlanDefinitions from '../reducers';
+import { CasePlanService } from '../services/caseplan.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'view-case-files',
@@ -26,45 +26,57 @@ import { CaseInstancesService } from '../services/caseinstances.service';
 })
 export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
     selectedTimer: string = "4000";
-    caseDefinition$: CasePlan = new CasePlan();
-    caseInstances$: CaseInstance[] = new Array<CaseInstance>();
-    caseFormInstances$:  CaseFormInstance[] = new Array<CaseFormInstance>();
-    caseActivations$: CaseActivation[] = new Array<CaseActivation>();
+    casePlan$: CasePlan = new CasePlan();
+    casePlanInstances$: CasePlanInstance[] = new Array<CasePlanInstance>();
+    formInstances$: FormInstance[] = new Array<FormInstance>();
+    workerTasks$: WorkerTask[] = new Array<WorkerTask>();
     displayedColumns: string[] = ['id', 'state', 'create_datetime', 'actions'];
-    formInstanceDisplayedColumns: string[] = ['form_id', 'case_instance_id', 'performer', 'update_datetime', 'create_datetime'];
-    caseActivationDisplayedColumns: string[] = ['case_instance_name', 'case_instance_id', 'performer', 'create_datetime'];
-    caseInstancesLength: number;
+    formInstanceDisplayedColumns: string[] = ['form_id', 'performer', 'status', 'update_datetime', 'create_datetime'];
+    workerTaskDisplayedColumns: string[] = ['type', 'status', 'performer', 'create_datetime', 'update_datetime'];
+    casePlanInstancesLength: number;
     formInstancesLength: number;
-    caseActivationsLength: number;
+    workerTasksLength: number;
     interval: any;
-    @ViewChild('caseInstancesSort') caseInstancesSort: MatSort;
-    @ViewChild('formInstancesSort') formInstancesSort: MatSort;
-    @ViewChild('caseActivationsSort') caseActivationsSort: MatSort;
-    @ViewChild('caseInstancesPaginator') caseInstancesPaginator: MatPaginator;
-    @ViewChild('formInstancesPaginator') formInstancesPaginator: MatPaginator;
-    @ViewChild('caseActivationsPaginator') caseActivationsPaginator: MatPaginator;
+    @ViewChild('casePlanInstanceSort') casePlanInstanceSort: MatSort;
+    @ViewChild('formInstanceSort') formInstanceSort: MatSort;
+    @ViewChild('workerTaskSort') workerTaskSort: MatSort;
+    @ViewChild('casePlanInstancePaginator') casePlanInstancePaginator: MatPaginator;
+    @ViewChild('formInstancePaginator') formInstancePaginator: MatPaginator;
+    @ViewChild('caseWorkerPaginator') caseWorkerPaginator: MatPaginator;
 
-    constructor(private caseDefinitionStore: Store<fromCaseDefinitions.CaseDefinitionsState>, private route: ActivatedRoute, private caseInstancesService: CaseInstancesService) {  }
+    constructor(private casePlanStore: Store<fromCasePlanDefinitions.CasePlanState>, private route: ActivatedRoute, private casePlanService: CasePlanService, private translateService: TranslateService, private snackBar: MatSnackBar) {  }
 
     ngOnInit() {
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectGetResult)).subscribe((caseDefinition: CasePlan) => {
-            this.caseDefinition$ = caseDefinition;
-            if (this.caseDefinition$.CaseFile) {
-                let loadCaseFile = new caseFilesActions.StartGet(this.caseDefinition$.CaseFile);
-                this.caseDefinitionStore.dispatch(loadCaseFile);
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectGetResult)).subscribe((casePlan: CasePlan) => {
+            if (!casePlan) {
+                return;
             }
+
+            this.casePlan$ = casePlan;
         });
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchInstancesResult)).subscribe((searchCaseInstancesResult: SearchCaseInstancesResult) => {
-            this.caseInstances$ = searchCaseInstancesResult.Content;
-            this.caseInstancesLength = searchCaseInstancesResult.TotalLength;
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchInstanceResult)).subscribe((searchCasePlanInstanceResult: SearchCasePlanInstanceResult) => {
+            if (!searchCasePlanInstanceResult) {
+                return;
+            }
+
+            this.casePlanInstances$ = searchCasePlanInstanceResult.Content;
+            this.casePlanInstancesLength = searchCasePlanInstanceResult.TotalLength;
         });
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchFormInstancesResult)).subscribe((searchCaseFormInstancesResult : SearchCaseFormInstancesResult) => {
-            this.caseFormInstances$ = searchCaseFormInstancesResult.Content;
-            this.formInstancesLength = searchCaseFormInstancesResult.TotalLength;
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchFormInstancesResult)).subscribe((searchFormInstanceResult: SearchFormInstanceResult) => {
+            if (!searchFormInstanceResult) {
+                return;
+            }
+
+            this.formInstances$ = searchFormInstanceResult.Content;
+            this.formInstancesLength = searchFormInstanceResult.TotalLength;
         });
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchCaseActivationsResult)).subscribe((searchCaseActivationsResult: SearchCaseActivationsResult) => {
-            this.caseActivations$ = searchCaseActivationsResult.Content;
-            this.caseActivationsLength = searchCaseActivationsResult.TotalLength;
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchCaseWorkerResult)).subscribe((searchWorkerTaskResult: SearchWorkerTaskResult) => {
+            if (!searchWorkerTaskResult) {
+                return;
+            }
+
+            this.workerTasks$ = searchWorkerTaskResult.Content;
+            this.workerTasksLength = searchWorkerTaskResult.TotalLength;
         });
         this.interval = setInterval(() => {
             this.refresh();
@@ -80,99 +92,127 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
     }
 
     launchCaseInstance() {
-        this.caseInstancesService.create(this.route.snapshot.params['id']).subscribe((caseInstance: CaseInstance) => {
-            this.caseInstancesService.launch(caseInstance.Id).subscribe(() => {
-                this.refresh();
+        this.casePlanService.launchCasePlanInstance(this.route.snapshot.params['id']).subscribe(() => {
+            this.snackBar.open(this.translateService.instant('CASE_PLAN_INSTANCE_LAUNCHED'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
+        }, () => {
+            this.snackBar.open(this.translateService.instant('CANNOT_LAUNCH_CASE_PLAN_INSTANCE'), this.translateService.instant('UNDO'), {
+                duration: 2000
             });
         });
     }
 
-    reactivateCaseInstance(caseInstance: CaseInstance) {
-        this.caseInstancesService.reactivateCaseInstance(caseInstance.Id).subscribe(() => {
-            this.refresh();
+    reactivateCaseInstance(caseInstance: CasePlanInstance) {
+        this.casePlanService.reactivateCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(() => {
+            this.snackBar.open(this.translateService.instant('CASE_PLAN_INSTANCE_REACTIVATED'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
+        }, () => {
+            this.snackBar.open(this.translateService.instant('CANNOT_REACTIVATE_CASE_PLAN_INSTANCE'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
         });
     }
 
-    suspendCaseInstance(caseInstance: CaseInstance) {
-        this.caseInstancesService.suspendCaseInstance(caseInstance.Id).subscribe(() => {
-            this.refresh();
+    suspendCaseInstance(caseInstance: CasePlanInstance) {
+        this.casePlanService.suspendCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(() => {
+            this.snackBar.open(this.translateService.instant('CASE_PLAN_INSTANCE_SUSPENDED'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
+        }, () => {
+            this.snackBar.open(this.translateService.instant('CANNOT_SUSPEND_CASE_PLAN_INSTANCE'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
         });
     }
 
-    resumeCaseInstance(caseInstance: CaseInstance) {
-        this.caseInstancesService.resumeCaseInstance(caseInstance.Id).subscribe(() => {
-            this.refresh();
+    resumeCaseInstance(caseInstance: CasePlanInstance) {
+        this.casePlanService.resumeCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(() => {
+            this.snackBar.open(this.translateService.instant('CASE_PLAN_INSTANCE_RESUMED'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
+        }, () => {
+            this.snackBar.open(this.translateService.instant('CANNOT_RESUME_CASE_PLAN_INSTANCE'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
         });
     }
 
-    closeCaseInstance(caseInstance: CaseInstance) {
-        this.caseInstancesService.closeCaseInstance(caseInstance.Id).subscribe(() => {
-            this.refresh();
+    closeCaseInstance(caseInstance: CasePlanInstance) {
+        this.casePlanService.closeCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(() => {
+            this.snackBar.open(this.translateService.instant('CASE_PLAN_INSTANCE_CLOSED'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
+        }, () => {
+            this.snackBar.open(this.translateService.instant('CANNOT_CLOSE_CASE_PLAN_INSTANCE'), this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
         });
     }
 
     ngAfterViewInit() {
-        merge(this.caseInstancesSort.sortChange, this.caseInstancesPaginator.page).subscribe(() => this.refreshCaseInstances());
-        merge(this.formInstancesSort.sortChange, this.formInstancesPaginator.page).subscribe(() => this.refreshFormInstances());
-        merge(this.caseActivationsSort.sortChange, this.caseActivationsPaginator.page).subscribe(() => this.refreshCaseActivations());
+        merge(this.casePlanInstanceSort.sortChange, this.casePlanInstancePaginator.page).subscribe(() => this.refreshCaseInstances());
+        merge(this.formInstanceSort.sortChange, this.formInstancePaginator.page).subscribe(() => this.refreshFormInstances());
+        merge(this.workerTaskSort.sortChange, this.caseWorkerPaginator.page).subscribe(() => this.refreshWorkerTasks());
     }
 
     refresh() {
         this.refreshCaseDefinition();
         this.refreshCaseInstances();
         this.refreshFormInstances();
-        this.refreshCaseActivations();
+        this.refreshWorkerTasks();
     }
 
     refreshCaseDefinition() {
         var id = this.route.snapshot.params['id'];
-        let loadCaseDefinition = new caseDefinitionsActions.StartGet(id);
-        this.caseDefinitionStore.dispatch(loadCaseDefinition);
+        let loadCaseDefinition = new fromCasePlan.StartGet(id);
+        this.casePlanStore.dispatch(loadCaseDefinition);
     }
 
     refreshCaseInstances() {
         let startIndex = 0;
         let count = 5;
-        if (this.caseInstancesPaginator.pageIndex && this.caseInstancesPaginator.pageSize) {
-            startIndex = this.caseInstancesPaginator.pageIndex * this.caseInstancesPaginator.pageSize;
+        if (this.casePlanInstancePaginator.pageIndex && this.casePlanInstancePaginator.pageSize) {
+            startIndex = this.casePlanInstancePaginator.pageIndex * this.casePlanInstancePaginator.pageSize;
         }
 
-        if (this.caseInstancesPaginator.pageSize) {
-            count = this.caseInstancesPaginator.pageSize;
+        if (this.casePlanInstancePaginator.pageSize) {
+            count = this.casePlanInstancePaginator.pageSize;
         }
 
-        let loadCaseInstances = new caseInstancesActions.StartFetch(this.route.snapshot.params['id'], startIndex, count, this.caseInstancesSort.active, this.caseInstancesSort.direction);
-        this.caseDefinitionStore.dispatch(loadCaseInstances);
+        let loadCaseInstances = new fromCaseInstance.StartSearch(this.route.snapshot.params['id'], startIndex, count, this.casePlanInstanceSort.active, this.casePlanInstanceSort.direction);
+        this.casePlanStore.dispatch(loadCaseInstances);
     }
 
     refreshFormInstances() {
         let startIndex = 0;
         let count = 5;
-        if (this.formInstancesPaginator.pageSize) {
-            count = this.formInstancesPaginator.pageSize;
+        if (this.formInstancePaginator.pageSize) {
+            count = this.formInstancePaginator.pageSize;
         }
 
-        if (this.formInstancesPaginator.pageIndex && this.formInstancesPaginator.pageSize) {
-            startIndex = this.formInstancesPaginator.pageIndex * this.formInstancesPaginator.pageSize;
+        if (this.formInstancePaginator.pageIndex && this.formInstancePaginator.pageSize) {
+            startIndex = this.formInstancePaginator.pageIndex * this.formInstancePaginator.pageSize;
         }
 
-        let loadFormInstances = new caseFormInstancesActions.StartFetch(this.route.snapshot.params['id'], this.formInstancesSort.active, this.formInstancesSort.direction, count, startIndex);
-        this.caseDefinitionStore.dispatch(loadFormInstances);
+        let loadFormInstances = new fromFormInstance.StartSearch(this.route.snapshot.params['id'], this.formInstanceSort.active, this.formInstanceSort.direction, count, startIndex);
+        this.casePlanStore.dispatch(loadFormInstances);
     }
 
-    refreshCaseActivations() {
+    refreshWorkerTasks() {
         let count = 5;
         let startIndex = 0;
-        if (this.caseActivationsPaginator.pageSize) {
-            count = this.caseActivationsPaginator.pageSize;
+        if (this.caseWorkerPaginator.pageSize) {
+            count = this.caseWorkerPaginator.pageSize;
         }
 
-        if (this.caseActivationsPaginator.pageIndex && this.caseActivationsPaginator.pageSize) {
-            startIndex = this.caseActivationsPaginator.pageIndex * this.caseActivationsPaginator.pageSize;
+        if (this.caseWorkerPaginator.pageIndex && this.caseWorkerPaginator.pageSize) {
+            startIndex = this.caseWorkerPaginator.pageIndex * this.caseWorkerPaginator.pageSize;
         }
 
-        let loadCaseActivations = new caseActivationsActions.StartFetch(this.route.snapshot.params['id'], this.caseActivationsSort.active, this.caseActivationsSort.direction, count, startIndex);
-        this.caseDefinitionStore.dispatch(loadCaseActivations);
+        let loadCaseWorker = new fromCaseWorker.StartSearch(this.route.snapshot.params['id'], this.workerTaskSort.active, this.workerTaskSort.direction, count, startIndex);
+        this.casePlanStore.dispatch(loadCaseWorker);
     }
 
     ngOnDestroy() {

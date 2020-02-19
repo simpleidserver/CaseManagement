@@ -634,7 +634,7 @@ namespace CaseManagement.CMMN.Domains
         public static CasePlanInstanceAggregate New(CasePlanAggregate workflowDefinition)
         {
             var result = new CasePlanInstanceAggregate();
-            var evt = new CaseInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, DateTime.UtcNow);
+            var evt = new CaseInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, DateTime.UtcNow, workflowDefinition.CaseOwner);
             var secondEvt = new CaseTransitionRaisedEvent(Guid.NewGuid().ToString(), evt.AggregateId, 1, CMMNTransitions.Create, DateTime.UtcNow);
             result.DomainEvents.Add(evt);
             result.DomainEvents.Add(secondEvt);
@@ -704,6 +704,7 @@ namespace CaseManagement.CMMN.Domains
             Id = evt.AggregateId;
             CreateDateTime = evt.CreateDateTime;
             CasePlanId = evt.CaseDefinitionId;
+            CaseOwner = evt.Performer;
         }
 
         private CaseElementInstance Handle(CaseElementCreatedEvent evt)

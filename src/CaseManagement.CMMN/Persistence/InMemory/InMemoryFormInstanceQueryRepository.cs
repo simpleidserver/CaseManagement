@@ -14,8 +14,9 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         private static Dictionary<string, string> MAPPING_FORMINSTANCENAME_TO_PROPERTYNAME = new Dictionary<string, string>
         {
             { "form_id", "FormId" },
-            { "performer", "RoleId" },
-            { "case_instance_id", "CasePlanInstanceId" },
+            { "performer", "PerformerRole" },
+            { "status", "Status" },
+            { "case_plan_instance_id", "CasePlanInstanceId" },
             { "create_datetime", "CreateDateTime" },
             { "update_datetime", "UpdateDateTime" }
         };
@@ -30,14 +31,19 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<FormInstanceAggregate>> Find(FindFormInstanceParameter parameter)
         {
             IQueryable<FormInstanceAggregate> result = _formInstances.AsQueryable();
-            if (MAPPING_FORMINSTANCENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+            if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
             {
-                result = result.InvokeOrderBy(MAPPING_FORMINSTANCENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+                result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
             }
 
             if (parameter.RoleIds != null && parameter.RoleIds.Any())
             {
                 result = result.Where(fi => parameter.RoleIds.Contains(fi.PerformerRole));
+            }
+
+            if (MAPPING_FORMINSTANCENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+            {
+                result = result.InvokeOrderBy(MAPPING_FORMINSTANCENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
             }
 
             int totalLength = result.Count();

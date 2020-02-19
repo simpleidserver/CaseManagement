@@ -18,10 +18,15 @@ var CaseFilesEffects = (function () {
         var _this = this;
         this.actions$ = actions$;
         this.caseFilesService = caseFilesService;
-        this.loadCaseFiles$ = this.actions$
+        this.searchCaseFiles$ = this.actions$
             .pipe(ofType(ActionTypes.START_SEARCH), mergeMap(function (evt) {
-            return _this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.user)
+            return _this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
                 .pipe(map(function (casefiles) { return { type: ActionTypes.COMPLETE_SEARCH, content: casefiles }; }), catchError(function () { return of({ type: ActionTypes.COMPLETE_SEARCH }); }));
+        }));
+        this.searchCaseFileHistories$ = this.actions$
+            .pipe(ofType(ActionTypes.START_SEARCH_HISTORY), mergeMap(function (evt) {
+            return _this.caseFilesService.searchCaseFileHistories(evt.caseFileId, evt.startIndex, evt.count, evt.order, evt.direction)
+                .pipe(map(function (casefiles) { return { type: ActionTypes.COMPLETE_SEARCH_HISTORY, content: casefiles }; }), catchError(function () { return of({ type: ActionTypes.COMPLETE_SEARCH_HISTORY }); }));
         }));
         this.loadCaseFile$ = this.actions$
             .pipe(ofType(ActionTypes.START_GET), mergeMap(function (evt) {
@@ -32,7 +37,11 @@ var CaseFilesEffects = (function () {
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "loadCaseFiles$", void 0);
+    ], CaseFilesEffects.prototype, "searchCaseFiles$", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], CaseFilesEffects.prototype, "searchCaseFileHistories$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)

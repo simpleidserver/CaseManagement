@@ -13,10 +13,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
     {
         private static Dictionary<string, string> MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME = new Dictionary<string, string>
         {
-            { "case_instance_id", "CasePlanInstanceId" },
-            { "case_instance_name", "WorkflowInstanceName" },
-            { "case_element_name", "WorkflowElementName" },
-            { "performer", "Performer" },
+            { "performer", "PerformerRole" },
+            { "case_plan_id", "CasePlanId" },
+            { "case_plan_instance_id", "CasePlanInstanceId" },
+            { "case_plan_element_instance_id", "CasePlanElementInstanceId" },
+            { "type", "TaskType" },
+            { "status", "Status" },
             { "create_datetime", "CreateDateTime" },
             { "update_datetime", "UpdateDateTime" }
         };
@@ -36,6 +38,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter)
         {
             IQueryable<CaseWorkerTaskAggregate> result = _caseWorkerTaskLst.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
+            {
+                result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
+            }
+
             if (MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

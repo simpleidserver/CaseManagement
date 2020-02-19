@@ -19,12 +19,10 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     public class CaseFormInstancesController : Controller
     {
         private readonly IFormInstanceQueryRepository _formInstanceQueryRepository;
-        private readonly IRoleQueryRepository _roleQueryRepository;
 
-        public CaseFormInstancesController(IFormInstanceQueryRepository formInstanceQueryRepository, IRoleQueryRepository roleQueryRepository)
+        public CaseFormInstancesController(IFormInstanceQueryRepository formInstanceQueryRepository)
         {
             _formInstanceQueryRepository = formInstanceQueryRepository;
-            _roleQueryRepository = roleQueryRepository;
         }
 
         [HttpGet("search")]
@@ -50,6 +48,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                         { "create_datetime", r.CreateDateTime },
                         { "update_datetime", r.UpdateDateTime },
                         { "performer", r.PerformerRole },
+                        { "case_plan_id", r.CasePlanId },
                         { "case_plan_instance_id", r.CasePlanInstanceId },
                         { "case_plan_element_instance_id", r.CaseElementInstanceId },
                         { "form_id", r.FormId },
@@ -76,6 +75,12 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         {
             var parameter = new FindFormInstanceParameter();
             parameter.ExtractFindParameter(query);
+            string casePlanId;
+            if (query.TryGet("case_plan_id", out casePlanId))
+            {
+                parameter.CasePlanId = casePlanId;    
+            }
+
             return parameter;
         }
     }

@@ -9,13 +9,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MatSnackBar } from '@angular/material';
 import { CaseFilesService } from '../services/casefiles.service';
+import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 var AddCaseFileDialog = (function () {
-    function AddCaseFileDialog(dialogRef, caseFilesService, formBuilder) {
+    function AddCaseFileDialog(route, dialogRef, caseFilesService, formBuilder, snackBar, translateService) {
+        this.route = route;
         this.dialogRef = dialogRef;
         this.caseFilesService = caseFilesService;
         this.formBuilder = formBuilder;
+        this.snackBar = snackBar;
+        this.translateService = translateService;
         this.addCaseFileForm = this.formBuilder.group({
             name: '',
             description: ''
@@ -23,8 +28,16 @@ var AddCaseFileDialog = (function () {
     }
     AddCaseFileDialog.prototype.onSubmit = function () {
         var _this = this;
-        this.caseFilesService.add(this.addCaseFileForm.get('name').value, this.addCaseFileForm.get('description').value).subscribe(function () {
+        this.caseFilesService.add(this.addCaseFileForm.get('name').value, this.addCaseFileForm.get('description').value).subscribe(function (caseFileId) {
+            _this.snackBar.open(_this.translateService.instant('CASES_FILE_ADDED'), _this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
             _this.dialogRef.close();
+            _this.route.navigate(["/cases/casefiles/" + caseFileId]);
+        }, function () {
+            _this.snackBar.open(_this.translateService.instant('ERROR_ADD_CASE_FILE'), _this.translateService.instant('UNDO'), {
+                duration: 2000
+            });
         });
     };
     AddCaseFileDialog = __decorate([
@@ -32,7 +45,7 @@ var AddCaseFileDialog = (function () {
             selector: 'add-case-file-dialog',
             templateUrl: 'add-case-file-dialog.html',
         }),
-        __metadata("design:paramtypes", [MatDialogRef, CaseFilesService, FormBuilder])
+        __metadata("design:paramtypes", [Router, MatDialogRef, CaseFilesService, FormBuilder, MatSnackBar, TranslateService])
     ], AddCaseFileDialog);
     return AddCaseFileDialog;
 }());

@@ -12,7 +12,7 @@
             DefaultCMMNSchema = "<?xml version='1.0' encoding='UTF-8'?>\n" +
             "<cmmn:definitions xmlns:dc='http://www.omg.org/spec/CMMN/20151109/DC' xmlns:cmmndi='http://www.omg.org/spec/CMMN/20151109/CMMNDI' xmlns:cmmn='http://www.omg.org/spec/CMMN/20151109/MODEL' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='Definitions_0m2br72' targetNamespace='http://bpmn.io/schema/cmmn' exporter='cmmn-js (https://demo.bpmn.io/cmmn)' exporterVersion='0.19.2'>\n" +
             "  <cmmn:case id='Case_0t7z7vp'>\n" +
-            "    <cmmn:casePlanModel id='CasePlanModel_08bspn4' name='A CasePlanModel'>\n" +
+            "    <cmmn:casePlanModel id='{id}' name='A CasePlanModel'>\n" +
             "      <cmmn:planItem id='PlanItem_1dphpiz' definitionRef='Task_1r5vfut' />\n" +
             "      <cmmn:task id='Task_1r5vfut' />\n" +
             "    </cmmn:casePlanModel>\n" +
@@ -20,7 +20,7 @@
             "  <cmmndi:CMMNDI>\n" +
             "    <cmmndi:CMMNDiagram id='CMMNDiagram_1'>\n" +
             "      <cmmndi:Size width='500' height='500' />\n" +
-            "      <cmmndi:CMMNShape id='DI_CasePlanModel_08bspn4' cmmnElementRef='CasePlanModel_08bspn4'>\n" +
+            "      <cmmndi:CMMNShape id='DI_{id}' cmmnElementRef='{id}'>\n" +
             "        <dc:Bounds x='156' y='99' width='534' height='389' />\n" +
             "        <cmmndi:CMMNLabel />\n" +
             "      </cmmndi:CMMNShape>\n" +

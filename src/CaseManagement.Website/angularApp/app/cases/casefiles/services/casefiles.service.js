@@ -18,11 +18,11 @@ var CaseFilesService = (function () {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CaseFilesService.prototype.search = function (startIndex, count, order, direction, text, owner) {
+    CaseFilesService.prototype.search = function (startIndex, count, order, direction, text) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/search?start_index=" + startIndex + "&count=" + count;
+        var targetUrl = process.env.API_URL + "/case-files/me/search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -32,8 +32,20 @@ var CaseFilesService = (function () {
         if (text) {
             targetUrl = targetUrl + "&text=" + text;
         }
-        if (owner) {
-            targetUrl = targetUrl + "&owner=" + owner;
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            return SearchCaseFilesResult.fromJson(res);
+        }));
+    };
+    CaseFilesService.prototype.searchCaseFileHistories = function (caseFileId, startIndex, count, order, direction) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-files/" + caseFileId + "/history/search?start_index=" + startIndex + "&count=" + count;
+        if (order) {
+            targetUrl = targetUrl + "&order_by=" + order;
+        }
+        if (direction) {
+            targetUrl = targetUrl + "&order=" + direction;
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return SearchCaseFilesResult.fromJson(res);
@@ -55,7 +67,9 @@ var CaseFilesService = (function () {
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-files";
-        return this.http.post(targetUrl, request, { headers: headers });
+        return this.http.post(targetUrl, request, { headers: headers }).pipe(map(function (res) {
+            return res['id'];
+        }));
     };
     CaseFilesService.prototype.update = function (id, name, description, payload) {
         var request = JSON.stringify({ name: name, description: description, payload: payload });
@@ -65,6 +79,15 @@ var CaseFilesService = (function () {
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-files/" + id;
         return this.http.put(targetUrl, request, { headers: headers });
+    };
+    CaseFilesService.prototype.publish = function (id) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-files/" + id + "/publish";
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            return res['id'];
+        }));
     };
     CaseFilesService = __decorate([
         Injectable(),

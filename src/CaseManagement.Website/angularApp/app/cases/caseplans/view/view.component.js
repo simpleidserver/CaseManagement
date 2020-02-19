@@ -12,46 +12,49 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import * as caseFilesActions from '../../casefiles/actions/case-files';
-import * as caseActivationsActions from '../actions/case-activations';
-import * as caseDefinitionsActions from '../actions/case-definitions';
-import * as caseFormInstancesActions from '../actions/case-form-instances';
-import * as caseInstancesActions from '../actions/case-instances';
-import { CaseDefinition } from '../models/case-definition.model';
-import * as fromCaseDefinitions from '../reducers';
-import { CaseInstancesService } from '../services/caseinstances.service';
+import { CasePlan } from '../models/caseplan.model';
+import * as fromCasePlanDefinitions from '../reducers';
+import { CasePlanService } from '../services/caseplan.service';
 var ViewCaseDefinitionComponent = (function () {
-    function ViewCaseDefinitionComponent(caseDefinitionStore, route, caseInstancesService) {
-        this.caseDefinitionStore = caseDefinitionStore;
+    function ViewCaseDefinitionComponent(casePlanStore, route, casePlanService) {
+        this.casePlanStore = casePlanStore;
         this.route = route;
-        this.caseInstancesService = caseInstancesService;
+        this.casePlanService = casePlanService;
         this.selectedTimer = "4000";
-        this.caseDefinition$ = new CaseDefinition();
-        this.caseInstances$ = new Array();
-        this.caseFormInstances$ = new Array();
-        this.caseActivations$ = new Array();
+        this.casePlan$ = new CasePlan();
+        this.casePlanInstances$ = new Array();
+        this.formInstances$ = new Array();
+        this.workerTasks$ = new Array();
         this.displayedColumns = ['id', 'state', 'create_datetime', 'actions'];
         this.formInstanceDisplayedColumns = ['form_id', 'case_instance_id', 'performer', 'update_datetime', 'create_datetime'];
         this.caseActivationDisplayedColumns = ['case_instance_name', 'case_instance_id', 'performer', 'create_datetime'];
     }
     ViewCaseDefinitionComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectGetResult)).subscribe(function (caseDefinition) {
-            _this.caseDefinition$ = caseDefinition;
-            if (_this.caseDefinition$.CaseFile) {
-                var loadCaseFile = new caseFilesActions.StartGet(_this.caseDefinition$.CaseFile);
-                _this.caseDefinitionStore.dispatch(loadCaseFile);
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectGetResult)).subscribe(function (casePlan) {
+            if (!casePlan) {
+                return;
             }
+            _this.casePlan$ = casePlan;
         });
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchInstancesResult)).subscribe(function (searchCaseInstancesResult) {
-            _this.caseInstances$ = searchCaseInstancesResult.Content;
-            _this.caseInstancesLength = searchCaseInstancesResult.TotalLength;
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchInstanceResult)).subscribe(function (searchCasePlanInstanceResult) {
+            if (!searchCasePlanInstanceResult) {
+                return;
+            }
+            _this.casePlanInstances$ = searchCasePlanInstanceResult.Content;
+            _this.casePlanInstancesLength = searchCasePlanInstanceResult.TotalLength;
         });
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchFormInstancesResult)).subscribe(function (searchCaseFormInstancesResult) {
-            _this.caseFormInstances$ = searchCaseFormInstancesResult.Content;
-            _this.formInstancesLength = searchCaseFormInstancesResult.TotalLength;
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchFormInstancesResult)).subscribe(function (searchFormInstanceResult) {
+            if (!searchFormInstanceResult) {
+                return;
+            }
+            _this.formInstances$ = searchFormInstanceResult.Content;
+            _this.formInstancesLength = searchFormInstanceResult.TotalLength;
         });
-        this.caseDefinitionStore.pipe(select(fromCaseDefinitions.selectSearchCaseActivationsResult)).subscribe(function (searchCaseActivationsResult) {
+        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchCaseActivationsResult)).subscribe(function (searchWorkerTaskResult) {
+            if (!searchWorkerTaskResult) {
+                return;
+            }
             _this.caseActivations$ = searchCaseActivationsResult.Content;
             _this.caseActivationsLength = searchCaseActivationsResult.TotalLength;
         });
@@ -156,27 +159,27 @@ var ViewCaseDefinitionComponent = (function () {
         clearInterval(this.interval);
     };
     __decorate([
-        ViewChild('caseInstancesSort'),
+        ViewChild('casePlanInstanceSort'),
         __metadata("design:type", MatSort)
     ], ViewCaseDefinitionComponent.prototype, "caseInstancesSort", void 0);
     __decorate([
-        ViewChild('formInstancesSort'),
+        ViewChild('formInstanceSort'),
         __metadata("design:type", MatSort)
     ], ViewCaseDefinitionComponent.prototype, "formInstancesSort", void 0);
     __decorate([
-        ViewChild('caseActivationsSort'),
+        ViewChild('workerTaskSort'),
         __metadata("design:type", MatSort)
     ], ViewCaseDefinitionComponent.prototype, "caseActivationsSort", void 0);
     __decorate([
-        ViewChild('caseInstancesPaginator'),
+        ViewChild('casePlanInstancePaginator'),
         __metadata("design:type", MatPaginator)
     ], ViewCaseDefinitionComponent.prototype, "caseInstancesPaginator", void 0);
     __decorate([
-        ViewChild('formInstancesPaginator'),
+        ViewChild('formInstancePaginator'),
         __metadata("design:type", MatPaginator)
     ], ViewCaseDefinitionComponent.prototype, "formInstancesPaginator", void 0);
     __decorate([
-        ViewChild('caseActivationsPaginator'),
+        ViewChild('caseWorkerPaginator'),
         __metadata("design:type", MatPaginator)
     ], ViewCaseDefinitionComponent.prototype, "caseActivationsPaginator", void 0);
     ViewCaseDefinitionComponent = __decorate([
@@ -186,7 +189,7 @@ var ViewCaseDefinitionComponent = (function () {
             styleUrls: ['./view.component.scss'],
             encapsulation: ViewEncapsulation.None
         }),
-        __metadata("design:paramtypes", [Store, ActivatedRoute, CaseInstancesService])
+        __metadata("design:paramtypes", [Store, ActivatedRoute, CasePlanService])
     ], ViewCaseDefinitionComponent);
     return ViewCaseDefinitionComponent;
 }());

@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, MatSort } from '@angular/material';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearch } from '../actions/case-plans';
-import { CasePlan } from '../models/case-plan.model';
-import { SearchCasePlansResult } from '../models/search-case-plans-result.model';
+import { StartSearch } from '../actions/caseplan';
+import { CasePlan } from '../models/caseplan.model';
+import { SearchCasePlanResult } from '../models/searchcaseplanresult.model';
 import * as fromCaseFiles from '../reducers';
 
 @Component({
@@ -21,14 +21,14 @@ export class ListCasePlansComponent implements OnInit {
     length: number;
     casePlans$: CasePlan[] = [];
 
-    constructor(private store: Store<fromCaseFiles.CaseDefinitionsState>, private formBuilder: FormBuilder) {
+    constructor(private store: Store<fromCaseFiles.CasePlanState>, private formBuilder: FormBuilder) {
         this.searchForm = this.formBuilder.group({
             text: ''
         });
     }
 
     ngOnInit() {
-        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe((l: SearchCasePlansResult) => {
+        this.store.pipe(select(fromCaseFiles.selectSearchResult)).subscribe((l: SearchCasePlanResult) => {
             if (!l || !l.Content) {
                 return;
             }

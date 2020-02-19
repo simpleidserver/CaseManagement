@@ -31,7 +31,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             });
             if (!string.IsNullOrWhiteSpace(humanTask.FormId))
             {
-                var formInstance = FormInstanceAggregate.New(humanTask.FormId, parameter.CaseInstance.Id, parameter.CaseElementInstance.Id, humanTask.PerformerRef);
+                var formInstance = FormInstanceAggregate.New(humanTask.FormId, parameter.CaseInstance.CasePlanId, parameter.CaseInstance.Id, parameter.CaseElementInstance.Id, humanTask.PerformerRef);
                 await CommitAggregateHelper.Commit(formInstance, FormInstanceAggregate.GetStreamName(formInstance.Id), CMMNConstants.QueueNames.FormInstances);
             }
 

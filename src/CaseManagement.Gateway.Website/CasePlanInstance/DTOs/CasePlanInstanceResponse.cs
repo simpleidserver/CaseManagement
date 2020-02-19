@@ -16,9 +16,13 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.DTOs
         public string CasePlanId { get; set; }
         [DataMember(Name = "context")]
         public JObject Context { get; set; }
+        [DataMember(Name = "state")]
+        public string State { get; set; }
         [DataMember(Name = "transition_histories")]
         public ICollection<TransitionHistoryResponse> TransitionHistories { get; set; }
         [DataMember(Name = "state_histories")]
         public ICollection<StateHistoryResponse> StateHistories { get; set; }
+        [DataMember(Name = "elements")]
+        public ICollection<CasePlanElementInstanceResponse> Elements { get; set; }
     }
 }

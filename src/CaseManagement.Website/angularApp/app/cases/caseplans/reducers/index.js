@@ -1,79 +1,53 @@
 import { createSelector } from '@ngrx/store';
-import { CaseFile } from '../../casefiles/models/case-file.model';
-import * as fromGetFile from '../../casefiles/reducers/get.reducer';
-import { CaseDefinitionHistory } from '../models/case-definition-history.model';
-import { CaseDefinition } from '../models/case-definition.model';
-import { SearchCaseActivationsResult } from '../models/search-case-activations-result.model';
-import { SearchCaseFormInstancesResult } from '../models/search-case-form-instances-result.model';
-import { SearchCaseInstancesResult } from '../models/search-case-instances.model';
-import * as fromGetHistory from './get-history.reducer';
+import { CasePlan } from '../models/caseplan.model';
+import { SearchCasePlanPlanInstanceResult } from '../models/searchcaseplaninstanceresult.model';
+import { SearchFormInstanceResult } from '../models/searchforminstanceresult.model';
+import { SearchWorkerTaskResult } from '../models/searchworkertaskresult.model';
 import * as fromGet from './get.reducer';
-import * as fromSearchCaseActivations from './search-case-activations.reducer';
-import * as fromSearchFormInstances from './search-form-instances.reducer';
-import * as fromSearchInstances from './search-instances.reducer';
 import * as fromSearch from './search.reducer';
+import * as fromCasePlanInstance from './searchcaseplaninstance.reducer';
+import * as fromFormInstance from './searchforminstance.reducer';
+import * as fromWorkerTask from './searchworkertask.reducer';
 export var selectSearch = function (state) { return state.search; };
 export var selectGet = function (state) { return state.get; };
-export var selectSearchInstances = function (state) { return state.searchInstances; };
-export var selectSearchFormInstances = function (state) { return state.searchFormInstances; };
-export var selectSearchCaseActivations = function (state) { return state.searchCaseActivations; };
-export var selectGetHistory = function (state) { return state.getHistory; };
-export var selectGetFile = function (state) { return state.getFile; };
-export var selectSearchResults = createSelector(selectSearch, function (state) {
+export var selectSearchInstance = function (state) { return state.searchInstance; };
+export var selectSearchFormInstance = function (state) { return state.searchFormInstance; };
+export var selectSearchWorkerTask = function (state) { return state.searchWorkerTask; };
+export var selectSearchResult = createSelector(selectSearch, function (state) {
     if (!state || state.content == null) {
-        return [];
+        return null;
     }
-    return state.content.Content;
-});
-export var selectLengthResults = createSelector(selectSearch, function (state) {
-    if (!state || state.content == null) {
-        return 0;
-    }
-    return state.content.TotalLength;
+    return state.content;
 });
 export var selectGetResult = createSelector(selectGet, function (state) {
     if (!state || !state.content) {
-        return new CaseDefinition();
+        return new CasePlan();
     }
     return state.content;
 });
-export var selectGetFileResult = createSelector(selectGetFile, function (state) {
+export var selectSearchInstanceResult = createSelector(selectSearchInstance, function (state) {
     if (!state || !state.content) {
-        return new CaseFile();
+        return new SearchCasePlanPlanInstanceResult();
     }
     return state.content;
 });
-export var selectSearchInstancesResult = createSelector(selectSearchInstances, function (state) {
+export var selectSearchFormInstancesResult = createSelector(selectSearchFormInstance, function (state) {
     if (!state || !state.content) {
-        return new SearchCaseInstancesResult();
+        return new SearchFormInstanceResult();
     }
     return state.content;
 });
-export var selectSearchFormInstancesResult = createSelector(selectSearchFormInstances, function (state) {
+export var selectSearchCaseWorkerResult = createSelector(selectSearchWorkerTask, function (state) {
     if (!state || !state.content) {
-        return new SearchCaseFormInstancesResult();
-    }
-    return state.content;
-});
-export var selectSearchCaseActivationsResult = createSelector(selectSearchCaseActivations, function (state) {
-    if (!state || !state.content) {
-        return new SearchCaseActivationsResult();
-    }
-    return state.content.Content;
-});
-export var selectGetHistoryResult = createSelector(selectGetHistory, function (state) {
-    if (!state || !state.content) {
-        return new CaseDefinitionHistory();
+        return new SearchWorkerTaskResult();
     }
     return state.content;
 });
 export var appReducer = {
     search: fromSearch.searchReducer,
     get: fromGet.getReducer,
-    searchInstances: fromSearchInstances.searchReducer,
-    searchFormInstances: fromSearchFormInstances.searchReducer,
-    searchCaseActivations: fromSearchCaseActivations.searchReducer,
-    getHistory: fromGetHistory.getReducer,
-    getFile: fromGetFile.getReducer
+    searchInstance: fromCasePlanInstance.searchReducer,
+    searchFormInstance: fromFormInstance.searchReducer,
+    searchWorkerTask: fromWorkerTask.searchReducer
 };
 //# sourceMappingURL=index.js.map

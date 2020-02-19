@@ -18,15 +18,17 @@ namespace CaseManagement.CMMN.Domains
             Status = FormInstanceStatus.Created;
         }
 
-        public FormInstanceAggregate(string id, string formId, string casePlanInstanceId, string caseElementInstanceId) : this()
+        public FormInstanceAggregate(string id, string formId, string casePlanId, string casePlanInstanceId, string caseElementInstanceId) : this()
         {
             Id = id;
             FormId = formId;
+            CasePlanId = casePlanId;
             CasePlanInstanceId = casePlanInstanceId;
             CaseElementInstanceId = caseElementInstanceId;
         }
 
         public string FormId { get; set; }
+        public string CasePlanId { get; set; }
         public string CasePlanInstanceId { get; set; }
         public string CaseElementInstanceId { get; set; }
         public ICollection<FormInstanceElement> Content { get; set; }
@@ -75,13 +77,13 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static FormInstanceAggregate New(string formId, string casePlanInstanceId, string caseElementInstanceId, string performerRole)
+        public static FormInstanceAggregate New(string formId, string casePlanId, string casePlanInstanceId, string caseElementInstanceId, string performerRole)
         {
             var result = new FormInstanceAggregate();
             lock (result.DomainEvents)
             {
                 var id = BuildFormInstanceIdentifier(casePlanInstanceId, caseElementInstanceId);
-                var evt = new FormInstanceAddedEvent(Guid.NewGuid().ToString(), id, 0, formId, DateTime.UtcNow, performerRole, caseElementInstanceId, casePlanInstanceId);
+                var evt = new FormInstanceAddedEvent(Guid.NewGuid().ToString(), id, 0, formId, DateTime.UtcNow, performerRole, casePlanId, caseElementInstanceId, casePlanInstanceId);
                 result.Handle(evt);
                 result.DomainEvents.Add(evt);
                 return result;
@@ -136,11 +138,12 @@ namespace CaseManagement.CMMN.Domains
         {
             Id = evt.AggregateId;
             FormId = evt.FormId;
+            CasePlanId = evt.CasePlanId;
             CasePlanInstanceId = evt.CasePlanInstanceId;
+            CaseElementInstanceId = evt.CaseElementInstanceId;
             Status = FormInstanceStatus.Created;
             CreateDateTime = evt.CreateDateTime;
             PerformerRole = evt.PerformerRole;
-            CaseElementInstanceId = evt.CaseElementInstanceId;
         }
 
         private void Handle(FormInstanceSubmittedEvent evt)
@@ -157,7 +160,7 @@ namespace CaseManagement.CMMN.Domains
 
         public override object Clone()
         {
-            return new FormInstanceAggregate(Id, FormId, CasePlanInstanceId, CaseElementInstanceId)
+            return new FormInstanceAggregate(Id, FormId, CasePlanId, CasePlanInstanceId, CaseElementInstanceId)
             {
                 Content = Content == null ? new List<FormInstanceElement>() : Content.Select(c => (FormInstanceElement)c.Clone()).ToList(),
                 PerformerRole = PerformerRole,

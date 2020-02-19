@@ -2,8 +2,12 @@
 using CaseManagement.Gateway.Website.CaseFile.CommandHandlers;
 using CaseManagement.Gateway.Website.CaseFile.QueryHandlers;
 using CaseManagement.Gateway.Website.CaseFile.Services;
+using CaseManagement.Gateway.Website.CasePlanInstance.Services;
+using CaseManagement.Gateway.Website.CasePlans.CommandHandlers;
 using CaseManagement.Gateway.Website.CasePlans.QueryHandlers;
 using CaseManagement.Gateway.Website.CasePlans.Services;
+using CaseManagement.Gateway.Website.CaseWorkerTask.Services;
+using CaseManagement.Gateway.Website.FormInstance.Services;
 using CaseManagement.Gateway.Website.Performance.QueryHandlers;
 using CaseManagement.Gateway.Website.Performance.Services;
 using CaseManagement.Gateway.Website.Statistic.QueryHandlers;
@@ -28,6 +32,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddPerformance()
                 .AddCaseFile()
                 .AddCasePlan()
+                .AddFormInstance()
+                .AddCaseWorkerTask()
+                .AddCasePlanInstance()
                 .AddToken();
             return services;
         }
@@ -68,9 +75,43 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddCasePlan(this IServiceCollection services)
         {
+            services.TryAddTransient<ISearchCasePlanHistoryQueryHandler, SearchCasePlanHistoryQueryHandler>();
+            services.TryAddTransient<ILaunchCasePlanInstanceCommandHandler, LaunchCasePlanInstanceCommandHandler>();
+            services.TryAddTransient<ICloseCasePlanInstanceCommandHandler, CloseCasePlanInstanceCommandHandler>();
+            services.TryAddTransient<IReactivateCasePlanInstanceCommandHandler, ReactivateCasePlanInstanceCommandHandler>();
+            services.TryAddTransient<IResumeCasePlanInstanceCommandHandler, ResumeCasePlanInstanceCommandHandler>();
+            services.TryAddTransient<ISuspendCasePlanInstanceCommandHandler, SuspendCasePlanInstanceCommandHandler>();
+            services.TryAddTransient<ITerminateCasePlanInstanceCommandHandler, TerminateCasePlanInstanceCommandHandler>();
             services.TryAddTransient<ISearchMyLatestCasePlanQueryHandler, SearchMyLatestCasePlanQueryHandler>();
+            services.TryAddTransient<ISearchCasePlanInstanceQueryHandler, SearchCasePlanInstanceQueryHandler>();
+            services.TryAddTransient<ISearchFormInstanceQueryHandler, SearchFormInstanceQueryHandler>();
+            services.TryAddTransient<ISearchCaseWorkerTaskQueryHandler, SearchCaseWorkerTaskQueryHandler>();
             services.TryAddTransient<IGetCasePlanQueryHandler, GetCasePlanQueryHandler>();
             services.AddHttpClient<ICasePlanService, CasePlanService>()
+                .AddPolicyHandler(GetRetryPolicy())
+                .AddPolicyHandler(GetBreakerCircuitPolicy());
+            return services;
+        }
+
+        public static IServiceCollection AddCasePlanInstance(this IServiceCollection services)
+        {
+            services.AddHttpClient<ICasePlanInstanceService, CasePlanInstanceService>()
+                .AddPolicyHandler(GetRetryPolicy())
+                .AddPolicyHandler(GetBreakerCircuitPolicy());
+            return services;
+        }
+
+        public static IServiceCollection AddFormInstance(this IServiceCollection services)
+        {
+            services.AddHttpClient<IFormInstanceService, FormInstanceService>()
+                .AddPolicyHandler(GetRetryPolicy())
+                .AddPolicyHandler(GetBreakerCircuitPolicy());
+            return services;
+        }
+
+        public static IServiceCollection AddCaseWorkerTask(this IServiceCollection services)
+        {
+            services.AddHttpClient<ICaseWorkerTaskService, CaseWorkerTaskService>()
                 .AddPolicyHandler(GetRetryPolicy())
                 .AddPolicyHandler(GetBreakerCircuitPolicy());
             return services;

@@ -1,5 +1,5 @@
-import * as fromActions from '../actions/case-plans';
-import { CasePlan } from '../models/case-plan.model';
+import * as fromActions from '../actions/caseplan';
+import { CasePlan } from '../models/caseplan.model';
 
 export interface State {
     isLoading: boolean;

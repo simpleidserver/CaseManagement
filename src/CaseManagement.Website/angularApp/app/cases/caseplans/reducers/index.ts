@@ -1,37 +1,32 @@
 import { createSelector } from '@ngrx/store';
-import { CaseFile } from '../../casefiles/models/case-file.model';
-import * as fromGetFile from '../../casefiles/reducers/get.reducer';
-import { CaseDefinitionHistory } from '../models/case-definition-history.model';
-import { CasePlan } from '../models/case-plan.model';
-import { SearchCaseActivationsResult } from '../models/search-case-activations-result.model';
-import { SearchCaseFormInstancesResult } from '../models/search-case-form-instances-result.model';
-import { SearchCaseInstancesResult } from '../models/search-case-instances.model';
-import * as fromGetHistory from './get-history.reducer';
+import { CasePlan } from '../models/caseplan.model';
+import { SearchCasePlanInstanceResult } from '../models/searchcaseplaninstanceresult.model';
+import { SearchFormInstanceResult } from '../models/searchforminstanceresult.model';
+import { SearchWorkerTaskResult } from '../models/searchworkertaskresult.model';
 import * as fromGet from './get.reducer';
-import * as fromSearchCaseActivations from './search-case-activations.reducer';
-import * as fromSearchFormInstances from './search-form-instances.reducer';
-import * as fromSearchInstances from './search-instances.reducer';
 import * as fromSearch from './search.reducer';
+import * as fromCasePlanInstance from './searchcaseplaninstance.reducer';
+import * as fromFormInstance from './searchforminstance.reducer';
+import * as fromWorkerTask from './searchworkertask.reducer';
+import * as fromSearchHistory from './searchhistory.reducer';
 
-export interface CaseDefinitionsState {
+export interface CasePlanState {
     search: fromSearch.State;
     get: fromGet.State;
-    searchInstances: fromSearchInstances.State,
-    searchFormInstances: fromSearchFormInstances.State,
-    searchCaseActivations: fromSearchCaseActivations.State,
-    getHistory: fromGetHistory.State,
-    getFile: fromGetFile.State
+    searchInstance: fromCasePlanInstance.State,
+    searchFormInstance: fromFormInstance.State,
+    searchWorkerTask: fromWorkerTask.State,
+    searchHistory: fromSearchHistory.State
 }
 
-export const selectSearch = (state: CaseDefinitionsState) => state.search;
-export const selectGet = (state: CaseDefinitionsState) => state.get;
-export const selectSearchInstances = (state: CaseDefinitionsState) => state.searchInstances;
-export const selectSearchFormInstances = (state: CaseDefinitionsState) => state.searchFormInstances;
-export const selectSearchCaseActivations = (state: CaseDefinitionsState) => state.searchCaseActivations;
-export const selectGetHistory = (state: CaseDefinitionsState) => state.getHistory
-export const selectGetFile = (state: CaseDefinitionsState) => state.getFile
+export const selectSearch = (state: CasePlanState) => state.search;
+export const selectGet = (state: CasePlanState) => state.get;
+export const selectSearchInstance = (state: CasePlanState) => state.searchInstance;
+export const selectSearchFormInstance = (state: CasePlanState) => state.searchFormInstance;
+export const selectSearchWorkerTask = (state: CasePlanState) => state.searchWorkerTask;
+export const selectSearchHistory = (state: CasePlanState) => state.searchHistory;
 
-export const selectSearchResults = createSelector(
+export const selectSearchResult = createSelector(
     selectSearch,
     (state: fromSearch.State) => {
         if (!state || state.content == null) {
@@ -53,22 +48,11 @@ export const selectGetResult = createSelector(
     }
 );
 
-export const selectGetFileResult = createSelector(
-    selectGetFile,
-    (state: fromGetFile.State) => {
+export const selectSearchInstanceResult = createSelector(
+    selectSearchInstance,
+    (state: fromCasePlanInstance.State) => {
         if (!state || !state.content) {
-            return new CaseFile();
-        }
-
-        return state.content;
-    }
-);
-
-export const selectSearchInstancesResult = createSelector(
-    selectSearchInstances,
-    (state: fromSearchInstances.State) => {
-        if (!state || !state.content) {
-            return new SearchCaseInstancesResult();
+            return new SearchCasePlanInstanceResult();
         }
 
         return state.content;
@@ -76,32 +60,32 @@ export const selectSearchInstancesResult = createSelector(
 );
 
 export const selectSearchFormInstancesResult = createSelector(
-    selectSearchFormInstances,
-    (state: fromSearchFormInstances.State) => {
+    selectSearchFormInstance,
+    (state: fromFormInstance.State) => {
         if (!state || !state.content) {
-            return new SearchCaseFormInstancesResult();
+            return new SearchFormInstanceResult();
         }
 
         return state.content;
     }
 );
 
-export const selectSearchCaseActivationsResult = createSelector(
-    selectSearchCaseActivations,
-    (state: fromSearchCaseActivations.State) => {
+export const selectSearchCaseWorkerResult = createSelector(
+    selectSearchWorkerTask,
+    (state: fromWorkerTask.State) => {
         if (!state || !state.content) {
-            return new SearchCaseActivationsResult();
+            return new SearchWorkerTaskResult();
         }
 
-        return state.content.Content;
+        return state.content;
     }
 );
 
-export const selectGetHistoryResult = createSelector(
-    selectGetHistory,
-    (state: fromGetHistory.State) => {
+export const selectSearchHistoryResult = createSelector(
+    selectSearchHistory,
+    (state: fromSearchHistory.State) => {
         if (!state || !state.content) {
-            return new CaseDefinitionHistory();
+            return new SearchCasePlanInstanceResult();
         }
 
         return state.content;
@@ -111,9 +95,8 @@ export const selectGetHistoryResult = createSelector(
 export const appReducer = {
     search: fromSearch.searchReducer,
     get: fromGet.getReducer,
-    searchInstances: fromSearchInstances.searchReducer,
-    searchFormInstances: fromSearchFormInstances.searchReducer,
-    searchCaseActivations: fromSearchCaseActivations.searchReducer,
-    getHistory: fromGetHistory.getReducer,
-    getFile: fromGetFile.getReducer
+    searchInstance: fromCasePlanInstance.searchReducer,
+    searchFormInstance: fromFormInstance.searchReducer,
+    searchWorkerTask: fromWorkerTask.searchReducer,
+    searchHistory: fromSearchHistory.searchReducer
 };

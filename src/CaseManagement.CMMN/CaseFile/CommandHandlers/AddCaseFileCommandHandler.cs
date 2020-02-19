@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
 using Microsoft.Extensions.Options;
+using System;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseFile.CommandHandlers
@@ -23,6 +24,7 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
             if (string.IsNullOrWhiteSpace(addCaseFileCommand.Payload))
             {
                 payload = _options.DefaultCMMNSchema;
+                payload = payload.Replace("{id}", $"CasePlanModel_{Guid.NewGuid()}");
             }
 
             var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, addCaseFileCommand.Owner, payload);
