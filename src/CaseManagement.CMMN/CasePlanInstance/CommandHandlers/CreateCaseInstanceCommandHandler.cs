@@ -25,9 +25,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
                 throw new UnknownCaseDefinitionException();
             }
 
-            if (workflowDefinition.CaseOwner != command.Performer)
+            if (!command.BypassUserValidation)
             {
-                throw new UnauthorizedCaseWorkerException(command.Performer, null, null);
+                if (workflowDefinition.CaseOwner != command.Performer)
+                {
+                    throw new UnauthorizedCaseWorkerException(command.Performer, null, null);
+                }
             }
             
             var workflowInstance = Domains.CasePlanInstanceAggregate.New(workflowDefinition);

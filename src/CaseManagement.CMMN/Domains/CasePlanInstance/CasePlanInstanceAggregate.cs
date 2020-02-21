@@ -26,6 +26,7 @@ namespace CaseManagement.CMMN.Domains
             ExecutionHistories = new List<CaseElementExecutionHistory>();
             WorkflowElementInstances = new List<CaseElementInstance>();
             DomainEvents = new List<DomainEvent>();
+            Roles = new List<string>();
         }
 
         public CasePlanInstanceAggregate(string id, DateTime createDateTime, string casePlanId) : base()
@@ -44,6 +45,7 @@ namespace CaseManagement.CMMN.Domains
         public ICollection<CaseInstanceTransitionHistory> TransitionHistories { get; set; }
         public ICollection<CaseElementExecutionHistory> ExecutionHistories { get; set; }
         public ICollection<CaseElementInstance> WorkflowElementInstances { get; set; }
+        public ICollection<string> Roles { get; set; }
         public event EventHandler<DomainEventArgs> EventRaised;
 
         #region Get
@@ -634,7 +636,7 @@ namespace CaseManagement.CMMN.Domains
         public static CasePlanInstanceAggregate New(CasePlanAggregate workflowDefinition)
         {
             var result = new CasePlanInstanceAggregate();
-            var evt = new CaseInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, DateTime.UtcNow, workflowDefinition.CaseOwner);
+            var evt = new CaseInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, DateTime.UtcNow, workflowDefinition.CaseOwner, workflowDefinition.Roles);
             var secondEvt = new CaseTransitionRaisedEvent(Guid.NewGuid().ToString(), evt.AggregateId, 1, CMMNTransitions.Create, DateTime.UtcNow);
             result.DomainEvents.Add(evt);
             result.DomainEvents.Add(secondEvt);
@@ -705,6 +707,7 @@ namespace CaseManagement.CMMN.Domains
             CreateDateTime = evt.CreateDateTime;
             CasePlanId = evt.CaseDefinitionId;
             CaseOwner = evt.Performer;
+            Roles = evt.Roles;
         }
 
         private CaseElementInstance Handle(CaseElementCreatedEvent evt)
@@ -889,7 +892,8 @@ namespace CaseManagement.CMMN.Domains
                 Version = Version,
                 CasePlanId = CasePlanId,
                 WorkflowElementInstances = WorkflowElementInstances == null ? null : WorkflowElementInstances.Select(w => (CaseElementInstance)w.Clone()).ToList(),
-                CaseOwner = CaseOwner
+                CaseOwner = CaseOwner,
+                Roles = Roles.ToList()
             };
         }
 

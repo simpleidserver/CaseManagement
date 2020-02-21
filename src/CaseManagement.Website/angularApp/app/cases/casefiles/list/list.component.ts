@@ -68,7 +68,17 @@ export class ListCaseFilesComponent implements OnInit {
             count = this.paginator.pageSize;
         }
 
-        let request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
+        let active = "create_datetime";
+        let direction = "desc";
+        if (this.sort.active) {
+            active = this.sort.active;
+        }
+
+        if (this.sort.direction) {
+            direction = this.sort.direction;
+        }
+
+        let request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     }
 }

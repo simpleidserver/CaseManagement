@@ -14,6 +14,9 @@
     <ProjectReference Include="..\..\src\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Cmmns\CaseWithOneHumanTaskAndRole.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\CaseWithOneManualActivationTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

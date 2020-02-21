@@ -26,6 +26,7 @@ using CaseManagement.CMMN.Infrastructures.Lock;
 using CaseManagement.CMMN.Infrastructures.Lock.InMemory;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
+using CaseManagement.CMMN.Roles.EventHandlers;
 using Microsoft.Extensions.Options;
 using NEventStore;
 using System;
@@ -145,10 +146,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CasePlanAddedEvent>, RoleEventHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<TransitionCommand>, TransitionCommandHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<ReactivateProcessCommand>, ReactivateProcessCommandHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<LaunchCasePlanInstanceCommand>, LaunchCasePlanInstanceHandler>();
-            services.TryAddTransient<IMessageBrokerConsumerGeneric<CasePlanAddedEvent>, CasePlanEventHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFilePublishedEvent>, CasePlanEventHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseWorkerTaskAddedEvent>, CaseWorkerTaskHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseWorkerTaskConfirmedEvent>, CaseWorkerTaskHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFileAddedEvent>, CaseFileHandler>();

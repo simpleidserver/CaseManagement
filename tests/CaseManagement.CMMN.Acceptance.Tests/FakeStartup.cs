@@ -35,12 +35,17 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 policy.AddPolicy("get_forminstances", p => p.RequireAuthenticatedUser());
                 // Case plan instance
                 policy.AddPolicy("search_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("me_search_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("me_get_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("get_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("get_casefileitems", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("me_add_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("add_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("add_caseplaniteminstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("me_launch_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("launch_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("me_close_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("close_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("me_suspend_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("suspend_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("me_reactivate_caseplaninstance", p => p.RequireAuthenticatedUser());

@@ -51,6 +51,14 @@ namespace CaseManagement.CMMN.Parser
             var planModel = tCase.casePlanModel;
             var planItems = BuildPlanItems(planModel);
             var builder = WorkflowBuilder.New(tCase.casePlanModel.id, tCase.casePlanModel.name, string.Empty, caseFile);
+            if (tCase.caseRoles != null && tCase.caseRoles.role != null)
+            {
+                foreach(var role in tCase.caseRoles.role)
+                {
+                    builder.AddRole(role.id);
+                }
+            }
+
             if (tCase.caseFileModel != null)
             {
                 foreach(var caseFileItem in tCase.caseFileModel.caseFileItem)

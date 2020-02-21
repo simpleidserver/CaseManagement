@@ -68,6 +68,8 @@ namespace CaseManagement.Gateway.Website.Host
                 policy.AddPolicy("resume_caseplaninstance", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("suspend_caseplaninstance", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("terminate_caseplaninstance", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("search_caseplaninstance", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("me_search_caseplaninstance", p => p.RequireRole("caseworker"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()

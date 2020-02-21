@@ -105,6 +105,12 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("get_forminstances", p => p.RequireClaim("scope", "get_forminstances"));
                 // Case plan instance
                 policy.AddPolicy("search_caseplaninstance", p => p.RequireClaim("scope", "search_caseplaninstance"));
+                policy.AddPolicy("me_search_caseplaninstance", p =>
+                {
+                    p.AuthenticationSchemes.Clear();
+                    p.AuthenticationSchemes.Add("IdentityServer");
+                    p.RequireAuthenticatedUser();
+                });
                 policy.AddPolicy("me_get_caseplaninstance", p =>
                 {
                     p.AuthenticationSchemes.Clear();

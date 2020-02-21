@@ -45,7 +45,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
             else
             {
                 var roles = await _roleQueryRepository.FindRolesByUser(confirmFormCommand.Performer);
-                formInstance.Submit(roles.Select(r => r.Name), form, confirmFormCommand.Content);
+                formInstance.Submit(roles.Select(r => r.Id), form, confirmFormCommand.Content);
             }
 
             await _commitAggregateHelper.Commit(formInstance, FormInstanceAggregate.GetStreamName(id), CMMNConstants.QueueNames.FormInstances);

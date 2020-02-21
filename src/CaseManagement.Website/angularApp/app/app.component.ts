@@ -34,7 +34,9 @@ export class AppComponent {
         this.oauthService.configure(authConfig);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         let self = this;
-        this.oauthService.loadDiscoveryDocumentAndTryLogin();
+        this.oauthService.loadDiscoveryDocumentAndTryLogin({
+            disableOAuth2StateCheck: true
+        });
         this.sessionCheckTimer = setInterval(function () {
             if (!self.oauthService.hasValidIdToken()) {
                 self.oauthService.logOut();

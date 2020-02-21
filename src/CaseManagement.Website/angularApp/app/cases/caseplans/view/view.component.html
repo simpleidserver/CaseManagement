@@ -24,7 +24,7 @@
                     </mat-list-item>
                     <mat-list-item>
                         <h4 mat-line>{{ "CASE_FILE" | translate}}</h4>
-                        <p mat-line><a [routerLink]="['/cases/casefiles/' + casePlan$.CaseFile]">{{ casePlan$.CaseFile }}</a></p>
+                        <p mat-line><a [routerLink]="['/cases/casefiles/' + casePlan$.CaseFile]">{{ "VIEW_CASE_FILE" | translate }}</a></p>
                     </mat-list-item>
                 </mat-list>
             </mat-card-content>
@@ -56,9 +56,7 @@
                             <table mat-table class="full-width" [dataSource]="casePlanInstances$" matSort #casePlanInstanceSort="matSort">
                                 <ng-container matColumnDef="id">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "ID" | translate }}</th>
-                                    <td mat-cell *matCellDef="let case">
-                                        <a class="no-style" [routerLink]="['/cases/caseinstances/' + case.Id]">{{case.Id}}</a>
-                                    </td>
+                                    <td mat-cell *matCellDef="let case">{{case.Id}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="state">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "STATE" | translate }}</th>

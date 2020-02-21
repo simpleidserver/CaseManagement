@@ -18,5 +18,10 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         {
             return Task.FromResult(_roles.Where(r => r.UserIds.Contains(userId)));
         }
+
+        public Task<IEnumerable<RoleAggregate>> FindRoles(ICollection<string> roles)
+        {
+            return Task.FromResult(_roles.Where(r => roles.Contains(r.Id)));
+        }
     }
 }

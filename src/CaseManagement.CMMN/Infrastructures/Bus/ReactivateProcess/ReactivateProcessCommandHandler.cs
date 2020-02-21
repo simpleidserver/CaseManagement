@@ -32,7 +32,7 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess
 
         public string QueueName => CMMNConstants.QueueNames.CasePlanInstances;
 
-        public async Task Execute(ReactivateProcessCommand command, CancellationToken token)
+        public async Task Handle(ReactivateProcessCommand command, CancellationToken token)
         {
             var lockId = $"caseplaninstance-{command.CasePlanInstanceId}";
             if (!await _distributedLock.AcquireLock(lockId))
@@ -75,11 +75,6 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.ReactivateProcess
         {
             var workflowInstance = sender as CasePlanInstanceAggregate;
             await _commitAggregateHelper.Commit(workflowInstance, new List<DomainEvent> { e.DomainEvt }, workflowInstance.Version, workflowInstance.GetStreamName(), CMMNConstants.QueueNames.CasePlanInstances);
-        }
-
-        public Task Handle(ReactivateProcessCommand message, CancellationToken token)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

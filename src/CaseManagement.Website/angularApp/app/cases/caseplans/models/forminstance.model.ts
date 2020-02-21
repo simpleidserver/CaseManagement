@@ -1,17 +1,8 @@
-import { CaseTranslation } from "./case-translation.model";
-
 export class FormElementInstance {
-    constructor() {
-        this.Names = [];
-        this.Descriptions = [];
-    }
+    constructor() { }
 
     FormElementId: string;
-    IsRequired: boolean;
     Value: string;
-    Type: string;
-    Names: CaseTranslation[];
-    Descriptions: CaseTranslation[];
 
     public static fromJson(json: any): FormElementInstance {
         let result = new FormElementInstance();
@@ -23,7 +14,6 @@ export class FormElementInstance {
 
 export class FormInstance {
     constructor() {
-        this.Titles = [];
         this.Content = [];
     }
 
@@ -37,7 +27,6 @@ export class FormInstance {
     CaseElementInstanceId: string;
     Status: string;
     FormId: string;
-    Titles: CaseTranslation[];
     Content: FormElementInstance[];
 
     public static fromJson(json: any): FormInstance {
@@ -49,8 +38,8 @@ export class FormInstance {
         result.CasePlanId = json["case_plan_id"];
         result.CasePlanInstanceId = json["case_plan_instance_id"];
         result.CasePlanElementInstanceId = json["case_plan_element_instance_id"];
-        result.FormId = json["form_id"];
         result.Status = json["status"];
+        result.FormId = json["form_id"];
         json["content"].forEach(function (elt : any) {
             result.Content.push(FormElementInstance.fromJson(elt));
         });

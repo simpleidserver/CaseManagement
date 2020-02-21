@@ -1,4 +1,6 @@
-﻿namespace CaseManagement.CMMN.Persistence.Parameters
+﻿using System.Collections.Generic;
+
+namespace CaseManagement.CMMN.Persistence.Parameters
 {
     public class FindWorkflowInstanceParameter : BaseFindParameter
     {
@@ -9,5 +11,6 @@
 
         public string CasePlanId { get; set; }
         public string CaseOwner { get; set; }
+        public ICollection<string> Roles { get; set; }
     }
 }

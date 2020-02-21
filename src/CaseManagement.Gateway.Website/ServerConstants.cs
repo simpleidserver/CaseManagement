@@ -8,6 +8,7 @@
             public const string Performances = "performances";
             public const string CaseFiles = "case-files";
             public const string CasePlans = "case-plans";
+            public const string CasePlanInstances = "case-plan-instances";
         }
     }
 }

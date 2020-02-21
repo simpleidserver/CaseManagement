@@ -35,8 +35,9 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         private readonly IActivateCommandHandler _activateCommandHandler;
         private readonly ICasePlanInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
         private readonly ICaseFileItemRepository _caseFileItemRepository;
+        private readonly IRoleQueryRepository _roleQueryRepository;
 
-        public CasePlanInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, ICasePlanInstanceQueryRepository cmmnWorkflowInstanceQueryRepository, ICaseFileItemRepository caseFileItemRepository)
+        public CasePlanInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, ICasePlanInstanceQueryRepository cmmnWorkflowInstanceQueryRepository, ICaseFileItemRepository caseFileItemRepository, IRoleQueryRepository roleQueryRepository)
         {
             _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
             _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
@@ -49,6 +50,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             _activateCommandHandler = activateCommandHandler;
             _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
             _caseFileItemRepository = caseFileItemRepository;
+            _roleQueryRepository = roleQueryRepository;
         }
 
         [HttpGet("search")]
@@ -57,6 +59,18 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         {
             var query = HttpContext.Request.Query.ToEnumerable();
             var result = await _cmmnWorkflowInstanceQueryRepository.Find(ExtractFindParameter(query));
+            return new OkObjectResult(ToDto(result));
+        }
+
+        [HttpGet("me/search")]
+        [Authorize("me_search_caseplaninstance")]
+        public async Task<IActionResult> SearchMe()
+        {
+            var query = HttpContext.Request.Query.ToEnumerable();
+            var roles = await _roleQueryRepository.FindRolesByUser(this.GetNameIdentifier());
+            var parameter = ExtractFindParameter(query);
+            parameter.Roles = roles.Select(r => r.Id).ToList();
+            var result = await _cmmnWorkflowInstanceQueryRepository.Find(parameter);
             return new OkObjectResult(ToDto(result));
         }
 
@@ -417,6 +431,13 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
             catch (AggregateValidationException ex)
             {
                 return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
@@ -442,6 +463,13 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch(UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
             catch (AggregateValidationException ex)

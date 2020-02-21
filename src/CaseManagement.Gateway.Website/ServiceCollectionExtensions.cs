@@ -2,6 +2,7 @@
 using CaseManagement.Gateway.Website.CaseFile.CommandHandlers;
 using CaseManagement.Gateway.Website.CaseFile.QueryHandlers;
 using CaseManagement.Gateway.Website.CaseFile.Services;
+using CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers;
 using CaseManagement.Gateway.Website.CasePlanInstance.Services;
 using CaseManagement.Gateway.Website.CasePlans.CommandHandlers;
 using CaseManagement.Gateway.Website.CasePlans.QueryHandlers;
@@ -83,7 +84,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ISuspendCasePlanInstanceCommandHandler, SuspendCasePlanInstanceCommandHandler>();
             services.TryAddTransient<ITerminateCasePlanInstanceCommandHandler, TerminateCasePlanInstanceCommandHandler>();
             services.TryAddTransient<ISearchMyLatestCasePlanQueryHandler, SearchMyLatestCasePlanQueryHandler>();
-            services.TryAddTransient<ISearchCasePlanInstanceQueryHandler, SearchCasePlanInstanceQueryHandler>();
+            services.TryAddTransient<CaseManagement.Gateway.Website.CasePlans.QueryHandlers.ISearchCasePlanInstanceQueryHandler, CaseManagement.Gateway.Website.CasePlans.QueryHandlers.SearchCasePlanInstanceQueryHandler>();
             services.TryAddTransient<ISearchFormInstanceQueryHandler, SearchFormInstanceQueryHandler>();
             services.TryAddTransient<ISearchCaseWorkerTaskQueryHandler, SearchCaseWorkerTaskQueryHandler>();
             services.TryAddTransient<IGetCasePlanQueryHandler, GetCasePlanQueryHandler>();
@@ -95,6 +96,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddCasePlanInstance(this IServiceCollection services)
         {
+            services.TryAddTransient<ISearchAssignedCasePlanInstanceQueryHandler, SearchAssignedCasePlanInstanceQueryHandler>();
+            services.TryAddTransient<CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers.ISearchCasePlanInstanceQueryHandler, CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers.SearchCasePlanInstanceQueryHandler>();
             services.AddHttpClient<ICasePlanInstanceService, CasePlanInstanceService>()
                 .AddPolicyHandler(GetRetryPolicy())
                 .AddPolicyHandler(GetBreakerCircuitPolicy());

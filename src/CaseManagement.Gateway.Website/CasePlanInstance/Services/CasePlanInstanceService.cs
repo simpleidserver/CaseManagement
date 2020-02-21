@@ -135,5 +135,24 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
             await _httpClient.SendAsync(request);
         }
+
+        public async Task<FindResponse<CasePlanInstanceResponse>> SearchMe(IEnumerable<KeyValuePair<string, string>> queries, string identityToken)
+        {
+            var lst = new List<string>();
+            foreach (var kvp in queries)
+            {
+                lst.Add($"{kvp.Key}={kvp.Value}");
+            }
+
+            var queryStr = string.Join("&", lst);
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/search?{queryStr}")
+            };
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            var httpResponse = await _httpClient.SendAsync(request);
+            var responseStr = await httpResponse.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<FindResponse<CasePlanInstanceResponse>>(responseStr);
+        }
     }
 }

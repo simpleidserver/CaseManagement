@@ -79,5 +79,7 @@
   "CASE_PLAN": "Plan d'exécution du case",
   "CASE_PLAN_HISTORY": "Historique du plan de case",
   "STOP": "Arrêter",
-  "RESUME": "Reprendre"
+  "RESUME": "Reprendre",
+  "CASE_PLAN_INSTANCES": "Instances de plan de case",
+  "CASE_PLAN_ID": "Identifiant du plan de case"
 }

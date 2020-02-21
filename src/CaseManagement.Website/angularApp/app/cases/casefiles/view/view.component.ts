@@ -11,6 +11,7 @@ import { CaseFilesService } from '../services/casefiles.service';
 let CmmnViewer = require('cmmn-js/lib/Modeler'),
     propertiesPanelModule = require('casemanagement-js-properties-panel'),
     propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'),
+    // propertiesProviderModule = require('cmmn-js-properties-panel/lib/provider/camunda'),
     caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement');
 
 @Component({

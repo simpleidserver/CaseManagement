@@ -42,7 +42,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
             else
             {
                 var roles = await _roleQueryRepository.FindRolesByUser(activateCommand.Performer);
-                activation.Confirm(roles.Select(r => r.Name));
+                activation.Confirm(roles.Select(r => r.Id));
             }
 
             await _commitAggregateHelper.Commit(activation, CaseWorkerTaskAggregate.GetStreamName(id), CMMNConstants.QueueNames.CasePlanInstances);

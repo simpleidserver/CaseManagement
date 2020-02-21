@@ -25,6 +25,7 @@ namespace CaseManagement.CMMN.Domains
             CaseFileId = caseFileId;
             ExitCriterias = new List<Criteria>();
             Elements = new List<CasePlanElement>();
+            Roles = new List<string>();
         }
         
         public string CasePlanId { get; set; }
@@ -35,6 +36,7 @@ namespace CaseManagement.CMMN.Domains
         public DateTime CreateDateTime { get; set; }
         public ICollection<Criteria> ExitCriterias { get; set; }
         public ICollection<CasePlanElement> Elements { get; set; }
+        public ICollection<string> Roles { get; set; }
 
         public CasePlanElement GetElement(string id)
         {
@@ -52,12 +54,12 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CasePlanAggregate New(string casePlanId, string name, string description, string caseOwner, string caseFileId, int caseFileVersion, ICollection<Criteria> exitCriterias, ICollection<CasePlanElement> elements)
+        public static CasePlanAggregate New(string casePlanId, string name, string description, string caseOwner, string caseFileId, int caseFileVersion, ICollection<Criteria> exitCriterias, ICollection<CasePlanElement> elements, ICollection<string> roles)
         {
             var result = new CasePlanAggregate(BuildCasePlanIdentifier(casePlanId, caseFileVersion), casePlanId, name, description, caseOwner, caseFileId);
             lock(result.DomainEvents)
             {
-                var evt = new CasePlanAddedEvent(Guid.NewGuid().ToString(), BuildCasePlanIdentifier(casePlanId, caseFileVersion), caseFileVersion, casePlanId, name, description, caseOwner, caseFileId, DateTime.UtcNow, exitCriterias, elements);
+                var evt = new CasePlanAddedEvent(Guid.NewGuid().ToString(), BuildCasePlanIdentifier(casePlanId, caseFileVersion), caseFileVersion, casePlanId, name, description, caseOwner, caseFileId, DateTime.UtcNow, exitCriterias, elements, roles);
                 result.Handle(evt);
                 result.DomainEvents.Add(evt);
                 return result;
@@ -75,7 +77,7 @@ namespace CaseManagement.CMMN.Domains
 
         private void Handle(CasePlanAddedEvent evt)
         {
-            Id = evt.Id;
+            Id = evt.AggregateId;
             Version = evt.Version;
             CasePlanId = evt.CasePlanId;
             Name = evt.Name;
@@ -85,6 +87,7 @@ namespace CaseManagement.CMMN.Domains
             CreateDateTime = evt.CreateDateTime;
             ExitCriterias = evt.ExitCriterias;
             Elements = evt.Elements;
+            Roles = evt.Roles;
         }
 
         private CasePlanElement GetElement(ICollection<CasePlanElement> elements, string id)
@@ -115,7 +118,8 @@ namespace CaseManagement.CMMN.Domains
                 ExitCriterias = ExitCriterias.Select(e => (Criteria)e.Clone()).ToList(),
                 CreateDateTime = CreateDateTime,
                 Elements = Elements.Select(e => (CasePlanElement)e.Clone()).ToList(),
-                Version = Version
+                Version = Version,
+                Roles = Roles.ToList()
             };
         }
 

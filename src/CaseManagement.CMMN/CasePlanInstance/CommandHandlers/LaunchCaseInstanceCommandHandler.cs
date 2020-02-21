@@ -26,9 +26,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
                 throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CasePlanInstanceId);
             }
 
-            if (caseInstance.CaseOwner != launchCaseInstanceCommand.Performer)
+            if (!launchCaseInstanceCommand.BypassUserValidation)
             {
-                throw new UnauthorizedCaseWorkerException(launchCaseInstanceCommand.Performer, caseInstance.Id, null);
+                if (caseInstance.CaseOwner != launchCaseInstanceCommand.Performer)
+                {
+                    throw new UnauthorizedCaseWorkerException(launchCaseInstanceCommand.Performer, caseInstance.Id, null);
+                }
             }
             
             await _messageBroker.QueueLaunchProcess(caseInstance.Id);

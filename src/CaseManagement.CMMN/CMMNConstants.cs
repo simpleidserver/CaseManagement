@@ -16,6 +16,7 @@
             public const string CasePlans = "caseplans";
             public const string FormInstances = "forminstances";
             public const string CaseWorkerTasks = "caseworkertasks";
+            public const string Roles = "roles";
         }
 
         public static class RouteNames

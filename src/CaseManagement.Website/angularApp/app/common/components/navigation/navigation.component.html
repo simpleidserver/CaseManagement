@@ -8,6 +8,7 @@
         <mat-menu #caseMenu="matMenu">
             <button mat-menu-item [routerLink]="['/cases/casefiles']">{{ "CASE_FILES" | translate }}</button>
             <button mat-menu-item [routerLink]="['/cases/caseplans']">{{ "CASE_PLANS" | translate }}</button>
+            <button mat-menu-item [routerLink]="['/cases/caseplaninstances']">{{ "CASE_PLAN_INSTANCES" | translate }}</button>
         </mat-menu>
         <button mat-button [matMenuTriggerFor]="welcomeMenu">
             {{ "WELCOME" | translate:{name:name} }}

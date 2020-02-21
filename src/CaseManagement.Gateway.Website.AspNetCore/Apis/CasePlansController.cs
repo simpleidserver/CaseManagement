@@ -151,7 +151,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             return new OkResult();
         }
 
-        private static JObject ToDto(FindResponse<CasePlanResponse> resp)
+        public static JObject ToDto(FindResponse<CasePlanResponse> resp)
         {
             return new JObject
             {
@@ -162,7 +162,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             };
         }
 
-        private static JObject ToDto(FindResponse<CasePlanInstanceResponse> resp)
+        public static JObject ToDto(FindResponse<CasePlanInstanceResponse> resp)
         {
             return new JObject
             {
@@ -173,7 +173,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             };
         }
 
-        private static JObject ToDto(FindResponse<FormInstanceResponse> resp)
+        public static JObject ToDto(FindResponse<FormInstanceResponse> resp)
         {
             return new JObject
             {
@@ -210,7 +210,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             };
         }
 
-        private static JObject ToDto(FindResponse<CaseWorkerTaskResponse> resp)
+        public static JObject ToDto(FindResponse<CaseWorkerTaskResponse> resp)
         {
             return new JObject
             {
@@ -234,7 +234,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             };
         }
 
-        private static JObject ToDto(CasePlanInstanceResponse casePlanInstance)
+        public static JObject ToDto(CasePlanInstanceResponse casePlanInstance)
         {
             var result = new JObject
             {
@@ -278,7 +278,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             return result;
         }
 
-        private static JObject ToDto(CasePlanElementInstanceResponse elt)
+        public static JObject ToDto(CasePlanElementInstanceResponse elt)
         {
             var result = new JObject
             {
@@ -313,7 +313,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             return result;
         }
 
-        private static JObject ToDto(CasePlanResponse def)
+        public static JObject ToDto(CasePlanResponse def)
         {
             return new JObject
             {

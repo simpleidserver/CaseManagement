@@ -79,5 +79,7 @@
   "CASE_PLAN": "Case plan",
   "CASE_PLAN_HISTORY": "Case plan history",
   "STOP": "Stop",
-  "RESUME": "Resume"
+  "RESUME": "Resume",
+  "CASE_PLAN_INSTANCES": "Case plan instances",
+  "CASE_PLAN_ID": "Case plan identifier"
 }

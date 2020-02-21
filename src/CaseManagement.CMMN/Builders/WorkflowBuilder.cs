@@ -10,6 +10,7 @@ namespace CaseManagement.CMMN.Builders
         private readonly string _name;
         private readonly string _description;
         private readonly CaseFileAggregate _caseFile;
+        private readonly ICollection<string> _roles;
         private ICollection<CasePlanElement> _elements { get; set; }
         private ICollection<Criteria> _exitCriterias { get; set; }
         private string _caseOwner;
@@ -19,6 +20,7 @@ namespace CaseManagement.CMMN.Builders
             _casePlanId = casePlanId;
             _name = name;
             _caseFile = caseFile;
+            _roles = new List<string>();
             _elements = new List<CasePlanElement>();
             _exitCriterias = new List<Criteria>();
         }
@@ -167,9 +169,15 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
+        public WorkflowBuilder AddRole(string role)
+        {
+            this._roles.Add(role);
+            return this;
+        }
+
         public CasePlanAggregate Build()
         {
-            var result = CasePlanAggregate.New(_casePlanId, _name, _description, _caseOwner, _caseFile.Id, _caseFile.Version, _exitCriterias, _elements);
+            var result = CasePlanAggregate.New(_casePlanId, _name, _description, _caseOwner, _caseFile.Id, _caseFile.Version, _exitCriterias, _elements, _roles);
             return result;
         }
 

@@ -3,7 +3,6 @@ using CaseManagement.CMMN.CaseFile.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.EvtStore;
-using CaseManagement.CMMN.Parser;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseFile.CommandHandlers
@@ -30,12 +29,6 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
             var newCaseFile = caseFile.Publish(publishCaseFileCommand.Performer, publishCaseFileCommand.BypassUserValidation);
             await _commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.Id), CMMNConstants.QueueNames.CaseFiles);
             await _commitAggregateHelper.Commit(newCaseFile, CaseFileAggregate.GetStreamName(newCaseFile.Id), CMMNConstants.QueueNames.CaseFiles);
-            var tDefinitions = CMMNParser.ParseWSDL(caseFile.Payload);
-            foreach (var casePlan in CMMNParser.ExtractCasePlans(tDefinitions, caseFile))
-            {
-                await _commitAggregateHelper.Commit(casePlan, CasePlanAggregate.GetStreamName(casePlan.Id), CMMNConstants.QueueNames.CasePlans);
-            }
-
             return newCaseFile.Id;
         }
     }
