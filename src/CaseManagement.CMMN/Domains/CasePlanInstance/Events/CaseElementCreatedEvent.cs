@@ -4,21 +4,23 @@ using System.Diagnostics;
 
 namespace CaseManagement.CMMN.Domains.Events
 {
-    [DebuggerDisplay("Create element {CaseElementDefinitionType} instance {CaseElementId}")]
+    [DebuggerDisplay("Create element {CasePlanElementType} instance {CasePlanElementId}")]
     public class CaseElementCreatedEvent : DomainEvent
     {
-        public CaseElementCreatedEvent(string id, string aggregateId, int version, string elementId, string workflowElementDefinitionId, CaseElementTypes workflowElementDefinitionType, DateTime createDateTime, string parentId) : base(id, aggregateId, version)
+        public CaseElementCreatedEvent(string id, string aggregateId, int version, string casePlanElementInstanceId, string casePlanElementId, string casePlanElementName, CaseElementTypes casePlanElementType, DateTime createDateTime, string parentId) : base(id, aggregateId, version)
         {
-            CaseElementId = elementId;
-            CaseElementDefinitionId = workflowElementDefinitionId;
-            CaseElementDefinitionType = workflowElementDefinitionType;
+            CasePlanElementInstanceId = casePlanElementInstanceId;
+            CasePlanElementId = casePlanElementId;
+            CasePlanElementName = casePlanElementName;
+            CasePlanElementType = casePlanElementType;
             CreateDateTime = createDateTime;
             ParentId = parentId;
         }
 
-        public string CaseElementId { get; set; }
-        public string CaseElementDefinitionId { get; set; }
-        public CaseElementTypes CaseElementDefinitionType { get; set; }
+        public string CasePlanElementInstanceId { get; set; }
+        public string CasePlanElementId { get; set; }
+        public string CasePlanElementName { get; set; }
+        public CaseElementTypes CasePlanElementType { get; set; }
         public DateTime CreateDateTime { get; set; }
         public string ParentId { get; set; }
     }

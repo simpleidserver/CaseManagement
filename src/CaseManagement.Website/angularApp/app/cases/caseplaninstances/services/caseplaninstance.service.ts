@@ -4,6 +4,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SearchCasePlanInstanceResult } from '../models/searchcaseplaninstanceresult.model';
+import { CasePlanInstance } from '../models/caseplaninstance.model';
 
 @Injectable()
 export class CasePlanInstanceService {
@@ -42,6 +43,16 @@ export class CasePlanInstanceService {
 
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return SearchCasePlanInstanceResult.fromJson(res);
+        }));
+    }
+
+    get(casePlanInstanceId: string): Observable<CasePlanInstance> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        let targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId;
+        return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
+            return CasePlanInstance.fromJson(res);
         }));
     }
 }

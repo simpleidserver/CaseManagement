@@ -57,7 +57,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                     continueExecution = false;
                 });
                 CriteriaListener.ListenEntryCriterias(parameter, tokenSource.Token);
-                var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
+                var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId);
                 if (parameter.CaseInstance.IsManualActivationRuleSatisfied(parameter.CaseElementInstance.Id, parameter.CaseDefinition))
                 {
                     var caseworkertask = CaseWorkerTaskAggregate.New(string.Empty, parameter.CaseInstance.CasePlanId, parameter.CaseInstance.Id, parameter.CaseElementInstance.Id, CaseWorkerTaskTypes.ActivateCasePlanElement);

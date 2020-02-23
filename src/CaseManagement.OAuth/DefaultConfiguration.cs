@@ -80,6 +80,11 @@ namespace CaseManagement.OAuth
             {
                 Name = "get_caseworkertasks",
                 IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "get_caseplaninstance",
+                IsExposedInConfigurationEdp = true
             }
         };
 
@@ -159,6 +164,10 @@ namespace CaseManagement.OAuth
                     new OAuthScope
                     {
                         Name = "get_caseworkertasks"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "get_caseplaninstance"
                     }
                 },
                 GrantTypes = new List<string>

@@ -10,6 +10,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.DTOs
     {
         [DataMember(Name = "id")]
         public string Id { get; set; }
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
         [DataMember(Name = "create_datetime")]
         public DateTime CreateDateTime { get; set; }
         [DataMember(Name = "case_plan_id")]

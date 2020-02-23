@@ -239,6 +239,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             var result = new JObject
             {
                 { "id", casePlanInstance.Id },
+                { "name", casePlanInstance.Name },
                 { "create_datetime", casePlanInstance.CreateDateTime},
                 { "case_plan_id", casePlanInstance.CasePlanId },
                 { "context", casePlanInstance.Context },
@@ -283,6 +284,8 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             var result = new JObject
             {
                 { "id", elt.Id },
+                { "name", elt.Name },
+                { "type", elt.Type },
                 { "version", elt.Version },
                 { "create_datetime", elt.CreateDateTime},
                 { "case_plan_element_id", elt.CasePlanElementId },

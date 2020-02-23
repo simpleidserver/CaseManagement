@@ -8,6 +8,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { CasePlanInstancesRoutes } from './caseplaninstances.routes';
 import { CasePlanInstanceEffects } from './effects/caseplaninstance';
 import { ListCasePlanInstancesComponent } from './list/list.component';
+import { ViewCasePlanInstanceComponent } from './view/view.component';
 import * as reducers from './reducers';
 import { CasePlanInstanceService } from './services/caseplaninstance.service';
 
@@ -23,7 +24,7 @@ import { CasePlanInstanceService } from './services/caseplaninstance.service';
             maxAge: 10
         })
     ],
-    declarations: [ListCasePlanInstancesComponent ],
+    declarations: [ListCasePlanInstancesComponent, ViewCasePlanInstanceComponent],
     providers: [ CasePlanInstanceService ]
 })
 

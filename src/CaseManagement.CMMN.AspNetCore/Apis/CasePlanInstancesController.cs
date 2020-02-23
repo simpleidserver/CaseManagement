@@ -694,6 +694,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             var result = new JObject
             {
                 { "id", workflowInstance.Id },
+                { "name", workflowInstance.CasePlanName },
                 { "create_datetime", workflowInstance.CreateDateTime},
                 { "case_plan_id", workflowInstance.CasePlanId },
                 { "context", ToDto(workflowInstance.ExecutionContext) },
@@ -748,9 +749,11 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             var result = new JObject
             {
                 { "id", elt.Id },
+                { "name", elt.CasePlanElementName },
+                { "type", Enum.GetName(typeof(CaseElementTypes), elt.CasePlanElementType).ToLowerInvariant() },
                 { "version", elt.Version },
                 { "create_datetime", elt.CreateDateTime},
-                { "case_plan_element_id", elt.CaseElementDefinitionId },
+                { "case_plan_element_id", elt.CasePlanElementId },
                 { "state", elt.State }
             };
             var stateHistories = new JArray();

@@ -39,4 +39,18 @@ export class CasePlanInstanceEffects {
             }
             )
     );
+
+    @Effect()
+    selectGetCasePlanInstance = this.actions$
+        .pipe(
+            ofType(fromCasePlanInstance.ActionTypes.START_GET),
+            mergeMap((evt: fromCasePlanInstance.StartGet) => {
+                return this.casePlanInstanceService.get(evt.id)
+                    .pipe(
+                        map(casePlanInstance => { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_GET, content: casePlanInstance }; }),
+                        catchError(() => of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_GET }))
+                    );
+            }
+            )
+        );
 }

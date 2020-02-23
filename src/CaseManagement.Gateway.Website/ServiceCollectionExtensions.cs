@@ -96,6 +96,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddCasePlanInstance(this IServiceCollection services)
         {
+            services.TryAddTransient<IGetCasePlanInstanceQueryHandler, GetCasePlanInstanceQueryHandler>();
+            services.TryAddTransient<IGetAssignedCasePlanInstanceQueryHandler, GetAssignedCasePlanInstanceQueryHandler>();
             services.TryAddTransient<ISearchAssignedCasePlanInstanceQueryHandler, SearchAssignedCasePlanInstanceQueryHandler>();
             services.TryAddTransient<CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers.ISearchCasePlanInstanceQueryHandler, CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers.SearchCasePlanInstanceQueryHandler>();
             services.AddHttpClient<ICasePlanInstanceService, CasePlanInstanceService>()

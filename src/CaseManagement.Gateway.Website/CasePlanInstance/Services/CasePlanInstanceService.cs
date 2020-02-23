@@ -43,6 +43,19 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
             return JsonConvert.DeserializeObject<FindResponse<CasePlanInstanceResponse>>(responseStr);
         }
 
+        public async Task<CasePlanInstanceResponse> Get(string id)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/{id}")
+            };
+            var token = await _tokenStore.GetValidToken(new[] { "get_caseplaninstance" });
+            request.Headers.Add("Authorization", $"Bearer {token}");
+            var httpResponse = await _httpClient.SendAsync(request);
+            var responseStr = await httpResponse.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<CasePlanInstanceResponse>(responseStr);
+        }
+
         public async Task<CasePlanInstanceResponse> GetMe(string id, string identityToken)
         {
             var request = new HttpRequestMessage

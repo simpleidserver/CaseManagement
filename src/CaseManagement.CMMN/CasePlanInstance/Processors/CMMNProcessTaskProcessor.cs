@@ -22,7 +22,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         protected override async Task Run(ProcessorParameter parameter, CancellationToken token)
         {
-            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId) as PlanItemDefinition;
+            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId) as PlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             await HandleProcess(parameter, token);
         }
@@ -34,7 +34,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         private async Task HandleProcess(ProcessorParameter parameter, CancellationToken token)
         {
-            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId) as PlanItemDefinition;
+            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId) as PlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             var parameters = new Dictionary<string, string>();
             var processRef = processTask.ProcessRef;
@@ -79,7 +79,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         
         private Task HandleLaunchCaseProcessCallback(ProcessorParameter parameter, CaseProcessResponse caseProcessResponse, CancellationToken token)
         {
-            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId) as PlanItemDefinition;
+            var planItem = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId) as PlanItemDefinition;
             var processTask = planItem.PlanItemDefinitionProcessTask;
             foreach (var mapping in processTask.Mappings)
             {

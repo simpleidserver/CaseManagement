@@ -37,6 +37,7 @@ namespace CaseManagement.CMMN.Domains
         }
         
         public string CasePlanId { get; set; }
+        public string CasePlanName { get; set; }
         public string CaseOwner { get; set; }
         public DateTime CreateDateTime { get; set; }
         public string State { get; set; }
@@ -149,7 +150,7 @@ namespace CaseManagement.CMMN.Domains
             {
                 foreach (var planItemOnPart in planItemOnParts)
                 {
-                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CaseElementDefinitionId == planItemOnPart.SourceRef);
+                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CasePlanElementId == planItemOnPart.SourceRef);
                     if (source == null)
                     {
                         return false;
@@ -164,7 +165,7 @@ namespace CaseManagement.CMMN.Domains
 
                 foreach (var caseItemOnPart in caseItemOnParts)
                 {
-                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CaseElementDefinitionId == caseItemOnPart.SourceRef);
+                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CasePlanElementId == caseItemOnPart.SourceRef);
                     if (source == null)
                     {
                         return false;
@@ -224,7 +225,7 @@ namespace CaseManagement.CMMN.Domains
                     return null;
                 }
 
-                return workflowDefinition.GetElement(elementInstance.CaseElementDefinitionId);
+                return workflowDefinition.GetElement(elementInstance.CasePlanElementId);
             }
         }
 
@@ -240,7 +241,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock (WorkflowElementInstances)
             {
-                return WorkflowElementInstances.FirstOrDefault(p => p.CaseElementDefinitionId == workflowItemDefinitionId && p.Version == version);
+                return WorkflowElementInstances.FirstOrDefault(p => p.CasePlanElementId == workflowItemDefinitionId && p.Version == version);
             }
         }
 
@@ -256,7 +257,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock (WorkflowElementInstances)
             {
-                var result = WorkflowElementInstances.Where(p => p.CaseElementDefinitionId == workflowItemDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
+                var result = WorkflowElementInstances.Where(p => p.CasePlanElementId == workflowItemDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
                 return result;
             }
         }
@@ -275,16 +276,16 @@ namespace CaseManagement.CMMN.Domains
 
         #region Commands
 
-        public CaseElementInstance CreateWorkflowElementInstance(CasePlanElement workflowElementDefinition, string parentId = null)
+        public CaseElementInstance CreateWorkflowElementInstance(CasePlanElement casePlanElement, string parentId = null)
         {
-            return CreateWorkflowElementInstance(workflowElementDefinition.Id, workflowElementDefinition.Type, parentId);
+            return CreateWorkflowElementInstance(casePlanElement.Id, casePlanElement.Name, casePlanElement.Type, parentId);
         }
 
-        public CaseElementInstance CreateWorkflowElementInstance(string planItemDefinitionId, CaseElementTypes workflowElementType, string parentId = null)
+        public CaseElementInstance CreateWorkflowElementInstance(string casePlanElementId, string casePlanElementName, CaseElementTypes workflowElementType, string parentId = null)
         {
             lock (DomainEvents)
             {
-                var evt = new CaseElementCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, Guid.NewGuid().ToString(), planItemDefinitionId, workflowElementType, DateTime.UtcNow, parentId);
+                var evt = new CaseElementCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, Guid.NewGuid().ToString(), casePlanElementId, casePlanElementName, workflowElementType, DateTime.UtcNow, parentId);
                 var result = Handle(evt);
                 DomainEvents.Add(evt);
                 return result;
@@ -337,7 +338,7 @@ namespace CaseManagement.CMMN.Domains
             lock (DomainEvents)
             {
                 var elt = WorkflowElementInstances.First(e => e.Id == elementId);
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, transition, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, transition, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -358,7 +359,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Enable, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Enable, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -379,7 +380,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.AddChild, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.AddChild, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -400,7 +401,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Start, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Start, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -421,7 +422,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Fault, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Fault, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -442,7 +443,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Occur, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Occur, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -463,7 +464,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Reactivate, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Reactivate, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -484,7 +485,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.ParentSuspend, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.ParentSuspend, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -505,7 +506,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Suspend, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Suspend, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -526,7 +527,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.ParentResume, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.ParentResume, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -547,7 +548,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Resume, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Resume, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -568,7 +569,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.ParentTerminate, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.ParentTerminate, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -589,7 +590,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Terminate, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Terminate, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -610,7 +611,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CaseElementDefinitionId, CMMNTransitions.Complete, DateTime.UtcNow);
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Complete, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -636,7 +637,7 @@ namespace CaseManagement.CMMN.Domains
         public static CasePlanInstanceAggregate New(CasePlanAggregate workflowDefinition)
         {
             var result = new CasePlanInstanceAggregate();
-            var evt = new CaseInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, DateTime.UtcNow, workflowDefinition.CaseOwner, workflowDefinition.Roles);
+            var evt = new CaseInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, workflowDefinition.Name, DateTime.UtcNow, workflowDefinition.CaseOwner, workflowDefinition.Roles);
             var secondEvt = new CaseTransitionRaisedEvent(Guid.NewGuid().ToString(), evt.AggregateId, 1, CMMNTransitions.Create, DateTime.UtcNow);
             result.DomainEvents.Add(evt);
             result.DomainEvents.Add(secondEvt);
@@ -705,15 +706,19 @@ namespace CaseManagement.CMMN.Domains
         {
             Id = evt.AggregateId;
             CreateDateTime = evt.CreateDateTime;
-            CasePlanId = evt.CaseDefinitionId;
+            CasePlanId = evt.CasePlanId;
+            CasePlanName = evt.CasePlanName;
             CaseOwner = evt.Performer;
             Roles = evt.Roles;
         }
 
         private CaseElementInstance Handle(CaseElementCreatedEvent evt)
         {
-            var existingPlanItem = WorkflowElementInstances.Where(p => p.CaseElementDefinitionId == evt.CaseElementDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
-            var elt = new CaseElementInstance(evt.CaseElementId, evt.CreateDateTime, evt.CaseElementDefinitionId, evt.CaseElementDefinitionType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1, evt.ParentId);
+            var existingPlanItem = WorkflowElementInstances.Where(p => p.CasePlanElementId == evt.CasePlanElementId).OrderByDescending(p => p.Version).FirstOrDefault();
+            var elt = new CaseElementInstance(evt.CasePlanElementId, evt.CreateDateTime, evt.CasePlanElementId, evt.CasePlanElementType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1, evt.ParentId)
+            {
+                CasePlanElementName = evt.CasePlanElementName
+            };
             WorkflowElementInstances.Add(elt);
             elt.UpdateState(CMMNTransitions.Create, evt.CreateDateTime);
             Version++;
@@ -891,6 +896,7 @@ namespace CaseManagement.CMMN.Domains
                 TransitionHistories = TransitionHistories == null ? null : TransitionHistories.Select(t => (CaseInstanceTransitionHistory)t.Clone()).ToList(),
                 Version = Version,
                 CasePlanId = CasePlanId,
+                CasePlanName = CasePlanName,
                 WorkflowElementInstances = WorkflowElementInstances == null ? null : WorkflowElementInstances.Select(w => (CaseElementInstance)w.Clone()).ToList(),
                 CaseOwner = CaseOwner,
                 Roles = Roles.ToList()

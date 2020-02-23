@@ -7,7 +7,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
     {
         public static bool Listen(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
-            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
+            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId);
             if (!parameter.CaseInstance.IsManualActivationRuleSatisfied(parameter.CaseElementInstance.Id, parameter.CaseDefinition))
             {
                 return false;

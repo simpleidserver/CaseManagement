@@ -48,7 +48,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                         var subParameter = parameter;
                         if (i > 0)
                         {
-                            var newInstance = parameter.CaseInstance.CreateWorkflowElementInstance(parameter.CaseElementInstance.CaseElementDefinitionId, parameter.CaseElementInstance.CaseElementDefinitionType);
+                            var newInstance = parameter.CaseInstance.CreateWorkflowElementInstance(parameter.CaseElementInstance.CasePlanElementId, parameter.CaseElementInstance.CasePlanElementName, parameter.CaseElementInstance.CasePlanElementType);
                             subParameter = new ProcessorParameter(parameter.CaseDefinition, parameter.CaseInstance, newInstance);
                         }
 

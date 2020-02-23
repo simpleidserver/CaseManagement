@@ -9,12 +9,12 @@ namespace CaseManagement.CMMN.Domains
     {
         private object _lock;
 
-        public CaseElementInstance(string id, DateTime createDateTime, string workflowElementDefinitionId, CaseElementTypes workflowElementDefinitionType, int version, string parentId)
+        public CaseElementInstance(string id, DateTime createDateTime, string casePlanElementId, CaseElementTypes casePlanElementType, int version, string parentId)
         {
             Id = id;
             CreateDateTime = createDateTime;
-            CaseElementDefinitionId = workflowElementDefinitionId;
-            CaseElementDefinitionType = workflowElementDefinitionType;
+            CasePlanElementId = casePlanElementId;
+            CasePlanElementType = casePlanElementType;
             Version = version;
             StateHistories = new List<CaseElementInstanceHistory>();
             TransitionHistories = new List<CaseElementInstanceTransitionHistory>();
@@ -26,8 +26,9 @@ namespace CaseManagement.CMMN.Domains
         public string Id { get; set; }
         public int Version { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public string CaseElementDefinitionId { get; set; }
-        public CaseElementTypes CaseElementDefinitionType { get; set; }
+        public string CasePlanElementId { get; set; }
+        public string CasePlanElementName { get; set; }
+        public CaseElementTypes CasePlanElementType { get; set; }
         public string State { get; set; }
         public string ParentId { get; set; }
         public ICollection<CaseElementInstanceHistory> StateHistories { get; set; }
@@ -58,7 +59,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock (_lock)
             {
-                switch (CaseElementDefinitionType)
+                switch (CasePlanElementType)
                 {
                     case CaseElementTypes.HumanTask:
                     case CaseElementTypes.ProcessTask:
@@ -95,7 +96,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock (_lock)
             {
-                switch (CaseElementDefinitionType)
+                switch (CasePlanElementType)
                 {
                     case CaseElementTypes.HumanTask:
                     case CaseElementTypes.ProcessTask:
@@ -132,7 +133,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock(_lock)
             {
-                switch (CaseElementDefinitionType)
+                switch (CasePlanElementType)
                 {
                     case CaseElementTypes.HumanTask:
                     case CaseElementTypes.ProcessTask:
@@ -154,7 +155,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock(_lock)
             {
-                switch (CaseElementDefinitionType)
+                switch (CasePlanElementType)
                 {
                     case CaseElementTypes.HumanTask:
                     case CaseElementTypes.ProcessTask:
@@ -184,7 +185,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock(_lock)
             {
-                switch (CaseElementDefinitionType)
+                switch (CasePlanElementType)
                 {
                     case CaseElementTypes.CaseFileItem:
                         if (State == Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Available))
@@ -221,7 +222,7 @@ namespace CaseManagement.CMMN.Domains
         {
             lock(_lock)
             {
-                switch (CaseElementDefinitionType)
+                switch (CasePlanElementType)
                 {
                     case CaseElementTypes.CaseFileItem:
                         if (State == Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Discarded))
@@ -256,7 +257,7 @@ namespace CaseManagement.CMMN.Domains
 
         private string GetState(CMMNTransitions planItemTransition)
         {
-            switch(CaseElementDefinitionType)
+            switch(CasePlanElementType)
             {
                 case CaseElementTypes.HumanTask:
                 case CaseElementTypes.Task:
@@ -539,9 +540,10 @@ namespace CaseManagement.CMMN.Domains
 
         public object Clone()
         {
-            return new CaseElementInstance(Id, CreateDateTime, CaseElementDefinitionId, CaseElementDefinitionType, Version, ParentId)
+            return new CaseElementInstance(Id, CreateDateTime, CasePlanElementId, CasePlanElementType, Version, ParentId)
             {
                 State = State,
+                CasePlanElementName = CasePlanElementName,
                 StateHistories = StateHistories == null ? null : StateHistories.Select(s => (CaseElementInstanceHistory)s.Clone()).ToList(),
                 TransitionHistories = TransitionHistories == null ? null : TransitionHistories.Select(t => (CaseElementInstanceTransitionHistory)t.Clone()).ToList()
             };

@@ -56,7 +56,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.CaseFileItem
                 fileSystemWatcher.EnableRaisingEvents = true;
                 if (isNewDirectory)
                 {
-                    await _caseFileItemRepository.AddCaseFileItem(processorParameter.CaseInstance.Id, processorParameter.CaseElementInstance.Id, processorParameter.CaseElementInstance.CaseElementDefinitionId, tmpDirectory);
+                    await _caseFileItemRepository.AddCaseFileItem(processorParameter.CaseInstance.Id, processorParameter.CaseElementInstance.Id, processorParameter.CaseElementInstance.CasePlanElementId, tmpDirectory);
                 }
 
                 while (!cancellationTokenSource.Token.IsCancellationRequested)

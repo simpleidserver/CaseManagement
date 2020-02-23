@@ -81,5 +81,7 @@
   "STOP": "Arrêter",
   "RESUME": "Reprendre",
   "CASE_PLAN_INSTANCES": "Instances de plan de case",
-  "CASE_PLAN_ID": "Identifiant du plan de case"
+  "CASE_PLAN_ID": "Identifiant du plan de case",
+  "VIEW_CASE_PLAN_INSTANCE": "Voir l'instance du plan de case",
+  "CASE_PLAN_INSTANCE":  "Instance du plan de case"
 }

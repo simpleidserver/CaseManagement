@@ -55,7 +55,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                     continueExecution = false;
                     tokenSource.Cancel();
                 });
-                var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
+                var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId);
                 CriteriaListener.ListenEntryCriterias(parameter, tokenSource.Token);
                 if (parameter.CaseInstance.IsManualActivationRuleSatisfied(parameter.CaseElementInstance.Id, parameter.CaseDefinition))
                 {

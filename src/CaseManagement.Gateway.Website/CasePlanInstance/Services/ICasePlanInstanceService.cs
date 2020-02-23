@@ -8,6 +8,7 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
     {
         Task<FindResponse<CasePlanInstanceResponse>> Search(IEnumerable<KeyValuePair<string, string>> queries);
         Task<FindResponse<CasePlanInstanceResponse>> SearchMe(IEnumerable<KeyValuePair<string, string>> queries, string identityToken);
+        Task<CasePlanInstanceResponse> Get(string id);
         Task<CasePlanInstanceResponse> GetMe(string id, string identityToken);
         Task<CasePlanInstanceResponse> AddMe(AddCasePlanInstanceParameter addCasePlanInstanceParameter, string identityToken);
         Task LaunchMe(string casePlanInstanceId, string identityToken);

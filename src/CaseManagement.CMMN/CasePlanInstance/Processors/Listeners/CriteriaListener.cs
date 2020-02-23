@@ -31,7 +31,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
 
         public static void ListenEntryCriterias(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
-            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
+            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId);
             var entryCriterion = planItemDefinition.EntryCriterions.ToList();
             if (!entryCriterion.Any())
             {
@@ -49,7 +49,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
 
         public static ListenEntryCriteriaResult ListenEntryCriteriasBg(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
-            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
+            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId);
             var entryCriterion = planItemDefinition.EntryCriterions.ToList();
             if (!entryCriterion.Any())
             {
@@ -72,7 +72,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
 
         public static KeyValuePair<Task, CriterionListener>? ListenExitCriterias(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
-            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CaseElementDefinitionId);
+            var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId);
             return ListenExitCriterias(parameter, planItemDefinition.ExitCriterions.ToList(), cancellationToken);
         }
 
@@ -140,7 +140,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
                 }
 
                 var sourcePlanItemInstance = _parameter.CaseInstance.GetWorkflowElementInstance(evt.CaseElementId);
-                if (!_criterions.Any(e => e.SEntry.PlanItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.CaseElementDefinitionId && p.StandardEvent == evt.Transition) || e.SEntry.FileItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.CaseElementDefinitionId && p.StandardEvent == evt.Transition)))
+                if (!_criterions.Any(e => e.SEntry.PlanItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.CasePlanElementId && p.StandardEvent == evt.Transition) || e.SEntry.FileItemOnParts.Any(p => p.SourceRef == sourcePlanItemInstance.CasePlanElementId && p.StandardEvent == evt.Transition)))
                 {
                     return;
                 }

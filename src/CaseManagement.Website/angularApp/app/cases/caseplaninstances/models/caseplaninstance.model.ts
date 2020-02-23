@@ -29,6 +29,8 @@ export class CasePlanElementInstance {
     }
 
     Id: string;
+    Name: string;
+    Type: string;
     Version: string;
     CreateDateTime: Date;
     DefinitionId: string;
@@ -39,6 +41,8 @@ export class CasePlanElementInstance {
     public static fromJson(json: any): CasePlanElementInstance {
         let result = new CasePlanElementInstance();
         result.Id = json["id"];
+        result.Name = json["name"];
+        result.Type = json["type"];
         result.Version = json["version"];
         result.CreateDateTime = json["create_datetime"];
         result.DefinitionId = json["definition_id"];
@@ -62,6 +66,7 @@ export class CasePlanInstance {
     }
 
     Id: string;
+    Name: string;
     CreateDateTime: Date;
     CasePlanId: string;
     Context: any;
@@ -73,6 +78,7 @@ export class CasePlanInstance {
     public static fromJson(json: any): CasePlanInstance {
         var result = new CasePlanInstance();
         result.Id = json["id"];
+        result.Name = json["name"];
         result.CreateDateTime = json["create_datetime"];
         result.CasePlanId = json["case_plan_id"];
         result.Context = json["context"];

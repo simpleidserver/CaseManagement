@@ -81,5 +81,7 @@
   "STOP": "Stop",
   "RESUME": "Resume",
   "CASE_PLAN_INSTANCES": "Case plan instances",
-  "CASE_PLAN_ID": "Case plan identifier"
+  "CASE_PLAN_ID": "Case plan identifier",
+  "VIEW_CASE_PLAN_INSTANCE": "View case plan instance",
+  "CASE_PLAN_INSTANCE": "Case plan instance"
 }
