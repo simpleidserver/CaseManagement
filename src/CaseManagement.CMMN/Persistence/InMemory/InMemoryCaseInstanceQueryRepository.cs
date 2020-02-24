@@ -18,7 +18,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             { "state", "State" },
             { "create_datetime", "CreateDateTime" }
         };
-        private ConcurrentBag<Domains.CasePlanInstanceAggregate> _instances;
+        private ConcurrentBag<CasePlanInstanceAggregate> _instances;
 
         public InMemoryCaseInstanceQueryRepository(ConcurrentBag<CasePlanInstanceAggregate> instances)
         {
@@ -28,6 +28,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter)
         {
             IQueryable<Domains.CasePlanInstanceAggregate> result = _instances.AsQueryable();
+            if (parameter.TakeLatest)
+            {
+                result = result.OrderByDescending(r => r.Version);
+                result = result.GroupBy(r => r.CasePlanId).Select(r => r.First());
+            }
+
             if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
             {
                 result = result.Where(r => r.CasePlanId == parameter.CasePlanId);

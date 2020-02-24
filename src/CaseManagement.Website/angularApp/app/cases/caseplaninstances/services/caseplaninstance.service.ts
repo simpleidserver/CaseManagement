@@ -10,7 +10,7 @@ import { CasePlanInstance } from '../models/caseplaninstance.model';
 export class CasePlanInstanceService {
     constructor(private http: HttpClient, private oauthService: OAuthService) { }
 
-    search(startIndex: number, count: number, order: string, direction: string): Observable<SearchCasePlanInstanceResult> {
+    search(startIndex: number, count: number, order: string, direction: string, casePlanId: string): Observable<SearchCasePlanInstanceResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
@@ -21,6 +21,10 @@ export class CasePlanInstanceService {
 
         if (direction) {
             targetUrl = targetUrl + "&order=" + direction;
+        }
+
+        if (casePlanId) {
+            targetUrl = targetUrl + "&case_plan_id=" + casePlanId;
         }
 
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
@@ -54,5 +58,13 @@ export class CasePlanInstanceService {
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return CasePlanInstance.fromJson(res);
         }));
+    }
+
+    enable(casePlanInstanceId: string, casePlanElementInstanceId: string) {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        let targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/enable/" + casePlanElementInstanceId;
+        return this.http.get(targetUrl, { headers: headers });
     }
 }

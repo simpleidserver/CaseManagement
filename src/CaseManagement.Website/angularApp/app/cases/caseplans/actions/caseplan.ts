@@ -13,7 +13,7 @@ export enum ActionTypes {
 
 export class StartSearch implements Action {
     readonly type = ActionTypes.START_SEARCH
-    constructor(public order: string, public direction: string, public count: number, public startIndex: number, public text: string) { }
+    constructor(public order: string, public direction: string, public count: number, public startIndex: number, public text: string, public caseFileId: string) { }
 }
 
 export class CompleteSearch implements Action {

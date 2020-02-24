@@ -800,6 +800,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             FindOrders findOrder;
             string casePlanId;
             string owner;
+            bool takeLatest;
             var parameter = new FindWorkflowInstanceParameter();
             if (query.TryGet("start_index", out startIndex))
             {
@@ -829,6 +830,11 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             if(query.TryGet("owner", out owner))
             {
                 parameter.CaseOwner = owner;
+            }
+
+            if (query.TryGet("take_latest", out takeLatest))
+            {
+                parameter.TakeLatest = takeLatest;
             }
 
             return parameter;

@@ -33,6 +33,10 @@
         background-color: rgb(149, 117, 205);
         border: 1px solid black;
     }
+
+    .is-active {
+        background-color: rgb(245, 245, 245) !important;
+    }
 }
 
 @mixin component-themes($theme) {

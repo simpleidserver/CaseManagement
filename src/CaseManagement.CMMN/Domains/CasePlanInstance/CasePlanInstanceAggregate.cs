@@ -715,7 +715,7 @@ namespace CaseManagement.CMMN.Domains
         private CaseElementInstance Handle(CaseElementCreatedEvent evt)
         {
             var existingPlanItem = WorkflowElementInstances.Where(p => p.CasePlanElementId == evt.CasePlanElementId).OrderByDescending(p => p.Version).FirstOrDefault();
-            var elt = new CaseElementInstance(evt.CasePlanElementId, evt.CreateDateTime, evt.CasePlanElementId, evt.CasePlanElementType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1, evt.ParentId)
+            var elt = new CaseElementInstance(evt.CasePlanElementInstanceId, evt.CreateDateTime, evt.CasePlanElementId, evt.CasePlanElementType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1, evt.ParentId)
             {
                 CasePlanElementName = evt.CasePlanElementName
             };

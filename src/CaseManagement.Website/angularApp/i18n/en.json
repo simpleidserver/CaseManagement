@@ -83,5 +83,16 @@
   "CASE_PLAN_INSTANCES": "Case plan instances",
   "CASE_PLAN_ID": "Case plan identifier",
   "VIEW_CASE_PLAN_INSTANCE": "View case plan instance",
-  "CASE_PLAN_INSTANCE": "Case plan instance"
+  "CASE_PLAN_INSTANCE": "Case plan instance",
+  "ACTIVE_ACTIVITIES": "Active activities",
+  "ENABLE_ACTIVITIES": "Enable activities",
+  "COMPLETED_ACTIVITIES": "Completed activities",
+  "ACTIVITY_IS_ENABLED": "Activity is enabled",
+  "CANNOT_ENABLE_ACTIVITY": "An error occured while trying to enable the activity",
+  "ENABLE": "Enable",
+  "VIEW_CASE_PLANS": "View case plans",
+  "ENTER_CASE_FILE_ID": "Enter case file identifier",
+  "FILTERS": "Filters",
+  "ENTER_CASE_PLAN_ID": "Enter case plan identifier",
+  "VIEW_CASE_PLAN_INSTANCES": "View case plan instances"
 }

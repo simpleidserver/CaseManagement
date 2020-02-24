@@ -7,6 +7,7 @@ import { StartSearch } from '../actions/caseplan';
 import { CasePlan } from '../models/caseplan.model';
 import { SearchCasePlanResult } from '../models/searchcaseplanresult.model';
 import * as fromCaseFiles from '../reducers';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'list-case-plans',
@@ -21,9 +22,10 @@ export class ListCasePlansComponent implements OnInit {
     length: number;
     casePlans$: CasePlan[] = [];
 
-    constructor(private store: Store<fromCaseFiles.CasePlanState>, private formBuilder: FormBuilder) {
+    constructor(private store: Store<fromCaseFiles.CasePlanState>, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
         this.searchForm = this.formBuilder.group({
-            text: ''
+            text: '',
+            caseFileId: ''
         });
     }
 
@@ -36,7 +38,14 @@ export class ListCasePlansComponent implements OnInit {
             this.casePlans$ = l.Content;
             this.length = l.TotalLength;
         });
-        this.refresh();
+        this.activatedRoute.queryParams.subscribe(params => {
+            var caseFileId = params['caseFileId'];
+            if (caseFileId) {
+                this.searchForm.controls['caseFileId'].setValue(caseFileId);
+            }
+
+            this.refresh();
+        });
     }
 
     onSubmit() {
@@ -58,7 +67,7 @@ export class ListCasePlansComponent implements OnInit {
             count = this.paginator.pageSize;
         }
 
-        let request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
+        let request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, this.searchForm.get('caseFileId').value);
         this.store.dispatch(request);
     }
 }

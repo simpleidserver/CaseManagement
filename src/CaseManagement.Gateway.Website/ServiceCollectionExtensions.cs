@@ -2,6 +2,7 @@
 using CaseManagement.Gateway.Website.CaseFile.CommandHandlers;
 using CaseManagement.Gateway.Website.CaseFile.QueryHandlers;
 using CaseManagement.Gateway.Website.CaseFile.Services;
+using CaseManagement.Gateway.Website.CasePlanInstance.CommandHandlers;
 using CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers;
 using CaseManagement.Gateway.Website.CasePlanInstance.Services;
 using CaseManagement.Gateway.Website.CasePlans.CommandHandlers;
@@ -96,6 +97,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddCasePlanInstance(this IServiceCollection services)
         {
+            services.TryAddTransient<IEnableCasePlanElementInstanceCommandHandler, EnableCasePlanElementInstanceCommandHandler>();
             services.TryAddTransient<IGetCasePlanInstanceQueryHandler, GetCasePlanInstanceQueryHandler>();
             services.TryAddTransient<IGetAssignedCasePlanInstanceQueryHandler, GetAssignedCasePlanInstanceQueryHandler>();
             services.TryAddTransient<ISearchAssignedCasePlanInstanceQueryHandler, SearchAssignedCasePlanInstanceQueryHandler>();

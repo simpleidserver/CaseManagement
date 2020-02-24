@@ -126,6 +126,11 @@ namespace CaseManagement.CMMN.Parser
 
         private static PlanItemDefinition BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                name = planItemDef.name;
+            }
+
             if (planItemDef is tProcessTask)
             {
                 return PlanItemDefinition.New(id, name, BuildProcessTask((tProcessTask)planItemDef));

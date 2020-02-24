@@ -13,7 +13,7 @@ import { SearchWorkerTaskResult } from '../models/searchworkertaskresult.model';
 export class CasePlanService {
     constructor(private http: HttpClient, private oauthService: OAuthService) { }
 
-    search(startIndex: number, count: number, order: string, direction: string, text: string): Observable<SearchCasePlanResult> {
+    search(startIndex: number, count: number, order: string, direction: string, text: string, caseFileId: string): Observable<SearchCasePlanResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
@@ -28,6 +28,10 @@ export class CasePlanService {
 
         if (text) {
             targetUrl = targetUrl + "&text=" + text;
+        }
+
+        if (caseFileId) {
+            targetUrl = targetUrl + "&case_file=" + caseFileId;
         }
 
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {

@@ -2,7 +2,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatDatepickerModule, MatInputModule, MatNativeDateModule } from '@angular/material';
+import { MatButtonModule, MatDatepickerModule, MatInputModule, MatNativeDateModule, MatExpansionModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -34,6 +34,7 @@ import { MatTreeModule } from '@angular/material/tree';
         MatToolbarModule,
         MatButtonModule,
         MatInputModule,
+        MatExpansionModule,
         MatGridListModule,
         MatCardModule,
         MatDividerModule,

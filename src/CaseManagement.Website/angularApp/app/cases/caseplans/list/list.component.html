@@ -12,7 +12,24 @@
                         <mat-form-field class="full-width">
                             <input matInput placeholder="{{ 'ENTER_CASE_PLAN_NAME' | translate }}" name="text" formControlName="text" />
                         </mat-form-field>
-                        <button mat-raised-button color="primary">{{ 'SEARCH' | translate }}</button>
+                        <mat-accordion>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title><mat-icon>filter_list</mat-icon>{{ 'FILTERS' | translate }}</mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div fxLayout="row" fxLayoutGap="10px">
+                                    <div fxLayout="column" fxFlex="50%" fxLayoutGap="10px">
+                                        <mat-form-field>
+                                            <input matInput placeholder="{{ 'ENTER_CASE_FILE_ID' | translate }}" name="caseFileId" formControlName="caseFileId" />
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxLayout="column" fxFlex="50%" fxLayoutGap="10px">
+
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                        <button class="mt-10" mat-raised-button color="primary">{{ 'SEARCH' | translate }}</button>
                     </form>
                 </mat-card-content>
             </mat-card>
@@ -40,6 +57,9 @@
                                     </button>
                                     <button mat-icon-button matTooltip="{{ 'VIEW_CASE_PLAN_HISTORY' | translate}}" [routerLink]="['/cases/caseplans/' + case.CaseFile + '/history']">
                                         <mat-icon>history</mat-icon>
+                                    </button>
+                                    <button mat-icon-button matTooltip="{{ 'VIEW_CASE_PLAN_INSTANCES' | translate}}" [routerLink]="['/cases/caseplaninstances']" [queryParams]="{casePlanId: case.Id}">
+                                        <mat-icon>file_copy</mat-icon>
                                     </button>
                                 </td>
                             </ng-container>

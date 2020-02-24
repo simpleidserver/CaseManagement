@@ -8,6 +8,30 @@
         <div fxLayout="column" fxLayoutGap="10px">
             <mat-card>
                 <mat-card-content>
+                    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+                        <mat-accordion>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title><mat-icon>filter_list</mat-icon>{{ 'FILTERS' | translate }}</mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div fxLayout="row" fxLayoutGap="10px">
+                                    <div fxLayout="column" fxFlex="50%" fxLayoutGap="10px">
+                                        <mat-form-field>
+                                            <input matInput placeholder="{{ 'ENTER_CASE_PLAN_ID' | translate }}" name="casePlanId" formControlName="casePlanId"  />
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxLayout="column" fxFlex="50%" fxLayoutGap="10px">
+
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                        <button style="margin-top: 10px;" mat-raised-button color="primary">{{ 'SEARCH' | translate }}</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-content>
                     <div class="mat-elevation-z8 overflow-hidden">
                         <table mat-table class="full-width" [dataSource]="casePlanInstances$" matSortActive="create_datetime" matSortDirection="desc" matSort>
                             <ng-container matColumnDef="id">

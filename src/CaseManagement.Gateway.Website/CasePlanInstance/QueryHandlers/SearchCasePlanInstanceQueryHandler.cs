@@ -1,6 +1,7 @@
 ﻿using CaseManagement.Gateway.Website.CasePlanInstance.DTOs;
 using CaseManagement.Gateway.Website.CasePlanInstance.Queries;
 using CaseManagement.Gateway.Website.CasePlanInstance.Services;
+using CaseManagement.Gateway.Website.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 

@@ -1,4 +1,48 @@
-﻿<app-navigation></app-navigation>
-<div class="content-router">
-    <router-outlet></router-outlet>
-</div>
+﻿<ng-container>
+    <mat-toolbar class="header-toolbar">
+        <a class="no-style" [routerLink]="['/home']">
+            <img src={{url}} />
+        </a>
+        <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <span class="navigation-spacer"></span>
+        <div *ngIf="isConnected">
+            <button mat-button [matMenuTriggerFor]="welcomeMenu">
+                {{ "WELCOME" | translate:{name:name} }}
+            </button>
+            <mat-menu #welcomeMenu="matMenu">
+                <button mat-menu-item (click)="disconnect()">{{ "DISCONNECT" | translate }}</button>
+            </mat-menu>
+        </div>
+        <div *ngIf="!isConnected">
+            <button mat-raised-button color="primary" (click)="login()">{{ "AUTHENTICATE" | translate }}</button>
+        </div>
+        <button mat-button [matMenuTriggerFor]="languages">{{ "LANGUAGES" | translate }}</button>
+        <mat-menu #languages="matMenu">
+            <button mat-menu-item (click)="chooseLanguage('fr')">{{ "FRENCH" | translate }}</button>
+            <button mat-menu-item (click)="chooseLanguage('en')">{{ "ENGLISH" | translate }}</button>
+        </mat-menu>
+    </mat-toolbar>
+    <mat-sidenav-container class="sidenav-container">
+        <mat-sidenav class="sidenav" #sidenav mode="side" opened [fixedInViewport]="false" [fixedTopGap]="0" [fixedBottomGap]="0">
+            <mat-nav-list>
+                <a mat-list-item (click)="toggleCases()">
+                    <mat-icon>folder</mat-icon> {{ "CASES" | translate }}
+                    <span fxFlex>
+                        <span fxFlex></span>
+                        <mat-icon [@indicatorRotate]="expanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
+                    </span>
+                </a>
+                <div *ngIf="expanded">
+                    <a mat-list-item [routerLink]="['/cases/casefiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_FILES" | translate }}</a>
+                    <a mat-list-item [routerLink]="['/cases/caseplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLANS" | translate }}</a>
+                    <a mat-list-item [routerLink]="['/cases/caseplaninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLAN_INSTANCES" | translate }}</a>
+                </div>
+            </mat-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</ng-container>

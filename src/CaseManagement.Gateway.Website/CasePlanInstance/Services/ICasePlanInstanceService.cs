@@ -17,5 +17,7 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
         Task ResumeMe(string id, string identityToken);
         Task TerminateMe(string id, string identityToken);
         Task CloseMe(string id, string identityToken);
+        Task Enable(string casePlanInstanecId, string casePlanElementInstanceId);
+        Task EnableMe(string casePlanInstanceId, string casePlanElementInstanceId, string identityToken);
     }
 }

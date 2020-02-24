@@ -7,3 +7,65 @@
         </ul>
     </div>
 </div>
+<div fxLayout="row">
+    <div fxFlex="80%" fxFlexOffset="10">
+        <div class="mat-h1">
+            {{ casePlanInstance.Name }} ({{ casePlanInstance.CreateDateTime | date:'medium' }})
+            <a [routerLink]="['/cases/caseplans/' + casePlanInstance.CasePlanId]">{{ "VIEW_CASE_PLAN" | translate }}</a>
+            <mat-chip-list>
+                <mat-chip>{{ casePlanInstance.State}}</mat-chip>
+            </mat-chip-list>
+        </div>
+        <div fxLayout="row">
+            <div fxFlex="70%">
+
+            </div>
+            <div fxFlex="30%" fxLayout="column" fxLayoutGap="10px">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>{{ "ACTIVE_ACTIVITIES"  | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-list *ngFor="let activeActivity of activeActivities">
+                            <mat-list-item>
+                                <mat-icon *ngIf="activeActivity.Type == 'task'">computer</mat-icon>
+                                {{ activeActivity.Name }}
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
+                </mat-card>
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>{{ "ENABLE_ACTIVITIES" | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-accordion style="width: 100%" *ngFor="let enableActivity of enableActivities">
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <mat-icon *ngIf="enableActivity.Type == 'task'">computer</mat-icon>
+                                        {{ enableActivity.Name }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <button mat-raised-button color="primary" (click)="enable(enableActivity)">{{ "ENABLE" | translate }}</button>
+                            </mat-expansion-panel>
+                        </mat-accordion>   
+                    </mat-card-content>
+                </mat-card>
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>{{ "COMPLETED_ACTIVITIES" | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-list *ngFor="let completeActivity of completeActivities">
+                            <mat-list-item>
+                                <mat-icon *ngIf="completeActivity.Type == 'task'">computer</mat-icon>
+                                {{ completeActivity.Name }}
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

@@ -48,6 +48,7 @@ export class CasePlanElementInstance {
     DefinitionId: string;
     FormInstanceId: string;
     State: string;
+    Type: string;
     StateHistories: StateHistory[];
     TransitionHistories: TransitionHistory[];
 
@@ -60,6 +61,7 @@ export class CasePlanElementInstance {
         result.DefinitionId = json["definition_id"];
         result.FormInstanceId = json["form_instanceid"];
         result.State = json["state"];
+        result.Type = json["type"];
         json["state_histories"].forEach(function (sh: any) {
             result.StateHistories.push(StateHistory.fromJson(sh));
         });

@@ -20,7 +20,7 @@ export class CasePlanEffects {
         .pipe(
             ofType(fromCasePlan.ActionTypes.START_SEARCH),
             mergeMap((evt: fromCasePlan.StartSearch) => {
-                return this.casePlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
+                return this.casePlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.caseFileId)
                     .pipe(
                         map(casePlans => { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH, content: casePlans }; }),
                         catchError(() => of({ type: fromCasePlan.ActionTypes.COMPLETE_SEARCH }))

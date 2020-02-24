@@ -167,5 +167,28 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
             var responseStr = await httpResponse.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<FindResponse<CasePlanInstanceResponse>>(responseStr);
         }
+
+        public async Task Enable(string casePlanInstanecId, string casePlanElementInstanceId)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/{casePlanInstanecId}/activate/{casePlanElementInstanceId}"),
+                Method = HttpMethod.Get
+            };
+            var token = await _tokenStore.GetValidToken(new[] { "activate_caseplaninstance" });
+            request.Headers.Add("Authorization", $"Bearer {token}");
+            await _httpClient.SendAsync(request);
+        }
+
+        public async Task EnableMe(string casePlanInstanceId, string casePlanElementInstanceId, string identityToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{casePlanInstanceId}/activate/{casePlanElementInstanceId}"),
+                Method = HttpMethod.Get
+            };
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            await _httpClient.SendAsync(request);
+        }
     }
 }

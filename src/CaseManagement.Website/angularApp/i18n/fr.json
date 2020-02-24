@@ -60,7 +60,7 @@
   "PUBLISH_CASE_FILE": "Le fichier de case a été publié",
   "ERROR_PUBLISH_CASE_FILE": "Une erreur est survenue durant la publication du fichier de case",
   "PUBLISH": "Publier",
-  "VIEW_CASE_FILE_HISTORY": "Voir l'historique du fichier de case",
+  "VIEW_CASE_FILE_HISTORY": "Historique du fichier de case",
   "EDIT_CASE_FILE": "Editer le fichier de case",
   "VIEW_CASE_PLAN": "Voir le plan de case",
   "VIEW_CASE_PLAN_HISTORY": "Voir l'historique du plan de case",
@@ -83,5 +83,16 @@
   "CASE_PLAN_INSTANCES": "Instances de plan de case",
   "CASE_PLAN_ID": "Identifiant du plan de case",
   "VIEW_CASE_PLAN_INSTANCE": "Voir l'instance du plan de case",
-  "CASE_PLAN_INSTANCE":  "Instance du plan de case"
+  "CASE_PLAN_INSTANCE": "Instance du plan de case",
+  "ACTIVE_ACTIVITIES": "Activités actives",
+  "ENABLE_ACTIVITIES": "Activités activées",
+  "COMPLETED_ACTIVITIES": "Activités complètes",
+  "ACTIVITY_IS_ENABLED": "L'activité est activée",
+  "CANNOT_ENABLE_ACTIVITY": "Une erreur est survenue durant l'activation de l'activité",
+  "ENABLE": "Activer",
+  "VIEW_CASE_PLANS": "Voir les plans de case",
+  "ENTER_CASE_FILE_ID": "Saisir l'identifiant du fichier de case",
+  "FILTERS": "Filtres",
+  "ENTER_CASE_PLAN_ID": "Saisir l'identifiant du plan de case",
+  "VIEW_CASE_PLAN_INSTANCES": "Voir les instances du plan de case"
 }

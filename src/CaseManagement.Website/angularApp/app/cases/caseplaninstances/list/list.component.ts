@@ -6,6 +6,8 @@ import { SearchCasePlanInstanceResult } from '../models/searchcaseplaninstancere
 import * as fromCasePlanInstance from '../reducers';
 import { StartSearch } from '../actions/caseplaninstance';
 import { merge } from 'rxjs';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'list-case-instances',
@@ -19,8 +21,13 @@ export class ListCasePlanInstancesComponent implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     casePlanInstances$: CasePlanInstance[] = [];
+    searchForm: FormGroup;
 
-    constructor(private store: Store<fromCasePlanInstance.CasePlanInstanceState>) { }
+    constructor(private store: Store<fromCasePlanInstance.CasePlanInstanceState>, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
+        this.searchForm = this.formBuilder.group({
+            casePlanId: ''
+        });
+    }
 
     ngOnInit(): void {
         this.store.pipe(select(fromCasePlanInstance.selectSearchResult)).subscribe((searchCasePlanInstanceResult: SearchCasePlanInstanceResult) => {
@@ -31,6 +38,18 @@ export class ListCasePlanInstancesComponent implements OnInit {
             this.length = searchCasePlanInstanceResult.TotalLength;
             this.casePlanInstances$ = searchCasePlanInstanceResult.Content;
         });
+
+        this.activatedRoute.queryParams.subscribe(params => {
+            var casePlanId = params['casePlanId'];
+            if (casePlanId) {
+                this.searchForm.controls['casePlanId'].setValue(casePlanId);
+            }
+
+            this.refresh();
+        });
+    }
+
+    onSubmit() {
         this.refresh();
     }
 
@@ -59,7 +78,7 @@ export class ListCasePlanInstancesComponent implements OnInit {
             direction = this.sort.direction;
         }
 
-        let request = new StartSearch(startIndex, count, active, direction);
+        let request = new StartSearch(startIndex, count, active, direction, this.searchForm.get('casePlanId').value);
         this.store.dispatch(request);
     }
 }

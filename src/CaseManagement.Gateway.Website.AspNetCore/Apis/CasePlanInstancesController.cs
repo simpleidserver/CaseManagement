@@ -1,4 +1,6 @@
 ﻿using CaseManagement.Gateway.Website.AspNetCore.Extensions;
+using CaseManagement.Gateway.Website.CasePlanInstance.CommandHandlers;
+using CaseManagement.Gateway.Website.CasePlanInstance.Commands;
 using CaseManagement.Gateway.Website.CasePlanInstance.Queries;
 using CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers;
 using Microsoft.AspNetCore.Authorization;
@@ -14,13 +16,15 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         private readonly ISearchCasePlanInstanceQueryHandler _searchCasePlanInstanceQueryHandler;
         private readonly IGetCasePlanInstanceQueryHandler _getCasePlanInstanceQueryHandler;
         private readonly IGetAssignedCasePlanInstanceQueryHandler _getAssignedCasePlanInstanceQueryHandler;
+        private readonly IEnableCasePlanElementInstanceCommandHandler _enableCasePlanElementInstanceCommandHandler;
 
-        public CasePlanInstancesController(ISearchAssignedCasePlanInstanceQueryHandler searchAssignedCasePlanInstanceQueryHandler, ISearchCasePlanInstanceQueryHandler searchCasePlanInstanceQueryHandler, IGetCasePlanInstanceQueryHandler getCasePlanInstanceQueryHandler, IGetAssignedCasePlanInstanceQueryHandler getAssignedCasePlanInstanceQueryHandler)
+        public CasePlanInstancesController(ISearchAssignedCasePlanInstanceQueryHandler searchAssignedCasePlanInstanceQueryHandler, ISearchCasePlanInstanceQueryHandler searchCasePlanInstanceQueryHandler, IGetCasePlanInstanceQueryHandler getCasePlanInstanceQueryHandler, IGetAssignedCasePlanInstanceQueryHandler getAssignedCasePlanInstanceQueryHandler, IEnableCasePlanElementInstanceCommandHandler enableCasePlanElementInstanceCommandHandler)
         {
             _searchAssignedCasePlanInstanceQueryHandler = searchAssignedCasePlanInstanceQueryHandler;
             _searchCasePlanInstanceQueryHandler = searchCasePlanInstanceQueryHandler;
             _getCasePlanInstanceQueryHandler = getCasePlanInstanceQueryHandler;
             _getAssignedCasePlanInstanceQueryHandler = getAssignedCasePlanInstanceQueryHandler;
+            _enableCasePlanElementInstanceCommandHandler = enableCasePlanElementInstanceCommandHandler;
         }
 
         [HttpGet("search")]
@@ -55,6 +59,14 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         {
             var result = await _getAssignedCasePlanInstanceQueryHandler.Handle(new GetAssignedCasePlanInstanceQuery { CasePlanInstanceId = id, IdentityToken = this.GetIdentityToken() });
             return new OkObjectResult(CasePlansController.ToDto(result));
+        }
+
+        [HttpGet("{id}/enable/{eltId}")]
+        [Authorize("enable_caseplaninstance")]
+        public async Task<IActionResult> Enable(string id, string eltId)
+        {
+            await _enableCasePlanElementInstanceCommandHandler.Handle(new EnableCasePlanElementInstanceCommand { CasePlanElementInstanceId = eltId, CasePlanInstanceId = id });
+            return new OkResult();
         }
     }
 }

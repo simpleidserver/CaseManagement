@@ -17,7 +17,7 @@ export class CasePlanInstanceEffects {
         .pipe(
             ofType(fromCasePlanInstance.ActionTypes.START_SEARCH),
             mergeMap((evt: fromCasePlanInstance.StartSearch) => {
-                return this.casePlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction)
+                return this.casePlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId)
                     .pipe(
                         map(casePlanInstances => { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH, content: casePlanInstances }; }),
                         catchError(() => of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH }))
@@ -31,7 +31,7 @@ export class CasePlanInstanceEffects {
         .pipe(
             ofType(fromCasePlanInstance.ActionTypes.START_SEARCH_ME),
             mergeMap((evt: fromCasePlanInstance.StartSearchMe) => {
-                return this.casePlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction)
+                return this.casePlanInstanceService.searchMe(evt.startIndex, evt.count, evt.order, evt.direction)
                     .pipe(
                         map(casePlanInstances => { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME, content: casePlanInstances }; }),
                         catchError(() => of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME }))
