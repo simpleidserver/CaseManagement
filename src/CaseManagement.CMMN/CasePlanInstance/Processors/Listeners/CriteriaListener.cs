@@ -106,10 +106,13 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
 
             public CriterionListener(ProcessorParameter parameter, CancellationToken cancellationToken, ICollection<Criteria> criterions)
             {
+                IsSatisfied = false;
                 _parameter = parameter;
                 _cancellationToken = cancellationToken;
                 _criterions = criterions;
             }
+
+            public bool IsSatisfied { get; set; }
 
             public void Listen()
             {
@@ -147,6 +150,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
 
                 if (_criterions.Any(c => _parameter.CaseInstance.IsCriteriaSatisfied(c, _parameter.CaseElementInstance.Version)))
                 {
+                    IsSatisfied = true;
                     Unsubscribe();
                 }
             }

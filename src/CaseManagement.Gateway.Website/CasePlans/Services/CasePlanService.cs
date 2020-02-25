@@ -2,6 +2,7 @@
 using CaseManagement.Gateway.Website.Token;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -52,6 +53,19 @@ namespace CaseManagement.Gateway.Website.CasePlans.Services
             var httpResponse = await _httpClient.SendAsync(request);
             var responseStr = await httpResponse.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<CasePlanResponse>(responseStr);
+        }
+
+        public async Task<int> Count()
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plans/count")
+            };
+            var token = await _tokenStore.GetValidToken(new[] { "get_statistic" });
+            request.Headers.Add("Authorization", $"Bearer {token}");
+            var httpResponse = await _httpClient.SendAsync(request);
+            var responseStr = await httpResponse.Content.ReadAsStringAsync();
+            return int.Parse(JObject.Parse(responseStr)["count"].ToString());
         }
     }
 }

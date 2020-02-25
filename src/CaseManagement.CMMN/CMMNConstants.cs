@@ -29,6 +29,7 @@
             public const string CaseWorkerTasks = "case-worker-tasks";
             public const string Statistics = "statistics";
             public const string Performances = "performances";
+            public const string Forms = "forms";
         }
 
         public static class ProcessImplementationTypes

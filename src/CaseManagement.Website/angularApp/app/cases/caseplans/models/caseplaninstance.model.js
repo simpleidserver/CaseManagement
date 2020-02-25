@@ -48,6 +48,7 @@ var CasePlanElementInstance = (function () {
         result.DefinitionId = json["definition_id"];
         result.FormInstanceId = json["form_instanceid"];
         result.State = json["state"];
+        result.Type = json["type"];
         json["state_histories"].forEach(function (sh) {
             result.StateHistories.push(StateHistory.fromJson(sh));
         });

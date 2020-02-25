@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using CaseManagement.CMMN.CaseInstance.Commands;
+using CaseManagement.CMMN.CasePlanInstance.Commands;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -28,17 +28,17 @@ namespace CaseManagement.CMMN.Benchmark
         [Benchmark]
         public async Task CreateCaseWithOneTask()
         {
-            var httpResult = await _client.GetAsync("http://localhost/case-definitions/search?cmmn_definition=CaseWithOneTask.cmmn");
+            var httpResult = await _client.GetAsync("http://localhost/case-plans/search?case_plan_id=CaseWithOneTask");
             var searchResult = JsonConvert.DeserializeObject<JObject>(await httpResult.Content.ReadAsStringAsync());
             var caseDefinitionId = searchResult.SelectToken("content[0].id").ToString();
             var createCaseInstance = new CreateCaseInstanceCommand
             {
-                CaseDefinitionId = caseDefinitionId
+                CasePlanId = caseDefinitionId
             };
             var httpRequestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost/case-instances"),
+                RequestUri = new Uri("http://localhost/case-plan-instances"),
                 Content = new StringContent(JsonConvert.SerializeObject(createCaseInstance), Encoding.UTF8, "application/json")
             };
             httpResult = await _client.SendAsync(httpRequestMessage);
@@ -50,29 +50,29 @@ namespace CaseManagement.CMMN.Benchmark
         [Benchmark]
         public async Task LaunchCaseWithOneTask()
         {
-            var httpResult = await _client.GetAsync("http://localhost/case-definitions/search?cmmn_definition=CaseWithOneTask.cmmn");
+            var httpResult = await _client.GetAsync("http://localhost/case-plans/search?case_plan_id=CaseWithOneTask");
             var searchResult = JsonConvert.DeserializeObject<JObject>(await httpResult.Content.ReadAsStringAsync());
             var caseDefinitionId = searchResult.SelectToken("content[0].id").ToString();
             var createCaseInstance = new CreateCaseInstanceCommand
             {
-                CaseDefinitionId = caseDefinitionId
+                CasePlanId = caseDefinitionId
             };
             var httpRequestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost/case-instances"),
+                RequestUri = new Uri("http://localhost/case-plan-instances"),
                 Content = new StringContent(JsonConvert.SerializeObject(createCaseInstance), Encoding.UTF8, "application/json")
             };
             httpResult = await _client.SendAsync(httpRequestMessage);
             var json = await httpResult.Content.ReadAsStringAsync();
             var id = JsonConvert.DeserializeObject<JObject>(json)["id"].ToString();
-            await _client.GetAsync($"http://localhost/case-instances/{id}/launch");
+            await _client.GetAsync($"http://localhost/case-plan-instances/{id}/launch");
             await PollCaseInstanceCompleted(id);
         }
 
         public async Task PollCaseInstanceCreated(string id)
         {
-            var httpResult = await _client.GetAsync($"http://localhost/case-instances/{id}");
+            var httpResult = await _client.GetAsync($"http://localhost/case-plan-instances/{id}");
             if (!httpResult.IsSuccessStatusCode)
             {
                 Thread.Sleep(MS);
@@ -83,7 +83,7 @@ namespace CaseManagement.CMMN.Benchmark
 
         public async Task PollCaseInstanceCompleted(string id)
         {
-            var httpResult = await _client.GetAsync($"http://localhost/case-instances/{id}");
+            var httpResult = await _client.GetAsync($"http://localhost/case-plan-instances/{id}");
             if (!httpResult.IsSuccessStatusCode)
             {
                 Thread.Sleep(MS);

@@ -22,8 +22,7 @@ const initialMonthStatisticAction: MonthStatisticsState = {
 const initalDeployedState: DeployedState = {
     isErrorLoadOccured: false,
     isLoading: true,
-    nbCaseDefinitions: null,
-    nbCaseFiles : null
+    content: null
 };
 
 export function statisticReducer(state = initialStatisticAction, action: ActionsUnion) {
@@ -81,8 +80,7 @@ export function deployedReducer(state = initalDeployedState, action: ActionsUnio
     switch (action.type) {
         case ActionTypes.DEPLOYEDLOADED:
             let deployedLoadedAction = <DeployedLoadedAction>action;
-            state.nbCaseDefinitions = deployedLoadedAction.nbCaseDefinitions;
-            state.nbCaseFiles = deployedLoadedAction.nbCaseFiles;
+            state.content = deployedLoadedAction.result;
             state.isLoading = false;
             state.isErrorLoadOccured = false;
             return { ...state };

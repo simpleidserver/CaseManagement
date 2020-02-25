@@ -8,7 +8,6 @@ using CaseManagement.Gateway.Website.CasePlans.QueryHandlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -64,7 +63,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             var query = Request.Query.ToEnumerable();
             var nameIdentifier = this.GetNameIdentifier();
             var result = await _searchMyLatestPublishedCaseFileQueryHandler.Handle(new SearchMyLatestPublishedCaseFileQuery(query, nameIdentifier));
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/history/search")]
@@ -79,7 +78,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
                 NameIdentifier = nameIdentifier,
                 Queries = query
             });
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}")]
@@ -92,7 +91,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
                 return new UnauthorizedResult();
             }
 
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpPut("{id}")]
@@ -114,34 +113,6 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             {
                 { "id", result }
             });
-        }
-
-        private static JObject ToDto(FindResponse<CaseFileResponse> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
-            };
-        }
-
-        private static JObject ToDto(CaseFileResponse resp)
-        {
-            return new JObject
-            {
-                { "id", resp.Id },
-                { "name", resp.Name },
-                { "description", resp.Description },
-                { "payload", resp.Payload },
-                { "create_datetime", resp.CreateDateTime },
-                { "update_datetime", resp.UpdateDateTime },
-                { "version", resp.Version },
-                { "file_id", resp.FileId },
-                { "owner", resp.Owner },
-                { "status", resp.Status }
-            };
         }
     }
 }

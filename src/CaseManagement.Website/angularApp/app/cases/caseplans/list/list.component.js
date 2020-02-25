@@ -14,14 +14,17 @@ import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
 import { StartSearch } from '../actions/caseplan';
 import * as fromCaseFiles from '../reducers';
+import { ActivatedRoute } from '@angular/router';
 var ListCasePlansComponent = (function () {
-    function ListCasePlansComponent(store, formBuilder) {
+    function ListCasePlansComponent(store, formBuilder, activatedRoute) {
         this.store = store;
         this.formBuilder = formBuilder;
+        this.activatedRoute = activatedRoute;
         this.displayedColumns = ['name', 'version', 'create_datetime', 'actions'];
         this.casePlans$ = [];
         this.searchForm = this.formBuilder.group({
-            text: ''
+            text: '',
+            caseFileId: ''
         });
     }
     ListCasePlansComponent.prototype.ngOnInit = function () {
@@ -33,7 +36,13 @@ var ListCasePlansComponent = (function () {
             _this.casePlans$ = l.Content;
             _this.length = l.TotalLength;
         });
-        this.refresh();
+        this.activatedRoute.queryParams.subscribe(function (params) {
+            var caseFileId = params['caseFileId'];
+            if (caseFileId) {
+                _this.searchForm.controls['caseFileId'].setValue(caseFileId);
+            }
+            _this.refresh();
+        });
     };
     ListCasePlansComponent.prototype.onSubmit = function () {
         this.refresh();
@@ -51,7 +60,7 @@ var ListCasePlansComponent = (function () {
         if (this.paginator.pageSize) {
             count = this.paginator.pageSize;
         }
-        var request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
+        var request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, this.searchForm.get('caseFileId').value);
         this.store.dispatch(request);
     };
     __decorate([
@@ -68,7 +77,7 @@ var ListCasePlansComponent = (function () {
             templateUrl: './list.component.html',
             styleUrls: ['./list.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, FormBuilder])
+        __metadata("design:paramtypes", [Store, FormBuilder, ActivatedRoute])
     ], ListCasePlansComponent);
     return ListCasePlansComponent;
 }());

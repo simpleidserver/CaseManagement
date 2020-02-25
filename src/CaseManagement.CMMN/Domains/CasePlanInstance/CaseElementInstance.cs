@@ -35,6 +35,25 @@ namespace CaseManagement.CMMN.Domains
         public ICollection<CaseElementInstanceTransitionHistory> TransitionHistories { get; set; }
         public event EventHandler<string> TransitionApplied;
 
+        public bool IsTaskOrStage()
+        {
+            return CasePlanElementType == CaseElementTypes.HumanTask ||
+                CasePlanElementType == CaseElementTypes.Task ||
+                CasePlanElementType == CaseElementTypes.ProcessTask ||
+                CasePlanElementType == CaseElementTypes.Stage;
+        }
+
+        public bool IsFileItem()
+        {
+            return CasePlanElementType == CaseElementTypes.CaseFileItem;
+        }
+
+        public bool IsMilestoneOrEvent()
+        {
+            return CasePlanElementType == CaseElementTypes.Milestone ||
+                CasePlanElementType == CaseElementTypes.TimerEventListener;
+        }
+
         public void UpdateState(CMMNTransitions transition, DateTime updateDateTime)
         {
             lock (_lock)
@@ -55,131 +74,6 @@ namespace CaseManagement.CMMN.Domains
             return new CaseElementInstance(Guid.NewGuid().ToString(), DateTime.UtcNow, workflowElementDefinition.Id, workflowElementDefinition.Type, 0, null);
         }
 
-        public bool CanBeTerminated()
-        {
-            lock (_lock)
-            {
-                switch (CasePlanElementType)
-                {
-                    case CaseElementTypes.HumanTask:
-                    case CaseElementTypes.ProcessTask:
-                    case CaseElementTypes.Stage:
-                    case CaseElementTypes.Task:
-                        if (State == Enum.GetName(typeof(TaskStates), TaskStates.Terminated) || State == Enum.GetName(typeof(TaskStates), TaskStates.Completed))
-                        {
-                            return false;
-                        }
-
-                        return true;
-                    case CaseElementTypes.Milestone:
-                    case CaseElementTypes.TimerEventListener:
-                        if (State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Completed) || State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Terminated))
-                        {
-                            return false;
-                        }
-
-                        return true;
-                    case CaseElementTypes.CaseFileItem:
-                        if (State == Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Discarded))
-                        {
-                            return false;
-                        }
-
-                        return true;
-                }
-
-                return false;
-            }
-        }
-
-        public bool IsAvailable()
-        {
-            lock (_lock)
-            {
-                switch (CasePlanElementType)
-                {
-                    case CaseElementTypes.HumanTask:
-                    case CaseElementTypes.ProcessTask:
-                    case CaseElementTypes.Stage:
-                    case CaseElementTypes.Task:
-                        if (State == Enum.GetName(typeof(TaskStates), TaskStates.Available))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    case CaseElementTypes.Milestone:
-                    case CaseElementTypes.TimerEventListener:
-                        if (State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    case CaseElementTypes.CaseFileItem:
-                        if (State == Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Available))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                }
-
-                return false;
-            }
-        }
-
-        public bool IsFail()
-        {
-            lock(_lock)
-            {
-                switch (CasePlanElementType)
-                {
-                    case CaseElementTypes.HumanTask:
-                    case CaseElementTypes.ProcessTask:
-                    case CaseElementTypes.Stage:
-                    case CaseElementTypes.Task:
-                        if (State == Enum.GetName(typeof(TaskStates), TaskStates.Failed))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                }
-
-                return false;
-            }
-        }
-
-        public bool IsSuspend()
-        {
-            lock(_lock)
-            {
-                switch (CasePlanElementType)
-                {
-                    case CaseElementTypes.HumanTask:
-                    case CaseElementTypes.ProcessTask:
-                    case CaseElementTypes.Stage:
-                    case CaseElementTypes.Task:
-                        if (State == Enum.GetName(typeof(TaskStates), TaskStates.Suspended))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    case CaseElementTypes.Milestone:
-                    case CaseElementTypes.TimerEventListener:
-                        if (State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Suspended))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                }
-
-                return false;
-            }
-        }
 
         public bool IsActive()
         {
@@ -402,7 +296,10 @@ namespace CaseManagement.CMMN.Domains
                             taskState = TaskStates.Terminated;
                             break;
                         case CMMNTransitions.ParentSuspend:
-                            if (State != Enum.GetName(typeof(TaskStates), TaskStates.Active))
+                            if (State != Enum.GetName(typeof(TaskStates), TaskStates.Available) &&
+                                State != Enum.GetName(typeof(TaskStates), TaskStates.Enabled) &&
+                                State != Enum.GetName(typeof(TaskStates), TaskStates.Active) &&
+                                State != Enum.GetName(typeof(TaskStates), TaskStates.Disabled))
                             {
                                 throw new AggregateValidationException(new Dictionary<string, string>
                                 {
@@ -421,7 +318,8 @@ namespace CaseManagement.CMMN.Domains
                                 });
                             }
 
-                            taskState = TaskStates.Active;
+                            var sh = StateHistories.ElementAt(StateHistories.Count() - 2);
+                            taskState = (TaskStates)Enum.Parse(typeof(TaskStates), sh.State);
                             break;
                     }
 
@@ -454,6 +352,7 @@ namespace CaseManagement.CMMN.Domains
                             milestoneState = MilestoneStates.Completed;
                             break;
                         case CMMNTransitions.Suspend:
+                        case CMMNTransitions.ParentSuspend:
                             if (State != Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available))
                             {
                                 throw new AggregateValidationException(new Dictionary<string, string>
@@ -476,6 +375,7 @@ namespace CaseManagement.CMMN.Domains
                             milestoneState = MilestoneStates.Terminated;
                             break;
                         case CMMNTransitions.Resume:
+                        case CMMNTransitions.ParentResume:
                             if (State != Enum.GetName(typeof(MilestoneStates), MilestoneStates.Suspended))
                             {
                                 throw new AggregateValidationException(new Dictionary<string, string>

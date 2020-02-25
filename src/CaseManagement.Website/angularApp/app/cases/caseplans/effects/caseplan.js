@@ -23,13 +23,18 @@ var CasePlanEffects = (function () {
         this.casePlanService = casePlanService;
         this.searchCasePlans$ = this.actions$
             .pipe(ofType(fromCasePlan.ActionTypes.START_SEARCH), mergeMap(function (evt) {
-            return _this.casePlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
+            return _this.casePlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.caseFileId)
                 .pipe(map(function (casePlans) { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH, content: casePlans }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_SEARCH }); }));
         }));
         this.getCasePlan$ = this.actions$
             .pipe(ofType(fromCasePlan.ActionTypes.START_GET), mergeMap(function (evt) {
             return _this.casePlanService.get(evt.id)
                 .pipe(map(function (casefiles) { return { type: fromCasePlan.ActionTypes.COMPLETE_GET, content: casefiles }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_GET }); }));
+        }));
+        this.searchCasePlanHistory = this.actions$
+            .pipe(ofType(fromCasePlan.ActionTypes.START_SEARCH_HISTORY), mergeMap(function (evt) {
+            return _this.casePlanService.searchHistory(evt.id, evt.startIndex, evt.count, evt.order, evt.direction)
+                .pipe(map(function (caseInstances) { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH_HISTORY, content: caseInstances }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_SEARCH_HISTORY }); }));
         }));
         this.searchCaseInstance$ = this.actions$
             .pipe(ofType(fromCaseInstance.ActionTypes.START_SEARCH), mergeMap(function (evt) {
@@ -55,6 +60,10 @@ var CasePlanEffects = (function () {
         Effect(),
         __metadata("design:type", Object)
     ], CasePlanEffects.prototype, "getCasePlan$", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], CasePlanEffects.prototype, "searchCasePlanHistory", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)

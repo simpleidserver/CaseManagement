@@ -37,7 +37,7 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public TableItem TableItem { get; set; }
 
-        public object Clone()
+        public virtual object Clone()
         {
             return new CasePlanElement(Id, Name)
             {

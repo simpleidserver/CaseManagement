@@ -62,7 +62,15 @@ var ListCaseFilesComponent = (function () {
         if (this.paginator.pageSize) {
             count = this.paginator.pageSize;
         }
-        var request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value);
+        var active = "create_datetime";
+        var direction = "desc";
+        if (this.sort.active) {
+            active = this.sort.active;
+        }
+        if (this.sort.direction) {
+            direction = this.sort.direction;
+        }
+        var request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     };
     __decorate([

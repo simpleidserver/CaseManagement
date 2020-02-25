@@ -55,7 +55,7 @@ export class LoadDeployedAction implements Action {
 
 export class DeployedLoadedAction implements Action {
     type = ActionTypes.DEPLOYEDLOADED
-    constructor(public nbCaseDefinitions: CountResult, public nbCaseFiles: CountResult) { }
+    constructor(public result: CountResult) { }
 }
 
 export type ActionsUnion = LoadStatisticAction | StatisticLoadedAction | LoadWeekStatisticsAction | WeekStatisticsLoadedAction | LoadMonthStatisticsAction | MonthStatisticsLoadedAction | LoadDeployedAction | DeployedLoadedAction;

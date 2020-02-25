@@ -41,6 +41,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 result = result.Where(fi => parameter.RoleIds.Contains(fi.PerformerRole));
             }
 
+            if (!string.IsNullOrWhiteSpace(parameter.CasePlanInstanceId))
+            {
+                result = result.Where(r => r.CasePlanInstanceId == parameter.CasePlanInstanceId);
+            }
+
             if (MAPPING_FORMINSTANCENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_FORMINSTANCENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

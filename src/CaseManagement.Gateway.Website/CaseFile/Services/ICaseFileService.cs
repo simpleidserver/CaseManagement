@@ -11,5 +11,6 @@ namespace CaseManagement.Gateway.Website.CaseFile.Services
         Task<CaseFileResponse> GetMe(string id, string identityToken);
         Task UpdateMe(string id, UpdateCaseFileParameter command, string identityToken);
         Task<string> PublishMe(string id, string identityToken);
+        Task<int> Count();
     }
 }

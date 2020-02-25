@@ -9,6 +9,7 @@ using CaseManagement.Gateway.Website.CasePlans.CommandHandlers;
 using CaseManagement.Gateway.Website.CasePlans.QueryHandlers;
 using CaseManagement.Gateway.Website.CasePlans.Services;
 using CaseManagement.Gateway.Website.CaseWorkerTask.Services;
+using CaseManagement.Gateway.Website.Form.Services;
 using CaseManagement.Gateway.Website.FormInstance.Services;
 using CaseManagement.Gateway.Website.Performance.QueryHandlers;
 using CaseManagement.Gateway.Website.Performance.Services;
@@ -37,12 +38,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddFormInstance()
                 .AddCaseWorkerTask()
                 .AddCasePlanInstance()
+                .AddForm()
                 .AddToken();
             return services;
         }
 
         public static IServiceCollection AddStatistic(this IServiceCollection services)
         {
+            services.AddTransient<ICountQueryHandler, CountQueryHandler>();
             services.TryAddTransient<IGetStatisticQueryHandler, GetStatisticQueryHandler>();
             services.TryAddTransient<ISearchStatisticQueryHandler, SearchStatisticQueryHandler>();
             services.AddHttpClient<IStatisticService, StatisticService>()
@@ -97,6 +100,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddCasePlanInstance(this IServiceCollection services)
         {
+            services.TryAddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
             services.TryAddTransient<IEnableCasePlanElementInstanceCommandHandler, EnableCasePlanElementInstanceCommandHandler>();
             services.TryAddTransient<IGetCasePlanInstanceQueryHandler, GetCasePlanInstanceQueryHandler>();
             services.TryAddTransient<IGetAssignedCasePlanInstanceQueryHandler, GetAssignedCasePlanInstanceQueryHandler>();
@@ -111,6 +115,14 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddFormInstance(this IServiceCollection services)
         {
             services.AddHttpClient<IFormInstanceService, FormInstanceService>()
+                .AddPolicyHandler(GetRetryPolicy())
+                .AddPolicyHandler(GetBreakerCircuitPolicy());
+            return services;
+        }
+
+        public static IServiceCollection AddForm(this IServiceCollection services)
+        {
+            services.AddHttpClient<IFormService, FormService>()
                 .AddPolicyHandler(GetRetryPolicy())
                 .AddPolicyHandler(GetBreakerCircuitPolicy());
             return services;

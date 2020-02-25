@@ -6,15 +6,17 @@ namespace CaseManagement.CMMN.Infrastructures.EvtStore
     {
         public SnapshotElement() { }
 
-        public SnapshotElement(long start, DateTime createDateTime, T content)
+        public SnapshotElement(long start, DateTime createDateTime, string id, T content)
         {
             Start = start;
             CreateDateTime = createDateTime;
+            Id = id;
             Content = content;
         }
 
         public long Start { get; set; }
         public DateTime CreateDateTime { get; set; }
+        public string Id { get; set; }
         public T Content { get; set; }
     }
 }

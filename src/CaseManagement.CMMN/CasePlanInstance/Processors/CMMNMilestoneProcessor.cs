@@ -66,8 +66,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                             entryCriteriaResult.Task.ContinueWith((o) =>
                             {
                                 o.Wait();
-                                parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
-                                continueExecution = false;
+                                if (entryCriteriaResult.Listener.IsSatisfied)
+                                {
+                                    parameter.CaseInstance.MakeTransitionOccur(parameter.CaseElementInstance.Id);
+                                    continueExecution = false;
+                                }
                             });
                         }
                     }

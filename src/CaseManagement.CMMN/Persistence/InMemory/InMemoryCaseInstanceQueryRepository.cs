@@ -27,7 +27,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public Task<FindResponse<CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter)
         {
-            IQueryable<Domains.CasePlanInstanceAggregate> result = _instances.AsQueryable();
+            IQueryable<CasePlanInstanceAggregate> result = _instances.AsQueryable();
             if (parameter.TakeLatest)
             {
                 result = result.OrderByDescending(r => r.Version);
@@ -56,7 +56,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<Domains.CasePlanInstanceAggregate>
+            return Task.FromResult(new FindResponse<CasePlanInstanceAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

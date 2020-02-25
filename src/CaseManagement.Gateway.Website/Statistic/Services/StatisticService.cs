@@ -46,7 +46,7 @@ namespace CaseManagement.Gateway.Website.Statistic.Services
             var queryStr = string.Join("&", lst);
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_serverOptions.ApiUrl}/statistics?{queryStr}")
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/statistics/search?{queryStr}")
             };
             var token = await _tokenStore.GetValidToken(new[] { "get_statistic" });
             request.Headers.Add("Authorization", $"Bearer {token}");

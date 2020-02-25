@@ -21,8 +21,7 @@ export interface MonthStatisticsState {
 }
 
 export interface DeployedState {
-    nbCaseFiles: CountResult;
-    nbCaseDefinitions: CountResult;
+    content: CountResult;
     isLoading: boolean;
     isErrorLoadOccured: boolean;
 }

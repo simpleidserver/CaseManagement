@@ -144,8 +144,8 @@ namespace CaseManagement.Identity
                 },
                 RedirectionUrls = new List<string>
                 {
-                    "http://localhost:51724",
-                    "http://localhost:8080"
+                    "http://localhost:51725",
+                    "http://localhost:8081"
                 },
                 PreferredTokenProfile = "Bearer",
                 ResponseTypes = new List<string>

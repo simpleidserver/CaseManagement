@@ -58,7 +58,7 @@
                 <mat-tab-group>
                     <mat-tab label="{{'CASE_INSTANCES' | translate}}">
                         <div class="mat-elevation-z8 overflow-hidden">
-                            <table mat-table class="full-width" [dataSource]="casePlanInstances$" matSort #casePlanInstanceSort="matSort">
+                            <table mat-table class="full-width" [dataSource]="casePlanInstances$" matSortActive="create_datetime" matSortDirection="desc" matSort #casePlanInstanceSort="matSort">
                                 <ng-container matColumnDef="id">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "ID" | translate }}</th>
                                     <td mat-cell *matCellDef="let case">{{case.Id}}</td>
@@ -100,7 +100,7 @@
                     </mat-tab>
                     <mat-tab label="{{ 'CASE_FORM_INSTANCES' | translate}}">
                         <div class="mat-elevation-z8 overflow-hidden">
-                            <table mat-table class="full-width" [dataSource]="formInstances$" matSort #formInstanceSort="matSort">
+                            <table mat-table class="full-width" [dataSource]="formInstances$" matSortActive="create_datetime" matSortDirection="desc" matSort #formInstanceSort="matSort">
                                 <ng-container matColumnDef="form_id">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "FORM_ID" | translate }}</th>
                                     <td mat-cell *matCellDef="let formInstance">{{ formInstance.FormId }}</td>
@@ -133,7 +133,7 @@
                     </mat-tab>
                     <mat-tab label="{{ 'CASE_WORKER_TASKS' | translate}}">
                         <div class="mat-elevation-z8 overflow-hidden">
-                            <table mat-table class="full-width" [dataSource]="workerTasks$" matSort #workerTaskSort="matSort">
+                            <table mat-table class="full-width" [dataSource]="workerTasks$" matSortActive="create_datetime" matSortDirection="desc" matSort #workerTaskSort="matSort">
                                 <ng-container matColumnDef="type">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "TYPE" | translate }}</th>
                                     <td mat-cell *matCellDef="let workerTask">{{ workerTask.Type }}</td>

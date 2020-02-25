@@ -29,16 +29,6 @@
                                                           [doughnut]="false">
                                     </ngx-charts-pie-chart>
                                 </div>
-                                <div fxFlex="30%">
-                                    <h4 class="mat-h4">{{ "ACTIVATION_STATUS" | translate }}</h4>
-                                    <ngx-charts-pie-chart [view]="viewPie"
-                                                          [results]="activationStatistic"
-                                                          [scheme]="activationStatisticColorScheme"
-                                                          [legend]="false"
-                                                          [labels]="true"
-                                                          [doughnut]="false">
-                                    </ngx-charts-pie-chart>
-                                </div>
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -84,22 +74,6 @@
                                                 </ngx-charts-line-chart>
                                             </div>
                                         </div>
-                                        <div>
-                                            <h4 class="mat-h4">{{ "ACTIVATION_STATUS" | translate }}</h4>
-                                            <ngx-charts-line-chart [view]="viewChart"
-                                                                   [showXAxisLabel]="true"
-                                                                   [showYAxisLabel]="true"
-                                                                   [xAxis]="true"
-                                                                   [yAxis]="true"
-                                                                   [xAxisLabel]="Date"
-                                                                   [yAxisLabel]="State"
-                                                                   [timeline]="true"
-                                                                   [legend]="false"
-                                                                   [results]="activationWeekStatistic"
-                                                                   [scheme]="activationStatisticColorScheme">
-
-                                            </ngx-charts-line-chart>
-                                        </div>
                                     </div>
                                 </mat-tab>
                                 <mat-tab label="{{ 'THIS_MONTH' | translate }}">
@@ -138,22 +112,6 @@
                                                 </ngx-charts-line-chart>
                                             </div>
                                         </div>
-                                        <div>
-                                            <h4 class="mat-h4">{{ "ACTIVATION_STATUS" | translate }}</h4>
-                                            <ngx-charts-line-chart [view]="viewChart"
-                                                                   [showXAxisLabel]="true"
-                                                                   [showYAxisLabel]="true"
-                                                                   [xAxis]="true"
-                                                                   [yAxis]="true"
-                                                                   [xAxisLabel]="Date"
-                                                                   [yAxisLabel]="State"
-                                                                   [timeline]="true"
-                                                                   [legend]="false"
-                                                                   [results]="activationMonthStatistic"
-                                                                   [scheme]="activationStatisticColorScheme">
-
-                                            </ngx-charts-line-chart>
-                                        </div>
                                     </div>
                                 </mat-tab>
                             </mat-tab-group>
@@ -173,8 +131,8 @@
                                 <h2>{{ nbCaseFiles }}</h2>
                             </mat-list-item>
                             <mat-list-item>
-                                <h4 mat-line>{{ "CASE_DEFINITIONS" | translate}}</h4>
-                                <h2>{{ nbCaseDefinitions }}</h2>
+                                <h4 mat-line>{{ "CASE_PLANS" | translate}}</h4>
+                                <h2>{{ nbCasePlans }}</h2>
                             </mat-list-item>
                         </mat-list>
                     </mat-card-content>

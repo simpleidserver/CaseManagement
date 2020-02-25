@@ -11,68 +11,47 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import * as fromCaseInstance from '../actions/caseinstance';
-import * as fromCasePlan from '../actions/caseplan';
-import * as fromCaseWorker from '../actions/caseworker';
-import * as fromFormInstance from '../actions/forminstance';
-import { CasePlanService } from '../services/caseplan.service';
-var CasePlanEffects = (function () {
-    function CasePlanEffects(actions$, casePlanService) {
+import * as fromCasePlanInstance from '../actions/caseplaninstance';
+import { CasePlanInstanceService } from '../services/caseplaninstance.service';
+var CasePlanInstanceEffects = (function () {
+    function CasePlanInstanceEffects(actions$, casePlanInstanceService) {
         var _this = this;
         this.actions$ = actions$;
-        this.casePlanService = casePlanService;
-        this.searchCasePlans$ = this.actions$
-            .pipe(ofType(fromCasePlan.ActionTypes.START_SEARCH), mergeMap(function (evt) {
-            return _this.casePlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text)
-                .pipe(map(function (casePlans) { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH, content: casePlans }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_SEARCH }); }));
+        this.casePlanInstanceService = casePlanInstanceService;
+        this.searchCasePlanInstance$ = this.actions$
+            .pipe(ofType(fromCasePlanInstance.ActionTypes.START_SEARCH), mergeMap(function (evt) {
+            return _this.casePlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId)
+                .pipe(map(function (casePlanInstances) { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH, content: casePlanInstances }; }), catchError(function () { return of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH }); }));
         }));
-        this.getCasePlan$ = this.actions$
-            .pipe(ofType(fromCasePlan.ActionTypes.START_GET), mergeMap(function (evt) {
-            return _this.casePlanService.get(evt.id)
-                .pipe(map(function (casefiles) { return { type: fromCasePlan.ActionTypes.COMPLETE_GET, content: casefiles }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_GET }); }));
+        this.searchMyCasePlanInstance$ = this.actions$
+            .pipe(ofType(fromCasePlanInstance.ActionTypes.START_SEARCH_ME), mergeMap(function (evt) {
+            return _this.casePlanInstanceService.searchMe(evt.startIndex, evt.count, evt.order, evt.direction)
+                .pipe(map(function (casePlanInstances) { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME, content: casePlanInstances }; }), catchError(function () { return of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME }); }));
         }));
-        this.searchCaseInstance$ = this.actions$
-            .pipe(ofType(fromCaseInstance.ActionTypes.START_SEARCH), mergeMap(function (evt) {
-            return _this.casePlanService.searchCasePlanInstance(evt.id, evt.startIndex, evt.count, evt.order, evt.direction)
-                .pipe(map(function (caseInstances) { return { type: fromCaseInstance.ActionTypes.COMPLETE_SEARCH, content: caseInstances }; }), catchError(function () { return of({ type: fromCaseInstance.ActionTypes.COMPLETE_SEARCH }); }));
-        }));
-        this.searchWorkerTask$ = this.actions$
-            .pipe(ofType(fromCaseWorker.ActionTypes.START_SEARCH), mergeMap(function (evt) {
-            return _this.casePlanService.searchWorkerTask(evt.id, evt.startIndex, evt.count, evt.order, evt.direction)
-                .pipe(map(function (workerTask) { return { type: fromCaseWorker.ActionTypes.COMPLETE_SEARCH, content: workerTask }; }), catchError(function () { return of({ type: fromCaseWorker.ActionTypes.COMPLETE_SEARCH }); }));
-        }));
-        this.searchFormInstance$ = this.actions$
-            .pipe(ofType(fromFormInstance.ActionTypes.START_SEARCH), mergeMap(function (evt) {
-            return _this.casePlanService.searchFormInstance(evt.id, evt.startIndex, evt.count, evt.order, evt.direction)
-                .pipe(map(function (formInstance) { return { type: fromFormInstance.ActionTypes.COMPLETE_SEARCH, content: formInstance }; }), catchError(function () { return of({ type: fromFormInstance.ActionTypes.COMPLETE_SEARCH }); }));
+        this.selectGetCasePlanInstance = this.actions$
+            .pipe(ofType(fromCasePlanInstance.ActionTypes.START_GET), mergeMap(function (evt) {
+            return _this.casePlanInstanceService.get(evt.id)
+                .pipe(map(function (casePlanInstance) { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_GET, content: casePlanInstance }; }), catchError(function () { return of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_GET }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "searchCasePlans$", void 0);
+    ], CasePlanInstanceEffects.prototype, "searchCasePlanInstance$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "getCasePlan$", void 0);
+    ], CasePlanInstanceEffects.prototype, "searchMyCasePlanInstance$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "searchCaseInstance$", void 0);
-    __decorate([
-        Effect(),
-        __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "searchWorkerTask$", void 0);
-    __decorate([
-        Effect(),
-        __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "searchFormInstance$", void 0);
-    CasePlanEffects = __decorate([
+    ], CasePlanInstanceEffects.prototype, "selectGetCasePlanInstance", void 0);
+    CasePlanInstanceEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            CasePlanService])
-    ], CasePlanEffects);
-    return CasePlanEffects;
+            CasePlanInstanceService])
+    ], CasePlanInstanceEffects);
+    return CasePlanInstanceEffects;
 }());
-export { CasePlanEffects };
-//# sourceMappingURL=caseplan.js.map
+export { CasePlanInstanceEffects };
+//# sourceMappingURL=caseplaninstance.js.map

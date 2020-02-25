@@ -10,39 +10,6 @@
     <ProjectReference Include="..\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Cmmns\caseWithOneBlockedSEntry.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneCaseFileItem.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneFailProcessTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneHumanTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneLongProcessTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneManualActivationTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneSEntry.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithOneTimerEventListener.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithRepetitionRule.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\caseWithTwoStages.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="oauth_puk.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

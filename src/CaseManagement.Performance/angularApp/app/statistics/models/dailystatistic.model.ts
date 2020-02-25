@@ -8,8 +8,6 @@ export class DailyStatistic {
     NbClosedCases: number;
     NbConfirmedForms: number;
     NbCreatedForms: number;
-    NbCreatedActivation: number;
-    NbConfirmedActivation: number;
 
     public static fromJson(json: any): DailyStatistic {
         var result = new DailyStatistic();
@@ -22,8 +20,6 @@ export class DailyStatistic {
         result.NbClosedCases = json["nb_closed_cases"];
         result.NbConfirmedForms = json["nb_confirmed_forms"];
         result.NbCreatedForms = json["nb_created_forms"];
-        result.NbCreatedActivation = json["nb_created_activations"];
-        result.NbConfirmedActivation = json["nb_confirmed_activations"];
         return result;
     }
 }

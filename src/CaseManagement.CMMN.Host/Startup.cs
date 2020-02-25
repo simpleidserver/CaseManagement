@@ -103,6 +103,9 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("get_casefile", p => p.RequireClaim("scope", "get_casefile"));
                 // Form instances
                 policy.AddPolicy("get_forminstances", p => p.RequireClaim("scope", "get_forminstances"));
+                // Form
+                policy.AddPolicy("get_form", p => p.RequireClaim("scope", "get_form"));
+                policy.AddPolicy("search_form", p => p.RequireClaim("scope", "search_form"));
                 // Case plan instance
                 policy.AddPolicy("search_caseplaninstance", p => p.RequireClaim("scope", "search_caseplaninstance"));
                 policy.AddPolicy("me_search_caseplaninstance", p =>
@@ -201,7 +204,6 @@ namespace CaseManagement.CMMN.Host
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            var files = Directory.EnumerateFiles(Path.Combine(_env.ContentRootPath, "Cmmns"), "*.cmmn").ToList();
             services.AddHostedService<BusHostedService>();
             services.AddCMMNApi();
             services.AddCMMNEngine()
@@ -227,55 +229,31 @@ namespace CaseManagement.CMMN.Host
                 {
                     new FormAggregate
                     {
-                        Id = "form",
+                        Id = FormAggregate.BuildIdentifier("form", 0),
+                        Titles = new List<Translation>
+                        {
+                            new Translation("fr", "Mettre à jour le client"),
+                            new Translation("en", "Update the client")
+                        },
+                        FormId ="form",
                         Elements = new List<FormElement>
                         {
                             new FormElement
                             {
                                 Id = "name",
-                                Type = FormElementTypes.TXT
+                                Type = FormElementTypes.TXT,
+                                Names = new List<Translation>
+                                {
+                                    new Translation("fr", "Nom"),
+                                    new Translation("en", "Name")
+                                },
+                                Descriptions = new List<Translation>
+                                {
+                                    new Translation("fr", "Nom du client"),
+                                    new Translation("en", "Name of the client")
+                                }
                             }
                         }
-                    }
-                })
-                .AddStatistics(new ConcurrentBag<DailyStatisticAggregate>
-                {
-                    new DailyStatisticAggregate
-                    {
-                        DateTime = DateTime.UtcNow.AddDays(-8).Date,
-                        NbActiveCases = 2,
-                        NbClosedCases = 1,
-                        NbCompletedCases = 10,
-                        NbFailedCases = 11,
-                        NbSuspendedCases = 12,
-                        NbTerminatedCases = 20,
-                        NbConfirmedActivation = 2,
-                        NbCreatedActivation = 2,
-                        NbConfirmedForm = 1,
-                        NbCreatedForm = 1
-                    },
-                    new DailyStatisticAggregate
-                    {
-                        DateTime = DateTime.UtcNow.AddDays(-1).Date,
-                        NbActiveCases = 10,
-                        NbClosedCases = 10,
-                        NbCompletedCases = 10,
-                        NbFailedCases = 0,
-                        NbSuspendedCases = 0,
-                        NbTerminatedCases = 0,
-                        NbConfirmedActivation = 10,
-                        NbConfirmedForm = 2,
-                        NbCreatedForm = 0,
-                        NbCreatedActivation = 3
-                    },
-                    new DailyStatisticAggregate
-                    {
-                        DateTime = DateTime.UtcNow.Date,
-                        NbActiveCases = 2,
-                        NbConfirmedActivation = 1,
-                        NbConfirmedForm = 1,
-                        NbCreatedForm = 1,
-                        NbCreatedActivation = 1
                     }
                 });
             services.Configure<ForwardedHeadersOptions>(options =>

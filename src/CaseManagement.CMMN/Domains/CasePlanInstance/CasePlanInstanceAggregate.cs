@@ -27,6 +27,7 @@ namespace CaseManagement.CMMN.Domains
             WorkflowElementInstances = new List<CaseElementInstance>();
             DomainEvents = new List<DomainEvent>();
             Roles = new List<string>();
+            TechnicalId = Guid.NewGuid().ToString();
         }
 
         public CasePlanInstanceAggregate(string id, DateTime createDateTime, string casePlanId) : base()
@@ -35,6 +36,8 @@ namespace CaseManagement.CMMN.Domains
             CreateDateTime = createDateTime;
             CasePlanId = casePlanId;
         }
+
+        public string TechnicalId { get; set; }
         
         public string CasePlanId { get; set; }
         public string CasePlanName { get; set; }
@@ -322,7 +325,7 @@ namespace CaseManagement.CMMN.Domains
                 {
                     foreach (var elt in WorkflowElementInstances)
                     {
-                        if (elt.IsFail())
+                        if (elt.IsTaskOrStage() && elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Failed))
                         {
                             MakeTransition(elt.Id, CMMNTransitions.Reactivate);
                         }
@@ -344,48 +347,6 @@ namespace CaseManagement.CMMN.Domains
             }
         }
 
-        public void MakeTransitionEnable(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsAvailable())
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Enable, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionAddChild(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsAvailable())
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.AddChild, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
         public void MakeTransitionStart(string elementId)
         {
             lock (DomainEvents)
@@ -396,12 +357,33 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsAvailable())
+                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
                 {
                     return;
                 }
 
                 var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Start, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionEnable(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
+                {
+                    return;
+                }
+
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Enable, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -417,12 +399,54 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsActive())
+                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Active))
                 {
                     return;
                 }
 
                 var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Fault, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionReactivate(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+                
+                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Failed))
+                {
+                    return;
+                }
+
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Reactivate, DateTime.UtcNow);
+                Handle(evt);
+                DomainEvents.Add(evt);
+            }
+        }
+
+        public void MakeTransitionAddChild(string elementId)
+        {
+            lock (DomainEvents)
+            {
+                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
+                if (elt == null)
+                {
+                    return;
+                }
+
+                if (!elt.IsFileItem() && elt.State != Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Available))
+                {
+                    return;
+                }
+
+                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.AddChild, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -438,33 +462,12 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsAvailable())
+                if (!elt.IsMilestoneOrEvent() && elt.State != Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available))
                 {
                     return;
                 }
 
                 var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Occur, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionReactivate(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsFail())
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Reactivate, DateTime.UtcNow);
                 Handle(evt);
                 DomainEvents.Add(evt);
             }
@@ -480,7 +483,12 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsActive())
+                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Available) ||
+                            elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Enabled) ||
+                            elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active) ||
+                            elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Disabled));
+                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available);
+                if (!isValidTask && !isValidMilestone)
                 {
                     return;
                 }
@@ -501,7 +509,9 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsActive())
+                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active));
+                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available);
+                if (!isValidTask && !isValidMilestone)
                 {
                     return;
                 }
@@ -522,7 +532,9 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsSuspend())
+                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Suspended));
+                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Suspended);
+                if (!isValidTask && !isValidMilestone)
                 {
                     return;
                 }
@@ -543,7 +555,9 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsSuspend())
+                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Suspended));
+                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Suspended);
+                if (!isValidTask && !isValidMilestone)
                 {
                     return;
                 }
@@ -564,7 +578,15 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.CanBeTerminated())
+                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Suspended) ||
+                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Available) ||
+                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Enabled) ||
+                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Disabled) ||
+                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active) ||
+                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Failed));
+                var isValidMilestone = elt.IsMilestoneOrEvent() && (elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available) ||
+                    elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Terminated));
+                if (!isValidTask && !isValidMilestone)
                 {
                     return;
                 }
@@ -585,7 +607,9 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsActive())
+                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active));
+                var isValidMilestone = elt.IsMilestoneOrEvent() && (elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available));
+                if (!isValidTask && !isValidMilestone)
                 {
                     return;
                 }
@@ -606,7 +630,8 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsActive())
+                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active));
+                if (!isValidTask)
                 {
                     return;
                 }
@@ -889,6 +914,7 @@ namespace CaseManagement.CMMN.Domains
         {
             return new CasePlanInstanceAggregate(Id, CreateDateTime, CasePlanId)
             {
+                TechnicalId = TechnicalId,
                 ExecutionContext = ExecutionContext == null ? null : (CaseInstanceExecutionContext)ExecutionContext.Clone(),
                 ExecutionHistories = ExecutionHistories == null ? null : ExecutionHistories.Select(e => (CaseElementExecutionHistory)e.Clone()).ToList(),
                 State = State,

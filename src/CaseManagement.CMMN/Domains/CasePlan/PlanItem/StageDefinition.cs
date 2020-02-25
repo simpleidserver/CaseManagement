@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class StageDefinition
+    public class StageDefinition : ICloneable
     {
         public StageDefinition(string name)
         {
@@ -12,5 +14,13 @@ namespace CaseManagement.CMMN.Domains
 
         public string Name { get; set; }
         public ICollection<CasePlanElement> Elements { get; set; }
+
+        public object Clone()
+        {
+            return new StageDefinition(Name)
+            {
+                Elements = Elements.Select(e => (CasePlanElement)e.Clone()).ToList()
+            };
+        }
     }
 }

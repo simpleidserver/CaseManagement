@@ -2,6 +2,7 @@
 using CaseManagement.Gateway.Website.Token;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -188,6 +189,19 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            await _httpClient.SendAsync(request);
+        }
+
+        public async Task ConfirmForm(string casePlanInstanceId, string casePlanElementInstanceId, JObject content) 
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/{casePlanInstanceId}/confirm/{casePlanElementInstanceId}"),
+                Method = HttpMethod.Post,
+                Content = new StringContent(content.ToString(), Encoding.UTF8, "application/json")
+            };
+            var token = await _tokenStore.GetValidToken(new[] { "confirm_caseplaninstance" });
+            request.Headers.Add("Authorization", $"Bearer {token}");
             await _httpClient.SendAsync(request);
         }
     }

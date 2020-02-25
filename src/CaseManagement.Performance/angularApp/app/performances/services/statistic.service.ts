@@ -13,7 +13,7 @@ export class StatisticService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        let targetUrl = process.env.API_URL + "/statistics/performances";
+        let targetUrl = process.env.API_URL + "/performances";
         return this.http.get<string[]>(targetUrl, { headers: headers });
     }
 
@@ -21,7 +21,7 @@ export class StatisticService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        let targetUrl = process.env.API_URL + "/statistics/performances/search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
+        let targetUrl = process.env.API_URL + "/performances/search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }

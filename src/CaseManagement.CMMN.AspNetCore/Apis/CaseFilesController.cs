@@ -1,20 +1,11 @@
 ﻿using CaseManagement.CMMN.AspNetCore.Extensions;
-using CaseManagement.CMMN.CaseFile.CommandHandlers;
+using CaseManagement.CMMN.CaseFile;
 using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Exceptions;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -23,142 +14,33 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     [Route(CMMNConstants.RouteNames.CaseFiles)]
     public class CaseFilesController : Controller
     {
-        private readonly ICaseFileQueryRepository _queryRepository;
-        private readonly IAddCaseFileCommandHandler _addCaseFileCommandHandler;
-        private readonly IUpdateCaseFileCommandHandler _updateCaseFileCommandHandler;
-        private readonly IPublishCaseFileCommandHandler _publishCaseFileCommandHandler;
+        private readonly ICaseFileService _caseFileService;
 
-        public CaseFilesController(ICaseFileQueryRepository queryRepository, IAddCaseFileCommandHandler addCaseFileCommandHandler, IUpdateCaseFileCommandHandler updateCaseFileCommandHandler, IPublishCaseFileCommandHandler publishCaseFileCommandHandler)
+        public CaseFilesController(ICaseFileService caseFileService)
         {
-            _queryRepository = queryRepository;
-            _addCaseFileCommandHandler = addCaseFileCommandHandler;
-            _updateCaseFileCommandHandler = updateCaseFileCommandHandler;
-            _publishCaseFileCommandHandler = publishCaseFileCommandHandler;
+            _caseFileService = caseFileService;
         }
 
         [HttpGet("count")]
         [Authorize("get_statistic")]
         public async Task<IActionResult> Count()
         {
-            var result = await _queryRepository.Count();
-            return new OkObjectResult(new
-            {
-                count = result
-            });
+            var result = await _caseFileService.Count();
+            return new OkObjectResult(result);
         }
 
         [HttpPost("me")]
         [Authorize("me_add_casefile")]
-        public Task<IActionResult> AddMe([FromBody] AddCaseFileCommand parameter)
-        {
-            parameter.Owner = this.GetNameIdentifier();
-            return InternalAdd(parameter);
-        }
-
-        [HttpPost]
-        [Authorize("add_casefile")]
-        public Task<IActionResult> Add([FromBody] AddCaseFileCommand parameter)
-        {
-            return InternalAdd(parameter);
-        }
-
-        [HttpPut("me/{id}")]
-        [Authorize("me_update_casefile")]
-        public Task<IActionResult> UpdateMe(string id, [FromBody] UpdateCaseFileCommand parameter)
-        {
-            parameter.Id = id;
-            parameter.BypassUserValidation = false;
-            parameter.Performer = this.GetNameIdentifier();
-            return InternalUpdate(parameter);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize("update_casefile")]
-        public Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
-        {
-            parameter.Id = id;
-            parameter.BypassUserValidation = true;
-            return InternalUpdate(parameter);
-        }
-
-        [HttpGet("me/{id}/publish")]
-        [Authorize("me_publish_casefile")]
-        public Task<IActionResult> PublishMe(string id)
-        {
-            var cmd = new PublishCaseFileCommand
-            {
-                Id = id,
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            };
-            return InternalPublish(cmd);
-        }
-
-        [HttpGet("{id}/publish")]
-        [Authorize("publish_casefile")]
-        public Task<IActionResult> Publish(string id)
-        {
-            var cmd = new PublishCaseFileCommand
-            {
-                Id = id,
-                BypassUserValidation = true
-            };
-            return InternalPublish(cmd);
-        }
-
-        [HttpGet("search")]
-        [Authorize("get_casefile")]
-        public async Task<IActionResult> Search()
-        {
-            var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _queryRepository.Find(ExtractFindParameter(query));
-            return new OkObjectResult(ToDto(result));
-        }
-
-        [HttpGet("me/{id}")]
-        [Authorize("me_get_casefile")]
-        public async Task<IActionResult> GetMe(string id)
-        {
-            var result = await _queryRepository.FindById(id);
-            if (result == null)
-            {
-                return new NotFoundResult();
-            }
-
-            if (result.Owner != this.GetNameIdentifier())
-            {
-                return new UnauthorizedResult();
-            }
-
-            return new OkObjectResult(ToDto(result));
-        }
-
-        [HttpGet("{id}")]
-        [Authorize("get_casefile")]
-        public async Task<IActionResult> Get(string id)
-        {
-            var result = await _queryRepository.FindById(id);
-            if (result == null)
-            {
-                return new NotFoundResult();
-            }
-
-            return new OkObjectResult(ToDto(result));
-        }
-
-        private async Task<IActionResult> InternalAdd(AddCaseFileCommand parameter)
+        public async Task<IActionResult> AddMe([FromBody] AddCaseFileCommand parameter)
         {
             try
             {
-                var result = await _addCaseFileCommandHandler.Handle(parameter);
-                var jObj = new JObject
-                {
-                    { "id", result }
-                };
+                parameter.Owner = this.GetNameIdentifier();
+                var result = await _caseFileService.Add(parameter);
                 return new ContentResult
                 {
                     StatusCode = (int)HttpStatusCode.Created,
-                    Content = jObj.ToString()
+                    Content = result.ToString()
                 };
             }
             catch (AggregateValidationException ex)
@@ -167,11 +49,34 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
-        private async Task<IActionResult> InternalUpdate(UpdateCaseFileCommand parameter)
+        [HttpPost]
+        [Authorize("add_casefile")]
+        public async Task<IActionResult> Add([FromBody] AddCaseFileCommand parameter)
         {
             try
             {
-                await _updateCaseFileCommandHandler.Handle(parameter);
+                var result = await _caseFileService.Add(parameter);
+                return new ContentResult
+                {
+                    StatusCode = (int)HttpStatusCode.Created,
+                    Content = result.ToString()
+                };
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPut("me/{id}")]
+        [Authorize("me_update_casefile")]
+        public async Task<IActionResult> UpdateMe(string id, [FromBody] UpdateCaseFileCommand parameter)
+        {
+            try
+            {
+                parameter.Id = id;
+                parameter.Performer = this.GetNameIdentifier();
+                await _caseFileService.UpdateMe(parameter);
                 return new OkResult();
             }
             catch (UnknownCaseFileException)
@@ -188,15 +93,15 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
-        private async Task<IActionResult> InternalPublish(PublishCaseFileCommand publishCaseFileCommand)
+        [HttpPut("{id}")]
+        [Authorize("update_casefile")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
         {
             try
             {
-                var newCaseFileId = await _publishCaseFileCommandHandler.Handle(publishCaseFileCommand);
-                return new OkObjectResult(new JObject
-                {
-                    { "id", newCaseFileId }
-                });
+                parameter.Id = id;
+                await _caseFileService.Update(parameter);
+                return new OkResult();
             }
             catch (UnknownCaseFileException)
             {
@@ -212,63 +117,106 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
-        private static JObject ToDto(FindResponse<CaseFileAggregate> resp)
+        [HttpGet("me/{id}/publish")]
+        [Authorize("me_publish_casefile")]
+        public async Task<IActionResult> PublishMe(string id)
         {
-            return new JObject
+            try
             {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
-            };
+                var cmd = new PublishCaseFileCommand
+                {
+                    Id = id,
+                    Performer = this.GetNameIdentifier()
+                };
+                var result = await _caseFileService.PublishMe(cmd);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownCaseFileException)
+            {
+                return new NotFoundResult();
+            }
+            catch (UnauthorizedCaseFileException)
+            {
+                return new UnauthorizedResult();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
         }
 
-        private static JObject ToDto(CaseFileAggregate resp)
+        [HttpGet("{id}/publish")]
+        [Authorize("publish_casefile")]
+        public async Task<IActionResult> Publish(string id)
         {
-            return new JObject
+            try
             {
-                { "id", resp.Id },
-                { "name", resp.Name },
-                { "description", resp.Description },
-                { "payload", resp.Payload },
-                { "create_datetime", resp.CreateDateTime },
-                { "update_datetime", resp.UpdateDateTime },
-                { "version", resp.Version },
-                { "file_id", resp.FileId },
-                { "owner", resp.Owner },
-                { "status", Enum.GetName(typeof(CaseFileStatus), resp.Status).ToLowerInvariant() }
-            };
+                var cmd = new PublishCaseFileCommand
+                {
+                    Id = id
+                };
+                var result = await _caseFileService.Publish(cmd);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownCaseFileException)
+            {
+                return new NotFoundResult();
+            }
+            catch (UnauthorizedCaseFileException)
+            {
+                return new UnauthorizedResult();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
         }
 
-        private static FindCaseFilesParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
+        [HttpGet("search")]
+        [Authorize("get_casefile")]
+        public async Task<IActionResult> Search()
         {
-            string owner;
-            string text;
-            bool takeLatest = false;
-            string caseFileId;
-            var parameter = new FindCaseFilesParameter();
-            parameter.ExtractFindParameter(query);
-            if (query.TryGet("owner", out owner))
-            {
-                parameter.Owner = owner;
-            }
+            var query = HttpContext.Request.Query.ToEnumerable();
+            var result = await _caseFileService.Search(query);
+            return new OkObjectResult(result);
+        }
 
-            if (query.TryGet("text", out text))
+        [HttpGet("me/{id}")]
+        [Authorize("me_get_casefile")]
+        public async Task<IActionResult> GetMe(string id)
+        {
+            try
             {
-                parameter.Text = text;
+                var result = await _caseFileService.GetMe(id, this.GetNameIdentifier());
+                return new OkObjectResult(result);
             }
-
-            if (query.TryGet("take_latest", out takeLatest))
+            catch(UnknownCaseFileException)
             {
-                parameter.TakeLatest = takeLatest;
+                return new NotFoundResult();
             }
-
-            if (query.TryGet("case_file_id", out caseFileId))
+            catch(UnauthorizedCaseFileException)
             {
-                parameter.CaseFileId = caseFileId;
+                return new UnauthorizedResult();
             }
+        }
 
-            return parameter;
+        [HttpGet("{id}")]
+        [Authorize("get_casefile")]
+        public async Task<IActionResult> Get(string id)
+        {
+            try
+            {
+                var result = await _caseFileService.Get(id);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownCaseFileException)
+            {
+                return new NotFoundResult();
+            }
+            catch (UnauthorizedCaseFileException)
+            {
+                return new UnauthorizedResult();
+            }
         }
     }
 }

@@ -18,11 +18,11 @@ export var initialState = {
 export function searchReducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH:
+        case fromActions.ActionTypes.COMPLETE_SEARCH_HISTORY:
             state.content = action.content;
             return __assign({}, state);
         default:
             return state;
     }
 }
-//# sourceMappingURL=search.reducer.js.map
+//# sourceMappingURL=searchhistory.reducer.js.map

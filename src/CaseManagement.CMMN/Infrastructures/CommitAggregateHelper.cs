@@ -46,7 +46,7 @@ namespace CaseManagement.CMMN.Infrastructures
 
             if (((aggregate.Version - 1) % _serverOptions.SnapshotFrequency) == 0)
             {
-                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, aggregate));
+                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, streamName, aggregate));
             }
         }
 
@@ -69,7 +69,7 @@ namespace CaseManagement.CMMN.Infrastructures
 
             if (((aggregateVersion - 1) % _serverOptions.SnapshotFrequency) == 0)
             {
-                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, aggregate));
+                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, streamName, aggregate));
             }
         }
     }

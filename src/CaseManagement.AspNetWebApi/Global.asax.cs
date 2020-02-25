@@ -1,8 +1,8 @@
 ﻿using CaseManagement.CMMN;
+using CaseManagement.CMMN.Domains;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
-using System.Linq;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -18,9 +18,38 @@ namespace CaseManagement.AspNetWebApi
         protected void Application_Start()
         {
             var serviceCollection = new ServiceCollection();
-            var files = Directory.EnumerateFiles(Path.Combine(System.Web.HttpContext.Current.Server.MapPath("."), "Cmmns"), "*.cmmn").ToList();
             serviceCollection.AddCMMNApi(opts => { })
-                .AddDefinitions(files);
+                .AddForms(new List<FormAggregate>
+                {
+                    new FormAggregate
+                    {
+                        Id = FormAggregate.BuildIdentifier("form", 0),
+                        Titles = new List<Translation>
+                        {
+                            new Translation("fr", "Mettre à jour le client"),
+                            new Translation("en", "Update the client")
+                        },
+                        FormId ="form",
+                        Elements = new List<FormElement>
+                        {
+                            new FormElement
+                            {
+                                Id = "name",
+                                Type = FormElementTypes.TXT,
+                                Names = new List<Translation>
+                                {
+                                    new Translation("fr", "Nom"),
+                                    new Translation("en", "Name")
+                                },
+                                Descriptions = new List<Translation>
+                                {
+                                    new Translation("fr", "Nom du client"),
+                                    new Translation("en", "Name of the client")
+                                }
+                            }
+                        }
+                    }
+                });
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(config => WebApiConfig.Register(config, serviceCollection));
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

@@ -11,7 +11,7 @@
   "THIS_WEEK": "Cette semaine",
   "THIS_MONTH": "Ce mois-ci",
   "DEPLOYED": "Déployé",
-  "CASE_DEFINITIONS": "Définitions de case",
+  "CASE_PLANS": "Plans de case",
   "PERFORMANCES": "Performance",
   "NB_THREADS": "Nombre de threads",
   "MEMORY_CONSUMED_MB": "Consommation de la mémoire en MB",
@@ -58,5 +58,6 @@
   "DISCONNECT": "Se déconnecter",
   "STATISTICS": "Statistiques",
   "NOT_FOUND": "404 : Page n'existe pas",
-  "NOT_AUTHORIZED": "401 : Vous n'êtes pas autorisé"
+  "NOT_AUTHORIZED": "401 : Vous n'êtes pas autorisé",
+  "CHOOSE_SESSION": "Choisir une session"
 }

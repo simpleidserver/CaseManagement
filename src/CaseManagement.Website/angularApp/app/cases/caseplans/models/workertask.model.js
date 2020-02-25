@@ -3,14 +3,14 @@ var WorkerTask = (function () {
     }
     WorkerTask.fromJson = function (json) {
         var result = new WorkerTask();
-        result.CaseDefinitionId = json["case_definition_id"];
-        result.CaseInstanceId = json["case_instance_id"];
-        result.CaseInstanceName = json["case_instance_name"];
-        result.CaseElementId = json["case_element_id"];
-        result.CaseElementInstanceId = json["case_element_instance_id"];
-        result.CaseElementName = json["case_element_name"];
+        result.CasePlanId = json["case_plan_id"];
+        result.CasePlanInstanceId = json["case_plan_instance_id"];
+        result.CasePlanElementInstanceId = json["case_plan_element_instance_id"];
         result.CreateDateTime = json["create_datetime"];
+        result.UpdateDateTime = json["update_datetime"];
         result.Performer = json["performer"];
+        result.Type = json["type"];
+        result.Status = json["status"];
         return result;
     };
     return WorkerTask;

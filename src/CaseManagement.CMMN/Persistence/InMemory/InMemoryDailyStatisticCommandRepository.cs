@@ -22,7 +22,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public void Update(DailyStatisticAggregate caseDailyStatistic)
         {
-            _caseDailyStatistics.Remove(caseDailyStatistic);
+            _caseDailyStatistics.Remove(_caseDailyStatistics.First(c => c.DateTime == caseDailyStatistic.DateTime));
             _caseDailyStatistics.Add(caseDailyStatistic);
         }
 

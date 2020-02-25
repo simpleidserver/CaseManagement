@@ -17,7 +17,7 @@ namespace CaseManagement.CMMN.Infrastructures.EvtStore.InMemory
         {
             lock(_snapshots)
             {
-                var result = _snapshots.Where(s => s.Content.Id == id).OrderByDescending(s => s.CreateDateTime).FirstOrDefault();
+                var result = _snapshots.Where(s => s.Id == id).OrderByDescending(s => s.CreateDateTime).FirstOrDefault();
                 if (result == null)
                 {
                     return Task.FromResult((SnapshotElement<T>)null);
@@ -44,7 +44,7 @@ namespace CaseManagement.CMMN.Infrastructures.EvtStore.InMemory
         private static SnapshotElement<T> Copy<T>(SnapshotElement<BaseAggregate> obj) where T : BaseAggregate
         {
             var copy = (T)(obj.Content).Clone();
-            return new SnapshotElement<T>(obj.Start, obj.CreateDateTime, copy);
+            return new SnapshotElement<T>(obj.Start, obj.CreateDateTime, obj.Id, copy);
         }
     }
 }

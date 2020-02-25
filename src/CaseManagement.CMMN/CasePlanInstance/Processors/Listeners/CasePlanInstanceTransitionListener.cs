@@ -19,7 +19,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
             private readonly CMMNTransitions _transition;
             private readonly Action _callback;
 
-            public EventListener(Domains.CasePlanInstanceAggregate instance, CMMNTransitions transition, Action callback)
+            public EventListener(CasePlanInstanceAggregate instance, CMMNTransitions transition, Action callback)
             {
                 _instance = instance;
                 _transition = transition;
@@ -47,7 +47,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
                 if (evt.AggregateId == _instance.Id && evt.Transition == _transition)
                 {
                     _callback();
-                    Unsubscribe();
                 }
             }
         }

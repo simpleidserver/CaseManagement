@@ -5,6 +5,7 @@ using CaseManagement.Gateway.Website.CasePlanInstance.Queries;
 using CaseManagement.Gateway.Website.CasePlanInstance.QueryHandlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Gateway.Website.AspNetCore.Apis
@@ -17,14 +18,16 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         private readonly IGetCasePlanInstanceQueryHandler _getCasePlanInstanceQueryHandler;
         private readonly IGetAssignedCasePlanInstanceQueryHandler _getAssignedCasePlanInstanceQueryHandler;
         private readonly IEnableCasePlanElementInstanceCommandHandler _enableCasePlanElementInstanceCommandHandler;
+        private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
 
-        public CasePlanInstancesController(ISearchAssignedCasePlanInstanceQueryHandler searchAssignedCasePlanInstanceQueryHandler, ISearchCasePlanInstanceQueryHandler searchCasePlanInstanceQueryHandler, IGetCasePlanInstanceQueryHandler getCasePlanInstanceQueryHandler, IGetAssignedCasePlanInstanceQueryHandler getAssignedCasePlanInstanceQueryHandler, IEnableCasePlanElementInstanceCommandHandler enableCasePlanElementInstanceCommandHandler)
+        public CasePlanInstancesController(ISearchAssignedCasePlanInstanceQueryHandler searchAssignedCasePlanInstanceQueryHandler, ISearchCasePlanInstanceQueryHandler searchCasePlanInstanceQueryHandler, IGetCasePlanInstanceQueryHandler getCasePlanInstanceQueryHandler, IGetAssignedCasePlanInstanceQueryHandler getAssignedCasePlanInstanceQueryHandler, IEnableCasePlanElementInstanceCommandHandler enableCasePlanElementInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler)
         {
             _searchAssignedCasePlanInstanceQueryHandler = searchAssignedCasePlanInstanceQueryHandler;
             _searchCasePlanInstanceQueryHandler = searchCasePlanInstanceQueryHandler;
             _getCasePlanInstanceQueryHandler = getCasePlanInstanceQueryHandler;
             _getAssignedCasePlanInstanceQueryHandler = getAssignedCasePlanInstanceQueryHandler;
             _enableCasePlanElementInstanceCommandHandler = enableCasePlanElementInstanceCommandHandler;
+            _confirmFormCommandHandler = confirmFormCommandHandler;
         }
 
         [HttpGet("search")]
@@ -33,7 +36,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         {
             var query = Request.Query.ToEnumerable();
             var result = await _searchCasePlanInstanceQueryHandler.Handle(new SearchCasePlanInstanceQuery { Queries = query });
-            return new OkObjectResult(CasePlansController.ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("search/me")]
@@ -42,7 +45,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         {
             var query = Request.Query.ToEnumerable();
             var result = await _searchAssignedCasePlanInstanceQueryHandler.Handle(new SearchAssignedCasePlanInstanceQuery { IdentityToken = this.GetIdentityToken(), Queries = query });
-            return new OkObjectResult(CasePlansController.ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}")]
@@ -50,7 +53,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         public async Task<IActionResult> Get(string id)
         {
             var result = await _getCasePlanInstanceQueryHandler.Handle(new GetCasePlanInstanceQuery { CasePlanInstanceId = id });
-            return new OkObjectResult(CasePlansController.ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("me/{id}")]
@@ -58,7 +61,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         public async Task<IActionResult> GetMe(string id)
         {
             var result = await _getAssignedCasePlanInstanceQueryHandler.Handle(new GetAssignedCasePlanInstanceQuery { CasePlanInstanceId = id, IdentityToken = this.GetIdentityToken() });
-            return new OkObjectResult(CasePlansController.ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/enable/{eltId}")]
@@ -66,6 +69,14 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         public async Task<IActionResult> Enable(string id, string eltId)
         {
             await _enableCasePlanElementInstanceCommandHandler.Handle(new EnableCasePlanElementInstanceCommand { CasePlanElementInstanceId = eltId, CasePlanInstanceId = id });
+            return new OkResult();
+        }
+
+        [HttpPost("{id}/confirm/{eltId}")]
+        [Authorize("confirm_form")]
+        public async Task<IActionResult> ConfirmForm(string id, string eltId, [FromBody] JObject content)
+        {
+            await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = eltId, Content = content });
             return new OkResult();
         }
     }

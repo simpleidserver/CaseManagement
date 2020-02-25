@@ -1,3 +1,106 @@
+export class Translation {
+    Language: string;
+    Value: string;
+
+    public static fromJson(key: string, value: string): Translation {
+        let result = new Translation();
+        result.Language = key.split('#')[1];
+        result.Value = value;
+        return result;
+    }
+}
+
+export class FormElement {
+    constructor() {
+        this.Titles = [];
+        this.Descriptions = [];
+    }
+
+    Id: string;
+    IsRequired: boolean;
+    Type: string;
+    Titles: Array<Translation>;
+    Descriptions: Array<Translation>;
+
+    public static fromJson(json: any): FormElement {
+        let result = new FormElement();
+        result.Id = json["id"];
+        result.IsRequired = json["is_required"];
+        result.Type = json["type"];
+        for (var key in json) {
+            if (key.startsWith("title")) {
+                result.Titles.push(Translation.fromJson(key, json[key]));
+            }
+        }
+
+        for (var key in json) {
+            if (key.startsWith("description")) {
+                result.Descriptions.push(Translation.fromJson(key, json[key]));
+            }
+        }
+
+        return result;
+    }
+}
+
+export class Form {
+    constructor() {
+        this.Titles = [];
+        this.Elements = [];
+    }
+
+    Id: string;
+    Version: number;
+    Status: string;
+    CreateDateTime: Date;
+    UpdateDateTime: Date;
+    Titles: Array<Translation>;
+    Elements: Array<FormElement>;
+
+    public static fromJson(json: any): Form {
+        let form = new Form();
+        form.Id = json["id"];
+        form.Version = json["version"];
+        form.Status = json["status"];
+        form.CreateDateTime = json["create_datetime"];
+        form.UpdateDateTime = json["update_datetime"];
+        for (var key in json) {
+            if (key.startsWith("title")) {
+                form.Titles.push(Translation.fromJson(key, json[key]));
+            }
+        }
+
+        let elements = json["elements"];
+        if (elements) {
+            json["elements"].forEach(function (fe: any) {
+                form.Elements.push(FormElement.fromJson(fe));
+            });
+        }
+
+        return form;
+    }
+}
+
+export class FormInstance {
+    CaseElementInstanceId: string;
+    CasePlanId: string;
+    CasePlanInstanceId: string;
+    CreateDateTime: Date;
+    UpdateDateTime: Date;
+    FormId: string;
+
+    public static fromJson(json: any): FormInstance {
+        let result = new FormInstance();
+        result.CaseElementInstanceId = json["case_element_instance_id"];
+        result.CasePlanId = json["case_plan_id"];
+        result.CasePlanInstanceId = json["case_plan_instance_id"];
+        result.CreateDateTime = json["create_datetime"];
+        result.UpdateDateTime = json["update_datetime"];
+        result.FormId = json["form_id"];
+        return result;
+    }
+}
+
 export class StateHistory {
     State: string;
     DateTime: string;
@@ -37,6 +140,8 @@ export class CasePlanElementInstance {
     State: string;
     StateHistories: StateHistory[];
     TransitionHistories: TransitionHistory[];
+    FormInstance: FormInstance;
+    Form: Form;
 
     public static fromJson(json: any): CasePlanElementInstance {
         let result = new CasePlanElementInstance();
@@ -53,6 +158,16 @@ export class CasePlanElementInstance {
         json["transition_histories"].forEach(function (th: any) {
             result.TransitionHistories.push(TransitionHistory.fromJson(th));
         });
+
+        let formInstance = json["form_instance"];
+        if (formInstance) {
+            result.FormInstance = FormInstance.fromJson(formInstance);
+        }
+
+        let form = json["form"];
+        if (form) {
+            result.Form = Form.fromJson(form);
+        }
 
         return result;
     }

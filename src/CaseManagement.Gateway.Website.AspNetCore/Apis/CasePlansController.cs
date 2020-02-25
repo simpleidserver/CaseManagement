@@ -1,16 +1,10 @@
 ﻿using CaseManagement.Gateway.Website.AspNetCore.Extensions;
-using CaseManagement.Gateway.Website.CasePlanInstance.DTOs;
 using CaseManagement.Gateway.Website.CasePlans.CommandHandlers;
 using CaseManagement.Gateway.Website.CasePlans.Commands;
-using CaseManagement.Gateway.Website.CasePlans.DTOs;
 using CaseManagement.Gateway.Website.CasePlans.Queries;
 using CaseManagement.Gateway.Website.CasePlans.QueryHandlers;
-using CaseManagement.Gateway.Website.CaseWorkerTask.DTOs;
-using CaseManagement.Gateway.Website.FormInstance.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.Gateway.Website.AspNetCore.Apis
@@ -54,7 +48,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             var query = Request.Query.ToEnumerable();
             var nameIdentifier = this.GetNameIdentifier();
             var result = await _searchMyLatestCasePlanQueryHandler.Handle(new SearchMyLatestCasePlanQuery { Queries = query, NameIdentifier = nameIdentifier });
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/history/search")]
@@ -64,7 +58,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             var query = Request.Query.ToEnumerable();
             var nameIdentifier = this.GetNameIdentifier();
             var result = await _searchCasePlanHistoryQueryHandler.Handle(new SearchCasePlanHistoryQuery { Queries = query, NameIdentifier = nameIdentifier });
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}")]
@@ -72,7 +66,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         public async Task<IActionResult> Get(string id)
         {
             var result = await _getCasePlanQueryHandler.Handle(id, this.GetIdentityToken());
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/caseplaninstances/search")]
@@ -82,7 +76,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             var query = Request.Query.ToEnumerable();
             var nameIdentifier = this.GetNameIdentifier();
             var result = await _searchCasePlanInstanceQueryHandler.Handle(new SearchCasePlanInstanceQuery { CasePlanId = id, Queries = query, Owner = nameIdentifier });
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/forminstances/search")]
@@ -91,7 +85,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         {
             var query = Request.Query.ToEnumerable();
             var result = await _searchFormInstanceQueryHandler.Handle(new SearchFormInstanceQuery { CasePlanId = id, Queries = query });
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/caseworkertasks/search")]
@@ -100,7 +94,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         {
             var query = Request.Query.ToEnumerable();
             var result = await _searchCaseWorkerTaskQueryHandler.Handle(new SearchCaseWorkerTaskQuery { CasePlanId = id, Queries = query });
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/caseplaninstances/launch")]
@@ -108,7 +102,7 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         public async Task<IActionResult> Launch(string id)
         {
             var result = await _launchCasePlanInstanceCommandHandler.Handle(id, this.GetIdentityToken());
-            return new OkObjectResult(ToDto(result));
+            return new OkObjectResult(result.ToDto());
         }
 
         [HttpGet("{id}/caseplaninstances/{casePlanInstanceId}/close")]
@@ -149,185 +143,6 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         {
             await _terminateCasePlanInstanceCommandHandler.Handle(new TerminateCasePlanInstanceCommand(casePlanInstanceId, this.GetIdentityToken()));
             return new OkResult();
-        }
-
-        public static JObject ToDto(FindResponse<CasePlanResponse> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
-            };
-        }
-
-        public static JObject ToDto(FindResponse<CasePlanInstanceResponse> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
-            };
-        }
-
-        public static JObject ToDto(FindResponse<FormInstanceResponse> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => {
-                    var result = new JObject
-                    {
-                        { "id", r.Id },
-                        { "create_datetime", r.CreateDateTime },
-                        { "update_datetime", r.UpdateDateTime },
-                        { "performer", r.PerformerRole },
-                        { "case_plan_id", r.CasePlanId },
-                        { "case_plan_instance_id", r.CasePlanInstanceId },
-                        { "case_plan_element_instance_id", r.CaseElementInstanceId },
-                        { "form_id", r.FormId },
-                        { "status", r.Status }
-                    };
-                    var content = new JArray();
-                    foreach(var formElt in r.Content)
-                    {
-                        var record = new JObject
-                        {
-                            { "form_element_id", formElt.FormElementId },
-                            { "value", formElt.Value }
-                        };
-                        content.Add(record);
-                    }
-
-                    result.Add("content", content);
-                    return result;
-                })) }
-            };
-        }
-
-        public static JObject ToDto(FindResponse<CaseWorkerTaskResponse> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => {
-                    var result = new JObject
-                    {
-                        { "case_plan_id", r.CasePlanId },
-                        { "case_plan_instance_id", r.CasePlanInstanceId },
-                        { "case_plan_element_instance_id", r.CasePlanElementInstanceId},
-                        { "create_datetime", r.CreateDateTime },
-                        { "update_datetime", r.UpdateDateTime },
-                        { "performer", r.PerformerRole },
-                        { "type", r.TaskType },
-                        { "status", r.Status }
-                    };
-                    return result;
-                })) }
-            };
-        }
-
-        public static JObject ToDto(CasePlanInstanceResponse casePlanInstance)
-        {
-            var result = new JObject
-            {
-                { "id", casePlanInstance.Id },
-                { "name", casePlanInstance.Name },
-                { "create_datetime", casePlanInstance.CreateDateTime},
-                { "case_plan_id", casePlanInstance.CasePlanId },
-                { "context", casePlanInstance.Context },
-                { "state", casePlanInstance.State }
-            };
-            var stateHistories = new JArray();
-            var transitionHistories = new JArray();
-            var executionHistories = new JArray();
-            var elts = new JArray();
-            foreach (var stateHistory in casePlanInstance.StateHistories)
-            {
-                stateHistories.Add(new JObject
-                {
-                    { "state", stateHistory.State },
-                    { "datetime", stateHistory.UpdateDateTime }
-                });
-            }
-
-            foreach (var transitionHistory in casePlanInstance.TransitionHistories)
-            {
-                transitionHistories.Add(new JObject
-                {
-                    { "transition", transitionHistory.Transition },
-                    { "datetime", transitionHistory.CreateDateTime }
-                });
-            }
-
-            foreach (var elt in casePlanInstance.Elements)
-            {
-                elts.Add(ToDto(elt));
-            }
-
-            result.Add("state_histories", stateHistories);
-            result.Add("transition_histories", transitionHistories);
-            result.Add("execution_histories", executionHistories);
-            result.Add("elements", elts);
-            return result;
-        }
-
-        public static JObject ToDto(CasePlanElementInstanceResponse elt)
-        {
-            var result = new JObject
-            {
-                { "id", elt.Id },
-                { "name", elt.Name },
-                { "type", elt.Type },
-                { "version", elt.Version },
-                { "create_datetime", elt.CreateDateTime},
-                { "case_plan_element_id", elt.CasePlanElementId },
-                { "state", elt.State }
-            };
-            var stateHistories = new JArray();
-            var transitionHistories = new JArray();
-            foreach (var stateHistory in elt.StateHistories)
-            {
-                stateHistories.Add(new JObject
-                {
-                    { "state", stateHistory.State },
-                    { "datetime", stateHistory.UpdateDateTime }
-                });
-            }
-
-            foreach (var transitionHistory in elt.TransitionHistories)
-            {
-                transitionHistories.Add(new JObject
-                {
-                    { "transition", transitionHistory.Transition },
-                    { "datetime", transitionHistory.CreateDateTime }
-                });
-            }
-
-            result.Add("state_histories", stateHistories);
-            result.Add("transition_histories", transitionHistories);
-            return result;
-        }
-
-        public static JObject ToDto(CasePlanResponse def)
-        {
-            return new JObject
-            {
-                { "id", def.Id },
-                { "name", def.Name },
-                { "description", def.Description },
-                { "case_file", def.CaseFileId },
-                { "create_datetime", def.CreateDateTime },
-                { "version", def.Version },
-                { "owner", def.Owner }
-            };
         }
     }
 }

@@ -15,6 +15,7 @@
     </div>
     <div *ngIf="!isConnected">
         <button mat-raised-button color="primary" (click)="login()">{{ "AUTHENTICATE" | translate }}</button>
+        <button mat-raised-button color="primary" (click)="chooseSession()">{{ "CHOOSE_SESSION" | translate }}</button>
     </div>
     <button mat-button [matMenuTriggerFor]="languages">{{ "LANGUAGES" | translate }}</button>
     <mat-menu #languages="matMenu">

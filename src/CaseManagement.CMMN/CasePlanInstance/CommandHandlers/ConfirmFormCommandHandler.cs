@@ -1,10 +1,10 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Commands;
+using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.FormInstance.Exceptions;
-using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.FormInstance;
+using CaseManagement.CMMN.FormInstance.Commands;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.EvtStore;
-using CaseManagement.CMMN.Persistence;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,42 +14,39 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
     public class ConfirmFormCommandHandler : IConfirmFormCommandHandler
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IFormQueryRepository _formQueryRepository;
         private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly IRoleQueryRepository _roleQueryRepository;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
+        private readonly IFormInstanceService _formInstanceService;
 
-        public ConfirmFormCommandHandler(IMessageBroker messageBroker, IFormQueryRepository formQueryRepository, IEventStoreRepository eventStoreRepository, IRoleQueryRepository roleQueryRepository, ICommitAggregateHelper commitAggregateHelper)
+        public ConfirmFormCommandHandler(IMessageBroker messageBroker, IEventStoreRepository eventStoreRepository, IFormInstanceService formInstanceService)
         {
             _messageBroker = messageBroker;
-            _formQueryRepository = formQueryRepository;
             _eventStoreRepository = eventStoreRepository;
-            _roleQueryRepository = roleQueryRepository;
-            _commitAggregateHelper = commitAggregateHelper;
+            _formInstanceService = formInstanceService;
         }
         
-        public async Task Handle(ConfirmFormCommand confirmFormCommand)
+        public async Task Handle(ConfirmFormCommand command)
         {
-            var id = FormInstanceAggregate.BuildFormInstanceIdentifier(confirmFormCommand.CasePlanInstanceId, confirmFormCommand.CasePlanElementInstanceId);
-            var formInstance = await _eventStoreRepository.GetLastAggregate<FormInstanceAggregate>(id, FormInstanceAggregate.GetStreamName(id));
-            if (formInstance == null || string.IsNullOrWhiteSpace(formInstance.Id))
+            var casePlanInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(command.CasePlanInstanceId, CasePlanInstanceAggregate.GetStreamName(command.CasePlanInstanceId));
+            if (casePlanInstance == null)
             {
-                throw new UnknownFormInstanceException(id);
+                throw new UnknownCaseInstanceException(command.CasePlanInstanceId);
             }
 
-            var form = await _formQueryRepository.FindFormById(formInstance.FormId);
-            if (confirmFormCommand.BypassUserValidation)
+            var elt = casePlanInstance.WorkflowElementInstances.FirstOrDefault(w => w.Id == command.CasePlanElementInstanceId);
+            if (elt == null)
             {
-                formInstance.Submit(form, confirmFormCommand.Content);
-            }
-            else
-            {
-                var roles = await _roleQueryRepository.FindRolesByUser(confirmFormCommand.Performer);
-                formInstance.Submit(roles.Select(r => r.Id), form, confirmFormCommand.Content);
+                throw new UnknownCaseInstanceElementException(command.CasePlanInstanceId, command.CasePlanElementInstanceId);
             }
 
-            await _commitAggregateHelper.Commit(formInstance, FormInstanceAggregate.GetStreamName(id), CMMNConstants.QueueNames.FormInstances);
-            await _messageBroker.QueueTransition(confirmFormCommand.CasePlanInstanceId, confirmFormCommand.CasePlanElementInstanceId, CMMNTransitions.Complete);
+            casePlanInstance.MakeTransition(command.CasePlanElementInstanceId, CMMNTransitions.Complete);
+            await _formInstanceService.Confirm(new ConfirmFormInstanceCommand
+            {
+                BypassUserValidation = command.BypassUserValidation,
+                CasePlanElementInstanceId = command.CasePlanElementInstanceId,
+                CasePlanInstanceId = command.CasePlanInstanceId,
+                Performer = command.Performer
+            });
+            await _messageBroker.QueueTransition(command.CasePlanInstanceId, command.CasePlanElementInstanceId, CMMNTransitions.Complete);
         }
     }
 }

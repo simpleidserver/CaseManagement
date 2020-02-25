@@ -1,10 +1,11 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Commands;
 using CaseManagement.CMMN.CasePlanInstance.Exceptions;
+using CaseManagement.CMMN.CaseWorkerTask;
+using CaseManagement.CMMN.CaseWorkerTask.Commands;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.EvtStore;
-using CaseManagement.CMMN.Persistence;
 using CaseManagement.Workflow.Infrastructure.Bus;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,39 +15,39 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
     public class ActivateCommandHandler : IActivateCommandHandler
     {
         private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly IRoleQueryRepository _roleQueryRepository;
+        private readonly ICaseWorkerTaskService _caseWorkerTaskService;
         private readonly IMessageBroker _messageBroker;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public ActivateCommandHandler(IEventStoreRepository eventStoreRepository, IRoleQueryRepository roleQueryRepository, IMessageBroker messageBroker, ICommitAggregateHelper commitAggregateHelper)
+        public ActivateCommandHandler(IEventStoreRepository eventStoreRepository, ICaseWorkerTaskService caseWorkerTaskService, IMessageBroker messageBroker)
         {
             _eventStoreRepository = eventStoreRepository;
-            _roleQueryRepository = roleQueryRepository;
+            _caseWorkerTaskService = caseWorkerTaskService;
             _messageBroker = messageBroker;
-            _commitAggregateHelper = commitAggregateHelper;
         }
 
-        public async Task Handle(ActivateCommand activateCommand)
+        public async Task Handle(ActivateCommand command)
         {
-            var id = CaseWorkerTaskAggregate.BuildCaseWorkerTaskIdentifier(activateCommand.CasePlanInstanceId, activateCommand.CasePlanElementInstanceId);
-            var activation = await _eventStoreRepository.GetLastAggregate<CaseWorkerTaskAggregate>(id, CaseWorkerTaskAggregate.GetStreamName(id));
-            if (activation == null || string.IsNullOrWhiteSpace(activation.Id))
+            var casePlanInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(command.CasePlanInstanceId, CasePlanInstanceAggregate.GetStreamName(command.CasePlanInstanceId));
+            if (casePlanInstance == null)
             {
-                throw new UnknownCaseActivationException();
+                throw new UnknownCaseInstanceException(command.CasePlanInstanceId);
             }
 
-            if (activateCommand.BypassUserValidation)
+            var elt = casePlanInstance.WorkflowElementInstances.FirstOrDefault(w => w.Id == command.CasePlanElementInstanceId);
+            if (elt == null)
             {
-                activation.Confirm();
-            }
-            else
-            {
-                var roles = await _roleQueryRepository.FindRolesByUser(activateCommand.Performer);
-                activation.Confirm(roles.Select(r => r.Id));
+                throw new UnknownCaseInstanceElementException(command.CasePlanInstanceId, command.CasePlanElementInstanceId);
             }
 
-            await _commitAggregateHelper.Commit(activation, CaseWorkerTaskAggregate.GetStreamName(id), CMMNConstants.QueueNames.CasePlanInstances);
-            await _messageBroker.QueueTransition(activation.CasePlanInstanceId, activation.CasePlanElementInstanceId, CMMNTransitions.ManualStart);
+            casePlanInstance.MakeTransition(command.CasePlanElementInstanceId, CMMNTransitions.ManualStart);
+            await _caseWorkerTaskService.ConfirmCaseWorker(new ConfirmCaseWorkerTask
+            {
+                BypassUserValidation = command.BypassUserValidation,
+                CasePlanElementInstanceId = command.CasePlanElementInstanceId,
+                CasePlanInstanceId = command.CasePlanInstanceId,
+                Performer = command.Performer
+            });
+            await _messageBroker.QueueTransition(command.CasePlanInstanceId, command.CasePlanElementInstanceId, CMMNTransitions.ManualStart);
         }
     }
 }

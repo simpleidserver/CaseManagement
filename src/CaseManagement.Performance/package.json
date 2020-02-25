@@ -6,7 +6,7 @@
     "author": "",
     "license": "ISC",
     "scripts": {
-        "start": "concurrently \"webpack-dev-server --env=dev --open --hot --inline --port 8080\" \"dotnet run\" ",
+        "start": "concurrently \"webpack-dev-server --env=dev --open --hot --inline --port 8081\" \"dotnet run\" ",
         "start-azure": "dotnet run --pathBase=/performance",
         "webpack-dev": "webpack --env=dev",
         "webpack-azure": "webpack --env=azure",

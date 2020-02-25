@@ -31,6 +31,9 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 policy.AddPolicy("publish_casefile", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("me_get_casefile", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("get_casefile", p => p.RequireAuthenticatedUser());
+                // Form
+                policy.AddPolicy("get_form", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("search_form", p => p.RequireAuthenticatedUser());
                 // Form instances
                 policy.AddPolicy("get_forminstances", p => p.RequireAuthenticatedUser());
                 // Case plan instance
@@ -96,7 +99,9 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 {
                     new FormAggregate
                     {
-                        Id = "form",
+                        Id = FormAggregate.BuildIdentifier("form", 0),
+                        FormId = "form",
+                        Version = 0,
                         Elements = new List<FormElement>
                         {
                             new FormElement
@@ -112,7 +117,6 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                     new RoleAggregate
                     {
                         Id = "admin",
-                        Name = "admin",
                         UserIds = new List<string>
                         {
                             "thabart"

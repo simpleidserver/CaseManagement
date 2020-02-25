@@ -181,7 +181,17 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
             count = this.casePlanInstancePaginator.pageSize;
         }
 
-        let loadCaseInstances = new fromCaseInstance.StartSearch(this.route.snapshot.params['id'], startIndex, count, this.casePlanInstanceSort.active, this.casePlanInstanceSort.direction);
+        let active = "create_datetime";
+        let direction = "desc";
+        if (this.casePlanInstanceSort.active) {
+            active = this.casePlanInstanceSort.active;
+        }
+
+        if (this.casePlanInstanceSort.direction) {
+            direction = this.casePlanInstanceSort.direction;
+        }
+
+        let loadCaseInstances = new fromCaseInstance.StartSearch(this.route.snapshot.params['id'], startIndex, count, active, direction);
         this.casePlanStore.dispatch(loadCaseInstances);
     }
 
@@ -196,7 +206,17 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
             startIndex = this.formInstancePaginator.pageIndex * this.formInstancePaginator.pageSize;
         }
 
-        let loadFormInstances = new fromFormInstance.StartSearch(this.route.snapshot.params['id'], this.formInstanceSort.active, this.formInstanceSort.direction, count, startIndex);
+        let active = "create_datetime";
+        let direction = "desc";
+        if (this.formInstanceSort.active) {
+            active = this.formInstanceSort.active;
+        }
+
+        if (this.formInstanceSort.direction) {
+            direction = this.formInstanceSort.direction;
+        }
+
+        let loadFormInstances = new fromFormInstance.StartSearch(this.route.snapshot.params['id'], active, direction, count, startIndex);
         this.casePlanStore.dispatch(loadFormInstances);
     }
 
@@ -211,7 +231,17 @@ export class ViewCaseDefinitionComponent implements OnInit, OnDestroy {
             startIndex = this.caseWorkerPaginator.pageIndex * this.caseWorkerPaginator.pageSize;
         }
 
-        let loadCaseWorker = new fromCaseWorker.StartSearch(this.route.snapshot.params['id'], this.workerTaskSort.active, this.workerTaskSort.direction, count, startIndex);
+        let active = "create_datetime";
+        let direction = "desc";
+        if (this.workerTaskSort.active) {
+            active = this.workerTaskSort.active;
+        }
+
+        if (this.workerTaskSort.direction) {
+            direction = this.workerTaskSort.direction;
+        }
+
+        let loadCaseWorker = new fromCaseWorker.StartSearch(this.route.snapshot.params['id'], active, direction, count, startIndex);
         this.casePlanStore.dispatch(loadCaseWorker);
     }
 

@@ -23,7 +23,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 
         public async Task Handle(CloseCommand closeCommand)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CasePlanInstanceAggregate>(closeCommand.CaseInstanceId, Domains.CasePlanInstanceAggregate.GetStreamName(closeCommand.CaseInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(closeCommand.CaseInstanceId, CasePlanInstanceAggregate.GetStreamName(closeCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(closeCommand.CaseInstanceId);

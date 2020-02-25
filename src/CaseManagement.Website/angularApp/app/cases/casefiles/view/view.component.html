@@ -5,7 +5,7 @@
             <li class="separator"><div class="mat-h1">\</div></li>
             <li>
                 <div class="mat-h1">
-                    {{ 'CASE_FILE' | translate }}
+                    {{ 'CASE_FILE' | translate }} ({{caseFile.Status}})
                 </div>
             </li>
         </ul>
@@ -18,7 +18,7 @@
                 <mat-icon>history</mat-icon> {{ 'VIEW_CASE_FILE_HISTORY' | translate}}
             </button>
         </div>
-        <div class="mt-10">
+        <div class="mt-10" *ngIf="caseFile.Status === 'published'">
             <button mat-raised-button color="primary" [routerLink]="['/cases/caseplans']" [queryParams]="{ caseFileId: caseFile.Id }">
                 <mat-icon>file_copy</mat-icon> {{ 'VIEW_CASE_PLANS' | translate}}
             </button>
@@ -39,8 +39,10 @@
             <mat-form-field class="full-width">
                 <textarea matInput placeholder="{{ 'ENTER_CASE_FILE_DESCRIPTION' | translate }}" name="description" formControlName="description"></textarea>
             </mat-form-field>
-            <button mat-raised-button color="primary">{{ 'SAVE' | translate }}</button>
-            <button mat-raised-button color="primary" class="ml-10" (click)="onPublish($event)">{{ 'PUBLISH' | translate }}</button>
+            <div *ngIf="caseFile.Status === 'edited'">
+                <button mat-raised-button color="primary">{{ 'SAVE' | translate }}</button>
+                <button mat-raised-button color="primary" class="ml-10" (click)="onPublish($event)">{{ 'PUBLISH' | translate }}</button>
+            </div>
         </form>
     </div>
     <div fxFlex="60%">

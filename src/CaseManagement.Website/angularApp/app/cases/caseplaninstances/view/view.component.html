@@ -16,9 +16,32 @@
                 <mat-chip>{{ casePlanInstance.State}}</mat-chip>
             </mat-chip-list>
         </div>
-        <div fxLayout="row">
+        <div fxLayout="row" fxLayoutGap="10px">
             <div fxFlex="70%">
-
+                <div fxLayout="column" fxLayoutGap="10px">
+                    <div>
+                        <form *ngIf="form != null" [formGroup]="formGroup" (ngSubmit)="onSubmit(formGroup.value)">
+                            <div class="mat-h2">{{ form.Title }}</div>
+                            <mat-form-field *ngFor="let elt of form.Elements" class="full-width">
+                                <mat-label>{{ elt.Title }}</mat-label>
+                                <input matInput placeholder="{{ elt.Description }}" name="{{ elt.Id }}" formControlName="{{ elt.Id }}" />
+                            </mat-form-field>
+                            <button mat-raised-button color="primary">{{ "SUBMIT" | translate }}</button>
+                        </form>
+                    </div>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>{{ "WHAT_HAPPENED"  | translate }}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <ul class="steps">
+                                <li class="{{ milestone.State == 'Completed' ? 'done' : 'undone' }}" *ngFor="let milestone of milestones">
+                                    <p>{{ milestone.Name }}</p>
+                                </li>
+                            </ul>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
             </div>
             <div fxFlex="30%" fxLayout="column" fxLayoutGap="10px">
                 <mat-card>
@@ -26,12 +49,18 @@
                         <mat-card-title>{{ "ACTIVE_ACTIVITIES"  | translate }}</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
-                        <mat-list *ngFor="let activeActivity of activeActivities">
-                            <mat-list-item>
-                                <mat-icon *ngIf="activeActivity.Type == 'task'">computer</mat-icon>
-                                {{ activeActivity.Name }}
-                            </mat-list-item>
-                        </mat-list>
+                        <mat-accordion style="width: 100%" *ngFor="let activeActivity of activeActivities">
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <mat-icon *ngIf="activeActivity.Type == 'task' || activeActivity.Type == 'processtask'">settings</mat-icon>
+                                        <mat-icon *ngIf="activeActivity.Type == 'humantask'">person</mat-icon>
+                                        {{ activeActivity.Name }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <button mat-raised-button color="primary" (click)="viewForm(activeActivity)">{{ "VIEW_FORM" | translate }}</button>
+                            </mat-expansion-panel>
+                        </mat-accordion>
                     </mat-card-content>
                 </mat-card>
                 <mat-card>
@@ -43,7 +72,8 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        <mat-icon *ngIf="enableActivity.Type == 'task'">computer</mat-icon>
+                                        <mat-icon *ngIf="enableActivity.Type == 'task' || enableActivity.Type == 'processtask'">settings</mat-icon>
+                                        <mat-icon *ngIf="enableActivity.Type == 'humantask'">person</mat-icon>
                                         {{ enableActivity.Name }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
@@ -59,7 +89,8 @@
                     <mat-card-content>
                         <mat-list *ngFor="let completeActivity of completeActivities">
                             <mat-list-item>
-                                <mat-icon *ngIf="completeActivity.Type == 'task'">computer</mat-icon>
+                                <mat-icon *ngIf="completeActivity.Type == 'task' || completeActivity.Type == 'processtask'">settings</mat-icon>
+                                <mat-icon *ngIf="completeActivity.Type == 'humantask'">person</mat-icon>
                                 {{ completeActivity.Name }}
                             </mat-list-item>
                         </mat-list>

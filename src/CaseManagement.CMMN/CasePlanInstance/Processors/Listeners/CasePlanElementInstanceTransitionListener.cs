@@ -47,7 +47,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
                 if (evt.CaseElementId == _parameter.CaseElementInstance.Id && evt.Transition == _transition)
                 {
                     _callback();
-                    Unsubscribe();
                 }
             }
         }

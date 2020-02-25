@@ -2,9 +2,6 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { Observable } from 'rxjs/Rx';
-import { CaseDefinitionsService } from '../services/casedefinitions.service';
-import { CaseFilesService } from '../services/casefiles.service';
 import { StatisticService } from '../services/statistic.service';
 import { ActionTypes } from './statistics-actions';
 
@@ -28,9 +25,7 @@ function getDate(d : Date) {
 export class StatisticsEffects {
     constructor(
         private actions$: Actions,
-        private statisticService: StatisticService,
-        private caseDefinitionsService: CaseDefinitionsService,
-        private caseFilesService: CaseFilesService
+        private statisticService: StatisticService
     ) { }
 
     @Effect()
@@ -82,10 +77,12 @@ export class StatisticsEffects {
         .pipe(
             ofType(ActionTypes.DEPLOYEDLOAD),
             mergeMap(() => {
-                return Observable.forkJoin([this.caseDefinitionsService.count(), this.caseFilesService.count()]).pipe(
-                    map(responses => { return { type: ActionTypes.DEPLOYEDLOADED, nbCaseDefinitions: responses[0], nbCaseFiles: responses[1] }; }),
-                    catchError(() => of({ type: ActionTypes.ERRORLOADDEPLOYED }))
-                );
-            })
-    );
+                return this.statisticService.count()
+                    .pipe(
+                        map(statistic => { return { type: ActionTypes.DEPLOYEDLOADED, result: statistic }; }),
+                        catchError(() => of({ type: ActionTypes.ERRORLOADDEPLOYED }))
+                    );
+            }
+            )
+        );
 }

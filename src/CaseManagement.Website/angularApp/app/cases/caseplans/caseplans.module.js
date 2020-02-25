@@ -17,6 +17,7 @@ import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { CasePlansRoutes } from './caseplans.routes';
 import { CasePlanEffects } from './effects/caseplan';
+import { HistoryCasePlanComponent } from './history/history.component';
 import { ListCasePlansComponent } from './list/list.component';
 import * as reducers from './reducers';
 import { CasePlanService } from './services/caseplan.service';
@@ -42,8 +43,8 @@ var CasePlansModule = (function () {
                 })
             ],
             entryComponents: [],
-            declarations: [ListCasePlansComponent, ViewCaseDefinitionComponent],
-            exports: [ListCasePlansComponent, ViewCaseDefinitionComponent],
+            declarations: [ListCasePlansComponent, ViewCaseDefinitionComponent, HistoryCasePlanComponent],
+            exports: [ListCasePlansComponent, ViewCaseDefinitionComponent, HistoryCasePlanComponent],
             providers: [CasePlanService]
         })
     ], CasePlansModule);

@@ -15,11 +15,25 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Controllers
     {
         private readonly IGetStatisticQueryHandler _statisticQueryRepository;
         private readonly ISearchStatisticQueryHandler _searchStatisticQueryHandler;
+        private readonly ICountQueryHandler _countQueryHandler;
 
-        public StatisticsController(IGetStatisticQueryHandler statisticQueryRepository, ISearchStatisticQueryHandler searchStatisticQueryHandler)
+        public StatisticsController(IGetStatisticQueryHandler statisticQueryRepository, ISearchStatisticQueryHandler searchStatisticQueryHandler, ICountQueryHandler countQueryHandler)
         {
             _statisticQueryRepository = statisticQueryRepository;
             _searchStatisticQueryHandler = searchStatisticQueryHandler;
+            _countQueryHandler = countQueryHandler;
+        }
+
+        [HttpGet("count")]
+        [Authorize("get_statistic")]
+        public async Task<IActionResult> Count()
+        {
+            var countResult = await _countQueryHandler.Handle(new CountQuery());
+            return new OkObjectResult(new JObject
+            {
+                { "nb_case_files", countResult.NbCaseFiles },
+                { "nb_case_plans", countResult.NbCasePlans }
+            });
         }
 
         [HttpGet]

@@ -94,5 +94,18 @@ namespace CaseManagement.Gateway.Website.CaseFile.Services
             var responseStr = await httpResponse.Content.ReadAsStringAsync();
             return JObject.Parse(responseStr)["id"].ToString();
         }
+
+        public async Task<int> Count()
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-files/count")
+            };
+            var token = await _tokenStore.GetValidToken(new[] { "get_statistic" });
+            request.Headers.Add("Authorization", $"Bearer {token}");
+            var httpResponse = await _httpClient.SendAsync(request);
+            var responseStr = await httpResponse.Content.ReadAsStringAsync();
+            return int.Parse(JObject.Parse(responseStr)["count"].ToString());
+        }
     }
 }

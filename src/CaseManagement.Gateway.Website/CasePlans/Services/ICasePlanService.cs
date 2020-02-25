@@ -8,5 +8,6 @@ namespace CaseManagement.Gateway.Website.CasePlans.Services
     {
         Task<FindResponse<CasePlanResponse>> Search(IEnumerable<KeyValuePair<string, string>> queries);
         Task<CasePlanResponse> GetMe(string id, string identityToken);
+        Task<int> Count();
     }
 }

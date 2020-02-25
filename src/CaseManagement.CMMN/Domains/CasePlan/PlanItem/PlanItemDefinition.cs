@@ -1,4 +1,6 @@
-﻿namespace CaseManagement.CMMN.Domains
+﻿using System.Linq;
+
+namespace CaseManagement.CMMN.Domains
 {
     public class PlanItemDefinition : CasePlanElement
     {
@@ -14,6 +16,27 @@
         public TimerEventListener PlanItemDefinitionTimerEventListener { get; set; }
         public Milestone PlanItemMilestone { get; set; }
         public StageDefinition Stage { get; set; }
+
+        public override object Clone()
+        {
+            return new PlanItemDefinition(Id, Name)
+            {
+                Type = Type,
+                ActivationRule = ActivationRule,
+                ManualActivationRule = ManualActivationRule == null ? null : (ManualActivationRule)ManualActivationRule.Clone(),
+                RepetitionRule = RepetitionRule == null ? null : (RepetitionRule)RepetitionRule.Clone(),
+                EntryCriterions = EntryCriterions.Select(e => (Criteria)e.Clone()).ToList(),
+                ExitCriterions = ExitCriterions.Select(e => (Criteria)e.Clone()).ToList(),
+                TableItem = TableItem == null ? null : (TableItem)TableItem.Clone(),
+                IsDiscretionary = IsDiscretionary,
+                PlanItemDefinitionTask = PlanItemDefinitionTask == null ? null : (CMMNTask)PlanItemDefinitionTask.Clone(),
+                PlanItemDefinitionHumanTask = PlanItemDefinitionHumanTask == null ? null : (HumanTask)PlanItemDefinitionHumanTask.Clone(),
+                PlanItemDefinitionProcessTask = PlanItemDefinitionProcessTask == null ? null : (ProcessTask)PlanItemDefinitionProcessTask.Clone(),
+                PlanItemDefinitionTimerEventListener = PlanItemDefinitionTimerEventListener == null ? null : (TimerEventListener)PlanItemDefinitionTimerEventListener.Clone(),
+                PlanItemMilestone = PlanItemMilestone == null ? null : (Milestone)PlanItemMilestone.Clone(),
+                Stage = Stage == null ? null : (StageDefinition)Stage.Clone()
+            };
+        }
 
         public static PlanItemDefinition New(string id, string name, StageDefinition stage)
         {

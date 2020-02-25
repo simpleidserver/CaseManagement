@@ -4,7 +4,7 @@
   <cmmn:case id="testCase" name="One Human Task Case">
     <cmmn:casePlanModel id="CaseWithOneHumanTask" name="Case with one human task">
       <cmmn:planItem id="PlanItem_0s8tly3" definitionRef="Task_1vmjwpa" />
-      <cmmn:humanTask id="Task_1vmjwpa" name="Human task" case:formRef="form" />
+      <cmmn:humanTask id="Task_1vmjwpa" name="Human task" case:formKey="form" />
     </cmmn:casePlanModel>
   </cmmn:case>
   <cmmndi:CMMNDI>

@@ -1,4 +1,5 @@
 ﻿using CaseManagement.Gateway.Website.CasePlanInstance.DTOs;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,5 +20,6 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
         Task CloseMe(string id, string identityToken);
         Task Enable(string casePlanInstanecId, string casePlanElementInstanceId);
         Task EnableMe(string casePlanInstanceId, string casePlanElementInstanceId, string identityToken);
+        Task ConfirmForm(string casePlanInstanceId, string casePlanElementInstanceId, JObject content);
     }
 }

@@ -10,6 +10,7 @@ namespace CaseManagement.CMMN.Domains.Events
             UpdateDateTime = updateDateTime;
         }
 
+        
         public DateTime UpdateDateTime { get; set; }
     }
 }

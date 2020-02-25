@@ -22,6 +22,17 @@ export class NavigationComponent implements OnInit {
     }
 
     login() {
+        this.oauthService.customQueryParams = {
+            'prompt': 'login'
+        };
+        this.oauthService.initImplicitFlow();
+        return false;
+    }
+
+    chooseSession() {
+        this.oauthService.customQueryParams = {
+            'prompt': 'select_account'
+        };
         this.oauthService.initImplicitFlow();
         return false;
     }

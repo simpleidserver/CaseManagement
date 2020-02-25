@@ -24,6 +24,23 @@ Nuget feed: https://www.myget.org/F/advance-ict/api/v3/index.json
    :hidden:
    :caption: Getting started
 
+   intro/glossary
    intro/architecture
-   intro/getting-started-with-casemanagement-engine
-   intro/getting-started-with-casemanagement-api
+   intro/getting-started
+
+
+.. toctree::
+   :maxdepth: 3
+   :hidden:
+   :caption: Case Management User Guide
+   
+   casemanagement-usermanual/publishcaseplan
+   casemanagement-usermanual/launchcaseinstance
+
+.. toctree::
+   :maxdepth: 3
+   :hidden:
+   :caption: Performance User Guide
+   
+   performance-usermanual/monitorperformance
+   performance-usermanual/monitorstatistics

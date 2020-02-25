@@ -67,4 +67,13 @@ export class CasePlanInstanceService {
         let targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/enable/" + casePlanElementInstanceId;
         return this.http.get(targetUrl, { headers: headers });
     }
+
+    confirmForm(casePlanInstanceId: string, casePlanElementInstanceId: string, request: any) {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        let targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/confirm/" + casePlanElementInstanceId;
+        return this.http.post(targetUrl, JSON.stringify(request), { headers: headers });
+    }
 }

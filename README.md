@@ -33,4 +33,24 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Live demo
 
+### Performance website
+
+Performance live demo : (?).
+
+Use the following administrator account to authenticate to the performance website.
+
+| Property      |      Value      |
+|---------------|-----------------|
+| login         | administrator   |
+| value         | password        |
+
+### Case management website
+
 CaseManagement live demo : [http://simpleidserver.northeurope.cloudapp.azure.com/](http://simpleidserver.northeurope.cloudapp.azure.com/).
+
+Use the following businessanalyst account to authenticate to the case management website.
+
+| Property      |      Value      |
+|---------------|-----------------|
+| login         | businessanalyst |
+| value         | password        |

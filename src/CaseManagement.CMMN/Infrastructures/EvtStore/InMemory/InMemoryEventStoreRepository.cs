@@ -1,7 +1,6 @@
 ﻿using NEventStore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,12 +20,12 @@ namespace CaseManagement.CMMN.Infrastructures.EvtStore.InMemory
         public async Task<T> GetLastAggregate<T>(string id, string streamName) where T : BaseAggregate
         {
             var domainEvents = await GetLastDomainEvents<T>(id, streamName);
-            return await GetLastAggregate<T>(id, domainEvents);
+            return await GetLastAggregate<T>(id, streamName, domainEvents);
         }
 
-        public async Task<T> GetLastAggregate<T>(string id, IEnumerable<DomainEvent> domainEvents) where T : BaseAggregate
+        public async Task<T> GetLastAggregate<T>(string id, string streamName, IEnumerable<DomainEvent> domainEvents) where T : BaseAggregate
         {
-            var snapCv = await _aggregateSnapshotStore.GetLast<T>(id);
+            var snapCv = await _aggregateSnapshotStore.GetLast<T>(streamName);
             var instance = (T)Activator.CreateInstance(typeof(T));
             if (snapCv != null)
             {
@@ -43,7 +42,7 @@ namespace CaseManagement.CMMN.Infrastructures.EvtStore.InMemory
 
         public async Task<IEnumerable<DomainEvent>> GetLastDomainEvents<T>(string id, string streamName) where T : BaseAggregate
         {
-            var snapCv = await _aggregateSnapshotStore.GetLast<T>(id);
+            var snapCv = await _aggregateSnapshotStore.GetLast<T>(streamName);
             DateTime? createDateTime = null;
             long position = 0;
             if (snapCv != null)

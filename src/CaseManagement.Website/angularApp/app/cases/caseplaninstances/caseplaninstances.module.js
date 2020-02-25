@@ -6,32 +6,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { CaseInstancesRoutes } from './caseinstances.routes';
-import { ListCaseInstancesComponent } from './list/list.component';
-import { CaseElementInstanceDialog, ViewCaseInstanceComponent } from './view/view.component';
-var CaseInstancesModule = (function () {
-    function CaseInstancesModule() {
+import { CasePlanInstancesRoutes } from './caseplaninstances.routes';
+import { CasePlanInstanceEffects } from './effects/caseplaninstance';
+import { ListCasePlanInstancesComponent } from './list/list.component';
+import { ViewCasePlanInstanceComponent } from './view/view.component';
+import * as reducers from './reducers';
+import { CasePlanInstanceService } from './services/caseplaninstance.service';
+var CasePlanInstancesModule = (function () {
+    function CasePlanInstancesModule() {
     }
-    CaseInstancesModule = __decorate([
+    CasePlanInstancesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
-                CaseInstancesRoutes,
+                CasePlanInstancesRoutes,
                 SharedModule,
                 MaterialModule,
+                EffectsModule.forRoot([CasePlanInstanceEffects]),
+                StoreModule.forRoot(reducers.appReducer),
                 StoreDevtoolsModule.instrument({
                     maxAge: 10
                 })
             ],
-            entryComponents: [CaseElementInstanceDialog],
-            declarations: [ViewCaseInstanceComponent, ListCaseInstancesComponent, CaseElementInstanceDialog
-            ],
+            declarations: [ListCasePlanInstancesComponent, ViewCasePlanInstanceComponent],
+            providers: [CasePlanInstanceService]
         })
-    ], CaseInstancesModule);
-    return CaseInstancesModule;
+    ], CasePlanInstancesModule);
+    return CasePlanInstancesModule;
 }());
-export { CaseInstancesModule };
-//# sourceMappingURL=caseinstances.module.js.map
+export { CasePlanInstancesModule };
+//# sourceMappingURL=caseplaninstances.module.js.map

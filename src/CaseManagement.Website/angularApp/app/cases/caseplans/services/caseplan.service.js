@@ -12,7 +12,7 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { map } from 'rxjs/operators';
 import { CasePlan } from '../models/caseplan.model';
-import { SearchCasePlanPlanInstanceResult } from '../models/searchcaseplaninstanceresult.model';
+import { SearchCasePlanInstanceResult } from '../models/searchcaseplaninstanceresult.model';
 import { SearchCasePlanResult } from '../models/searchcaseplanresult.model';
 import { SearchFormInstanceResult } from '../models/searchforminstanceresult.model';
 import { SearchWorkerTaskResult } from '../models/searchworkertaskresult.model';
@@ -21,7 +21,7 @@ var CasePlanService = (function () {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CasePlanService.prototype.search = function (startIndex, count, order, direction, text) {
+    CasePlanService.prototype.search = function (startIndex, count, order, direction, text, caseFileId) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
@@ -34,6 +34,9 @@ var CasePlanService = (function () {
         }
         if (text) {
             targetUrl = targetUrl + "&text=" + text;
+        }
+        if (caseFileId) {
+            targetUrl = targetUrl + "&case_file=" + caseFileId;
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return SearchCasePlanResult.fromJson(res);
@@ -48,6 +51,22 @@ var CasePlanService = (function () {
             return CasePlan.fromJson(res);
         }));
     };
+    CasePlanService.prototype.searchHistory = function (casePlanId, startIndex, count, order, direction) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-plans/" + casePlanId + "/history/search?start_index=" + startIndex + "&count=" + count;
+        if (order) {
+            targetUrl = targetUrl + "&order_by=" + order;
+        }
+        if (direction) {
+            targetUrl = targetUrl + "&order=" + direction;
+        }
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            var result = SearchCasePlanResult.fromJson(res);
+            return result;
+        }));
+    };
     CasePlanService.prototype.searchCasePlanInstance = function (casePlanId, startIndex, count, order, direction) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
@@ -60,7 +79,7 @@ var CasePlanService = (function () {
             targetUrl = targetUrl + "&order=" + direction;
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            var result = SearchCasePlanPlanInstanceResult.fromJson(res);
+            var result = SearchCasePlanInstanceResult.fromJson(res);
             return result;
         }));
     };
@@ -114,7 +133,7 @@ var CasePlanService = (function () {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plans/" + casePlanId + "/caseplaninstances/" + casePlanInstanceId + "/close";
+        var targetUrl = process.env.API_URL + "/case-plans/" + casePlanId + "/caseplaninstances/" + casePlanInstanceId + "/reactivate";
         return this.http.get(targetUrl, { headers: headers });
     };
     CasePlanService.prototype.resumeCasePlanInstance = function (casePlanId, casePlanInstanceId) {

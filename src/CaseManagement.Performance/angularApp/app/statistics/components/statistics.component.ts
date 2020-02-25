@@ -15,7 +15,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     weekSubscription: any;
     monthSubscription: any;
     deployedSubscription: any;
-    nbCaseDefinitions: number = 0;
+    nbCasePlans: number = 0;
     nbCaseFiles: number = 0;
     viewPie: any[] = [300, 300];
     viewChart: any[] = [500, 300];
@@ -133,39 +133,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
             "series": []
         }
     ];
-    activationStatisticColorScheme = {
-        domain: ['#808080', '#008000']
-    };
-    activationStatistic: any[] = [
-        {
-            "name": "Created",
-            "value": 0
-        },
-        {
-            "name": "Confirmed",
-            "value": 0
-        }
-    ];
-    activationWeekStatistic: any[] = [
-        {
-            "name": "Created",
-            "series": []
-        },
-        {
-            "name": "Confirmed",
-            "series": []
-        }
-    ];
-    activationMonthStatistic: any[] = [
-        {
-            "name": "Created",
-            "series": []
-        },
-        {
-            "name": "Confirmed",
-            "series": []
-        }
-    ];
     constructor(private statisticStore: Store<fromStatisticsStates.StatisticState>, private weekStatisticStore: Store<fromStatisticsStates.WeekStatisticsState>, private monthStatisticStore: Store<fromStatisticsStates.MonthStatisticsState>, private deployedStore: Store<fromStatisticsStates.DeployedState>, private datePipe: DatePipe) { }
 
     ngOnInit() {
@@ -210,16 +177,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
                     {
                         "name": "Confirmed",
                         "value": st.content.NbConfirmedForms
-                    }
-                ];
-                this.activationStatistic = [
-                    {
-                        "name": "Created",
-                        "value": st.content.NbCreatedActivation
-                    },
-                    {
-                        "name": "Confirmed",
-                        "value": st.content.NbConfirmedActivation
                     }
                 ];
             }
@@ -321,7 +278,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 
                 this.caseWeekStatistic = caseWeekResult;
                 this.formWeekStatistic = formWeekResult;
-                this.activationWeekStatistic = activationWeekResult;
             }
         });
         this.monthSubscription = this.monthStatisticStore.pipe(select('monthStatistics')).subscribe((st: fromStatisticsStates.WeekStatisticsState) => {
@@ -366,16 +322,6 @@ export class StatisticsComponent implements OnInit, OnDestroy {
                         "series": []
                     }
                 ];
-                let activationMonthResult: any[] = [
-                    {
-                        "name": "Created",
-                        "series": []
-                    },
-                    {
-                        "name": "Confirmed",
-                        "series": []
-                    }
-                ];
                 st.content.Content.forEach(function (elt: DailyStatistic) {
                     caseMonthResult[0].series.push({
                         "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
@@ -409,25 +355,16 @@ export class StatisticsComponent implements OnInit, OnDestroy {
                         "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbConfirmedForms
                     });
-                    activationMonthResult[0].series.push({
-                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
-                        "value": elt.NbCreatedForms
-                    });
-                    activationMonthResult[1].series.push({
-                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
-                        "value": elt.NbConfirmedForms
-                    });
                 });
 
                 this.caseMonthStatistic = caseMonthResult;
                 this.formMonthStatistic = formMonthResult;
-                this.activationMonthStatistic = activationMonthResult;
             }
         });        
         this.deployedSubscription = this.deployedStore.pipe(select('deployed')).subscribe((st: fromStatisticsStates.DeployedState) => {
-            if (st.nbCaseDefinitions) {
-                this.nbCaseDefinitions = st.nbCaseDefinitions.Count;
-                this.nbCaseFiles = st.nbCaseFiles.Count;
+            if (st.content) {
+                this.nbCasePlans = st.content.NbCasePlans;
+                this.nbCaseFiles = st.content.NbCaseFiles;
             }
         });
         this.refresh();
@@ -439,11 +376,13 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         };
         let loadWeekStatisticsRequest: any = {
             type: ActionTypes.SEARCHWEEKSTATISTICS,
-            count: 100
+            count: 100,
+            startIndex: 0
         };
         let loadMonthStatisticsRequest: any = {
             type: ActionTypes.SEARCHMONTHSTATISTICS,
-            count: 100
+            count: 100,
+            startIndex: 0
         };
         let loadDeployedRequest: any = {
             type: ActionTypes.DEPLOYEDLOAD

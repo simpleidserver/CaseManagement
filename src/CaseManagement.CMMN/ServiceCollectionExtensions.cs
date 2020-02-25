@@ -1,7 +1,10 @@
 ﻿using CaseManagement.CMMN;
+using CaseManagement.CMMN.CaseFile;
 using CaseManagement.CMMN.CaseFile.CommandHandlers;
 using CaseManagement.CMMN.CaseFile.EventHandlers;
+using CaseManagement.CMMN.CasePlan;
 using CaseManagement.CMMN.CasePlan.EventHandlers;
+using CaseManagement.CMMN.CasePlanInstance;
 using CaseManagement.CMMN.CasePlanInstance.CommandHandlers;
 using CaseManagement.CMMN.CasePlanInstance.EventHandlers;
 using CaseManagement.CMMN.CasePlanInstance.Processors;
@@ -9,11 +12,17 @@ using CaseManagement.CMMN.CasePlanInstance.Processors.CaseFileItem;
 using CaseManagement.CMMN.CasePlanInstance.Repositories;
 using CaseManagement.CMMN.CaseProcess.CommandHandlers;
 using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
+using CaseManagement.CMMN.CaseWorkerTask;
+using CaseManagement.CMMN.CaseWorkerTask.CommandHandlers;
 using CaseManagement.CMMN.CaseWorkerTask.EventHandlers;
+using CaseManagement.CMMN.DailyStatistic;
 using CaseManagement.CMMN.DailyStatistic.EventHandlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Domains.FormInstance.Events;
+using CaseManagement.CMMN.Form;
+using CaseManagement.CMMN.FormInstance;
+using CaseManagement.CMMN.FormInstance.CommandHandlers;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.Bus.InMemory;
@@ -24,8 +33,10 @@ using CaseManagement.CMMN.Infrastructures.EvtStore;
 using CaseManagement.CMMN.Infrastructures.EvtStore.InMemory;
 using CaseManagement.CMMN.Infrastructures.Lock;
 using CaseManagement.CMMN.Infrastructures.Lock.InMemory;
+using CaseManagement.CMMN.Performance;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
+using CaseManagement.CMMN.Roles;
 using CaseManagement.CMMN.Roles.EventHandlers;
 using Microsoft.Extensions.Options;
 using NEventStore;
@@ -44,6 +55,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ICaseLaunchProcessCommandHandler, CaseLaunchProcessCommandHandler>();
             services.TryAddTransient<ICaseEngine, CaseEngine>()
                 .AddCommon()
+                .AddServices()
                 .AddMessageHandlers()
                 .AddProcessHandlers()
                 .AddProcessors()
@@ -72,6 +84,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
         {
+            services.TryAddTransient<IConfirmFormInstanceCommandHandler, ConfirmFormInstanceCommandHandler>();
+            services.TryAddTransient<IConfirmCaseWorkerTaskHandler, ConfirmCaseWorkerTaskHandler>();
             services.TryAddTransient<IUpdateCaseFileCommandHandler, UpdateCaseFileCommandHandler>();
             services.TryAddTransient<IAddCaseFileCommandHandler, AddCaseFileCommandHandler>();
             services.TryAddTransient<IPublishCaseFileCommandHandler, PublishCaseFileCommandHandler>();
@@ -169,6 +183,20 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseInstanceCreatedEvent>, CasePlanInstanceHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseInstanceVariableAddedEvent>, CasePlanInstanceHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseTransitionRaisedEvent>, CasePlanInstanceHandler>();
+            return services;
+        }
+
+        private static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            services.TryAddTransient<IDailyStatisticService, DailyStatisticService>();
+            services.TryAddTransient<IPerformanceService, PerformanceService>();
+            services.TryAddTransient<ICaseWorkerTaskService, CaseWorkerTaskService>();
+            services.TryAddTransient<ICasePlanInstanceService, CasePlanInstanceService>();
+            services.TryAddTransient<IRoleService, RoleService>();
+            services.TryAddTransient<ICaseFileService, CaseFileService>();
+            services.TryAddTransient<IFormInstanceService, FormInstanceService>();
+            services.TryAddTransient<ICasePlanService, CasePlanService>();
+            services.TryAddTransient<IFormService, FormService>();
             return services;
         }
 

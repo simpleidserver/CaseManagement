@@ -1,11 +1,9 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CaseManagement.CMMN.AspNet.Extensions;
+using CaseManagement.CMMN.CaseFile;
+using CaseManagement.CMMN.CaseFile.Commands;
+using CaseManagement.CMMN.CaseFile.Exceptions;
+using CaseManagement.CMMN.Infrastructures;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -15,22 +13,154 @@ namespace CaseManagement.CMMN.AspNet.Apis
     [RoutePrefix(CMMNConstants.RouteNames.CaseFiles)]
     public class CaseFilesController : ApiController
     {
-        private readonly ICaseFileQueryRepository _queryRepository;
+        private readonly ICaseFileService _caseFileService;
 
-        public CaseFilesController(ICaseFileQueryRepository queryRepository)
+        public CaseFilesController(ICaseFileService caseFileService)
         {
-            _queryRepository = queryRepository;
+            _caseFileService = caseFileService;
         }
 
         [HttpGet]
         [Route("count")]
         public async Task<IHttpActionResult> Count()
         {
-            var result = await _queryRepository.Count();
-            return Ok(new
+            var result = await _caseFileService.Count();
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("me")]
+        public async Task<IHttpActionResult> AddMe([FromBody] AddCaseFileCommand parameter)
+        {
+            try
             {
-                count = result
-            });
+                parameter.Owner = this.GetNameIdentifier();
+                var result = await _caseFileService.Add(parameter);
+                return Content(HttpStatusCode.Created, result);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return Content(HttpStatusCode.BadRequest, this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request));
+            }
+        }
+
+        [HttpPost]
+        [Route]
+        public async Task<IHttpActionResult> Add([FromBody] AddCaseFileCommand parameter)
+        {
+            try
+            {
+                var result = await _caseFileService.Add(parameter);
+                return Content(HttpStatusCode.Created, result);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return Content(HttpStatusCode.BadRequest, this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request));
+            }
+        }
+
+        [HttpPut]
+        [Route("me/{id:string}")]
+        public async Task<IHttpActionResult> UpdateMe(string id, [FromBody] UpdateCaseFileCommand parameter)
+        {
+            try
+            {
+                parameter.Id = id;
+                parameter.Performer = this.GetNameIdentifier();
+                await _caseFileService.UpdateMe(parameter);
+                return Ok();
+            }
+            catch (UnknownCaseFileException)
+            {
+                return NotFound();
+            }
+            catch (UnauthorizedCaseFileException)
+            {
+                return Unauthorized();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return Content(HttpStatusCode.BadRequest, this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request));
+            }
+        }
+
+        [HttpPut]
+        [Route("{id:string}")]
+        public async Task<IHttpActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
+        {
+            try
+            {
+                parameter.Id = id;
+                await _caseFileService.Update(parameter);
+                return Ok();
+            }
+            catch (UnknownCaseFileException)
+            {
+                return NotFound();
+            }
+            catch (UnauthorizedCaseFileException)
+            {
+                return Unauthorized();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return Content(HttpStatusCode.BadRequest, this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request));
+            }
+        }
+
+        [HttpGet]
+        [Route("me/{id:string}/publish")]
+        public async Task<IHttpActionResult> PublishMe(string id)
+        {
+            try
+            {
+                var cmd = new PublishCaseFileCommand
+                {
+                    Id = id,
+                    Performer = this.GetNameIdentifier()
+                };
+                var result = await _caseFileService.PublishMe(cmd);
+                return Ok(result);
+            }
+            catch (UnknownCaseFileException)
+            {
+                return NotFound();
+            }
+            catch (UnauthorizedCaseFileException)
+            {
+                return Unauthorized();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return Content(HttpStatusCode.BadRequest, this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request));
+            }
+        }
+
+        [HttpGet]
+        [Route("{id:string}/publish")]
+        public async Task<IHttpActionResult> Publish(string id)
+        {
+            try
+            {
+                var cmd = new PublishCaseFileCommand
+                {
+                    Id = id
+                };
+                var result = await _caseFileService.Publish(cmd);
+                return Ok(result);
+            }
+            catch (UnknownCaseFileException)
+            {
+                return NotFound();
+            }
+            catch (UnauthorizedCaseFileException)
+            {
+                return Unauthorized();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return Content(HttpStatusCode.BadRequest, this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request));
+            }
         }
 
         [HttpGet]
@@ -38,81 +168,47 @@ namespace CaseManagement.CMMN.AspNet.Apis
         public async Task<IHttpActionResult> Search()
         {
             var query = this.Request.GetQueryNameValuePairs();
-            var result = await _queryRepository.Find(ExtractFindParameter(query));
-            return Ok(ToDto(result));
+            var result = await _caseFileService.Search(query);
+            return Ok(result);
         }
 
+
         [HttpGet]
-        [Route("{id}")]
-        public async Task<IHttpActionResult> Get(string id)
+        [Route("me/{id:string}")]
+        public async Task<IHttpActionResult> GetMe(string id)
         {
-            var result = await _queryRepository.FindById(id);
-            if (result == null)
+            try
+            {
+                var result = await _caseFileService.GetMe(id, this.GetNameIdentifier());
+                return Ok(result);
+            }
+            catch (UnknownCaseFileException)
             {
                 return NotFound();
             }
-
-            return Ok(ToDto(result));
+            catch (UnauthorizedCaseFileException)
+            {
+                return Unauthorized();
+            }
         }
 
-        private static JObject ToDto(FindResponse<CaseFileAggregate> resp)
+        [HttpGet]
+        [Route("{id:string}")]
+        public async Task<IHttpActionResult> Get(string id)
         {
-            return new JObject
+            try
             {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => new JObject
-                {
-                    { "id", r.Id },
-                    { "name", r.Name },
-                    { "description", r.Description },
-                    { "payload", r.Payload },
-                    { "create_datetime", r.CreateDateTime }
-                })) }
-            };
-        }
-
-        private static JObject ToDto(CaseFileAggregate resp)
-        {
-            return new JObject
-            {
-                { "id", resp.Id },
-                { "name", resp.Name },
-                { "description", resp.Description },
-                { "payload", resp.Payload },
-                { "create_datetime", resp.CreateDateTime }
-            };
-        }
-
-        private static FindCaseFilesParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
-        {
-            int startIndex;
-            int count;
-            string orderBy;
-            FindOrders findOrder;
-            var parameter = new FindCaseFilesParameter();
-            if (query.TryGet("start_index", out startIndex))
-            {
-                parameter.StartIndex = startIndex;
+                var result = await _caseFileService.Get(id);
+                return Ok(result);
             }
-
-            if (query.TryGet("count", out count))
+            catch (UnknownCaseFileException)
             {
-                parameter.Count = count;
+                return NotFound();
             }
-
-            if (query.TryGet("order_by", out orderBy))
+            catch (UnauthorizedCaseFileException)
             {
-                parameter.OrderBy = orderBy;
+                return Unauthorized();
             }
-
-            if (query.TryGet("order", out findOrder))
-            {
-                parameter.Order = findOrder;
-            }
-
-            return parameter;
         }
     }
 }

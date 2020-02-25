@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, MatSort } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
 import { StartSearch } from '../actions/caseplan';
 import { CasePlan } from '../models/caseplan.model';
 import { SearchCasePlanResult } from '../models/searchcaseplanresult.model';
 import * as fromCaseFiles from '../reducers';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'list-case-plans',
@@ -67,7 +67,17 @@ export class ListCasePlansComponent implements OnInit {
             count = this.paginator.pageSize;
         }
 
-        let request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, this.searchForm.get('caseFileId').value);
+        let active = "create_datetime";
+        let direction = "desc";
+        if (this.sort.active) {
+            active = this.sort.active;
+        }
+
+        if (this.sort.direction) {
+            direction = this.sort.direction;
+        }
+
+        let request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value, this.searchForm.get('caseFileId').value);
         this.store.dispatch(request);
     }
 }

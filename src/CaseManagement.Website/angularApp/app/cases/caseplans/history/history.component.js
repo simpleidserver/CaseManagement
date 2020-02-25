@@ -12,34 +12,34 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearchHistory } from '../actions/case-files';
-import * as fromCaseFiles from '../reducers';
-var HistoryCaseFileComponent = (function () {
-    function HistoryCaseFileComponent(route, store) {
+import { StartSearchHistory } from '../actions/caseplan';
+import * as fromCasePlan from '../reducers';
+var HistoryCasePlanComponent = (function () {
+    function HistoryCasePlanComponent(route, store) {
         this.route = route;
         this.store = store;
-        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
-        this.caseFiles$ = [];
+        this.displayedColumns = ['name', 'version', 'create_datetime', 'actions'];
+        this.casePlans$ = [];
     }
-    HistoryCaseFileComponent.prototype.ngOnInit = function () {
+    HistoryCasePlanComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCaseFiles.selectSearchHistoryResult)).subscribe(function (searchCaseFilesResult) {
+        this.store.pipe(select(fromCasePlan.selectSearchHistoryResult)).subscribe(function (searchCaseFilesResult) {
             if (!searchCaseFilesResult) {
                 return;
             }
-            _this.caseFiles$ = searchCaseFilesResult.Content;
+            _this.casePlans$ = searchCaseFilesResult.Content;
             _this.length = searchCaseFilesResult.TotalLength;
         });
         this.refresh();
     };
-    HistoryCaseFileComponent.prototype.onSubmit = function () {
+    HistoryCasePlanComponent.prototype.onSubmit = function () {
         this.refresh();
     };
-    HistoryCaseFileComponent.prototype.ngAfterViewInit = function () {
+    HistoryCasePlanComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
     };
-    HistoryCaseFileComponent.prototype.refresh = function () {
+    HistoryCasePlanComponent.prototype.refresh = function () {
         var startIndex = 0;
         var count = 5;
         if (this.paginator.pageIndex && this.paginator.pageSize) {
@@ -62,20 +62,20 @@ var HistoryCaseFileComponent = (function () {
     __decorate([
         ViewChild(MatPaginator),
         __metadata("design:type", MatPaginator)
-    ], HistoryCaseFileComponent.prototype, "paginator", void 0);
+    ], HistoryCasePlanComponent.prototype, "paginator", void 0);
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], HistoryCaseFileComponent.prototype, "sort", void 0);
-    HistoryCaseFileComponent = __decorate([
+    ], HistoryCasePlanComponent.prototype, "sort", void 0);
+    HistoryCasePlanComponent = __decorate([
         Component({
-            selector: 'history-case-file',
+            selector: 'history-case-plan',
             templateUrl: './history.component.html',
             styleUrls: ['./history.component.scss']
         }),
         __metadata("design:paramtypes", [ActivatedRoute, Store])
-    ], HistoryCaseFileComponent);
-    return HistoryCaseFileComponent;
+    ], HistoryCasePlanComponent);
+    return HistoryCasePlanComponent;
 }());
-export { HistoryCaseFileComponent };
+export { HistoryCasePlanComponent };
 //# sourceMappingURL=history.component.js.map

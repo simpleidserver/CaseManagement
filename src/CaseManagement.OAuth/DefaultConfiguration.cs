@@ -90,6 +90,21 @@ namespace CaseManagement.OAuth
             {
                 Name = "activate_caseplaninstance",
                 IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "get_form",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "search_form",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "confirm_caseplaninstance",
+                IsExposedInConfigurationEdp = true
             }
         };
 
@@ -177,6 +192,18 @@ namespace CaseManagement.OAuth
                     new OAuthScope
                     {
                         Name = "activate_caseplaninstance"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "get_form"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "search_form"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "confirm_caseplaninstance"
                     }
                 },
                 GrantTypes = new List<string>

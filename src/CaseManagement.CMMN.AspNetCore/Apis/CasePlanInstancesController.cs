@@ -1,21 +1,15 @@
 ﻿using CaseManagement.CMMN.AspNetCore.Extensions;
-using CaseManagement.CMMN.CasePlanInstance.CommandHandlers;
+using CaseManagement.CMMN.CasePlanInstance;
 using CaseManagement.CMMN.CasePlanInstance.Commands;
 using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.CMMN.CasePlanInstance.Repositories;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.CaseWorkerTask.Exceptions;
 using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -24,33 +18,11 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
     [Route(CMMNConstants.RouteNames.CasePlanInstances)]
     public class CasePlanInstancesController : Controller
     {
-        private readonly ICreateCaseInstanceCommandHandler _createCaseInstanceCommandHandler;
-        private readonly ILaunchCaseInstanceCommandHandler _launchCaseInstanceCommandHandler;
-        private readonly ISuspendCommandHandler _suspendCommandHandler;
-        private readonly IResumeCommandHandler _resumeCommandHandler;
-        private readonly ITerminateCommandHandler _terminateCommandHandler;
-        private readonly IReactivateCommandHandler _reactivateCommandHandler;
-        private readonly ICloseCommandHandler _closeCommandHandler;
-        private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
-        private readonly IActivateCommandHandler _activateCommandHandler;
-        private readonly ICasePlanInstanceQueryRepository _cmmnWorkflowInstanceQueryRepository;
-        private readonly ICaseFileItemRepository _caseFileItemRepository;
-        private readonly IRoleQueryRepository _roleQueryRepository;
+        private readonly ICasePlanInstanceService _casePlanInstanceService;
 
-        public CasePlanInstancesController(ICreateCaseInstanceCommandHandler createCaseInstanceCommandHandler, ILaunchCaseInstanceCommandHandler launchCaseInstanceCommandHandler, ISuspendCommandHandler suspendCommandHandler, IResumeCommandHandler resumeCommandHandler, ITerminateCommandHandler terminateCommandHandler, IReactivateCommandHandler reactivateCommandHandler, ICloseCommandHandler closeCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IActivateCommandHandler activateCommandHandler, ICasePlanInstanceQueryRepository cmmnWorkflowInstanceQueryRepository, ICaseFileItemRepository caseFileItemRepository, IRoleQueryRepository roleQueryRepository)
+        public CasePlanInstancesController(ICasePlanInstanceService casePlanInstanceService)
         {
-            _createCaseInstanceCommandHandler = createCaseInstanceCommandHandler;
-            _launchCaseInstanceCommandHandler = launchCaseInstanceCommandHandler;
-            _suspendCommandHandler = suspendCommandHandler;
-            _resumeCommandHandler = resumeCommandHandler;
-            _terminateCommandHandler = terminateCommandHandler;
-            _reactivateCommandHandler = reactivateCommandHandler;
-            _closeCommandHandler = closeCommandHandler;
-            _confirmFormCommandHandler = confirmFormCommandHandler;
-            _activateCommandHandler = activateCommandHandler;
-            _cmmnWorkflowInstanceQueryRepository = cmmnWorkflowInstanceQueryRepository;
-            _caseFileItemRepository = caseFileItemRepository;
-            _roleQueryRepository = roleQueryRepository;
+            _casePlanInstanceService = casePlanInstanceService;
         }
 
         [HttpGet("search")]
@@ -58,8 +30,8 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _cmmnWorkflowInstanceQueryRepository.Find(ExtractFindParameter(query));
-            return new OkObjectResult(ToDto(result));
+            var result = await _casePlanInstanceService.Search(query);
+            return new OkObjectResult(result);
         }
 
         [HttpGet("me/search")]
@@ -67,316 +39,61 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         public async Task<IActionResult> SearchMe()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
-            var roles = await _roleQueryRepository.FindRolesByUser(this.GetNameIdentifier());
-            var parameter = ExtractFindParameter(query);
-            parameter.Roles = roles.Select(r => r.Id).ToList();
-            var result = await _cmmnWorkflowInstanceQueryRepository.Find(parameter);
-            return new OkObjectResult(ToDto(result));
+            var result = await _casePlanInstanceService.SearchMe(query, this.GetNameIdentifier());
+            return new OkObjectResult(result);
         }
 
         [HttpGet("me/{id}")]
         [Authorize("me_get_caseplaninstance")]
         public async Task<IActionResult> GetMe(string id)
         {
-            var result = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(id);
-            if (result == null)
+            try
+            {
+                var result = await _casePlanInstanceService.GetMe(id, this.GetNameIdentifier());
+                return new OkObjectResult(result);
+            }
+            catch(UnknownCaseInstanceException)
             {
                 return new NotFoundResult();
             }
-
-            if (result.CaseOwner != this.GetNameIdentifier())
+            catch(UnauthorizedCaseWorkerException)
             {
                 return new UnauthorizedResult();
             }
-
-            return new OkObjectResult(ToDto(result));
         }
 
         [HttpGet("{id}")]
         [Authorize("get_caseplaninstance")]
         public async Task<IActionResult> Get(string id)
         {
-            var result = await _cmmnWorkflowInstanceQueryRepository.FindFlowInstanceById(id);
-            if (result == null)
+            try
+            {
+                var result = await _casePlanInstanceService.Get(id);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownCaseInstanceException)
             {
                 return new NotFoundResult();
             }
-
-            return new OkObjectResult(ToDto(result));
         }
 
         [HttpGet("{id}/casefileitems")]
         [Authorize("get_casefileitems")]
         public async Task<IActionResult> GetCaseFileItems(string id)
         {
-            var result = await _caseFileItemRepository.FindByCaseInstance(id);
-            return new OkObjectResult(ToDto(result));
+            var result = await _casePlanInstanceService.GetCaseFileItems(id);
+            return new OkObjectResult(result);
         }
 
         [HttpPost("me")]
         [Authorize("me_add_caseplaninstance")]
-        public Task<IActionResult> CreateMe([FromBody] CreateCaseInstanceCommand createCaseInstance)
+        public async Task<IActionResult> CreateMe([FromBody] CreateCaseInstanceCommand createCaseInstance)
         {
             createCaseInstance.Performer = this.GetNameIdentifier();
-            return InternalCreate(createCaseInstance);
-        }
-
-        [HttpPost]
-        [Authorize("add_caseplaninstance")]
-        public Task<IActionResult> Create([FromBody] CreateCaseInstanceCommand createCaseInstance)
-        {
-            createCaseInstance.BypassUserValidation = true;
-            return InternalCreate(createCaseInstance);
-        }
-
-        [HttpGet("me/{id}/launch")]
-        [Authorize("me_launch_caseplaninstance")]
-        public Task<IActionResult> LaunchMe(string id)
-        {
-            return InternalLaunch(new LaunchCaseInstanceCommand { Performer = this.GetNameIdentifier(), CasePlanInstanceId = id });
-        }
-
-        [HttpGet("{id}/launch")]
-        [Authorize("launch_caseplaninstance")]
-        public Task<IActionResult> Launch(string id)
-        {
-            return InternalLaunch(new LaunchCaseInstanceCommand { BypassUserValidation = true, CasePlanInstanceId = id });
-        }
-
-        [HttpGet("me/{id}/suspend")]
-        [Authorize("me_suspend_caseplaninstance")]
-        public Task<IActionResult> SuspendMe(string id)
-        {
-            return InternalSuspend(new SuspendCommand(id, null)
-            {
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/suspend")]
-        [Authorize("suspend_caseplaninstance")]
-        public Task<IActionResult> Suspend(string id)
-        {
-            return InternalSuspend(new SuspendCommand(id, null)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/suspend/{elt}")]
-        [Authorize("me_suspend_caseplaninstance")]
-        public Task<IActionResult> SuspendMe(string id, string elt)
-        {
-            return InternalSuspend(new SuspendCommand(id, elt)
-            {
-                Performer = this.GetNameIdentifier(),
-                BypassUserValidation = false
-            });
-        }
-
-        [HttpGet("{id}/suspend/{elt}")]
-        [Authorize("suspend_caseplaninstance")]
-        public Task<IActionResult> Suspend(string id, string elt)
-        {
-            return InternalSuspend(new SuspendCommand(id, elt)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/reactivate")]
-        [Authorize("me_reactivate_caseplaninstance")]
-        public Task<IActionResult> ReactivateMe(string id)
-        {
-            return InternalReactivate(new ReactivateCommand(id, null)
-            {
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/reactivate")]
-        [Authorize("reactivate_caseplaninstance")]
-        public Task<IActionResult> Reactivate(string id)
-        {
-            return InternalReactivate(new ReactivateCommand(id, null)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/reactivate/{elt}")]
-        [Authorize("me_reactivate_caseplaninstance")]
-        public Task<IActionResult> ReactivateMe(string id, string elt)
-        {
-            return InternalReactivate(new ReactivateCommand(id, elt)
-            {
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/reactivate/{elt}")]
-        [Authorize("reactivate_caseplaninstance")]
-        public Task<IActionResult> Reactivate(string id, string elt)
-        {
-            return InternalReactivate(new ReactivateCommand(id, elt)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/resume")]
-        [Authorize("me_resume_caseplaninstance")]
-        public Task<IActionResult> ResumeMe(string id)
-        {
-            return InternalResume(new ResumeCommand(id, null)
-            {
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/resume")]
-        [Authorize("resume_caseplaninstance")]
-        public Task<IActionResult> Resume(string id)
-        {
-            return InternalResume(new ResumeCommand(id, null)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/resume/{elt}")]
-        [Authorize("resume_caseplaninstance")]
-        public Task<IActionResult> ResumeMe(string id, string elt)
-        {
-            return InternalResume(new ResumeCommand(id, elt)
-            {
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/resume/{elt}")]
-        [Authorize("resume_caseplaninstance")]
-        public Task<IActionResult> Resume(string id, string elt)
-        {
-            return InternalResume(new ResumeCommand(id, elt)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/terminate")]
-        [Authorize("me_terminate_caseplaninstance")]
-        public Task<IActionResult> TerminateMe(string id)
-        {
-            return InternalTerminate(new TerminateCommand(id, null)
-            {
-                BypassUserValidation = true,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/terminate")]
-        [Authorize("terminate_caseplaninstance")]
-        public Task<IActionResult> Terminate(string id)
-        {
-            return InternalTerminate(new TerminateCommand(id, null)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/terminate/{elt}")]
-        [Authorize("me_terminate_caseplaninstance")]
-        public Task<IActionResult> TerminateMe(string id, string elt)
-        {
-            return InternalTerminate(new TerminateCommand(id, elt)
-            {
-                BypassUserValidation = true,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/terminate/{elt}")]
-        [Authorize("terminate_caseplaninstance")]
-        public Task<IActionResult> Terminate(string id, string elt)
-        {
-            return InternalTerminate(new TerminateCommand(id, elt)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpGet("me/{id}/close")]
-        [Authorize("me_close_caseplaninstance")]
-        public Task<IActionResult> CloseMe(string id)
-        {
-            return InternalClose(new CloseCommand(id)
-            {
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/close")]
-        [Authorize("close_caseplaninstance")]
-        public Task<IActionResult> Close(string id)
-        {
-            return InternalClose(new CloseCommand(id)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        [HttpPost("me/{id}/confirm/{elt}")]
-        [Authorize("me_confirm_caseplaninstance")]
-        public Task<IActionResult> ConfirmFormMe(string id, string elt, [FromBody] JObject jObj)
-        {
-            return InternalConfirmForm(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = elt, Content = jObj, BypassUserValidation = false, Performer = this.GetNameIdentifier() });
-        }
-
-        [HttpPost("{id}/confirm/{elt}")]
-        [Authorize("confirm_caseplaninstance")]
-        public Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
-        {
-            return InternalConfirmForm(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = elt, Content = jObj, BypassUserValidation = true });
-        }
-
-        [HttpGet("me/{id}/activate/{elt}")]
-        [HttpGet("me_activate_caseplaninstance")]
-        public Task<IActionResult> ActivateMe(string id, string elt)
-        {
-            return InternalActivate(new ActivateCommand(id, elt)
-            {
-                BypassUserValidation = false,
-                Performer = this.GetNameIdentifier()
-            });
-        }
-
-        [HttpGet("{id}/activate/{elt}")]
-        [HttpGet("activate_caseplaninstance")]
-        public Task<IActionResult> Activate(string id, string elt)
-        {
-            return InternalActivate(new ActivateCommand(id, elt)
-            {
-                BypassUserValidation = true
-            });
-        }
-
-        private async Task<IActionResult> InternalCreate([FromBody] CreateCaseInstanceCommand createCaseInstance)
-        {
             try
             {
-                var result = await _createCaseInstanceCommandHandler.Handle(createCaseInstance);
-                return new ContentResult
-                {
-                    StatusCode = (int)HttpStatusCode.Created,
-                    Content = ToDto(result).ToString()
-                };
+                var result = await _casePlanInstanceService.CreateMe(createCaseInstance);
+                return new OkObjectResult(result);
             }
             catch (UnauthorizedCaseWorkerException)
             {
@@ -393,12 +110,32 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 }, HttpStatusCode.NotFound, Request);
             }
         }
-        
-        private async Task<IActionResult> InternalLaunch(LaunchCaseInstanceCommand launchCaseInstanceCommand)
+
+        [HttpPost]
+        [Authorize("add_caseplaninstance")]
+        public async Task<IActionResult> Create([FromBody] CreateCaseInstanceCommand createCaseInstance)
         {
             try
             {
-                await _launchCaseInstanceCommandHandler.Handle(launchCaseInstanceCommand);
+                var result = await _casePlanInstanceService.Create(createCaseInstance);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownCaseDefinitionException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case definition doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/launch")]
+        [Authorize("me_launch_caseplaninstance")]
+        public async Task<IActionResult> LaunchMe(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.LaunchMe(new LaunchCaseInstanceCommand { Performer = this.GetNameIdentifier(), CasePlanInstanceId = id });
                 return new OkResult();
             }
             catch (UnauthorizedCaseWorkerException)
@@ -417,11 +154,31 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        private async Task<IActionResult> InternalSuspend(SuspendCommand suspendCommand)
+        [HttpGet("{id}/launch")]
+        [Authorize("launch_caseplaninstance")]
+        public async Task<IActionResult> Launch(string id)
         {
             try
             {
-                await _suspendCommandHandler.Handle(suspendCommand);
+                await _casePlanInstanceService.Launch(new LaunchCaseInstanceCommand { CasePlanInstanceId = id });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/suspend")]
+        [Authorize("me_suspend_caseplaninstance")]
+        public async Task<IActionResult> SuspendMe(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.SuspendMe(new SuspendCommand(id, null) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
             catch (UnknownCaseInstanceException)
@@ -451,72 +208,13 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        private async Task<IActionResult> InternalReactivate(ReactivateCommand cmd)
+        [HttpGet("{id}/suspend")]
+        [Authorize("suspend_caseplaninstance")]
+        public async Task<IActionResult> Suspend(string id)
         {
             try
             {
-                await _reactivateCommandHandler.Handle(cmd);
-                return new OkResult();
-            }
-            catch (UnknownCaseInstanceException)
-            {
-                return this.ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
-            }
-            catch(UnknownCaseInstanceElementException)
-            {
-                return this.ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance element doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
-            }
-            catch (AggregateValidationException ex)
-            {
-                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
-            }
-            catch (Exception ex)
-            {
-                return this.ToError(new Dictionary<string, string>
-                {
-                    { "invalid_request", ex.Message }
-                }, HttpStatusCode.BadRequest, Request);
-            }
-        }
-
-        private async Task<IActionResult> InternalResume(ResumeCommand cmd)
-        {
-            try
-            {
-                await _resumeCommandHandler.Handle(cmd);
-                return new OkResult();
-            }
-            catch (UnknownCaseInstanceException)
-            {
-                return this.ToError(new Dictionary<string, string>
-                {
-                    { "bad_request", "case instance doesn't exist" }
-                }, HttpStatusCode.NotFound, Request);
-            }
-            catch (AggregateValidationException ex)
-            {
-                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
-            }
-            catch (Exception ex)
-            {
-                return this.ToError(new Dictionary<string, string>
-                {
-                    { "invalid_request", ex.Message }
-                }, HttpStatusCode.BadRequest, Request);
-            }
-        }
-
-        private async Task<IActionResult> InternalTerminate(TerminateCommand cmd)
-        {
-            try
-            {
-                await _terminateCommandHandler.Handle(cmd);
+                await _casePlanInstanceService.Suspend(new SuspendCommand(id, null));
                 return new OkResult();
             }
             catch (UnknownCaseInstanceException)
@@ -546,11 +244,229 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        private async Task<IActionResult> InternalClose(CloseCommand cmd)
+        [HttpGet("me/{id}/suspend/{elt}")]
+        [Authorize("me_suspend_caseplaninstance")]
+        public async Task<IActionResult> SuspendMe(string id, string elt)
         {
             try
             {
-                await _closeCommandHandler.Handle(cmd);
+                await _casePlanInstanceService.SuspendMe(new SuspendCommand(id, elt) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/suspend/{elt}")]
+        [Authorize("suspend_caseplaninstance")]
+        public async Task<IActionResult> Suspend(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.Suspend(new SuspendCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/reactivate")]
+        [Authorize("me_reactivate_caseplaninstance")]
+        public async Task<IActionResult> ReactivateMe(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.ReactivateMe(new ReactivateCommand(id, null) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/reactivate")]
+        [Authorize("reactivate_caseplaninstance")]
+        public async Task<IActionResult> Reactivate(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.Reactivate(new ReactivateCommand(id, null));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/reactivate/{elt}")]
+        [Authorize("me_reactivate_caseplaninstance")]
+        public async Task<IActionResult> ReactivateMe(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.ReactivateMe(new ReactivateCommand(id, elt) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/reactivate/{elt}")]
+        [Authorize("reactivate_caseplaninstance")]
+        public async Task<IActionResult> Reactivate(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.Reactivate(new ReactivateCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/resume")]
+        [Authorize("me_resume_caseplaninstance")]
+        public async Task<IActionResult> ResumeMe(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.ResumeMe(new ResumeCommand(id, null) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
             catch (UnknownCaseInstanceException)
@@ -573,11 +489,302 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        private async Task<IActionResult> InternalConfirmForm(ConfirmFormCommand cmd)
+        [HttpGet("{id}/resume")]
+        [Authorize("resume_caseplaninstance")]
+        public async Task<IActionResult> Resume(string id)
         {
             try
             {
-                await _confirmFormCommandHandler.Handle(cmd);
+                await _casePlanInstanceService.Resume(new ResumeCommand(id, null));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/resume/{elt}")]
+        [Authorize("resume_caseplaninstance")]
+        public async Task<IActionResult> ResumeMe(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.ResumeMe(new ResumeCommand(id, elt) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/resume/{elt}")]
+        [Authorize("resume_caseplaninstance")]
+        public async Task<IActionResult> Resume(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.Resume(new ResumeCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/terminate")]
+        [Authorize("me_terminate_caseplaninstance")]
+        public async Task<IActionResult> TerminateMe(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.TerminateMe(new TerminateCommand(id, null) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/terminate")]
+        [Authorize("terminate_caseplaninstance")]
+        public async Task<IActionResult> Terminate(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.Terminate(new TerminateCommand(id, null));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/terminate/{elt}")]
+        [Authorize("me_terminate_caseplaninstance")]
+        public async Task<IActionResult> TerminateMe(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.TerminateMe(new TerminateCommand(id, elt) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/terminate/{elt}")]
+        [Authorize("terminate_caseplaninstance")]
+        public async Task<IActionResult> Terminate(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.Terminate(new TerminateCommand(id, elt));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/close")]
+        [Authorize("me_close_caseplaninstance")]
+        public async Task<IActionResult> CloseMe(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.CloseMe(new CloseCommand(id) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("{id}/close")]
+        [Authorize("close_caseplaninstance")]
+        public async Task<IActionResult> Close(string id)
+        {
+            try
+            {
+                await _casePlanInstanceService.Close(new CloseCommand(id));
+                return new OkResult();
+            }
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPost("me/{id}/confirm/{elt}")]
+        [Authorize("me_confirm_caseplaninstance")]
+        public async Task<IActionResult> ConfirmFormMe(string id, string elt, [FromBody] JObject jObj)
+        {
+            try
+            {
+                await _casePlanInstanceService.ConfirmFormMe(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = elt, Content = jObj, Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
             catch (UnknownCaseInstanceException)
@@ -614,14 +821,59 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        private async Task<IActionResult> InternalActivate(ActivateCommand cmd)
+        [HttpPost("{id}/confirm/{elt}")]
+        [Authorize("confirm_caseplaninstance")]
+        public async Task<IActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
         {
             try
             {
-                await _activateCommandHandler.Handle(cmd);
+                await _casePlanInstanceService.ConfirmForm(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = elt, Content = jObj });
                 return new OkResult();
             }
-            catch (UnknownCaseActivationException)
+            catch (UnknownCaseInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (UnknownCaseInstanceElementException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnauthorizedCaseWorkerException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "unauthorized_request", "you're not authorized to confirm the human task" }
+                }, HttpStatusCode.Unauthorized, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpGet("me/{id}/activate/{elt}")]
+        [HttpGet("me_activate_caseplaninstance")]
+        public async Task<IActionResult> ActivateMe(string id, string elt)
+        {
+            try
+            {
+                await _casePlanInstanceService.ActivateMe(new ActivateCommand(id, elt) { Performer = this.GetNameIdentifier() });
+                return new OkResult();
+            }
+            catch (UnknownCaseWorkerTaskException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -648,196 +900,40 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        private static JObject ToDto(FindResponse<Domains.CasePlanInstanceAggregate> resp)
+        [HttpGet("{id}/activate/{elt}")]
+        [HttpGet("activate_caseplaninstance")]
+        public async Task<IActionResult> Activate(string id, string elt)
         {
-            return new JObject
+            try
             {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
-            };
-        }
-
-        private static JObject ToDto(IEnumerable<CaseFileItem> caseFileItems)
-        {
-            var jArr = new JArray();
-            var jObj = new JObject
-            {
-                { "casefileitems", jArr }
-            };
-            foreach(var caseFileItem in caseFileItems)
-            {
-                jArr.Add(ToDto(caseFileItem));
+                await _casePlanInstanceService.Activate(new ActivateCommand(id, elt));
+                return new OkResult();
             }
-
-            return jObj;
-        }
-
-        private static JObject ToDto(CaseFileItem caseFileItem)
-        {
-            var result = new JObject
+            catch (UnknownCaseWorkerTaskException)
             {
-                { "element_definition_id", caseFileItem.CaseElementDefinitionId },
-                { "element_instance_id", caseFileItem.CaseElementInstanceId },
-                { "case_instance_id", caseFileItem.CaseInstanceId },
-                { "value", caseFileItem.Value },
-                { "id", caseFileItem.Id },
-                { "type", caseFileItem.Type },
-                { "create_datetime", caseFileItem.CreateDateTime }
-            };
-            return result;
-        }
-        
-        private static JObject ToDto(CasePlanInstanceAggregate workflowInstance)
-        {
-            var result = new JObject
-            {
-                { "id", workflowInstance.Id },
-                { "name", workflowInstance.CasePlanName },
-                { "create_datetime", workflowInstance.CreateDateTime},
-                { "case_plan_id", workflowInstance.CasePlanId },
-                { "context", ToDto(workflowInstance.ExecutionContext) },
-                { "state", workflowInstance.State }
-            };
-            var stateHistories = new JArray();
-            var transitionHistories = new JArray();
-            var executionHistories = new JArray();
-            var elts = new JArray();
-            foreach(var stateHistory in workflowInstance.StateHistories)
-            {
-                stateHistories.Add(new JObject
+                return this.ToError(new Dictionary<string, string>
                 {
-                    { "state", stateHistory.State },
-                    { "datetime", stateHistory.UpdateDateTime }
-                });
+                    { "bad_request", "case activation doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
             }
-
-            foreach(var transitionHistory in workflowInstance.TransitionHistories)
+            catch (UnknownCaseInstanceElementException)
             {
-                transitionHistories.Add(new JObject
+                return this.ToError(new Dictionary<string, string>
                 {
-                    { "transition", Enum.GetName(typeof(CMMNTransitions), transitionHistory.Transition) },
-                    { "datetime", transitionHistory.CreateDateTime }
-                });
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
             }
-
-            foreach (var executionHistory in workflowInstance.ExecutionHistories)
+            catch (AggregateValidationException ex)
             {
-                executionHistories.Add(new JObject
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
                 {
-                    { "start_datetime", executionHistory.StartDateTime },
-                    { "end_datetime", executionHistory.EndDateTime },
-                    { "id", executionHistory.CaseElementDefinitionId }
-                });
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
             }
-
-            foreach(var elt in workflowInstance.WorkflowElementInstances)
-            {
-                elts.Add(ToDto(elt));
-            }
-
-            result.Add("state_histories", stateHistories);
-            result.Add("transition_histories", transitionHistories);
-            result.Add("execution_histories", executionHistories);
-            result.Add("elements", elts);
-            return result;
-        }
-
-        private static JObject ToDto(CaseElementInstance elt)
-        {
-            var result = new JObject
-            {
-                { "id", elt.Id },
-                { "name", elt.CasePlanElementName },
-                { "type", Enum.GetName(typeof(CaseElementTypes), elt.CasePlanElementType).ToLowerInvariant() },
-                { "version", elt.Version },
-                { "create_datetime", elt.CreateDateTime},
-                { "case_plan_element_id", elt.CasePlanElementId },
-                { "state", elt.State }
-            };
-            var stateHistories = new JArray();
-            var transitionHistories = new JArray();
-            foreach (var stateHistory in elt.StateHistories)
-            {
-                stateHistories.Add(new JObject
-                {
-                    { "state", stateHistory.State },
-                    { "datetime", stateHistory.UpdateDateTime }
-                });
-            }
-
-            foreach (var transitionHistory in elt.TransitionHistories)
-            {
-                transitionHistories.Add(new JObject
-                {
-                    { "transition", Enum.GetName(typeof(CMMNTransitions), transitionHistory.Transition) },
-                    { "datetime", transitionHistory.CreateDateTime }
-                });
-            }
-
-            result.Add("state_histories", stateHistories);
-            result.Add("transition_histories", transitionHistories);
-            return result;
-        }
-
-        private static JObject ToDto(CaseInstanceExecutionContext context)
-        {
-            var jObj = new JObject();
-            foreach (var kvp in context.Variables)
-            {
-                jObj.Add(kvp.Key, kvp.Value);
-            }
-
-            return jObj;
-        }
-
-        private static FindWorkflowInstanceParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
-        {
-            int startIndex;
-            int count;
-            string orderBy;
-            FindOrders findOrder;
-            string casePlanId;
-            string owner;
-            bool takeLatest;
-            var parameter = new FindWorkflowInstanceParameter();
-            if (query.TryGet("start_index", out startIndex))
-            {
-                parameter.StartIndex = startIndex;
-            }
-
-            if (query.TryGet("count", out count))
-            {
-                parameter.Count = count;
-            }
-
-            if (query.TryGet("order_by", out orderBy))
-            {
-                parameter.OrderBy = orderBy;
-            }
-
-            if (query.TryGet("order", out findOrder))
-            {
-                parameter.Order = findOrder;
-            }
-
-            if (query.TryGet("case_plan_id", out casePlanId))
-            {
-                parameter.CasePlanId = casePlanId;
-            }
-
-            if(query.TryGet("owner", out owner))
-            {
-                parameter.CaseOwner = owner;
-            }
-
-            if (query.TryGet("take_latest", out takeLatest))
-            {
-                parameter.TakeLatest = takeLatest;
-            }
-
-            return parameter;
         }
     }
 }

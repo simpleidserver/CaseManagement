@@ -105,6 +105,18 @@ namespace CaseManagement.CMMN.Extensions
             return false;
         }
 
+        public static bool TryGet(this IEnumerable<KeyValuePair<string, string>> queryCollection, string name, out IEnumerable<string> values)
+        {
+            values = null;
+            if (queryCollection.ContainsKey(name))
+            {
+                values = queryCollection.Get(name);
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool TryGet(this IEnumerable<KeyValuePair<string, string>> queryCollection, string name, out FindOrders order)
         {
             string orderStr;

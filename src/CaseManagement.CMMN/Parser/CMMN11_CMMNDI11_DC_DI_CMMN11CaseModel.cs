@@ -3105,7 +3105,7 @@ public partial class tHumanTask : tTask {
         }
     }
 
-    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "formRef", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "formKey", Namespace = "https://github.com/simpleidserver/CaseManagement")]
     public string caseFormRef
     {
         get

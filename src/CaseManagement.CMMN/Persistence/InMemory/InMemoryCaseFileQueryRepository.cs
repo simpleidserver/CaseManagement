@@ -75,7 +75,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public Task<int> Count()
         {
-            return Task.FromResult(_caseFileDefinitions.Count());
+            return Task.FromResult(_caseFileDefinitions.Where(c => c.Status == CaseFileStatus.Published).Count());
         }
     }
 }

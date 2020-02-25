@@ -11,7 +11,7 @@
   "THIS_WEEK": "This week",
   "THIS_MONTH": "This month",
   "DEPLOYED": "Deployed",
-  "CASE_DEFINITIONS": "List of case definitions",
+  "CASE_PLANS": "Case plans",
   "PERFORMANCES": "Performance",
   "NB_THREADS": "Number of threads",
   "MEMORY_CONSUMED_MB": "Memory consumption in MB",
@@ -58,5 +58,6 @@
   "DISCONNECT": "Disconnect",
   "STATISTICS": "Statistics",
   "NOT_FOUND": "404 : Page not found",
-  "NOT_AUTHORIZED": "401 : You're not authorized"
+  "NOT_AUTHORIZED": "401 : You're not authorized",
+  "CHOOSE_SESSION": "Choose session"
 }

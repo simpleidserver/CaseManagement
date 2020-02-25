@@ -37,6 +37,32 @@
     .is-active {
         background-color: rgb(245, 245, 245) !important;
     }
+
+    .steps li a, .steps li p {
+        background: #9575cd;
+        color: white;
+    }
+
+    .steps li a:after, .steps li p:after {
+        border-left: 12px solid #9575cd;
+    }
+
+    .steps li.undone a, .steps li.undone p {
+        background: #eee;
+        color: #333;
+    }
+
+    .steps li a:before, .steps li p:before {
+        border-left: 12px solid #fff;
+    }
+
+    .steps li.undone a:after, .steps li.undone p:after {
+        border-left: 12px solid #eee;
+    }
+
+    .steps li.undone p {
+        color: #aaa;
+    }
 }
 
 @mixin component-themes($theme) {

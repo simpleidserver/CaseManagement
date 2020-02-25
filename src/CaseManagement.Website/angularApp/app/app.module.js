@@ -15,7 +15,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
-import { NavigationModule } from './common/navigation.module';
 import { HomeModule } from './home/home.module';
 import { AuthGuard } from './infrastructure/auth-guard.service';
 import { MaterialModule } from './shared/material.module';
@@ -33,7 +32,6 @@ var AppModule = (function () {
                 RouterModule.forRoot(routes),
                 SharedModule,
                 MaterialModule,
-                NavigationModule,
                 HomeModule,
                 MatFormFieldModule,
                 FlexLayoutModule,

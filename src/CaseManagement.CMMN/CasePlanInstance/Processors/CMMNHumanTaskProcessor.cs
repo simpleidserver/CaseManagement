@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Processors.Listeners;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Persistence;
 using Microsoft.Extensions.Options;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,12 +12,14 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
     public class CMMNHumanTaskProcessor : BaseCMMNTaskProcessor
     {
         private readonly CMMNServerOptions _options;
+        private readonly IFormQueryRepository _formQueryRepository;
         private bool _continueExecution;
         private EventListener _listener;
 
-        public CMMNHumanTaskProcessor(IOptions<CMMNServerOptions> options, ICommitAggregateHelper commitAggregateHelper) : base(commitAggregateHelper)
+        public CMMNHumanTaskProcessor(IOptions<CMMNServerOptions> options, ICommitAggregateHelper commitAggregateHelper, IFormQueryRepository formQueryRepository) : base(commitAggregateHelper)
         {
             _options = options.Value;
+            _formQueryRepository = formQueryRepository;
         }
 
         public override CaseElementTypes Type => CaseElementTypes.HumanTask;
@@ -31,7 +34,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             });
             if (!string.IsNullOrWhiteSpace(humanTask.FormId))
             {
-                var formInstance = FormInstanceAggregate.New(humanTask.FormId, parameter.CaseInstance.CasePlanId, parameter.CaseInstance.Id, parameter.CaseElementInstance.Id, humanTask.PerformerRef);
+                var latestFormVersion = await _formQueryRepository.FindLatestVersion(humanTask.FormId);
+                var formInstance = FormInstanceAggregate.New(latestFormVersion.Id, parameter.CaseInstance.CasePlanId, parameter.CaseInstance.Id, parameter.CaseElementInstance.Id, humanTask.PerformerRef);
                 await CommitAggregateHelper.Commit(formInstance, FormInstanceAggregate.GetStreamName(formInstance.Id), CMMNConstants.QueueNames.FormInstances);
             }
 

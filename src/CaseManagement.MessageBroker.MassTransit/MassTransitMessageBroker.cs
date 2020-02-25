@@ -52,7 +52,7 @@ namespace CaseManagement.MessageBroker.MassTransit
         public async Task Queue(string queueName, object message)
         {
             var sendEdp = await _options.BusControl.GetSendEndpoint(_options.UriCallback(queueName));
-            await sendEdp.Send(new MassTransitMessage(typeof(T).AssemblyQualifiedName, message));
+            await sendEdp.Send(new MassTransitMessage(message.GetType().AssemblyQualifiedName, message));
         }
 
         public Task Stop()

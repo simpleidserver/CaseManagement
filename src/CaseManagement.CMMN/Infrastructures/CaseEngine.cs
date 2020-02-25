@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.Infrastructures
             return task;
         }
 
-        public Task Reactivate(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken cancellationToken)
+        public Task Reactivate(CasePlanAggregate workflowDefinition, CasePlanInstanceAggregate workflowInstance, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var cancellationTokenSource = new CancellationTokenSource();
@@ -42,7 +42,7 @@ namespace CaseManagement.CMMN.Infrastructures
             return task;
         }
 
-        private void HandleTask(CasePlanAggregate workflowDefinition, Domains.CasePlanInstanceAggregate workflowInstance, CancellationTokenSource cancellationTokenSource, bool reactivate = false)
+        private void HandleTask(CasePlanAggregate workflowDefinition, CasePlanInstanceAggregate workflowInstance, CancellationTokenSource cancellationTokenSource, bool reactivate = false)
         {
             bool continueExecution = true;
             bool isSuspend = false;

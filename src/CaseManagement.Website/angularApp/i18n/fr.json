@@ -94,5 +94,9 @@
   "ENTER_CASE_FILE_ID": "Saisir l'identifiant du fichier de case",
   "FILTERS": "Filtres",
   "ENTER_CASE_PLAN_ID": "Saisir l'identifiant du plan de case",
-  "VIEW_CASE_PLAN_INSTANCES": "Voir les instances du plan de case"
+  "VIEW_CASE_PLAN_INSTANCES": "Voir les instances du plan de case",
+  "VIEW_FORM": "Voir le formulaire",
+  "FORM_IS_SUBMITTED": "Le formulaire est confirmé",
+  "CANNOT_SUBMIT_THE_FORM": "Une erreur est survenue durant la confirmation du formulaire",
+  "WHAT_HAPPENED": "Que s'est il passé?"
 }

@@ -12,8 +12,6 @@ import { StatisticsEffects } from './components/statistics-effects';
 import * as fromStatisticsReducer from './components/statistics-reducer';
 import { StatisticsComponent } from './components/statistics.component';
 import { StatisticsRoutes } from './statistics.routes';
-import { CaseDefinitionsService } from './services/casedefinitions.service';
-import { CaseFilesService } from './services/casefiles.service';
 import { StatisticService } from './services/statistic.service';
 
 @NgModule({
@@ -47,8 +45,6 @@ import { StatisticService } from './services/statistic.service';
 
     providers: [
         StatisticService,
-        CaseFilesService,
-        CaseDefinitionsService,
         DatePipe
     ]
 })

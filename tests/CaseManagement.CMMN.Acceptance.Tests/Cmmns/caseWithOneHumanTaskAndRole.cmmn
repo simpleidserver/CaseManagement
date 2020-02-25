@@ -3,7 +3,7 @@
   <cmmn:case id="testCase" name="One Human Task Case and role">
     <cmmn:casePlanModel id="CaseWithOneHumanTaskAndRole" name="Case with one human task">
       <cmmn:planItem id="PlanItem_0s8tly3" definitionRef="Task_1vmjwpa" />
-      <cmmn:humanTask id="Task_1vmjwpa" name="Human task" case:formRef="form" performerRef="admin" />
+      <cmmn:humanTask id="Task_1vmjwpa" name="Human task" case:formKey="form" performerRef="admin" />
       <caseRoles id="admin" name="admin" />
     </cmmn:casePlanModel>
   </cmmn:case>

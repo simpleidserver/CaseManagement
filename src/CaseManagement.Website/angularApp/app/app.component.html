@@ -17,6 +17,7 @@
         </div>
         <div *ngIf="!isConnected">
             <button mat-raised-button color="primary" (click)="login()">{{ "AUTHENTICATE" | translate }}</button>
+            <button mat-raised-button color="primary" (click)="chooseSession()">{{ "CHOOSE_SESSION" | translate }}</button>
         </div>
         <button mat-button [matMenuTriggerFor]="languages">{{ "LANGUAGES" | translate }}</button>
         <mat-menu #languages="matMenu">
@@ -26,7 +27,7 @@
     </mat-toolbar>
     <mat-sidenav-container class="sidenav-container">
         <mat-sidenav class="sidenav" #sidenav mode="side" opened [fixedInViewport]="false" [fixedTopGap]="0" [fixedBottomGap]="0">
-            <mat-nav-list>
+            <mat-nav-list *ngIf="isConnected">
                 <a mat-list-item (click)="toggleCases()">
                     <mat-icon>folder</mat-icon> {{ "CASES" | translate }}
                     <span fxFlex>

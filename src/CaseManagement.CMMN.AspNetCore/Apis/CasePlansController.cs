@@ -1,15 +1,9 @@
 ﻿using CaseManagement.CMMN.AspNetCore.Extensions;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
+using CaseManagement.CMMN.CasePlan;
+using CaseManagement.CMMN.CasePlan.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.AspNetCore.Apis
@@ -17,53 +11,53 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     [Route(CMMNConstants.RouteNames.CasePlans)]
     public class CasePlansController : Controller
     {
-        private readonly ICasePlanQueryRepository _queryRepository;
+        private readonly ICasePlanService _casePlanService;
 
-        public CasePlansController(ICasePlanQueryRepository queryRepository)
+        public CasePlansController(ICasePlanService casePlanService)
         {
-            _queryRepository = queryRepository;
+            _casePlanService = casePlanService;
         }
 
         [HttpGet("count")]
         [Authorize("get_statistic")]
         public async Task<IActionResult> Count()
         {
-            var result = await _queryRepository.Count();
-            return new OkObjectResult(new 
-            {
-                count = result
-            });
+            var result = await _casePlanService.Count();
+            return new OkObjectResult(result);
         }
 
         [HttpGet("me/{id}")]
         [Authorize("me_get_caseplan")]
         public async Task<IActionResult> GetMe(string id)
         {
-            var result = await _queryRepository.FindById(id);
-            if (result == null)
+            try
+            {
+                var result = await _casePlanService.GetMe(id, this.GetNameIdentifier());
+                return new OkObjectResult(result);
+            }
+            catch(UnknownCasePlanException)
             {
                 return new NotFoundResult();
             }
-
-            if (result.CaseOwner != this.GetNameIdentifier())
+            catch(UnauthorizedCasePlanException)
             {
                 return new UnauthorizedResult();
             }
-
-            return new OkObjectResult(ToDto(result));
         }
 
         [HttpGet("{id}")]
         [Authorize("get_caseplan")]
         public async Task<IActionResult> Get(string id)
         {
-            var result = await _queryRepository.FindById(id);
-            if (result == null)
+            try
+            {
+                var result = await _casePlanService.Get(id);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownCasePlanException)
             {
                 return new NotFoundResult();
             }
-
-            return new OkObjectResult(ToDto(result));
         }
 
         [HttpGet("search")]
@@ -71,70 +65,8 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         public async Task<IActionResult> Search()
         {
             var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _queryRepository.Find(ExtractFindParameter(query));
-            return new OkObjectResult(ToDto(result));
-        }
-
-        private static JObject ToDto(FindResponse<CasePlanAggregate> resp)
-        {
-            return new JObject
-            {
-                { "start_index", resp.StartIndex },
-                { "total_length", resp.TotalLength },
-                { "count", resp.Count },
-                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
-            };
-        }
-
-        private static JObject ToDto(CasePlanAggregate def)
-        {
-            return new JObject
-            {
-                { "id", def.Id },
-                { "name", def.Name },
-                { "description", def.Description },
-                { "case_file", def.CaseFileId },
-                { "create_datetime", def.CreateDateTime },
-                { "version", def.Version },
-                { "owner", def.CaseOwner }
-            };
-        }
-
-        private static FindCasePlansParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
-        {
-            string caseFile;
-            string text;
-            string caseOwner;
-            string casePlanId;
-            bool takeLatest = false;
-            var parameter = new FindCasePlansParameter();
-            parameter.ExtractFindParameter(query);
-            if (query.TryGet("case_file", out caseFile))
-            {
-                parameter.CaseFileId = caseFile;
-            }
-
-            if (query.TryGet("text", out text))
-            {
-                parameter.Text = text;
-            }
-
-            if (query.TryGet("owner", out caseOwner))
-            {
-                parameter.CaseOwner = caseOwner;
-            }
-
-            if (query.TryGet("case_plan_id", out casePlanId))
-            {
-                parameter.CasePlanId = casePlanId;
-            }
-
-            if (query.TryGet("take_latest", out takeLatest))
-            {
-                parameter.TakeLatest = takeLatest;
-            }
-
-            return parameter;
+            var result = await _casePlanService.Search(query);
+            return new OkObjectResult(result);
         }
     }
 }
