@@ -75,6 +75,24 @@ namespace CaseManagement.Identity
                     { SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "businessanalyst" },
                     { SimpleIdServer.Jwt.Constants.UserClaims.Role, "businessanalyst" }
                 }
+            },
+            new OAuthUser
+            {
+                Id = "caseworker",
+                Credentials = new List<OAuthUserCredential>
+                {
+                    new OAuthUserCredential
+                    {
+                        CredentialType = "pwd",
+                        Value = PasswordHelper.ComputeHash("password")
+                    }
+                },
+                Claims = new Dictionary<string, string>
+                {
+                    { SimpleIdServer.Jwt.Constants.UserClaims.Subject, "caseworker" },
+                    { SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "caseworker" },
+                    { SimpleIdServer.Jwt.Constants.UserClaims.Role, "caseworker" }
+                }
             }
         };
 

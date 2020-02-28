@@ -92,7 +92,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task SuspendMe(string id, string identityToken)
@@ -103,7 +104,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task ReactivateMe(string id, string identityToken)
@@ -114,7 +116,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task ResumeMe(string id, string identityToken)
@@ -125,7 +128,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task TerminateMe(string id, string identityToken)
@@ -136,7 +140,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task CloseMe(string id, string identityToken)
@@ -147,7 +152,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task<FindResponse<CasePlanInstanceResponse>> SearchMe(IEnumerable<KeyValuePair<string, string>> queries, string identityToken)
@@ -178,7 +184,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
             };
             var token = await _tokenStore.GetValidToken(new[] { "activate_caseplaninstance" });
             request.Headers.Add("Authorization", $"Bearer {token}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task EnableMe(string casePlanInstanceId, string casePlanElementInstanceId, string identityToken)
@@ -189,7 +196,8 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
                 Method = HttpMethod.Get
             };
             request.Headers.Add("Authorization", $"Bearer {identityToken}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
 
         public async Task ConfirmForm(string casePlanInstanceId, string casePlanElementInstanceId, JObject content) 
@@ -202,7 +210,21 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
             };
             var token = await _tokenStore.GetValidToken(new[] { "confirm_caseplaninstance" });
             request.Headers.Add("Authorization", $"Bearer {token}");
-            await _httpClient.SendAsync(request);
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
+        }
+
+        public async Task ConfirmFormMe(string casePlanInstanceId, string casePlanElementInstanceId, JObject content, string identityToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"{_serverOptions.ApiUrl}/case-plan-instances/me/{casePlanInstanceId}/confirm/{casePlanElementInstanceId}"),
+                Method = HttpMethod.Post,
+                Content = new StringContent(content.ToString(), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Add("Authorization", $"Bearer {identityToken}");
+            var httpResult = await _httpClient.SendAsync(request);
+            httpResult.EnsureSuccessStatusCode();
         }
     }
 }

@@ -12,7 +12,8 @@ let CmmnViewer = require('cmmn-js/lib/Modeler'),
     propertiesPanelModule = require('casemanagement-js-properties-panel'),
     propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'),
     // propertiesProviderModule = require('cmmn-js-properties-panel/lib/provider/camunda'),
-    caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement');
+    caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement'),
+    cmmnModdle = require('casemanagement-cmmn-moddle/resources/cmmn');
 
 @Component({
     selector: 'view-case-file',
@@ -51,7 +52,8 @@ export class ViewCaseFilesComponent implements OnInit {
                 parent: '#properties'
             },
             moddleExtensions: {
-                case: caseModdle
+                case: caseModdle,
+                cmmn: cmmnModdle
             }
         });
         this.store.pipe(select(fromCaseFiles.selectGetResult)).subscribe((e: CaseFile) => {

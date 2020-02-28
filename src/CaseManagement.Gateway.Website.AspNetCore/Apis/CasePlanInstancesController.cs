@@ -19,8 +19,10 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
         private readonly IGetAssignedCasePlanInstanceQueryHandler _getAssignedCasePlanInstanceQueryHandler;
         private readonly IEnableCasePlanElementInstanceCommandHandler _enableCasePlanElementInstanceCommandHandler;
         private readonly IConfirmFormCommandHandler _confirmFormCommandHandler;
+        private readonly IEnableAssignedCasePlanElementInstanceCommandHandler _enableAssignedCasePlanElementInstanceCommandHandler;
+        private readonly IConfirmAssignedFormCommandHandler _confirmAssignedFormCommandHandler;
 
-        public CasePlanInstancesController(ISearchAssignedCasePlanInstanceQueryHandler searchAssignedCasePlanInstanceQueryHandler, ISearchCasePlanInstanceQueryHandler searchCasePlanInstanceQueryHandler, IGetCasePlanInstanceQueryHandler getCasePlanInstanceQueryHandler, IGetAssignedCasePlanInstanceQueryHandler getAssignedCasePlanInstanceQueryHandler, IEnableCasePlanElementInstanceCommandHandler enableCasePlanElementInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler)
+        public CasePlanInstancesController(ISearchAssignedCasePlanInstanceQueryHandler searchAssignedCasePlanInstanceQueryHandler, ISearchCasePlanInstanceQueryHandler searchCasePlanInstanceQueryHandler, IGetCasePlanInstanceQueryHandler getCasePlanInstanceQueryHandler, IGetAssignedCasePlanInstanceQueryHandler getAssignedCasePlanInstanceQueryHandler, IEnableCasePlanElementInstanceCommandHandler enableCasePlanElementInstanceCommandHandler, IConfirmFormCommandHandler confirmFormCommandHandler, IEnableAssignedCasePlanElementInstanceCommandHandler enableAssignedCasePlanElementInstanceCommandHandler, IConfirmAssignedFormCommandHandler confirmAssignedFormCommandHandler)
         {
             _searchAssignedCasePlanInstanceQueryHandler = searchAssignedCasePlanInstanceQueryHandler;
             _searchCasePlanInstanceQueryHandler = searchCasePlanInstanceQueryHandler;
@@ -28,6 +30,8 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             _getAssignedCasePlanInstanceQueryHandler = getAssignedCasePlanInstanceQueryHandler;
             _enableCasePlanElementInstanceCommandHandler = enableCasePlanElementInstanceCommandHandler;
             _confirmFormCommandHandler = confirmFormCommandHandler;
+            _enableAssignedCasePlanElementInstanceCommandHandler = enableAssignedCasePlanElementInstanceCommandHandler;
+            _confirmAssignedFormCommandHandler = confirmAssignedFormCommandHandler;
         }
 
         [HttpGet("search")]
@@ -72,11 +76,27 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Apis
             return new OkResult();
         }
 
+        [HttpGet("me/{id}/enable/{eltId}")]
+        [Authorize("me_enable_caseplaninstance")]
+        public async Task<IActionResult> EnableMe(string id, string eltId)
+        {
+            await _enableAssignedCasePlanElementInstanceCommandHandler.Handle(new EnableAssignedCasePlanElementInstanceCommand { CasePlanElementInstanceId = eltId, CasePlanInstanceId = id, IdentityToken = this.GetIdentityToken() });
+            return new OkResult();
+        }
+
         [HttpPost("{id}/confirm/{eltId}")]
         [Authorize("confirm_form")]
         public async Task<IActionResult> ConfirmForm(string id, string eltId, [FromBody] JObject content)
         {
             await _confirmFormCommandHandler.Handle(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = eltId, Content = content });
+            return new OkResult();
+        }
+
+        [HttpPost("me/{id}/confirm/{eltId}")]
+        [Authorize("me_confirm_form")]
+        public async Task<IActionResult> ConfirmFormMe(string id, string eltId, [FromBody] JObject content)
+        {
+            await _confirmAssignedFormCommandHandler.Handle(new ConfirmAssignedFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = eltId, Content = content, IdentityToken = this.GetIdentityToken() });
             return new OkResult();
         }
     }

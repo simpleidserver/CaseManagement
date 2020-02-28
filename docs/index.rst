@@ -36,6 +36,7 @@ Nuget feed: https://www.myget.org/F/advance-ict/api/v3/index.json
    
    casemanagement-usermanual/publishcaseplan
    casemanagement-usermanual/launchcaseinstance
+   casemanagement-usermanual/viewcaseplaninstance
 
 .. toctree::
    :maxdepth: 3
@@ -44,3 +45,10 @@ Nuget feed: https://www.myget.org/F/advance-ict/api/v3/index.json
    
    performance-usermanual/monitorperformance
    performance-usermanual/monitorstatistics
+   
+.. toctree::
+   :maxdepth: 3
+   :hidden:
+   :caption: Reference
+   
+   reference/cmmn

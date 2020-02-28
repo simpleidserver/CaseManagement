@@ -225,6 +225,19 @@ namespace CaseManagement.CMMN.Host
                         AssemblyQualifiedName = typeof(IncrementTask).AssemblyQualifiedName
                     }
                 })
+                .AddRoles(new List<RoleAggregate>
+                {
+                    new RoleAggregate
+                    {
+                        Id = "caseworker",
+                        UserIds = new List<string>
+                        {
+                            "caseworker"
+                        },
+                        CreateDateTime = DateTime.UtcNow,
+                        Version = 0
+                    }
+                })
                 .AddForms(new List<FormAggregate>
                 {
                     new FormAggregate

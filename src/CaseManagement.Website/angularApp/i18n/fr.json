@@ -98,5 +98,7 @@
   "VIEW_FORM": "Voir le formulaire",
   "FORM_IS_SUBMITTED": "Le formulaire est confirmé",
   "CANNOT_SUBMIT_THE_FORM": "Une erreur est survenue durant la confirmation du formulaire",
-  "WHAT_HAPPENED": "Que s'est il passé?"
+  "WHAT_HAPPENED": "Que s'est il passé?",
+  "AUTHENTICATE": "Authentifier",
+  "CHOOSE_SESSION": "Choisir une session"
 }

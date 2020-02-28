@@ -21,5 +21,6 @@ namespace CaseManagement.Gateway.Website.CasePlanInstance.Services
         Task Enable(string casePlanInstanecId, string casePlanElementInstanceId);
         Task EnableMe(string casePlanInstanceId, string casePlanElementInstanceId, string identityToken);
         Task ConfirmForm(string casePlanInstanceId, string casePlanElementInstanceId, JObject content);
+        Task ConfirmFormMe(string casePlanInstanceId, string casePlanElementInstanceId, JObject content, string identityToken);
     }
 }

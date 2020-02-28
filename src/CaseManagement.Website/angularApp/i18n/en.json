@@ -98,5 +98,7 @@
   "VIEW_FORM": "View form",
   "FORM_IS_SUBMITTED": "The form is submitted",
   "CANNOT_SUBMIT_THE_FORM": "An error occured while trying to submit the form",
-  "WHAT_HAPPENED": "What happened so far?"
+  "WHAT_HAPPENED": "What happened so far?",
+  "AUTHENTICATE": "Authenticate",
+  "CHOOSE_SESSION": "Choose session"
 }

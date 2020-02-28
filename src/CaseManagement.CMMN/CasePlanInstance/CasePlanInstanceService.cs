@@ -72,7 +72,12 @@ namespace CaseManagement.CMMN.CasePlanInstance
 
             if (result.CaseOwner != nameIdentifier)
             {
-                throw new UnauthorizedCaseWorkerException(nameIdentifier, id, null);
+                var roles = await _roleService.FindRolesByUser(nameIdentifier);
+                var roleIds = roles.Select(r => r.Id);
+                if (!roleIds.Any(roleId => result.Roles.Contains(roleId)))
+                {
+                    throw new UnauthorizedCaseWorkerException(nameIdentifier, id, null);
+                }
             }
 
             return ToDto(result);

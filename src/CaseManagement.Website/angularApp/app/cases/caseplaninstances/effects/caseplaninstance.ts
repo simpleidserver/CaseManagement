@@ -27,20 +27,6 @@ export class CasePlanInstanceEffects {
     );
 
     @Effect()
-    searchMyCasePlanInstance$ = this.actions$
-        .pipe(
-            ofType(fromCasePlanInstance.ActionTypes.START_SEARCH_ME),
-            mergeMap((evt: fromCasePlanInstance.StartSearchMe) => {
-                return this.casePlanInstanceService.searchMe(evt.startIndex, evt.count, evt.order, evt.direction)
-                    .pipe(
-                        map(casePlanInstances => { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME, content: casePlanInstances }; }),
-                        catchError(() => of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
     selectGetCasePlanInstance = this.actions$
         .pipe(
             ofType(fromCasePlanInstance.ActionTypes.START_GET),

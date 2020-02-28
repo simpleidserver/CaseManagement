@@ -46,7 +46,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             if (parameter.Roles != null && parameter.Roles.Any())
             {
-                result = result.Where(r => parameter.Roles.Contains(r.Id));
+                result = result.Where(r => r.Roles.Any(role => parameter.Roles.Contains(role)));
             }
 
             if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))

@@ -36,9 +36,9 @@
                     </span>
                 </a>
                 <div *ngIf="expanded">
-                    <a mat-list-item [routerLink]="['/cases/casefiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_FILES" | translate }}</a>
-                    <a mat-list-item [routerLink]="['/cases/caseplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLANS" | translate }}</a>
-                    <a mat-list-item [routerLink]="['/cases/caseplaninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLAN_INSTANCES" | translate }}</a>
+                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cases/casefiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_FILES" | translate }}</a>
+                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cases/caseplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLANS" | translate }}</a>
+                    <a mat-list-item *ngIf="roles === 'businessanalyst' || roles === 'caseworker'" [routerLink]="['/cases/caseplaninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLAN_INSTANCES" | translate }}</a>
                 </div>
             </mat-nav-list>
         </mat-sidenav>

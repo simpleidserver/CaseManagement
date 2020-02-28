@@ -100,6 +100,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddCasePlanInstance(this IServiceCollection services)
         {
+            services.TryAddTransient<IConfirmAssignedFormCommandHandler, ConfirmAssignedFormCommandHandler>();
+            services.TryAddTransient<IEnableAssignedCasePlanElementInstanceCommandHandler, EnableAssignedCasePlanElementInstanceCommandHandler>();
             services.TryAddTransient<IConfirmFormCommandHandler, ConfirmFormCommandHandler>();
             services.TryAddTransient<IEnableCasePlanElementInstanceCommandHandler, EnableCasePlanElementInstanceCommandHandler>();
             services.TryAddTransient<IGetCasePlanInstanceQueryHandler, GetCasePlanInstanceQueryHandler>();

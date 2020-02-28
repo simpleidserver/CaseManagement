@@ -865,7 +865,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
 
         [HttpGet("me/{id}/activate/{elt}")]
-        [HttpGet("me_activate_caseplaninstance")]
+        [Authorize("me_activate_caseplaninstance")]
         public async Task<IActionResult> ActivateMe(string id, string elt)
         {
             try
@@ -901,7 +901,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         }
 
         [HttpGet("{id}/activate/{elt}")]
-        [HttpGet("activate_caseplaninstance")]
+        [Authorize("activate_caseplaninstance")]
         public async Task<IActionResult> Activate(string id, string elt)
         {
             try
