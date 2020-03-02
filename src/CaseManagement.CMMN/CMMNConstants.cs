@@ -30,6 +30,7 @@
             public const string Statistics = "statistics";
             public const string Performances = "performances";
             public const string Forms = "forms";
+            public const string Roles = "roles";
         }
 
         public static class ProcessImplementationTypes

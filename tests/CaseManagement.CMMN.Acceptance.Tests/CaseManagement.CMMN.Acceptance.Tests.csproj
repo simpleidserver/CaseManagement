@@ -6,6 +6,8 @@
   <ItemGroup>
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\CaseInstances - Copier.feature.cs" />
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\CaseInstances - Copy.feature.cs" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\CasePlanErrors - Copy.feature.cs" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\RoleErrors - Copy.feature.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
@@ -60,6 +62,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <SpecFlowFeatureFiles Update="Features\Role.feature">
+      <Visible>$(UsingMicrosoftNETSdk)</Visible>
+      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+    </SpecFlowFeatureFiles>
+    <SpecFlowFeatureFiles Update="Features\RoleErrors.feature">
+      <Visible>$(UsingMicrosoftNETSdk)</Visible>
+      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+    </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Features\CasePlanInstanceErrors.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
@@ -78,5 +88,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Features\Role.feature.cs">
+      <DependentUpon>Role.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Features\RoleErrors.feature.cs">
+      <DependentUpon>RoleErrors.feature</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

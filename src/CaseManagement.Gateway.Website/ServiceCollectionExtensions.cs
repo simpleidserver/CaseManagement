@@ -13,6 +13,9 @@ using CaseManagement.Gateway.Website.Form.Services;
 using CaseManagement.Gateway.Website.FormInstance.Services;
 using CaseManagement.Gateway.Website.Performance.QueryHandlers;
 using CaseManagement.Gateway.Website.Performance.Services;
+using CaseManagement.Gateway.Website.Role.CommandHandlers;
+using CaseManagement.Gateway.Website.Role.QueryHandlers;
+using CaseManagement.Gateway.Website.Role.Services;
 using CaseManagement.Gateway.Website.Statistic.QueryHandlers;
 using CaseManagement.Gateway.Website.Statistic.Services;
 using CaseManagement.Gateway.Website.Token;
@@ -39,6 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddCaseWorkerTask()
                 .AddCasePlanInstance()
                 .AddForm()
+                .AddRole()
                 .AddToken();
             return services;
         }
@@ -142,6 +146,19 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.TryAddSingleton<ITokenStore, TokenStore>();
             services.AddHttpClient<ITokenService, TokenService>()
+                .AddPolicyHandler(GetRetryPolicy())
+                .AddPolicyHandler(GetBreakerCircuitPolicy());
+            return services;
+        }
+
+        public static IServiceCollection AddRole(this IServiceCollection services)
+        {
+            services.TryAddTransient<IAddRoleCommandHandler, AddRoleCommandHandler>();
+            services.TryAddTransient<IUpdateRoleCommandHandler, UpdateRoleCommandHandler>();
+            services.TryAddTransient<IDeleteRoleCommandHandler, DeleteRoleCommandHandler>();
+            services.TryAddTransient<IGetRoleQueryHandler, GetRoleQueryHandler>();
+            services.TryAddTransient<ISearchRoleQueryHandler, SearchRoleQueryHandler>();
+            services.AddHttpClient<IRoleService, RoleService>()
                 .AddPolicyHandler(GetRetryPolicy())
                 .AddPolicyHandler(GetBreakerCircuitPolicy());
             return services;

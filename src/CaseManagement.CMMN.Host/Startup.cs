@@ -200,6 +200,12 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("get_performance", p => p.RequireClaim("scope", "get_performance"));
                 // Statistic
                 policy.AddPolicy("get_statistic", p => p.RequireClaim("scope", "get_statistic"));
+                // Role
+                policy.AddPolicy("get_role", p => p.RequireClaim("scope", "get_role"));
+                policy.AddPolicy("search_role", p => p.RequireClaim("scope", "search_role"));
+                policy.AddPolicy("add_role", p => p.RequireClaim("scope", "add_role"));
+                policy.AddPolicy("delete_role", p => p.RequireClaim("scope", "delete_role"));
+                policy.AddPolicy("update_role", p => p.RequireClaim("scope", "update_role"));
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()

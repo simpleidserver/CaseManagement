@@ -72,6 +72,11 @@ namespace CaseManagement.Gateway.Website.Host
                 policy.AddPolicy("get_caseplaninstance", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("enable_caseplaninstance", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("confirm_form", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("add_role", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("update_role", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("delete_role", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("get_role", p => p.RequireRole("businessanalyst"));
+                policy.AddPolicy("search_role", p => p.RequireRole("businessanalyst"));
                 policy.AddPolicy("me_search_caseplaninstance", p => p.RequireRole("caseworker"));
                 policy.AddPolicy("me_get_caseplaninstance", p => p.RequireRole("caseworker"));
                 policy.AddPolicy("me_enable_caseplaninstance", p => p.RequireRole("caseworker"));

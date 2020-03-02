@@ -103,3 +103,25 @@ Scenario: Activate unknown case element instance and check error is returned
 	
 	Then HTTP status code equals to '404'
 	Then JSON 'errors.bad_request[0]'='case activation doesn't exist'
+
+Scenario: Submit form and the user is not authorized
+	When execute HTTP GET request 'http://localhost/case-plans/search?case_plan_id=CaseWithOneHumanTaskAndRole'
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'defid'
+	And execute HTTP POST JSON request 'http://localhost/case-plan-instances'
+	| Key          | Value   |
+	| case_plan_id | $defid$ |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'insid'
+	And execute HTTP GET request 'http://localhost/case-plan-instances/$insid$/launch'	
+	And poll 'http://localhost/case-plan-instances/$insid$', until 'elements[0].transition_histories[1].transition'='Start'
+	And extract JSON from body
+	And extract 'elements[0].id' from JSON body into 'eltid'
+	And authenticate as 'caseworker'
+	And execute HTTP POST JSON request 'http://localhost/case-plan-instances/me/$insid$/confirm/$eltid$'
+	| Key  | Value |
+	| name | name  |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '401'
+	Then JSON 'errors.unauthorized_request[0]'='you're not authorized to confirm the human task'

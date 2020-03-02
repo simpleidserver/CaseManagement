@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -55,6 +56,19 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             var httpRequestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
+                RequestUri = new Uri(url)
+            };
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
+        [When("execute HTTP DELETE request '(.*)'")]
+        public async Task WhenExecuteHTTPDELETERequest(string url)
+        {
+            url = Parse(url);
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Delete,
                 RequestUri = new Uri(url)
             };
             var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
@@ -149,6 +163,34 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
 
+        [When("execute HTTP PUT JSON request '(.*)'")]
+        public async Task WhenExecuteHTTPPutJSONRequest(string url, Table table)
+        {
+            var jObj = new JObject();
+            foreach (var record in table.Rows)
+            {
+                var key = record["Key"];
+                var value = Parse(record["Value"]);
+                try
+                {
+                    jObj.Add(key, JToken.Parse(value));
+                }
+                catch
+                {
+                    jObj.Add(key, value.ToString());
+                }
+            }
+
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri(Parse(url)),
+                Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
+            };
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
         [When("extract JSON from body")]
         public async Task WhenExtractFromBody()
         {
@@ -223,6 +265,14 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
             var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
             Assert.Equal(value.ToLowerInvariant(), currentValue);
+        }
+
+        [Then("JSON '(.*)' contains '(.*)'")]
+        public void ThenContains(string key, string value)
+        {
+            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
+            var currentValue = (jsonHttpBody[key] as JArray).Values<string>().ToList();
+            Assert.True(currentValue.Contains(value) == true);
         }
 
         [Then("extract JSON '(.*)', JSON exists '(.*)'")]

@@ -100,5 +100,12 @@
   "CANNOT_SUBMIT_THE_FORM": "An error occured while trying to submit the form",
   "WHAT_HAPPENED": "What happened so far?",
   "AUTHENTICATE": "Authenticate",
-  "CHOOSE_SESSION": "Choose session"
+  "CHOOSE_SESSION": "Choose session",
+  "ROLES": "Roles",
+  "ROLE": "Role",
+  "VIEW_ROLE": "View the role",
+  "USERS": "Users",
+  "ENTER_USER_ID": "Enter user identifier",
+  "ROLE_SAVED": "Role is saved",
+  "ERROR_SAVE_ROLE": "An error occured while trying to update the role"
 }

@@ -70,6 +70,12 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 policy.AddPolicy("get_performance", p => p.RequireAuthenticatedUser());
                 // Statistic
                 policy.AddPolicy("get_statistic", p => p.RequireAuthenticatedUser());
+                // Role
+                policy.AddPolicy("get_role", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("search_role", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("add_role", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("delete_role", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("update_role", p => p.RequireAuthenticatedUser());
             });
             services.AddMvc();
             services.AddHostedService<BusHostedService>();
@@ -120,6 +126,14 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                         UserIds = new List<string>
                         {
                             "thabart"
+                        }
+                    },
+                    new RoleAggregate
+                    {
+                        Id = "caseworker",
+                        UserIds = new List<string>
+                        {
+                            "caseworker"
                         }
                     }
                 });

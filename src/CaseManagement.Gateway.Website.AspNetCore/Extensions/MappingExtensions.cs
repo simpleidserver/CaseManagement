@@ -5,6 +5,7 @@ using CaseManagement.Gateway.Website.CasePlans.DTOs;
 using CaseManagement.Gateway.Website.CaseWorkerTask.DTOs;
 using CaseManagement.Gateway.Website.Form.DTOs;
 using CaseManagement.Gateway.Website.FormInstance.DTOs;
+using CaseManagement.Gateway.Website.Role.DTOs;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 
@@ -12,6 +13,30 @@ namespace CaseManagement.Gateway.Website.AspNetCore.Extensions
 {
     public static class MappingExtensions
     {
+        public static JObject ToDto(this FindResponse<RoleResponse> resp)
+        {
+            return new JObject
+            {
+                { "start_index", resp.StartIndex },
+                { "total_length", resp.TotalLength },
+                { "count", resp.Count },
+                { "content", new JArray(resp.Content.Select(r => ToDto(r))) }
+            };
+        }
+
+        public static JObject ToDto(this RoleResponse role)
+        {
+            var result = new JObject
+            {
+                { "id", role.Id },
+                { "is_deleted", role.IsDeleted },
+                { "users", new JArray(role.Users) },
+                { "update_datetime", role.UpdateDateTime },
+                { "create_datetime", role.CreateDateTime }
+            };
+            return result;
+        }
+
         public static JObject ToDto(this GetCasePlanInstanceResult resp)
         {
             var jObj = resp.CasePlanInstance.ToDto();

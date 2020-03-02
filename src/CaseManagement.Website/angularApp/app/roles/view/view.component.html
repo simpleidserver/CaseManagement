@@ -1,0 +1,43 @@
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <ul>
+            <li><div class="mat-h1"><a [routerLink]="['/roles']">{{ "ROLES" | translate }}</a></div></li>
+            <li class="separator"><div class="mat-h1">\</div></li>
+            <li><div class="mat-h1">{{ 'ROLE' | translate }}</div></li>
+        </ul>
+    </div>
+</div>
+<div fxLayout="row">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <div fxLayout="column" fxLayoutGap="10px">
+            <mat-card>
+                <mat-card-content>
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="{{ 'ROLE' | translate }}" value="{{ role.Id }}" disabled />
+                    </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="{{ 'CREATE_DATETIME' | translate }}" value="{{ role.CreateDateTime | date:'medium' }}" disabled />
+                    </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="{{ 'UPDATE_DATETIME' | translate }}" value="{{ role.UpdateDateTime | date:'medium' }}" disabled />
+                    </mat-form-field>
+                    <div class="mat-h3">{{ "USERS" | translate }}</div>
+                    <form [formGroup]="addRoleForm" (ngSubmit)="onSubmit(addRoleForm.value)">
+                        <mat-form-field class="full-width">
+                            <input matInput placeholder="{{ 'ENTER_USER_ID' | translate }}" name="role" formControlName="role" />
+                        </mat-form-field>
+                        <button mat-raised-button color="primary">{{ "SUBMIT" | translate }}</button>
+                    </form>
+                    <mat-list *ngFor="let user of role.Users">
+                        <mat-list-item>
+                            <span matLine>{{ user }}</span>
+                            <button mat-icon-button (click)="remove(user)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

@@ -100,5 +100,12 @@
   "CANNOT_SUBMIT_THE_FORM": "Une erreur est survenue durant la confirmation du formulaire",
   "WHAT_HAPPENED": "Que s'est il passé?",
   "AUTHENTICATE": "Authentifier",
-  "CHOOSE_SESSION": "Choisir une session"
+  "CHOOSE_SESSION": "Choisir une session",
+  "ROLES": "Rôles",
+  "ROLE": "Rôle",
+  "VIEW_ROLE": "Voir le rôle",
+  "USERS": "Utilisateurs",
+  "ENTER_USER_ID": "Saisir l'identifiant de l'utilisateur",
+  "ROLE_SAVED": "Le rôle est sauvegardé",
+  "ERROR_SAVE_ROLE": "Une erreur est survenue durant la sauvegarde du rôle"
 }

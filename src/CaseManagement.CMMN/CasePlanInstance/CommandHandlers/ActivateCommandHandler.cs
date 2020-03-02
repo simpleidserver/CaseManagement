@@ -3,7 +3,6 @@ using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.CaseWorkerTask;
 using CaseManagement.CMMN.CaseWorkerTask.Commands;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.EvtStore;
 using CaseManagement.Workflow.Infrastructure.Bus;

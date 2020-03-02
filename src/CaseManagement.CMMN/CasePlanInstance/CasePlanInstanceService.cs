@@ -400,34 +400,11 @@ namespace CaseManagement.CMMN.CasePlanInstance
 
         private static FindWorkflowInstanceParameter ExtractFindParameter(IEnumerable<KeyValuePair<string, string>> query)
         {
-            int startIndex;
-            int count;
-            string orderBy;
-            FindOrders findOrder;
             string casePlanId;
             string owner;
             bool takeLatest;
             var parameter = new FindWorkflowInstanceParameter();
-            if (query.TryGet("start_index", out startIndex))
-            {
-                parameter.StartIndex = startIndex;
-            }
-
-            if (query.TryGet("count", out count))
-            {
-                parameter.Count = count;
-            }
-
-            if (query.TryGet("order_by", out orderBy))
-            {
-                parameter.OrderBy = orderBy;
-            }
-
-            if (query.TryGet("order", out findOrder))
-            {
-                parameter.Order = findOrder;
-            }
-
+            parameter.ExtractFindParameter(query);
             if (query.TryGet("case_plan_id", out casePlanId))
             {
                 parameter.CasePlanId = casePlanId;

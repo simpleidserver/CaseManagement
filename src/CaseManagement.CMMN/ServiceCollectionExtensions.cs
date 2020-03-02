@@ -20,6 +20,7 @@ using CaseManagement.CMMN.DailyStatistic.EventHandlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Domains.FormInstance.Events;
+using CaseManagement.CMMN.Domains.Role.Events;
 using CaseManagement.CMMN.Form;
 using CaseManagement.CMMN.FormInstance;
 using CaseManagement.CMMN.FormInstance.CommandHandlers;
@@ -37,6 +38,7 @@ using CaseManagement.CMMN.Performance;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using CaseManagement.CMMN.Roles;
+using CaseManagement.CMMN.Roles.CommandHandlers;
 using CaseManagement.CMMN.Roles.EventHandlers;
 using Microsoft.Extensions.Options;
 using NEventStore;
@@ -84,6 +86,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
         {
+            services.TryAddTransient<IAddRoleCommandHandler, AddRoleCommandHandler>();
+            services.TryAddTransient<IDeleteRoleCommandHandler, DeleteRoleCommandHandler>();
+            services.TryAddTransient<IUpdateRoleCommandHandler, UpdateRoleCommandHandler>();
             services.TryAddTransient<IConfirmFormInstanceCommandHandler, ConfirmFormInstanceCommandHandler>();
             services.TryAddTransient<IConfirmCaseWorkerTaskHandler, ConfirmCaseWorkerTaskHandler>();
             services.TryAddTransient<IUpdateCaseFileCommandHandler, UpdateCaseFileCommandHandler>();
@@ -160,11 +165,14 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
-            services.TryAddTransient<IMessageBrokerConsumerGeneric<CasePlanAddedEvent>, RoleEventHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<RoleAddedEvent>, RoleEventHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<RoleUpdatedEvent>, RoleEventHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<RoleDeletedEvent>, RoleEventHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CasePlanAddedEvent>, CaseManagement.CMMN.Roles.EventHandlers.CasePlanEventHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<TransitionCommand>, TransitionCommandHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<ReactivateProcessCommand>, ReactivateProcessCommandHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<LaunchCasePlanInstanceCommand>, LaunchCasePlanInstanceHandler>();
-            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFilePublishedEvent>, CasePlanEventHandler>();
+            services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFilePublishedEvent>, CaseManagement.CMMN.CasePlan.EventHandlers.CasePlanEventHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseWorkerTaskAddedEvent>, CaseWorkerTaskHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseWorkerTaskConfirmedEvent>, CaseWorkerTaskHandler>();
             services.TryAddTransient<IMessageBrokerConsumerGeneric<CaseFileAddedEvent>, CaseFileHandler>();

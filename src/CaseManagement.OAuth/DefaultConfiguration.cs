@@ -105,6 +105,31 @@ namespace CaseManagement.OAuth
             {
                 Name = "confirm_caseplaninstance",
                 IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "delete_role",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "update_role",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "get_role",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "search_role",
+                IsExposedInConfigurationEdp = true
+            },
+            new OAuthScope
+            {
+                Name = "add_role",
+                IsExposedInConfigurationEdp = true
             }
         };
 
@@ -204,6 +229,26 @@ namespace CaseManagement.OAuth
                     new OAuthScope
                     {
                         Name = "confirm_caseplaninstance"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "delete_role",
+                    },
+                    new OAuthScope
+                    {
+                        Name = "update_role"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "get_role"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "search_role"
+                    },
+                    new OAuthScope
+                    {
+                        Name = "add_scope"
                     }
                 },
                 GrantTypes = new List<string>
