@@ -12,7 +12,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         }
 
         public CasePlanAggregate CaseDefinition { get; set; }
-        public Domains.CasePlanInstanceAggregate CaseInstance { get; set; }
+        public CasePlanInstanceAggregate CaseInstance { get; set; }
         public CaseElementInstance CaseElementInstance { get; set; }
     }
 }

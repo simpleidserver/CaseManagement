@@ -767,24 +767,21 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'CaseFileItem_05yrrad\')].transition_" +
                     "histories[1].transition\'=\'AddChild\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 280
- testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'CaseFileItem_05yrrad\')].transition_" +
-                    "histories[2].transition\'=\'ParentTerminate\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 281
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0uxcsmm\')].transition_hist" +
                     "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 282
+#line 281
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0uxcsmm\')].transition_hist" +
                     "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 283
+#line 282
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0uxcsmm\')].transition_hist" +
                     "ories[2].transition\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 284
+#line 283
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0uxcsmm\')].state_histories" +
                     "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 285
+#line 284
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0uxcsmm\')].state_histories" +
                     "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 286
+#line 285
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0uxcsmm\')].state_histories" +
                     "[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -797,15 +794,15 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void LaunchCaseWithOneHumanTaskAndRoleAndCheckHisStatusIsCompleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneHumanTaskAndRole and check his status is completed", null, ((string[])(null)));
-#line 288
+#line 287
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 289
+#line 288
  testRunner.When("execute HTTP GET request \'http://localhost/case-plans/search?case_plan_id=CaseWit" +
                     "hOneHumanTaskAndRole\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 290
+#line 289
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 291
+#line 290
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
@@ -814,22 +811,22 @@ this.ScenarioInitialize(scenarioInfo);
             table12.AddRow(new string[] {
                         "case_plan_id",
                         "$defid$"});
-#line 292
+#line 291
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table12, "And ");
-#line 295
+#line 294
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 296
+#line 295
  testRunner.And("extract \'id\' from JSON body into \'insid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 297
+#line 296
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 298
+#line 297
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'elements[0].transitio" +
                     "n_histories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 299
+#line 298
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 300
+#line 299
  testRunner.And("extract \'elements[0].id\' from JSON body into \'eltid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 301
+#line 300
  testRunner.And("authenticate as \'thabart\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
@@ -838,32 +835,32 @@ this.ScenarioInitialize(scenarioInfo);
             table13.AddRow(new string[] {
                         "name",
                         "name"});
-#line 302
+#line 301
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances/$insid$/conf" +
                     "irm/$eltid$\'", ((string)(null)), table13, "And ");
-#line 305
+#line 304
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 306
+#line 305
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 308
+#line 307
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 309
+#line 308
  testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 310
+#line 309
  testRunner.Then("JSON \'state_histories[0].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 311
+#line 310
  testRunner.Then("JSON \'state_histories[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 312
+#line 311
  testRunner.Then("JSON \'elements[0].transition_histories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 313
+#line 312
  testRunner.Then("JSON \'elements[0].transition_histories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 314
+#line 313
  testRunner.Then("JSON \'elements[0].transition_histories[2].transition\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 315
+#line 314
  testRunner.Then("JSON \'elements[0].state_histories[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 316
+#line 315
  testRunner.Then("JSON \'elements[0].state_histories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 317
+#line 316
  testRunner.Then("JSON \'elements[0].state_histories[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -875,15 +872,15 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void LaunchCaseWithOneBlockedSEntryAndCheckHisStatusIsActive()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneBlockedSEntry and check his status is active", null, ((string[])(null)));
-#line 319
+#line 318
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 320
+#line 319
  testRunner.When("execute HTTP GET request \'http://localhost/case-plans/search?case_plan_id=CaseWit" +
                     "hOneBlockedSEntry\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 321
+#line 320
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 322
+#line 321
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
@@ -892,52 +889,52 @@ this.ScenarioInitialize(scenarioInfo);
             table14.AddRow(new string[] {
                         "case_plan_id",
                         "$defid$"});
-#line 323
+#line 322
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table14, "And ");
-#line 326
+#line 325
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 327
+#line 326
  testRunner.And("extract \'id\' from JSON body into \'insid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 328
+#line 327
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 329
+#line 328
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'$.elements[?(@.case_p" +
                     "lan_element_id == \'PlanItem_18sdiyp\')].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 330
+#line 329
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 331
+#line 330
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/terminate\'" +
                     "", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 332
+#line 331
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state\'=\'Terminated\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 334
+#line 333
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 335
+#line 334
  testRunner.Then("JSON \'state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 336
+#line 335
  testRunner.Then("JSON \'state_histories[0].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 337
+#line 336
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0s8tly3\')].state_histories" +
                     "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 338
+#line 337
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0s8tly3\')].transition_hist" +
                     "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 339
+#line 338
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_18sdiyp\')].state_histories" +
                     "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 340
+#line 339
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_18sdiyp\')].state_histories" +
                     "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 341
+#line 340
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_18sdiyp\')].state_histories" +
                     "[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 342
+#line 341
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_18sdiyp\')].transition_hist" +
                     "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 343
+#line 342
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_18sdiyp\')].transition_hist" +
                     "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 344
+#line 343
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_18sdiyp\')].transition_hist" +
                     "ories[2].transition\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -953,15 +950,15 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Suspend caseWithOneLongProcessTask and check his status is suspended (scope = Pro" +
                     "cessTask)", null, ((string[])(null)));
-#line 346
+#line 345
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 347
+#line 346
  testRunner.When("execute HTTP GET request \'http://localhost/case-plans/search?case_plan_id=CaseWit" +
                     "hOneLongProcessTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 348
+#line 347
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 349
+#line 348
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
@@ -970,61 +967,61 @@ this.ScenarioInitialize(scenarioInfo);
             table15.AddRow(new string[] {
                         "case_plan_id",
                         "$defid$"});
-#line 350
+#line 349
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table15, "And ");
-#line 353
+#line 352
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 354
+#line 353
  testRunner.And("extract \'id\' from JSON body into \'insid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 355
+#line 354
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 356
+#line 355
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'elements[0].state_his" +
                     "tories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 357
+#line 356
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 358
+#line 357
  testRunner.And("extract \'elements[0].id\' from JSON body into \'eltid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 359
+#line 358
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/suspend/$e" +
                     "ltid$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 360
+#line 359
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'elements[0].state_his" +
                     "tories[2].state\'=\'Suspended\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 361
+#line 360
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/resume/$el" +
                     "tid$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 362
+#line 361
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 363
+#line 362
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 365
+#line 364
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 366
+#line 365
  testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 367
+#line 366
  testRunner.Then("JSON \'state_histories[0].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 368
+#line 367
  testRunner.Then("JSON \'state_histories[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 369
+#line 368
  testRunner.Then("JSON \'elements[0].transition_histories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 370
+#line 369
  testRunner.Then("JSON \'elements[0].transition_histories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 371
+#line 370
  testRunner.Then("JSON \'elements[0].transition_histories[2].transition\'=\'Suspend\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 372
+#line 371
  testRunner.Then("JSON \'elements[0].transition_histories[3].transition\'=\'Resume\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 373
+#line 372
  testRunner.Then("JSON \'elements[0].transition_histories[4].transition\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 374
+#line 373
  testRunner.Then("JSON \'elements[0].state_histories[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 375
+#line 374
  testRunner.Then("JSON \'elements[0].state_histories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 376
+#line 375
  testRunner.Then("JSON \'elements[0].state_histories[2].state\'=\'Suspended\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 377
+#line 376
  testRunner.Then("JSON \'elements[0].state_histories[3].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 378
+#line 377
  testRunner.Then("JSON \'elements[0].state_histories[4].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1039,15 +1036,15 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Suspend caseWithOneLongProcessTask and check his status is suspended (scope = Cas" +
                     "e Instance)", null, ((string[])(null)));
-#line 380
+#line 379
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 381
+#line 380
  testRunner.When("execute HTTP GET request \'http://localhost/case-plans/search?case_plan_id=CaseWit" +
                     "hOneLongProcessTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 382
+#line 381
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 383
+#line 382
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1056,63 +1053,63 @@ this.ScenarioInitialize(scenarioInfo);
             table16.AddRow(new string[] {
                         "case_plan_id",
                         "$defid$"});
-#line 384
+#line 383
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table16, "And ");
-#line 387
+#line 386
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 388
+#line 387
  testRunner.And("extract \'id\' from JSON body into \'insid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 389
+#line 388
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 390
+#line 389
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'elements[0].state_his" +
                     "tories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 391
+#line 390
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 392
+#line 391
  testRunner.And("extract \'elements[0].id\' from JSON body into \'eltid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 393
+#line 392
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/suspend\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 394
+#line 393
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'elements[0].state_his" +
                     "tories[2].state\'=\'Suspended\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 395
+#line 394
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/resume\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 396
+#line 395
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 397
+#line 396
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 399
+#line 398
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 400
+#line 399
  testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 401
+#line 400
  testRunner.Then("JSON \'state_histories[0].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 402
+#line 401
  testRunner.Then("JSON \'state_histories[1].state\'=\'Suspended\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 403
+#line 402
  testRunner.Then("JSON \'state_histories[2].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 404
+#line 403
  testRunner.Then("JSON \'state_histories[3].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 405
+#line 404
  testRunner.Then("JSON \'elements[0].transition_histories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 406
+#line 405
  testRunner.Then("JSON \'elements[0].transition_histories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 407
+#line 406
  testRunner.Then("JSON \'elements[0].transition_histories[2].transition\'=\'ParentSuspend\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 408
+#line 407
  testRunner.Then("JSON \'elements[0].transition_histories[3].transition\'=\'ParentResume\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 409
+#line 408
  testRunner.Then("JSON \'elements[0].transition_histories[4].transition\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 410
+#line 409
  testRunner.Then("JSON \'elements[0].state_histories[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 411
+#line 410
  testRunner.Then("JSON \'elements[0].state_histories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 412
+#line 411
  testRunner.Then("JSON \'elements[0].state_histories[2].state\'=\'Suspended\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 413
+#line 412
  testRunner.Then("JSON \'elements[0].state_histories[3].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 414
+#line 413
  testRunner.Then("JSON \'elements[0].state_histories[4].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1124,15 +1121,15 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void ReactiveFailedCaseWithTwoStagesAndCheckHisStatusIsFailedScopeStage()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Reactive failed caseWithTwoStages and check his status is failed (scope = Stage)", null, ((string[])(null)));
-#line 416
+#line 415
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 417
+#line 416
  testRunner.When("execute HTTP GET request \'http://localhost/case-plans/search?case_plan_id=CaseWit" +
                     "hTwoStages\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 418
+#line 417
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 419
+#line 418
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1141,146 +1138,146 @@ this.ScenarioInitialize(scenarioInfo);
             table17.AddRow(new string[] {
                         "case_plan_id",
                         "$defid$"});
-#line 420
+#line 419
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table17, "And ");
-#line 423
+#line 422
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 424
+#line 423
  testRunner.And("extract \'id\' from JSON body into \'insid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 425
+#line 424
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 426
+#line 425
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'$.elements[?(@.case_p" +
                     "lan_element_id == \'PlanItem_1291396\')].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 427
+#line 426
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'$.elements[?(@.case_p" +
                     "lan_element_id == \'PlanItem_0ox3upg\')].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 428
+#line 427
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'$.elements[?(@.case_p" +
                     "lan_element_id == \'PlanItem_0ctfxhw\')].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 429
+#line 428
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'$.elements[?(@.case_p" +
                     "lan_element_id == \'PlanItem_1fd01pl\')].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 430
+#line 429
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 431
+#line 430
  testRunner.And("extract \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].id\' from JSO" +
                     "N body into \'eltid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 432
+#line 431
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/reactivate" +
                     "/$eltid$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 433
+#line 432
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'$.elements[?(@.case_p" +
                     "lan_element_id == \'PlanItem_1291396\')].state_histories[4].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 434
+#line 433
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/terminate\'" +
                     "", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 435
+#line 434
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state\'=\'Terminated\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 436
+#line 435
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 438
+#line 437
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 439
+#line 438
  testRunner.Then("JSON \'state\'=\'Terminated\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 440
+#line 439
  testRunner.Then("JSON \'state_histories[0].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 441
+#line 440
  testRunner.Then("JSON \'state_histories[1].state\'=\'Terminated\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 441
+ testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].transition_hist" +
+                    "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 442
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].transition_hist" +
-                    "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 443
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].transition_hist" +
-                    "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "ories[2].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 444
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].transition_hist" +
-                    "ories[2].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "ories[3].transition\'=\'Reactivate\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 445
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].transition_hist" +
-                    "ories[3].transition\'=\'Reactivate\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 446
- testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].transition_hist" +
                     "ories[4].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 446
+ testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].state_histories" +
+                    "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 447
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].state_histories" +
-                    "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 448
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].state_histories" +
-                    "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "[2].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 449
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].state_histories" +
-                    "[2].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "[3].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 450
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].state_histories" +
-                    "[3].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 451
- testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1291396\')].state_histories" +
                     "[4].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 451
+ testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].transition_hist" +
+                    "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 452
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].transition_hist" +
-                    "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 453
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].transition_hist" +
-                    "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "ories[2].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 454
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].transition_hist" +
-                    "ories[2].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "ories[3].transition\'=\'Reactivate\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 455
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].transition_hist" +
-                    "ories[3].transition\'=\'Reactivate\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 456
- testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].transition_hist" +
                     "ories[4].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 456
+ testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].state_histories" +
+                    "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 457
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].state_histories" +
-                    "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 458
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].state_histories" +
-                    "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "[2].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 459
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].state_histories" +
-                    "[2].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "[3].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 460
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].state_histories" +
-                    "[3].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 461
- testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ox3upg\')].state_histories" +
                     "[4].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 461
+ testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].transition_hist" +
+                    "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 462
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].transition_hist" +
-                    "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 463
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].transition_hist" +
-                    "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 464
- testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].transition_hist" +
                     "ories[2].transition\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 464
+ testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].state_histories" +
+                    "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 465
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].state_histories" +
-                    "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                    "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 466
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].state_histories" +
-                    "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 467
- testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_0ctfxhw\')].state_histories" +
                     "[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 468
+#line 467
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1fd01pl\')].transition_hist" +
                     "ories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 469
+#line 468
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1fd01pl\')].transition_hist" +
                     "ories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 470
+#line 469
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1fd01pl\')].transition_hist" +
                     "ories[2].transition\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 471
+#line 470
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1fd01pl\')].state_histories" +
                     "[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 472
+#line 471
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1fd01pl\')].state_histories" +
                     "[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 473
+#line 472
  testRunner.Then("JSON \'$.elements[?(@.case_plan_element_id == \'PlanItem_1fd01pl\')].state_histories" +
                     "[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -1296,15 +1293,15 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Reactivate failed caseWithOneFailProcessTask and check his status is failed (scop" +
                     "e = Case Instance)", null, ((string[])(null)));
-#line 475
+#line 474
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 476
+#line 475
  testRunner.When("execute HTTP GET request \'http://localhost/case-plans/search?case_plan_id=CaseWit" +
                     "hOneFailProcessTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 477
+#line 476
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 478
+#line 477
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1313,56 +1310,56 @@ this.ScenarioInitialize(scenarioInfo);
             table18.AddRow(new string[] {
                         "case_plan_id",
                         "$defid$"});
-#line 479
+#line 478
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table18, "And ");
-#line 482
+#line 481
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 483
+#line 482
  testRunner.And("extract \'id\' from JSON body into \'insid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 484
+#line 483
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 485
+#line 484
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state_histories[1].st" +
                     "ate\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 486
+#line 485
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/reactivate" +
                     "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 487
+#line 486
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state_histories[3].st" +
                     "ate\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 488
+#line 487
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 490
+#line 489
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 491
+#line 490
  testRunner.Then("JSON \'state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 492
+#line 491
  testRunner.Then("JSON \'state_histories[0].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 493
+#line 492
  testRunner.Then("JSON \'state_histories[1].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 494
+#line 493
  testRunner.Then("JSON \'state_histories[2].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 495
+#line 494
  testRunner.Then("JSON \'state_histories[3].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 496
+#line 495
  testRunner.Then("JSON \'elements[0].transition_histories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 497
+#line 496
  testRunner.Then("JSON \'elements[0].transition_histories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 498
+#line 497
  testRunner.Then("JSON \'elements[0].transition_histories[2].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 499
+#line 498
  testRunner.Then("JSON \'elements[0].transition_histories[3].transition\'=\'Reactivate\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 500
+#line 499
  testRunner.Then("JSON \'elements[0].transition_histories[4].transition\'=\'Fault\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 501
+#line 500
  testRunner.Then("JSON \'elements[0].state_histories[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 502
+#line 501
  testRunner.Then("JSON \'elements[0].state_histories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 503
+#line 502
  testRunner.Then("JSON \'elements[0].state_histories[2].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 504
+#line 503
  testRunner.Then("JSON \'elements[0].state_histories[3].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 505
+#line 504
  testRunner.Then("JSON \'elements[0].state_histories[4].state\'=\'Failed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1374,15 +1371,15 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void TerminateCaseWithOneLongProcessTaskAndCheckHisStatusIsTerminated()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Terminate caseWithOneLongProcessTask and check his status is terminated", null, ((string[])(null)));
-#line 507
+#line 506
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 508
+#line 507
  testRunner.When("execute HTTP GET request \'http://localhost/case-plans/search?case_plan_id=CaseWit" +
                     "hOneLongProcessTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 509
+#line 508
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 510
+#line 509
  testRunner.And("extract \'content[0].id\' from JSON body into \'defid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1391,47 +1388,47 @@ this.ScenarioInitialize(scenarioInfo);
             table19.AddRow(new string[] {
                         "case_plan_id",
                         "$defid$"});
-#line 511
+#line 510
  testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table19, "And ");
-#line 514
+#line 513
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 515
+#line 514
  testRunner.And("extract \'id\' from JSON body into \'insid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 516
+#line 515
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 517
+#line 516
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'elements[0].state_his" +
                     "tories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 518
+#line 517
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 519
+#line 518
  testRunner.And("extract \'elements[0].id\' from JSON body into \'eltid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 520
+#line 519
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$insid$/terminate/" +
                     "$eltid$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 521
+#line 520
  testRunner.And("poll \'http://localhost/case-plan-instances/$insid$\', until \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 522
+#line 521
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 524
+#line 523
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 525
+#line 524
  testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 526
+#line 525
  testRunner.Then("JSON \'state_histories[0].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 527
+#line 526
  testRunner.Then("JSON \'state_histories[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 528
+#line 527
  testRunner.Then("JSON \'elements[0].transition_histories[0].transition\'=\'Create\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 529
+#line 528
  testRunner.Then("JSON \'elements[0].transition_histories[1].transition\'=\'Start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 530
+#line 529
  testRunner.Then("JSON \'elements[0].transition_histories[2].transition\'=\'Terminate\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 531
+#line 530
  testRunner.Then("JSON \'elements[0].state_histories[0].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 532
+#line 531
  testRunner.Then("JSON \'elements[0].state_histories[1].state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 533
+#line 532
  testRunner.Then("JSON \'elements[0].state_histories[2].state\'=\'Terminated\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

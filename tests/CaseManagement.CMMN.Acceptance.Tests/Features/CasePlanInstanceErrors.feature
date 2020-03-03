@@ -87,7 +87,7 @@ Scenario: Activate unknown case instance and check error is returned
 	And extract JSON from body
 	
 	Then HTTP status code equals to '404'
-	Then JSON 'errors.bad_request[0]'='case activation doesn't exist'
+	Then JSON 'errors.bad_request[0]'='case instance element doesn't exist'
 
 Scenario: Activate unknown case element instance and check error is returned
 	When execute HTTP GET request 'http://localhost/case-plans/search?case_plan_id=CaseWithOneManualActivationTask'
@@ -102,7 +102,7 @@ Scenario: Activate unknown case element instance and check error is returned
 	And extract JSON from body
 	
 	Then HTTP status code equals to '404'
-	Then JSON 'errors.bad_request[0]'='case activation doesn't exist'
+	Then JSON 'errors.bad_request[0]'='case instance element doesn't exist'
 
 Scenario: Submit form and the user is not authorized
 	When execute HTTP GET request 'http://localhost/case-plans/search?case_plan_id=CaseWithOneHumanTaskAndRole'

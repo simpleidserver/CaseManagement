@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -22,6 +23,8 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         private static object _obj = new object();
         private static CustomWebApplicationFactory<FakeStartup> _factory;
         private static HttpClient _client;
+        private static IScenarioContextProvider _scenarioContextProvider;
+        private static EventWaitHandle Evt = new EventWaitHandle(true, EventResetMode.AutoReset);
 
         public SharedSteps(ScenarioContext scenarioContext)
         {
@@ -33,20 +36,25 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         {
             lock(_obj)
             {
+                Evt.WaitOne();
                 if (_factory == null)
                 {
+                    _scenarioContextProvider = new ScenarioContextProvider();
                     _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
                     {
-                        c.AddSingleton(_scenarioContext);
+                        c.AddSingleton(_scenarioContextProvider);
                     });
                     _client = _factory.CreateClient();
                 }
+
+                _scenarioContextProvider.SetContext(_scenarioContext);
             }
         }
 
         [AfterScenario]
         public void AfterScenario()
         {
+            Evt.Set();
         }
 
         [When("execute HTTP GET request '(.*)'")]

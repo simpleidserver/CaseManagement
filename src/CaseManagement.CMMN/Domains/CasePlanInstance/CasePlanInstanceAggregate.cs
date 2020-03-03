@@ -131,13 +131,24 @@ namespace CaseManagement.CMMN.Domains
 
         public bool IsManualActivationRuleSatisfied(string id, CasePlanAggregate workflowDefinition)
         {
-            var planItemDef = GetWorkflowElementDefinition(id, workflowDefinition);
-            if (planItemDef == null || planItemDef.ActivationRule != ActivationRuleTypes.ManualActivation || planItemDef.ManualActivationRule == null)
+            var casePlanElementInstance = GetWorkflowElementInstance(id);
+            var casePlanElement = GetWorkflowElementDefinition(id, workflowDefinition);
+            if (!casePlanElementInstance.IsTaskOrStage())
             {
                 return false;
             }
 
-            if (planItemDef.ManualActivationRule.Expression != null && !ExpressionParser.IsValid(planItemDef.ManualActivationRule.Expression.Body, this))
+            if (casePlanElementInstance.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
+            {
+                return false;
+            }
+
+            if (casePlanElement == null || casePlanElement.ActivationRule != ActivationRuleTypes.ManualActivation || casePlanElement.ManualActivationRule == null)
+            {
+                return false;
+            }
+
+            if (casePlanElement.ManualActivationRule.Expression != null && !ExpressionParser.IsValid(casePlanElement.ManualActivationRule.Expression.Body, this))
             {
                 return false;
             }
@@ -357,7 +368,7 @@ namespace CaseManagement.CMMN.Domains
                     return;
                 }
 
-                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
+                if (!elt.IsTaskOrStage() || elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
                 {
                     return;
                 }

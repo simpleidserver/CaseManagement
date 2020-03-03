@@ -121,48 +121,20 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
-        [Xunit.FactAttribute(DisplayName="Update role with existing users")]
-        [Xunit.TraitAttribute("FeatureTitle", "RoleErrors")]
-        [Xunit.TraitAttribute("Description", "Update role with existing users")]
-        public virtual void UpdateRoleWithExistingUsers()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update role with existing users", null, ((string[])(null)));
-#line 19
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line hidden
-            TechTalk.SpecFlow.Table table30 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Key",
-                        "Value"});
-            table30.AddRow(new string[] {
-                        "users",
-                        "[\'thabart\']"});
-#line 20
- testRunner.When("execute HTTP PUT JSON request \'http://localhost/roles/admin\'", ((string)(null)), table30, "When ");
-#line 24
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 26
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 27
- testRunner.Then("JSON \'errors.validation[0]\'=\'users \'thabart\' are already assigned to the role\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
         [Xunit.FactAttribute(DisplayName="Get unknown role")]
         [Xunit.TraitAttribute("FeatureTitle", "RoleErrors")]
         [Xunit.TraitAttribute("Description", "Get unknown role")]
         public virtual void GetUnknownRole()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get unknown role", null, ((string[])(null)));
-#line 29
+#line 19
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 30
+#line 20
  testRunner.When("execute HTTP GET request \'http://localhost/roles/role\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 31
+#line 21
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 33
+#line 23
  testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

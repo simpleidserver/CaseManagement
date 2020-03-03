@@ -12,19 +12,20 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Middlewares
 {
     public class CustomAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private readonly ScenarioContext _scenarioContext;
+        private readonly IScenarioContextProvider _scenarioContextProvider;
 
-        public CustomAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, ScenarioContext scenarioContext) : base(options, logger, encoder, clock)
+        public CustomAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, IScenarioContextProvider scenarioContextProvider) : base(options, logger, encoder, clock)
         {
-            _scenarioContext = scenarioContext;
+            _scenarioContextProvider = scenarioContextProvider;
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var nameIdentifier = "thabart";
-            if (_scenarioContext.ContainsKey("userId"))
+            var scenarioContext = _scenarioContextProvider.GetContext();
+            if (scenarioContext.ContainsKey("userId"))
             {
-                nameIdentifier = _scenarioContext["userId"].ToString();
+                nameIdentifier = scenarioContext["userId"].ToString();
             }
 
             var claims = new List<Claim>

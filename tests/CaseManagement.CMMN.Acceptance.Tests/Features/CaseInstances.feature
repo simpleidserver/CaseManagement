@@ -277,7 +277,6 @@ Scenario: Launch caseWithOneCaseFileItem and check his status is completed
 	Then JSON 'state_histories[1].state'='Terminated'
 	Then JSON '$.elements[?(@.case_plan_element_id == 'CaseFileItem_05yrrad')].transition_histories[0].transition'='Create'
 	Then JSON '$.elements[?(@.case_plan_element_id == 'CaseFileItem_05yrrad')].transition_histories[1].transition'='AddChild'
-	Then JSON '$.elements[?(@.case_plan_element_id == 'CaseFileItem_05yrrad')].transition_histories[2].transition'='ParentTerminate'
 	Then JSON '$.elements[?(@.case_plan_element_id == 'PlanItem_0uxcsmm')].transition_histories[0].transition'='Create'
 	Then JSON '$.elements[?(@.case_plan_element_id == 'PlanItem_0uxcsmm')].transition_histories[1].transition'='Start'
 	Then JSON '$.elements[?(@.case_plan_element_id == 'PlanItem_0uxcsmm')].transition_histories[2].transition'='Complete'

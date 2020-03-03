@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Domains.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -32,15 +33,31 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Listeners
         public static void ListenEntryCriterias(ProcessorParameter parameter, CancellationToken cancellationToken)
         {
             var planItemDefinition = parameter.CaseDefinition.GetElement(parameter.CaseElementInstance.CasePlanElementId);
-            var entryCriterion = planItemDefinition.EntryCriterions.ToList();
-            if (!entryCriterion.Any())
+            var entryCriterion = planItemDefinition.EntryCriterions;
+            var casePlanElementType = parameter.CaseElementInstance.CasePlanElementType;
+            if (!entryCriterion.Any() || entryCriterion.Any(c => parameter.CaseInstance.IsCriteriaSatisfied(c, parameter.CaseElementInstance.Version)))
             {
                 return;
             }
 
-            if (entryCriterion.Any(c => parameter.CaseInstance.IsCriteriaSatisfied(c, parameter.CaseElementInstance.Version)))
+            if (!parameter.CaseElementInstance.IsTaskOrStage() && casePlanElementType != CaseElementTypes.Milestone)
             {
                 return;
+            }
+
+            if (casePlanElementType == CaseElementTypes.Milestone)
+            {
+                if (parameter.CaseElementInstance.State != Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available))
+                {
+                    return;
+                }
+            }
+            else   
+            {
+                if (parameter.CaseElementInstance.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
+                {
+                    return;
+                }
             }
 
             var criterionListener = new CriterionListener(parameter, cancellationToken, entryCriterion);

@@ -44,6 +44,8 @@ task pack -depends compile {
 	exec { dotnet pack $source_dir\CaseManagement.CMMN\CaseManagement.CMMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNet\CaseManagement.CMMN.AspNet.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.Gateway.Website\CaseManagement.Gateway.Website.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.Gateway.Website.AspNetCore\CaseManagement.Gateway.Website.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
 }
 
 task test {
