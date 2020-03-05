@@ -1,0 +1,13 @@
+[Unit]
+Description=Case management authorization (OAUTH)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.OAuth/bin/Debug/netcoreapp2.2/CaseManagement.OAuth.dll --server.urls="http://*:60001"
+KillMode=process
+TimeoutStopSec=5s
+Restart=always
+WorkingDirectory=/src/CaseManagement/src/CaseManagement.OAuth
+
+[Install]
+WantedBy=multi-user.target

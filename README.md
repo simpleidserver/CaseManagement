@@ -21,11 +21,13 @@ For project documentation, please visit [readthedocs](https://casemanagement.rea
 
 ## Packages
 
-|                         			 						|      																															  																					|																																				|																																				|
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CaseManagement.CMMN` 			 						| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN)													| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.svg)](https://nuget.org/packages/CaseManagement.CMMN) 							| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.svg)](https://nuget.org/packages/CaseManagement.CMMN) 							|
-| `CaseManagement.CMMN.AspNet` 								| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.AspNet.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.AspNet)										| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.AspNet.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNet) 				| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.AspNet.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNet) 			|
-| `CaseManagement.CMMN.AspNetCore`							| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.AspNetCore.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.AspNetCore)								| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNetCore) 		| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNetCore) 	|
+|                         			 						|      																															  																					|																																										|																																								|
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CaseManagement.CMMN` 			 						| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN)													| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.svg)](https://nuget.org/packages/CaseManagement.CMMN) 													| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.svg)](https://nuget.org/packages/CaseManagement.CMMN) 											|
+| `CaseManagement.CMMN.AspNet` 								| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.AspNet.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.AspNet)										| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.AspNet.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNet) 										| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.AspNet.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNet) 							|
+| `CaseManagement.CMMN.AspNetCore`							| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.AspNetCore.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.AspNetCore)								| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNetCore) 								| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNetCore) 					|
+| `CaseManagement.Gateway.Website`							| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.Gateway.Website.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.Gateway.Website)								| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.Gateway.Website.svg)](https://nuget.org/packages/CaseManagement.Gateway.Website) 								| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.Gateway.Website.svg)](https://nuget.org/packages/CaseManagement.Gateway.Website) 					|
+| `CaseManagement.Gateway.Website.AspNetCore`				| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.Gateway.Website.AspNetCore.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.Gateway.Website.AspNetCore)		| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.Gateway.Website.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.Gateway.Website.AspNetCore) 		| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.Gateway.Website.AspNetCore)](https://nuget.org/packages/CaseManagement.Gateway.Website.AspNetCore) 	|
 
 ## Contributing
 
@@ -35,9 +37,9 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ### Performance website
 
-Performance live demo : (?).
+Performance live demo : [http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementperformance](http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementperformance).
 
-Use the following administrator account to authenticate to the performance website.
+Administrator credentials :
 
 | Property      |      Value      |
 |---------------|-----------------|
@@ -46,11 +48,18 @@ Use the following administrator account to authenticate to the performance websi
 
 ### Case management website
 
-CaseManagement live demo : [http://simpleidserver.northeurope.cloudapp.azure.com/](http://simpleidserver.northeurope.cloudapp.azure.com/).
+CaseManagement live demo : [http://simpleidserver.northeurope.cloudapp.azure.com/casemanagement](http://simpleidserver.northeurope.cloudapp.azure.com/casemanagement).
 
-Use the following businessanalyst account to authenticate to the case management website.
+Business analyst credentials :
 
 | Property      |      Value      |
 |---------------|-----------------|
 | login         | businessanalyst |
+| value         | password        |
+
+Case worker credentials :
+
+| Property      |      Value      |
+|---------------|-----------------|
+| login         | caseworker      |
 | value         | password        |

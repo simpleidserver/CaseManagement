@@ -51,11 +51,11 @@ namespace CaseManagement.Identity
                         Value = PasswordHelper.ComputeHash("password")
                     }
                 },
-                Claims = new Dictionary<string, string>
+                Claims = new List<KeyValuePair<string, string>>
                 {
-                    { SimpleIdServer.Jwt.Constants.UserClaims.Subject, "administrator" },
-                    { SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "administrator" },
-                    { SimpleIdServer.Jwt.Constants.UserClaims.Role, "admin" }
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "administrator"),
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "administrator"),
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Role, "admin")
                 }
             },
             new OAuthUser
@@ -69,11 +69,11 @@ namespace CaseManagement.Identity
                         Value = PasswordHelper.ComputeHash("password")
                     }
                 },
-                Claims = new Dictionary<string, string>
+                Claims = new List<KeyValuePair<string, string>>
                 {
-                    { SimpleIdServer.Jwt.Constants.UserClaims.Subject, "businessanalyst" },
-                    { SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "businessanalyst" },
-                    { SimpleIdServer.Jwt.Constants.UserClaims.Role, "businessanalyst" }
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "businessanalyst"),
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "businessanalyst"),
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Role, "businessanalyst")
                 }
             },
             new OAuthUser
@@ -87,11 +87,11 @@ namespace CaseManagement.Identity
                         Value = PasswordHelper.ComputeHash("password")
                     }
                 },
-                Claims = new Dictionary<string, string>
+                Claims = new List<KeyValuePair<string, string>>
                 {
-                    { SimpleIdServer.Jwt.Constants.UserClaims.Subject, "caseworker" },
-                    { SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "caseworker" },
-                    { SimpleIdServer.Jwt.Constants.UserClaims.Role, "caseworker" }
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "caseworker"),
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "caseworker"),
+                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Role, "caseworker")
                 }
             }
         };
@@ -126,7 +126,8 @@ namespace CaseManagement.Identity
                 RedirectionUrls = new List<string>
                 {
                     "http://localhost:51724",
-                    "http://localhost:8080"
+                    "http://localhost:8080",
+                    "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagement"
                 },
                 PreferredTokenProfile = "Bearer",
                 ResponseTypes = new List<string>
@@ -163,7 +164,8 @@ namespace CaseManagement.Identity
                 RedirectionUrls = new List<string>
                 {
                     "http://localhost:51725",
-                    "http://localhost:8081"
+                    "http://localhost:8081",
+                    "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementperformance"
                 },
                 PreferredTokenProfile = "Bearer",
                 ResponseTypes = new List<string>

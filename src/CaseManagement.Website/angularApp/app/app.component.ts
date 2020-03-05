@@ -1,10 +1,9 @@
-﻿import { DOCUMENT } from '@angular/common';
-import { Component, Inject, ViewEncapsulation, OnInit } from '@angular/core';
+﻿import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
-import { Router } from '@angular/router';
-import { trigger, transition, state, style, animate } from '@angular/animations';
 
 @Component({
     selector: 'app-component',
@@ -38,7 +37,7 @@ export class AppComponent implements OnInit {
     url: string = process.env.BASE_URL + "assets/images/logo.svg";
     expanded: boolean = false;
 
-    constructor(private route: Router, private translate: TranslateService, private oauthService: OAuthService, @Inject(DOCUMENT) private document: any, private router: Router) {
+    constructor(private route: Router, private translate: TranslateService, private oauthService: OAuthService, private router: Router) {
         translate.setDefaultLang('fr');
         translate.use('fr');
         this.configureAuth();
@@ -109,7 +108,6 @@ export class AppComponent implements OnInit {
     }
 
     private configureAuth() {
-        authConfig.redirectUri = this.document.location.origin;
         this.oauthService.configure(authConfig);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         let self = this;

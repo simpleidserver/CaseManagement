@@ -10,6 +10,8 @@ const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 
 const ENV = process.env.ENV = process.env.NODE_ENV = 'azure';
 const API_URL = process.env.API_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementapi";
+const OPENID_URL = process.env.OPENID_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity";
+const REDIRECT_URL = process.env.REDIRECT_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagement";
 const BASE_URL = process.env.BASE_URL || '/casemanagement/';
 
 const ROOT = path.resolve(__dirname, '..');
@@ -128,7 +130,8 @@ module.exports = {
         new CopyWebpackPlugin([
             { from: './angularApp/images/*.*', to: 'assets/images', flatten: true },
             { from: './angularApp/i18n/*.*', to: 'assets/i18n', flatten: true },
-            { from: './angularApp/fonts/*.*', to: 'assets/fonts', flatten: true }
+            { from: './angularApp/fonts/*.*', to: 'assets/fonts', flatten: true },
+            { from: './node_modules/ngx-monaco-editor/assets/monaco', to: 'assets/monaco' }
         ]),
 
         new FilterWarningsPlugin({
@@ -138,10 +141,14 @@ module.exports = {
         new webpack.DefinePlugin({
             'ENV': JSON.stringify(ENV),
             'API_URL': JSON.stringify(API_URL),
+            'OPENID_URL': JSON.stringify(OPENID_URL),
+            'REDIRECT_URL': JSON.stringify(REDIRECT_URL),
             'process.env': {
                 'ENV': JSON.stringify(ENV),
                 'API_URL': JSON.stringify(API_URL),
-                'BASE_URL': JSON.stringify(BASE_URL)
+                'OPENID_URL': JSON.stringify(OPENID_URL),
+                'BASE_URL': JSON.stringify(BASE_URL),
+                'REDIRECT_URL': JSON.stringify(REDIRECT_URL),
             }
         })
     ]

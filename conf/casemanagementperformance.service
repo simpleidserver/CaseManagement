@@ -1,0 +1,13 @@
+[Unit]
+Description=Case management performance
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.Performance/bin/Debug/netcoreapp2.2/CaseManagement.Performance.dll --pathBase=/casemanagementperformance --server.urls="http://*:51725"
+KillMode=process
+TimeoutStopSec=5s
+Restart=always
+WorkingDirectory=/src/CaseManagement/src/CaseManagement.Performance
+
+[Install]
+WantedBy=multi-user.target

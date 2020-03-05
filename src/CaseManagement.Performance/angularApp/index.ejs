@@ -7,72 +7,72 @@
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
         <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
         <style type="text/css">
-        body, html {
-            height: 100%;
-        }
+          body, html {
+          height: 100%;
+          }
 
-        .app-loading {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
+          .app-loading {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          }
 
-        .app-loading .spinner {
-            height: 200px;
-            width: 200px;
-            animation: rotate 2s linear infinite;
-            transform-origin: center center;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-        }
+          .app-loading .spinner {
+          height: 200px;
+          width: 200px;
+          animation: rotate 2s linear infinite;
+          transform-origin: center center;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin: auto;
+          }
 
-        .app-loading .spinner .path {
-            stroke-dasharray: 1, 200;
-            stroke-dashoffset: 0;
-            animation: dash 1.5s ease-in-out infinite;
-            stroke-linecap: round;
-            stroke: #ddd;
-        }
+          .app-loading .spinner .path {
+          stroke-dasharray: 1, 200;
+          stroke-dashoffset: 0;
+          animation: dash 1.5s ease-in-out infinite;
+          stroke-linecap: round;
+          stroke: #ddd;
+          }
 
-        @keyframes rotate {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+          @keyframes rotate {
+          100% {
+          transform: rotate(360deg);
+          }
+          }
 
-        @keyframes dash {
-            0% {
-                stroke-dasharray: 1, 200;
-                stroke-dashoffset: 0;
-            }
+          @keyframes dash {
+          0% {
+          stroke-dasharray: 1, 200;
+          stroke-dashoffset: 0;
+          }
 
-            50% {
-                stroke-dasharray: 89, 200;
-                stroke-dashoffset: -35px;
-            }
+          50% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -35px;
+          }
 
-            100% {
-                stroke-dasharray: 89, 200;
-                stroke-dashoffset: -124px;
-            }
-        }
+          100% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -124px;
+          }
+          }
 
-        /* fallback */
-        @font-face {
+          /* fallback */
+          @font-face {
           font-family: 'Material Icons';
           font-style: normal;
           font-weight: 400;
-          src: url(/assets/fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
-        }
+          src: url(<%= baseUrl == "/" ? "" : baseUrl %>/assets/fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+          }
 
-        .material-icons {
+          .material-icons {
           font-family: 'Material Icons';
           font-weight: normal;
           font-style: normal;
@@ -86,7 +86,7 @@
           direction: ltr;
           -webkit-font-feature-settings: 'liga';
           -webkit-font-smoothing: antialiased;
-        }
+          }
         </style>
     </head>
     <body class="my-theme">

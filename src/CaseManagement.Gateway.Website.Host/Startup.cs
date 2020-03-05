@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
@@ -30,7 +32,7 @@ namespace CaseManagement.Gateway.Website.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -43,11 +45,13 @@ namespace CaseManagement.Gateway.Website.Host
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "http://localhost:60000"
+                        "http://localhost:60000",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60000"
+                        "http://localhost:60000",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
                     }
                 };
             });
@@ -114,17 +118,16 @@ namespace CaseManagement.Gateway.Website.Host
         private RsaSecurityKey ExtractKey(string fileName)
         {
             var json = File.ReadAllText(Path.Combine(_env.ContentRootPath, fileName));
+            Console.WriteLine(json);
             var dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-            using (var rsa = RSA.Create())
+            var rsa = RSA.Create();
+            var rsaParameters = new RSAParameters
             {
-                var rsaParameters = new RSAParameters
-                {
-                    Modulus = Convert.FromBase64String(dic["n"].ToString()),
-                    Exponent = Convert.FromBase64String(dic["e"].ToString())
-                };
-                rsa.ImportParameters(rsaParameters);
-                return new RsaSecurityKey(rsa);
-            }
+                Modulus = Convert.FromBase64String(dic["n"].ToString()),
+                Exponent = Convert.FromBase64String(dic["e"].ToString())
+            };
+            rsa.ImportParameters(rsaParameters);
+            return new RsaSecurityKey(rsa);
         }
     }
 }
