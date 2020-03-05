@@ -3,11 +3,11 @@ Description=Case management
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.CMMN.Host/bin/Debug/netcoreapp2.2/CaseManagement.CMMN.Host.dll --pathBase=/casemanagementapi --server.urls="http://*:54942"
+ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.CMMN.Host/bin/Debug/netcoreapp3.1/CaseManagement.CMMN.Host.dll --server.urls="http://*:54942"
 KillMode=process
 TimeoutStopSec=5s
 Restart=always
-WorkingDirectory=/src/CaseManagement/src/CaseManagement.CMMN.Host/bin/Debug/netcoreapp2.2
+WorkingDirectory=/src/CaseManagement/src/CaseManagement.CMMN.Host/bin/Debug/netcoreapp3.1
 
 [Install]
 WantedBy=multi-user.target

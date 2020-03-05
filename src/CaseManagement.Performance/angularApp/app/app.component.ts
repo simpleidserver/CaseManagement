@@ -1,5 +1,4 @@
-﻿import { DOCUMENT } from '@angular/common';
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
+﻿import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
@@ -19,14 +18,13 @@ import { authConfig } from './auth.config';
 export class AppComponent {
     sessionCheckTimer: any;
 
-    constructor(translate: TranslateService, private router: Router, private oauthService: OAuthService, @Inject(DOCUMENT) private document: any) {
+    constructor(translate: TranslateService, private router: Router, private oauthService: OAuthService) {
         translate.setDefaultLang('fr');
         translate.use('fr');
         this.configureAuth();
     }
 
     private configureAuth() {
-        authConfig.redirectUri = this.document.location.origin;
         this.oauthService.configure(authConfig);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         let self = this;

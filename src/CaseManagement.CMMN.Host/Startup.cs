@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,7 +33,7 @@ namespace CaseManagement.CMMN.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,11 +61,13 @@ namespace CaseManagement.CMMN.Host
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "http://localhost:60000"
+                        "http://localhost:60000",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60000"
+                        "http://localhost:60000",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
                     }
                 };
             });
@@ -298,16 +299,14 @@ namespace CaseManagement.CMMN.Host
         {
             var json = File.ReadAllText(Path.Combine(_env.ContentRootPath, fileName));
             var dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-            using (var rsa = RSA.Create())
+            var rsa = RSA.Create();
+            var rsaParameters = new RSAParameters
             {
-                var rsaParameters = new RSAParameters
-                {
-                    Modulus = Convert.FromBase64String(dic["n"].ToString()),
-                    Exponent = Convert.FromBase64String(dic["e"].ToString())
-                };
-                rsa.ImportParameters(rsaParameters);
-                return new RsaSecurityKey(rsa);
-            }
+                Modulus = Convert.FromBase64String(dic["n"].ToString()),
+                Exponent = Convert.FromBase64String(dic["e"].ToString())
+            };
+            rsa.ImportParameters(rsaParameters);
+            return new RsaSecurityKey(rsa);
         }
     }
 }
