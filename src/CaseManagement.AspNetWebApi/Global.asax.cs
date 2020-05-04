@@ -61,7 +61,10 @@ namespace CaseManagement.AspNetWebApi
 
         protected void Application_End()
         {
-            _jobServer.Stop();
+            if (_jobServer != null)
+            {
+                _jobServer.Stop();
+            }
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)

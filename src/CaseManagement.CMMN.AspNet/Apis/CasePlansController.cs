@@ -27,7 +27,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
 
 
         [HttpGet]
-        [Route("me/{id:string}")]
+        [Route("me/{id}")]
         public async Task<IHttpActionResult> GetMe(string id)
         {
             try
@@ -47,7 +47,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
 
 
         [HttpGet]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
             try

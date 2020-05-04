@@ -74,7 +74,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ServerBuilder AddCMMNApi(this IServiceCollection services)
         {
             var builder = new ServerBuilder(services);
-            services.AddCommon().AddCommandHandlers();
+            services.AddCommon()
+                .AddServices()
+                .AddCommandHandlers();
             return builder;
         }
 
@@ -300,6 +302,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IOptionsMonitor<T>, OptionsMonitor<T>>();
             services.TryAddTransient<IOptionsFactory<T>, OptionsFactory<T>>();
             services.TryAddSingleton<IConfigureOptions<T>>(new ConfigureNamedOptions<T>(Options.Options.DefaultName, callback));
+            services.AddSingleton<IPostConfigureOptions<T>>(new PostConfigureOptions<T>(Options.Options.DefaultName, callback));
         }
     }
 }

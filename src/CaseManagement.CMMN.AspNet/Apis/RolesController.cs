@@ -21,7 +21,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpGet]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
             try
@@ -59,7 +59,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpDelete]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Delete(string id)
         {
             try
@@ -78,7 +78,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpPut]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Update(string id, [FromBody] UpdateRoleCommand updateRoleCommand)
         {
             try

@@ -17,7 +17,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpGet]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
             try
@@ -41,7 +41,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpGet]
-        [Route("{formId:string}/{version:int}")]
+        [Route("{formId}/{version:int}")]
         public async Task<IHttpActionResult> Get(string formId, int version)
         {
             try

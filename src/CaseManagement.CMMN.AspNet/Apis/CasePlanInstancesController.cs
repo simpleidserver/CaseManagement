@@ -2,16 +2,10 @@
 using CaseManagement.CMMN.CasePlanInstance;
 using CaseManagement.CMMN.CasePlanInstance.Commands;
 using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.CMMN.CasePlanInstance.Repositories;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -48,7 +42,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> GetMe(string id)
         {
             try
@@ -67,7 +61,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
             try
@@ -82,7 +76,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/casefileitems")]
+        [Route("{id}/casefileitems")]
         public async Task<IHttpActionResult> GetCaseFileItems(string id)
         {
             var result = await _casePlanInstanceService.GetCaseFileItems(id);
@@ -134,7 +128,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/launch")]
+        [Route("me/{id}/launch")]
         public async Task<IHttpActionResult> LaunchMe(string id)
         {
             try
@@ -159,7 +153,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/launch")]
+        [Route("{id}/launch")]
         public async Task<IHttpActionResult> Launch(string id)
         {
             try
@@ -178,7 +172,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
 
 
         [HttpGet]
-        [Route("me/{id:string}/suspend")]
+        [Route("me/{id}/suspend")]
         public async Task<IHttpActionResult> SuspendMe(string id)
         {
             try
@@ -214,7 +208,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/suspend")]
+        [Route("{id}/suspend")]
         public async Task<IHttpActionResult> Suspend(string id)
         {
             try
@@ -250,7 +244,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/suspend/{elt:string}")]
+        [Route("me/{id}/suspend/{elt}")]
         public async Task<IHttpActionResult> SuspendMe(string id, string elt)
         {
             try
@@ -286,7 +280,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/suspend/{elt:string}")]
+        [Route("{id}/suspend/{elt}")]
         public async Task<IHttpActionResult> Suspend(string id, string elt)
         {
             try
@@ -322,7 +316,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/reactivate")]
+        [Route("me/{id}/reactivate")]
         public async Task<IHttpActionResult> ReactivateMe(string id)
         {
             try
@@ -358,7 +352,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/reactivate")]
+        [Route("{id}/reactivate")]
         public async Task<IHttpActionResult> Reactivate(string id)
         {
             try
@@ -394,7 +388,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/reactivate/{elt:string}")]
+        [Route("{id}/reactivate/{elt}")]
         public async Task<IHttpActionResult> Reactivate(string id, string elt)
         {
             try
@@ -430,7 +424,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/resume")]
+        [Route("me/{id}/resume")]
         public async Task<IHttpActionResult> ResumeMe(string id)
         {
             try
@@ -459,7 +453,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/resume")]
+        [Route("{id}/resume")]
         public async Task<IHttpActionResult> Resume(string id)
         {
             try
@@ -488,7 +482,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/resume/{elt:string}")]
+        [Route("me/{id}/resume/{elt}")]
         public async Task<IHttpActionResult> ResumeMe(string id, string elt)
         {
             try
@@ -517,7 +511,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/resume/{elt:string}")]
+        [Route("{id}/resume/{elt}")]
         public async Task<IHttpActionResult> Resume(string id, string elt)
         {
             try
@@ -546,7 +540,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/terminate")]
+        [Route("me/{id}/terminate")]
         public async Task<IHttpActionResult> TerminateMe(string id)
         {
             try
@@ -582,7 +576,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/terminate")]
+        [Route("{id}/terminate")]
         public async Task<IHttpActionResult> Terminate(string id)
         {
             try
@@ -618,7 +612,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/terminate/{elt:string}")]
+        [Route("me/{id}/terminate/{elt}")]
         public async Task<IHttpActionResult> TerminateMe(string id, string elt)
         {
             try
@@ -654,7 +648,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/terminate/{elt:string}")]
+        [Route("{id}/terminate/{elt}")]
         public async Task<IHttpActionResult> Terminate(string id, string elt)
         {
             try
@@ -690,7 +684,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/close")]
+        [Route("me/{id}/close")]
         public async Task<IHttpActionResult> CloseMe(string id)
         {
             try
@@ -719,7 +713,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/close")]
+        [Route("{id}/close")]
         public async Task<IHttpActionResult> Close(string id)
         {
             try
@@ -748,7 +742,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpPost]
-        [Route("me/{id:string}/confirm/{elt:string}")]
+        [Route("me/{id}/confirm/{elt}")]
         public async Task<IHttpActionResult> ConfirmFormMe(string id, string elt, [FromBody] JObject jObj)
         {
             try
@@ -791,7 +785,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpPost]
-        [Route("{id:string}/confirm/{elt:string}")]
+        [Route("{id}/confirm/{elt}")]
         public async Task<IHttpActionResult> ConfirmForm(string id, string elt, [FromBody] JObject jObj)
         {
             try
@@ -834,7 +828,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("me/{id:string}/activate/{elt:string}")]
+        [Route("me/{id}/activate/{elt}")]
         public async Task<IHttpActionResult> ActivateMe(string id, string elt)
         {
             try
@@ -870,7 +864,7 @@ namespace CaseManagement.CMMN.AspNet.Controllers
         }
 
         [HttpGet]
-        [Route("{id:string}/activate/{elt:string}")]
+        [Route("{id}/activate/{elt}")]
         public async Task<IHttpActionResult> Activate(string id, string elt)
         {
             try

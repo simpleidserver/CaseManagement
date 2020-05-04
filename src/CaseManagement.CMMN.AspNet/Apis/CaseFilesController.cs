@@ -60,7 +60,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpPut]
-        [Route("me/{id:string}")]
+        [Route("me/{id}")]
         public async Task<IHttpActionResult> UpdateMe(string id, [FromBody] UpdateCaseFileCommand parameter)
         {
             try
@@ -85,7 +85,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpPut]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
         {
             try
@@ -109,7 +109,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpGet]
-        [Route("me/{id:string}/publish")]
+        [Route("me/{id}/publish")]
         public async Task<IHttpActionResult> PublishMe(string id)
         {
             try
@@ -137,7 +137,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpGet]
-        [Route("{id:string}/publish")]
+        [Route("{id}/publish")]
         public async Task<IHttpActionResult> Publish(string id)
         {
             try
@@ -174,7 +174,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
 
 
         [HttpGet]
-        [Route("me/{id:string}")]
+        [Route("me/{id}")]
         public async Task<IHttpActionResult> GetMe(string id)
         {
             try
@@ -193,7 +193,7 @@ namespace CaseManagement.CMMN.AspNet.Apis
         }
 
         [HttpGet]
-        [Route("{id:string}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> Get(string id)
         {
             try

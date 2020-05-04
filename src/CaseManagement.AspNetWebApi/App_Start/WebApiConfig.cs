@@ -17,6 +17,7 @@ namespace CaseManagement.AspNetWebApi
                 Register(container, d);
             }
 
+            container.RegisterInstance<IServiceProvider>(serviceCollection.BuildServiceProvider());
             config.DependencyResolver = new UnityResolver(container);
             // Web API routes
             config.MapHttpAttributeRoutes();

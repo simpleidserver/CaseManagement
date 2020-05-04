@@ -19,17 +19,18 @@ namespace CaseManagement.CMMN.Infrastructures.Bus.InMemory
             return Task.CompletedTask;
         }
 
-        public Task Queue(string queueName, object message)
+        public async Task Queue(string queueName, object message)
         {
             var genericType = message.GetType();
             var messageBrokerType = typeof(IMessageBrokerConsumerGeneric<>).MakeGenericType(genericType);
             var lst = (IEnumerable<object>)_serviceProvider.GetService(typeof(IEnumerable<>).MakeGenericType(messageBrokerType));
+            var lstTask = new List<Task>();
             foreach (var r in lst)
             {
-                messageBrokerType.GetMethod("Handle").Invoke(r, new object[] { message, CancellationToken.None });
+                lstTask.Add((Task)messageBrokerType.GetMethod("Handle").Invoke(r, new object[] { message, CancellationToken.None }));
             }
 
-            return Task.CompletedTask;
+            await Task.WhenAll(lstTask);
         }
 
         public Task Stop()
