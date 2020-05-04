@@ -37,6 +37,8 @@ task compile -depends clean {
 
 	exec { msbuild -version }
 	
+	exec { dotnet restore .\CaseManagement.sln }
+	exec { dotnet restore .\CaseManagement.AspNet.sln }
     exec { dotnet build .\CaseManagement.sln -c $config --version-suffix=$buildSuffix }
 }
  
