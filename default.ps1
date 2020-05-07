@@ -15,8 +15,15 @@ properties {
 
 task default -depends local
 task local -depends compile, test
-task ci -depends clean, release, local, pack
-# task ci -depends clean, release, local, pack, benchmark
+task ci -depends clean, release, local, pack, publish
+
+task publish {
+	exec { dotnet publish $source_dir\CaseManagement.CMMN.Host\CaseManagement.CMMN.Host.csproj -c $config -o $result_dir\services\CaseManagementApi }
+	exec { dotnet publish $source_dir\CaseManagement.Gateway.Website.Host\CaseManagement.Gateway.Website.Host.csproj -c $config -o $result_dir\services\CaseManagementGateway }
+	exec { npm install $source_dir\CaseManagement.Website --prefix $source_dir\CaseManagement.Website }
+	exec { npm run build-azure --prefix $source_dir\CaseManagement.Website }
+	exec { dotnet publish $source_dir\CaseManagement.Website -c $config -o $result_dir\services\CaseManagementWebsite }
+}
 
 task clean {
 	rd "$source_dir\artifacts" -recurse -force  -ErrorAction SilentlyContinue | out-null
