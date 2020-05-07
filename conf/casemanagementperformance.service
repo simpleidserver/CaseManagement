@@ -1,13 +1,13 @@
 [Unit]
-Description=Case management performance
+Description=Case Management performance
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.Performance/bin/Debug/netcoreapp2.2/CaseManagement.Performance.dll --pathBase=/casemanagementperformance --server.urls="http://*:51725"
+ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/CaseManagementPerformance/CaseManagement.Performance.dll --pathBase=/casemanagementperformance --server.urls="http://*:5003"
 KillMode=process
 TimeoutStopSec=5s
 Restart=always
-WorkingDirectory=/src/CaseManagement/src/CaseManagement.Performance
+WorkingDirectory=/home/ftpuser/src/build/results/services/CaseManagementPerformance
 
 [Install]
 WantedBy=multi-user.target

@@ -23,6 +23,9 @@ task publish {
 	exec { npm install $source_dir\CaseManagement.Website --prefix $source_dir\CaseManagement.Website }
 	exec { npm run build-azure --prefix $source_dir\CaseManagement.Website }
 	exec { dotnet publish $source_dir\CaseManagement.Website -c $config -o $result_dir\services\CaseManagementWebsite }
+	exec { npm install $source_dir\CaseManagement.Performance --prefix $source_dir\CaseManagement.Performance }
+	exec { npm run build-azure --prefix $source_dir\CaseManagement.Performance }
+	exec { dotnet publish $source_dir\CaseManagement.Performance -c $config -o $result_dir\services\CaseManagementPerformance }
 }
 
 task clean {

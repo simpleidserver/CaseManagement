@@ -3,11 +3,11 @@ Description=Case management website
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.Website/bin/Debug/netcoreapp2.2/CaseManagement.Website.dll --pathBase=/casemanagement --server.urls="http://*:51724"
+ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/CaseManagementWebsite/CaseManagement.Website.dll --pathBase=/casemanagement --server.urls="http://*:5002"
 KillMode=process
 TimeoutStopSec=5s
 Restart=always
-WorkingDirectory=/src/CaseManagement/src/CaseManagement.Website
+WorkingDirectory=/home/ftpuser/src/build/results/services/CaseManagementWebsite
 
 [Install]
 WantedBy=multi-user.target

@@ -46,12 +46,12 @@ namespace CaseManagement.Gateway.Website.Host
                     ValidAudiences = new List<string>
                     {
                         "http://localhost:60000",
-                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
                     ValidIssuers = new List<string>
                     {
                         "http://localhost:60000",
-                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
             });
@@ -91,7 +91,7 @@ namespace CaseManagement.Gateway.Website.Host
                 .AllowAnyHeader()));
             services.AddWebsiteGateway(opts =>
             {
-                opts.ApiUrl = "http://localhost:54942";
+                opts.ApiUrl = "http://localhost:60005";
                 opts.TokenUrl = "http://localhost:60001/token";
                 opts.ClientId = "websiteGateway";
                 opts.ClientSecret = "websiteGatewaySecret";

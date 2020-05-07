@@ -62,12 +62,12 @@ namespace CaseManagement.CMMN.Host
                     ValidAudiences = new List<string>
                     {
                         "http://localhost:60000",
-                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
                     ValidIssuers = new List<string>
                     {
                         "http://localhost:60000",
-                        "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementidentity"
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
             });

@@ -1,13 +1,13 @@
 [Unit]
-Description=Case management
+Description=Case Management API
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/dotnet /src/CaseManagement/src/CaseManagement.CMMN.Host/bin/Debug/netcoreapp3.1/CaseManagement.CMMN.Host.dll --server.urls="http://*:54942"
+ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/CaseManagementApi/CaseManagement.CMMN.Host.dll --server.urls="http://*:60005"
 KillMode=process
 TimeoutStopSec=5s
 Restart=always
-WorkingDirectory=/src/CaseManagement/src/CaseManagement.CMMN.Host/bin/Debug/netcoreapp3.1
+WorkingDirectory=/home/ftpuser/src/build/results/services/CaseManagementApi
 
 [Install]
 WantedBy=multi-user.target
