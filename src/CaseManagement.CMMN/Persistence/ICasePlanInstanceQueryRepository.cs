@@ -7,7 +7,7 @@ namespace CaseManagement.CMMN.Persistence
 {
     public interface ICasePlanInstanceQueryRepository
     {
-        Task<CasePlanInstanceAggregate> FindFlowInstanceById(string id);
+        Task<CasePlanInstanceAggregate> Get(string id);
         Task<FindResponse<CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter);
     }
 }

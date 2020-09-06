@@ -1,8 +1,8 @@
 export var authConfig = {
-    issuer: 'http://localhost:60000',
+    issuer: process.env.OPENID_URL,
     clientId: 'caseManagementPerformanceWebsite',
     scope: 'openid profile email role',
-    redirectUri: window.location.origin,
-    disableAtHashCheck: true
+    redirectUri: process.env.REDIRECT_URL,
+    requireHttps: false
 };
 //# sourceMappingURL=auth.config.js.map

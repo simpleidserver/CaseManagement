@@ -7,6 +7,7 @@ namespace CaseManagement.CMMN.CasePlanInstance
 {
     public interface ICasePlanInstanceService
     {
+        /*
         Task<JObject> Search(IEnumerable<KeyValuePair<string, string>> query);
         Task<JObject> SearchMe(IEnumerable<KeyValuePair<string, string>> query, string nameIdentifier);
         Task<JObject> GetMe(string id, string nameIdentifier);
@@ -30,5 +31,6 @@ namespace CaseManagement.CMMN.CasePlanInstance
         Task ConfirmForm(ConfirmFormCommand confirmFormCommand);
         Task ActivateMe(ActivateCommand activateCommand);
         Task Activate(ActivateCommand activateCommand);
+        */
     }
 }

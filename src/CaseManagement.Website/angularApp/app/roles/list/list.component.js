@@ -8,52 +8,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatPaginator, MatSort } from '@angular/material';
-import { select, Store } from '@ngrx/store';
+import * as fromRole from '../reducers';
+import { Store, select } from '@ngrx/store';
+import { MatSort, MatPaginator } from '@angular/material';
+import { StartSearch } from '../actions/role';
 import { merge } from 'rxjs';
-import { StartSearch } from '../actions/case-files';
-import * as fromCaseFiles from '../reducers';
-import { AddCaseFileDialog } from './add-case-file-dialog';
-var ListCaseFilesComponent = (function () {
-    function ListCaseFilesComponent(store, formBuilder, dialog) {
+var ListRolesComponent = (function () {
+    function ListRolesComponent(store) {
         this.store = store;
-        this.formBuilder = formBuilder;
-        this.dialog = dialog;
-        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
-        this.caseFiles$ = [];
-        this.searchForm = this.formBuilder.group({
-            text: ''
-        });
+        this.displayedColumns = ['name', 'create_datetime', 'update_datetime', 'actions'];
+        this.roles$ = [];
     }
-    ListCaseFilesComponent.prototype.ngOnInit = function () {
+    ListRolesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe(function (searchCaseFilesResult) {
-            if (!searchCaseFilesResult) {
+        this.store.pipe(select(fromRole.selectSearchResults)).subscribe(function (l) {
+            if (!l || !l.Content) {
                 return;
             }
-            _this.caseFiles$ = searchCaseFilesResult.Content;
-            _this.length = searchCaseFilesResult.TotalLength;
+            _this.roles$ = l.Content;
+            _this.length = l.TotalLength;
         });
         this.refresh();
     };
-    ListCaseFilesComponent.prototype.onSubmit = function () {
-        this.refresh();
-    };
-    ListCaseFilesComponent.prototype.ngAfterViewInit = function () {
+    ListRolesComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
     };
-    ListCaseFilesComponent.prototype.addCaseFile = function () {
-        var _this = this;
-        var dialogRef = this.dialog.open(AddCaseFileDialog, {
-            width: '800px'
-        });
-        dialogRef.afterClosed().subscribe(function () {
-            _this.refresh();
-        });
-    };
-    ListCaseFilesComponent.prototype.refresh = function () {
+    ListRolesComponent.prototype.refresh = function () {
         var startIndex = 0;
         var count = 5;
         if (this.paginator.pageIndex && this.paginator.pageSize) {
@@ -70,26 +51,26 @@ var ListCaseFilesComponent = (function () {
         if (this.sort.direction) {
             direction = this.sort.direction;
         }
-        var request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value);
+        var request = new StartSearch(startIndex, count, active, direction);
         this.store.dispatch(request);
     };
     __decorate([
         ViewChild(MatPaginator),
         __metadata("design:type", MatPaginator)
-    ], ListCaseFilesComponent.prototype, "paginator", void 0);
+    ], ListRolesComponent.prototype, "paginator", void 0);
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], ListCaseFilesComponent.prototype, "sort", void 0);
-    ListCaseFilesComponent = __decorate([
+    ], ListRolesComponent.prototype, "sort", void 0);
+    ListRolesComponent = __decorate([
         Component({
-            selector: 'list-case-files',
+            selector: 'list-roles',
             templateUrl: './list.component.html',
             styleUrls: ['./list.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, FormBuilder, MatDialog])
-    ], ListCaseFilesComponent);
-    return ListCaseFilesComponent;
+        __metadata("design:paramtypes", [Store])
+    ], ListRolesComponent);
+    return ListRolesComponent;
 }());
-export { ListCaseFilesComponent };
+export { ListRolesComponent };
 //# sourceMappingURL=list.component.js.map

@@ -1,12 +1,7 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Commands;
-using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.CaseWorkerTask;
-using CaseManagement.CMMN.CaseWorkerTask.Commands;
-using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.EvtStore;
-using CaseManagement.Workflow.Infrastructure.Bus;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
@@ -26,6 +21,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 
         public async Task Handle(ActivateCommand command)
         {
+            /*
             var casePlanInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(command.CasePlanInstanceId, CasePlanInstanceAggregate.GetStreamName(command.CasePlanInstanceId));
             if (casePlanInstance == null)
             {
@@ -47,6 +43,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
                 Performer = command.Performer
             });
             await _messageBroker.QueueTransition(command.CasePlanInstanceId, command.CasePlanElementInstanceId, CMMNTransitions.ManualStart);
+            */
         }
     }
 }

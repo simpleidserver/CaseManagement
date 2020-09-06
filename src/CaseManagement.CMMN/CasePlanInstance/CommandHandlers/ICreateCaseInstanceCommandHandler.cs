@@ -1,10 +1,11 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Commands;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 {
     public interface ICreateCaseInstanceCommandHandler
     {
-        Task<Domains.CasePlanInstanceAggregate> Handle(CreateCaseInstanceCommand command);
+        Task<Domains.CasePlanInstanceAggregate> Handle(CreateCaseInstanceCommand command, CancellationToken token);
     }
 }

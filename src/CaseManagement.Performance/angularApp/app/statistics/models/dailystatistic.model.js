@@ -12,8 +12,6 @@ var DailyStatistic = (function () {
         result.NbClosedCases = json["nb_closed_cases"];
         result.NbConfirmedForms = json["nb_confirmed_forms"];
         result.NbCreatedForms = json["nb_created_forms"];
-        result.NbCreatedActivation = json["nb_created_activations"];
-        result.NbConfirmedActivation = json["nb_confirmed_activations"];
         return result;
     };
     return DailyStatistic;

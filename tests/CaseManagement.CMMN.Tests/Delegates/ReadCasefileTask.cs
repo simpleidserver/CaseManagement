@@ -1,13 +1,6 @@
-﻿using CaseManagement.CMMN.CasePlanInstance.Repositories;
-using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
-using CaseManagement.CMMN.Infrastructures;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.Tests.Delegates
+﻿namespace CaseManagement.CMMN.Tests.Delegates
 {
+    /*
     public class ReadCasefileTask : CaseProcessDelegate
     {
         public ReadCasefileTask(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -26,4 +19,5 @@ namespace CaseManagement.CMMN.Tests.Delegates
             await callback(result);
         }
     }
+    */
 }

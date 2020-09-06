@@ -10,11 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatPaginator, MatSort } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
 import { StartSearch } from '../actions/caseplan';
 import * as fromCaseFiles from '../reducers';
-import { ActivatedRoute } from '@angular/router';
 var ListCasePlansComponent = (function () {
     function ListCasePlansComponent(store, formBuilder, activatedRoute) {
         this.store = store;
@@ -60,7 +60,15 @@ var ListCasePlansComponent = (function () {
         if (this.paginator.pageSize) {
             count = this.paginator.pageSize;
         }
-        var request = new StartSearch(this.sort.active, this.sort.direction, count, startIndex, this.searchForm.get('text').value, this.searchForm.get('caseFileId').value);
+        var active = "create_datetime";
+        var direction = "desc";
+        if (this.sort.active) {
+            active = this.sort.active;
+        }
+        if (this.sort.direction) {
+            direction = this.sort.direction;
+        }
+        var request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value, this.searchForm.get('caseFileId').value);
         this.store.dispatch(request);
     };
     __decorate([

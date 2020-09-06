@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Extensions;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
@@ -32,7 +33,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseDefinitions.Remove(_caseDefinitions.First(c => c.Id == workflowDefinition.Id));
         }
 
-        public Task<int> SaveChanges()
+        public Task<int> SaveChanges(CancellationToken token)
         {
             return Task.FromResult(1);
         }

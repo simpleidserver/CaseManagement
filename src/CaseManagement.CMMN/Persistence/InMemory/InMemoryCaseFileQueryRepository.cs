@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
@@ -28,12 +29,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseFileDefinitions = caseFileDefinitions;
         }
 
-        public Task<CaseFileAggregate> FindById(string id)
+        public Task<CaseFileAggregate> Get(string id, CancellationToken token)
         {
             return Task.FromResult(_caseFileDefinitions.FirstOrDefault(c => c.Id == id));
         }
 
-        public Task<FindResponse<CaseFileAggregate>> Find(FindCaseFilesParameter parameter)
+        public Task<FindResponse<CaseFileAggregate>> Find(FindCaseFilesParameter parameter, CancellationToken token)
         {
             IQueryable<CaseFileAggregate> result = _caseFileDefinitions.AsQueryable();
             if (parameter.TakeLatest)
@@ -73,7 +74,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             });
         }
 
-        public Task<int> Count()
+        public Task<int> Count(CancellationToken token)
         {
             return Task.FromResult(_caseFileDefinitions.Where(c => c.Status == CaseFileStatus.Published).Count());
         }

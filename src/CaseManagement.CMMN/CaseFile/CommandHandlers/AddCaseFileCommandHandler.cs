@@ -3,6 +3,7 @@ using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures;
 using Microsoft.Extensions.Options;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseFile.CommandHandlers
@@ -18,7 +19,7 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
             _options = options.Value;
         }
 
-        public async Task<string> Handle(AddCaseFileCommand addCaseFileCommand)
+        public async Task<string> Handle(AddCaseFileCommand addCaseFileCommand, CancellationToken cancellationToken)
         {
             var payload = addCaseFileCommand.Payload;
             if (string.IsNullOrWhiteSpace(addCaseFileCommand.Payload))
@@ -29,7 +30,7 @@ namespace CaseManagement.CMMN.CaseFile.CommandHandlers
 
             var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, addCaseFileCommand.Owner, payload);
             var streamName = CaseFileAggregate.GetStreamName(caseFile.Id);
-            await _commitAggregateHelper.Commit(caseFile, streamName, CMMNConstants.QueueNames.CaseFiles);
+            await _commitAggregateHelper.Commit(caseFile, streamName, cancellationToken);
             return caseFile.Id;
         }
     }

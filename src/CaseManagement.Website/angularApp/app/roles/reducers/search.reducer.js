@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import * as fromActions from '../actions/case-files';
+import * as fromActions from '../actions/role';
 export var initialState = {
     content: null,
     isLoading: true,

@@ -3,7 +3,8 @@ var CountResult = (function () {
     }
     CountResult.fromJson = function (json) {
         var result = new CountResult();
-        result.Count = json["count"];
+        result.NbCaseFiles = json["nb_case_files"];
+        result.NbCasePlans = json["nb_case_plans"];
         return result;
     };
     return CountResult;

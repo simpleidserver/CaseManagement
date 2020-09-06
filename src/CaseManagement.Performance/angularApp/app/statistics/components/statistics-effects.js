@@ -11,9 +11,6 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { Observable } from 'rxjs/Rx';
-import { CaseDefinitionsService } from '../services/casedefinitions.service';
-import { CaseFilesService } from '../services/casefiles.service';
 import { StatisticService } from '../services/statistic.service';
 import { ActionTypes } from './statistics-actions';
 function getFirstDayOfMonth() {
@@ -29,12 +26,10 @@ function getDate(d) {
     return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
 }
 var StatisticsEffects = (function () {
-    function StatisticsEffects(actions$, statisticService, caseDefinitionsService, caseFilesService) {
+    function StatisticsEffects(actions$, statisticService) {
         var _this = this;
         this.actions$ = actions$;
         this.statisticService = statisticService;
-        this.caseDefinitionsService = caseDefinitionsService;
-        this.caseFilesService = caseFilesService;
         this.loadStatistic = this.actions$
             .pipe(ofType(ActionTypes.STATISTICLOAD), mergeMap(function () {
             return _this.statisticService.get()
@@ -54,7 +49,8 @@ var StatisticsEffects = (function () {
         }));
         this.loadDeployed = this.actions$
             .pipe(ofType(ActionTypes.DEPLOYEDLOAD), mergeMap(function () {
-            return Observable.forkJoin([_this.caseDefinitionsService.count(), _this.caseFilesService.count()]).pipe(map(function (responses) { return { type: ActionTypes.DEPLOYEDLOADED, nbCaseDefinitions: responses[0], nbCaseFiles: responses[1] }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADDEPLOYED }); }));
+            return _this.statisticService.count()
+                .pipe(map(function (statistic) { return { type: ActionTypes.DEPLOYEDLOADED, result: statistic }; }), catchError(function () { return of({ type: ActionTypes.ERRORLOADDEPLOYED }); }));
         }));
     }
     __decorate([
@@ -76,9 +72,7 @@ var StatisticsEffects = (function () {
     StatisticsEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            StatisticService,
-            CaseDefinitionsService,
-            CaseFilesService])
+            StatisticService])
     ], StatisticsEffects);
     return StatisticsEffects;
 }());

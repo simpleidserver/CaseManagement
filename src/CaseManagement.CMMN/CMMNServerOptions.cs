@@ -5,6 +5,7 @@
         public CMMNServerOptions()
         {
             MaxConcurrentTask = 20;
+            NbRetry = 5;
             PerformanceIntervalInSeconds = 4;
             BlockThreadMS = 20;
             MaxNbPerformanceRecords = 10;
@@ -41,6 +42,10 @@
         /// Set the time in milliseconds used to block a thread.
         /// </summary>
         public int BlockThreadMS { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int NbRetry { get; set; }
         /// <summary>
         /// Set the maximum number of records (performance).
         /// </summary>

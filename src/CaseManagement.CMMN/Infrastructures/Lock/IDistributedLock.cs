@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Infrastructures.Lock
 {
     public interface IDistributedLock
     {
-        Task<bool> IsLocked(string id);
-        Task<bool> AcquireLock(string id);
-        Task ReleaseLock(string id);
+        Task<bool> TryAcquireLock(string id, CancellationToken token);
+        Task ReleaseLock(string id, CancellationToken token);
     }
 }

@@ -7,6 +7,7 @@ using CaseManagement.CMMN.Persistence.Responses;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlan
@@ -20,34 +21,18 @@ namespace CaseManagement.CMMN.CasePlan
             _queryRepository = queryRepository;
         }
 
-        public async Task<JObject> Count()
+        public async Task<JObject> Count(CancellationToken cancellationToken)
         {
-            var result = await _queryRepository.Count();
+            var result = await _queryRepository.Count(cancellationToken);
             return new JObject
             {
                 { "count", result }
             };
         }
 
-        public async Task<JObject> GetMe(string id, string nameIdentifier)
+        public async Task<JObject> Get(string id, CancellationToken cancellationToken)
         {
-            var result = await _queryRepository.FindById(id);
-            if (result == null)
-            {
-                throw new UnknownCasePlanException(id);
-            }
-
-            if (result.CaseOwner != nameIdentifier)
-            {
-                throw new UnauthorizedCasePlanException(nameIdentifier, id);
-            }
-
-            return ToDto(result);
-        }
-
-        public async Task<JObject> Get(string id)
-        {
-            var result = await _queryRepository.FindById(id);
+            var result = await _queryRepository.Get(id, cancellationToken);
             if (result == null)
             {
                 throw new UnknownCasePlanException(id);
@@ -56,10 +41,10 @@ namespace CaseManagement.CMMN.CasePlan
             return ToDto(result);
         }
 
-        public async Task<JObject> Search(IEnumerable<KeyValuePair<string, string>> query)
+        public async Task<JObject> Search(IEnumerable<KeyValuePair<string, string>> query, CancellationToken token)
         {
             var parameter = ExtractFindParameter(query);
-            var result = await _queryRepository.Find(parameter);
+            var result = await _queryRepository.Find(parameter, token);
             return ToDto(result);
         }
 

@@ -1,11 +1,6 @@
-﻿using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
-using CaseManagement.CMMN.Infrastructures;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.Tests.Delegates
+﻿namespace CaseManagement.CMMN.Tests.Delegates
 {
+    /*
     public class IncrementTask : CaseProcessDelegate
     {
         public IncrementTask(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -29,4 +24,5 @@ namespace CaseManagement.CMMN.Tests.Delegates
             return callback(result);
         }
     }
+    */
 }

@@ -6,27 +6,39 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { CasesRoutes } from './cases.routes';
-import { CasesComponent } from './cases.component';
-var CasesModule = (function () {
-    function CasesModule() {
+import { RoleEffects } from './effects/role';
+import { ListRolesComponent } from './list/list.component';
+import * as reducers from './reducers';
+import { RolesRoutes } from './roles.routes';
+import { RolesService } from './services/role.service';
+import { ViewRoleComponent } from './view/view.component';
+var RolesModule = (function () {
+    function RolesModule() {
     }
-    CasesModule = __decorate([
+    RolesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
                 SharedModule,
                 MaterialModule,
-                CasesRoutes
+                RolesRoutes,
+                EffectsModule.forRoot([RoleEffects]),
+                StoreModule.forRoot(reducers.appReducer),
+                StoreDevtoolsModule.instrument({
+                    maxAge: 10
+                })
             ],
             entryComponents: [],
-            declarations: [CasesComponent],
-            providers: []
+            declarations: [ListRolesComponent, ViewRoleComponent],
+            providers: [RolesService]
         })
-    ], CasesModule);
-    return CasesModule;
+    ], RolesModule);
+    return RolesModule;
 }());
-export { CasesModule };
-//# sourceMappingURL=cases.module.js.map
+export { RolesModule };
+//# sourceMappingURL=roles.module.js.map

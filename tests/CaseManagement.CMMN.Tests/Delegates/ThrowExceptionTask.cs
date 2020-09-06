@@ -1,11 +1,6 @@
-﻿using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
-using CaseManagement.CMMN.Infrastructures;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.Tests.Delegates
+﻿namespace CaseManagement.CMMN.Tests.Delegates
 {
+    /*
     public class ThrowExceptionTask : CaseProcessDelegate
     {
         public ThrowExceptionTask(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -17,4 +12,5 @@ namespace CaseManagement.CMMN.Tests.Delegates
             throw new InvalidOperationException("an error occured while trying to execute the task");
         }
     }
+    */
 }

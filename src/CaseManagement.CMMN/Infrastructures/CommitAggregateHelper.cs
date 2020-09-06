@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 using NEventStore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Infrastructures
@@ -24,7 +26,7 @@ namespace CaseManagement.CMMN.Infrastructures
             _serverOptions = options.Value;
         }
 
-        public async Task Commit<T>(T aggregate, string streamName, string queueName) where T : BaseAggregate
+        public async Task Commit<T>(T aggregate, string streamName, CancellationToken token) where T : BaseAggregate
         {
             using (var evtStream = _storeEvents.OpenStream(streamName, streamName, int.MinValue, int.MaxValue))
             {
@@ -39,18 +41,14 @@ namespace CaseManagement.CMMN.Infrastructures
                 evtStream.CommitChanges(Guid.NewGuid());
             }
 
-            foreach (var evt in aggregate.DomainEvents)
-            {
-                await _messageBroker.QueueEvent(evt, queueName);
-            }
-
+            await _messageBroker.QueueDomainEvents(aggregate.DomainEvents.ToList());
             if (((aggregate.Version - 1) % _serverOptions.SnapshotFrequency) == 0)
             {
-                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, streamName, aggregate));
+                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, streamName, aggregate), token);
             }
         }
 
-        public async Task Commit<T>(T aggregate, ICollection<DomainEvent> evts, int aggregateVersion, string streamName, string queueName) where T : BaseAggregate
+        public async Task Commit<T>(T aggregate, ICollection<DomainEvent> evts, int aggregateVersion, string streamName, CancellationToken token) where T : BaseAggregate
         {
             using (var evtStream = _storeEvents.OpenStream(streamName, streamName, int.MinValue, int.MaxValue))
             {
@@ -62,14 +60,10 @@ namespace CaseManagement.CMMN.Infrastructures
                 evtStream.CommitChanges(Guid.NewGuid());
             }
 
-            foreach (var evt in evts)
-            {
-                await _messageBroker.QueueEvent(evt, queueName);
-            }
-
+            await _messageBroker.QueueDomainEvents(evts);
             if (((aggregateVersion - 1) % _serverOptions.SnapshotFrequency) == 0)
             {
-                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, streamName, aggregate));
+                await _aggregateSnapshotStore.Add(new SnapshotElement<BaseAggregate>(0, DateTime.UtcNow, streamName, aggregate), token);
             }
         }
     }

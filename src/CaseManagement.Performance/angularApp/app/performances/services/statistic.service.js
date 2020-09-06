@@ -21,14 +21,14 @@ var StatisticService = (function () {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/statistics/performances";
+        var targetUrl = process.env.API_URL + "/performances";
         return this.http.get(targetUrl, { headers: headers });
     };
     StatisticService.prototype.searchPerformances = function (startIndex, count, order, direction, startDateTime) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/statistics/performances/search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
+        var targetUrl = process.env.API_URL + "/performances/search?start_index=" + startIndex + "&count=" + count + "&group_by=machine_name";
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }

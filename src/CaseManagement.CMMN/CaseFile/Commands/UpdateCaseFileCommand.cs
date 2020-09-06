@@ -12,7 +12,5 @@ namespace CaseManagement.CMMN.CaseFile.Commands
         public string Description { get; set; }
         [DataMember(Name = "payload")]
         public string Payload { get; set; }
-        public string Performer { get; set; }
-        public bool BypassUserValidation { get; set; }
     }
 }

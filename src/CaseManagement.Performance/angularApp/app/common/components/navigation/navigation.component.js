@@ -23,6 +23,16 @@ var NavigationComponent = (function () {
         this.translateService.use(lng);
     };
     NavigationComponent.prototype.login = function () {
+        this.oauthService.customQueryParams = {
+            'prompt': 'login'
+        };
+        this.oauthService.initImplicitFlow();
+        return false;
+    };
+    NavigationComponent.prototype.chooseSession = function () {
+        this.oauthService.customQueryParams = {
+            'prompt': 'select_account'
+        };
         this.oauthService.initImplicitFlow();
         return false;
     };

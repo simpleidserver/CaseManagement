@@ -1,18 +1,16 @@
-var CasePlan = (function () {
-    function CasePlan() {
+var Role = (function () {
+    function Role() {
     }
-    CasePlan.fromJson = function (json) {
-        var result = new CasePlan();
+    Role.fromJson = function (json) {
+        var result = new Role();
         result.Id = json["id"];
-        result.Name = json["name"];
-        result.Description = json["description"];
-        result.CaseFile = json["case_file"];
+        result.IsDeleted = json["is_deleted"];
+        result.Users = json["users"];
         result.CreateDateTime = json["create_datetime"];
-        result.Version = json["version"];
-        result.Owner = json["owner"];
+        result.UpdateDateTime = json["update_datetime"];
         return result;
     };
-    return CasePlan;
+    return Role;
 }());
-export { CasePlan };
-//# sourceMappingURL=caseplan.model.js.map
+export { Role };
+//# sourceMappingURL=role.model.js.map

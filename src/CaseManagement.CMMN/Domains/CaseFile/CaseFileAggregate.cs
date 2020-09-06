@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.CaseFile.Exceptions;
-using CaseManagement.CMMN.Domains.Events;
+﻿using CaseManagement.CMMN.Domains.Events;
 using CaseManagement.CMMN.Infrastructures;
 using CaseManagement.CMMN.Parser;
 using System;
@@ -20,36 +19,20 @@ namespace CaseManagement.CMMN.Domains
         public string Owner { get; set; }
         public CaseFileStatus Status { get; set; }
 
-        public void Update(string name, string description, string payload, string performer, bool byPassUserValidation)
+        public void Update(string name, string description, string payload)
         {
-            lock(DomainEvents)
-            {
-                if (!byPassUserValidation && Owner != performer)
-                {
-                    throw new UnauthorizedCaseFileException(performer, Id);
-                }
-
-                var evt = new CaseFileUpdatedEvent(Guid.NewGuid().ToString(), Id, Version, DateTime.UtcNow, name, description, payload, performer);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
+            var evt = new CaseFileUpdatedEvent(Guid.NewGuid().ToString(), Id, Version, DateTime.UtcNow, name, description, payload);
+            Handle(evt);
+            DomainEvents.Add(evt);
         }
 
-        public CaseFileAggregate Publish(string performer, bool byPassUserValidation)
+        public CaseFileAggregate Publish()
         {
-            lock (DomainEvents)
-            {
-                if (!byPassUserValidation && Owner != performer)
-                {
-                    throw new UnauthorizedCaseFileException(performer, Id);
-                }
-
-                var evt = new CaseFilePublishedEvent(Guid.NewGuid().ToString(), Id, Version, performer);
-                Handle(evt);
-                DomainEvents.Add(evt);
-                var next = New(Name, Description, Version + 1, Owner, Payload, FileId);
-                return next;
-            }
+            var evt = new CaseFilePublishedEvent(Guid.NewGuid().ToString(), Id, Version);
+            Handle(evt);
+            DomainEvents.Add(evt);
+            var next = New(Name, Description, Version + 1, Owner, Payload, FileId);
+            return next;
         }
 
         public static CaseFileAggregate New(List<DomainEvent> evts)
@@ -66,37 +49,15 @@ namespace CaseManagement.CMMN.Domains
         public static CaseFileAggregate New(string name, string description, int version, string owner, string payload = null, string fileId = null)
         {
             var result = new CaseFileAggregate();
-            lock(result.DomainEvents)
-            {
-                if (string.IsNullOrWhiteSpace(fileId))
-                {
-                    fileId = Guid.NewGuid().ToString();
-                }
-
-                var evt = new CaseFileAddedEvent(Guid.NewGuid().ToString(), BuildCaseFileIdentifier(fileId, version), version, fileId, name, description, DateTime.UtcNow, owner, payload);
-                result.Handle(evt);
-                result.DomainEvents.Add(evt);
-            }
-            
+            var evt = new CaseFileAddedEvent(Guid.NewGuid().ToString(), BuildCaseFileIdentifier(fileId, version), version, fileId, name, description, DateTime.UtcNow, owner, payload);
+            result.Handle(evt);
+            result.DomainEvents.Add(evt);
             return result;
         }
 
-        public override void Handle(object obj)
+        public override void Handle(dynamic obj)
         {
-            if (obj is CaseFileAddedEvent)
-            {
-                Handle((CaseFileAddedEvent)obj);
-            }
-
-            if (obj is CaseFileUpdatedEvent)
-            {
-                Handle((CaseFileUpdatedEvent)obj);
-            }
-
-            if (obj is CaseFilePublishedEvent)
-            {
-                Handle((CaseFilePublishedEvent)obj);
-            }
+            Handle(obj);
         }
 
         private void Handle(CaseFileAddedEvent caseFileAddedEvent)

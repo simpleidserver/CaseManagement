@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace CaseManagement.CMMN.Domains.Events
 {
-    [DebuggerDisplay("Case file {AggregateId} is added by {Owner}")]
+    [DebuggerDisplay("Case file '{AggregateId}' is added by '{Owner}'")]
     public class CaseFileAddedEvent : DomainEvent
     {
         public CaseFileAddedEvent(string id, string aggregateId, int version, string fileId, string name, string description, DateTime createDateTime, string owner, string payload) : base(id, aggregateId, version)

@@ -1,804 +1,153 @@
-﻿using CaseManagement.CMMN.Domains.Events;
+﻿using CaseManagement.CMMN.Domains.CasePlanInstance.Events;
 using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class DomainEventArgs
-    {
-        public DomainEventArgs(DomainEvent domainEvt)
-        {
-            DomainEvt = domainEvt;
-        }
-
-        public DomainEvent DomainEvt { get; set; }
-    }
-
     public class CasePlanInstanceAggregate : BaseAggregate
     {
         public CasePlanInstanceAggregate()
         {
-            ExecutionContext = new CaseInstanceExecutionContext();
-            StateHistories = new List<CaseInstanceHistory>();
-            TransitionHistories = new List<CaseInstanceTransitionHistory>();
-            ExecutionHistories = new List<CaseElementExecutionHistory>();
-            WorkflowElementInstances = new List<CaseElementInstance>();
-            DomainEvents = new List<DomainEvent>();
-            Roles = new List<string>();
-            TechnicalId = Guid.NewGuid().ToString();
+            Roles = new List<CasePlanInstanceRole>();
         }
 
-        public CasePlanInstanceAggregate(string id, DateTime createDateTime, string casePlanId) : base()
-        {
-            Id = id;
-            CreateDateTime = createDateTime;
-            CasePlanId = casePlanId;
-        }
-
-        public string TechnicalId { get; set; }
-        
-        public string CasePlanId { get; set; }
-        public string CasePlanName { get; set; }
-        public string CaseOwner { get; set; }
+        public string Name { get; set; }
+        public CaseStates? State { get; set; }
+        public ICollection<CasePlanInstanceRole> Roles { get; set; }
+        public StageElementInstance Content { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public string State { get; set; }
-        public CaseInstanceExecutionContext ExecutionContext { get; set; }
-        public ICollection<CaseInstanceHistory> StateHistories { get; set; }
-        public ICollection<CaseInstanceTransitionHistory> TransitionHistories { get; set; }
-        public ICollection<CaseElementExecutionHistory> ExecutionHistories { get; set; }
-        public ICollection<CaseElementInstance> WorkflowElementInstances { get; set; }
-        public ICollection<string> Roles { get; set; }
-        public event EventHandler<DomainEventArgs> EventRaised;
 
-        #region Get
-
-        public bool ContainsVariable(string key)
+        public bool IsEntryCriteriaSatisfied(string id)
         {
-            lock (ExecutionContext)
-            {
-                return ExecutionContext.ContainsVariable(key);
-            }
+            var child = GetChild(id);
+            return child.EntryCriterions == null || !child.EntryCriterions.Any() || child.EntryCriterions.Any(_ => IsCriteriaSatisfied(_));
         }
 
-        public string GetVariable(string key)
+        public bool IsCriteriaSatisfied(Criteria criteria)
         {
-            lock (ExecutionContext)
+            Func<string, CMMNTransitions, bool> callback = (sourceRef, standardEvent) =>
             {
-                return ExecutionContext.GetVariable(key);
-            }
-        }
-
-        public int GetNumberVariable(string key)
-        {
-            var value = GetVariable(key);
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return default(int);
-            }
-
-            return int.Parse(GetVariable(key));
-        }
-
-        public ICollection<Criteria> GetEntryCriterions(string id, CasePlanAggregate workflowDefinition)
-        {
-            var planItemDefinition = GetWorkflowElementDefinition(id, workflowDefinition);
-            if (planItemDefinition == null)
-            {
-                return new List<Criteria>();
-            }
-
-            return planItemDefinition.EntryCriterions;
-        }
-
-        public bool IsRepetitionRuleSatisfied(string planItemId, CasePlanAggregate workflowDefinition, bool listenEvent = false)
-        {
-            var planItemDef = workflowDefinition.GetElement(planItemId);
-            if (planItemDef == null || planItemDef.ActivationRule != ActivationRuleTypes.Repetition || planItemDef.RepetitionRule == null)
-            {
-                return false;
-            }
-
-            if (planItemDef.RepetitionRule.Condition != null && !ExpressionParser.IsValid(planItemDef.RepetitionRule.Condition.Body, this))
-            {
-                return false;
-            }
-
-            if (!listenEvent)
-            {
-                if (!planItemDef.EntryCriterions.Any())
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            if (!planItemDef.EntryCriterions.Any())
-            {
-                return false;
-            }
-
-            var lastPlanItem = GetLastWorkflowElementInstance(planItemId);
-            if (!planItemDef.EntryCriterions.Any(c => IsCriteriaSatisfied(c, lastPlanItem.Version + 1)))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool IsManualActivationRuleSatisfied(string id, CasePlanAggregate workflowDefinition)
-        {
-            var casePlanElementInstance = GetWorkflowElementInstance(id);
-            var casePlanElement = GetWorkflowElementDefinition(id, workflowDefinition);
-            if (!casePlanElementInstance.IsTaskOrStage())
-            {
-                return false;
-            }
-
-            if (casePlanElementInstance.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
-            {
-                return false;
-            }
-
-            if (casePlanElement == null || casePlanElement.ActivationRule != ActivationRuleTypes.ManualActivation || casePlanElement.ManualActivationRule == null)
-            {
-                return false;
-            }
-
-            if (casePlanElement.ManualActivationRule.Expression != null && !ExpressionParser.IsValid(casePlanElement.ManualActivationRule.Expression.Body, this))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool IsCriteriaSatisfied(Criteria criteria, int version)
-        {
-            var planItemOnParts = criteria.SEntry.PlanItemOnParts;
-            var caseItemOnParts = criteria.SEntry.FileItemOnParts;
-            lock (WorkflowElementInstances)
-            {
-                foreach (var planItemOnPart in planItemOnParts)
-                {
-                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CasePlanElementId == planItemOnPart.SourceRef);
-                    if (source == null)
-                    {
-                        return false;
-                    }
-
-                    var transitionHistories = source.TransitionHistories.ToList();
-                    if (!transitionHistories.Any(t => t.Transition == planItemOnPart.StandardEvent))
-                    {
-                        return false;
-                    }
-                }
-
-                foreach (var caseItemOnPart in caseItemOnParts)
-                {
-                    var source = WorkflowElementInstances.FirstOrDefault(p => p.Version == version && p.CasePlanElementId == caseItemOnPart.SourceRef);
-                    if (source == null)
-                    {
-                        return false;
-                    }
-
-                    var transitionHistories = source.TransitionHistories.ToList();
-                    if (!transitionHistories.Any(t => t.Transition == caseItemOnPart.StandardEvent))
-                    {
-                        return false;
-                    }
-                }
-
-                if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
-                {
-                    if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, this))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        }
-
-        public bool IsWorkflowElementDefinitionFinished(string elementDefinitionId)
-        {
-            lock (ExecutionHistories)
-            {
-                var executionHistory = ExecutionHistories.FirstOrDefault(e => e.CaseElementDefinitionId == elementDefinitionId);
-                if (executionHistory == null || executionHistory.EndDateTime == null)
+                var source = GetChild(sourceRef);
+                if (standardEvent != source.LatestTransition)
                 {
                     return false;
                 }
 
                 return true;
+            };
+            foreach(var planItemOnPart in criteria.SEntry.PlanItemOnParts)
+            {
+                if (!callback(planItemOnPart.SourceRef, planItemOnPart.StandardEvent))
+                {
+                    return false;
+                }
             }
+
+            foreach(var caseItemOnPart in criteria.SEntry.FileItemOnParts)
+            {
+                if (!callback(caseItemOnPart.SourceRef, caseItemOnPart.StandardEvent))
+                {
+                    return false;
+                }
+            }
+
+            if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
+            {
+                if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, this))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
-        public bool IsWorkflowElementDefinitionFailed(string elementDefinitionId)
+        public bool IsManualActivationRuleSatisfied()
         {
-            var last = GetLastWorkflowElementInstance(elementDefinitionId);
-            if (last != null && last.State == Enum.GetName(typeof(TaskStates), TaskStates.Failed))
-            {
-                return true;
-            }
-
             return false;
         }
 
-        public CasePlanElement GetWorkflowElementDefinition(string id, CasePlanAggregate workflowDefinition)
+        public CasePlanElementInstance GetChild(string id)
         {
-            lock (WorkflowElementInstances)
+            if (Content.Id == id)
             {
-                var elementInstance = WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
-                if (elementInstance == null)
-                {
-                    return null;
-                }
-
-                return workflowDefinition.GetElement(elementInstance.CasePlanElementId);
+                return Content;
             }
+
+            var child = Content.Children.FirstOrDefault(_ => _.Id == id);
+            return child;
         }
 
-        public CaseElementInstance GetWorkflowElementInstance(string id)
+        public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan)
         {
-            lock (WorkflowElementInstances)
+            var result = new CasePlanInstanceAggregate();
+            var roles = caseplan.Roles.Select(_ => new CasePlanInstanceRole
             {
-                return WorkflowElementInstances.FirstOrDefault(p => p.Id == id);
-            }
+                Id = _.Id,
+                Name = _.Name
+            });
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, roles, caseplan.XmlContent, DateTime.UtcNow);
+            result.Handle(evt);
+            result.DomainEvents.Add(evt);
+            return result;
         }
 
-        public CaseElementInstance GetWorkflowElementInstance(string workflowItemDefinitionId, int version)
-        {
-            lock (WorkflowElementInstances)
-            {
-                return WorkflowElementInstances.FirstOrDefault(p => p.CasePlanElementId == workflowItemDefinitionId && p.Version == version);
-            }
-        }
-
-        public ICollection<CaseElementInstance> GetWorkflowElementInstancesByParentId(string parentId)
-        {
-            lock (WorkflowElementInstances)
-            {
-                return WorkflowElementInstances.Where(e => e.ParentId == parentId).ToList();
-            }
-        }
-
-        public CaseElementInstance GetLastWorkflowElementInstance(string workflowItemDefinitionId)
-        {
-            lock (WorkflowElementInstances)
-            {
-                var result = WorkflowElementInstances.Where(p => p.CasePlanElementId == workflowItemDefinitionId).OrderByDescending(p => p.Version).FirstOrDefault();
-                return result;
-            }
-        }
-
-        public string GetStreamName()
-        {
-            return GetStreamName(Id);
-        }
-
-        public bool IsRunning()
-        {
-            return State == Enum.GetName(typeof(CaseStates), CaseStates.Active) || State == Enum.GetName(typeof(CaseStates), CaseStates.Suspended);
-        }
-       
-        #endregion
-
-        #region Commands
-
-        public CaseElementInstance CreateWorkflowElementInstance(CasePlanElement casePlanElement, string parentId = null)
-        {
-            return CreateWorkflowElementInstance(casePlanElement.Id, casePlanElement.Name, casePlanElement.Type, parentId);
-        }
-
-        public CaseElementInstance CreateWorkflowElementInstance(string casePlanElementId, string casePlanElementName, CaseElementTypes workflowElementType, string parentId = null)
-        {
-            lock (DomainEvents)
-            {
-                var evt = new CaseElementCreatedEvent(Guid.NewGuid().ToString(), Id, Version + 1, Guid.NewGuid().ToString(), casePlanElementId, casePlanElementName, workflowElementType, DateTime.UtcNow, parentId);
-                var result = Handle(evt);
-                DomainEvents.Add(evt);
-                return result;
-            }
-        }
-
-        public void StartElement(string elementDefinitionId)
-        {
-            lock (DomainEvents)
-            {
-                var evt = new CaseElementStartedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementDefinitionId, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void FinishElement(string elementDefinitionId)
-        {
-            lock (DomainEvents)
-            {
-                var evt = new CaseElementFinishedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementDefinitionId, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
+        #region Operations
 
         public void MakeTransition(CMMNTransitions transition)
         {
-            lock (DomainEvents)
-            {
-                var evt = new CaseTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, transition, DateTime.UtcNow);
-                Handle(evt);
-                if (transition == CMMNTransitions.Reactivate)
-                {
-                    foreach (var elt in WorkflowElementInstances)
-                    {
-                        if (elt.IsTaskOrStage() && elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Failed))
-                        {
-                            MakeTransition(elt.Id, CMMNTransitions.Reactivate);
-                        }
-                    }
-                }
+            var evt = new CaseTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, transition, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
 
-                DomainEvents.Add(evt);
-            }
+        public void MakeTransition(CasePlanElementInstance element, CMMNTransitions transition)
+        {
+            MakeTransition(element.Id, transition);
         }
 
         public void MakeTransition(string elementId, CMMNTransitions transition)
         {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.First(e => e.Id == elementId);
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, transition, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionStart(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsTaskOrStage() || elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Start, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionEnable(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Available))
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Enable, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionFault(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Active))
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Fault, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionReactivate(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-                
-                if (!elt.IsTaskOrStage() && elt.State != Enum.GetName(typeof(TaskStates), TaskStates.Failed))
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Reactivate, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionAddChild(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsFileItem() && elt.State != Enum.GetName(typeof(CaseFileItemStates), CaseFileItemStates.Available))
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.AddChild, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionOccur(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                if (!elt.IsMilestoneOrEvent() && elt.State != Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available))
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Occur, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionParentSuspend(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Available) ||
-                            elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Enabled) ||
-                            elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active) ||
-                            elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Disabled));
-                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available);
-                if (!isValidTask && !isValidMilestone)
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.ParentSuspend, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionSuspend(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active));
-                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available);
-                if (!isValidTask && !isValidMilestone)
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Suspend, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionParentResume(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Suspended));
-                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Suspended);
-                if (!isValidTask && !isValidMilestone)
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.ParentResume, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionResume(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Suspended));
-                var isValidMilestone = elt.IsMilestoneOrEvent() && elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Suspended);
-                if (!isValidTask && !isValidMilestone)
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Resume, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionParentTerminate(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Suspended) ||
-                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Available) ||
-                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Enabled) ||
-                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Disabled) ||
-                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active) ||
-                    elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Failed));
-                var isValidMilestone = elt.IsMilestoneOrEvent() && (elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available) ||
-                    elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Terminated));
-                if (!isValidTask && !isValidMilestone)
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.ParentTerminate, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionTerminate(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active));
-                var isValidMilestone = elt.IsMilestoneOrEvent() && (elt.State == Enum.GetName(typeof(MilestoneStates), MilestoneStates.Available));
-                if (!isValidTask && !isValidMilestone)
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Terminate, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void MakeTransitionComplete(string elementId)
-        {
-            lock (DomainEvents)
-            {
-                var elt = WorkflowElementInstances.FirstOrDefault(e => e.Id == elementId);
-                if (elt == null)
-                {
-                    return;
-                }
-
-                var isValidTask = elt.IsTaskOrStage() && (elt.State == Enum.GetName(typeof(TaskStates), TaskStates.Active));
-                if (!isValidTask)
-                {
-                    return;
-                }
-
-                var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, elt.CasePlanElementId, CMMNTransitions.Complete, DateTime.UtcNow);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
-        }
-
-        public void SetVariable(string key, int value)
-        {
-            SetVariable(key, value.ToString());
-        }
-
-        public void SetVariable(string key, string value)
-        {
-            lock (DomainEvents)
-            {
-                var evt = new CaseInstanceVariableAddedEvent(Guid.NewGuid().ToString(), Id, Version + 1, key, value);
-                Handle(evt);
-                DomainEvents.Add(evt);
-            }
+            var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), Id, Version + 1, elementId, transition, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
         }
 
         #endregion
 
-        public static CasePlanInstanceAggregate New(CasePlanAggregate workflowDefinition)
+        public override object Clone()
         {
-            var result = new CasePlanInstanceAggregate();
-            var evt = new CaseInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, workflowDefinition.Id, workflowDefinition.Name, DateTime.UtcNow, workflowDefinition.CaseOwner, workflowDefinition.Roles);
-            var secondEvt = new CaseTransitionRaisedEvent(Guid.NewGuid().ToString(), evt.AggregateId, 1, CMMNTransitions.Create, DateTime.UtcNow);
-            result.DomainEvents.Add(evt);
-            result.DomainEvents.Add(secondEvt);
-            result.Handle(evt);
-            result.Handle(secondEvt);
-            return result;
+            throw new NotImplementedException();
         }
 
-        public static CasePlanInstanceAggregate New(List<DomainEvent> evts)
+        #region Handle domain events
+
+        public override void Handle(dynamic obj)
         {
-            var result = new CasePlanInstanceAggregate();
-            foreach(var evt in evts)
-            {
-                result.Handle(evt);
-            }
-
-            return result;
-        }
-        
-        public static string GetStreamName(string id)
-        {
-            return $"cmmn-workflow-instance-{id}";
-        }
-
-        #region Handle events
-
-        public override void Handle(object obj)
-        {
-            if (obj is CaseInstanceCreatedEvent)
-            {
-                Handle((CaseInstanceCreatedEvent)obj);
-            }
-
-            if (obj is CaseElementCreatedEvent)
-            {
-                Handle((CaseElementCreatedEvent)obj);
-            }
-
-            if (obj is CaseElementTransitionRaisedEvent)
-            {
-                Handle((CaseElementTransitionRaisedEvent)obj);
-            }
-
-            if (obj is CaseInstanceVariableAddedEvent)
-            {
-                Handle((CaseInstanceVariableAddedEvent)obj);
-            }
-
-            if (obj is CaseElementStartedEvent)
-            {
-                Handle((CaseElementStartedEvent)obj);
-            }
-
-            if (obj is CaseElementFinishedEvent)
-            {
-                Handle((CaseElementFinishedEvent)obj);
-            }
-
-            if (obj is CaseTransitionRaisedEvent)
-            {
-                Handle((CaseTransitionRaisedEvent)obj);
-            }
-        }
-
-        private void Handle(CaseInstanceCreatedEvent evt)
-        {
-            Id = evt.AggregateId;
-            CreateDateTime = evt.CreateDateTime;
-            CasePlanId = evt.CasePlanId;
-            CasePlanName = evt.CasePlanName;
-            CaseOwner = evt.Performer;
-            Roles = evt.Roles;
-        }
-
-        private CaseElementInstance Handle(CaseElementCreatedEvent evt)
-        {
-            var existingPlanItem = WorkflowElementInstances.Where(p => p.CasePlanElementId == evt.CasePlanElementId).OrderByDescending(p => p.Version).FirstOrDefault();
-            var elt = new CaseElementInstance(evt.CasePlanElementInstanceId, evt.CreateDateTime, evt.CasePlanElementId, evt.CasePlanElementType, existingPlanItem == null ? 0 : existingPlanItem.Version + 1, evt.ParentId)
-            {
-                CasePlanElementName = evt.CasePlanElementName
-            };
-            WorkflowElementInstances.Add(elt);
-            elt.UpdateState(CMMNTransitions.Create, evt.CreateDateTime);
-            Version++;
-            RaiseEvent(evt);
-            return elt;
+            Handle(obj);
         }
 
         private void Handle(CaseElementTransitionRaisedEvent evt)
         {
-            var elt = WorkflowElementInstances.First(p => p.Id == evt.CaseElementId);
-            elt.UpdateState(evt.Transition, evt.UpdateDateTime);
-            Version++;
-            RaiseEvent(evt);
+            var child = GetChild(evt.ElementId);
+            child.MakeTransition(evt.Transition, DateTime.UtcNow);
         }
 
-        private void Handle(CaseInstanceVariableAddedEvent evt)
+        private void Handle(CasePlanInstanceCreatedEvent evt)
         {
-            ExecutionContext.SetVariable(evt.Key, evt.Value);
-            Version++;
-            RaiseEvent(evt);
-        }
-
-        private void Handle(CaseElementStartedEvent evt)
-        {
-            ExecutionHistories.Add(new CaseElementExecutionHistory(evt.CaseElementDefinitionId, evt.StartDateTime));
-            Version++;
-            RaiseEvent(evt);
-        }
-
-        private void Handle(CaseElementFinishedEvent evt)
-        {
-            var executionHistory = ExecutionHistories.First(e => e.CaseElementDefinitionId == evt.CaseElementDefinitionId);
-            executionHistory.EndDateTime = evt.EndDateTime;
-            Version++;
-            RaiseEvent(evt);
+            Roles = evt.Roles.ToList();
+            Content = CMMNParser.ExtractStage(evt.XmlContent);
+            CreateDateTime = evt.CreateDateTime;
         }
 
         private void Handle(CaseTransitionRaisedEvent evt)
         {
-            CaseStates? state = null;
             switch (evt.Transition)
             {
                 case CMMNTransitions.Create:
-                    if (!string.IsNullOrWhiteSpace(State))
+                    if (State != null)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -806,10 +155,10 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Active;
+                    State = CaseStates.Active;
                     break;
                 case CMMNTransitions.Complete:
-                    if (State != Enum.GetName(typeof(CaseStates), CaseStates.Active))
+                    if (State != CaseStates.Active)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -817,10 +166,10 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Completed;
+                    State = CaseStates.Completed;
                     break;
                 case CMMNTransitions.Terminate:
-                    if (State != Enum.GetName(typeof(CaseStates), CaseStates.Active))
+                    if (State != CaseStates.Active)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -828,10 +177,10 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Terminated;
+                    State = CaseStates.Terminated;
                     break;
                 case CMMNTransitions.Fault:
-                    if (State != Enum.GetName(typeof(CaseStates), CaseStates.Active))
+                    if (State != CaseStates.Active)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -839,10 +188,10 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Failed;
+                    State = CaseStates.Failed;
                     break;
                 case CMMNTransitions.Suspend:
-                    if (State != Enum.GetName(typeof(CaseStates), CaseStates.Active))
+                    if (State != CaseStates.Active)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -850,10 +199,10 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Suspended;
+                    State = CaseStates.Suspended;
                     break;
                 case CMMNTransitions.Resume:
-                    if (State != Enum.GetName(typeof(CaseStates), CaseStates.Suspended))
+                    if (State != CaseStates.Suspended)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -861,13 +210,13 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Active;
+                    State = CaseStates.Active;
                     break;
                 case CMMNTransitions.Close:
-                    if (State != Enum.GetName(typeof(CaseStates), CaseStates.Completed) &&
-                        State != Enum.GetName(typeof(CaseStates), CaseStates.Terminated) &&
-                        State != Enum.GetName(typeof(CaseStates), CaseStates.Failed) &&
-                        State != Enum.GetName(typeof(CaseStates), CaseStates.Suspended))
+                    if (State != CaseStates.Completed &&
+                        State != CaseStates.Terminated &&
+                        State != CaseStates.Failed &&
+                        State != CaseStates.Suspended)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -875,13 +224,13 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Closed;
+                    State = CaseStates.Closed;
                     break;
                 case CMMNTransitions.Reactivate:
-                    if (State != Enum.GetName(typeof(CaseStates), CaseStates.Completed) && 
-                        State != Enum.GetName(typeof(CaseStates), CaseStates.Terminated) &&
-                        State != Enum.GetName(typeof(CaseStates), CaseStates.Failed) &&
-                        State != Enum.GetName(typeof(CaseStates), CaseStates.Suspended))
+                    if (State != CaseStates.Completed &&
+                        State != CaseStates.Terminated &&
+                        State != CaseStates.Failed &&
+                        State != CaseStates.Suspended)
                     {
                         throw new AggregateValidationException(new Dictionary<string, string>
                         {
@@ -889,63 +238,11 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    state = CaseStates.Active;
+                    State = CaseStates.Active;
                     break;
-            }
-
-            if (state != null)
-            {
-                State = Enum.GetName(typeof(CaseStates), state);
-                StateHistories.Add(new CaseInstanceHistory(State, DateTime.UtcNow));
-                TransitionHistories.Add(new CaseInstanceTransitionHistory(evt.Transition, DateTime.UtcNow));
-                Version++;
-                RaiseEvent(evt);
             }
         }
 
         #endregion
-
-        public override bool Equals(object obj)
-        {
-            var workflowInstance = obj as CasePlanInstanceAggregate;
-            if (workflowInstance == null)
-            {
-                return false;
-            }
-
-            return workflowInstance.GetHashCode() == this.GetHashCode();
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
-
-        public override object Clone()
-        {
-            return new CasePlanInstanceAggregate(Id, CreateDateTime, CasePlanId)
-            {
-                TechnicalId = TechnicalId,
-                ExecutionContext = ExecutionContext == null ? null : (CaseInstanceExecutionContext)ExecutionContext.Clone(),
-                ExecutionHistories = ExecutionHistories == null ? null : ExecutionHistories.Select(e => (CaseElementExecutionHistory)e.Clone()).ToList(),
-                State = State,
-                StateHistories = StateHistories == null ? null : StateHistories.Select(s => (CaseInstanceHistory)s.Clone()).ToList(),
-                TransitionHistories = TransitionHistories == null ? null : TransitionHistories.Select(t => (CaseInstanceTransitionHistory)t.Clone()).ToList(),
-                Version = Version,
-                CasePlanId = CasePlanId,
-                CasePlanName = CasePlanName,
-                WorkflowElementInstances = WorkflowElementInstances == null ? null : WorkflowElementInstances.Select(w => (CaseElementInstance)w.Clone()).ToList(),
-                CaseOwner = CaseOwner,
-                Roles = Roles.ToList()
-            };
-        }
-
-        private void RaiseEvent(DomainEvent evt)
-        {
-            if (EventRaised != null)
-            {
-                EventRaised(this, new DomainEventArgs(evt));
-            }
-        }
     }
 }

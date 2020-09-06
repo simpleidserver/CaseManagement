@@ -163,7 +163,15 @@ var ViewCaseDefinitionComponent = (function () {
         if (this.casePlanInstancePaginator.pageSize) {
             count = this.casePlanInstancePaginator.pageSize;
         }
-        var loadCaseInstances = new fromCaseInstance.StartSearch(this.route.snapshot.params['id'], startIndex, count, this.casePlanInstanceSort.active, this.casePlanInstanceSort.direction);
+        var active = "create_datetime";
+        var direction = "desc";
+        if (this.casePlanInstanceSort.active) {
+            active = this.casePlanInstanceSort.active;
+        }
+        if (this.casePlanInstanceSort.direction) {
+            direction = this.casePlanInstanceSort.direction;
+        }
+        var loadCaseInstances = new fromCaseInstance.StartSearch(this.route.snapshot.params['id'], startIndex, count, active, direction);
         this.casePlanStore.dispatch(loadCaseInstances);
     };
     ViewCaseDefinitionComponent.prototype.refreshFormInstances = function () {
@@ -175,7 +183,15 @@ var ViewCaseDefinitionComponent = (function () {
         if (this.formInstancePaginator.pageIndex && this.formInstancePaginator.pageSize) {
             startIndex = this.formInstancePaginator.pageIndex * this.formInstancePaginator.pageSize;
         }
-        var loadFormInstances = new fromFormInstance.StartSearch(this.route.snapshot.params['id'], this.formInstanceSort.active, this.formInstanceSort.direction, count, startIndex);
+        var active = "create_datetime";
+        var direction = "desc";
+        if (this.formInstanceSort.active) {
+            active = this.formInstanceSort.active;
+        }
+        if (this.formInstanceSort.direction) {
+            direction = this.formInstanceSort.direction;
+        }
+        var loadFormInstances = new fromFormInstance.StartSearch(this.route.snapshot.params['id'], active, direction, count, startIndex);
         this.casePlanStore.dispatch(loadFormInstances);
     };
     ViewCaseDefinitionComponent.prototype.refreshWorkerTasks = function () {
@@ -187,7 +203,15 @@ var ViewCaseDefinitionComponent = (function () {
         if (this.caseWorkerPaginator.pageIndex && this.caseWorkerPaginator.pageSize) {
             startIndex = this.caseWorkerPaginator.pageIndex * this.caseWorkerPaginator.pageSize;
         }
-        var loadCaseWorker = new fromCaseWorker.StartSearch(this.route.snapshot.params['id'], this.workerTaskSort.active, this.workerTaskSort.direction, count, startIndex);
+        var active = "create_datetime";
+        var direction = "desc";
+        if (this.workerTaskSort.active) {
+            active = this.workerTaskSort.active;
+        }
+        if (this.workerTaskSort.direction) {
+            direction = this.workerTaskSort.direction;
+        }
+        var loadCaseWorker = new fromCaseWorker.StartSearch(this.route.snapshot.params['id'], active, direction, count, startIndex);
         this.casePlanStore.dispatch(loadCaseWorker);
     };
     ViewCaseDefinitionComponent.prototype.ngOnDestroy = function () {

@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseFile
@@ -29,75 +30,32 @@ namespace CaseManagement.CMMN.CaseFile
             _publishCaseFileCommandHandler = publishCaseFileCommandHandler;
         }
 
-        public async Task<JObject> Count()
+        public async Task<JObject> Count(CancellationToken cancellationToken)
         {
-            var result = await _queryRepository.Count();
+            var result = await _queryRepository.Count(cancellationToken);
             return new JObject
             {
                 { "count", result }
             };
         }
 
-        public async Task<JObject> Add(AddCaseFileCommand parameter)
+        public async Task<JObject> Add(AddCaseFileCommand parameter, CancellationToken cancellationToken)
         {
-            var result = await _addCaseFileCommandHandler.Handle(parameter);
+            var result = await _addCaseFileCommandHandler.Handle(parameter, cancellationToken);
             return new JObject
             {
                 { "id", result }
             };
         }
 
-        public Task<bool> UpdateMe(UpdateCaseFileCommand parameter)
+        public Task<bool> Update(UpdateCaseFileCommand parameter, CancellationToken cancellationToken)
         {
-            parameter.BypassUserValidation = false;
-            return _updateCaseFileCommandHandler.Handle(parameter);
+            return _updateCaseFileCommandHandler.Handle(parameter, cancellationToken);
         }
 
-        public Task<bool> Update(UpdateCaseFileCommand parameter)
+        public async Task<JObject> Get(string id, CancellationToken token)
         {
-            parameter.BypassUserValidation = true;
-            return _updateCaseFileCommandHandler.Handle(parameter);
-        }
-
-        public async Task<JObject> PublishMe(PublishCaseFileCommand parameter)
-        {
-            parameter.BypassUserValidation = false;
-            var result = await _publishCaseFileCommandHandler.Handle(parameter);
-            return new JObject
-            {
-                { "id", result }
-            };
-        }
-
-        public async Task<JObject> Publish(PublishCaseFileCommand parameter)
-        {
-            parameter.BypassUserValidation = true;
-            var result = await _publishCaseFileCommandHandler.Handle(parameter);
-            return new JObject
-            {
-                { "id", result }
-            };
-        }
-
-        public async Task<JObject> GetMe(string id, string nameIdentifier)
-        {
-            var result = await _queryRepository.FindById(id);
-            if (result == null)
-            {
-                throw new UnknownCaseFileException(id);
-            }
-
-            if (result.Owner != nameIdentifier)
-            {
-                throw new UnauthorizedCaseFileException(nameIdentifier, id);
-            }
-
-            return ToDto(result);
-        }
-
-        public async Task<JObject> Get(string id)
-        {
-            var result = await _queryRepository.FindById(id);
+            var result = await _queryRepository.Get(id, token);
             if (result == null)
             {
                 throw new UnknownCaseFileException(id);
@@ -106,9 +64,18 @@ namespace CaseManagement.CMMN.CaseFile
             return ToDto(result);
         }
 
-        public async Task<JObject> Search(IEnumerable<KeyValuePair<string, string>> query)
+        public async Task<JObject> Publish(PublishCaseFileCommand parameter, CancellationToken cancellationToken)
         {
-            var result = await _queryRepository.Find(ExtractFindParameter(query));
+            var result = await _publishCaseFileCommandHandler.Handle(parameter, cancellationToken);
+            return new JObject
+            {
+                { "id", result }
+            };
+        }
+
+        public async Task<JObject> Search(IEnumerable<KeyValuePair<string, string>> query, CancellationToken token)
+        {
+            var result = await _queryRepository.Find(ExtractFindParameter(query), token);
             return ToDto(result);
         }
 

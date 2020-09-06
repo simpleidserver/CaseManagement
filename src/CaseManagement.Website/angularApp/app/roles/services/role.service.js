@@ -11,36 +11,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { map } from 'rxjs/operators';
-import { CaseFile } from '../models/case-file.model';
-import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
-var CaseFilesService = (function () {
-    function CaseFilesService(http, oauthService) {
+import { Role } from '../models/role.model';
+import { SearchRolesResult } from '../models/search-roles.model';
+var RolesService = (function () {
+    function RolesService(http, oauthService) {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CaseFilesService.prototype.search = function (startIndex, count, order, direction, text) {
+    RolesService.prototype.search = function (startIndex, count, order, direction) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/me/search?start_index=" + startIndex + "&count=" + count;
-        if (order) {
-            targetUrl = targetUrl + "&order_by=" + order;
-        }
-        if (direction) {
-            targetUrl = targetUrl + "&order=" + direction;
-        }
-        if (text) {
-            targetUrl = targetUrl + "&text=" + text;
-        }
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchCaseFilesResult.fromJson(res);
-        }));
-    };
-    CaseFilesService.prototype.searchCaseFileHistories = function (caseFileId, startIndex, count, order, direction) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + caseFileId + "/history/search?start_index=" + startIndex + "&count=" + count;
+        var targetUrl = process.env.API_URL + "/roles/search?start_index=" + startIndex + "&count=" + count;
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -48,52 +30,50 @@ var CaseFilesService = (function () {
             targetUrl = targetUrl + "&order=" + direction;
         }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchCaseFilesResult.fromJson(res);
+            return SearchRolesResult.fromJson(res);
         }));
     };
-    CaseFilesService.prototype.get = function (id) {
+    RolesService.prototype.get = function (role) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + id;
+        var targetUrl = process.env.API_URL + "/roles/" + role;
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return CaseFile.fromJson(res);
+            return Role.fromJson(res);
         }));
     };
-    CaseFilesService.prototype.add = function (name, description) {
-        var request = JSON.stringify({ name: name, description: description });
+    RolesService.prototype.add = function (role) {
+        var request = JSON.stringify({ role: role });
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files";
+        var targetUrl = process.env.API_URL + "/roles";
         return this.http.post(targetUrl, request, { headers: headers }).pipe(map(function (res) {
-            return res['id'];
+            return Role.fromJson(res);
         }));
     };
-    CaseFilesService.prototype.update = function (id, name, description, payload) {
-        var request = JSON.stringify({ name: name, description: description, payload: payload });
+    RolesService.prototype.update = function (role, users) {
+        var request = JSON.stringify({ users: users });
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + id;
+        var targetUrl = process.env.API_URL + "/roles/" + role;
         return this.http.put(targetUrl, request, { headers: headers });
     };
-    CaseFilesService.prototype.publish = function (id) {
+    RolesService.prototype.delete = function (role) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + id + "/publish";
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return res['id'];
-        }));
+        var targetUrl = process.env.API_URL + "/roles/" + role;
+        return this.http.delete(targetUrl, { headers: headers });
     };
-    CaseFilesService = __decorate([
+    RolesService = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [HttpClient, OAuthService])
-    ], CaseFilesService);
-    return CaseFilesService;
+    ], RolesService);
+    return RolesService;
 }());
-export { CaseFilesService };
-//# sourceMappingURL=casefiles.service.js.map
+export { RolesService };
+//# sourceMappingURL=role.service.js.map

@@ -18,7 +18,7 @@ var StatisticsComponent = (function () {
         this.monthStatisticStore = monthStatisticStore;
         this.deployedStore = deployedStore;
         this.datePipe = datePipe;
-        this.nbCaseDefinitions = 0;
+        this.nbCasePlans = 0;
         this.nbCaseFiles = 0;
         this.viewPie = [300, 300];
         this.viewChart = [500, 300];
@@ -136,39 +136,6 @@ var StatisticsComponent = (function () {
                 "series": []
             }
         ];
-        this.activationStatisticColorScheme = {
-            domain: ['#808080', '#008000']
-        };
-        this.activationStatistic = [
-            {
-                "name": "Created",
-                "value": 0
-            },
-            {
-                "name": "Confirmed",
-                "value": 0
-            }
-        ];
-        this.activationWeekStatistic = [
-            {
-                "name": "Created",
-                "series": []
-            },
-            {
-                "name": "Confirmed",
-                "series": []
-            }
-        ];
-        this.activationMonthStatistic = [
-            {
-                "name": "Created",
-                "series": []
-            },
-            {
-                "name": "Confirmed",
-                "series": []
-            }
-        ];
     }
     StatisticsComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -212,16 +179,6 @@ var StatisticsComponent = (function () {
                     {
                         "name": "Confirmed",
                         "value": st.content.NbConfirmedForms
-                    }
-                ];
-                _this.activationStatistic = [
-                    {
-                        "name": "Created",
-                        "value": st.content.NbCreatedActivation
-                    },
-                    {
-                        "name": "Confirmed",
-                        "value": st.content.NbConfirmedActivation
                     }
                 ];
             }
@@ -321,7 +278,6 @@ var StatisticsComponent = (function () {
                 });
                 _this.caseWeekStatistic = caseWeekResult_1;
                 _this.formWeekStatistic = formWeekResult_1;
-                _this.activationWeekStatistic = activationWeekResult_1;
             }
         });
         this.monthSubscription = this.monthStatisticStore.pipe(select('monthStatistics')).subscribe(function (st) {
@@ -365,16 +321,6 @@ var StatisticsComponent = (function () {
                         "series": []
                     }
                 ];
-                var activationMonthResult_1 = [
-                    {
-                        "name": "Created",
-                        "series": []
-                    },
-                    {
-                        "name": "Confirmed",
-                        "series": []
-                    }
-                ];
                 st.content.Content.forEach(function (elt) {
                     caseMonthResult_1[0].series.push({
                         "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
@@ -408,24 +354,15 @@ var StatisticsComponent = (function () {
                         "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
                         "value": elt.NbConfirmedForms
                     });
-                    activationMonthResult_1[0].series.push({
-                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
-                        "value": elt.NbCreatedForms
-                    });
-                    activationMonthResult_1[1].series.push({
-                        "name": self.datePipe.transform(elt.DateTime, 'mediumDate'),
-                        "value": elt.NbConfirmedForms
-                    });
                 });
                 _this.caseMonthStatistic = caseMonthResult_1;
                 _this.formMonthStatistic = formMonthResult_1;
-                _this.activationMonthStatistic = activationMonthResult_1;
             }
         });
         this.deployedSubscription = this.deployedStore.pipe(select('deployed')).subscribe(function (st) {
-            if (st.nbCaseDefinitions) {
-                _this.nbCaseDefinitions = st.nbCaseDefinitions.Count;
-                _this.nbCaseFiles = st.nbCaseFiles.Count;
+            if (st.content) {
+                _this.nbCasePlans = st.content.NbCasePlans;
+                _this.nbCaseFiles = st.content.NbCaseFiles;
             }
         });
         this.refresh();
@@ -436,11 +373,13 @@ var StatisticsComponent = (function () {
         };
         var loadWeekStatisticsRequest = {
             type: ActionTypes.SEARCHWEEKSTATISTICS,
-            count: 100
+            count: 100,
+            startIndex: 0
         };
         var loadMonthStatisticsRequest = {
             type: ActionTypes.SEARCHMONTHSTATISTICS,
-            count: 100
+            count: 100,
+            startIndex: 0
         };
         var loadDeployedRequest = {
             type: ActionTypes.DEPLOYEDLOAD

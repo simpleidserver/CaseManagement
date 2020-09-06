@@ -1,53 +1,57 @@
-﻿using CaseManagement.CMMN.Infrastructures;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.Infrastructures.Bus;
+using CaseManagement.CMMN.Persistence;
+using CaseManagement.Workflow.Infrastructure.Bus;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN
 {
-    public class CaseJobServer
+    public class CaseJobServer : ICaseJobServer
     {
-        private readonly Action<CMMNServerOptions> _action;
-        private readonly IServiceCollection _serviceCollection;
-        private IEnumerable<IJob> _jobs;
+        private readonly IEnumerable<IJob> _jobs;
+        private readonly ICasePlanInstanceCommandRepository _casePlanInstanceCommandRepository;
+        private readonly IMessageBroker _messageBroker;
 
-        public CaseJobServer(IServiceCollection serviceCollection)
+        public CaseJobServer(IEnumerable<IJob> jobs, ICasePlanInstanceCommandRepository casePlanInstanceCommandRepository, IMessageBroker messageBroker)
         {
-            _serviceCollection = serviceCollection;
-        }
-
-        public CaseJobServer(IServiceCollection serviceCollection, Action<CMMNServerOptions> action = null)
-        {
-            _serviceCollection = serviceCollection;
-            _action = action;
+            _jobs = jobs;
+            _casePlanInstanceCommandRepository = casePlanInstanceCommandRepository;
+            _messageBroker = messageBroker;
         }
 
         public void Start()
         {
-            if (_action != null)
+            foreach(var job in _jobs)
             {
-                _serviceCollection.AddCMMNEngine(_action);
-            }
-            else
-            {
-                _serviceCollection.AddCMMNEngine(act => { });
-            }
-
-            _serviceCollection.AddLogging();
-            var serviceProvider = _serviceCollection.BuildServiceProvider();
-            _jobs = serviceProvider.GetServices<IJob>();
-            foreach(var messageConsumer in _jobs)
-            {
-                messageConsumer.Start();
+                job.Start();
             }
         }
 
         public void Stop()
         {
-            foreach(var messageConsumer in _jobs)
+            foreach(var job in _jobs)
             {
-                messageConsumer.Stop();
+                job.Stop();
             }
+        }
+
+        public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId)
+        {
+            return _messageBroker.QueueExternalEvent(evt, casePlanInstanceId, casePlanElementInstanceId);
+        }
+
+        public async Task RegisterCasePlanInstance(CasePlanInstanceAggregate casePlanInstance, CancellationToken cancellationToken)
+        {
+            _casePlanInstanceCommandRepository.Add(casePlanInstance);
+            await _casePlanInstanceCommandRepository.SaveChanges(cancellationToken);
+        }
+
+        public Task EnqueueCasePlanInstance(string id)
+        {
+            return _messageBroker.QueueCasePlanInstance(id);
         }
     }
 }

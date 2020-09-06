@@ -1,5 +1,5 @@
-﻿using CaseManagement.CMMN.Builders;
-using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Domains.CasePlan;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,17 +11,6 @@ namespace CaseManagement.CMMN.Parser
 {
     public class CMMNParser
     {
-        public static ICollection<CasePlanAggregate> ExtractCasePlans(tDefinitions definitions, CaseFileAggregate caseFile)
-        {
-            var result = new List<CasePlanAggregate>();
-            foreach (var cmmnCase in definitions.@case)
-            {
-                result.Add(BuildWorkflowDefinition(cmmnCase, definitions, caseFile));
-            }
-
-            return result;
-        }
-
         public static tDefinitions ParseWSDL(string cmmnTxt)
         {
             var xmlSerializer = new XmlSerializer(typeof(tDefinitions));
@@ -34,53 +23,159 @@ namespace CaseManagement.CMMN.Parser
             return defs;
         }
 
-        public static string Serialize(tDefinitions def)
+        public static ICollection<CasePlanAggregate> ExtractCasePlans(tDefinitions definitions, CaseFileAggregate caseFile)
         {
-            var xmlSerializer = new XmlSerializer(typeof(tDefinitions));
-            var strBuilder = new StringBuilder();
-            using (var txtWriter = new StringWriter(strBuilder))
+            var result = new List<CasePlanAggregate>();
+            foreach (var cmmnCase in definitions.@case)
             {
-                xmlSerializer.Serialize(txtWriter, def);
+                result.Add(BuildCasePlan(cmmnCase, caseFile));
             }
 
-            return strBuilder.ToString();
+            return result;
+        }
+        
+        public static StageElementInstance ExtractStage(string xmlContent)
+        {
+            var tStage = DeserializeStage(xmlContent);
+            var result = BuildStage(tStage);
+            return result;
         }
 
-        private static CasePlanAggregate BuildWorkflowDefinition(tCase tCase, tDefinitions definitions, CaseFileAggregate caseFile)
+        private static CasePlanAggregate BuildCasePlan(tCase tCase, CaseFileAggregate caseFile)
         {
             var planModel = tCase.casePlanModel;
-            var planItems = BuildPlanItems(planModel);
-            var builder = WorkflowBuilder.New(tCase.casePlanModel.id, tCase.casePlanModel.name, string.Empty, caseFile);
+            var roles = new List<CasePlanRole>();
             if (tCase.caseRoles != null && tCase.caseRoles.role != null)
             {
                 foreach(var role in tCase.caseRoles.role)
                 {
-                    builder.AddRole(role.id);
-                }
-            }
-
-            if (tCase.caseFileModel != null)
-            {
-                foreach(var caseFileItem in tCase.caseFileModel.caseFileItem)
-                {
-                    var caseFileItemDef = definitions.caseFileItemDefinition.First(c => c.id == caseFileItem.definitionRef.ToString());
-                    builder.AddCaseFileItem(caseFileItem.id, caseFileItemDef.name, (cb) =>
+                    roles.Add(new CasePlanRole
                     {
-                        cb.SetDefinition(caseFileItemDef.definitionType);
+                        Id = role.id,
+                        Name = role.name
                     });
                 }
             }
 
+            return CasePlanAggregate.New(planModel.id, planModel.name, planModel.name, caseFile.Owner, caseFile.Id, caseFile.Version, Serialize(planModel), roles);
+        }
+
+        private static StageElementInstance BuildStage(tStage stage)
+        {
+            var planItems = BuildPlanItems(stage);
+            var result = new StageElementInstance { Id = stage.id, Name = stage.name };
             foreach (var planItem in planItems)
             {
-                builder.AddCMMNPlanItem(planItem);
+                result.AddChild(planItem);
             }
-            
-            builder.SetCaseOwner(caseFile.Owner);
-            var result = builder.Build();
+
             return result;
         }
-        
+
+        private static List<CasePlanElementInstance> BuildPlanItems(tStage stage)
+        {
+            var planItems = new List<CasePlanElementInstance>();
+            if (stage.planItem != null)
+            {
+                foreach (var planItem in stage.planItem)
+                {
+                    var planItemDef = stage.Items.First(i => i.id == planItem.definitionRef);
+                    var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
+                    if (planItem.entryCriterion != null)
+                    {
+                        foreach (var entryCriterion in planItem.entryCriterion)
+                        {
+                            var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
+                            flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
+                        }
+                    }
+
+                    if (planItem.exitCriterion != null)
+                    {
+                        foreach (var exitCriteria in planItem.exitCriterion)
+                        {
+                            var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
+                            flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
+                        }
+                    }
+
+                    if (planItem.itemControl != null)
+                    {
+                        var baseTask = flowInstanceElt as BaseTaskOrStageElementInstance;
+                        if (planItem.itemControl.manualActivationRule != null && baseTask != null)
+                        {
+                            var manualActivationRule = new ManualActivationRule(planItem.itemControl.manualActivationRule.name);
+                            var condition = planItem.itemControl.manualActivationRule.condition;
+                            if (condition != null && condition.Text.Any())
+                            {
+                                manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
+                            }
+
+                            baseTask.ManualActivationRule = manualActivationRule;
+                        }
+
+                        if (planItem.itemControl.repetitionRule != null)
+                        {
+                            var repetitionRule = new RepetitionRule(planItem.itemControl.repetitionRule.name);
+                            var condition = planItem.itemControl.repetitionRule.condition;
+                            if (condition != null && condition.Text.Any())
+                            {
+                                repetitionRule.Condition = new CMMNExpression(condition.language, condition.Text.First());
+                            }
+
+                            flowInstanceElt.RepetitionRule = repetitionRule;
+                        }
+                    }
+
+                    planItems.Add(flowInstanceElt);
+                }
+            }
+
+            return planItems;
+        }
+
+        private static CasePlanElementInstance BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                name = planItemDef.name;
+            }
+
+            if (planItemDef is tHumanTask)
+            {
+                var humanTask = planItemDef as tHumanTask;
+                return new HumanTaskElementInstance { Id = id, Name = name, FormId = humanTask.caseFormRef, PerformerRef = humanTask.performerRef };
+            }
+
+            if (planItemDef is tTask)
+            {
+                return new EmptyTaskElementInstance { Id = id, Name = name };
+            }
+
+            if (planItemDef is tTimerEventListener)
+            {
+                var timer = planItemDef as tTimerEventListener;
+                CMMNExpression expression = new CMMNExpression
+                {
+                    Body = timer.timerExpression.Text.First(),
+                    Language = timer.timerExpression.language
+                };
+                return new TimerEventListener { Id = id, Name = name, TimerExpression = expression };
+            }
+
+            if (planItemDef is tMilestone)
+            {
+                return new MilestoneElementInstance { Id = id, Name = name };
+            }
+
+            if (planItemDef is tStage)
+            {
+                // return PlanItemDefinition.New(id, name, BuildStage((tStage)planItemDef));
+            }
+
+            return null;
+        }
+
         private static SEntry BuildSEntry(tSentry sEntry)
         {
             var result = new SEntry(sEntry.name);
@@ -124,259 +219,28 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
 
-        private static PlanItemDefinition BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef)
+        private static tStage DeserializeStage(string xml)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            var xmlSerializer = new XmlSerializer(typeof(tStage));
+            tStage result = null;
+            using (var txtReader = new StringReader(xml))
             {
-                name = planItemDef.name;
-            }
-
-            if (planItemDef is tProcessTask)
-            {
-                return PlanItemDefinition.New(id, name, BuildProcessTask((tProcessTask)planItemDef));
-            }
-
-            if (planItemDef is tHumanTask)
-            {
-                return PlanItemDefinition.New(id, name, BuildHumanTask((tHumanTask)planItemDef));
-            }
-
-            if (planItemDef is tTask)
-            {
-                return PlanItemDefinition.New(id, name, BuildTask((tTask)planItemDef));
-            }
-
-            if (planItemDef is tTimerEventListener)
-            {
-                return PlanItemDefinition.New(id, name, BuildTimerEventListener((tTimerEventListener)planItemDef));
-            }
-
-            if (planItemDef is tMilestone)
-            {
-                return PlanItemDefinition.New(id, name, BuildMilestone((tMilestone)planItemDef));
-            }
-
-            if (planItemDef is tStage)
-            {
-                return PlanItemDefinition.New(id, name, BuildStage((tStage)planItemDef));
-            }
-
-            return null;
-        }
-
-        private static ProcessTask BuildProcessTask(tProcessTask processTask)
-        {
-            var result = new ProcessTask(processTask.name) { IsBlocking = processTask.isBlocking };
-            if (processTask.parameterMapping != null)
-            {
-                foreach (var pm in processTask.parameterMapping)
-                {
-                    result.Mappings.Add(new ParameterMapping
-                    {
-                        SourceRef = new CMMNParameter { Name = pm.sourceRef },
-                        TargetRef = new CMMNParameter { Name = pm.targetRef },
-                        Transformation = pm.transformation == null ? null : new CMMNExpression(pm.transformation.language)
-                        {
-                            Body = pm.transformation.Text == null ? null : pm.transformation.Text.First()
-                        }
-                    });
-                }
-            }
-
-            if (processTask.processRef != null)
-            {
-                result.ProcessRef = processTask.processRef.Name;
-            }
-
-            if (processTask.processRefExpression != null)
-            {
-                result.ProcessRefExpression = new CMMNExpression(processTask.processRefExpression.language)
-                {
-                    Body = processTask.processRefExpression.Text.First()
-                };
+                result = (tStage)xmlSerializer.Deserialize(txtReader);
             }
 
             return result;
         }
 
-        private static HumanTask BuildHumanTask(tHumanTask humanTask)
+        private static string Serialize(tStage stage)
         {
-            return new HumanTask(humanTask.name) { FormId = humanTask.caseFormRef, IsBlocking = humanTask.isBlocking, PerformerRef = humanTask.performerRef };
-        }
-
-        private static CMMNTask BuildTask(tTask task)
-        {
-            return new CMMNTask(task.name);
-        }
-
-        private static TimerEventListener BuildTimerEventListener(tTimerEventListener timerEventListener)
-        {
-            var result = new TimerEventListener(timerEventListener.name);
-            if (timerEventListener.timerExpression != null)
+            var xmlSerializer = new XmlSerializer(typeof(tDefinitions));
+            var strBuilder = new StringBuilder();
+            using (var txtWriter = new StringWriter(strBuilder))
             {
-                result.TimerExpression = new CMMNExpression(timerEventListener.timerExpression.language)
-                {
-                    Body = timerEventListener.timerExpression.Text.First()
-                };
+                xmlSerializer.Serialize(txtWriter, stage);
             }
 
-            return result;
-        }
-
-        private static Milestone BuildMilestone(tMilestone milestone)
-        {
-            return new Milestone(milestone.name);
-        }
-
-        private static StageDefinition BuildStage(tStage stage)
-        {
-            var planItems = BuildPlanItems(stage);
-            var result = new StageDefinition(stage.name);
-            foreach (var planItem in planItems)
-            {
-                result.Elements.Add(planItem);
-            }
-
-            return result;
-        }
-
-        private static List<PlanItemDefinition> BuildPlanItems(tStage stage)
-        {
-            var planItems = new List<PlanItemDefinition>();
-            if (stage.planItem != null)
-            {
-                foreach (var planItem in stage.planItem)
-                {
-                    var planItemDef = stage.Items.First(i => i.id == planItem.definitionRef);
-                    var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
-                    if (planItem.entryCriterion != null)
-                    {
-                        foreach (var entryCriterion in planItem.entryCriterion)
-                        {
-                            var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
-                            flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
-                        }
-                    }
-
-                    if (planItem.exitCriterion != null)
-                    {
-                        foreach (var exitCriteria in planItem.exitCriterion)
-                        {
-                            var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
-                            flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
-                        }
-                    }
-
-                    if (planItem.itemControl != null)
-                    {
-                        if (planItem.itemControl.manualActivationRule != null)
-                        {
-                            var manualActivationRule = new ManualActivationRule(planItem.itemControl.manualActivationRule.name);
-                            var condition = planItem.itemControl.manualActivationRule.condition;
-                            if (condition != null && condition.Text.Any())
-                            {
-                                manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
-                            }
-
-                            flowInstanceElt.SetManualActivationRule(manualActivationRule);
-                        }
-                        else if (planItem.itemControl.repetitionRule != null)
-                        {
-                            var repetitionRule = new RepetitionRule(planItem.itemControl.repetitionRule.name);
-                            var condition = planItem.itemControl.repetitionRule.condition;
-                            if (condition != null && condition.Text.Any())
-                            {
-                                repetitionRule.Condition = new CMMNExpression(condition.language, condition.Text.First());
-                            }
-
-                            flowInstanceElt.SetRepetitionRule(repetitionRule);
-                        }
-                    }
-
-                    planItems.Add(flowInstanceElt);
-                }
-            }
-
-            if (stage.planningTable != null)
-            {
-                foreach (var planItem in stage.planningTable.Items)
-                {
-                    var discretionaryItem = planItem as tDiscretionaryItem;
-                    if (discretionaryItem == null)
-                    {
-                        continue;
-                    }
-
-                    var planItemDef = stage.Items.First(i => i.id == discretionaryItem.definitionRef);
-                    var flowInstanceElt = BuildPlanItem(planItem.id, planItemDef.name, planItemDef);
-                    if (discretionaryItem.entryCriterion != null)
-                    {
-                        foreach (var entryCriterion in discretionaryItem.entryCriterion)
-                        {
-                            var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
-                            flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
-                        }
-                    }
-
-                    if (discretionaryItem.exitCriterion != null)
-                    {
-                        foreach (var exitCriteria in discretionaryItem.exitCriterion)
-                        {
-                            var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
-                            flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
-                        }
-                    }
-
-                    if (discretionaryItem.itemControl != null)
-                    {
-                        if (discretionaryItem.itemControl.manualActivationRule != null)
-                        {
-                            var manualActivationRule = new ManualActivationRule(discretionaryItem.itemControl.manualActivationRule.name);
-                            var condition = discretionaryItem.itemControl.manualActivationRule.condition;
-                            if (condition != null && condition.Text.Any())
-                            {
-                                manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
-                            }
-
-                            flowInstanceElt.SetManualActivationRule(manualActivationRule);
-                        }
-                        else if (discretionaryItem.itemControl.repetitionRule != null)
-                        {
-                            var repetitionRule = new RepetitionRule(discretionaryItem.itemControl.repetitionRule.name);
-                            var condition = discretionaryItem.itemControl.repetitionRule.condition;
-                            if (condition != null && condition.Text.Any())
-                            {
-                                repetitionRule.Condition = new CMMNExpression(condition.language, condition.Text.First());
-                            }
-
-                            flowInstanceElt.SetRepetitionRule(repetitionRule);
-                        }
-                    }
-
-                    var tableItem = new TableItem();
-                    if (!string.IsNullOrWhiteSpace(discretionaryItem.authorizedRoleRefs))
-                    {
-                        tableItem.AuthorizedRoleRef = discretionaryItem.authorizedRoleRefs;
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(discretionaryItem.applicabilityRuleRefs))
-                    {
-                        var splitted = discretionaryItem.applicabilityRuleRefs.Split(',');
-                        var applicabilityRule = stage.planningTable.applicabilityRule.First(a => splitted.Contains(a.id));
-                        tableItem.ApplicabilityRuleRef = new ApplicabilityRule
-                        {
-                            ContextRef = applicabilityRule.contextRef,
-                            Expression = applicabilityRule.condition == null ? null : applicabilityRule.condition.Text.First(),
-                            Name = applicabilityRule.name
-                        };
-                    }
-
-                    flowInstanceElt.TableItem = tableItem;
-                    planItems.Add(flowInstanceElt);
-                }
-            }
-
-            return planItems;
+            return strBuilder.ToString();
         }
     }
 }

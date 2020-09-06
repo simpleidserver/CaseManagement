@@ -23,6 +23,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 
         public async Task Handle(CloseCommand closeCommand)
         {
+            /*
             var caseInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(closeCommand.CaseInstanceId, CasePlanInstanceAggregate.GetStreamName(closeCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
@@ -44,6 +45,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
                 caseInstance.MakeTransition(CMMNTransitions.Close);
                 await _messageBroker.QueueEvent(caseInstance.DomainEvents.Last(), CMMNConstants.QueueNames.CasePlanInstances);
             }
+            */
         }
     }
 }

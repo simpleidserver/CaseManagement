@@ -28,8 +28,7 @@ var initialMonthStatisticAction = {
 var initalDeployedState = {
     isErrorLoadOccured: false,
     isLoading: true,
-    nbCaseDefinitions: null,
-    nbCaseFiles: null
+    content: null
 };
 export function statisticReducer(state, action) {
     if (state === void 0) { state = initialStatisticAction; }
@@ -87,8 +86,7 @@ export function deployedReducer(state, action) {
     switch (action.type) {
         case ActionTypes.DEPLOYEDLOADED:
             var deployedLoadedAction = action;
-            state.nbCaseDefinitions = deployedLoadedAction.nbCaseDefinitions;
-            state.nbCaseFiles = deployedLoadedAction.nbCaseFiles;
+            state.content = deployedLoadedAction.result;
             state.isLoading = false;
             state.isErrorLoadOccured = false;
             return __assign({}, state);

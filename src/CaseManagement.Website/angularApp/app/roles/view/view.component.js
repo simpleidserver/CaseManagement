@@ -7,89 +7,77 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
+import { Role } from '../models/role.model';
+import { Store, select } from '@ngrx/store';
+import * as fromRole from '../reducers';
+import { StartGet } from '../actions/role';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatPaginator, MatSort } from '@angular/material';
-import { select, Store } from '@ngrx/store';
-import { merge } from 'rxjs';
-import { StartSearch } from '../actions/case-files';
-import * as fromCaseFiles from '../reducers';
-import { AddCaseFileDialog } from './add-case-file-dialog';
-var ListCaseFilesComponent = (function () {
-    function ListCaseFilesComponent(store, formBuilder, dialog) {
+import { RolesService } from '../services/role.service';
+import { MatSnackBar } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
+var ViewRoleComponent = (function () {
+    function ViewRoleComponent(store, route, formBuilder, roleService, snackBar, translateService) {
         this.store = store;
+        this.route = route;
         this.formBuilder = formBuilder;
-        this.dialog = dialog;
-        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
-        this.caseFiles$ = [];
-        this.searchForm = this.formBuilder.group({
-            text: ''
+        this.roleService = roleService;
+        this.snackBar = snackBar;
+        this.translateService = translateService;
+        this.role = new Role();
+        this.addRoleForm = this.formBuilder.group({
+            role: ''
         });
     }
-    ListCaseFilesComponent.prototype.ngOnInit = function () {
+    ViewRoleComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe(function (searchCaseFilesResult) {
-            if (!searchCaseFilesResult) {
+        this.store.pipe(select(fromRole.selectGetResult)).subscribe(function (role) {
+            if (!role) {
                 return;
             }
-            _this.caseFiles$ = searchCaseFilesResult.Content;
-            _this.length = searchCaseFilesResult.TotalLength;
+            _this.role = role;
         });
         this.refresh();
     };
-    ListCaseFilesComponent.prototype.onSubmit = function () {
-        this.refresh();
+    ViewRoleComponent.prototype.onSubmit = function (form) {
+        this.role.Users.push(form.role);
+        this.update();
     };
-    ListCaseFilesComponent.prototype.ngAfterViewInit = function () {
+    ViewRoleComponent.prototype.remove = function (user) {
+        var users = this.role.Users;
+        var index = users.indexOf(user);
+        users.splice(index, 1);
+        this.update();
+    };
+    ViewRoleComponent.prototype.refresh = function () {
+        var id = this.route.snapshot.params['id'];
+        var startGet = new StartGet(id);
+        this.store.dispatch(startGet);
+    };
+    ViewRoleComponent.prototype.update = function () {
         var _this = this;
-        merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
-    };
-    ListCaseFilesComponent.prototype.addCaseFile = function () {
-        var _this = this;
-        var dialogRef = this.dialog.open(AddCaseFileDialog, {
-            width: '800px'
+        var cancel = this.translateService.instant('CANCEL');
+        var role = this.route.snapshot.params['id'];
+        this.roleService.update(role, this.role.Users).subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('ROLE_SAVED'), cancel, {
+                duration: 2000
+            });
+        }, function () {
+            _this.snackBar.open(_this.translateService.instant('ERROR_SAVE_ROLE'), cancel, {
+                duration: 2000
+            });
         });
-        dialogRef.afterClosed().subscribe(function () {
-            _this.refresh();
-        });
     };
-    ListCaseFilesComponent.prototype.refresh = function () {
-        var startIndex = 0;
-        var count = 5;
-        if (this.paginator.pageIndex && this.paginator.pageSize) {
-            startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-        }
-        if (this.paginator.pageSize) {
-            count = this.paginator.pageSize;
-        }
-        var active = "create_datetime";
-        var direction = "desc";
-        if (this.sort.active) {
-            active = this.sort.active;
-        }
-        if (this.sort.direction) {
-            direction = this.sort.direction;
-        }
-        var request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value);
-        this.store.dispatch(request);
-    };
-    __decorate([
-        ViewChild(MatPaginator),
-        __metadata("design:type", MatPaginator)
-    ], ListCaseFilesComponent.prototype, "paginator", void 0);
-    __decorate([
-        ViewChild(MatSort),
-        __metadata("design:type", MatSort)
-    ], ListCaseFilesComponent.prototype, "sort", void 0);
-    ListCaseFilesComponent = __decorate([
+    ViewRoleComponent = __decorate([
         Component({
-            selector: 'list-case-files',
-            templateUrl: './list.component.html',
-            styleUrls: ['./list.component.scss']
+            selector: 'view-role',
+            templateUrl: './view.component.html',
+            styleUrls: ['./view.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, FormBuilder, MatDialog])
-    ], ListCaseFilesComponent);
-    return ListCaseFilesComponent;
+        __metadata("design:paramtypes", [Store, ActivatedRoute, FormBuilder, RolesService, MatSnackBar, TranslateService])
+    ], ViewRoleComponent);
+    return ViewRoleComponent;
 }());
-export { ListCaseFilesComponent };
-//# sourceMappingURL=list.component.js.map
+export { ViewRoleComponent };
+//# sourceMappingURL=view.component.js.map

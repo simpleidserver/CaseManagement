@@ -21,9 +21,14 @@ var AuthGuard = (function () {
             this.router.navigate(['/status/404']);
             return false;
         }
-        if (next.data && next.data.role && claims.role.indexOf(next.data.role) === -1) {
-            this.router.navigate(['/status/401']);
-            return false;
+        if (next.data && next.data.role) {
+            var filteredRoles = next.data.role.filter(function (role) {
+                return role === claims.role;
+            });
+            if (filteredRoles.length === 0) {
+                this.router.navigate(['/status/401']);
+                return false;
+            }
         }
         return true;
     };

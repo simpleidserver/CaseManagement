@@ -1,13 +1,14 @@
 ﻿using CaseManagement.CMMN.Domains;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence
 {
     public interface ICasePlanCommandRepository
     {
-        void Update(CasePlanAggregate workflowDefinition);
-        void Add(CasePlanAggregate workflowDefinition);
-        void Delete(CasePlanAggregate workflowDefinition);
-        Task<int> SaveChanges();
+        void Update(CasePlanAggregate casePlan);
+        void Add(CasePlanAggregate casePlan);
+        void Delete(CasePlanAggregate casePlan);
+        Task<int> SaveChanges(CancellationToken token);
     }
 }

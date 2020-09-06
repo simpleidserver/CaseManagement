@@ -20,6 +20,7 @@ namespace CaseManagement.CMMN
 
         public ServerBuilder AddDefinitions(List<string> pathLst, string caseOwner = null)
         {
+            /*
             var caseFiles = new ConcurrentBag<CaseFileAggregate>();
             var caseDefinitions = new ConcurrentBag<CasePlanAggregate>();
             foreach(var path in pathLst)
@@ -42,34 +43,18 @@ namespace CaseManagement.CMMN
             _services.TryUpdateSingleton<ICaseFileCommandRepository>(new InMemoryCaseFileCommandRepository(caseFiles));
             _services.TryUpdateSingleton<ICasePlanCommandRepository>(new InMemoryCasePlanCommandRepository(caseDefinitions));
             _services.TryUpdateSingleton<ICasePlanQueryRepository>(new InMemoryCasePlanQueryRepository(caseDefinitions));
+            */
             return this;
         }
 
-        public ServerBuilder AddCaseProcesses(ICollection<ProcessAggregate> caseProcesses)
+        public ServerBuilder SetCasePlanInstance(CasePlanInstanceAggregate casePlanInstance)
         {
-            _services.TryUpdateSingleton<IProcessQueryRepository>(new InMemoryProcessQueryRepository(caseProcesses));
-            return this;
-        }
-
-        public ServerBuilder AddForms(ICollection<FormAggregate> forms)
-        {
-            _services.TryUpdateSingleton<IFormQueryRepository>(new InMemoryFormQueryRepository(forms));
-            _services.TryUpdateSingleton<IFormCommandRepository>(new InMemoryFormCommandRepository(forms));
-            return this;
-        }
-
-        public ServerBuilder AddStatistics(ConcurrentBag<DailyStatisticAggregate> statistics)
-        {
-            var performanceStatistics = new ConcurrentBag<PerformanceAggregate>();
-            _services.TryUpdateSingleton<IDailyStatisticCommandRepository>(new InMemoryDailyStatisticCommandRepository(statistics));
-            _services.TryUpdateSingleton<IStatisticQueryRepository>(new InMemoryDailyStatisticQueryRepository(statistics));
-            return this;
-        }
-
-        public ServerBuilder AddRoles(ICollection<RoleAggregate> roles)
-        {
-            _services.TryUpdateSingleton<IRoleCommandRepository>(new InMemoryRoleCommandRepository(roles));
-            _services.TryUpdateSingleton<IRoleQueryRepository>(new InMemoryRoleQueryRepository(roles));
+            var casePlanInstances = new ConcurrentBag<CasePlanInstanceAggregate>
+            {
+                casePlanInstance
+            };
+            _services.TryUpdateSingleton<ICasePlanInstanceCommandRepository>(new InMemoryCaseInstanceCommandRepository(casePlanInstances));
+            _services.TryUpdateSingleton<ICasePlanInstanceQueryRepository>(new InMemoryCaseInstanceQueryRepository(casePlanInstances));
             return this;
         }
     }

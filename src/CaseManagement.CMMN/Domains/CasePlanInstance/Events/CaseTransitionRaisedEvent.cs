@@ -2,9 +2,10 @@
 using System;
 using System.Diagnostics;
 
-namespace CaseManagement.CMMN.Domains.Events
+namespace CaseManagement.CMMN.Domains.CasePlanInstance.Events
 {
-    [DebuggerDisplay("Make transition {Transition} to case instance {AggregateId}")]
+    [Serializable]
+    [DebuggerDisplay("Make transition '{Transition}'")]
     public class CaseTransitionRaisedEvent : DomainEvent
     {
         public CaseTransitionRaisedEvent(string id, string aggregateId, int version, CMMNTransitions transition, DateTime updateDateTime) : base(id, aggregateId, version)

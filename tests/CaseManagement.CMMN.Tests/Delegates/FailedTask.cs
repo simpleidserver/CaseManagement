@@ -1,11 +1,6 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
-using CaseManagement.CMMN.Infrastructures;
-
-namespace CaseManagement.CMMN.Tests.Delegates
+﻿namespace CaseManagement.CMMN.Tests.Delegates
 {
+    /*
     public class FailedTask : CaseProcessDelegate
     {
         public FailedTask(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -17,4 +12,5 @@ namespace CaseManagement.CMMN.Tests.Delegates
             throw new Exception("message");
         }
     }
+    */
 }

@@ -1,12 +1,8 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Parser;
-using System.IO;
-using Xunit;
-
-namespace CaseManagement.CMMN.Tests
+﻿namespace CaseManagement.CMMN.Tests
 {
     public class CMMNParserFixture
     {
+        /*
         [Fact]
         public void When_Extract_WorkflowDefinitions()
         {
@@ -30,5 +26,6 @@ namespace CaseManagement.CMMN.Tests
             Assert.NotNull(fifthResult);
             Assert.NotNull(sixResult);
         }
+        */
     }
 }

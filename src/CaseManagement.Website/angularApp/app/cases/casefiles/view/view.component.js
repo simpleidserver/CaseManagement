@@ -17,7 +17,7 @@ import { StartGet } from '../actions/case-files';
 import { CaseFile } from '../models/case-file.model';
 import * as fromCaseFiles from '../reducers';
 import { CaseFilesService } from '../services/casefiles.service';
-var CmmnViewer = require('cmmn-js/lib/Modeler'), propertiesPanelModule = require('casemanagement-js-properties-panel'), propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'), caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement');
+var CmmnViewer = require('cmmn-js/lib/Modeler'), propertiesPanelModule = require('casemanagement-js-properties-panel'), propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'), caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement'), cmmnModdle = require('casemanagement-cmmn-moddle/resources/cmmn');
 var ViewCaseFilesComponent = (function () {
     function ViewCaseFilesComponent(store, route, formBuilder, caseFilesService, snackBar, translateService, router) {
         this.store = store;
@@ -53,7 +53,8 @@ var ViewCaseFilesComponent = (function () {
                 parent: '#properties'
             },
             moddleExtensions: {
-                case: caseModdle
+                case: caseModdle,
+                cmmn: cmmnModdle
             }
         });
         this.store.pipe(select(fromCaseFiles.selectGetResult)).subscribe(function (e) {

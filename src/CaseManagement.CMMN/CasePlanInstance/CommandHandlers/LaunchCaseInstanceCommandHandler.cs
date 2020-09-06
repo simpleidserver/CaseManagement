@@ -20,6 +20,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 
         public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
         {
+            /*
             var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CasePlanInstanceAggregate>(launchCaseInstanceCommand.CasePlanInstanceId, Domains.CasePlanInstanceAggregate.GetStreamName(launchCaseInstanceCommand.CasePlanInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
@@ -35,6 +36,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
             }
             
             await _messageBroker.QueueLaunchProcess(caseInstance.Id);
+            */
         }
     }
 }

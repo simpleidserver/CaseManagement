@@ -66,9 +66,8 @@ var LoadDeployedAction = (function () {
 }());
 export { LoadDeployedAction };
 var DeployedLoadedAction = (function () {
-    function DeployedLoadedAction(nbCaseDefinitions, nbCaseFiles) {
-        this.nbCaseDefinitions = nbCaseDefinitions;
-        this.nbCaseFiles = nbCaseFiles;
+    function DeployedLoadedAction(result) {
+        this.result = result;
         this.type = ActionTypes.DEPLOYEDLOADED;
     }
     return DeployedLoadedAction;

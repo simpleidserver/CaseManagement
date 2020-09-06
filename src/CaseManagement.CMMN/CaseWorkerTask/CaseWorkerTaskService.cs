@@ -1,6 +1,4 @@
-﻿using CaseManagement.CMMN.CaseWorkerTask.CommandHandlers;
-using CaseManagement.CMMN.CaseWorkerTask.Commands;
-using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
@@ -16,23 +14,16 @@ namespace CaseManagement.CMMN.CaseWorkerTask
     public class CaseWorkerTaskService : ICaseWorkerTaskService
     {
         private readonly ICaseWorkerTaskQueryRepository _activationQueryRepository;
-        private readonly IConfirmCaseWorkerTaskHandler _confirmCaseWorkerTaskHandler;
 
-        public CaseWorkerTaskService(ICaseWorkerTaskQueryRepository activationQueryRepository, IConfirmCaseWorkerTaskHandler confirmCaseWorkerTaskHandler)
+        public CaseWorkerTaskService(ICaseWorkerTaskQueryRepository activationQueryRepository)
         {
             _activationQueryRepository = activationQueryRepository;
-            _confirmCaseWorkerTaskHandler = confirmCaseWorkerTaskHandler;
         }
 
         public async Task<JObject> Search(IEnumerable<KeyValuePair<string, string>> query)
         {
             var result = await _activationQueryRepository.Find(ExtractFindParameter(query));
             return ToDto(result);
-        }
-        
-        public Task ConfirmCaseWorker(ConfirmCaseWorkerTask confirmCaseWorkerTask)
-        {
-            return _confirmCaseWorkerTaskHandler.Handle(confirmCaseWorkerTask);
         }
 
         private static JObject ToDto(FindResponse<CaseWorkerTaskAggregate> resp)

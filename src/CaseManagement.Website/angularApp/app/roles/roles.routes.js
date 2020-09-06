@@ -1,10 +1,9 @@
 import { RouterModule } from '@angular/router';
-import { CasesComponent } from './cases.component';
+import { ListRolesComponent } from './list/list.component';
+import { ViewRoleComponent } from './view/view.component';
 var routes = [
-    { path: '', redirectTo: 'casefiles', pathMatch: 'full' },
-    { path: 'casefiles', component: CasesComponent, loadChildren: './casefiles/casefiles.module#CaseFilesModule' },
-    { path: 'caseplans', component: CasesComponent, loadChildren: './caseplans/caseplans.module#CasePlansModule' },
-    { path: 'caseplaninstances', component: CasesComponent, loadChildren: './caseplaninstances/caseplaninstances.module#CasePlanInstancesModule' }
+    { path: '', component: ListRolesComponent },
+    { path: ':id', component: ViewRoleComponent }
 ];
-export var CasesRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=cases.routes.js.map
+export var RolesRoutes = RouterModule.forChild(routes);
+//# sourceMappingURL=roles.routes.js.map

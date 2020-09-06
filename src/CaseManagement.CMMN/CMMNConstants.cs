@@ -11,8 +11,9 @@
 
         public static class QueueNames
         {
-            public const string CaseFiles = "casefiles";
+            public const string ExternalEvents = "externalevts";
             public const string CasePlanInstances = "caseplaninstances";
+            public const string DomainEvents = "domainevts";
             public const string CasePlans = "caseplans";
             public const string FormInstances = "forminstances";
             public const string CaseWorkerTasks = "caseworkertasks";

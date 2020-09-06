@@ -9,15 +9,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { map } from 'rxjs/operators';
+import { CountResult } from '../models/count-result.model';
 import { DailyStatistic } from '../models/dailystatistic.model';
 import { SearchDailyStatisticsResult } from '../models/search-dailystatistics-result.model';
-import { OAuthService } from 'angular-oauth2-oidc';
 var StatisticService = (function () {
     function StatisticService(http, oauthService) {
         this.http = http;
         this.oauthService = oauthService;
     }
+    StatisticService.prototype.count = function () {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/statistics/count";
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
+            return CountResult.fromJson(res);
+        }));
+    };
     StatisticService.prototype.get = function () {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');

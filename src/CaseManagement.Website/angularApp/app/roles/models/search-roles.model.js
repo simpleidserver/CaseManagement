@@ -1,22 +1,22 @@
-import { CaseFile } from './case-file.model';
-var SearchCaseFilesResult = (function () {
-    function SearchCaseFilesResult() {
+import { Role } from './role.model';
+var SearchRolesResult = (function () {
+    function SearchRolesResult() {
     }
-    SearchCaseFilesResult.fromJson = function (json) {
-        var result = new SearchCaseFilesResult();
+    SearchRolesResult.fromJson = function (json) {
+        var result = new SearchRolesResult();
         result.StartIndex = json["start_index"];
         result.Count = json["count"];
         result.TotalLength = json["total_length"];
         var content = [];
         if (json["content"]) {
             json["content"].forEach(function (c) {
-                content.push(CaseFile.fromJson(c));
+                content.push(Role.fromJson(c));
             });
         }
         result.Content = content;
         return result;
     };
-    return SearchCaseFilesResult;
+    return SearchRolesResult;
 }());
-export { SearchCaseFilesResult };
-//# sourceMappingURL=search-case-files-result.model.js.map
+export { SearchRolesResult };
+//# sourceMappingURL=search-roles.model.js.map

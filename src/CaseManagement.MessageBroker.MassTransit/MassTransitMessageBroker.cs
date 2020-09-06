@@ -12,6 +12,7 @@ namespace CaseManagement.MessageBroker.MassTransit
 {
     public class MassTransitMessageBroker : IMessageBroker
     {
+        /*
         private readonly MessageBrokerOptions _options;
         private readonly IServiceProvider _serviceProvider;
 
@@ -99,6 +100,31 @@ namespace CaseManagement.MessageBroker.MassTransit
 
                 return Task.CompletedTask;
             }
+        }
+        */
+        public Task<T> Dequeue<T>(string queueName, CancellationToken cancellationToken) where T : class
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Queue(string queueName, object message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Start()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Stop()
+        {
+            throw new NotImplementedException();
         }
     }
 }

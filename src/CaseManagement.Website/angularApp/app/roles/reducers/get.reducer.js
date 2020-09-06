@@ -9,20 +9,20 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import * as fromActions from '../actions/case-files';
+import * as fromActions from '../actions/role';
 export var initialState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export function searchReducer(state, action) {
+export function getReducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH:
+        case fromActions.ActionTypes.COMPLETE_GET:
             state.content = action.content;
             return __assign({}, state);
         default:
             return state;
     }
 }
-//# sourceMappingURL=search.reducer.js.map
+//# sourceMappingURL=get.reducer.js.map

@@ -23,11 +23,6 @@ var CasePlanInstanceEffects = (function () {
             return _this.casePlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId)
                 .pipe(map(function (casePlanInstances) { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH, content: casePlanInstances }; }), catchError(function () { return of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH }); }));
         }));
-        this.searchMyCasePlanInstance$ = this.actions$
-            .pipe(ofType(fromCasePlanInstance.ActionTypes.START_SEARCH_ME), mergeMap(function (evt) {
-            return _this.casePlanInstanceService.searchMe(evt.startIndex, evt.count, evt.order, evt.direction)
-                .pipe(map(function (casePlanInstances) { return { type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME, content: casePlanInstances }; }), catchError(function () { return of({ type: fromCasePlanInstance.ActionTypes.COMPLETE_SEARCH_ME }); }));
-        }));
         this.selectGetCasePlanInstance = this.actions$
             .pipe(ofType(fromCasePlanInstance.ActionTypes.START_GET), mergeMap(function (evt) {
             return _this.casePlanInstanceService.get(evt.id)
@@ -38,10 +33,6 @@ var CasePlanInstanceEffects = (function () {
         Effect(),
         __metadata("design:type", Object)
     ], CasePlanInstanceEffects.prototype, "searchCasePlanInstance$", void 0);
-    __decorate([
-        Effect(),
-        __metadata("design:type", Object)
-    ], CasePlanInstanceEffects.prototype, "searchMyCasePlanInstance$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)

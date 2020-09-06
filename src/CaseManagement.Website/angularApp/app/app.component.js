@@ -7,22 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-import { DOCUMENT } from '@angular/common';
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
-import { Router } from '@angular/router';
-import { trigger, transition, state, style, animate } from '@angular/animations';
 var AppComponent = (function () {
-    function AppComponent(route, translate, oauthService, document, router) {
+    function AppComponent(route, translate, oauthService, router) {
         this.route = route;
         this.translate = translate;
         this.oauthService = oauthService;
-        this.document = document;
         this.router = router;
         this.isConnected = false;
         this.url = process.env.BASE_URL + "assets/images/logo.svg";
@@ -35,6 +30,16 @@ var AppComponent = (function () {
         this.translate.use(lng);
     };
     AppComponent.prototype.login = function () {
+        this.oauthService.customQueryParams = {
+            'prompt': 'login'
+        };
+        this.oauthService.initImplicitFlow();
+        return false;
+    };
+    AppComponent.prototype.chooseSession = function () {
+        this.oauthService.customQueryParams = {
+            'prompt': 'select_account'
+        };
         this.oauthService.initImplicitFlow();
         return false;
     };
@@ -79,7 +84,6 @@ var AppComponent = (function () {
         });
     };
     AppComponent.prototype.configureAuth = function () {
-        authConfig.redirectUri = this.document.location.origin;
         this.oauthService.configure(authConfig);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         var self = this;
@@ -115,8 +119,7 @@ var AppComponent = (function () {
                 ])
             ]
         }),
-        __param(3, Inject(DOCUMENT)),
-        __metadata("design:paramtypes", [Router, TranslateService, OAuthService, Object, Router])
+        __metadata("design:paramtypes", [Router, TranslateService, OAuthService, Router])
     ], AppComponent);
     return AppComponent;
 }());

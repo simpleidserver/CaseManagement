@@ -1,23 +1,8 @@
-﻿using CaseManagement.CMMN.CasePlanInstance.CommandHandlers;
-using CaseManagement.CMMN.CasePlanInstance.Commands;
-using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.CMMN.CasePlanInstance.Repositories;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
-using CaseManagement.CMMN.Roles;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.CasePlanInstance
+﻿namespace CaseManagement.CMMN.CasePlanInstance
 {
     public class CasePlanInstanceService : ICasePlanInstanceService
     {
+        /*
         private readonly ICreateCaseInstanceCommandHandler _createCaseInstanceCommandHandler;
         private readonly ILaunchCaseInstanceCommandHandler _launchCaseInstanceCommandHandler;
         private readonly ISuspendCommandHandler _suspendCommandHandler;
@@ -350,7 +335,7 @@ namespace CaseManagement.CMMN.CasePlanInstance
             return result;
         }
 
-        private static JObject ToDto(CaseElementInstance elt)
+        private static JObject ToDto(CasePlanElementInstance elt)
         {
             var result = new JObject
             {
@@ -422,5 +407,6 @@ namespace CaseManagement.CMMN.CasePlanInstance
 
             return parameter;
         }
+    */
     }
 }

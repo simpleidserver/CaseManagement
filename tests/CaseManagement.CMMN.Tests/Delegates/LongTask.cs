@@ -1,11 +1,6 @@
-﻿using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
-using CaseManagement.CMMN.Infrastructures;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.Tests.Delegates
+﻿namespace CaseManagement.CMMN.Tests.Delegates
 {
+    /*
     public class LongTask : CaseProcessDelegate
     {
         private const double NUMBER_MS = 2000;
@@ -33,4 +28,5 @@ namespace CaseManagement.CMMN.Tests.Delegates
             return callback(result);
         }
     }
+    */
 }

@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
 using System.Collections.Concurrent;
@@ -27,6 +26,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public Task<FindResponse<CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter)
         {
+            /*
             IQueryable<CasePlanInstanceAggregate> result = _instances.AsQueryable();
             if (parameter.TakeLatest)
             {
@@ -63,9 +63,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 TotalLength = totalLength,
                 Content = result.ToList()
             });
+            */
+            return null;
         }
 
-        public Task<CasePlanInstanceAggregate> FindFlowInstanceById(string id)
+        public Task<CasePlanInstanceAggregate> Get(string id)
         {
             var result = _instances.FirstOrDefault(i => i.Id == id);
             if (result == null)
@@ -73,7 +75,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 return Task.FromResult((CasePlanInstanceAggregate)null);
             }
 
-            return Task.FromResult(result.Clone() as CasePlanInstanceAggregate);
+            return Task.FromResult(result);
         }     
     }
 }

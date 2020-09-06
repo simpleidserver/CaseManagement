@@ -8,6 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewEncapsulation } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
@@ -16,7 +17,6 @@ import { StartGet } from '../actions/caseplaninstance';
 import { CasePlanInstance } from '../models/caseplaninstance.model';
 import * as fromCasePlanInstance from '../reducers';
 import { CasePlanInstanceService } from '../services/caseplaninstance.service';
-import { FormBuilder } from '@angular/forms';
 var FormElementView = (function () {
     function FormElementView() {
     }
@@ -43,6 +43,7 @@ var ViewCasePlanInstanceComponent = (function () {
         this.activeActivities = [];
         this.enableActivities = [];
         this.completeActivities = [];
+        this.milestones = [];
     }
     ViewCasePlanInstanceComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -52,13 +53,16 @@ var ViewCasePlanInstanceComponent = (function () {
             }
             _this.casePlanInstance = casePlanInstance;
             _this.activeActivities = casePlanInstance.Elements.filter(function (cp) {
-                return cp.State == "Active";
+                return _this.isActivity(cp) && cp.State == "Active";
             });
             _this.enableActivities = casePlanInstance.Elements.filter(function (cp) {
-                return cp.State == "Enabled";
+                return _this.isActivity(cp) && cp.State == "Enabled";
             });
             _this.completeActivities = casePlanInstance.Elements.filter(function (cp) {
-                return cp.State == "Completed";
+                return _this.isActivity(cp) && cp.State == "Completed";
+            });
+            _this.milestones = casePlanInstance.Elements.filter(function (cp) {
+                return cp.Type == "milestone";
             });
         });
         this.refresh();
@@ -124,6 +128,11 @@ var ViewCasePlanInstanceComponent = (function () {
         var id = this.route.snapshot.params['id'];
         var request = new StartGet(id);
         this.store.dispatch(request);
+    };
+    ViewCasePlanInstanceComponent.prototype.isActivity = function (casePlanElementInstance) {
+        return casePlanElementInstance.Type == "task" ||
+            casePlanElementInstance.Type == "humantask" ||
+            casePlanElementInstance.Type == "processtask";
     };
     ViewCasePlanInstanceComponent = __decorate([
         Component({

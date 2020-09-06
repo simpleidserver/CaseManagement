@@ -19,10 +19,14 @@ var CasePlanInstanceService = (function () {
         this.oauthService = oauthService;
     }
     CasePlanInstanceService.prototype.search = function (startIndex, count, order, direction, casePlanId) {
+        var claims = this.oauthService.getIdentityClaims();
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plan-instances/search?start_index=" + startIndex + "&count=" + count;
+        if (claims.role === 'caseworker') {
+            targetUrl = process.env.API_URL + "/case-plan-instances/search/me?start_index=" + startIndex + "&count=" + count;
+        }
         if (order) {
             targetUrl = targetUrl + "&order_by=" + order;
         }
@@ -36,43 +40,40 @@ var CasePlanInstanceService = (function () {
             return SearchCasePlanInstanceResult.fromJson(res);
         }));
     };
-    CasePlanInstanceService.prototype.searchMe = function (startIndex, count, order, direction) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/me/search?start_index=" + startIndex + "&count=" + count;
-        if (order) {
-            targetUrl = targetUrl + "&order_by=" + order;
-        }
-        if (direction) {
-            targetUrl = targetUrl + "&order=" + direction;
-        }
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchCasePlanInstanceResult.fromJson(res);
-        }));
-    };
     CasePlanInstanceService.prototype.get = function (casePlanInstanceId) {
+        var claims = this.oauthService.getIdentityClaims();
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId;
+        if (claims.role === 'caseworker') {
+            targetUrl = process.env.API_URL + "/case-plan-instances/me/" + casePlanInstanceId;
+        }
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return CasePlanInstance.fromJson(res);
         }));
     };
     CasePlanInstanceService.prototype.enable = function (casePlanInstanceId, casePlanElementInstanceId) {
+        var claims = this.oauthService.getIdentityClaims();
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/enable/" + casePlanElementInstanceId;
+        if (claims.role === 'caseworker') {
+            targetUrl = process.env.API_URL + "/case-plan-instances/me/" + casePlanInstanceId + "/enable/" + casePlanElementInstanceId;
+        }
         return this.http.get(targetUrl, { headers: headers });
     };
     CasePlanInstanceService.prototype.confirmForm = function (casePlanInstanceId, casePlanElementInstanceId, request) {
+        var claims = this.oauthService.getIdentityClaims();
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/confirm/" + casePlanElementInstanceId;
+        if (claims.role === 'caseworker') {
+            targetUrl = process.env.API_URL + "/case-plan-instances/me/" + casePlanInstanceId + "/confirm/" + casePlanElementInstanceId;
+        }
         return this.http.post(targetUrl, JSON.stringify(request), { headers: headers });
     };
     CasePlanInstanceService = __decorate([

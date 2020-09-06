@@ -1,12 +1,6 @@
-﻿using CaseManagement.CMMN.CaseProcess.ProcessHandlers;
-using CaseManagement.CMMN.Infrastructures;
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CaseManagement.CMMN.Tests.Delegates
+﻿namespace CaseManagement.CMMN.Tests.Delegates
 {
+    /*
     public class GetGoogleHomePageTask : CaseProcessDelegate
     {
         public GetGoogleHomePageTask(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -25,4 +19,5 @@ namespace CaseManagement.CMMN.Tests.Delegates
             }
         }
     }
+    */
 }

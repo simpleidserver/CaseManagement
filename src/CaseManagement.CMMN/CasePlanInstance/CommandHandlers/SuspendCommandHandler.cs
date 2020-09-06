@@ -22,6 +22,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 
         public async Task Handle(SuspendCommand suspendCommand)
         {
+            /*
             var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CasePlanInstanceAggregate>(suspendCommand.CaseInstanceId, Domains.CasePlanInstanceAggregate.GetStreamName(suspendCommand.CaseInstanceId));
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
@@ -48,6 +49,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
 
             caseInstance.MakeTransition(CMMNTransitions.Suspend);
             await _messageBroker.QueueTransition(caseInstance.Id, null, CMMNTransitions.Suspend);
+            */
         }
     }
 }
