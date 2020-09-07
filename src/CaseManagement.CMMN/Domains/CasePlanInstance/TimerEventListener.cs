@@ -7,7 +7,7 @@ namespace CaseManagement.CMMN.Domains
         public MilestoneEventStates? State { get; set; }
         public CMMNExpression TimerExpression { get; set; }
 
-        protected override void UpdateTransition(CMMNTransitions transition)
+        protected override void UpdateTransition(CMMNTransitions transition, DateTime executionDateTime)
         {
             State = GetMilestoneOrEventListenerState(State, transition);
         }

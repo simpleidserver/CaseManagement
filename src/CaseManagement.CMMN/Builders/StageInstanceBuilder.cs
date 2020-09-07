@@ -4,28 +4,19 @@ using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
 {
-    public class StageInstanceBuilder
+    public class StageInstanceBuilder : CaseElementInstanceBuilder
     {
 
-        protected StageInstanceBuilder(string id, string name)
+        protected StageInstanceBuilder(string id, string name) : base(id, name)
         {
-            Id = id;
-            Name = name;
             Builders = new List<CaseElementInstanceBuilder>();
         }
-
-        protected string Id { get; set; }
-        protected string Name { get; set; }
 
         protected ICollection<CaseElementInstanceBuilder> Builders;
 
         public StageInstanceBuilder AddEmptyTask(string id, string name, Action<EmptyTaskInstanceBuilder> callback = null)
         {
-            var stepBuilder = new EmptyTaskInstanceBuilder
-            {
-                Name = name,
-                Id = id
-            };
+            var stepBuilder = new EmptyTaskInstanceBuilder(id, name);
             if (callback != null)
             {
                 callback(stepBuilder);
@@ -37,12 +28,22 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
 
         public StageInstanceBuilder AddHumanTask(string id, string name, string performerRef, Action<HumanTaskInstanceBuilder> callback = null)
         {
-            var stepBuilder = new HumanTaskInstanceBuilder
+            var stepBuilder = new HumanTaskInstanceBuilder(id, name)
             {
-                Name = name,
-                Id = id,
                 PerformerRef = performerRef
             };
+            if (callback != null)
+            {
+                callback(stepBuilder);
+            }
+
+            Builders.Add(stepBuilder);
+            return this;
+        }
+
+        public StageInstanceBuilder AddStage(string id, string name, Action<StageInstanceBuilder> callback = null)
+        {
+            var stepBuilder = new StageInstanceBuilder(id, name);
             if (callback != null)
             {
                 callback(stepBuilder);
@@ -57,7 +58,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
             return new StageInstanceBuilder(id, name);
         }
 
-        public StageElementInstance Build()
+        protected override CasePlanElementInstance InternalBuild()
         {
             var result = new StageElementInstance
             {
@@ -72,6 +73,4 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
             return result;
         }
     }
-
-
 }

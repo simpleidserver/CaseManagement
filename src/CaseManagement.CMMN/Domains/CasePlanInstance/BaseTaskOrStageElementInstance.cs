@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace CaseManagement.CMMN.Domains
 {
     public class BaseTaskOrStageElementInstance : CasePlanElementInstance
@@ -7,9 +8,28 @@ namespace CaseManagement.CMMN.Domains
         public TaskStageStates? State { get; set; }
         public bool IsBlocking { get; set; }
 
-        protected override void UpdateTransition(CMMNTransitions transition)
+        public bool IsManualActivationRuleSatisfied()
         {
-            State = GetTaskStageState(State, transition);
+            return ManualActivationRule.IsSatisfied();
         }
+
+        protected override void UpdateTransition(CMMNTransitions transition, DateTime executionDateTime)
+        {
+            if (transition == CMMNTransitions.ParentTerminate)
+            {
+                if (State != TaskStageStates.Completed && State != TaskStageStates.Terminated)
+                {
+                    State = TaskStageStates.Terminated;
+                }
+            }
+            else
+            {
+                State = GetTaskStageState(State, transition);
+            }
+
+            Process(transition, executionDateTime);
+        }
+
+        protected virtual void Process(CMMNTransitions transition, DateTime executionDateTime) { }
     }
 }

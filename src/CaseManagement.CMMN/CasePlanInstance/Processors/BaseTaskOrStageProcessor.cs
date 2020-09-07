@@ -11,25 +11,42 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         public override async Task Execute(ExecutionContext executionContext, T elt, CancellationToken cancellationToken)
         {
+            var terminate = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
+            var manualStart = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.ManualStart, cancellationToken);
             if (elt.State == null)
             {
-                executionContext.CasePlanInstance.MakeTransition(elt, Domains.CMMNTransitions.Create);
+                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Create);
             }
 
-            if (elt.State == Domains.TaskStageStates.Available)
+            if (elt.State == TaskStageStates.Available)
             {
-                if (elt.ManualActivationRule != null && executionContext.CasePlanInstance.IsManualActivationRuleSatisfied())
+                if (elt.ManualActivationRule != null && elt.IsManualActivationRuleSatisfied())
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, Domains.CMMNTransitions.Enable);
+                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Enable);
                     return;
                 }
 
-                executionContext.CasePlanInstance.MakeTransition(elt, Domains.CMMNTransitions.Start);
+                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Start);
             }
 
-            if (elt.State == Domains.TaskStageStates.Active)
+            if (elt.State == TaskStageStates.Enabled)
+            {
+                if (!manualStart.IsCaptured)
+                {
+                    return;
+                }
+
+                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.ManualStart);
+            }
+
+            if (elt.State == TaskStageStates.Active)
             {
                 await ProtectedExecute(executionContext, elt, cancellationToken);
+                if (terminate.IsCaptured)
+                {
+                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Terminate);
+                    return;
+                }
             }
         }
 

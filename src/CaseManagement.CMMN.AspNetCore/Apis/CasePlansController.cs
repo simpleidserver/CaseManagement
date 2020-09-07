@@ -4,6 +4,7 @@ using CaseManagement.CMMN.CasePlan.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.AspNetCore.Apis
@@ -20,38 +21,19 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
 
         [HttpGet("count")]
         [Authorize("get_statistic")]
-        public async Task<IActionResult> Count()
+        public async Task<IActionResult> Count(CancellationToken token)
         {
-            var result = await _casePlanService.Count();
+            var result = await _casePlanService.Count(token);
             return new OkObjectResult(result);
-        }
-
-        [HttpGet("me/{id}")]
-        [Authorize("me_get_caseplan")]
-        public async Task<IActionResult> GetMe(string id)
-        {
-            try
-            {
-                var result = await _casePlanService.GetMe(id, this.GetNameIdentifier());
-                return new OkObjectResult(result);
-            }
-            catch(UnknownCasePlanException)
-            {
-                return new NotFoundResult();
-            }
-            catch(UnauthorizedCasePlanException)
-            {
-                return new UnauthorizedResult();
-            }
         }
 
         [HttpGet("{id}")]
         [Authorize("get_caseplan")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, CancellationToken token)
         {
             try
             {
-                var result = await _casePlanService.Get(id);
+                var result = await _casePlanService.Get(id, token);
                 return new OkObjectResult(result);
             }
             catch (UnknownCasePlanException)
@@ -62,10 +44,10 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
 
         [HttpGet("search")]
         [Authorize("get_caseplan")]
-        public async Task<IActionResult> Search()
+        public async Task<IActionResult> Search(CancellationToken token)
         {
             var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _casePlanService.Search(query);
+            var result = await _casePlanService.Search(query, token);
             return new OkObjectResult(result);
         }
     }

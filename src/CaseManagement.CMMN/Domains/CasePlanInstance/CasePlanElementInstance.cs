@@ -31,11 +31,11 @@ namespace CaseManagement.CMMN.Domains
 
         public void MakeTransition(CMMNTransitions transition, DateTime executionDateTime)
         {
-            UpdateTransition(transition);
+            UpdateTransition(transition, executionDateTime);
             TransitionHistories.Add(new CasePlanElementInstanceTransitionHistory { ExecutionDateTime = executionDateTime, Transition = transition });
         }
 
-        protected abstract void UpdateTransition(CMMNTransitions transition);
+        protected abstract void UpdateTransition(CMMNTransitions transition, DateTime executionDateTime);
 
         protected TaskStageStates? GetTaskStageState(TaskStageStates? state, CMMNTransitions transition)
         {

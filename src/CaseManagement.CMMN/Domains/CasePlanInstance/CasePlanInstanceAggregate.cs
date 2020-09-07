@@ -56,17 +56,12 @@ namespace CaseManagement.CMMN.Domains
 
             if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
             {
-                if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, this))
+                if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition))
                 {
                     return false;
                 }
             }
             return true;
-        }
-
-        public bool IsManualActivationRuleSatisfied()
-        {
-            return false;
         }
 
         public CasePlanElementInstance GetChild(string id)
@@ -76,8 +71,7 @@ namespace CaseManagement.CMMN.Domains
                 return Content;
             }
 
-            var child = Content.Children.FirstOrDefault(_ => _.Id == id);
-            return child;
+            return Content.GetChild(id);
         }
 
         public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan)
@@ -120,6 +114,16 @@ namespace CaseManagement.CMMN.Domains
         public override object Clone()
         {
             throw new NotImplementedException();
+        }
+
+        public string GetStreamName()
+        {
+            return GetStreamName(Id);
+        }
+
+        public static string GetStreamName(string id)
+        {
+            return $"case-planinstance-{id}";
         }
 
         #region Handle domain events
@@ -178,6 +182,7 @@ namespace CaseManagement.CMMN.Domains
                     }
 
                     State = CaseStates.Terminated;
+                    Content.MakeTransition(CMMNTransitions.ParentTerminate, evt.UpdateDateTime);
                     break;
                 case CMMNTransitions.Fault:
                     if (State != CaseStates.Active)

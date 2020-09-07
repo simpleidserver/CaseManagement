@@ -14,10 +14,13 @@
             public const string ExternalEvents = "externalevts";
             public const string CasePlanInstances = "caseplaninstances";
             public const string DomainEvents = "domainevts";
-            public const string CasePlans = "caseplans";
-            public const string FormInstances = "forminstances";
-            public const string CaseWorkerTasks = "caseworkertasks";
-            public const string Roles = "roles";
+        }
+
+        public static class ExternalTransitionNames
+        {
+            public const string Terminate = "terminate";
+            public const string ManualStart = "manualstart";
+            public const string Complete = "complete";
         }
 
         public static class RouteNames

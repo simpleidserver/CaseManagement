@@ -1,8 +1,10 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Commands;
 using CaseManagement.CMMN.CasePlanInstance.Exceptions;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures.Bus;
 using CaseManagement.CMMN.Infrastructures.EvtStore;
 using CaseManagement.Workflow.Infrastructure.Bus;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
@@ -18,25 +20,16 @@ namespace CaseManagement.CMMN.CasePlanInstance.CommandHandlers
             _eventStoreRepository = eventStoreRepository;
         }
 
-        public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand)
+        public async Task Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand, CancellationToken token)
         {
-            /*
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CasePlanInstanceAggregate>(launchCaseInstanceCommand.CasePlanInstanceId, Domains.CasePlanInstanceAggregate.GetStreamName(launchCaseInstanceCommand.CasePlanInstanceId));
+            var caseInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(launchCaseInstanceCommand.CasePlanInstanceId, 
+                CasePlanInstanceAggregate.GetStreamName(launchCaseInstanceCommand.CasePlanInstanceId), token);
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.Id))
             {
                 throw new UnknownCaseInstanceException(launchCaseInstanceCommand.CasePlanInstanceId);
             }
-
-            if (!launchCaseInstanceCommand.BypassUserValidation)
-            {
-                if (caseInstance.CaseOwner != launchCaseInstanceCommand.Performer)
-                {
-                    throw new UnauthorizedCaseWorkerException(launchCaseInstanceCommand.Performer, caseInstance.Id, null);
-                }
-            }
             
-            await _messageBroker.QueueLaunchProcess(caseInstance.Id);
-            */
+            await _messageBroker.QueueCasePlanInstance(caseInstance.Id);
         }
     }
 }

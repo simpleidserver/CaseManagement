@@ -14,20 +14,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         protected ISubscriberRepository SubscriberRepository { get; private set; }
 
-        protected Task<Subscription> GetSubscription(ExecutionContext executionContext, T casePlanElementInstance, string evtName, CancellationToken cancellationToken)
+        protected Task<Subscription> TrySubscribe(ExecutionContext executionContext, T casePlanElementInstance, string evtName, CancellationToken cancellationToken)
         {
-            return SubscriberRepository.Get(executionContext.CasePlanInstance.Id, casePlanElementInstance.Id, evtName, cancellationToken);
-        }
-
-        protected Task<bool> Subscribe(ExecutionContext executionContext, T casePlanElementInstance, string evtName, CancellationToken cancellationToken)
-        {
-            return SubscriberRepository.Add(new Subscription
-            {
-                CasePlanElementInstanceId = casePlanElementInstance.Id,
-                CasePlanInstanceId = executionContext.CasePlanInstance.Id,
-                EventName = evtName,
-                IsCaptured = false
-            }, cancellationToken);
+            return SubscriberRepository.TrySubscribe(executionContext.CasePlanInstance.Id, casePlanElementInstance.Id, evtName, cancellationToken);
         } 
 
         public abstract Task Execute(ExecutionContext executionContext, T elt, CancellationToken cancellationToken);

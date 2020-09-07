@@ -8,8 +8,10 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
     {
         private ICollection<CriteriaBuilder> _entryCriterions;
 
-        public CaseElementInstanceBuilder()
+        public CaseElementInstanceBuilder(string id, string name)
         {
+            Id = id;
+            Name = name;
             _entryCriterions = new List<CriteriaBuilder>();
         }
 
@@ -47,6 +49,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
 
     public class BaseTaskInstanceBuilder : CaseElementInstanceBuilder
     {
+        public BaseTaskInstanceBuilder(string id, string name) : base(id, name) { }
+
         protected ManualActivationRule ManualActivationRule { get; set; }
 
         public BaseTaskInstanceBuilder SetManualActivationRule(string name, CMMNExpression expression)
@@ -62,6 +66,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
 
     public class EmptyTaskInstanceBuilder : BaseTaskInstanceBuilder
     {
+        public EmptyTaskInstanceBuilder(string id, string name) : base(id, name) { }
+
         protected override CasePlanElementInstance InternalBuild()
         {
             return new EmptyTaskElementInstance
@@ -75,6 +81,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
 
     public class HumanTaskInstanceBuilder : BaseTaskInstanceBuilder
     {
+        public HumanTaskInstanceBuilder(string id, string name) : base(id, name) { }
+
         public string PerformerRef { get; set; }
 
         protected override CasePlanElementInstance InternalBuild()

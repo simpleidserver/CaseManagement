@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Domains.CasePlanInstance;
 using CaseManagement.CMMN.Infrastructures.ExternalEvts;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +55,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         {
             var stageOrTask = planElementInstance as BaseTaskOrStageElementInstance;
             var milestone = planElementInstance as MilestoneElementInstance;
-            if (stageOrTask != null && (stageOrTask.State == TaskStageStates.Completed || stageOrTask.State == TaskStageStates.Terminated || stageOrTask.State != TaskStageStates.Terminated))
+            if (stageOrTask != null && (stageOrTask.State == TaskStageStates.Completed || 
+                stageOrTask.State == TaskStageStates.Terminated || 
+                stageOrTask.State == TaskStageStates.Disabled))
             {
                 return true;
             }

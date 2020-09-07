@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CaseManagement.CMMN.Infrastructures;
+using System;
 
 namespace CaseManagement.CMMN.Domains
 {
@@ -18,6 +19,11 @@ namespace CaseManagement.CMMN.Domains
 
         public string Name { get; set; }
         public CMMNExpression Expression { get; set; }
+
+        public bool IsSatisfied()
+        {
+            return ExpressionParser.IsValid(Expression.Body);
+        }
 
         public object Clone()
         {

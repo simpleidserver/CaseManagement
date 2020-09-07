@@ -12,7 +12,7 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
 {
     public static class MessageBrokerExtensions
     {
-        public static Task QueueExternalEvent(this IMessageBroker messageBroker, string evtName, string casePlanInstanceId, string casePlanElementInstanceId)
+        public static Task QueueExternalEvent(this IMessageBroker messageBroker, string evtName, string casePlanInstanceId, string casePlanElementInstanceId = null)
         {
             return messageBroker.Queue(CMMNConstants.QueueNames.ExternalEvents, new ExternalEventNotification(Guid.NewGuid().ToString())
             {

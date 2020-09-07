@@ -2,7 +2,6 @@
 using CaseManagement.CMMN.CasePlanInstance;
 using CaseManagement.CMMN.CasePlanInstance.Commands;
 using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.CMMN.CaseWorkerTask.Exceptions;
 using CaseManagement.CMMN.Infrastructures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

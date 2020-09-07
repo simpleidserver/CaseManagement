@@ -7,7 +7,5 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands
     {
         [DataMember(Name = "case_plan_id")]
         public string CasePlanId { get; set; }
-        public string Performer { get; set; }
-        public bool BypassUserValidation { get; set; }
     }
 }

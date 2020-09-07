@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.Extensions;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
@@ -15,21 +16,6 @@ namespace CaseManagement.CMMN.Infrastructures.ExternalEvts
             _subscriptions = new ConcurrentBag<Subscription>();
         }
 
-        public Task<bool> Add(Subscription subscription, CancellationToken cancellationToken)
-        {
-            _subscriptions.Add(subscription);
-            return Task.FromResult(true);
-        }
-
-        public Task<bool> Delete(Subscription subscription, CancellationToken cancellationToken)
-        {
-            var sub = _subscriptions.First(_ => _.CasePlanElementInstanceId == subscription.CasePlanElementInstanceId
-            && _.CasePlanInstanceId == subscription.CasePlanInstanceId
-            && _.EventName == subscription.EventName);
-            _subscriptions.Remove(sub);
-            return Task.FromResult(true);
-        }
-
         public Task<Subscription> Get(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token)
         {
             return Task.FromResult(_subscriptions.FirstOrDefault(_ => _.CasePlanElementInstanceId == casePlanElementInstanceId
@@ -39,9 +25,47 @@ namespace CaseManagement.CMMN.Infrastructures.ExternalEvts
 
         public async Task<bool> Update(Subscription subscription, CancellationToken cancellationToken)
         {
-            await Delete(subscription, cancellationToken);
-            await Add(subscription, cancellationToken);
+            var record = await Get(subscription.CasePlanInstanceId, subscription.CasePlanElementInstanceId, subscription.EventName, cancellationToken);
+            _subscriptions.Remove(record);
+            _subscriptions.Add(subscription);
             return true;
         }
+
+        public Task<Subscription> TrySubscribe(string casePlanInstanceId, string evtName, CancellationToken token)
+        {
+            var result = _subscriptions.FirstOrDefault(_ => _.EventName == evtName && _.CasePlanInstanceId == casePlanInstanceId && _.CasePlanElementInstanceId == null);
+            if (result == null)
+            {
+                result = new Subscription
+                {
+                    CreationDateTime = DateTime.UtcNow,
+                    CasePlanElementInstanceId = null,
+                    CasePlanInstanceId = casePlanInstanceId,
+                    EventName = evtName
+                };
+                _subscriptions.Add(result);
+            }
+
+            return Task.FromResult(result);
+        }
+
+        public Task<Subscription> TrySubscribe(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token)
+        {
+            var result = _subscriptions.FirstOrDefault(_ => _.EventName == evtName && _.CasePlanInstanceId == casePlanInstanceId && _.CasePlanElementInstanceId == casePlanElementInstanceId);
+            if (result == null)
+            {
+                result = new Subscription
+                {
+                    CreationDateTime = DateTime.UtcNow,
+                    CasePlanElementInstanceId = casePlanElementInstanceId,
+                    CasePlanInstanceId = casePlanInstanceId,
+                    EventName = evtName
+                };
+                _subscriptions.Add(result);
+            }
+
+            return Task.FromResult(result);
+        }
+
     }
 }

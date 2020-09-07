@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.CasePlanInstance.Processors;
-using CaseManagement.CMMN.CasePlanInstance.Processors.Builders;
+﻿using CaseManagement.CMMN.CasePlanInstance.Processors.Builders;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +12,10 @@ namespace CaseManagement.CMMN.Tests
 {
     public class CaseJobServerFixture
     {
+        #region Case plan items
+
         [Fact]
-        public async Task When_Execute_Three_Empty_Tasks()
+        public async Task When_Execute_Empty_Tasks()
         {
             var instance = CasePlanInstanceBuilder.New("1", "firstCase")
                 .AddEmptyTask("2", "firstTask", (_) =>
@@ -79,6 +80,150 @@ namespace CaseManagement.CMMN.Tests
             }
         }
 
+        [Fact]
+        public async Task When_Execute_Stage()
+        {
+            var instance = CasePlanInstanceBuilder.New("1", "firstCase")
+                .AddStage("2", "firstStage", (_) =>
+                {
+                    _.AddStage("3", "secondStage", (__) =>
+                    {
+                        __.AddEmptyTask("4", "emtpytask");
+                    });
+                })
+                .AddStage("5", "thirdStage", (_) =>
+                {
+                    _.AddEmptyTask("6", "emtpytask");
+                })
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueCasePlanInstance("1");
+                var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
+                {
+                    return c.State == CaseStates.Completed;
+                });
+                Assert.Equal(CaseStates.Completed, casePlanInstance.State);
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
+        #endregion
+
+        #region Items controls
+
+        [Fact]
+        public async Task When_Execute_Task_With_ManualActivationRule()
+        {
+            var instance = CasePlanInstanceBuilder.New("1", "firstCase")
+                .AddEmptyTask("2", "firstTask", (_) =>
+                {
+                    _.SetManualActivationRule("name", new CMMNExpression("csharp", "true"));
+                })
+                .AddEmptyTask("3", "secondTask", (_) =>
+                {
+                })
+                .AddEmptyTask("4", "thirdTask", (_) =>
+                {
+                    _.AddEntryCriteria("entry", (__) =>
+                    {
+                        __.AddPlanItemOnPart("2", CMMNTransitions.Complete);
+                        __.AddPlanItemOnPart("3", CMMNTransitions.Complete);
+                    });
+                })
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueCasePlanInstance("1");
+                await jobServer.PublishExternalEvt("manualstart", "1", "2");
+                var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
+                {
+                    return c.State == CaseStates.Completed;
+                });
+                Assert.Equal(CaseStates.Completed, casePlanInstance.State);
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
+
+        #endregion
+
+        #region CMMN transitions
+
+        [Fact]
+        public async Task When_Terminate_CasePlanInstance()
+        {
+            var instance = CasePlanInstanceBuilder.New("1", "firstCase")
+                .AddHumanTask("2", "humanTask", null, (_) => { })
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueCasePlanInstance("1");
+                await jobServer.PublishExternalEvt("terminate", "1");
+                var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
+                {
+                    return c.State == CaseStates.Terminated;
+                });
+                var child = casePlanInstance.Content.Children.First() as HumanTaskElementInstance;
+                Assert.Equal(CaseStates.Terminated, casePlanInstance.State);
+                Assert.Equal(TaskStageStates.Terminated, child.State);
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
+        [Fact]
+        public async Task When_Terminate_CasePlanElementInstance()
+        {
+            var instance = CasePlanInstanceBuilder.New("1", "firstCase")
+                .AddHumanTask("2", "humanTask", null, (_) => { })
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueCasePlanInstance("1");
+                await jobServer.PublishExternalEvt("terminate", "1", "2");
+                var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
+                {
+                    if (!c.Content.Children.Any())
+                    {
+                        return false;
+                    }
+
+                    var ht = c.Content.Children.First() as HumanTaskElementInstance;
+                    return ht.State == TaskStageStates.Terminated;
+                });
+                var child = casePlanInstance.Content.Children.First() as HumanTaskElementInstance;
+                Assert.Equal(CaseStates.Completed, casePlanInstance.State);
+                Assert.Equal(TaskStageStates.Terminated, child.State);
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
+        #endregion
+
         private class FakeCaseJobServer
         {
             private IServiceProvider _serviceProvider;
@@ -115,7 +260,7 @@ namespace CaseManagement.CMMN.Tests
                 return _caseJobServer.RegisterCasePlanInstance(casePlanInstance, cancellationToken);
             }
 
-            public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId)
+            public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId = null)
             {
                 return _caseJobServer.PublishExternalEvt(evt, casePlanInstanceId, casePlanElementInstanceId);
             }
