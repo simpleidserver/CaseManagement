@@ -1,6 +1,8 @@
-﻿namespace CaseManagement.CMMN.CasePlanInstance.Commands
+﻿using MediatR;
+
+namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
-    public class LaunchCaseInstanceCommand
+    public class LaunchCaseInstanceCommand : IRequest<bool>
     {
         public string CasePlanInstanceId { get; set; }
     }

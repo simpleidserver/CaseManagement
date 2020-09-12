@@ -1,7 +1,10 @@
-﻿namespace CaseManagement.CMMN.Persistence.Parameters
+﻿using CaseManagement.CMMN.Common.Parameters;
+using System.Collections.Generic;
+
+namespace CaseManagement.CMMN.Persistence.Parameters
 {
-    public class FindCaseWorkerTasksParameter : BaseFindParameter
+    public class FindCaseWorkerTasksParameter : BaseSearchParameter
     {
-        public string CasePlanId { get; set; }
+        public IEnumerable<KeyValuePair<string, string>> Claims { get; set; }
     }
 }

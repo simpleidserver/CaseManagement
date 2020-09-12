@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
+﻿using CaseManagement.CMMN.Extensions;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
@@ -9,26 +8,28 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 {
     public class InMemoryCaseInstanceCommandRepository : ICasePlanInstanceCommandRepository
     {
-        private ConcurrentBag<CasePlanInstanceAggregate> _instances;
+        private ConcurrentBag<Domains.CasePlanInstanceAggregate> _instances;
 
-        public InMemoryCaseInstanceCommandRepository(ConcurrentBag<CasePlanInstanceAggregate> instances)
+        public InMemoryCaseInstanceCommandRepository(ConcurrentBag<Domains.CasePlanInstanceAggregate> instances)
         {
             _instances = instances;
         }
 
-        public void Add(CasePlanInstanceAggregate casePlanInstance)
+        public Task Add(Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken token)
         {
-            _instances.Add(casePlanInstance);
+            _instances.Add((Domains.CasePlanInstanceAggregate)workflowInstance.Clone());
+            return Task.CompletedTask;
         }
 
-        public void Update(CasePlanInstanceAggregate casePlanInstance)
+        public Task Update(Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken token)
         {
-            var instance = _instances.First(_ => _.Id == casePlanInstance.Id);
+            var instance = _instances.First(i => i.AggregateId == workflowInstance.AggregateId);
             _instances.Remove(instance);
-            _instances.Add(casePlanInstance);
+            _instances.Add((Domains.CasePlanInstanceAggregate)workflowInstance.Clone());
+            return Task.CompletedTask;
         }
 
-        public Task<int> SaveChanges(CancellationToken cancellationToken)
+        public Task<int> SaveChanges(CancellationToken token)
         {
             return Task.FromResult(1);
         }

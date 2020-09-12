@@ -51,7 +51,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 var result = await _casePlanInstanceService.GetMe(id, this.GetNameIdentifier());
                 return new OkObjectResult(result);
             }
-            catch(UnknownCaseInstanceException)
+            catch(UnknownCasePlanInstanceException)
             {
                 return new NotFoundResult();
             }
@@ -70,7 +70,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 var result = await _casePlanInstanceService.Get(id);
                 return new OkObjectResult(result);
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return new NotFoundResult();
             }
@@ -101,7 +101,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                     { "unauthorized_request", "you're not authorized to create the case instance" }
                 }, HttpStatusCode.Unauthorized, Request);
             }
-            catch (UnknownCaseDefinitionException)
+            catch (UnknownCasePlanException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -119,7 +119,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 var result = await _casePlanInstanceService.Create(createCaseInstance);
                 return new OkObjectResult(result);
             }
-            catch (UnknownCaseDefinitionException)
+            catch (UnknownCasePlanException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -144,7 +144,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                     { "unauthorized_request", "you're not authorized to launch the case instance" }
                 }, HttpStatusCode.Unauthorized, Request);
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -162,7 +162,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Launch(new LaunchCaseInstanceCommand { CasePlanInstanceId = id });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -180,14 +180,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.SuspendMe(new SuspendCommand(id, null) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -216,14 +216,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Suspend(new SuspendCommand(id, null));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -252,14 +252,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.SuspendMe(new SuspendCommand(id, elt) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -288,14 +288,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Suspend(new SuspendCommand(id, elt));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -324,14 +324,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.ReactivateMe(new ReactivateCommand(id, null) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -360,14 +360,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Reactivate(new ReactivateCommand(id, null));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -396,14 +396,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.ReactivateMe(new ReactivateCommand(id, elt) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -432,14 +432,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Reactivate(new ReactivateCommand(id, elt));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -468,7 +468,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.ResumeMe(new ResumeCommand(id, null) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -497,7 +497,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Resume(new ResumeCommand(id, null));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -526,7 +526,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.ResumeMe(new ResumeCommand(id, elt) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -555,7 +555,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Resume(new ResumeCommand(id, elt));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -584,14 +584,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.TerminateMe(new TerminateCommand(id, null) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -620,14 +620,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Terminate(new TerminateCommand(id, null));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -656,14 +656,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.TerminateMe(new TerminateCommand(id, elt) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -692,14 +692,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Terminate(new TerminateCommand(id, elt));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -728,7 +728,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.CloseMe(new CloseCommand(id) { Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -757,7 +757,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.Close(new CloseCommand(id));
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -786,14 +786,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.ConfirmFormMe(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = elt, Content = jObj, Performer = this.GetNameIdentifier() });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -829,14 +829,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 await _casePlanInstanceService.ConfirmForm(new ConfirmFormCommand { CasePlanInstanceId = id, CasePlanElementInstanceId = elt, Content = jObj });
                 return new OkResult();
             }
-            catch (UnknownCaseInstanceException)
+            catch (UnknownCasePlanInstanceException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
                     { "bad_request", "case instance doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -879,7 +879,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                     { "bad_request", "case activation doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {
@@ -915,7 +915,7 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                     { "bad_request", "case activation doesn't exist" }
                 }, HttpStatusCode.NotFound, Request);
             }
-            catch (UnknownCaseInstanceElementException)
+            catch (UnknownCasePlanInstanceElementException)
             {
                 return this.ToError(new Dictionary<string, string>
                 {

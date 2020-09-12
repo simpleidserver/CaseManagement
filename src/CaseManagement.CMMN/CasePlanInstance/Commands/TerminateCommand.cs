@@ -1,6 +1,8 @@
-﻿namespace CaseManagement.CMMN.CasePlanInstance.Commands
+﻿using MediatR;
+
+namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
-    public class TerminateCommand
+    public class TerminateCommand : IRequest<bool>
     {
         public TerminateCommand(string caseInstanceId, string caseInstanceElementId)
         {

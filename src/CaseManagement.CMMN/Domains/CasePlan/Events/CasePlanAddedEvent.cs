@@ -1,14 +1,14 @@
-﻿using CaseManagement.CMMN.Domains.CasePlan;
-using CaseManagement.CMMN.Infrastructures;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
-namespace CaseManagement.CMMN.Domains.Events
+namespace CaseManagement.CMMN.Domains
 {
     [Serializable]
+    [DebuggerDisplay("Case plan added")]
     public class CasePlanAddedEvent : DomainEvent
     {
-        public CasePlanAddedEvent(string id, string aggregateId, int version, string casePlanId, string name, string description, string caseOwner, string caseFileId, DateTime createDateTime, string xmlContent, IEnumerable<CasePlanRole> roles) : base(id, aggregateId, version)
+        public CasePlanAddedEvent(string id, string aggregateId, int version, string casePlanId, string name, string description, string caseOwner, string caseFileId, DateTime createDateTime, string xmlContent, ICollection<CasePlanRole> roles, ICollection<CasePlanFileItem> files) : base(id, aggregateId, version)
         {
             CasePlanId = casePlanId;
             Name = name;
@@ -18,6 +18,7 @@ namespace CaseManagement.CMMN.Domains.Events
             CreateDateTime = createDateTime;
             XmlContent = xmlContent;
             Roles = roles;
+            Files = files;
         }
 
         public string CasePlanId { get; set; }
@@ -27,6 +28,7 @@ namespace CaseManagement.CMMN.Domains.Events
         public string CaseFileId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public string XmlContent { get; set; }
-        public IEnumerable<CasePlanRole> Roles { get; set; }
+        public ICollection<CasePlanRole> Roles { get; set; }
+        public ICollection<CasePlanFileItem> Files { get; set; }
     }
 }

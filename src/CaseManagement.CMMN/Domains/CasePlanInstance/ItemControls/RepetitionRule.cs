@@ -2,6 +2,7 @@
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public class RepetitionRule : ICloneable
     {
         public RepetitionRule() { }

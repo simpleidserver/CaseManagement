@@ -5,6 +5,7 @@ using CaseManagement.CMMN.Persistence.Responses;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
@@ -30,22 +31,25 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseWorkerTaskLst = caseWorkerTaskLst;
         }
 
-        public Task<CaseWorkerTaskAggregate> FindById(string id)
+        public Task<CaseWorkerTaskAggregate> Get(string id, CancellationToken token)
         {
-            return Task.FromResult(_caseWorkerTaskLst.FirstOrDefault(a => a.Id == id));
+            return Task.FromResult(_caseWorkerTaskLst.FirstOrDefault(a => a.AggregateId == id));
         }
 
-        public Task<FindResponse<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter)
+        public Task<FindResponse<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
         {
-            IQueryable<CaseWorkerTaskAggregate> result = _caseWorkerTaskLst.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
+            IEnumerable<CaseWorkerTaskAggregate> result = _caseWorkerTaskLst.ToList();
+            if (parameter.Claims != null && parameter.Claims.Any())
             {
-                result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
+                result = result.Where(_ =>
+                {
+                    return _.Roles.Any(__ => __.Claims.Any(c => parameter.Claims.Any(pc => pc.Key == c.Key && pc.Value == c.Value)));
+                });
             }
 
             if (MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
-                result = result.InvokeOrderBy(MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+                result = result.AsQueryable().InvokeOrderBy(MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order).ToList();
             }
 
             int totalLength = result.Count();

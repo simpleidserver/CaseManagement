@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace CaseManagement.CMMN.Infrastructures
+namespace CaseManagement.CMMN.Domains
 {
     public abstract class BaseAggregate : ICloneable
     {
         public BaseAggregate()
         {
-            DomainEvents = new ConcurrentBag<DomainEvent>();
+            DomainEvents = new BlockingCollection<DomainEvent>();
         }
 
-        public string Id { get; set; }
+        public string AggregateId { get; set; }
         public int Version { get; set; }
-        public ConcurrentBag<DomainEvent> DomainEvents { get; protected set; }
+        public BlockingCollection<DomainEvent> DomainEvents { get; set; }
 
         public abstract object Clone();
-        public abstract void Handle(dynamic obj);
+
+        public abstract void Handle(dynamic evt);
     }
 }

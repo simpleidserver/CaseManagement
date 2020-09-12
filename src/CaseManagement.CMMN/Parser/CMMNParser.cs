@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Domains.CasePlan;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,26 +27,27 @@ namespace CaseManagement.CMMN.Parser
             var result = new List<CasePlanAggregate>();
             foreach (var cmmnCase in definitions.@case)
             {
-                result.Add(BuildCasePlan(cmmnCase, caseFile));
+                result.Add(BuildCasePlan(cmmnCase, definitions, caseFile));
             }
 
             return result;
         }
-        
-        public static StageElementInstance ExtractStage(string xmlContent)
+
+        public static StageElementInstance ExtractStage(string xmlContent, string casePlanInstanceId)
         {
             var tStage = DeserializeStage(xmlContent);
-            var result = BuildStage(tStage);
+            var result = BuildStage(tStage, casePlanInstanceId);
             return result;
         }
 
-        private static CasePlanAggregate BuildCasePlan(tCase tCase, CaseFileAggregate caseFile)
+        private static CasePlanAggregate BuildCasePlan(tCase tCase, tDefinitions definitions, CaseFileAggregate caseFile)
         {
             var planModel = tCase.casePlanModel;
             var roles = new List<CasePlanRole>();
+            var files = new List<CasePlanFileItem>();
             if (tCase.caseRoles != null && tCase.caseRoles.role != null)
             {
-                foreach(var role in tCase.caseRoles.role)
+                foreach (var role in tCase.caseRoles.role)
                 {
                     roles.Add(new CasePlanRole
                     {
@@ -57,22 +57,49 @@ namespace CaseManagement.CMMN.Parser
                 }
             }
 
-            return CasePlanAggregate.New(planModel.id, planModel.name, planModel.name, caseFile.Owner, caseFile.Id, caseFile.Version, Serialize(planModel), roles);
+            if (tCase.caseFileModel != null && tCase.caseFileModel.caseFileItem != null)
+            {
+                foreach(var caseFileItem in tCase.caseFileModel.caseFileItem)
+                {
+                    var caseFileItemDef = definitions.caseFileItemDefinition.First(c => c.id == caseFileItem.definitionRef.ToString());
+                    files.Add(new CasePlanFileItem
+                    {
+                        DefinitionType = caseFileItemDef.definitionType,
+                        Id = caseFileItem.id,
+                        Name = caseFileItem.name
+                    });
+                }
+            }
+
+            return CasePlanAggregate.New(planModel.id, planModel.name, planModel.name, caseFile.Owner, caseFile.AggregateId, caseFile.Version, Serialize(planModel), roles, files);
         }
 
-        private static StageElementInstance BuildStage(tStage stage)
+        private static StageElementInstance BuildStage(tStage stage, string casePlanInstanceId)
         {
-            var planItems = BuildPlanItems(stage);
-            var result = new StageElementInstance { Id = stage.id, Name = stage.name };
+            var planItems = BuildPlanItems(stage, casePlanInstanceId);
+            var result = new StageElementInstance 
+            { 
+                Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, stage.id, 0),
+                Name = stage.name 
+            };
             foreach (var planItem in planItems)
             {
                 result.AddChild(planItem);
+            }
+            
+            if (!result.ExitCriterions.Any() && stage.exitCriterion != null)
+            {
+                foreach (var exitCriteria in stage.exitCriterion)
+                {
+                    var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
+                    result.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
+                }
             }
 
             return result;
         }
 
-        private static List<CasePlanElementInstance> BuildPlanItems(tStage stage)
+        private static List<CasePlanElementInstance> BuildPlanItems(tStage stage, string casePlanInstanceId)
         {
             var planItems = new List<CasePlanElementInstance>();
             if (stage.planItem != null)
@@ -80,7 +107,7 @@ namespace CaseManagement.CMMN.Parser
                 foreach (var planItem in stage.planItem)
                 {
                     var planItemDef = stage.Items.First(i => i.id == planItem.definitionRef);
-                    var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef);
+                    var flowInstanceElt = BuildPlanItem(planItem.id, planItem.name, planItemDef, casePlanInstanceId);
                     if (planItem.entryCriterion != null)
                     {
                         foreach (var entryCriterion in planItem.entryCriterion)
@@ -134,7 +161,7 @@ namespace CaseManagement.CMMN.Parser
             return planItems;
         }
 
-        private static CasePlanElementInstance BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef)
+        private static CasePlanElementInstance BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef, string casePlanInstanceId)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -144,12 +171,26 @@ namespace CaseManagement.CMMN.Parser
             if (planItemDef is tHumanTask)
             {
                 var humanTask = planItemDef as tHumanTask;
-                return new HumanTaskElementInstance { Id = id, Name = name, FormId = humanTask.caseFormRef, PerformerRef = humanTask.performerRef };
+                return new HumanTaskElementInstance 
+                { 
+                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
+                    EldId = id,
+                    NbOccurrence = 0,
+                    Name = name, 
+                    FormId = humanTask.caseFormRef, 
+                    PerformerRef = humanTask.performerRef 
+                };
             }
 
             if (planItemDef is tTask)
             {
-                return new EmptyTaskElementInstance { Id = id, Name = name };
+                return new EmptyTaskElementInstance
+                {
+                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
+                    EldId = id,
+                    NbOccurrence = 0,
+                    Name = name 
+                };
             }
 
             if (planItemDef is tTimerEventListener)
@@ -160,17 +201,30 @@ namespace CaseManagement.CMMN.Parser
                     Body = timer.timerExpression.Text.First(),
                     Language = timer.timerExpression.language
                 };
-                return new TimerEventListener { Id = id, Name = name, TimerExpression = expression };
+                return new TimerEventListener
+                {
+                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
+                    EldId = id,
+                    NbOccurrence = 0,
+                    Name = name, 
+                    TimerExpression = expression 
+                };
             }
 
             if (planItemDef is tMilestone)
             {
-                return new MilestoneElementInstance { Id = id, Name = name };
+                return new MilestoneElementInstance
+                {
+                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
+                    EldId = id,
+                    NbOccurrence = 0,
+                    Name = name 
+                };
             }
 
             if (planItemDef is tStage)
             {
-                // return PlanItemDefinition.New(id, name, BuildStage((tStage)planItemDef));
+                return BuildStage(planItemDef as tStage, casePlanInstanceId);
             }
 
             return null;
@@ -233,7 +287,7 @@ namespace CaseManagement.CMMN.Parser
 
         private static string Serialize(tStage stage)
         {
-            var xmlSerializer = new XmlSerializer(typeof(tDefinitions));
+            var xmlSerializer = new XmlSerializer(typeof(tStage));
             var strBuilder = new StringBuilder();
             using (var txtWriter = new StringWriter(strBuilder))
             {

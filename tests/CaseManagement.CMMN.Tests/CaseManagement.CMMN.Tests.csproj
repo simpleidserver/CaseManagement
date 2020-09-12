@@ -13,24 +13,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="Cmmns\CaseWithOneHumanTaskAndRole.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\CaseWithOneManualActivationTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\CaseWithOneDiscretionaryItem.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\CaseWithOneSEntry.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\CaseWithOneTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Cmmns\CaseWithTwoStages.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

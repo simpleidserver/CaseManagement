@@ -1,6 +1,8 @@
-﻿namespace CaseManagement.CMMN.CasePlanInstance.Commands
+﻿using MediatR;
+
+namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
-    public class ActivateCommand
+    public class ActivateCommand : IRequest<bool>
     {
         public ActivateCommand(string casePlanInstanceId, string casePlanElementInstanceId)
         {
@@ -10,7 +12,5 @@
 
         public string CasePlanInstanceId { get; set; }
         public string CasePlanElementInstanceId { get; set; }
-        public string Performer { get; set; }
-        public bool BypassUserValidation { get; set;}
     }
 }

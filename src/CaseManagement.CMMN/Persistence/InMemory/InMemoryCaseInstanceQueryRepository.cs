@@ -1,9 +1,11 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
@@ -24,31 +26,9 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _instances = instances;
         }
 
-        public Task<FindResponse<CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter)
+        public Task<FindResponse<CasePlanInstanceAggregate>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token)
         {
-            /*
             IQueryable<CasePlanInstanceAggregate> result = _instances.AsQueryable();
-            if (parameter.TakeLatest)
-            {
-                result = result.OrderByDescending(r => r.Version);
-                result = result.GroupBy(r => r.CasePlanId).Select(r => r.First());
-            }
-
-            if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
-            {
-                result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
-            }
-
-            if (!string.IsNullOrWhiteSpace(parameter.CaseOwner))
-            {
-                result = result.Where(r => r.CaseOwner == parameter.CaseOwner);
-            }
-
-            if (parameter.Roles != null && parameter.Roles.Any())
-            {
-                result = result.Where(r => r.Roles.Any(role => parameter.Roles.Contains(role)));
-            }
-
             if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
@@ -63,19 +43,21 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 TotalLength = totalLength,
                 Content = result.ToList()
             });
-            */
-            return null;
         }
 
-        public Task<CasePlanInstanceAggregate> Get(string id)
+        public Task<CasePlanInstanceAggregate> Get(string id, CancellationToken token)
         {
-            var result = _instances.FirstOrDefault(i => i.Id == id);
+            var result = _instances.FirstOrDefault(i => i.AggregateId == id);
             if (result == null)
             {
                 return Task.FromResult((CasePlanInstanceAggregate)null);
             }
 
-            return Task.FromResult(result);
-        }     
+            return Task.FromResult(result.Clone() as CasePlanInstanceAggregate);
+        }
+
+        public void Dispose()
+        {
+        }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.CMMN.Infrastructures.Bus;
-using CaseManagement.CMMN.Persistence;
-using CaseManagement.Workflow.Infrastructure.Bus;
+using CaseManagement.CMMN.Infrastructure;
+using CaseManagement.CMMN.Infrastructure.Bus;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,47 +9,53 @@ namespace CaseManagement.CMMN
 {
     public class CaseJobServer : ICaseJobServer
     {
+        private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly IEnumerable<IJob> _jobs;
-        private readonly ICasePlanInstanceCommandRepository _casePlanInstanceCommandRepository;
         private readonly IMessageBroker _messageBroker;
 
-        public CaseJobServer(IEnumerable<IJob> jobs, ICasePlanInstanceCommandRepository casePlanInstanceCommandRepository, IMessageBroker messageBroker)
+        public CaseJobServer(ICommitAggregateHelper commitAggregateHelper, IEnumerable<IJob> jobs, IMessageBroker messageBroker)
         {
+            _commitAggregateHelper = commitAggregateHelper;
             _jobs = jobs;
-            _casePlanInstanceCommandRepository = casePlanInstanceCommandRepository;
             _messageBroker = messageBroker;
+        }
+
+        public Task EnqueueCasePlanInstance(string casePlanInstanceId, CancellationToken token)
+        {
+            return _messageBroker.QueueCasePlanInstance(casePlanInstanceId, token);
+        }
+
+        public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId, CancellationToken token)
+        {
+            return _messageBroker.QueueExternalEvent(evt, casePlanInstanceId, casePlanElementInstanceId, token);
+        }
+
+        public async Task RegisterCasePlanInstance(CasePlanInstanceAggregate casePlanInstance, CancellationToken token)
+        {
+            await _commitAggregateHelper.Commit(casePlanInstance, casePlanInstance.GetStreamName(), token);
         }
 
         public void Start()
         {
-            foreach(var job in _jobs)
+            foreach (var messageConsumer in _jobs)
             {
-                job.Start();
+                messageConsumer.Start();
             }
         }
 
         public void Stop()
         {
-            foreach(var job in _jobs)
+            foreach (var messageConsumer in _jobs)
             {
-                job.Stop();
+                try
+                {
+                    messageConsumer.Stop().Wait();
+                }
+                catch
+                {
+                    continue;
+                }
             }
-        }
-
-        public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId)
-        {
-            return _messageBroker.QueueExternalEvent(evt, casePlanInstanceId, casePlanElementInstanceId);
-        }
-
-        public async Task RegisterCasePlanInstance(CasePlanInstanceAggregate casePlanInstance, CancellationToken cancellationToken)
-        {
-            _casePlanInstanceCommandRepository.Add(casePlanInstance);
-            await _casePlanInstanceCommandRepository.SaveChanges(cancellationToken);
-        }
-
-        public Task EnqueueCasePlanInstance(string id)
-        {
-            return _messageBroker.QueueCasePlanInstance(id);
         }
     }
 }

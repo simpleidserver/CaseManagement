@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.Events;
-using CaseManagement.CMMN.Infrastructures;
+﻿using CaseManagement.CMMN.Common.Exceptions;
 using CaseManagement.CMMN.Parser;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Text;
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public class CaseFileAggregate : BaseAggregate
     {
         public string FileId { get; set; }
@@ -21,14 +21,14 @@ namespace CaseManagement.CMMN.Domains
 
         public void Update(string name, string description, string payload)
         {
-            var evt = new CaseFileUpdatedEvent(Guid.NewGuid().ToString(), Id, Version, DateTime.UtcNow, name, description, payload);
+            var evt = new CaseFileUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, DateTime.UtcNow, name, description, payload);
             Handle(evt);
             DomainEvents.Add(evt);
         }
 
         public CaseFileAggregate Publish()
         {
-            var evt = new CaseFilePublishedEvent(Guid.NewGuid().ToString(), Id, Version);
+            var evt = new CaseFilePublishedEvent(Guid.NewGuid().ToString(), AggregateId, Version);
             Handle(evt);
             DomainEvents.Add(evt);
             var next = New(Name, Description, Version + 1, Owner, Payload, FileId);
@@ -38,7 +38,7 @@ namespace CaseManagement.CMMN.Domains
         public static CaseFileAggregate New(List<DomainEvent> evts)
         {
             var result = new CaseFileAggregate();
-            foreach(var evt in evts)
+            foreach (var evt in evts)
             {
                 result.Handle(evt);
             }
@@ -49,9 +49,18 @@ namespace CaseManagement.CMMN.Domains
         public static CaseFileAggregate New(string name, string description, int version, string owner, string payload = null, string fileId = null)
         {
             var result = new CaseFileAggregate();
-            var evt = new CaseFileAddedEvent(Guid.NewGuid().ToString(), BuildCaseFileIdentifier(fileId, version), version, fileId, name, description, DateTime.UtcNow, owner, payload);
-            result.Handle(evt);
-            result.DomainEvents.Add(evt);
+            lock (result.DomainEvents)
+            {
+                if (string.IsNullOrWhiteSpace(fileId))
+                {
+                    fileId = Guid.NewGuid().ToString();
+                }
+
+                var evt = new CaseFileAddedEvent(Guid.NewGuid().ToString(), BuildCaseFileIdentifier(fileId, version), version, fileId, name, description, DateTime.UtcNow, owner, payload);
+                result.Handle(evt);
+                result.DomainEvents.Add(evt);
+            }
+
             return result;
         }
 
@@ -64,21 +73,21 @@ namespace CaseManagement.CMMN.Domains
         {
             if (string.IsNullOrWhiteSpace(caseFileAddedEvent.Name))
             {
-                throw new AggregateValidationException(new Dictionary<string, string>
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
-                    { "validation", "name must be specified" }
+                    new KeyValuePair<string, string>("validation", "name must be specified")
                 });
             }
 
             if (string.IsNullOrWhiteSpace(caseFileAddedEvent.Description))
             {
-                throw new AggregateValidationException(new Dictionary<string, string>
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
-                    { "validation", "description must be specified" }
+                    new KeyValuePair<string, string>("validation", "description must be specified")
                 });
             }
 
-            Id = caseFileAddedEvent.AggregateId;
+            AggregateId = caseFileAddedEvent.AggregateId;
             FileId = caseFileAddedEvent.FileId;
             Name = caseFileAddedEvent.Name;
             Description = caseFileAddedEvent.Description;
@@ -93,25 +102,25 @@ namespace CaseManagement.CMMN.Domains
         {
             if (string.IsNullOrWhiteSpace(caseFileUpdatedEvent.Name))
             {
-                throw new AggregateValidationException(new Dictionary<string, string>
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
-                    { "validation", "name must be specified" }
+                    new KeyValuePair<string, string>("validation", "name must be specified")
                 });
             }
 
             if (string.IsNullOrWhiteSpace(caseFileUpdatedEvent.Description))
             {
-                throw new AggregateValidationException(new Dictionary<string, string>
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
-                    { "validation", "description must be specified" }
+                    new KeyValuePair<string, string>("validation", "description must be specified")
                 });
             }
 
             if (string.IsNullOrWhiteSpace(caseFileUpdatedEvent.Payload))
             {
-                throw new AggregateValidationException(new Dictionary<string, string>
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
-                    { "validation", "payload must be specified" }
+                    new KeyValuePair<string, string>("validation", "payload must be specified")
                 });
             }
 
@@ -121,9 +130,9 @@ namespace CaseManagement.CMMN.Domains
             }
             catch
             {
-                throw new AggregateValidationException(new Dictionary<string, string>
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
-                    { "validation", "xml file is not valid" }
+                    new KeyValuePair<string, string>("validation", "xml file is not valid")
                 });
             }
 
@@ -142,7 +151,7 @@ namespace CaseManagement.CMMN.Domains
         {
             return new CaseFileAggregate
             {
-                Id = Id,
+                AggregateId = AggregateId,
                 FileId = FileId,
                 Name = Name,
                 Description = Description,
@@ -157,9 +166,9 @@ namespace CaseManagement.CMMN.Domains
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return AggregateId.GetHashCode();
         }
-        
+
         public static string GetStreamName(string id)
         {
             return $"case-file-{id}";

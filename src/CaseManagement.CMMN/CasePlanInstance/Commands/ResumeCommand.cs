@@ -1,16 +1,16 @@
-﻿namespace CaseManagement.CMMN.CasePlanInstance.Commands
+﻿using MediatR;
+
+namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
-    public class ResumeCommand
+    public class ResumeCommand : IRequest<bool>
     {
-        public ResumeCommand(string caseInstanceId, string caseInstanceElementId)
+        public ResumeCommand(string casePlanInstanceId, string casePlanInstanceElementId)
         {
-            CaseInstanceId = caseInstanceId;
-            CaseInstanceElementId = caseInstanceElementId;
+            CasePlanInstanceId = casePlanInstanceId;
+            CasePlanInstanceElementId = casePlanInstanceElementId;
         }
 
-        public string CaseInstanceId { get; set; }
-        public string CaseInstanceElementId { get; set; }
-        public bool BypassUserValidation { get; set; }
-        public string Performer { get; set; }
+        public string CasePlanInstanceId { get; set; }
+        public string CasePlanInstanceElementId { get; set; }
     }
 }

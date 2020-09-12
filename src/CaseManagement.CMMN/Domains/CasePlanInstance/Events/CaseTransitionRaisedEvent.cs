@@ -1,8 +1,7 @@
-﻿using CaseManagement.CMMN.Infrastructures;
-using System;
+﻿using System;
 using System.Diagnostics;
 
-namespace CaseManagement.CMMN.Domains.CasePlanInstance.Events
+namespace CaseManagement.CMMN.Domains
 {
     [Serializable]
     [DebuggerDisplay("Make transition '{Transition}'")]

@@ -1,7 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.CasePlan;
-using CaseManagement.CMMN.Domains.Events;
-using CaseManagement.CMMN.Infrastructures;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -9,38 +6,28 @@ using System.Text;
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public class CasePlanAggregate : BaseAggregate
     {
-        private CasePlanAggregate()
+        public CasePlanAggregate()
         {
 
         }
 
-        public CasePlanAggregate(string id, string casePlanId, string name, string description, string caseOwner, string caseFileId, string xmlContent, IEnumerable<CasePlanRole> roles)
-        {
-            Id = id;
-            CasePlanId = casePlanId;
-            Name = name;
-            Description = description;
-            CaseOwner = caseOwner;
-            CaseFileId = caseFileId;
-            XmlContent = xmlContent;
-            Roles = roles;
-        }
-        
         public string CasePlanId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string CaseOwner { get; set; }
         public string CaseFileId { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public IEnumerable<CasePlanRole> Roles { get; set; }
+        public ICollection<CasePlanRole> Roles { get; set; }
+        public ICollection<CasePlanFileItem> Files { get; set; }
         public string XmlContent { get; set; }
 
         public static CasePlanAggregate New(List<DomainEvent> evts)
         {
             var result = new CasePlanAggregate();
-            foreach(var evt in evts)
+            foreach (var evt in evts)
             {
                 result.Handle(evt);
             }
@@ -48,18 +35,15 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CasePlanAggregate New(string casePlanId, string name, string description, string caseOwner, string caseFileId, int caseFileVersion, string xmlContent, IEnumerable<CasePlanRole> roles)
+        public static CasePlanAggregate New(string casePlanId, string name, string description, string caseOwner, string caseFileId, int caseFileVersion, string xmlContent, ICollection<CasePlanRole> roles, ICollection<CasePlanFileItem> files)
         {
-            var result = new CasePlanAggregate(BuildCasePlanIdentifier(casePlanId, caseFileVersion), casePlanId, name, description, caseOwner, caseFileId, xmlContent, roles);
-            lock(result.DomainEvents)
-            {
-                var evt = new CasePlanAddedEvent(Guid.NewGuid().ToString(), BuildCasePlanIdentifier(casePlanId, caseFileVersion), caseFileVersion, casePlanId, name, description, caseOwner, caseFileId, DateTime.UtcNow, xmlContent, roles);
-                result.Handle(evt);
-                result.DomainEvents.Add(evt);
-                return result;
-            }
+            var result = new CasePlanAggregate();
+            var evt = new CasePlanAddedEvent(Guid.NewGuid().ToString(), BuildCasePlanIdentifier(casePlanId, caseFileVersion), caseFileVersion, casePlanId, name, description, caseOwner, caseFileId, DateTime.UtcNow, xmlContent, roles, files);
+            result.Handle(evt);
+            result.DomainEvents.Add(evt);
+            return result;
         }
-        
+
         public override void Handle(dynamic obj)
         {
             Handle(obj);
@@ -67,7 +51,7 @@ namespace CaseManagement.CMMN.Domains
 
         private void Handle(CasePlanAddedEvent evt)
         {
-            Id = evt.AggregateId;
+            AggregateId = evt.AggregateId;
             Version = evt.Version;
             CasePlanId = evt.CasePlanId;
             Name = evt.Name;
@@ -76,17 +60,26 @@ namespace CaseManagement.CMMN.Domains
             CaseFileId = evt.CaseFileId;
             CreateDateTime = evt.CreateDateTime;
             XmlContent = evt.XmlContent;
-            Roles = evt.Roles;
+            Roles = evt.Roles.ToList();
+            Files = evt.Files;
         }
 
         public override object Clone()
         {
-            return new CasePlanAggregate(Id, CasePlanId, Name, Description, CaseOwner, CaseFileId, XmlContent, Roles.Select(_ =>
-            new CasePlanRole
+            return new CasePlanAggregate
             {
-                Id = _.Id,
-                Name = _.Name
-            }));
+                AggregateId = AggregateId,
+                CasePlanId = CasePlanId,
+                Name = Name,
+                Description = Description,
+                CaseOwner = CaseOwner,
+                CaseFileId = CaseFileId,
+                XmlContent = XmlContent,
+                Roles = Roles.Select(_ => (CasePlanRole)_.Clone()).ToList(),
+                Files = Files.Select(_ => (CasePlanFileItem)_.Clone()).ToList(),
+                CreateDateTime = CreateDateTime,
+                Version = Version
+            };
         }
 
         public override bool Equals(object obj)
@@ -102,7 +95,7 @@ namespace CaseManagement.CMMN.Domains
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return AggregateId.GetHashCode();
         }
 
         public static string BuildCasePlanIdentifier(string casePlanId, int version)

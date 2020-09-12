@@ -1,6 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures.ExternalEvts;
-using System;
+using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +18,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         public async Task Execute(CasePlanInstanceAggregate casePlanInstance, CancellationToken cancellationToken)
         {
-            var terminateSub = await _subscriberRepository.TrySubscribe(casePlanInstance.Id, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
+            var terminateSub = await _subscriberRepository.TrySubscribe(casePlanInstance.AggregateId, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
             if (casePlanInstance.State == null)
             {
                 casePlanInstance.MakeTransition(CMMNTransitions.Create);
@@ -27,11 +26,17 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
             if (casePlanInstance.State == CaseStates.Active)
             {
-                var executionContext = new ExecutionContext { CasePlanInstance = casePlanInstance };
+                var executionContext = new CMMNExecutionContext { CasePlanInstance = casePlanInstance };
                 await _processorFactory.Execute(executionContext, casePlanInstance.Content, cancellationToken);
                 if (casePlanInstance.Content.State == TaskStageStates.Completed)
                 {
-                    casePlanInstance.MakeTransition(CMMNTransitions.Complete);
+                    casePlanInstance.MakeTransition(CMMNTransitions.Complete, false);
+                    return;
+                }
+
+                if (casePlanInstance.Content.State == TaskStageStates.Terminated)
+                {
+                    casePlanInstance.MakeTransition(CMMNTransitions.Terminate, false);
                     return;
                 }
 

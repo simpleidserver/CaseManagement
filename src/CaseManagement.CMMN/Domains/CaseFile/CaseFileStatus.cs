@@ -1,4 +1,6 @@
-﻿namespace CaseManagement.CMMN.Domains
+﻿using System;
+
+namespace CaseManagement.CMMN.Domains
 {
     public enum CaseFileStatus
     {

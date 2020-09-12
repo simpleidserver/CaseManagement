@@ -1,7 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
 using System.Collections.Generic;
 
-namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
+namespace CaseManagement.CMMN.Builders
 {
     public class CriteriaBuilder
     {

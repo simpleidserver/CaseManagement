@@ -16,21 +16,24 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseDefinitions = caseDefinitions;
         }
 
-        public void Update(CasePlanAggregate workflowDefinition)
+        public Task Update(CasePlanAggregate workflowDefinition, CancellationToken token)
         {
-            var wf = _caseDefinitions.First(w => w.Id == workflowDefinition.Id);
+            var wf = _caseDefinitions.First(w => w.AggregateId == workflowDefinition.AggregateId);
             _caseDefinitions.Remove(wf);
             _caseDefinitions.Add((CasePlanAggregate)wf.Clone());
+            return Task.CompletedTask;
         }
 
-        public void Add(CasePlanAggregate workflowDefinition)
+        public Task Add(CasePlanAggregate workflowDefinition, CancellationToken token)
         {
             _caseDefinitions.Add((CasePlanAggregate)workflowDefinition.Clone());
+            return Task.CompletedTask;
         }
 
-        public void Delete(CasePlanAggregate workflowDefinition)
+        public Task Delete(CasePlanAggregate workflowDefinition, CancellationToken token)
         {
-            _caseDefinitions.Remove(_caseDefinitions.First(c => c.Id == workflowDefinition.Id));
+            _caseDefinitions.Remove(_caseDefinitions.First(c => c.AggregateId == workflowDefinition.AggregateId));
+            return Task.CompletedTask;
         }
 
         public Task<int> SaveChanges(CancellationToken token)

@@ -1,6 +1,8 @@
-﻿namespace CaseManagement.CMMN.Persistence.Parameters
+﻿using CaseManagement.CMMN.Common.Parameters;
+
+namespace CaseManagement.CMMN.Persistence.Parameters
 {
-    public class FindCaseFilesParameter : BaseFindParameter
+    public class FindCaseFilesParameter : BaseSearchParameter
     {
         public FindCaseFilesParameter()
         {

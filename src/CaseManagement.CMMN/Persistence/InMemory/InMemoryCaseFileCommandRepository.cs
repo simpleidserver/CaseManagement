@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Extensions;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
@@ -15,23 +16,26 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseFiles = caseFiles;
         }
 
-        public void Delete(CaseFileAggregate caseFile)
+        public Task Delete(CaseFileAggregate caseFile, CancellationToken token)
         {
-            _caseFiles.Remove(_caseFiles.First(a => a.Id == caseFile.Id));
+            _caseFiles.Remove(_caseFiles.First(a => a.AggregateId == caseFile.AggregateId));
+            return Task.CompletedTask;
         }
 
-        public void Add(CaseFileAggregate caseFile)
+        public Task Add(CaseFileAggregate caseFile, CancellationToken token)
         {
             _caseFiles.Add((CaseFileAggregate)caseFile.Clone());
+            return Task.CompletedTask;
         }
 
-        public void Update(CaseFileAggregate caseFile)
+        public Task Update(CaseFileAggregate caseFile, CancellationToken token)
         {
-            _caseFiles.Remove(_caseFiles.First(a => a.Id == caseFile.Id));
+            _caseFiles.Remove(_caseFiles.First(a => a.AggregateId == caseFile.AggregateId));
             _caseFiles.Add((CaseFileAggregate)caseFile.Clone());
+            return Task.CompletedTask;
         }
 
-        public Task<int> SaveChanges()
+        public Task<int> SaveChanges(CancellationToken token)
         {
             return Task.FromResult(1);
         }

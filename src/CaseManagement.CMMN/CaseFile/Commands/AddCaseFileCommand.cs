@@ -1,9 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿using MediatR;
+using System.Runtime.Serialization;
 
 namespace CaseManagement.CMMN.CaseFile.Commands
 {
     [DataContract]
-    public class AddCaseFileCommand
+    public class AddCaseFileCommand : IRequest<string>
     {
         [DataMember(Name = "name")]
         public string Name { get; set; }

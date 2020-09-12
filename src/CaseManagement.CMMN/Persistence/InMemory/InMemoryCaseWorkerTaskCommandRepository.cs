@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Extensions;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence.InMemory
@@ -15,23 +16,26 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseWorkerTaskLst = caseWorkerTaskLst;
         }
 
-        public void Delete(CaseWorkerTaskAggregate caseWorkerTask)
+        public Task Delete(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
         {
-            _caseWorkerTaskLst.Remove(_caseWorkerTaskLst.First(a => a.Id == caseWorkerTask.Id));
+            _caseWorkerTaskLst.Remove(_caseWorkerTaskLst.First(a => a.AggregateId == caseWorkerTask.AggregateId));
+            return Task.CompletedTask;
         }
 
-        public void Add(CaseWorkerTaskAggregate caseWorkerTask)
+        public Task Add(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
         {
             _caseWorkerTaskLst.Add((CaseWorkerTaskAggregate)caseWorkerTask.Clone());
+            return Task.CompletedTask;
         }
 
-        public void Update(CaseWorkerTaskAggregate caseWorkerTask)
+        public Task Update(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
         {
-            _caseWorkerTaskLst.Remove(_caseWorkerTaskLst.First(a => a.Id == caseWorkerTask.Id));
+            _caseWorkerTaskLst.Remove(_caseWorkerTaskLst.First(a => a.AggregateId == caseWorkerTask.AggregateId));
             _caseWorkerTaskLst.Add((CaseWorkerTaskAggregate)caseWorkerTask.Clone());
+            return Task.CompletedTask;
         }
 
-        public Task<int> SaveChanges()
+        public Task<int> SaveChanges(CancellationToken token)
         {
             return Task.FromResult(1);
         }

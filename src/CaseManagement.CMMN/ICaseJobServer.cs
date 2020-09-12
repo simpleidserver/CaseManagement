@@ -8,8 +8,8 @@ namespace CaseManagement.CMMN
     {
         void Start();
         void Stop();
-        Task RegisterCasePlanInstance(CasePlanInstanceAggregate casePlanInstance, CancellationToken cancellationToken);
-        Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId = null);
-        Task EnqueueCasePlanInstance(string id);
+        Task RegisterCasePlanInstance(CasePlanInstanceAggregate casePlanInstance, CancellationToken token);
+        Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId, CancellationToken token);
+        Task EnqueueCasePlanInstance(string casePlanInstanceId, CancellationToken token);
     }
 }

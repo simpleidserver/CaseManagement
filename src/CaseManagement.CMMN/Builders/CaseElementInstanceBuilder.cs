@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
+namespace CaseManagement.CMMN.Builders
 {
     public class CaseElementInstanceBuilder
     {
@@ -93,6 +93,41 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
                 Name = Name,
                 PerformerRef = PerformerRef,
                 ManualActivationRule = ManualActivationRule
+            };
+        }
+    }
+
+    public class MilestoneInstanceBuilder : CaseElementInstanceBuilder
+    {
+        public MilestoneInstanceBuilder(string id, string name) : base(id, name)
+        {
+        }
+
+        protected override CasePlanElementInstance InternalBuild()
+        {
+            return new MilestoneElementInstance
+            {
+                Id = Id,
+                Name =  Name
+            };
+        }
+    }
+
+    public class FileItemInstanceBuilder : CaseElementInstanceBuilder
+    {
+        public FileItemInstanceBuilder(string id, string name) : base(id, name)
+        {
+        }
+
+        public string DefinitionType { get; set; }
+
+        protected override CasePlanElementInstance InternalBuild()
+        {
+            return new CaseFileItemInstance
+            {
+                Id = Id, 
+                Name = Name,
+                DefinitionType = DefinitionType
             };
         }
     }

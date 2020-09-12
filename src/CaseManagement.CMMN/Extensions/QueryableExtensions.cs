@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Persistence.Parameters;
+﻿using CaseManagement.CMMN.Common.Parameters;
 using System;
 using System.Linq;
 using System.Linq.Expressions;

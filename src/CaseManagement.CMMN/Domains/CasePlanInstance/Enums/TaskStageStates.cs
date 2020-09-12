@@ -1,4 +1,5 @@
-﻿namespace CaseManagement.CMMN.Domains
+﻿
+namespace CaseManagement.CMMN.Domains
 {
     public enum TaskStageStates
     {

@@ -1,8 +1,9 @@
-﻿using CaseManagement.CMMN.Infrastructures;
+﻿using CaseManagement.CMMN.Infrastructure;
 using System;
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public class ManualActivationRule : ICloneable
     {
         public ManualActivationRule() { }
@@ -20,9 +21,9 @@ namespace CaseManagement.CMMN.Domains
         public string Name { get; set; }
         public CMMNExpression Expression { get; set; }
 
-        public bool IsSatisfied()
+        public bool IsSatisfied(CasePlanInstanceExecutionContext executionContext)
         {
-            return ExpressionParser.IsValid(Expression.Body);
+            return ExpressionParser.IsValid(Expression.Body, executionContext);
         }
 
         public object Clone()

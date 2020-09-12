@@ -12,8 +12,8 @@
         public static class QueueNames
         {
             public const string ExternalEvents = "externalevts";
-            public const string CasePlanInstances = "caseplaninstances";
             public const string DomainEvents = "domainevts";
+            public const string CasePlanInstances = "caseplaninstances";
         }
 
         public static class ExternalTransitionNames
@@ -21,6 +21,17 @@
             public const string Terminate = "terminate";
             public const string ManualStart = "manualstart";
             public const string Complete = "complete";
+            public const string Reactivate = "reactivate";
+            public const string Close = "close";
+            public const string Resume = "resume";
+            public const string Suspend = "suspend";
+            public const string Update = "update";
+            public const string Replace = "replace";
+            public const string RemoveChild = "removechild";
+            public const string AddChild = "addchild";
+            public const string AddReference = "addreference";
+            public const string RemoveReference = "removereference";
+            public const string Delete = "delete";
         }
 
         public static class RouteNames
@@ -48,8 +59,7 @@
 
         public static class ContentManagementTypes
         {
-            public const string DIRECTORY = "https://github.com/simpleidserver/casemanagement/directory";
-            public const string FILE = "https://github.com/simpleidserver/casemanagement/file";
+            public const string FAKE_CMIS_DIRECTORY = "https://github.com/simpleidserver/CaseManagement/fakecmis/folder";
         }
     }
 }

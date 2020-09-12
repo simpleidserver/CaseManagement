@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
+namespace CaseManagement.CMMN.Builders
 {
     public class StageInstanceBuilder : CaseElementInstanceBuilder
     {
@@ -44,6 +44,30 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
         public StageInstanceBuilder AddStage(string id, string name, Action<StageInstanceBuilder> callback = null)
         {
             var stepBuilder = new StageInstanceBuilder(id, name);
+            if (callback != null)
+            {
+                callback(stepBuilder);
+            }
+
+            Builders.Add(stepBuilder);
+            return this;
+        }
+
+        public StageInstanceBuilder AddMilestone(string id, string name, Action<MilestoneInstanceBuilder> callback = null)
+        {
+            var stepBuilder = new MilestoneInstanceBuilder(id, name);
+            if (callback != null)
+            {
+                callback(stepBuilder);
+            }
+
+            Builders.Add(stepBuilder);
+            return this;
+        }
+
+        public StageInstanceBuilder AddFileItem(string id, string name, Action<FileItemInstanceBuilder> callback = null)
+        {
+            var stepBuilder = new FileItemInstanceBuilder(id, name);
             if (callback != null)
             {
                 callback(stepBuilder);

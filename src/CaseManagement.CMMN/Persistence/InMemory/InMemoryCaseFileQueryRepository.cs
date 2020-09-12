@@ -31,7 +31,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public Task<CaseFileAggregate> Get(string id, CancellationToken token)
         {
-            return Task.FromResult(_caseFileDefinitions.FirstOrDefault(c => c.Id == id));
+            return Task.FromResult(_caseFileDefinitions.FirstOrDefault(c => c.AggregateId == id));
         }
 
         public Task<FindResponse<CaseFileAggregate>> Find(FindCaseFilesParameter parameter, CancellationToken token)

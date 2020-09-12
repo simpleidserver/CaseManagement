@@ -29,7 +29,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
         public Task<CasePlanAggregate> Get(string id, CancellationToken token)
         {
-            return Task.FromResult(_definitions.FirstOrDefault(d => d.Id == id));
+            return Task.FromResult(_definitions.FirstOrDefault(d => d.AggregateId == id));
         }
 
         public Task<FindResponse<CasePlanAggregate>> Find(FindCasePlansParameter parameter, CancellationToken token)

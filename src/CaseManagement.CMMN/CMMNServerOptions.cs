@@ -1,14 +1,15 @@
-﻿namespace CaseManagement.CMMN
+﻿using System.Collections.Generic;
+
+namespace CaseManagement.CMMN
 {
     public class CMMNServerOptions
     {
         public CMMNServerOptions()
         {
-            MaxConcurrentTask = 20;
+            Metadata = new Dictionary<string, string>();
             NbRetry = 5;
-            PerformanceIntervalInSeconds = 4;
+            DeadLetterTimeMS = 1000;
             BlockThreadMS = 20;
-            MaxNbPerformanceRecords = 10;
             SnapshotFrequency = 100;
             DefaultCMMNSchema = "<?xml version='1.0' encoding='UTF-8'?>\n" +
             "<cmmn:definitions xmlns:dc='http://www.omg.org/spec/CMMN/20151109/DC' xmlns:cmmndi='http://www.omg.org/spec/CMMN/20151109/CMMNDI' xmlns:cmmn='http://www.omg.org/spec/CMMN/20151109/MODEL' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='Definitions_0m2br72' targetNamespace='http://bpmn.io/schema/cmmn' exporter='cmmn-js (https://demo.bpmn.io/cmmn)' exporterVersion='0.19.2'>\n" +
@@ -34,26 +35,12 @@
             "</cmmn:definitions>";
         }
 
-        /// <summary>
-        /// Set the interval time in seconds to compute the performance.
-        /// </summary>
-        public int PerformanceIntervalInSeconds { get; set; }
+        public Dictionary<string, string> Metadata { get; set; }
+
         /// <summary>
         /// Set the time in milliseconds used to block a thread.
         /// </summary>
         public int BlockThreadMS { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public int NbRetry { get; set; }
-        /// <summary>
-        /// Set the maximum number of records (performance).
-        /// </summary>
-        public int MaxNbPerformanceRecords { get; set; }
-        /// <summary>
-        /// Set the maximum of concurrent tasks.
-        /// </summary>
-        public int MaxConcurrentTask { get; set; }
         /// <summary>
         /// Set the snapshot frequency.
         /// </summary>
@@ -62,5 +49,10 @@
         /// Default CMMN schema used when adding a default case file.
         /// </summary>
         public string DefaultCMMNSchema { get; set; }
+        /// <summary>
+        /// Set the number of attempts to process a message.
+        /// </summary>
+        public int NbRetry { get; set; }
+        public int DeadLetterTimeMS { get; set; }
     }
 }

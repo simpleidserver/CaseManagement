@@ -1,5 +1,4 @@
-﻿
-namespace CaseManagement.CMMN.Infrastructures
+﻿namespace CaseManagement.CMMN.Domains
 {
     public class DomainEvent
     {

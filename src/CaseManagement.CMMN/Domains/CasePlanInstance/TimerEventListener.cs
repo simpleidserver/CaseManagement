@@ -2,24 +2,21 @@
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class TimerEventListener : CasePlanElementInstance
+    [Serializable]
+    public class TimerEventListener : BaseMilestoneOrTimerElementInstance
     {
-        public MilestoneEventStates? State { get; set; }
         public CMMNExpression TimerExpression { get; set; }
+        public override string Type { get => "timer"; }
 
-        protected override void UpdateTransition(CMMNTransitions transition, DateTime executionDateTime)
+        public override object Clone()
         {
-            State = GetMilestoneOrEventListenerState(State, transition);
-        }
-
-        public object Clone()
-        {
-            return new TimerEventListener
+            var result = new TimerEventListener
             {
-                Id = Id,
-                Name = Name,
                 TimerExpression = TimerExpression == null ? null : (CMMNExpression)TimerExpression.Clone()
             };
+            FeedCasePlanElement(result);
+            FeedMilestoneOrTimer(result);
+            return result;
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿
+﻿using System;
+
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public class HumanTaskElementInstance : BaseTaskOrStageElementInstance
     {
         /// <summary>
@@ -8,5 +10,18 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public string PerformerRef { get; set; }
         public string FormId { get; set; }
+        public override string Type { get => "humantask"; }
+
+        public override object Clone()
+        {
+            var result = new HumanTaskElementInstance
+            {
+                PerformerRef = PerformerRef,
+                FormId = FormId
+            };
+            FeedCasePlanElement(result);
+            FeedTaskOrStage(result);
+            return result;
+        }
     }
 }

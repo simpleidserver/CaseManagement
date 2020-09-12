@@ -1,7 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
 using System;
 
-namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
+namespace CaseManagement.CMMN.Builders
 {
     public class CasePlanInstanceBuilder : StageInstanceBuilder
     {
@@ -26,6 +26,18 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
             return this;
         }
 
+        public new CasePlanInstanceBuilder AddMilestone(string id, string name, Action<MilestoneInstanceBuilder> callback = null)
+        {
+            base.AddMilestone(id, name, callback);
+            return this;
+        }
+
+        public new CasePlanInstanceBuilder AddFileItem(string id, string name, Action<FileItemInstanceBuilder> callback = null)
+        {
+            base.AddFileItem(id, name, callback);
+            return this;
+        }
+
         public new CasePlanInstanceBuilder AddStage(string id, string name, Action<StageInstanceBuilder> callback = null)
         {
             base.AddStage(id, name, callback);
@@ -34,12 +46,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Builders
 
         public new CasePlanInstanceAggregate Build()
         {
-            var result = new CasePlanInstanceAggregate
-            {
-                Id = Id,
-                Name = Name,
-                Content = base.InternalBuild() as StageElementInstance
-            };
+            var result = CasePlanInstanceAggregate.New(Id, base.InternalBuild() as StageElementInstance);
             return result;
         }
     }

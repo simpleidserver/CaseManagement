@@ -20,19 +20,23 @@ using System.Xml.Serialization;
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("extensionElements", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tExtensionElements {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("extensionElements", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tExtensionElements
+{
+
     private System.Xml.XmlElement[] anyField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyElementAttribute()]
-    public System.Xml.XmlElement[] Any {
-        get {
+    public System.Xml.XmlElement[] Any
+    {
+        get
+        {
             return this.anyField;
         }
-        set {
+        set
+        {
             this.anyField = value;
         }
     }
@@ -43,32 +47,39 @@ public partial class tExtensionElements {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC", IsNullable=false)]
-public partial class Dimension {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC", IsNullable = false)]
+public partial class Dimension
+{
+
     private double widthField;
-    
+
     private double heightField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double width {
-        get {
+    public double width
+    {
+        get
+        {
             return this.widthField;
         }
-        set {
+        set
+        {
             this.widthField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double height {
-        get {
+    public double height
+    {
+        get
+        {
             return this.heightField;
         }
-        set {
+        set
+        {
             this.heightField = value;
         }
     }
@@ -79,58 +90,71 @@ public partial class Dimension {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC", IsNullable=false)]
-public partial class Bounds {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC", IsNullable = false)]
+public partial class Bounds
+{
+
     private double xField;
-    
+
     private double yField;
-    
+
     private double widthField;
-    
+
     private double heightField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double x {
-        get {
+    public double x
+    {
+        get
+        {
             return this.xField;
         }
-        set {
+        set
+        {
             this.xField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double y {
-        get {
+    public double y
+    {
+        get
+        {
             return this.yField;
         }
-        set {
+        set
+        {
             this.yField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double width {
-        get {
+    public double width
+    {
+        get
+        {
             return this.widthField;
         }
-        set {
+        set
+        {
             this.widthField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double height {
-        get {
+    public double height
+    {
+        get
+        {
             return this.heightField;
         }
-        set {
+        set
+        {
             this.heightField = value;
         }
     }
@@ -141,32 +165,39 @@ public partial class Bounds {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC", IsNullable=false)]
-public partial class Point {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC", IsNullable = false)]
+public partial class Point
+{
+
     private double xField;
-    
+
     private double yField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double x {
-        get {
+    public double x
+    {
+        get
+        {
             return this.xField;
         }
-        set {
+        set
+        {
             this.xField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double y {
-        get {
+    public double y
+    {
+        get
+        {
             return this.yField;
         }
-        set {
+        set
+        {
             this.yField = value;
         }
     }
@@ -177,45 +208,55 @@ public partial class Point {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC", IsNullable=false)]
-public partial class Color {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC", IsNullable = false)]
+public partial class Color
+{
+
     private int redField;
-    
+
     private int greenField;
-    
+
     private int blueField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public int red {
-        get {
+    public int red
+    {
+        get
+        {
             return this.redField;
         }
-        set {
+        set
+        {
             this.redField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public int green {
-        get {
+    public int green
+    {
+        get
+        {
             return this.greenField;
         }
-        set {
+        set
+        {
             this.greenField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public int blue {
-        get {
+    public int blue
+    {
+        get
+        {
             return this.blueField;
         }
-        set {
+        set
+        {
             this.blueField = value;
         }
     }
@@ -227,44 +268,54 @@ public partial class Color {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DI")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DI", IsNullable=false)]
-public abstract partial class Style {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DI")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DI", IsNullable = false)]
+public abstract partial class Style
+{
+
     private StyleExtension extensionField;
-    
+
     private string idField;
-    
+
     private System.Xml.XmlAttribute[] anyAttrField;
-    
+
     /// <remarks/>
-    public StyleExtension extension {
-        get {
+    public StyleExtension extension
+    {
+        get
+        {
             return this.extensionField;
         }
-        set {
+        set
+        {
             this.extensionField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
-    public string id {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "ID")]
+    public string id
+    {
+        get
+        {
             return this.idField;
         }
-        set {
+        set
+        {
             this.idField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-    public System.Xml.XmlAttribute[] AnyAttr {
-        get {
+    public System.Xml.XmlAttribute[] AnyAttr
+    {
+        get
+        {
             return this.anyAttrField;
         }
-        set {
+        set
+        {
             this.anyAttrField = value;
         }
     }
@@ -275,18 +326,22 @@ public abstract partial class Style {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.omg.org/spec/CMMN/20151109/DI")]
-public partial class StyleExtension {
-    
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.omg.org/spec/CMMN/20151109/DI")]
+public partial class StyleExtension
+{
+
     private System.Xml.XmlElement[] anyField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyElementAttribute()]
-    public System.Xml.XmlElement[] Any {
-        get {
+    public System.Xml.XmlElement[] Any
+    {
+        get
+        {
             return this.anyField;
         }
-        set {
+        set
+        {
             this.anyField = value;
         }
     }
@@ -297,237 +352,292 @@ public partial class StyleExtension {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable=false)]
-public partial class CMMNStyle : Style {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable = false)]
+public partial class CMMNStyle : Style
+{
+
     private Color fillColorField;
-    
+
     private Color strokeColorField;
-    
+
     private Color fontColorField;
-    
+
     private string fontFamilyField;
-    
+
     private double fontSizeField;
-    
+
     private bool fontSizeFieldSpecified;
-    
+
     private bool fontItalicField;
-    
+
     private bool fontItalicFieldSpecified;
-    
+
     private bool fontBoldField;
-    
+
     private bool fontBoldFieldSpecified;
-    
+
     private bool fontUnderlineField;
-    
+
     private bool fontUnderlineFieldSpecified;
-    
+
     private bool fontStrikeThroughField;
-    
+
     private bool fontStrikeThroughFieldSpecified;
-    
+
     private AlignmentKind labelHorizontalAlignementField;
-    
+
     private bool labelHorizontalAlignementFieldSpecified;
-    
+
     private AlignmentKind labelVerticalAlignmentField;
-    
+
     private bool labelVerticalAlignmentFieldSpecified;
-    
+
     /// <remarks/>
-    public Color FillColor {
-        get {
+    public Color FillColor
+    {
+        get
+        {
             return this.fillColorField;
         }
-        set {
+        set
+        {
             this.fillColorField = value;
         }
     }
-    
+
     /// <remarks/>
-    public Color StrokeColor {
-        get {
+    public Color StrokeColor
+    {
+        get
+        {
             return this.strokeColorField;
         }
-        set {
+        set
+        {
             this.strokeColorField = value;
         }
     }
-    
+
     /// <remarks/>
-    public Color FontColor {
-        get {
+    public Color FontColor
+    {
+        get
+        {
             return this.fontColorField;
         }
-        set {
+        set
+        {
             this.fontColorField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string fontFamily {
-        get {
+    public string fontFamily
+    {
+        get
+        {
             return this.fontFamilyField;
         }
-        set {
+        set
+        {
             this.fontFamilyField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double fontSize {
-        get {
+    public double fontSize
+    {
+        get
+        {
             return this.fontSizeField;
         }
-        set {
+        set
+        {
             this.fontSizeField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool fontSizeSpecified {
-        get {
+    public bool fontSizeSpecified
+    {
+        get
+        {
             return this.fontSizeFieldSpecified;
         }
-        set {
+        set
+        {
             this.fontSizeFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public bool fontItalic {
-        get {
+    public bool fontItalic
+    {
+        get
+        {
             return this.fontItalicField;
         }
-        set {
+        set
+        {
             this.fontItalicField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool fontItalicSpecified {
-        get {
+    public bool fontItalicSpecified
+    {
+        get
+        {
             return this.fontItalicFieldSpecified;
         }
-        set {
+        set
+        {
             this.fontItalicFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public bool fontBold {
-        get {
+    public bool fontBold
+    {
+        get
+        {
             return this.fontBoldField;
         }
-        set {
+        set
+        {
             this.fontBoldField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool fontBoldSpecified {
-        get {
+    public bool fontBoldSpecified
+    {
+        get
+        {
             return this.fontBoldFieldSpecified;
         }
-        set {
+        set
+        {
             this.fontBoldFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public bool fontUnderline {
-        get {
+    public bool fontUnderline
+    {
+        get
+        {
             return this.fontUnderlineField;
         }
-        set {
+        set
+        {
             this.fontUnderlineField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool fontUnderlineSpecified {
-        get {
+    public bool fontUnderlineSpecified
+    {
+        get
+        {
             return this.fontUnderlineFieldSpecified;
         }
-        set {
+        set
+        {
             this.fontUnderlineFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public bool fontStrikeThrough {
-        get {
+    public bool fontStrikeThrough
+    {
+        get
+        {
             return this.fontStrikeThroughField;
         }
-        set {
+        set
+        {
             this.fontStrikeThroughField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool fontStrikeThroughSpecified {
-        get {
+    public bool fontStrikeThroughSpecified
+    {
+        get
+        {
             return this.fontStrikeThroughFieldSpecified;
         }
-        set {
+        set
+        {
             this.fontStrikeThroughFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public AlignmentKind labelHorizontalAlignement {
-        get {
+    public AlignmentKind labelHorizontalAlignement
+    {
+        get
+        {
             return this.labelHorizontalAlignementField;
         }
-        set {
+        set
+        {
             this.labelHorizontalAlignementField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool labelHorizontalAlignementSpecified {
-        get {
+    public bool labelHorizontalAlignementSpecified
+    {
+        get
+        {
             return this.labelHorizontalAlignementFieldSpecified;
         }
-        set {
+        set
+        {
             this.labelHorizontalAlignementFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public AlignmentKind labelVerticalAlignment {
-        get {
+    public AlignmentKind labelVerticalAlignment
+    {
+        get
+        {
             return this.labelVerticalAlignmentField;
         }
-        set {
+        set
+        {
             this.labelVerticalAlignmentField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool labelVerticalAlignmentSpecified {
-        get {
+    public bool labelVerticalAlignmentSpecified
+    {
+        get
+        {
             return this.labelVerticalAlignmentFieldSpecified;
         }
-        set {
+        set
+        {
             this.labelVerticalAlignmentFieldSpecified = value;
         }
     }
@@ -536,15 +646,16 @@ public partial class CMMNStyle : Style {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC")]
-public enum AlignmentKind {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC")]
+public enum AlignmentKind
+{
+
     /// <remarks/>
     start,
-    
+
     /// <remarks/>
     end,
-    
+
     /// <remarks/>
     center,
 }
@@ -561,69 +672,85 @@ public enum AlignmentKind {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DI")]
-[System.Xml.Serialization.XmlRootAttribute("CMMNDiagramElement", Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable=false)]
-public abstract partial class DiagramElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DI")]
+[System.Xml.Serialization.XmlRootAttribute("CMMNDiagramElement", Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable = false)]
+public abstract partial class DiagramElement
+{
+
     private DiagramElementExtension extensionField;
-    
+
     private Style styleField;
-    
+
     private string sharedStyleField;
-    
+
     private string idField;
-    
+
     private System.Xml.XmlAttribute[] anyAttrField;
-    
+
     /// <remarks/>
-    public DiagramElementExtension extension {
-        get {
+    public DiagramElementExtension extension
+    {
+        get
+        {
             return this.extensionField;
         }
-        set {
+        set
+        {
             this.extensionField = value;
         }
     }
-    
+
     /// <remarks/>
-    public Style Style {
-        get {
+    public Style Style
+    {
+        get
+        {
             return this.styleField;
         }
-        set {
+        set
+        {
             this.styleField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sharedStyle {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sharedStyle
+    {
+        get
+        {
             return this.sharedStyleField;
         }
-        set {
+        set
+        {
             this.sharedStyleField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
-    public string id {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "ID")]
+    public string id
+    {
+        get
+        {
             return this.idField;
         }
-        set {
+        set
+        {
             this.idField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-    public System.Xml.XmlAttribute[] AnyAttr {
-        get {
+    public System.Xml.XmlAttribute[] AnyAttr
+    {
+        get
+        {
             return this.anyAttrField;
         }
-        set {
+        set
+        {
             this.anyAttrField = value;
         }
     }
@@ -634,18 +761,22 @@ public abstract partial class DiagramElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.omg.org/spec/CMMN/20151109/DI")]
-public partial class DiagramElementExtension {
-    
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.omg.org/spec/CMMN/20151109/DI")]
+public partial class DiagramElementExtension
+{
+
     private System.Xml.XmlElement[] anyField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyElementAttribute()]
-    public System.Xml.XmlElement[] Any {
-        get {
+    public System.Xml.XmlElement[] Any
+    {
+        get
+        {
             return this.anyField;
         }
-        set {
+        set
+        {
             this.anyField = value;
         }
     }
@@ -657,57 +788,70 @@ public partial class DiagramElementExtension {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DI")]
-public abstract partial class Diagram : DiagramElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DI")]
+public abstract partial class Diagram : DiagramElement
+{
+
     private string nameField;
-    
+
     private string documentationField;
-    
+
     private double resolutionField;
-    
+
     private bool resolutionFieldSpecified;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string documentation {
-        get {
+    public string documentation
+    {
+        get
+        {
             return this.documentationField;
         }
-        set {
+        set
+        {
             this.documentationField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public double resolution {
-        get {
+    public double resolution
+    {
+        get
+        {
             return this.resolutionField;
         }
-        set {
+        set
+        {
             this.resolutionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool resolutionSpecified {
-        get {
+    public bool resolutionSpecified
+    {
+        get
+        {
             return this.resolutionFieldSpecified;
         }
-        set {
+        set
+        {
             this.resolutionFieldSpecified = value;
         }
     }
@@ -718,46 +862,56 @@ public abstract partial class Diagram : DiagramElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable=false)]
-public partial class CMMNDiagram : Diagram {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable = false)]
+public partial class CMMNDiagram : Diagram
+{
+
     private Dimension sizeField;
-    
+
     private DiagramElement[] itemsField;
-    
+
     private System.Xml.XmlQualifiedName cmmnElementRefField;
-    
+
     /// <remarks/>
-    public Dimension Size {
-        get {
+    public Dimension Size
+    {
+        get
+        {
             return this.sizeField;
         }
-        set {
+        set
+        {
             this.sizeField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("CMMNDiagramElement", typeof(DiagramElement))]
     [System.Xml.Serialization.XmlElementAttribute("CMMNEdge", typeof(CMMNEdge))]
     [System.Xml.Serialization.XmlElementAttribute("CMMNShape", typeof(CMMNShape))]
-    public DiagramElement[] Items {
-        get {
+    public DiagramElement[] Items
+    {
+        get
+        {
             return this.itemsField;
         }
-        set {
+        set
+        {
             this.itemsField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName cmmnElementRef {
-        get {
+    public System.Xml.XmlQualifiedName cmmnElementRef
+    {
+        get
+        {
             return this.cmmnElementRefField;
         }
-        set {
+        set
+        {
             this.cmmnElementRefField = value;
         }
     }
@@ -768,83 +922,102 @@ public partial class CMMNDiagram : Diagram {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable=false)]
-public partial class CMMNEdge : Edge {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable = false)]
+public partial class CMMNEdge : Edge
+{
+
     private CMMNLabel cMMNLabelField;
-    
+
     private System.Xml.XmlQualifiedName cmmnElementRefField;
-    
+
     private System.Xml.XmlQualifiedName sourceCMMNElementRefField;
-    
+
     private System.Xml.XmlQualifiedName targetCMMNElementRefField;
-    
+
     private bool isStandardEventVisibleField;
-    
+
     private bool isStandardEventVisibleFieldSpecified;
-    
+
     /// <remarks/>
-    public CMMNLabel CMMNLabel {
-        get {
+    public CMMNLabel CMMNLabel
+    {
+        get
+        {
             return this.cMMNLabelField;
         }
-        set {
+        set
+        {
             this.cMMNLabelField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName cmmnElementRef {
-        get {
+    public System.Xml.XmlQualifiedName cmmnElementRef
+    {
+        get
+        {
             return this.cmmnElementRefField;
         }
-        set {
+        set
+        {
             this.cmmnElementRefField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName sourceCMMNElementRef {
-        get {
+    public System.Xml.XmlQualifiedName sourceCMMNElementRef
+    {
+        get
+        {
             return this.sourceCMMNElementRefField;
         }
-        set {
+        set
+        {
             this.sourceCMMNElementRefField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName targetCMMNElementRef {
-        get {
+    public System.Xml.XmlQualifiedName targetCMMNElementRef
+    {
+        get
+        {
             return this.targetCMMNElementRefField;
         }
-        set {
+        set
+        {
             this.targetCMMNElementRefField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public bool isStandardEventVisible {
-        get {
+    public bool isStandardEventVisible
+    {
+        get
+        {
             return this.isStandardEventVisibleField;
         }
-        set {
+        set
+        {
             this.isStandardEventVisibleField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool isStandardEventVisibleSpecified {
-        get {
+    public bool isStandardEventVisibleSpecified
+    {
+        get
+        {
             return this.isStandardEventVisibleFieldSpecified;
         }
-        set {
+        set
+        {
             this.isStandardEventVisibleFieldSpecified = value;
         }
     }
@@ -855,9 +1028,10 @@ public partial class CMMNEdge : Edge {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable=false)]
-public partial class CMMNLabel : Shape {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable = false)]
+public partial class CMMNLabel : Shape
+{
 }
 
 /// <remarks/>
@@ -867,18 +1041,22 @@ public partial class CMMNLabel : Shape {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DI")]
-public abstract partial class Shape : DiagramElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DI")]
+public abstract partial class Shape : DiagramElement
+{
+
     private Bounds boundsField;
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DC")]
-    public Bounds Bounds {
-        get {
+    [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DC")]
+    public Bounds Bounds
+    {
+        get
+        {
             return this.boundsField;
         }
-        set {
+        set
+        {
             this.boundsField = value;
         }
     }
@@ -889,83 +1067,102 @@ public abstract partial class Shape : DiagramElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable=false)]
-public partial class CMMNShape : Shape {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable = false)]
+public partial class CMMNShape : Shape
+{
+
     private CMMNLabel cMMNLabelField;
-    
+
     private System.Xml.XmlQualifiedName cmmnElementRefField;
-    
+
     private bool isCollapsedField;
-    
+
     private bool isCollapsedFieldSpecified;
-    
+
     private bool isPlanningTableCollapsedField;
-    
+
     private bool isPlanningTableCollapsedFieldSpecified;
-    
+
     /// <remarks/>
-    public CMMNLabel CMMNLabel {
-        get {
+    public CMMNLabel CMMNLabel
+    {
+        get
+        {
             return this.cMMNLabelField;
         }
-        set {
+        set
+        {
             this.cMMNLabelField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName cmmnElementRef {
-        get {
+    public System.Xml.XmlQualifiedName cmmnElementRef
+    {
+        get
+        {
             return this.cmmnElementRefField;
         }
-        set {
+        set
+        {
             this.cmmnElementRefField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public bool isCollapsed {
-        get {
+    public bool isCollapsed
+    {
+        get
+        {
             return this.isCollapsedField;
         }
-        set {
+        set
+        {
             this.isCollapsedField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool isCollapsedSpecified {
-        get {
+    public bool isCollapsedSpecified
+    {
+        get
+        {
             return this.isCollapsedFieldSpecified;
         }
-        set {
+        set
+        {
             this.isCollapsedFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public bool isPlanningTableCollapsed {
-        get {
+    public bool isPlanningTableCollapsed
+    {
+        get
+        {
             return this.isPlanningTableCollapsedField;
         }
-        set {
+        set
+        {
             this.isPlanningTableCollapsedField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool isPlanningTableCollapsedSpecified {
-        get {
+    public bool isPlanningTableCollapsedSpecified
+    {
+        get
+        {
             return this.isPlanningTableCollapsedFieldSpecified;
         }
-        set {
+        set
+        {
             this.isPlanningTableCollapsedFieldSpecified = value;
         }
     }
@@ -977,18 +1174,22 @@ public partial class CMMNShape : Shape {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/DI")]
-public abstract partial class Edge : DiagramElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/DI")]
+public abstract partial class Edge : DiagramElement
+{
+
     private Point[] waypointField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("waypoint")]
-    public Point[] waypoint {
-        get {
+    public Point[] waypoint
+    {
+        get
+        {
             return this.waypointField;
         }
-        set {
+        set
+        {
             this.waypointField = value;
         }
     }
@@ -999,32 +1200,39 @@ public abstract partial class Edge : DiagramElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable=false)]
-public partial class CMMNDI {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI", IsNullable = false)]
+public partial class CMMNDI
+{
+
     private CMMNDiagram[] cMMNDiagramField;
-    
+
     private CMMNStyle[] cMMNStyleField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("CMMNDiagram")]
-    public CMMNDiagram[] CMMNDiagram {
-        get {
+    public CMMNDiagram[] CMMNDiagram
+    {
+        get
+        {
             return this.cMMNDiagramField;
         }
-        set {
+        set
+        {
             this.cMMNDiagramField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("CMMNStyle")]
-    public CMMNStyle[] CMMNStyle {
-        get {
+    public CMMNStyle[] CMMNStyle
+    {
+        get
+        {
             return this.cMMNStyleField;
         }
-        set {
+        set
+        {
             this.cMMNStyleField = value;
         }
     }
@@ -1036,69 +1244,85 @@ public partial class CMMNDI {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public abstract partial class tCmmnElementWithMixedContent {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public abstract partial class tCmmnElementWithMixedContent
+{
+
     private tDocumentation[] documentationField;
-    
+
     private tExtensionElements extensionElementsField;
-    
+
     private string[] textField;
-    
+
     private string idField;
-    
+
     private System.Xml.XmlAttribute[] anyAttrField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("documentation")]
-    public tDocumentation[] documentation {
-        get {
+    public tDocumentation[] documentation
+    {
+        get
+        {
             return this.documentationField;
         }
-        set {
+        set
+        {
             this.documentationField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tExtensionElements extensionElements {
-        get {
+    public tExtensionElements extensionElements
+    {
+        get
+        {
             return this.extensionElementsField;
         }
-        set {
+        set
+        {
             this.extensionElementsField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlTextAttribute()]
-    public string[] Text {
-        get {
+    public string[] Text
+    {
+        get
+        {
             return this.textField;
         }
-        set {
+        set
+        {
             this.textField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
-    public string id {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "ID")]
+    public string id
+    {
+        get
+        {
             return this.idField;
         }
-        set {
+        set
+        {
             this.idField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-    public System.Xml.XmlAttribute[] AnyAttr {
-        get {
+    public System.Xml.XmlAttribute[] AnyAttr
+    {
+        get
+        {
             return this.anyAttrField;
         }
-        set {
+        set
+        {
             this.anyAttrField = value;
         }
     }
@@ -1109,51 +1333,62 @@ public abstract partial class tCmmnElementWithMixedContent {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("documentation", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tDocumentation {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("documentation", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tDocumentation
+{
+
     private System.Xml.XmlNode[] anyField;
-    
+
     private string idField;
-    
+
     private string textFormatField;
-    
-    public tDocumentation() {
+
+    public tDocumentation()
+    {
         this.textFormatField = "text/plain";
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlTextAttribute()]
     [System.Xml.Serialization.XmlAnyElementAttribute()]
-    public System.Xml.XmlNode[] Any {
-        get {
+    public System.Xml.XmlNode[] Any
+    {
+        get
+        {
             return this.anyField;
         }
-        set {
+        set
+        {
             this.anyField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
-    public string id {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "ID")]
+    public string id
+    {
+        get
+        {
             return this.idField;
         }
-        set {
+        set
+        {
             this.idField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute("text/plain")]
-    public string textFormat {
-        get {
+    public string textFormat
+    {
+        get
+        {
             return this.textFormatField;
         }
-        set {
+        set
+        {
             this.textFormatField = value;
         }
     }
@@ -1215,56 +1450,69 @@ public partial class tDocumentation {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public abstract partial class tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public abstract partial class tCmmnElement
+{
+
     private tDocumentation[] documentationField;
-    
+
     private tExtensionElements extensionElementsField;
-    
+
     private string idField;
-    
+
     private System.Xml.XmlAttribute[] anyAttrField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("documentation")]
-    public tDocumentation[] documentation {
-        get {
+    public tDocumentation[] documentation
+    {
+        get
+        {
             return this.documentationField;
         }
-        set {
+        set
+        {
             this.documentationField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tExtensionElements extensionElements {
-        get {
+    public tExtensionElements extensionElements
+    {
+        get
+        {
             return this.extensionElementsField;
         }
-        set {
+        set
+        {
             this.extensionElementsField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
-    public string id {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "ID")]
+    public string id
+    {
+        get
+        {
             return this.idField;
         }
-        set {
+        set
+        {
             this.idField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-    public System.Xml.XmlAttribute[] AnyAttr {
-        get {
+    public System.Xml.XmlAttribute[] AnyAttr
+    {
+        get
+        {
             return this.anyAttrField;
         }
-        set {
+        set
+        {
             this.anyAttrField = value;
         }
     }
@@ -1275,18 +1523,22 @@ public abstract partial class tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public partial class tCaseRoles : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public partial class tCaseRoles : tCmmnElement
+{
+
     private tRole[] roleField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("role")]
-    public tRole[] role {
-        get {
+    public tRole[] role
+    {
+        get
+        {
             return this.roleField;
         }
-        set {
+        set
+        {
             this.roleField = value;
         }
     }
@@ -1297,19 +1549,23 @@ public partial class tCaseRoles : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("role", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tRole : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("role", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tRole : tCmmnElement
+{
+
     private string nameField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
@@ -1322,31 +1578,38 @@ public partial class tRole : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public abstract partial class tCriterion : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public abstract partial class tCriterion : tCmmnElement
+{
+
     private string nameField;
-    
+
     private string sentryRefField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sentryRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sentryRef
+    {
+        get
+        {
             return this.sentryRefField;
         }
-        set {
+        set
+        {
             this.sentryRefField = value;
         }
     }
@@ -1357,18 +1620,22 @@ public abstract partial class tCriterion : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public partial class tChildren : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public partial class tChildren : tCmmnElement
+{
+
     private tCaseFileItem[] caseFileItemField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("caseFileItem")]
-    public tCaseFileItem[] caseFileItem {
-        get {
+    public tCaseFileItem[] caseFileItem
+    {
+        get
+        {
             return this.caseFileItemField;
         }
-        set {
+        set
+        {
             this.caseFileItemField = value;
         }
     }
@@ -1379,88 +1646,108 @@ public partial class tChildren : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("caseFileItem", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCaseFileItem : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("caseFileItem", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCaseFileItem : tCmmnElement
+{
+
     private tChildren childrenField;
-    
+
     private string nameField;
-    
+
     private MultiplicityEnum multiplicityField;
-    
+
     private System.Xml.XmlQualifiedName definitionRefField;
-    
+
     private string sourceRefField;
-    
+
     private string targetRefsField;
-    
-    public tCaseFileItem() {
+
+    public tCaseFileItem()
+    {
         this.multiplicityField = MultiplicityEnum.Unspecified;
     }
-    
+
     /// <remarks/>
-    public tChildren children {
-        get {
+    public tChildren children
+    {
+        get
+        {
             return this.childrenField;
         }
-        set {
+        set
+        {
             this.childrenField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(MultiplicityEnum.Unspecified)]
-    public MultiplicityEnum multiplicity {
-        get {
+    public MultiplicityEnum multiplicity
+    {
+        get
+        {
             return this.multiplicityField;
         }
-        set {
+        set
+        {
             this.multiplicityField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName definitionRef {
-        get {
+    public System.Xml.XmlQualifiedName definitionRef
+    {
+        get
+        {
             return this.definitionRefField;
         }
-        set {
+        set
+        {
             this.definitionRefField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sourceRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sourceRef
+    {
+        get
+        {
             return this.sourceRefField;
         }
-        set {
+        set
+        {
             this.sourceRefField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREFS")]
-    public string targetRefs {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREFS")]
+    public string targetRefs
+    {
+        get
+        {
             return this.targetRefsField;
         }
-        set {
+        set
+        {
             this.targetRefsField = value;
         }
     }
@@ -1469,24 +1756,25 @@ public partial class tCaseFileItem : tCmmnElement {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public enum MultiplicityEnum {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public enum MultiplicityEnum
+{
+
     /// <remarks/>
     ZeroOrOne,
-    
+
     /// <remarks/>
     ZeroOrMore,
-    
+
     /// <remarks/>
     ExactlyOne,
-    
+
     /// <remarks/>
     OneOrMore,
-    
+
     /// <remarks/>
     Unspecified,
-    
+
     /// <remarks/>
     Unknown,
 }
@@ -1496,71 +1784,87 @@ public enum MultiplicityEnum {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("relationship", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tRelationship : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("relationship", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tRelationship : tCmmnElement
+{
+
     private System.Xml.XmlQualifiedName[] sourceField;
-    
+
     private System.Xml.XmlQualifiedName[] targetField;
-    
+
     private string typeField;
-    
+
     private tRelationshipDirection directionField;
-    
+
     private bool directionFieldSpecified;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("source")]
-    public System.Xml.XmlQualifiedName[] source {
-        get {
+    public System.Xml.XmlQualifiedName[] source
+    {
+        get
+        {
             return this.sourceField;
         }
-        set {
+        set
+        {
             this.sourceField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("target")]
-    public System.Xml.XmlQualifiedName[] target {
-        get {
+    public System.Xml.XmlQualifiedName[] target
+    {
+        get
+        {
             return this.targetField;
         }
-        set {
+        set
+        {
             this.targetField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string type {
-        get {
+    public string type
+    {
+        get
+        {
             return this.typeField;
         }
-        set {
+        set
+        {
             this.typeField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public tRelationshipDirection direction {
-        get {
+    public tRelationshipDirection direction
+    {
+        get
+        {
             return this.directionField;
         }
-        set {
+        set
+        {
             this.directionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool directionSpecified {
-        get {
+    public bool directionSpecified
+    {
+        get
+        {
             return this.directionFieldSpecified;
         }
-        set {
+        set
+        {
             this.directionFieldSpecified = value;
         }
     }
@@ -1569,18 +1873,19 @@ public partial class tRelationship : tCmmnElement {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public enum tRelationshipDirection {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public enum tRelationshipDirection
+{
+
     /// <remarks/>
     None,
-    
+
     /// <remarks/>
     Forward,
-    
+
     /// <remarks/>
     Backward,
-    
+
     /// <remarks/>
     Both,
 }
@@ -1592,9 +1897,10 @@ public enum tRelationshipDirection {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("artifact", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public abstract partial class tArtifact : tCmmnElement {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("artifact", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public abstract partial class tArtifact : tCmmnElement
+{
 }
 
 /// <remarks/>
@@ -1602,58 +1908,71 @@ public abstract partial class tArtifact : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("association", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tAssociation : tArtifact {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("association", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tAssociation : tArtifact
+{
+
     private string sourceRefField;
-    
+
     private string targetRefField;
-    
+
     private tAssociationDirection associationDirectionField;
-    
+
     private bool associationDirectionFieldSpecified;
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sourceRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sourceRef
+    {
+        get
+        {
             return this.sourceRefField;
         }
-        set {
+        set
+        {
             this.sourceRefField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string targetRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string targetRef
+    {
+        get
+        {
             return this.targetRefField;
         }
-        set {
+        set
+        {
             this.targetRefField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public tAssociationDirection associationDirection {
-        get {
+    public tAssociationDirection associationDirection
+    {
+        get
+        {
             return this.associationDirectionField;
         }
-        set {
+        set
+        {
             this.associationDirectionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool associationDirectionSpecified {
-        get {
+    public bool associationDirectionSpecified
+    {
+        get
+        {
             return this.associationDirectionFieldSpecified;
         }
-        set {
+        set
+        {
             this.associationDirectionFieldSpecified = value;
         }
     }
@@ -1662,15 +1981,16 @@ public partial class tAssociation : tArtifact {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public enum tAssociationDirection {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public enum tAssociationDirection
+{
+
     /// <remarks/>
     None,
-    
+
     /// <remarks/>
     One,
-    
+
     /// <remarks/>
     Both,
 }
@@ -1680,31 +2000,38 @@ public enum tAssociationDirection {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("textAnnotation", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tTextAnnotation : tArtifact {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("textAnnotation", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tTextAnnotation : tArtifact
+{
+
     private string textField;
-    
+
     private string textFormatField;
-    
+
     /// <remarks/>
-    public string text {
-        get {
+    public string text
+    {
+        get
+        {
             return this.textField;
         }
-        set {
+        set
+        {
             this.textField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string textFormat {
-        get {
+    public string textFormat
+    {
+        get
+        {
             return this.textFormatField;
         }
-        set {
+        set
+        {
             this.textFormatField = value;
         }
     }
@@ -1715,82 +2042,99 @@ public partial class tTextAnnotation : tArtifact {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("case", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCase : tCmmnElement {
-    private string caseOwnerField;
-
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("case", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCase : tCmmnElement
+{
     private tCaseFile caseFileModelField;
-    
+
     private tStage casePlanModelField;
-    
+
     private tCaseRoles caseRolesField;
-    
+
     private tCaseParameter[] inputField;
-    
+
     private tCaseParameter[] outputField;
-    
+
     private string nameField;
-    
+
     /// <remarks/>
-    public tCaseFile caseFileModel {
-        get {
+    public tCaseFile caseFileModel
+    {
+        get
+        {
             return this.caseFileModelField;
         }
-        set {
+        set
+        {
             this.caseFileModelField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tStage casePlanModel {
-        get {
+    public tStage casePlanModel
+    {
+        get
+        {
             return this.casePlanModelField;
         }
-        set {
+        set
+        {
             this.casePlanModelField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tCaseRoles caseRoles {
-        get {
+    public tCaseRoles caseRoles
+    {
+        get
+        {
             return this.caseRolesField;
         }
-        set {
+        set
+        {
             this.caseRolesField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("input")]
-    public tCaseParameter[] input {
-        get {
+    public tCaseParameter[] input
+    {
+        get
+        {
             return this.inputField;
         }
-        set {
+        set
+        {
             this.inputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("output")]
-    public tCaseParameter[] output {
-        get {
+    public tCaseParameter[] output
+    {
+        get
+        {
             return this.outputField;
         }
-        set {
+        set
+        {
             this.outputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
@@ -1801,19 +2145,23 @@ public partial class tCase : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("caseFile", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCaseFile : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("caseFile", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCaseFile : tCmmnElement
+{
+
     private tCaseFileItem[] caseFileItemField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("caseFileItem")]
-    public tCaseFileItem[] caseFileItem {
-        get {
+    public tCaseFileItem[] caseFileItem
+    {
+        get
+        {
             return this.caseFileItemField;
         }
-        set {
+        set
+        {
             this.caseFileItemField = value;
         }
     }
@@ -1824,32 +2172,37 @@ public partial class tCaseFile : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("stage", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tStage : tPlanFragment {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("stage", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tStage : tPlanFragment
+{
+
     private tPlanningTable planningTableField;
-    
+
     private tPlanItemDefinition[] itemsField;
-    
+
     private tExitCriterion[] exitCriterionField;
-    
+
     private bool autoCompleteField;
-    
-    public tStage() {
+
+    public tStage()
+    {
         this.autoCompleteField = false;
     }
-    
+
     /// <remarks/>
-    public tPlanningTable planningTable {
-        get {
+    public tPlanningTable planningTable
+    {
+        get
+        {
             return this.planningTableField;
         }
-        set {
+        set
+        {
             this.planningTableField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("eventListener", typeof(tEventListener))]
     [System.Xml.Serialization.XmlElementAttribute("milestone", typeof(tMilestone))]
@@ -1859,35 +2212,44 @@ public partial class tStage : tPlanFragment {
     [System.Xml.Serialization.XmlElementAttribute("task", typeof(tTask))]
     [System.Xml.Serialization.XmlElementAttribute("humanTask", typeof(tHumanTask))]
     [System.Xml.Serialization.XmlElementAttribute("processTask", typeof(tProcessTask))]
-    [System.Xml.Serialization.XmlElementAttribute("timerEventListener", typeof(tTimerEventListener))]    
-    public tPlanItemDefinition[] Items {
-        get {
+    [System.Xml.Serialization.XmlElementAttribute("timerEventListener", typeof(tTimerEventListener))]
+    public tPlanItemDefinition[] Items
+    {
+        get
+        {
             return this.itemsField;
         }
-        set {
+        set
+        {
             this.itemsField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("exitCriterion")]
-    public tExitCriterion[] exitCriterion {
-        get {
+    public tExitCriterion[] exitCriterion
+    {
+        get
+        {
             return this.exitCriterionField;
         }
-        set {
+        set
+        {
             this.exitCriterionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(false)]
-    public bool autoComplete {
-        get {
+    public bool autoComplete
+    {
+        get
+        {
             return this.autoCompleteField;
         }
-        set {
+        set
+        {
             this.autoCompleteField = value;
         }
     }
@@ -1898,34 +2260,41 @@ public partial class tStage : tPlanFragment {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("planningTable", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tPlanningTable : tTableItem {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("planningTable", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tPlanningTable : tTableItem
+{
+
     private tTableItem[] itemsField;
-    
+
     private tApplicabilityRule[] applicabilityRuleField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("discretionaryItem", typeof(tDiscretionaryItem))]
     [System.Xml.Serialization.XmlElementAttribute("planningTable", typeof(tPlanningTable))]
     [System.Xml.Serialization.XmlElementAttribute("tableItem", typeof(tTableItem))]
-    public tTableItem[] Items {
-        get {
+    public tTableItem[] Items
+    {
+        get
+        {
             return this.itemsField;
         }
-        set {
+        set
+        {
             this.itemsField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("applicabilityRule")]
-    public tApplicabilityRule[] applicabilityRule {
-        get {
+    public tApplicabilityRule[] applicabilityRule
+    {
+        get
+        {
             return this.applicabilityRuleField;
         }
-        set {
+        set
+        {
             this.applicabilityRuleField = value;
         }
     }
@@ -1936,70 +2305,86 @@ public partial class tPlanningTable : tTableItem {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("discretionaryItem", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tDiscretionaryItem : tTableItem {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("discretionaryItem", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tDiscretionaryItem : tTableItem
+{
+
     private tPlanItemControl itemControlField;
-    
+
     private tEntryCriterion[] entryCriterionField;
-    
+
     private tExitCriterion[] exitCriterionField;
-    
+
     private string nameField;
-    
+
     private string definitionRefField;
-    
+
     /// <remarks/>
-    public tPlanItemControl itemControl {
-        get {
+    public tPlanItemControl itemControl
+    {
+        get
+        {
             return this.itemControlField;
         }
-        set {
+        set
+        {
             this.itemControlField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("entryCriterion")]
-    public tEntryCriterion[] entryCriterion {
-        get {
+    public tEntryCriterion[] entryCriterion
+    {
+        get
+        {
             return this.entryCriterionField;
         }
-        set {
+        set
+        {
             this.entryCriterionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("exitCriterion")]
-    public tExitCriterion[] exitCriterion {
-        get {
+    public tExitCriterion[] exitCriterion
+    {
+        get
+        {
             return this.exitCriterionField;
         }
-        set {
+        set
+        {
             this.exitCriterionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string definitionRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string definitionRef
+    {
+        get
+        {
             return this.definitionRefField;
         }
-        set {
+        set
+        {
             this.definitionRefField = value;
         }
     }
@@ -2010,42 +2395,52 @@ public partial class tDiscretionaryItem : tTableItem {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("planItemControl", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tPlanItemControl : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("planItemControl", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tPlanItemControl : tCmmnElement
+{
+
     private tRepetitionRule repetitionRuleField;
-    
+
     private tRequiredRule requiredRuleField;
-    
+
     private tManualActivationRule manualActivationRuleField;
-    
+
     /// <remarks/>
-    public tRepetitionRule repetitionRule {
-        get {
+    public tRepetitionRule repetitionRule
+    {
+        get
+        {
             return this.repetitionRuleField;
         }
-        set {
+        set
+        {
             this.repetitionRuleField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tRequiredRule requiredRule {
-        get {
+    public tRequiredRule requiredRule
+    {
+        get
+        {
             return this.requiredRuleField;
         }
-        set {
+        set
+        {
             this.requiredRuleField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tManualActivationRule manualActivationRule {
-        get {
+    public tManualActivationRule manualActivationRule
+    {
+        get
+        {
             return this.manualActivationRuleField;
         }
-        set {
+        set
+        {
             this.manualActivationRuleField = value;
         }
     }
@@ -2056,44 +2451,54 @@ public partial class tPlanItemControl : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("repetitionRule", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tRepetitionRule : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("repetitionRule", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tRepetitionRule : tCmmnElement
+{
+
     private tExpression conditionField;
-    
+
     private string nameField;
-    
+
     private string contextRefField;
-    
+
     /// <remarks/>
-    public tExpression condition {
-        get {
+    public tExpression condition
+    {
+        get
+        {
             return this.conditionField;
         }
-        set {
+        set
+        {
             this.conditionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string contextRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string contextRef
+    {
+        get
+        {
             return this.contextRefField;
         }
-        set {
+        set
+        {
             this.contextRefField = value;
         }
     }
@@ -2104,19 +2509,23 @@ public partial class tRepetitionRule : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("expression", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tExpression : tCmmnElementWithMixedContent {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("expression", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tExpression : tCmmnElementWithMixedContent
+{
+
     private string languageField;
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-    public string language {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
+    public string language
+    {
+        get
+        {
             return this.languageField;
         }
-        set {
+        set
+        {
             this.languageField = value;
         }
     }
@@ -2127,44 +2536,54 @@ public partial class tExpression : tCmmnElementWithMixedContent {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("requiredRule", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tRequiredRule : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("requiredRule", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tRequiredRule : tCmmnElement
+{
+
     private tExpression conditionField;
-    
+
     private string nameField;
-    
+
     private string contextRefField;
-    
+
     /// <remarks/>
-    public tExpression condition {
-        get {
+    public tExpression condition
+    {
+        get
+        {
             return this.conditionField;
         }
-        set {
+        set
+        {
             this.conditionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string contextRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string contextRef
+    {
+        get
+        {
             return this.contextRefField;
         }
-        set {
+        set
+        {
             this.contextRefField = value;
         }
     }
@@ -2175,44 +2594,54 @@ public partial class tRequiredRule : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("manualActivationRule", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tManualActivationRule : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("manualActivationRule", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tManualActivationRule : tCmmnElement
+{
+
     private tExpression conditionField;
-    
+
     private string nameField;
-    
+
     private string contextRefField;
-    
+
     /// <remarks/>
-    public tExpression condition {
-        get {
+    public tExpression condition
+    {
+        get
+        {
             return this.conditionField;
         }
-        set {
+        set
+        {
             this.conditionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string contextRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string contextRef
+    {
+        get
+        {
             return this.contextRefField;
         }
-        set {
+        set
+        {
             this.contextRefField = value;
         }
     }
@@ -2223,9 +2652,10 @@ public partial class tManualActivationRule : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("entryCriterion", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tEntryCriterion : tCriterion {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("entryCriterion", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tEntryCriterion : tCriterion
+{
 }
 
 /// <remarks/>
@@ -2233,9 +2663,10 @@ public partial class tEntryCriterion : tCriterion {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("exitCriterion", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tExitCriterion : tCriterion {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("exitCriterion", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tExitCriterion : tCriterion
+{
 }
 
 /// <remarks/>
@@ -2245,32 +2676,39 @@ public partial class tExitCriterion : tCriterion {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("tableItem", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public abstract partial class tTableItem : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("tableItem", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public abstract partial class tTableItem : tCmmnElement
+{
+
     private string applicabilityRuleRefsField;
-    
+
     private string authorizedRoleRefsField;
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREFS")]
-    public string applicabilityRuleRefs {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREFS")]
+    public string applicabilityRuleRefs
+    {
+        get
+        {
             return this.applicabilityRuleRefsField;
         }
-        set {
+        set
+        {
             this.applicabilityRuleRefsField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREFS")]
-    public string authorizedRoleRefs {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREFS")]
+    public string authorizedRoleRefs
+    {
+        get
+        {
             return this.authorizedRoleRefsField;
         }
-        set {
+        set
+        {
             this.authorizedRoleRefsField = value;
         }
     }
@@ -2281,44 +2719,54 @@ public abstract partial class tTableItem : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("applicabilityRule", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tApplicabilityRule : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("applicabilityRule", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tApplicabilityRule : tCmmnElement
+{
+
     private tExpression conditionField;
-    
+
     private string nameField;
-    
+
     private string contextRefField;
-    
+
     /// <remarks/>
-    public tExpression condition {
-        get {
+    public tExpression condition
+    {
+        get
+        {
             return this.conditionField;
         }
-        set {
+        set
+        {
             this.conditionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string contextRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string contextRef
+    {
+        get
+        {
             return this.contextRefField;
         }
-        set {
+        set
+        {
             this.contextRefField = value;
         }
     }
@@ -2331,9 +2779,10 @@ public partial class tApplicabilityRule : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("eventListener", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tEventListener : tPlanItemDefinition {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("eventListener", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tEventListener : tPlanItemDefinition
+{
 }
 
 /// <remarks/>
@@ -2352,31 +2801,38 @@ public partial class tEventListener : tPlanItemDefinition {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("planItemDefinition", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public abstract partial class tPlanItemDefinition : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("planItemDefinition", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public abstract partial class tPlanItemDefinition : tCmmnElement
+{
+
     private tPlanItemControl defaultControlField;
-    
+
     private string nameField;
-    
+
     /// <remarks/>
-    public tPlanItemControl defaultControl {
-        get {
+    public tPlanItemControl defaultControl
+    {
+        get
+        {
             return this.defaultControlField;
         }
-        set {
+        set
+        {
             this.defaultControlField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
@@ -2387,9 +2843,10 @@ public abstract partial class tPlanItemDefinition : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("milestone", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tMilestone : tPlanItemDefinition {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("milestone", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tMilestone : tPlanItemDefinition
+{
 }
 
 /// <remarks/>
@@ -2398,32 +2855,39 @@ public partial class tMilestone : tPlanItemDefinition {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("planFragment", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tPlanFragment : tPlanItemDefinition {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("planFragment", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tPlanFragment : tPlanItemDefinition
+{
+
     private tPlanItem[] planItemField;
-    
+
     private tSentry[] sentryField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("planItem")]
-    public tPlanItem[] planItem {
-        get {
+    public tPlanItem[] planItem
+    {
+        get
+        {
             return this.planItemField;
         }
-        set {
+        set
+        {
             this.planItemField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("sentry")]
-    public tSentry[] sentry {
-        get {
+    public tSentry[] sentry
+    {
+        get
+        {
             return this.sentryField;
         }
-        set {
+        set
+        {
             this.sentryField = value;
         }
     }
@@ -2434,70 +2898,86 @@ public partial class tPlanFragment : tPlanItemDefinition {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("planItem", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tPlanItem : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("planItem", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tPlanItem : tCmmnElement
+{
+
     private tPlanItemControl itemControlField;
-    
+
     private tEntryCriterion[] entryCriterionField;
-    
+
     private tExitCriterion[] exitCriterionField;
-    
+
     private string nameField;
-    
+
     private string definitionRefField;
-    
+
     /// <remarks/>
-    public tPlanItemControl itemControl {
-        get {
+    public tPlanItemControl itemControl
+    {
+        get
+        {
             return this.itemControlField;
         }
-        set {
+        set
+        {
             this.itemControlField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("entryCriterion")]
-    public tEntryCriterion[] entryCriterion {
-        get {
+    public tEntryCriterion[] entryCriterion
+    {
+        get
+        {
             return this.entryCriterionField;
         }
-        set {
+        set
+        {
             this.entryCriterionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("exitCriterion")]
-    public tExitCriterion[] exitCriterion {
-        get {
+    public tExitCriterion[] exitCriterion
+    {
+        get
+        {
             return this.exitCriterionField;
         }
-        set {
+        set
+        {
             this.exitCriterionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string definitionRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string definitionRef
+    {
+        get
+        {
             return this.definitionRefField;
         }
-        set {
+        set
+        {
             this.definitionRefField = value;
         }
     }
@@ -2508,46 +2988,56 @@ public partial class tPlanItem : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("sentry", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tSentry : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("sentry", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tSentry : tCmmnElement
+{
+
     private tOnPart[] itemsField;
-    
+
     private tIfPart ifPartField;
-    
+
     private string nameField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("caseFileItemOnPart", typeof(tCaseFileItemOnPart))]
     [System.Xml.Serialization.XmlElementAttribute("onPart", typeof(tOnPart))]
     [System.Xml.Serialization.XmlElementAttribute("planItemOnPart", typeof(tPlanItemOnPart))]
-    public tOnPart[] Items {
-        get {
+    public tOnPart[] Items
+    {
+        get
+        {
             return this.itemsField;
         }
-        set {
+        set
+        {
             this.itemsField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tIfPart ifPart {
-        get {
+    public tIfPart ifPart
+    {
+        get
+        {
             return this.ifPartField;
         }
-        set {
+        set
+        {
             this.ifPartField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
@@ -2558,44 +3048,54 @@ public partial class tSentry : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("caseFileItemOnPart", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCaseFileItemOnPart : tOnPart {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("caseFileItemOnPart", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCaseFileItemOnPart : tOnPart
+{
+
     private CaseFileItemTransition standardEventField;
-    
+
     private bool standardEventFieldSpecified;
-    
+
     private string sourceRefField;
-    
+
     /// <remarks/>
-    public CaseFileItemTransition standardEvent {
-        get {
+    public CaseFileItemTransition standardEvent
+    {
+        get
+        {
             return this.standardEventField;
         }
-        set {
+        set
+        {
             this.standardEventField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool standardEventSpecified {
-        get {
+    public bool standardEventSpecified
+    {
+        get
+        {
             return this.standardEventFieldSpecified;
         }
-        set {
+        set
+        {
             this.standardEventFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sourceRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sourceRef
+    {
+        get
+        {
             return this.sourceRefField;
         }
-        set {
+        set
+        {
             this.sourceRefField = value;
         }
     }
@@ -2604,30 +3104,31 @@ public partial class tCaseFileItemOnPart : tOnPart {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public enum CaseFileItemTransition {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public enum CaseFileItemTransition
+{
+
     /// <remarks/>
     addChild,
-    
+
     /// <remarks/>
     addReference,
-    
+
     /// <remarks/>
     create,
-    
+
     /// <remarks/>
     delete,
-    
+
     /// <remarks/>
     removeChild,
-    
+
     /// <remarks/>
     removeReference,
-    
+
     /// <remarks/>
     replace,
-    
+
     /// <remarks/>
     update,
 }
@@ -2639,19 +3140,23 @@ public enum CaseFileItemTransition {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("onPart", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public abstract partial class tOnPart : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("onPart", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public abstract partial class tOnPart : tCmmnElement
+{
+
     private string nameField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
@@ -2662,57 +3167,70 @@ public abstract partial class tOnPart : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("planItemOnPart", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tPlanItemOnPart : tOnPart {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("planItemOnPart", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tPlanItemOnPart : tOnPart
+{
+
     private PlanItemTransition standardEventField;
-    
+
     private bool standardEventFieldSpecified;
-    
+
     private string sourceRefField;
-    
+
     private string exitCriterionRefField;
-    
+
     /// <remarks/>
-    public PlanItemTransition standardEvent {
-        get {
+    public PlanItemTransition standardEvent
+    {
+        get
+        {
             return this.standardEventField;
         }
-        set {
+        set
+        {
             this.standardEventField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool standardEventSpecified {
-        get {
+    public bool standardEventSpecified
+    {
+        get
+        {
             return this.standardEventFieldSpecified;
         }
-        set {
+        set
+        {
             this.standardEventFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sourceRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sourceRef
+    {
+        get
+        {
             return this.sourceRefField;
         }
-        set {
+        set
+        {
             this.sourceRefField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string exitCriterionRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string exitCriterionRef
+    {
+        get
+        {
             return this.exitCriterionRefField;
         }
-        set {
+        set
+        {
             this.exitCriterionRefField = value;
         }
     }
@@ -2721,57 +3239,58 @@ public partial class tPlanItemOnPart : tOnPart {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-public enum PlanItemTransition {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+public enum PlanItemTransition
+{
+
     /// <remarks/>
     close,
-    
+
     /// <remarks/>
     complete,
-    
+
     /// <remarks/>
     create,
-    
+
     /// <remarks/>
     disable,
-    
+
     /// <remarks/>
     enable,
-    
+
     /// <remarks/>
     exit,
-    
+
     /// <remarks/>
     fault,
-    
+
     /// <remarks/>
     manualStart,
-    
+
     /// <remarks/>
     occur,
-    
+
     /// <remarks/>
     parentResume,
-    
+
     /// <remarks/>
     parentSuspend,
-    
+
     /// <remarks/>
     reactivate,
-    
+
     /// <remarks/>
     reenable,
-    
+
     /// <remarks/>
     resume,
-    
+
     /// <remarks/>
     start,
-    
+
     /// <remarks/>
     suspend,
-    
+
     /// <remarks/>
     terminate,
 }
@@ -2781,31 +3300,38 @@ public enum PlanItemTransition {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("ifPart", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tIfPart : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("ifPart", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tIfPart : tCmmnElement
+{
+
     private tExpression conditionField;
-    
+
     private string contextRefField;
-    
+
     /// <remarks/>
-    public tExpression condition {
-        get {
+    public tExpression condition
+    {
+        get
+        {
             return this.conditionField;
         }
-        set {
+        set
+        {
             this.conditionField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string contextRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string contextRef
+    {
+        get
+        {
             return this.contextRefField;
         }
-        set {
+        set
+        {
             this.contextRefField = value;
         }
     }
@@ -2820,50 +3346,61 @@ public partial class tIfPart : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("task", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tTask : tPlanItemDefinition {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("task", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tTask : tPlanItemDefinition
+{
+
     private tCaseParameter[] inputField;
-    
+
     private tCaseParameter[] outputField;
-    
+
     private bool isBlockingField;
-    
-    public tTask() {
+
+    public tTask()
+    {
         this.isBlockingField = true;
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("input")]
-    public tCaseParameter[] input {
-        get {
+    public tCaseParameter[] input
+    {
+        get
+        {
             return this.inputField;
         }
-        set {
+        set
+        {
             this.inputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("output")]
-    public tCaseParameter[] output {
-        get {
+    public tCaseParameter[] output
+    {
+        get
+        {
             return this.outputField;
         }
-        set {
+        set
+        {
             this.outputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(true)]
-    public bool isBlocking {
-        get {
+    public bool isBlocking
+    {
+        get
+        {
             return this.isBlockingField;
         }
-        set {
+        set
+        {
             this.isBlockingField = value;
         }
     }
@@ -2874,31 +3411,38 @@ public partial class tTask : tPlanItemDefinition {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("caseParameter", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCaseParameter : tParameter {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("caseParameter", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCaseParameter : tParameter
+{
+
     private tExpression bindingRefinementField;
-    
+
     private string bindingRefField;
-    
+
     /// <remarks/>
-    public tExpression bindingRefinement {
-        get {
+    public tExpression bindingRefinement
+    {
+        get
+        {
             return this.bindingRefinementField;
         }
-        set {
+        set
+        {
             this.bindingRefinementField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string bindingRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string bindingRef
+    {
+        get
+        {
             return this.bindingRefField;
         }
-        set {
+        set
+        {
             this.bindingRefField = value;
         }
     }
@@ -2912,19 +3456,23 @@ public partial class tCaseParameter : tParameter {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("parameter", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public abstract partial class tParameter : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("parameter", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public abstract partial class tParameter : tCmmnElement
+{
+
     private string nameField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
@@ -2935,76 +3483,93 @@ public abstract partial class tParameter : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("caseFileItemDefinition", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCaseFileItemDefinition : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("caseFileItemDefinition", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCaseFileItemDefinition : tCmmnElement
+{
+
     private tProperty[] propertyField;
-    
+
     private string nameField;
-    
+
     private string definitionTypeField;
-    
+
     private System.Xml.XmlQualifiedName structureRefField;
-    
+
     private System.Xml.XmlQualifiedName importRefField;
-    
-    public tCaseFileItemDefinition() {
+
+    public tCaseFileItemDefinition()
+    {
         this.definitionTypeField = "http://www.omg.org/spec/CMMN/DefinitionType/Unspecified";
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("property")]
-    public tProperty[] property {
-        get {
+    public tProperty[] property
+    {
+        get
+        {
             return this.propertyField;
         }
-        set {
+        set
+        {
             this.propertyField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute("http://www.omg.org/spec/CMMN/DefinitionType/Unspecified")]
-    public string definitionType {
-        get {
+    public string definitionType
+    {
+        get
+        {
             return this.definitionTypeField;
         }
-        set {
+        set
+        {
             this.definitionTypeField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName structureRef {
-        get {
+    public System.Xml.XmlQualifiedName structureRef
+    {
+        get
+        {
             return this.structureRefField;
         }
-        set {
+        set
+        {
             this.structureRefField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName importRef {
-        get {
+    public System.Xml.XmlQualifiedName importRef
+    {
+        get
+        {
             return this.importRefField;
         }
-        set {
+        set
+        {
             this.importRefField = value;
         }
     }
@@ -3015,37 +3580,45 @@ public partial class tCaseFileItemDefinition : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("property", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tProperty : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("property", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tProperty : tCmmnElement
+{
+
     private string nameField;
-    
+
     private string typeField;
-    
-    public tProperty() {
+
+    public tProperty()
+    {
         this.typeField = "http://www.omg.org/spec/CMMN/PropertyType/Unspecified";
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute("http://www.omg.org/spec/CMMN/PropertyType/Unspecified")]
-    public string type {
-        get {
+    public string type
+    {
+        get
+        {
             return this.typeField;
         }
-        set {
+        set
+        {
             this.typeField = value;
         }
     }
@@ -3056,9 +3629,10 @@ public partial class tProperty : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("processParameter", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tProcessParameter : tParameter {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("processParameter", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tProcessParameter : tParameter
+{
 }
 
 /// <remarks/>
@@ -3066,9 +3640,10 @@ public partial class tProcessParameter : tParameter {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("decisionParameter", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tDecisionParameter : tParameter {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("decisionParameter", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tDecisionParameter : tParameter
+{
 }
 
 /// <remarks/>
@@ -3076,31 +3651,38 @@ public partial class tDecisionParameter : tParameter {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("humanTask", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tHumanTask : tTask {
-    
-    private tPlanningTable planningTableField;    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("humanTask", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tHumanTask : tTask
+{
+
+    private tPlanningTable planningTableField;
     private string performerRefField;
     private string caseFormRefField;
-    
+
     /// <remarks/>
-    public tPlanningTable planningTable {
-        get {
+    public tPlanningTable planningTable
+    {
+        get
+        {
             return this.planningTableField;
         }
-        set {
+        set
+        {
             this.planningTableField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string performerRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string performerRef
+    {
+        get
+        {
             return this.performerRefField;
         }
-        set {
+        set
+        {
             this.performerRefField = value;
         }
     }
@@ -3124,46 +3706,56 @@ public partial class tHumanTask : tTask {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("processTask", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tProcessTask : tTask {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("processTask", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tProcessTask : tTask
+{
+
     private tParameterMapping[] parameterMappingField;
-    
+
     private tExpression processRefExpressionField;
-    
+
     private System.Xml.XmlQualifiedName processRefField;
 
     private System.Xml.XmlQualifiedName sourceRefField;
 
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("parameterMapping")]
-    public tParameterMapping[] parameterMapping {
-        get {
+    public tParameterMapping[] parameterMapping
+    {
+        get
+        {
             return this.parameterMappingField;
         }
-        set {
+        set
+        {
             this.parameterMappingField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tExpression processRefExpression {
-        get {
+    public tExpression processRefExpression
+    {
+        get
+        {
             return this.processRefExpressionField;
         }
-        set {
+        set
+        {
             this.processRefExpressionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "processRef")]
-    public System.Xml.XmlQualifiedName processRef {
-        get {
+    public System.Xml.XmlQualifiedName processRef
+    {
+        get
+        {
             return this.processRefField;
         }
-        set {
+        set
+        {
             this.processRefField = value;
         }
     }
@@ -3188,44 +3780,54 @@ public partial class tProcessTask : tTask {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("parameterMapping", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tParameterMapping : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("parameterMapping", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tParameterMapping : tCmmnElement
+{
+
     private tExpression transformationField;
-    
+
     private string sourceRefField;
-    
+
     private string targetRefField;
-    
+
     /// <remarks/>
-    public tExpression transformation {
-        get {
+    public tExpression transformation
+    {
+        get
+        {
             return this.transformationField;
         }
-        set {
+        set
+        {
             this.transformationField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sourceRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sourceRef
+    {
+        get
+        {
             return this.sourceRefField;
         }
-        set {
+        set
+        {
             this.sourceRefField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string targetRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string targetRef
+    {
+        get
+        {
             return this.targetRefField;
         }
-        set {
+        set
+        {
             this.targetRefField = value;
         }
     }
@@ -3236,76 +3838,93 @@ public partial class tParameterMapping : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("process", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tProcess : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("process", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tProcess : tCmmnElement
+{
+
     private tProcessParameter[] inputField;
-    
+
     private tProcessParameter[] outputField;
-    
+
     private string nameField;
-    
+
     private System.Xml.XmlQualifiedName externalRefField;
-    
+
     private string implementationTypeField;
-    
-    public tProcess() {
+
+    public tProcess()
+    {
         this.implementationTypeField = "http://www.omg.org/spec/CMMN/ProcessType/Unspecified";
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("input")]
-    public tProcessParameter[] input {
-        get {
+    public tProcessParameter[] input
+    {
+        get
+        {
             return this.inputField;
         }
-        set {
+        set
+        {
             this.inputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("output")]
-    public tProcessParameter[] output {
-        get {
+    public tProcessParameter[] output
+    {
+        get
+        {
             return this.outputField;
         }
-        set {
+        set
+        {
             this.outputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName externalRef {
-        get {
+    public System.Xml.XmlQualifiedName externalRef
+    {
+        get
+        {
             return this.externalRefField;
         }
-        set {
+        set
+        {
             this.externalRefField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
     [System.ComponentModel.DefaultValueAttribute("http://www.omg.org/spec/CMMN/ProcessType/Unspecified")]
-    public string implementationType {
-        get {
+    public string implementationType
+    {
+        get
+        {
             return this.implementationTypeField;
         }
-        set {
+        set
+        {
             this.implementationTypeField = value;
         }
     }
@@ -3316,44 +3935,54 @@ public partial class tProcess : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("caseTask", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCaseTask : tTask {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("caseTask", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCaseTask : tTask
+{
+
     private tParameterMapping[] parameterMappingField;
-    
+
     private tExpression caseRefExpressionField;
-    
+
     private System.Xml.XmlQualifiedName caseRefField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("parameterMapping")]
-    public tParameterMapping[] parameterMapping {
-        get {
+    public tParameterMapping[] parameterMapping
+    {
+        get
+        {
             return this.parameterMappingField;
         }
-        set {
+        set
+        {
             this.parameterMappingField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tExpression caseRefExpression {
-        get {
+    public tExpression caseRefExpression
+    {
+        get
+        {
             return this.caseRefExpressionField;
         }
-        set {
+        set
+        {
             this.caseRefExpressionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName caseRef {
-        get {
+    public System.Xml.XmlQualifiedName caseRef
+    {
+        get
+        {
             return this.caseRefField;
         }
-        set {
+        set
+        {
             this.caseRefField = value;
         }
     }
@@ -3364,44 +3993,54 @@ public partial class tCaseTask : tTask {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("decisionTask", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tDecisionTask : tTask {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("decisionTask", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tDecisionTask : tTask
+{
+
     private tParameterMapping[] parameterMappingField;
-    
+
     private tExpression decisionRefExpressionField;
-    
+
     private System.Xml.XmlQualifiedName decisionRefField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("parameterMapping")]
-    public tParameterMapping[] parameterMapping {
-        get {
+    public tParameterMapping[] parameterMapping
+    {
+        get
+        {
             return this.parameterMappingField;
         }
-        set {
+        set
+        {
             this.parameterMappingField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tExpression decisionRefExpression {
-        get {
+    public tExpression decisionRefExpression
+    {
+        get
+        {
             return this.decisionRefExpressionField;
         }
-        set {
+        set
+        {
             this.decisionRefExpressionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName decisionRef {
-        get {
+    public System.Xml.XmlQualifiedName decisionRef
+    {
+        get
+        {
             return this.decisionRefField;
         }
-        set {
+        set
+        {
             this.decisionRefField = value;
         }
     }
@@ -3412,76 +4051,93 @@ public partial class tDecisionTask : tTask {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("decision", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tDecision : tCmmnElement {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("decision", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tDecision : tCmmnElement
+{
+
     private tDecisionParameter[] inputField;
-    
+
     private tDecisionParameter[] outputField;
-    
+
     private string nameField;
-    
+
     private System.Xml.XmlQualifiedName externalRefField;
-    
+
     private string implementationTypeField;
-    
-    public tDecision() {
+
+    public tDecision()
+    {
         this.implementationTypeField = "http://www.omg.org/spec/CMMN/DecisionType/Unspecified";
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("input")]
-    public tDecisionParameter[] input {
-        get {
+    public tDecisionParameter[] input
+    {
+        get
+        {
             return this.inputField;
         }
-        set {
+        set
+        {
             this.inputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("output")]
-    public tDecisionParameter[] output {
-        get {
+    public tDecisionParameter[] output
+    {
+        get
+        {
             return this.outputField;
         }
-        set {
+        set
+        {
             this.outputField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.Xml.XmlQualifiedName externalRef {
-        get {
+    public System.Xml.XmlQualifiedName externalRef
+    {
+        get
+        {
             return this.externalRefField;
         }
-        set {
+        set
+        {
             this.externalRefField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
     [System.ComponentModel.DefaultValueAttribute("http://www.omg.org/spec/CMMN/DecisionType/Unspecified")]
-    public string implementationType {
-        get {
+    public string implementationType
+    {
+        get
+        {
             return this.implementationTypeField;
         }
-        set {
+        set
+        {
             this.implementationTypeField = value;
         }
     }
@@ -3492,19 +4148,23 @@ public partial class tDecision : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("userEventListener", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tUserEventListener : tEventListener {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("userEventListener", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tUserEventListener : tEventListener
+{
+
     private string authorizedRoleRefsField;
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREFS")]
-    public string authorizedRoleRefs {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREFS")]
+    public string authorizedRoleRefs
+    {
+        get
+        {
             return this.authorizedRoleRefsField;
         }
-        set {
+        set
+        {
             this.authorizedRoleRefsField = value;
         }
     }
@@ -3515,33 +4175,40 @@ public partial class tUserEventListener : tEventListener {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("timerEventListener", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tTimerEventListener : tEventListener {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("timerEventListener", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tTimerEventListener : tEventListener
+{
+
     private tExpression timerExpressionField;
-    
+
     private tStartTrigger itemField;
-    
+
     /// <remarks/>
-    public tExpression timerExpression {
-        get {
+    public tExpression timerExpression
+    {
+        get
+        {
             return this.timerExpressionField;
         }
-        set {
+        set
+        {
             this.timerExpressionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("caseFileItemStartTrigger", typeof(tCaseFileItemStartTrigger))]
     [System.Xml.Serialization.XmlElementAttribute("planItemStartTrigger", typeof(tPlanItemStartTrigger))]
     [System.Xml.Serialization.XmlElementAttribute("timerStart", typeof(tStartTrigger))]
-    public tStartTrigger Item {
-        get {
+    public tStartTrigger Item
+    {
+        get
+        {
             return this.itemField;
         }
-        set {
+        set
+        {
             this.itemField = value;
         }
     }
@@ -3552,44 +4219,54 @@ public partial class tTimerEventListener : tEventListener {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("caseFileItemStartTrigger", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tCaseFileItemStartTrigger : tStartTrigger {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("caseFileItemStartTrigger", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tCaseFileItemStartTrigger : tStartTrigger
+{
+
     private CaseFileItemTransition standardEventField;
-    
+
     private bool standardEventFieldSpecified;
-    
+
     private string sourceRefField;
-    
+
     /// <remarks/>
-    public CaseFileItemTransition standardEvent {
-        get {
+    public CaseFileItemTransition standardEvent
+    {
+        get
+        {
             return this.standardEventField;
         }
-        set {
+        set
+        {
             this.standardEventField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool standardEventSpecified {
-        get {
+    public bool standardEventSpecified
+    {
+        get
+        {
             return this.standardEventFieldSpecified;
         }
-        set {
+        set
+        {
             this.standardEventFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sourceRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sourceRef
+    {
+        get
+        {
             return this.sourceRefField;
         }
-        set {
+        set
+        {
             this.sourceRefField = value;
         }
     }
@@ -3602,9 +4279,10 @@ public partial class tCaseFileItemStartTrigger : tStartTrigger {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("timerStart", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public abstract partial class tStartTrigger : tCmmnElement {
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("timerStart", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public abstract partial class tStartTrigger : tCmmnElement
+{
 }
 
 /// <remarks/>
@@ -3612,44 +4290,54 @@ public abstract partial class tStartTrigger : tCmmnElement {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("planItemStartTrigger", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tPlanItemStartTrigger : tStartTrigger {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("planItemStartTrigger", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tPlanItemStartTrigger : tStartTrigger
+{
+
     private PlanItemTransition standardEventField;
-    
+
     private bool standardEventFieldSpecified;
-    
+
     private string sourceRefField;
-    
+
     /// <remarks/>
-    public PlanItemTransition standardEvent {
-        get {
+    public PlanItemTransition standardEvent
+    {
+        get
+        {
             return this.standardEventField;
         }
-        set {
+        set
+        {
             this.standardEventField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool standardEventSpecified {
-        get {
+    public bool standardEventSpecified
+    {
+        get
+        {
             return this.standardEventFieldSpecified;
         }
-        set {
+        set
+        {
             this.standardEventFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
-    public string sourceRef {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "IDREF")]
+    public string sourceRef
+    {
+        get
+        {
             return this.sourceRefField;
         }
-        set {
+        set
+        {
             this.sourceRefField = value;
         }
     }
@@ -3660,259 +4348,318 @@ public partial class tPlanItemStartTrigger : tStartTrigger {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("definitions", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tDefinitions {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("definitions", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tDefinitions
+{
+
     private tImport[] importField;
-    
+
     private tCaseFileItemDefinition[] caseFileItemDefinitionField;
-    
+
     private tCase[] caseField;
-    
+
     private tProcess[] processField;
-    
+
     private tDecision[] decisionField;
-    
+
     private tExtensionElements extensionElementsField;
-    
+
     private tRelationship[] relationshipField;
-    
+
     private tArtifact[] itemsField;
-    
+
     private CMMNDI cMMNDIField;
-    
+
     private string idField;
-    
+
     private string nameField;
-    
+
     private string targetNamespaceField;
-    
+
     private string expressionLanguageField;
-    
+
     private string exporterField;
-    
+
     private string exporterVersionField;
-    
+
     private string authorField;
-    
+
     private System.DateTime creationDateField;
-    
+
     private bool creationDateFieldSpecified;
-    
+
     private System.Xml.XmlAttribute[] anyAttrField;
-    
-    public tDefinitions() {
+
+    public tDefinitions()
+    {
         this.expressionLanguageField = "http://www.w3.org/1999/XPath";
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("import")]
-    public tImport[] import {
-        get {
+    public tImport[] import
+    {
+        get
+        {
             return this.importField;
         }
-        set {
+        set
+        {
             this.importField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("caseFileItemDefinition")]
-    public tCaseFileItemDefinition[] caseFileItemDefinition {
-        get {
+    public tCaseFileItemDefinition[] caseFileItemDefinition
+    {
+        get
+        {
             return this.caseFileItemDefinitionField;
         }
-        set {
+        set
+        {
             this.caseFileItemDefinitionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("case")]
-    public tCase[] @case {
-        get {
+    public tCase[] @case
+    {
+        get
+        {
             return this.caseField;
         }
-        set {
+        set
+        {
             this.caseField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("process")]
-    public tProcess[] process {
-        get {
+    public tProcess[] process
+    {
+        get
+        {
             return this.processField;
         }
-        set {
+        set
+        {
             this.processField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("decision")]
-    public tDecision[] decision {
-        get {
+    public tDecision[] decision
+    {
+        get
+        {
             return this.decisionField;
         }
-        set {
+        set
+        {
             this.decisionField = value;
         }
     }
-    
+
     /// <remarks/>
-    public tExtensionElements extensionElements {
-        get {
+    public tExtensionElements extensionElements
+    {
+        get
+        {
             return this.extensionElementsField;
         }
-        set {
+        set
+        {
             this.extensionElementsField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("relationship")]
-    public tRelationship[] relationship {
-        get {
+    public tRelationship[] relationship
+    {
+        get
+        {
             return this.relationshipField;
         }
-        set {
+        set
+        {
             this.relationshipField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("artifact", typeof(tArtifact))]
     [System.Xml.Serialization.XmlElementAttribute("association", typeof(tAssociation))]
     [System.Xml.Serialization.XmlElementAttribute("textAnnotation", typeof(tTextAnnotation))]
-    public tArtifact[] Items {
-        get {
+    public tArtifact[] Items
+    {
+        get
+        {
             return this.itemsField;
         }
-        set {
+        set
+        {
             this.itemsField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
-    public CMMNDI CMMNDI {
-        get {
+    [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/CMMNDI")]
+    public CMMNDI CMMNDI
+    {
+        get
+        {
             return this.cMMNDIField;
         }
-        set {
+        set
+        {
             this.cMMNDIField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
-    public string id {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "ID")]
+    public string id
+    {
+        get
+        {
             return this.idField;
         }
-        set {
+        set
+        {
             this.idField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
+    public string name
+    {
+        get
+        {
             return this.nameField;
         }
-        set {
+        set
+        {
             this.nameField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-    public string targetNamespace {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
+    public string targetNamespace
+    {
+        get
+        {
             return this.targetNamespaceField;
         }
-        set {
+        set
+        {
             this.targetNamespaceField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
     [System.ComponentModel.DefaultValueAttribute("http://www.w3.org/1999/XPath")]
-    public string expressionLanguage {
-        get {
+    public string expressionLanguage
+    {
+        get
+        {
             return this.expressionLanguageField;
         }
-        set {
+        set
+        {
             this.expressionLanguageField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string exporter {
-        get {
+    public string exporter
+    {
+        get
+        {
             return this.exporterField;
         }
-        set {
+        set
+        {
             this.exporterField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string exporterVersion {
-        get {
+    public string exporterVersion
+    {
+        get
+        {
             return this.exporterVersionField;
         }
-        set {
+        set
+        {
             this.exporterVersionField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string author {
-        get {
+    public string author
+    {
+        get
+        {
             return this.authorField;
         }
-        set {
+        set
+        {
             this.authorField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public System.DateTime creationDate {
-        get {
+    public System.DateTime creationDate
+    {
+        get
+        {
             return this.creationDateField;
         }
-        set {
+        set
+        {
             this.creationDateField = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool creationDateSpecified {
-        get {
+    public bool creationDateSpecified
+    {
+        get
+        {
             return this.creationDateFieldSpecified;
         }
-        set {
+        set
+        {
             this.creationDateFieldSpecified = value;
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-    public System.Xml.XmlAttribute[] AnyAttr {
-        get {
+    public System.Xml.XmlAttribute[] AnyAttr
+    {
+        get
+        {
             return this.anyAttrField;
         }
-        set {
+        set
+        {
             this.anyAttrField = value;
         }
     }
@@ -3923,45 +4670,55 @@ public partial class tDefinitions {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL")]
-[System.Xml.Serialization.XmlRootAttribute("import", Namespace="http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable=false)]
-public partial class tImport {
-    
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL")]
+[System.Xml.Serialization.XmlRootAttribute("import", Namespace = "http://www.omg.org/spec/CMMN/20151109/MODEL", IsNullable = false)]
+public partial class tImport
+{
+
     private string locationField;
-    
+
     private string namespaceField;
-    
+
     private string importTypeField;
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string location {
-        get {
+    public string location
+    {
+        get
+        {
             return this.locationField;
         }
-        set {
+        set
+        {
             this.locationField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-    public string @namespace {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
+    public string @namespace
+    {
+        get
+        {
             return this.namespaceField;
         }
-        set {
+        set
+        {
             this.namespaceField = value;
         }
     }
-    
+
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
-    public string importType {
-        get {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
+    public string importType
+    {
+        get
+        {
             return this.importTypeField;
         }
-        set {
+        set
+        {
             this.importTypeField = value;
         }
     }

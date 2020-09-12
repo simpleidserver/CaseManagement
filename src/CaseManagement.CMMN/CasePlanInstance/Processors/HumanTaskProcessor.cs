@@ -1,20 +1,21 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures.ExternalEvts;
+using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CaseManagement.CMMN.CasePlanInstance.Processors.Steps
+namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
     public class HumanTaskProcessor : BaseTaskOrStageProcessor<HumanTaskElementInstance>
     {
         public HumanTaskProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        protected override async Task ProtectedExecute(ExecutionContext executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
+        protected override async Task ProtectedExecute(CMMNExecutionContext executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
         {
-            var subscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
-            if (subscription.IsCaptured)
+            executionContext.CasePlanInstance.TryAddWorkerTask(elt.Id);
+            var completeSubscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
+            if (completeSubscription.IsCaptured)
             {
-                executionContext.CasePlanInstance.MakeTransition(elt, Domains.CMMNTransitions.Complete);
+                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Complete);
             }
         }
     }

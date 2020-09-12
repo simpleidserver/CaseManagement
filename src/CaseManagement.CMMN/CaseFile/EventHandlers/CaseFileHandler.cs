@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.Events;
-using CaseManagement.CMMN.Infrastructures;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures.DomainEvts;
 using CaseManagement.CMMN.Persistence;
 using System.Collections.Generic;
@@ -22,28 +21,27 @@ namespace CaseManagement.CMMN.CaseFile.EventHandlers
         public async Task Handle(CaseFileAddedEvent @event, CancellationToken cancellationToken)
         {
             var caseFile = Domains.CaseFileAggregate.New(new List<DomainEvent>
-            {
-                @event
-            });
-            _caseFileCommandRepository.Add(caseFile);
-            await _caseFileCommandRepository.SaveChanges();
+                {
+                    @event
+                });
+            await _caseFileCommandRepository.Add(caseFile, cancellationToken);
+            await _caseFileCommandRepository.SaveChanges(cancellationToken);
         }
 
         public async Task Handle(CaseFileUpdatedEvent @event, CancellationToken cancellationToken)
         {
             var caseFile = await _caseFileQueryRepository.Get(@event.AggregateId, cancellationToken);
             caseFile.Handle(@event);
-            _caseFileCommandRepository.Update(caseFile);
-            await _caseFileCommandRepository.SaveChanges();
-
+            await _caseFileCommandRepository.Update(caseFile, cancellationToken);
+            await _caseFileCommandRepository.SaveChanges(cancellationToken);
         }
 
         public async Task Handle(CaseFilePublishedEvent @event, CancellationToken cancellationToken)
         {
             var caseFile = await _caseFileQueryRepository.Get(@event.AggregateId, cancellationToken);
             caseFile.Handle(@event);
-            _caseFileCommandRepository.Update(caseFile);
-            await _caseFileCommandRepository.SaveChanges();
+            await _caseFileCommandRepository.Update(caseFile, cancellationToken);
+            await _caseFileCommandRepository.SaveChanges(cancellationToken);
         }
     }
 }

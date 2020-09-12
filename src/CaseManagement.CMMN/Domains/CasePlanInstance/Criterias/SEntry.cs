@@ -15,6 +15,7 @@ namespace CaseManagement.CMMN.Domains
         OnPartTypes Type { get; }
     }
 
+    [Serializable]
     public class PlanItemOnPart : IOnPart
     {
         /// <summary>
@@ -39,6 +40,7 @@ namespace CaseManagement.CMMN.Domains
         }
     }
 
+    [Serializable]
     public class CaseFileItemOnPart : IOnPart
     {
         /// <summary>
@@ -63,6 +65,7 @@ namespace CaseManagement.CMMN.Domains
         }
     }
 
+    [Serializable]
     public class IfPart : ICloneable
     {
         // contextRef ?
@@ -80,6 +83,7 @@ namespace CaseManagement.CMMN.Domains
         }
     }
 
+    [Serializable]
     public class SEntry : ICloneable
     {
         public SEntry(string name)

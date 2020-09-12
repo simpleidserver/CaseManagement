@@ -1,10 +1,10 @@
-﻿using CaseManagement.CMMN.Infrastructures;
-using System;
+﻿using System;
 using System.Diagnostics;
 
-namespace CaseManagement.CMMN.Domains.Events
+namespace CaseManagement.CMMN.Domains
 {
-    [DebuggerDisplay("Case file '{AggregateId}' is added by '{Owner}'")]
+    [DebuggerDisplay("Case file {AggregateId} is added by {Owner}")]
+    [Serializable]
     public class CaseFileAddedEvent : DomainEvent
     {
         public CaseFileAddedEvent(string id, string aggregateId, int version, string fileId, string name, string description, DateTime createDateTime, string owner, string payload) : base(id, aggregateId, version)

@@ -2,6 +2,7 @@
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public class Criteria : ICloneable
     {
         public Criteria(string name)

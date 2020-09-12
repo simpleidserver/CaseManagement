@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Domains.Events;
+﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructures.DomainEvts;
 using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence;
@@ -22,9 +22,9 @@ namespace CaseManagement.CMMN.CasePlan.EventHandlers
         {
             var caseFile = await _caseFileQueryRepository.Get(@event.AggregateId, cancellationToken);
             var tDefinitions = CMMNParser.ParseWSDL(caseFile.Payload);
-            foreach(var casePlan in CMMNParser.ExtractCasePlans(tDefinitions, caseFile))
+            foreach (var casePlan in CMMNParser.ExtractCasePlans(tDefinitions, caseFile))
             {
-                _casePlanCommandRepository.Add(casePlan);
+                await _casePlanCommandRepository.Add(casePlan, cancellationToken);
             }
 
             await _casePlanCommandRepository.SaveChanges(cancellationToken);

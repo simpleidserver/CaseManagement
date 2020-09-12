@@ -1,13 +1,15 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.CMMN.Persistence.Responses;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Persistence
 {
-    public interface ICasePlanInstanceQueryRepository
+    public interface ICasePlanInstanceQueryRepository : IDisposable
     {
-        Task<CasePlanInstanceAggregate> Get(string id);
-        Task<FindResponse<CasePlanInstanceAggregate>> Find(FindWorkflowInstanceParameter parameter);
+        Task<CasePlanInstanceAggregate> Get(string id, CancellationToken token);
+        Task<FindResponse<CasePlanInstanceAggregate>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token);
     }
 }

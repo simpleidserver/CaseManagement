@@ -1,5 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures.ExternalEvts;
+using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,20 +16,26 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _processorFactory = processorFactory;
         }
 
-        protected override async Task ProtectedExecute(ExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
+        protected override async Task ProtectedExecute(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
         {
             var executionBranch = ExecutionBranch.Build(stageElt.Children);
             await ExecuteBranch(executionContext, executionBranch, cancellationToken);
             if (stageElt.Children.All(_ => IsElementCompleted(_)))
             {
                 executionContext.CasePlanInstance.MakeTransition(stageElt, CMMNTransitions.Complete);
+                return;
+            }
+
+            if (executionContext.CasePlanInstance.IsExitCriteriaSatisfied(stageElt))
+            {
+                executionContext.CasePlanInstance.MakeTransition(stageElt, CMMNTransitions.Terminate);
             }
         }
 
-        private async Task ExecuteBranch(ExecutionContext executionContext, ExecutionBranch branch, CancellationToken cancellationToken)
+        private async Task ExecuteBranch(CMMNExecutionContext executionContext, ExecutionBranch branch, CancellationToken cancellationToken)
         {
             var taskLst = new List<Task>();
-            foreach(var node in branch.Nodes)
+            foreach (var node in branch.Nodes)
             {
                 taskLst.Add(HandleCasePlan(executionContext, node, cancellationToken));
             }
@@ -41,7 +47,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private Task HandleCasePlan(ExecutionContext executionContext, CasePlanElementInstance casePlanElementInstance, CancellationToken token)
+        private Task HandleCasePlan(CMMNExecutionContext executionContext, CasePlanElementInstance casePlanElementInstance, CancellationToken token)
         {
             if (!executionContext.CasePlanInstance.IsEntryCriteriaSatisfied(casePlanElementInstance.Id))
             {
@@ -55,8 +61,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         {
             var stageOrTask = planElementInstance as BaseTaskOrStageElementInstance;
             var milestone = planElementInstance as MilestoneElementInstance;
-            if (stageOrTask != null && (stageOrTask.State == TaskStageStates.Completed || 
-                stageOrTask.State == TaskStageStates.Terminated || 
+            if (stageOrTask != null && (stageOrTask.State == TaskStageStates.Completed ||
+                stageOrTask.State == TaskStageStates.Terminated ||
                 stageOrTask.State == TaskStageStates.Disabled))
             {
                 return true;

@@ -1,38 +1,20 @@
-﻿using CaseManagement.CMMN;
-using CaseManagement.CMMN.Infrastructures;
-using CaseManagement.CMMN.Infrastructures.Bus;
-using CaseManagement.CMMN.Infrastructures.Jobs.Notifications;
+﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Infrastructure.Jobs;
+using CaseManagement.CMMN.Infrastructure.Jobs.Notifications;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace CaseManagement.Workflow.Infrastructure.Bus
+namespace CaseManagement.CMMN.Infrastructure.Bus
 {
     public static class MessageBrokerExtensions
     {
-        public static Task QueueExternalEvent(this IMessageBroker messageBroker, string evtName, string casePlanInstanceId, string casePlanElementInstanceId = null)
+        public static Task QueueDomainEvents(this IMessageBroker messageBroker, ICollection<DomainEvent> domainEvts, CancellationToken token)
         {
-            return messageBroker.Queue(CMMNConstants.QueueNames.ExternalEvents, new ExternalEventNotification(Guid.NewGuid().ToString())
-            {
-                CasePlanElementInstanceId = casePlanElementInstanceId,
-                CasePlanInstanceId = casePlanInstanceId,
-                EvtName = evtName
-            });
-        }
-
-        public static Task QueueCasePlanInstance(this IMessageBroker messageBroker, string casePlanInstanceId)
-        {
-            return messageBroker.Queue(CMMNConstants.QueueNames.CasePlanInstances, new CasePlanInstanceNotification(Guid.NewGuid().ToString())
-            {
-                CasePlanInstanceId = casePlanInstanceId
-            });
-        }
-
-        public static Task QueueDomainEvents(this IMessageBroker messageBroker, ICollection<DomainEvent> domainEvts)
-        {
-            return messageBroker.Queue(CMMNConstants.QueueNames.DomainEvents, new DomainEventNotification(Guid.NewGuid().ToString())
+            return messageBroker.Queue("domainevts", new DomainEventNotification(Guid.NewGuid().ToString())
             {
                 Evts = domainEvts.Select(_ =>
                 new DomainEventNotificationRecord
@@ -40,7 +22,25 @@ namespace CaseManagement.Workflow.Infrastructure.Bus
                     Content = JsonConvert.SerializeObject(_),
                     Type = _.GetType().FullName
                 }).ToList()
-            });
+            }, token);
+        }
+
+        public static Task QueueExternalEvent(this IMessageBroker messageBroker, string evtName, string casePlanInstanceId, string casePlanElementInstanceId, CancellationToken token)
+        {
+            return messageBroker.Queue(CMMNConstants.QueueNames.ExternalEvents, new ExternalEventNotification(Guid.NewGuid().ToString())
+            {
+                CasePlanElementInstanceId = casePlanElementInstanceId,
+                CasePlanInstanceId = casePlanInstanceId,
+                EvtName = evtName
+            }, token);
+        }
+
+        public static Task QueueCasePlanInstance(this IMessageBroker messageBroker, string casePlanInstanceId, CancellationToken token)
+        {
+            return messageBroker.Queue(CMMNConstants.QueueNames.CasePlanInstances, new CasePlanInstanceNotification(Guid.NewGuid().ToString())
+            {
+                CasePlanInstanceId = casePlanInstanceId
+            }, token);
         }
     }
 }

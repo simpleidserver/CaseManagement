@@ -1,15 +1,21 @@
-﻿
-using System;
+﻿using System;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class MilestoneElementInstance : CasePlanElementInstance
+    [Serializable]
+    public class MilestoneElementInstance : BaseMilestoneOrTimerElementInstance
     {
-        public MilestoneEventStates? State { get; set; }
+        public override string Type { get => "milestone"; }
 
-        protected override void UpdateTransition(CMMNTransitions transition, DateTime updateDateTime)
+        public override object Clone()
         {
-            State = GetMilestoneOrEventListenerState(State, transition);
+            var result = new MilestoneElementInstance
+            {
+                State = State
+            };
+            FeedCasePlanElement(result);
+            FeedMilestoneOrTimer(result);
+            return result;
         }
     }
 }

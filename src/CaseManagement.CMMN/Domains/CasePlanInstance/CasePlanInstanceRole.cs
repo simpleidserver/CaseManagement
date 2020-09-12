@@ -1,13 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
     [Serializable]
-    public class CasePlanInstanceRole
+    public class CasePlanInstanceRole : ICloneable
     {
+        public CasePlanInstanceRole()
+        {
+            Claims = new List<KeyValuePair<string, string>>();
+        }
+
         public string Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<KeyValuePair<string, string>> Claims { get; set; }
+        public ICollection<KeyValuePair<string, string>> Claims { get; set; }
+
+        public object Clone()
+        {
+            return new CasePlanInstanceRole
+            {
+                Id = Id,
+                Name = Name,
+                Claims = Claims.ToList()
+            };
+        }
     }
 }

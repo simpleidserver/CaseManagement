@@ -1,10 +1,10 @@
-﻿using CaseManagement.CMMN.Infrastructures;
-using System;
+﻿using System;
 using System.Diagnostics;
 
-namespace CaseManagement.CMMN.Domains.Events
+namespace CaseManagement.CMMN.Domains
 {
     [DebuggerDisplay("Case file '{AggregateId}' is updated")]
+    [Serializable]
     public class CaseFileUpdatedEvent : DomainEvent
     {
         public CaseFileUpdatedEvent(string id, string aggregateId, int version, DateTime updateDatetime, string name, string description, string payload) : base(id, aggregateId, version)

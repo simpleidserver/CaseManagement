@@ -2,15 +2,22 @@
 
 namespace CaseManagement.CMMN.Domains
 {
-    public class BaseTaskOrStageElementInstance : CasePlanElementInstance
+    public abstract class BaseTaskOrStageElementInstance : CasePlanElementInstance
     {
         public ManualActivationRule ManualActivationRule { get; set; }
         public TaskStageStates? State { get; set; }
         public bool IsBlocking { get; set; }
 
-        public bool IsManualActivationRuleSatisfied()
+        public bool IsManualActivationRuleSatisfied(CasePlanInstanceExecutionContext executionContext)
         {
-            return ManualActivationRule.IsSatisfied();
+            return ManualActivationRule.IsSatisfied(executionContext);
+        }
+
+        protected void FeedTaskOrStage(BaseTaskOrStageElementInstance elt)
+        {
+            elt.ManualActivationRule = (ManualActivationRule)ManualActivationRule?.Clone();
+            elt.State = State;
+            elt.IsBlocking = IsBlocking;
         }
 
         protected override void UpdateTransition(CMMNTransitions transition, DateTime executionDateTime)
@@ -26,10 +33,6 @@ namespace CaseManagement.CMMN.Domains
             {
                 State = GetTaskStageState(State, transition);
             }
-
-            Process(transition, executionDateTime);
         }
-
-        protected virtual void Process(CMMNTransitions transition, DateTime executionDateTime) { }
     }
 }

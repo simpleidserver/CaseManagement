@@ -1,14 +1,14 @@
-﻿namespace CaseManagement.CMMN.CasePlanInstance.Commands
+﻿using MediatR;
+
+namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
-    public class CloseCommand
+    public class CloseCommand : IRequest<bool>
     {
-        public CloseCommand(string caseInstanceId)
+        public CloseCommand(string casePlanInstanceId)
         {
-            CaseInstanceId = caseInstanceId;
+            CasePlanInstanceId = casePlanInstanceId;
         }
 
-        public string CaseInstanceId { get; set; }
-        public bool BypassUserValidation { get; set; }
-        public string Performer { get; set; }
+        public string CasePlanInstanceId { get; set; }
     }
 }

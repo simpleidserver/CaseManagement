@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Domains;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Extensions
@@ -21,7 +20,7 @@ namespace CaseManagement.CMMN.Extensions
                 lst.Add(result);
             }
 
-            foreach(var l in lst)
+            foreach (var l in lst)
             {
                 bag.Add(l);
             }
