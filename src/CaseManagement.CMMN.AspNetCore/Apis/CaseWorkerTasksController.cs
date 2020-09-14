@@ -1,8 +1,8 @@
-﻿using CaseManagement.CMMN.AspNetCore.Extensions;
-using CaseManagement.CMMN.CaseWorkerTask;
+﻿using CaseManagement.CMMN.CaseWorkerTask.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.AspNetCore.Apis
@@ -10,19 +10,18 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     [Route(CMMNConstants.RouteNames.CaseWorkerTasks)]
     public class CaseWorkerTasksController : Controller
     {
-        private readonly ICaseWorkerTaskService _caseWorkerTaskService;
+        private readonly IMediator _mediator;
 
-        public CaseWorkerTasksController(ICaseWorkerTaskService caseWorkerTaskService)
+        public CaseWorkerTasksController(IMediator mediator)
         {
-            _caseWorkerTaskService = caseWorkerTaskService;
+            _mediator = mediator;
         }
 
-        [HttpGet("search")]
+        [HttpPost("search")]
         [Authorize("get_caseworkertasks")]
-        public async Task<IActionResult> Search()
+        public async Task<IActionResult> Search([FromBody] SearchCaseWorkerTaskQuery query, CancellationToken token)
         {
-            var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _caseWorkerTaskService.Search(query);
+            var result = await _mediator.Send(query, token);
             return new OkObjectResult(result);
         }
     }

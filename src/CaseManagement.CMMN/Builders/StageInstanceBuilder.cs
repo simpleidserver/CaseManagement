@@ -4,19 +4,18 @@ using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Builders
 {
-    public class StageInstanceBuilder : CaseElementInstanceBuilder
+    public class StageInstanceBuilder : BaseTaskInstanceBuilder
     {
-
-        protected StageInstanceBuilder(string id, string name) : base(id, name)
+        protected StageInstanceBuilder(string casePlanIntanceId, string eltId, string name) : base(casePlanIntanceId, eltId, name)
         {
-            Builders = new List<CaseElementInstanceBuilder>();
+            Builders = new List<BaseCasePlanItemEltInstanceBuilder>();
         }
 
-        protected ICollection<CaseElementInstanceBuilder> Builders;
+        protected ICollection<BaseCasePlanItemEltInstanceBuilder> Builders;
 
         public StageInstanceBuilder AddEmptyTask(string id, string name, Action<EmptyTaskInstanceBuilder> callback = null)
         {
-            var stepBuilder = new EmptyTaskInstanceBuilder(id, name);
+            var stepBuilder = new EmptyTaskInstanceBuilder(CasePlanInstanceId, id, name);
             if (callback != null)
             {
                 callback(stepBuilder);
@@ -28,7 +27,7 @@ namespace CaseManagement.CMMN.Builders
 
         public StageInstanceBuilder AddHumanTask(string id, string name, string performerRef, Action<HumanTaskInstanceBuilder> callback = null)
         {
-            var stepBuilder = new HumanTaskInstanceBuilder(id, name)
+            var stepBuilder = new HumanTaskInstanceBuilder(CasePlanInstanceId, id, name)
             {
                 PerformerRef = performerRef
             };
@@ -43,7 +42,7 @@ namespace CaseManagement.CMMN.Builders
 
         public StageInstanceBuilder AddStage(string id, string name, Action<StageInstanceBuilder> callback = null)
         {
-            var stepBuilder = new StageInstanceBuilder(id, name);
+            var stepBuilder = new StageInstanceBuilder(CasePlanInstanceId, id, name);
             if (callback != null)
             {
                 callback(stepBuilder);
@@ -55,7 +54,7 @@ namespace CaseManagement.CMMN.Builders
 
         public StageInstanceBuilder AddMilestone(string id, string name, Action<MilestoneInstanceBuilder> callback = null)
         {
-            var stepBuilder = new MilestoneInstanceBuilder(id, name);
+            var stepBuilder = new MilestoneInstanceBuilder(CasePlanInstanceId, id, name);
             if (callback != null)
             {
                 callback(stepBuilder);
@@ -65,9 +64,9 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
-        public StageInstanceBuilder AddFileItem(string id, string name, Action<FileItemInstanceBuilder> callback = null)
+        public StageInstanceBuilder AddTimerEventListener(string id, string name, Action<TimerEventListenerBuilder> callback = null)
         {
-            var stepBuilder = new FileItemInstanceBuilder(id, name);
+            var stepBuilder = new TimerEventListenerBuilder(CasePlanInstanceId, id, name);
             if (callback != null)
             {
                 callback(stepBuilder);
@@ -77,24 +76,20 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
-        public static StageInstanceBuilder New(string id, string name)
+        protected override BaseCaseEltInstance InternalBuild()
         {
-            return new StageInstanceBuilder(id, name);
-        }
-
-        protected override CasePlanElementInstance InternalBuild()
-        {
-            var result = new StageElementInstance
-            {
-                Id = Id,
-                Name = Name
-            };
+            var result = new StageElementInstance();
             foreach(var builder in Builders)
             {
-                result.AddChild(builder.Build());
+                result.AddChild(builder.Build() as BaseCasePlanItemInstance);
             }
 
             return result;
+        }
+
+        protected override string BuildId()
+        {
+            return StageElementInstance.BuildId(CasePlanInstanceId, EltId, 0);
         }
     }
 }

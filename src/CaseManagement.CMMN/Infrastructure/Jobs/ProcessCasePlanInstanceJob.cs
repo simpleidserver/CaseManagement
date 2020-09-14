@@ -4,7 +4,6 @@ using CaseManagement.CMMN.Infrastructure.Bus;
 using CaseManagement.CMMN.Infrastructure.EvtStore;
 using CaseManagement.CMMN.Infrastructure.Jobs.Notifications;
 using CaseManagement.CMMN.Infrastructure.Lock;
-using CaseManagement.CMMN.Persistence;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
@@ -37,9 +36,9 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
                 return;
             }
 
+            var casePlanInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(notification.CasePlanInstanceId, CasePlanInstanceAggregate.GetStreamName(notification.CasePlanInstanceId));
             try
             {
-                var casePlanInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(notification.CasePlanInstanceId, CasePlanInstanceAggregate.GetStreamName(notification.CasePlanInstanceId));
                 if (casePlanInstance == null || string.IsNullOrWhiteSpace(casePlanInstance.AggregateId))
                 {
                     throw new InvalidOperationException($"case plan instance '{notification.CasePlanInstanceId}' doesn't exist");
@@ -47,10 +46,6 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
 
                 await _casePlanInstanceProcessor.Execute(casePlanInstance, cancellationToken);
                 await _commitAggregateHelper.Commit(casePlanInstance, casePlanInstance.GetStreamName(), cancellationToken);
-            }
-            catch(Exception e)
-            {
-                string tto = "";
             }
             finally
             {

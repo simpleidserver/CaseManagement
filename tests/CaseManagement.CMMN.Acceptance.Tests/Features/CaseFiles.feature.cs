@@ -76,12 +76,12 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Features
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Add case file and check it is created")]
+        [Xunit.FactAttribute(DisplayName="Publish case file and check caseplan is inserted")]
         [Xunit.TraitAttribute("FeatureTitle", "CaseFiles")]
-        [Xunit.TraitAttribute("Description", "Add case file and check it is created")]
-        public virtual void AddCaseFileAndCheckItIsCreated()
+        [Xunit.TraitAttribute("Description", "Publish case file and check caseplan is inserted")]
+        public virtual void PublishCaseFileAndCheckCaseplanIsInserted()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add case file and check it is created", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Publish case file and check caseplan is inserted", null, ((string[])(null)));
 #line 4
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -100,24 +100,32 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10
- testRunner.And("extract \'id\' from JSON body into \'casefileid\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract \'id\' from JSON body into \'caseFileId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 11
- testRunner.And("execute HTTP GET request \'http://localhost/case-files/$casefileid$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("poll \'http://localhost/case-files/$caseFileId$\', until \'name\'=\'name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 12
- testRunner.And("extract JSON from body into \'casefile\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract JSON from body into \'caseFile\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 13
- testRunner.And("execute HTTP GET request \'http://localhost/case-files/$casefileid$/publish\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("execute HTTP GET request \'http://localhost/case-files/$caseFileId$/publish\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 14
- testRunner.And("execute HTTP GET request \'http://localhost/case-plans/search?case_file=$casefilei" +
-                    "d$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("poll \'http://localhost/case-files/$caseFileId$\', until \'status\'=\'Published\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table2.AddRow(new string[] {
+                        "caseFileId",
+                        "$caseFileId$"});
 #line 15
- testRunner.And("extract JSON from body into \'casedefinition\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 17
- testRunner.Then("extract JSON \'casefile\', JSON \'name\'=\'name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table2, "And ");
 #line 18
- testRunner.Then("extract JSON \'casefile\', JSON \'description\'=\'description\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 19
- testRunner.Then("extract JSON \'casedefinition\', JSON \'total_length\'=\'1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("extract JSON from body into \'casePlans\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 20
+ testRunner.Then("extract JSON \'caseFile\', JSON \'name\'=\'name\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 21
+ testRunner.Then("extract JSON \'caseFile\', JSON \'description\'=\'description\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 22
+ testRunner.Then("extract JSON \'casePlans\', JSON \'totalLength\'=\'1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

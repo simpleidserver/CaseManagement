@@ -1,7 +1,6 @@
 ﻿using CaseManagement.CMMN.Infrastructure.Bus;
 using Microsoft.Extensions.Options;
 using System;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -69,7 +68,7 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
                     if (dequeue.NbRetry < Options.NbRetry)
                     {
                         var elapsedTime = DateTime.UtcNow.AddMilliseconds(Options.DeadLetterTimeMS);
-                        await MessageBroker.QueueDeadLetter(QueueName, dequeue, elapsedTime, cancellationToken);
+                        await MessageBroker.QueueScheduleMessage(QueueName, dequeue, elapsedTime, cancellationToken);
                     }
                 }
             }

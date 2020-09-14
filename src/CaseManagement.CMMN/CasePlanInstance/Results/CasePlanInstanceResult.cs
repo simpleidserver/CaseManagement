@@ -14,7 +14,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
         public Dictionary<string, string> ExecutionContext { get; set; }
         public ICollection<CasePlanInstanceFileItemResult> Files { get; set; }
         public ICollection<CasePlanInstanceRoleResult> Roles { get; set; }
-        public ICollection<CasePlanElementInstanceResult> Children { get; set; }
+        public ICollection<CasePlanItemInstanceResult> Children { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
 
@@ -50,7 +50,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             }
         }
 
-        public class CasePlanElementInstanceResult
+        public class CasePlanItemInstanceResult
         {
             public string Id { get; set; }
             public string Name { get; set; }
@@ -58,28 +58,28 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             public string State { get; set; }
             public ICollection<TransitionHistoryResult> TransitionHistories { get; set; }
 
-            public static CasePlanElementInstanceResult ToDto(CasePlanElementInstance casePlanElementInstance)
+            public static CasePlanItemInstanceResult ToDto(BaseCasePlanItemInstance casePlanItemInstance)
             {
                 string stateStr = null;
-                if (casePlanElementInstance is BaseTaskOrStageElementInstance)
+                if (casePlanItemInstance is BaseTaskOrStageElementInstance)
                 {
-                    var state = ((BaseTaskOrStageElementInstance)casePlanElementInstance).State;
+                    var state = ((BaseTaskOrStageElementInstance)casePlanItemInstance).State;
                     stateStr = state == null ? null : Enum.GetName(typeof(TaskStageStates), state);
                 }
 
-                if (casePlanElementInstance is BaseMilestoneOrTimerElementInstance)
+                if (casePlanItemInstance is BaseMilestoneOrTimerElementInstance)
                 {
-                    var state = ((BaseMilestoneOrTimerElementInstance)casePlanElementInstance).State;
+                    var state = ((BaseMilestoneOrTimerElementInstance)casePlanItemInstance).State;
                     stateStr = state == null ? null : Enum.GetName(typeof(MilestoneEventStates), state);
                 }
 
-                return new CasePlanElementInstanceResult
+                return new CasePlanItemInstanceResult
                 {
-                    Id = casePlanElementInstance.Id,
-                    Name = casePlanElementInstance.Name,
+                    Id = casePlanItemInstance.Id,
+                    Name = casePlanItemInstance.Name,
                     State = stateStr,
-                    Type = casePlanElementInstance.Type,
-                    TransitionHistories = casePlanElementInstance.TransitionHistories.Select(_ => TransitionHistoryResult.ToDto(_)).ToList()
+                    Type = Enum.GetName(typeof(CasePlanElementInstanceTypes), casePlanItemInstance.Type).ToUpperInvariant(),
+                    TransitionHistories = casePlanItemInstance.TransitionHistories.Select(_ => TransitionHistoryResult.ToDto(_)).ToList()
                 };
             }
         }
@@ -109,7 +109,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                 Roles = casePlanInstance.Roles.Select(_ => CasePlanInstanceRoleResult.ToDto(_)).ToList(),
                 CreateDateTime = casePlanInstance.CreateDateTime,
                 UpdateDateTime = casePlanInstance.UpdateDateTime,
-                Children = casePlanInstance.GetFlatListChildren().Select(_ => CasePlanElementInstanceResult.ToDto(_)).ToList(),
+                Children = casePlanInstance.GetFlatListCasePlanItems().Select(_ => CasePlanItemInstanceResult.ToDto(_)).ToList(),
                 Files = casePlanInstance.Files.Select(_ => CasePlanInstanceFileItemResult.ToDTO(_)).ToList(),
                 ExecutionContext = casePlanInstance.ExecutionContext == null ? new Dictionary<string, string>() : casePlanInstance.ExecutionContext.Variables.ToDictionary(k => k.Key, k => k.Value)
             };

@@ -5,11 +5,21 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public abstract class BaseProcessor<T> : IProcessor<T> where T : CasePlanElementInstance
+    public abstract class BaseCaseEltInstanceProcessor<T> : IProcessor<T> where T : BaseCaseEltInstance
     {
-        public BaseProcessor(ISubscriberRepository subscriberRepository)
+        public BaseCaseEltInstanceProcessor(ISubscriberRepository subscriberRepository)
         {
             SubscriberRepository = subscriberRepository;
+        }
+
+        public Task Execute(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
+        {
+            if (elt.LatestTransition == null)
+            {
+                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Create);
+            }
+
+            return Handle(executionContext, elt, cancellationToken);
         }
 
         protected ISubscriberRepository SubscriberRepository { get; private set; }
@@ -24,6 +34,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             return SubscriberRepository.TryReset(executionContext.CasePlanInstance.AggregateId, casePlanElementInstance.Id, evtName, cancellationToken);
         }
 
-        public abstract Task Execute(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task Handle(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
     }
 }

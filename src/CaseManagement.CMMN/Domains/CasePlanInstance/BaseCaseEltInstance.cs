@@ -3,36 +3,28 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public abstract class CasePlanElementInstance : ICloneable
+    public abstract class BaseCaseEltInstance : ICloneable
     {
-        public CasePlanElementInstance()
+        public BaseCaseEltInstance()
         {
-            EntryCriterions = new List<Criteria>();
-            ExitCriterions = new List<Criteria>();
             TransitionHistories = new ConcurrentBag<CasePlanElementInstanceTransitionHistory>();
         }
 
+        #region Properties
+
         public string Id { get; set; }
-        public string EldId { get; set; }
-        public int NbOccurrence { get; set; }
+        public string EltId { get; set; }
         public string Name { get; set; }
-        public RepetitionRule RepetitionRule { get; set; }
         public ConcurrentBag<CasePlanElementInstanceTransitionHistory> TransitionHistories { get; set; }
-        public abstract string Type { get; }
-
-        /// <summary>
-        /// Zero or more EntryCriterion for that PlanItem. [0...*].
-        /// An EntryCriterion represents the condition for a PlanItem to become available.
-        /// </summary>
-        public ICollection<Criteria> EntryCriterions { get; set; }
-        public ICollection<Criteria> ExitCriterions { get; set; }
-
+        public abstract CasePlanElementInstanceTypes Type { get; }
         public CMMNTransitions? LatestTransition => TransitionHistories.OrderByDescending(_ => _.ExecutionDateTime).FirstOrDefault()?.Transition;
+
+        #endregion
+
+        #region Update state
 
         public void MakeTransition(CMMNTransitions transition, DateTime executionDateTime)
         {
@@ -297,31 +289,16 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
+        #endregion
+
         public abstract object Clone();
 
-        protected void FeedCasePlanElement(CasePlanElementInstance elt)
+        protected void FeedCaseEltInstance(BaseCaseEltInstance elt)
         {
             elt.Id = Id;
             elt.Name = Name;
-            elt.RepetitionRule = (RepetitionRule)RepetitionRule?.Clone();
+            elt.EltId = EltId;
             elt.TransitionHistories = new ConcurrentBag<CasePlanElementInstanceTransitionHistory>(TransitionHistories.Select(_ => (CasePlanElementInstanceTransitionHistory)_.Clone()));
-            elt.EntryCriterions = EntryCriterions.Select(_ => (Criteria)_.Clone()).ToList();
-            elt.ExitCriterions = ExitCriterions.Select(_ => (Criteria)_.Clone()).ToList();
-        }
-
-        public static string BuildCasePlanElementInstanceId(string casePlanInstanceId, string eltId, int nbOccurrence)
-        {
-            using (var sha256Hash = SHA256.Create())
-            {
-                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes($"{casePlanInstanceId}{eltId}{nbOccurrence}"));
-                var builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-
-                return builder.ToString();
-            }
         }
     }
 }

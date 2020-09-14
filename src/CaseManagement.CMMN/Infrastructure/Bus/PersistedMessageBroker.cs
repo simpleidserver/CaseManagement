@@ -37,12 +37,12 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
             return _messageBrokerStore.Queue(record, token);
         }
 
-        public Task QueueDeadLetter(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
+        public Task QueueScheduleMessage(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<DeadLetterMessage>> DequeueDeadLetters(CancellationToken token)
+        public Task<List<ScheduleMessage>> DequeueScheduleMessage(CancellationToken token)
         {
             throw new NotImplementedException();
         }

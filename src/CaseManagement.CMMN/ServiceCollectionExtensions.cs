@@ -10,6 +10,7 @@ using CaseManagement.CMMN.Infrastructure.Lock;
 using CaseManagement.CMMN.Infrastructures.DomainEvts;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
+using MediatR;
 using Microsoft.Extensions.Options;
 using NEventStore;
 using System;
@@ -94,6 +95,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddCaseApiApplication(this IServiceCollection services)
         {
+            services.AddMediatR(typeof(ServiceCollectionExtensions));
             return services;
         }
 

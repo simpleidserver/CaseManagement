@@ -12,9 +12,13 @@ namespace CaseManagement.CMMN.Domains
             Claims = new List<KeyValuePair<string, string>>();
         }
 
+        #region Properties
+
         public string Id { get; set; }
         public string Name { get; set; }
         public ICollection<KeyValuePair<string, string>> Claims { get; set; }
+
+        #endregion
 
         public object Clone()
         {

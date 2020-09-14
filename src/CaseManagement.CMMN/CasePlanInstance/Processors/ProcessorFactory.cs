@@ -14,12 +14,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _serviceProvider = serviceProvider;
         }
 
-        public Task Execute<T>(CMMNExecutionContext executionContext, T instance, CancellationToken token) where T : CasePlanElementInstance
+        public Task Execute<T>(CMMNExecutionContext executionContext, T instance, CancellationToken token) where T : BaseCaseEltInstance
         {
             return Execute(executionContext, instance, typeof(T), token);
         }
 
-        public Task Execute(CMMNExecutionContext executionContext, CasePlanElementInstance instance, Type type, CancellationToken token)
+        public Task Execute(CMMNExecutionContext executionContext, BaseCaseEltInstance instance, Type type, CancellationToken token)
         {
             var genericType = typeof(IProcessor<>).MakeGenericType(type);
             var processor = _serviceProvider.GetService(genericType);

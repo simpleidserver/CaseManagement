@@ -5,7 +5,6 @@ using CaseManagement.CMMN.Parser;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
@@ -17,9 +16,12 @@ namespace CaseManagement.CMMN.Domains
         {
             Roles = new List<CasePlanInstanceRole>();
             WorkerTasks = new ConcurrentBag<CasePlanInstanceWorkerTask>();
-            ExecutionContext = new CasePlanInstanceExecutionContext();
+            ExecutionContext = new CasePlanInstanceExecutionContext(this);
             Files = new ConcurrentBag<CasePlanInstanceFileItem>();
+            Children = new ConcurrentBag<BaseCaseEltInstance>();
         }
+
+        #region Properties
 
         public string CasePlanId { get; set; }
         public string CaseOwner { get; set; }
@@ -29,61 +31,46 @@ namespace CaseManagement.CMMN.Domains
         public ICollection<CasePlanInstanceRole> Roles { get; set; }
         public ConcurrentBag<CasePlanInstanceFileItem> Files { get; set; }
         public ConcurrentBag<CasePlanInstanceWorkerTask> WorkerTasks { get; set; }
-        public StageElementInstance Content { get; set; }
+        public StageElementInstance StageContent => (StageElementInstance)Children.FirstOrDefault(c => c is StageElementInstance);
+        public ICollection<CaseFileItemInstance> FileItems => Children.Where(c => c is CaseFileItemInstance).Cast<CaseFileItemInstance>().ToList();
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public CasePlanInstanceRole CaseOwnerRole => string.IsNullOrWhiteSpace(CaseOwner) ? null : Roles.First(_ => _.Id == CaseOwner);
+        public ConcurrentBag<BaseCaseEltInstance> Children { get; set; }
+
+        #endregion
+
+        #region Getters
 
         public bool IsEntryCriteriaSatisfied(string id)
         {
-            var child = GetChild(id);
+            var child = GetCasePlanItem(id);
             return IsEntryCriteriaSatisfied(child);
         }
 
-        public bool IsEntryCriteriaSatisfied(CasePlanElementInstance elt)
+        public bool IsEntryCriteriaSatisfied(BaseCasePlanItemInstance elt)
         {
-            return elt.EntryCriterions == null || !elt.EntryCriterions.Any() || elt.EntryCriterions.Any(_ => IsCriteriaSatisfied(_));
+            return elt.EntryCriterions == null || !elt.EntryCriterions.Any() || elt.EntryCriterions.Any(_ => IsCriteriaSatisfied(_, elt.NbOccurrence));
+        }
+
+        public bool IsRepetitionRuleSatisfied(BaseCasePlanItemInstance elt)
+        {
+            return elt.RepetitionRule != null && ExpressionParser.IsValid(elt.RepetitionRule.Condition.Body, ExecutionContext);
         }
 
         public bool IsExitCriteriaSatisfied(string id)
         {
-            var child = GetChild(id);
+            var child = GetCasePlanItem(id);
             return IsExitCriteriaSatisfied(child);
         }
 
-        public bool IsExitCriteriaSatisfied(CasePlanElementInstance elt)
+        public bool IsExitCriteriaSatisfied(BaseCasePlanItemInstance elt)
         {
-            return elt.ExitCriterions != null && elt.ExitCriterions.Any() && elt.ExitCriterions.Any(_ => IsCriteriaSatisfied(_));
+            return elt.ExitCriterions != null && elt.ExitCriterions.Any() && elt.ExitCriterions.Any(_ => IsCriteriaSatisfied(_, elt.NbOccurrence));
         }
 
-        public bool IsCriteriaSatisfied(Criteria criteria)
+        public bool IsCriteriaSatisfied(Criteria criteria, int nbOccurrence)
         {
-            Func<string, CMMNTransitions, bool> callback = (sourceRef, standardEvent) =>
-            {
-                var source = GetChild(sourceRef);
-                if (standardEvent != source.LatestTransition)
-                {
-                    return false;
-                }
-
-                return true;
-            };
-            foreach (var planItemOnPart in criteria.SEntry.PlanItemOnParts)
-            {
-                if (!callback(planItemOnPart.SourceRef, planItemOnPart.StandardEvent))
-                {
-                    return false;
-                }
-            }
-
-            foreach (var caseItemOnPart in criteria.SEntry.FileItemOnParts)
-            {
-                if (!callback(caseItemOnPart.SourceRef, caseItemOnPart.StandardEvent))
-                {
-                    return false;
-                }
-            }
-
             if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
             {
                 if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, ExecutionContext))
@@ -91,6 +78,27 @@ namespace CaseManagement.CMMN.Domains
                     return false;
                 }
             }
+
+            foreach (var planItemOnPart in criteria.SEntry.PlanItemOnParts)
+            {
+                var id = BaseCasePlanItemInstance.BuildId(AggregateId, planItemOnPart.SourceRef, nbOccurrence);
+                var source = GetCasePlanItem(id);
+                if (planItemOnPart.StandardEvent != source.LatestTransition)
+                {
+                    return false;
+                }
+            }
+
+            foreach (var caseItemOnPart in criteria.SEntry.FileItemOnParts)
+            {
+                var id = CaseFileItemInstance.BuildId(AggregateId, caseItemOnPart.SourceRef);
+                var source = GetCaseFileItem(id);
+                if (caseItemOnPart.StandardEvent != source.LatestTransition)
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -99,56 +107,43 @@ namespace CaseManagement.CMMN.Domains
             return Files.Any(_ => _.CasePlanElementInstanceId == casePlanInstanceElementId);
         }
 
-        public CasePlanElementInstance GetChild(string id)
+        public BaseCaseEltInstance GetChild(string id)
         {
-            if (Content.Id == id)
+            var child = Children.FirstOrDefault(c => c.Id == id);
+            if (child != null)
             {
-                return Content;
+                return child;
             }
 
-            return Content.GetChild(id);
+            return GetCasePlanItem(id);
         }
 
-        public ICollection<CasePlanElementInstance> GetFlatListChildren()
+        public BaseCasePlanItemInstance GetCasePlanItem(string id)
         {
-            return Content.GetFlatListChildren();
-        }
-
-        public static CasePlanInstanceAggregate New(ICollection<DomainEvent> evts)
-        {
-            var result = new CasePlanInstanceAggregate();
-            foreach(var evt in evts)
+            if (StageContent.Id == id)
             {
-                result.Handle(evt);
+                return StageContent;
             }
 
-            return result;
+            return StageContent.GetChild(id);
         }
 
-        public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan, ICollection<CasePlanInstanceRole> permissions, Dictionary<string, string> parameters)
+        public StageElementInstance GetCasePlanItemParent(string id)
         {
-            var result = new CasePlanInstanceAggregate();
-            var roles = caseplan.Roles.Select(_ => new CasePlanInstanceRole
-            {
-                Id = _.Id,
-                Name = _.Name
-            }).ToList();
-            var stage = CMMNParser.ExtractStage(caseplan.XmlContent, id);
-            var json = stage.ToJson();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, caseplan.CaseOwner, roles, permissions, json, DateTime.UtcNow, caseplan.AggregateId, parameters, caseplan.Files);
-            result.Handle(evt);
-            result.DomainEvents.Add(evt);
-            return result;
+            return StageContent.GetParent(id);
         }
 
-        public static CasePlanInstanceAggregate New(string id, StageElementInstance stage)
+        public CaseFileItemInstance GetCaseFileItem(string id)
         {
-            var result = new CasePlanInstanceAggregate();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), new List<CasePlanInstanceRole>(), stage.ToJson(), DateTime.UtcNow, null, new Dictionary<string, string>(), new List<CasePlanFileItem>());
-            result.Handle(evt);
-            result.DomainEvents.Add(evt);
-            return result;
+            return FileItems.FirstOrDefault(f => f.Id == id);
         }
+
+        public ICollection<BaseCasePlanItemInstance> GetFlatListCasePlanItems()
+        {
+            return StageContent.GetFlatListChildren();
+        }
+
+        #endregion
 
         #region Operations
 
@@ -159,11 +154,11 @@ namespace CaseManagement.CMMN.Domains
             DomainEvents.Add(evt);
             if (isEvtPropagate)
             {
-                PropagateTransition(Content, transition);
+                PropagateTransition(StageContent, transition);
             }
         }
 
-        public void MakeTransition(CasePlanElementInstance element, CMMNTransitions transition, bool isEvtPropagate = true)
+        public void MakeTransition(BaseCaseEltInstance element, CMMNTransitions transition, bool isEvtPropagate = true)
         {
             var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, element.Id, transition, DateTime.UtcNow);
             Handle(evt);
@@ -219,11 +214,70 @@ namespace CaseManagement.CMMN.Domains
             return true;
         }
 
+        public void SetVariable(string key, string value)
+        {
+            var evt = new VariableUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, key, value, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        public BaseCasePlanItemInstance TryCreateInstance(BaseCasePlanItemInstance elt)
+        {
+            var evt = new CasePlanItemInstanceCreatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, elt.Id, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+            var id = BaseCasePlanItemInstance.BuildId(AggregateId, elt.EltId, elt.NbOccurrence + 1);
+            return GetCasePlanItem(id);
+        }
+
         #endregion
+
+        public static CasePlanInstanceAggregate New(ICollection<DomainEvent> evts)
+        {
+            var result = new CasePlanInstanceAggregate();
+            foreach(var evt in evts)
+            {
+                result.Handle(evt);
+            }
+
+            return result;
+        }
+
+        public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan, ICollection<CasePlanInstanceRole> permissions, Dictionary<string, string> parameters)
+        {
+            var result = new CasePlanInstanceAggregate();
+            var roles = caseplan.Roles.Select(_ => new CasePlanInstanceRole
+            {
+                Id = _.Id,
+                Name = _.Name
+            }).ToList();
+            var files = caseplan.Files.Select(_ => new CaseFileItemInstance
+            {
+                DefinitionType = _.DefinitionType,
+                EltId = _.Id,
+                Id = CaseFileItemInstance.BuildId(id, _.Id),
+                Name = _.Name
+            }).ToList();
+            var stage = CMMNParser.ExtractStage(caseplan.XmlContent, id);
+            var json = stage.ToJson();
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, caseplan.CaseOwner, roles, permissions, json, DateTime.UtcNow, caseplan.AggregateId, parameters, files);
+            result.Handle(evt);
+            result.DomainEvents.Add(evt);
+            return result;
+        }
+
+        public static CasePlanInstanceAggregate New(string id, StageElementInstance stage, ICollection<CaseFileItemInstance> caseFiles)
+        {
+            var result = new CasePlanInstanceAggregate();
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), new List<CasePlanInstanceRole>(), stage.ToJson(), DateTime.UtcNow, null, new Dictionary<string, string>(), caseFiles);
+            result.Handle(evt);
+            result.DomainEvents.Add(evt);
+            return result;
+        }
 
         public override object Clone()
         {
-            return new CasePlanInstanceAggregate
+            var result = new CasePlanInstanceAggregate
             {
                 CasePlanId = CasePlanId,
                 AggregateId = AggregateId,
@@ -236,9 +290,11 @@ namespace CaseManagement.CMMN.Domains
                 Files = new ConcurrentBag<CasePlanInstanceFileItem>(Files.Select(_ => (CasePlanInstanceFileItem)_.Clone()).ToList()),
                 Roles = Roles.Select(_ => (CasePlanInstanceRole)_.Clone()).ToList(),
                 WorkerTasks = new ConcurrentBag<CasePlanInstanceWorkerTask>(WorkerTasks.Select(_ => (CasePlanInstanceWorkerTask)_.Clone()).ToArray()),
-                Content = (StageElementInstance)Content.Clone(),
-                ExecutionContext = (CasePlanInstanceExecutionContext)ExecutionContext.Clone()
+                ExecutionContext = (CasePlanInstanceExecutionContext)ExecutionContext.Clone(),
+                Children = new ConcurrentBag<BaseCaseEltInstance>(Children.Select(_ => (BaseCaseEltInstance)_.Clone()))
             };
+            result.ExecutionContext.CasePlanInstance = result;
+            return result;
         }
 
         public string GetStreamName()
@@ -294,17 +350,16 @@ namespace CaseManagement.CMMN.Domains
             }
 
             AggregateId = evt.AggregateId;
-            Content = StageElementInstance.FromJson(evt.JsonContent);
+            if (!string.IsNullOrWhiteSpace(evt.JsonContent))
+            {
+                Children.Add(StageElementInstance.FromJson(evt.JsonContent));
+            }
+
             if (evt.Files != null && evt.Files.Any())
             {
                 foreach(var file in evt.Files)
                 {
-                    Content.AddChild(new CaseFileItemInstance
-                    {
-                        DefinitionType = file.DefinitionType,
-                        Id = file.Id,
-                        Name = file.Name
-                    });
+                    Children.Add(file.Clone() as CaseFileItemInstance);
                 }
             }
 
@@ -317,7 +372,7 @@ namespace CaseManagement.CMMN.Domains
             {
                 foreach (var kvp in evt.Parameters)
                 {
-                    ExecutionContext.SetVariable(kvp.Key, kvp.Value);
+                    ExecutionContext.SetStrVariable(kvp.Key, kvp.Value);
                 }
             }
         }
@@ -444,7 +499,7 @@ namespace CaseManagement.CMMN.Domains
 
         private void Handle(CaseInstanceWorkerTaskAddedEvent evt)
         {
-            var child = GetChild(evt.CasePlanInstanceElementId);
+            var child = GetCasePlanItem(evt.CasePlanInstanceElementId);
             if (child == null)
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
@@ -497,6 +552,28 @@ namespace CaseManagement.CMMN.Domains
             });
         }
 
+        private void Handle(VariableUpdatedEvent evt)
+        {
+            ExecutionContext.UpdateStrVariable(evt.Key, evt.Value);
+            Version = evt.Version;
+            UpdateDateTime = evt.UpdateDateTime;
+        }
+
+        private void Handle(CasePlanItemInstanceCreatedEvent evt)
+        {
+            var parent = GetCasePlanItemParent(evt.CasePlanItemInstanceId);
+            if (parent == null)
+            {
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>( "validation",  $"case plan item '{evt.CasePlanItemInstanceId}' doesn't exist")
+                });
+            }
+
+            var child = GetCasePlanItem(evt.CasePlanItemInstanceId);
+            parent.Children.Add(child.NewOccurrence(AggregateId));
+        }
+
         #endregion
 
         /// <summary>
@@ -504,7 +581,7 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         /// <param name="elementId"></param>
         /// <param name="transition"></param>
-        private void PropagateTransition(CasePlanElementInstance elt, CMMNTransitions transition)
+        private void PropagateTransition(BaseCaseEltInstance elt, CMMNTransitions transition)
         {
             CMMNTransitions? newTransition = null;
             if (transition == CMMNTransitions.Terminate || transition == CMMNTransitions.ParentTerminate)

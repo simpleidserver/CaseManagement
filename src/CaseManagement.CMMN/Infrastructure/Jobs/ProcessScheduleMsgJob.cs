@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.Infrastructure.Jobs
 {
-    public class ProcessDeadLetterMsgJob : IJob
+    public class ProcessScheduleMsgJob : IJob
     {
         private readonly IMessageBroker _messageBroker;
         private CancellationTokenSource _cancellationTokenSource { get; set; }
         private Task _currentTask { get; set; }
         private CMMNServerOptions _options;
 
-        public ProcessDeadLetterMsgJob(IMessageBroker messageBroker, IOptions<CMMNServerOptions> options)
+        public ProcessScheduleMsgJob(IMessageBroker messageBroker, IOptions<CMMNServerOptions> options)
         {
             _messageBroker = messageBroker;
             _options = options.Value;
@@ -38,10 +38,10 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 Thread.Sleep(_options.BlockThreadMS);
-                var deadLetters = await _messageBroker.DequeueDeadLetters(cancellationToken);
-                foreach (var deadLetter in deadLetters)
+                var scheduleMessages = await _messageBroker.DequeueScheduleMessage(cancellationToken);
+                foreach (var scheduleMessage in scheduleMessages)
                 {
-                    await _messageBroker.Queue(deadLetter.QueueName, deadLetter.Content, cancellationToken);
+                    await _messageBroker.Queue(scheduleMessage.QueueName, scheduleMessage.Content, cancellationToken);
                 }
             }
         }

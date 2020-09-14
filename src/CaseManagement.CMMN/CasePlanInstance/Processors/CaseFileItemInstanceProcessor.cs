@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public class CaseFileItemInstanceProcessor : BaseProcessor<CaseFileItemInstance>
+    public class CaseFileItemInstanceProcessor : BaseCaseEltInstanceProcessor<CaseFileItemInstance>
     {
         private readonly IEnumerable<ICaseFileItemStore> _caseFileItemStores;
 
@@ -17,7 +17,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _caseFileItemStores = caseFileItemStores;
         }
 
-        public override async Task Execute(CMMNExecutionContext executionContext, CaseFileItemInstance elt, CancellationToken cancellationToken)
+        protected override async Task Handle(CMMNExecutionContext executionContext, CaseFileItemInstance elt, CancellationToken cancellationToken)
         {
             var update = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Update, cancellationToken);
             var replace = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Replace, cancellationToken);
@@ -26,11 +26,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             var addReference = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddReference, cancellationToken);
             var removeReference = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveReference, cancellationToken);
             var delete = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Delete, cancellationToken);
-            if (elt.State == null)
-            {
-                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Create);
-            }
-
             if (elt.State == CaseFileItemStates.Available)
             {
                 var caseFileItemStore = _caseFileItemStores.FirstOrDefault(_ => _.CaseFileItemType == elt.DefinitionType);

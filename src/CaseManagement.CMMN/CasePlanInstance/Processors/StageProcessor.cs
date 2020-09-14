@@ -16,7 +16,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _processorFactory = processorFactory;
         }
 
-        protected override async Task ProtectedExecute(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
+        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
         {
             var executionBranch = ExecutionBranch.Build(stageElt.Children);
             await ExecuteBranch(executionContext, executionBranch, cancellationToken);
@@ -47,17 +47,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private Task HandleCasePlan(CMMNExecutionContext executionContext, CasePlanElementInstance casePlanElementInstance, CancellationToken token)
+        private async Task HandleCasePlan(CMMNExecutionContext executionContext, BaseCasePlanItemInstance casePlanElementInstance, CancellationToken token)
         {
-            if (!executionContext.CasePlanInstance.IsEntryCriteriaSatisfied(casePlanElementInstance.Id))
-            {
-                return Task.CompletedTask;
-            }
-
-            return _processorFactory.Execute(executionContext, casePlanElementInstance, casePlanElementInstance.GetType(), token);
+            await _processorFactory.Execute(executionContext, casePlanElementInstance, casePlanElementInstance.GetType(), token);
         }
 
-        private bool IsElementCompleted(CasePlanElementInstance planElementInstance)
+        private bool IsElementCompleted(BaseCasePlanItemInstance planElementInstance)
         {
             var stageOrTask = planElementInstance as BaseTaskOrStageElementInstance;
             var milestone = planElementInstance as MilestoneElementInstance;

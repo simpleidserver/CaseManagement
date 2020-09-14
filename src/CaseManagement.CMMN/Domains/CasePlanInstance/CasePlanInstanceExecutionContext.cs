@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace CaseManagement.CMMN.Domains
 {
@@ -12,9 +14,33 @@ namespace CaseManagement.CMMN.Domains
             Variables = new ConcurrentDictionary<string, string>();
         }
 
+        public CasePlanInstanceExecutionContext(CasePlanInstanceAggregate casePlanInstance) : this()
+        {
+            CasePlanInstance = casePlanInstance;
+        }
+
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public CasePlanInstanceAggregate CasePlanInstance { get; set; }
         public ConcurrentDictionary<string, string> Variables;
 
-        public string GetVariable(string key)
+        public int GetVariableAndIncrement(string key)
+        {
+            int result = 0;
+            if (!Variables.ContainsKey(key))
+            {
+                SetStrVariable(key, "1");
+            }
+            else
+            {
+                result = int.Parse(Variables[key]);
+                SetStrVariable(key, (result + 1).ToString());
+            }
+
+            return result;
+        }
+
+        public string GetStrVariable(string key)
         {
             if (!Variables.ContainsKey(key))
             {
@@ -24,9 +50,23 @@ namespace CaseManagement.CMMN.Domains
             return Variables[key];
         }
 
-        public bool SetVariable(string key, string value)
+        public void SetStrVariable(string key, string value)
         {
-            return Variables.TryAdd(key, value);
+            CasePlanInstance.SetVariable(key, value);
+        }
+
+        internal bool UpdateStrVariable(string key, string value)
+        {
+            if (!Variables.ContainsKey(key))
+            {
+                return Variables.TryAdd(key, value);
+            }
+            else
+            {
+                Variables[key] = value;
+            }
+
+            return true;
         }
 
         public object Clone()

@@ -1,9 +1,11 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 
 namespace CaseManagement.CMMN
 {
@@ -18,7 +20,6 @@ namespace CaseManagement.CMMN
 
         public ServerBuilder AddDefinitions(List<string> pathLst, string caseOwner = null)
         {
-            /*
             var caseFiles = new ConcurrentBag<CaseFileAggregate>();
             var caseDefinitions = new ConcurrentBag<CasePlanAggregate>();
             foreach(var path in pathLst)
@@ -26,7 +27,6 @@ namespace CaseManagement.CMMN
                 var cmmnTxt = File.ReadAllText(path);
                 var name = Path.GetFileName(path);
                 var caseFile = CaseFileAggregate.New(name, name, 0, caseOwner, cmmnTxt);
-                caseFile.Update(name, name, cmmnTxt, caseOwner, true);
                 var tDefinitions = CMMNParser.ParseWSDL(cmmnTxt);
                 var caseDefinition = CMMNParser.ExtractCasePlans(tDefinitions, caseFile);
                 foreach(var cd in caseDefinition)
@@ -41,7 +41,6 @@ namespace CaseManagement.CMMN
             _services.TryUpdateSingleton<ICaseFileCommandRepository>(new InMemoryCaseFileCommandRepository(caseFiles));
             _services.TryUpdateSingleton<ICasePlanCommandRepository>(new InMemoryCasePlanCommandRepository(caseDefinitions));
             _services.TryUpdateSingleton<ICasePlanQueryRepository>(new InMemoryCasePlanQueryRepository(caseDefinitions));
-            */
             return this;
         }
 

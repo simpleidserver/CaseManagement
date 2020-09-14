@@ -6,6 +6,8 @@
         EMPTYTASK = 1,
         TIMER = 2,
         STAGE = 3,
-        MILESTONE = 4
+        MILESTONE = 4,
+        FILEITEM = 5,
+        PROCESSTASK = 6
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,19 +12,25 @@ namespace CaseManagement.CMMN.Domains
     {
         public StageElementInstance()
         {
-            Children = new List<CasePlanElementInstance>();
+            Children = new List<BaseCasePlanItemInstance>();
         }
 
-        public override string Type { get => "stage"; }
-        public ICollection<CasePlanElementInstance> Children { get; set; }
+        #region Properties
+
+        public override CasePlanElementInstanceTypes Type { get => CasePlanElementInstanceTypes.STAGE; }
+        public ICollection<BaseCasePlanItemInstance> Children { get; set; }
         public int Length => Children.Count();
 
-        public void AddChild(CasePlanElementInstance child)
+        #endregion
+
+        #region Get or set operations
+
+        public void AddChild(BaseCasePlanItemInstance child)
         {
             Children.Add(child);
         }
 
-        public CasePlanElementInstance GetChild(string id)
+        public BaseCasePlanItemInstance GetChild(string id)
         {
             var child = Children.FirstOrDefault(_ => _.Id == id);
             if (child != null)
@@ -44,9 +51,29 @@ namespace CaseManagement.CMMN.Domains
             return null;
         }
 
-        public List<CasePlanElementInstance> GetFlatListChildren()
+        public StageElementInstance GetParent(string id)
         {
-            var result = new List<CasePlanElementInstance> { this };
+            if (Children.Any(c => c.Id == id))
+            {
+                return this;
+            }
+
+            var stages = Children.Where(c => c is StageElementInstance).Cast<StageElementInstance>();
+            foreach(var stage in stages)
+            {
+                var result = stage.GetParent(id);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        public List<BaseCasePlanItemInstance> GetFlatListChildren()
+        {
+            var result = new List<BaseCasePlanItemInstance> { this };
             foreach(var child in Children)
             {
                 var stage = child as StageElementInstance;
@@ -63,13 +90,15 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
+        #endregion
+
         public override object Clone()
         {
             var result = new StageElementInstance
             {
-                Children = Children.Select(_ => (CasePlanElementInstance)_.Clone()).ToList()
+                Children = Children.Select(_ => (BaseCasePlanItemInstance)_.Clone()).ToList()
             };
-            FeedCasePlanElement(result);
+            FeedCaseEltInstance(result);
             FeedTaskOrStage(result);
             return result;
         }
@@ -85,16 +114,17 @@ namespace CaseManagement.CMMN.Domains
             return JsonConvert.SerializeObject(this);
         }
 
-        private static CasePlanElementInstance FromJsonElt(string json)
+        private static BaseCasePlanItemInstance FromJsonElt(string json)
         {
             var deserialized = JsonConvert.DeserializeObject<JObject>(json);
             var type = deserialized["Type"].ToString();
-            switch (type)
+            var typeEnum = (CasePlanElementInstanceTypes)Enum.Parse(typeof(CasePlanElementInstanceTypes), type);
+            switch (typeEnum)
             {
-                case "humantask":
+                case CasePlanElementInstanceTypes.HUMANTASK:
                     return JsonConvert.DeserializeObject<HumanTaskElementInstance>(json);
-                case "stage":
-                    var chl = new List<CasePlanElementInstance>();
+                case CasePlanElementInstanceTypes.STAGE:
+                    var chl = new List<BaseCasePlanItemInstance>();
                     var children = deserialized["Children"] as JArray;
                     foreach (var child in children)
                     {
@@ -105,17 +135,25 @@ namespace CaseManagement.CMMN.Domains
                     var stage = JsonConvert.DeserializeObject<StageElementInstance>(deserialized.ToString());
                     stage.Children = chl;                
                     return stage;
-                case "fileitem":
-                    return JsonConvert.DeserializeObject<CaseFileItemInstance>(json);
-                case "emptytask":
+                case CasePlanElementInstanceTypes.EMPTYTASK:
                     return JsonConvert.DeserializeObject<EmptyTaskElementInstance>(json);
-                case "milestone":
+                case CasePlanElementInstanceTypes.MILESTONE:
                     return JsonConvert.DeserializeObject<MilestoneElementInstance>(json);
-                case "timer":
+                case CasePlanElementInstanceTypes.TIMER:
                     return JsonConvert.DeserializeObject<TimerEventListener>(json);
             }
 
             return null;
+        }
+
+        public override BaseCasePlanItemInstance NewOccurrence(string casePlanInstanceId)
+        {
+            var clone = Clone() as ProcessTaskElementInstance;
+            clone.State = null;
+            clone.TransitionHistories = new ConcurrentBag<CasePlanElementInstanceTransitionHistory>();
+            clone.NbOccurrence = NbOccurrence + 1;
+            clone.Id = BuildId(casePlanInstanceId, EltId, clone.NbOccurrence);
+            return clone;
         }
     }
 }

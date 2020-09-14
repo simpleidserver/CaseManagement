@@ -54,27 +54,12 @@
     <None Update="Cmmns\caseWithOneFailProcessTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Cmmns\caseWithOneLongProcessTask.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Cmmns\caseWithOneTask.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <SpecFlowFeatureFiles Update="Features\Role.feature">
-      <Visible>$(UsingMicrosoftNETSdk)</Visible>
-      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\RoleErrors.feature">
-      <Visible>$(UsingMicrosoftNETSdk)</Visible>
-      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
-    </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Features\CasePlanInstanceErrors.feature">
-      <Visible>$(UsingMicrosoftNETSdk)</Visible>
-      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\CaseFormInstances.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
     </SpecFlowFeatureFiles>
@@ -88,13 +73,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Features\Role.feature.cs">
-      <DependentUpon>Role.feature</DependentUpon>
-    </Compile>
-    <Compile Update="Features\RoleErrors.feature.cs">
-      <DependentUpon>RoleErrors.feature</DependentUpon>
-    </Compile>
   </ItemGroup>
 </Project>

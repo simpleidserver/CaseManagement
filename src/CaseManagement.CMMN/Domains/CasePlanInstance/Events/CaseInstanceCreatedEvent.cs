@@ -8,7 +8,7 @@ namespace CaseManagement.CMMN.Domains
     [DebuggerDisplay("case plan instance is created")]
     public class CasePlanInstanceCreatedEvent : DomainEvent
     {
-        public CasePlanInstanceCreatedEvent(string id, string aggregateId, int version, string caseOwner, ICollection<CasePlanInstanceRole> roles, ICollection<CasePlanInstanceRole> permissions, string jsonContent, DateTime createDateTime, string casePlanId, Dictionary<string, string> parameters, ICollection<CasePlanFileItem> files) : base(id, aggregateId, version)
+        public CasePlanInstanceCreatedEvent(string id, string aggregateId, int version, string caseOwner, ICollection<CasePlanInstanceRole> roles, ICollection<CasePlanInstanceRole> permissions, string jsonContent, DateTime createDateTime, string casePlanId, Dictionary<string, string> parameters, ICollection<CaseFileItemInstance> files) : base(id, aggregateId, version)
         {
             CaseOwner = caseOwner;
             Roles = roles;
@@ -27,6 +27,6 @@ namespace CaseManagement.CMMN.Domains
         public DateTime CreateDateTime { get; set; }
         public string CasePlanId { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
-        public ICollection<CasePlanFileItem> Files { get; set; }
+        public ICollection<CaseFileItemInstance> Files { get; set; }
     }
 }

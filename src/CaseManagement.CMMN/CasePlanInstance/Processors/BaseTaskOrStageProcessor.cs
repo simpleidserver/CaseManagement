@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public abstract class BaseTaskOrStageProcessor<T> : BaseProcessor<T> where T : BaseTaskOrStageElementInstance
+    public abstract class BaseTaskOrStageProcessor<T> : BaseCasePlanItemProcessor<T> where T : BaseTaskOrStageElementInstance
     {
         public BaseTaskOrStageProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        public override async Task Execute(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
+        protected override async Task Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
         {
             var terminate = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
             var manualStart = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.ManualStart, cancellationToken);
@@ -41,7 +41,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
             if (elt.State == TaskStageStates.Active)
             {
-                await ProtectedExecute(executionContext, elt, cancellationToken);
+                await ProtectedProcess(executionContext, elt, cancellationToken);
                 if (terminate.IsCaptured)
                 {
                     executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Terminate);
@@ -50,6 +50,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        protected abstract Task ProtectedExecute(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task ProtectedProcess(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
     }
 }

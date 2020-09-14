@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Domains
@@ -11,7 +12,9 @@ namespace CaseManagement.CMMN.Domains
             Mappings = new List<ParameterMapping>();
         }
 
-        public override string Type { get => "processtask"; }
+        #region Properties
+
+        public override CasePlanElementInstanceTypes Type { get => CasePlanElementInstanceTypes.PROCESSTASK; }
         /// <summary>
         /// Zero or more ParameterMapping objects. A ParameterMapping of a ProcessTask specifies how an input of the ProcessTask is mapped to an
         /// input of the called Process and how an output of the called Process is mapped to an output of the ProcessTask
@@ -30,12 +33,25 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public CMMNExpression ProcessRefExpression { get; set; }
 
+        #endregion
+
         public override object Clone()
         {
             var result = new ProcessTaskElementInstance();
-            FeedCasePlanElement(result);
+            FeedCasePlanItem(result);
+            FeedCaseEltInstance(result);
             FeedTaskOrStage(result);
             return result;
+        }
+
+        public override BaseCasePlanItemInstance NewOccurrence(string casePlanInstanceId)
+        {
+            var clone = Clone() as ProcessTaskElementInstance;
+            clone.State = null;
+            clone.TransitionHistories = new ConcurrentBag<CasePlanElementInstanceTransitionHistory>();
+            clone.NbOccurrence = NbOccurrence + 1;
+            clone.Id = BuildId(casePlanInstanceId, EltId, clone.NbOccurrence);
+            return clone;
         }
     }
 }

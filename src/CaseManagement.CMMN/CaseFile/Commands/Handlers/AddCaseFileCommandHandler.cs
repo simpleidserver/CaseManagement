@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.CaseFile.Commands;
+using CaseManagement.CMMN.CaseFile.Results;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure;
 using MediatR;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseFile.Command.Handlers
 {
-    public class AddCaseFileCommandHandler : IRequestHandler<AddCaseFileCommand, string>
+    public class AddCaseFileCommandHandler : IRequestHandler<AddCaseFileCommand, CreateCaseFileResult>
     {
         private readonly ICommitAggregateHelper _commitAggregateHelper;
         private readonly CMMNServerOptions _options;
@@ -20,7 +21,7 @@ namespace CaseManagement.CMMN.CaseFile.Command.Handlers
             _options = options.Value;
         }
 
-        public async Task<string> Handle(AddCaseFileCommand addCaseFileCommand, CancellationToken token)
+        public async Task<CreateCaseFileResult> Handle(AddCaseFileCommand addCaseFileCommand, CancellationToken token)
         {
             var payload = addCaseFileCommand.Payload;
             if (string.IsNullOrWhiteSpace(addCaseFileCommand.Payload))
@@ -32,7 +33,10 @@ namespace CaseManagement.CMMN.CaseFile.Command.Handlers
             var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, addCaseFileCommand.Owner, payload);
             var streamName = CaseFileAggregate.GetStreamName(caseFile.AggregateId);
             await _commitAggregateHelper.Commit(caseFile, streamName, token);
-            return caseFile.AggregateId;
+            return new CreateCaseFileResult
+            {
+                Id = caseFile.AggregateId
+            };
         }
     }
 }

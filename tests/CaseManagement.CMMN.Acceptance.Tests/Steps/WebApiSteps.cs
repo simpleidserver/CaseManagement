@@ -16,7 +16,7 @@ using Xunit;
 namespace CaseManagement.CMMN.Acceptance.Tests.Steps
 {
     [Binding]
-    public class SharedSteps
+    public class WebApiSteps
     {
         private const int MS = 400;
         private readonly ScenarioContext _scenarioContext;
@@ -26,7 +26,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
         private static IScenarioContextProvider _scenarioContextProvider;
         private static EventWaitHandle Evt = new EventWaitHandle(true, EventResetMode.AutoReset);
 
-        public SharedSteps(ScenarioContext scenarioContext)
+        public WebApiSteps(ScenarioContext scenarioContext)
         {
             _scenarioContext = scenarioContext;
         }
@@ -197,111 +197,6 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
             };
             var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
-        }
-
-        [When("extract JSON from body")]
-        public async Task WhenExtractFromBody()
-        {
-            var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
-            var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-            _scenarioContext.Set(JsonConvert.DeserializeObject<JObject>(json), "jsonHttpBody");
-        }
-
-        [When("extract JSON from body into '(.*)'")]
-        public async Task WhenExtractFromBodyIntoKey(string key)
-        {
-            var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
-            var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-            _scenarioContext.Set(JsonConvert.DeserializeObject<JObject>(json), key);
-        }
-
-        [When("extract '(.*)' from JSON body into '(.*)'")]
-        public void WhenExtractJSONKeyFromBody(string selector, string key)
-        {
-            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
-            var val = jsonHttpBody.SelectToken(selector);
-            if (val != null)
-            {
-                _scenarioContext.Set(val.ToString(), key);
-            }
-        }
-
-        [When("wait '(.*)' seconds")]
-        public void WhenWaitSeconds(string seconds)
-        {
-            Thread.Sleep(int.Parse(seconds));
-        }
-
-        [When("add a file into the folder '(.*)'")]
-        public void ThenAddFileIntoFolder(string key)
-        {
-            var currentValue = Parse(key);
-            File.WriteAllText(Path.Combine(currentValue, $"{Guid.NewGuid().ToString()}.txt"), Guid.NewGuid().ToString());
-        }
-
-        [When("authenticate as '(.*)'")]
-        public void WhenAuthenticate(string key)
-        {
-            _scenarioContext.Add("userId", key);
-        }
-
-        [Then("HTTP status code equals to '(.*)'")]
-        public void ThenCheckHttpStatusCode(int code)
-        {
-            var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
-            Assert.Equal(code, (int)httpResponseMessage.StatusCode);
-        }
-
-        [Then("JSON contains '(.*)'")]
-        public void ThenExists(string key)
-        {
-            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
-            Assert.True(jsonHttpBody.ContainsKey(key) == true);
-        }
-
-        [Then("extract JSON '(.*)', JSON '(.*)'='(.*)'")]
-        public void ThenExtractJSONEqualsTo(string jsonKey, string key, string value)
-        {
-            var jsonHttpBody = _scenarioContext[jsonKey] as JObject;
-            var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
-            Assert.Equal(value.ToLowerInvariant(), currentValue);
-        }
-
-        [Then("JSON '(.*)'='(.*)'")]
-        public void ThenEqualsTo(string key, string value)
-        {
-            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
-            var currentValue = jsonHttpBody.SelectToken(key).ToString().ToLowerInvariant();
-            Assert.Equal(value.ToLowerInvariant(), currentValue);
-        }
-
-        [Then("JSON '(.*)' contains '(.*)'")]
-        public void ThenContains(string key, string value)
-        {
-            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
-            var currentValue = (jsonHttpBody[key] as JArray).Values<string>().ToList();
-            Assert.True(currentValue.Contains(value) == true);
-        }
-
-        [Then("extract JSON '(.*)', JSON exists '(.*)'")]
-        public void ThenExtractJSONExists(string jsonKey, string key)
-        {
-            var jsonHttpBody = _scenarioContext[jsonKey] as JObject;
-            Assert.NotNull(jsonHttpBody.SelectToken(key));
-        }
-
-        [Then("extract JSON '(.*)', JSON doesn't exist '(.*)'")]
-        public void ThenExtractJSONDoesntExist(string jsonKey, string key)
-        {
-            var jsonHttpBody = _scenarioContext[jsonKey] as JObject;
-            Assert.Null(jsonHttpBody.SelectToken(key));
-        }
-
-        [Then("JSON exists '(.*)'")]
-        public void ThenJsonExists(string key)
-        {
-            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
-            Assert.NotNull(jsonHttpBody.SelectToken(key));
         }
 
         private string Parse(string val)

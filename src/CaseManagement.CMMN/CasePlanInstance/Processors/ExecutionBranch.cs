@@ -8,15 +8,15 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
     {
         public ExecutionBranch(int level)
         {
-            Nodes = new List<CasePlanElementInstance>();
+            Nodes = new List<BaseCasePlanItemInstance>();
             Level = level;
         }
 
         public int Level { get; private set; }
         public ExecutionBranch NextBranch { get; set; }
-        public ICollection<CasePlanElementInstance> Nodes { get; internal set; }
+        public ICollection<BaseCasePlanItemInstance> Nodes { get; internal set; }
 
-        public void AddNode(CasePlanElementInstance casePlanElementInstance)
+        public void AddNode(BaseCasePlanItemInstance casePlanElementInstance)
         {
             Nodes.Add(casePlanElementInstance);
         }
@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             return Level == 0;
         }
 
-        public CasePlanElementInstance GetNode(CasePlanElementInstance casePlanElementInstance)
+        public BaseCasePlanItemInstance GetNode(BaseCasePlanItemInstance casePlanElementInstance)
         {
             var node = Nodes.FirstOrDefault(_ => _.Id == casePlanElementInstance.Id);
             if (node != null)
@@ -49,9 +49,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             return null;
         }
 
-        public static ExecutionBranch Build(ICollection<CasePlanElementInstance> casePlanElementInstances, ExecutionBranch parentExecutionBranch = null)
+        public static ExecutionBranch Build(ICollection<BaseCasePlanItemInstance> casePlanElementInstances, ExecutionBranch parentExecutionBranch = null)
         {
-            IEnumerable<CasePlanElementInstance> filteredCasePlanElementsInstances;
+            IEnumerable<BaseCasePlanItemInstance> filteredCasePlanElementsInstances;
             if (parentExecutionBranch == null)
             {
                 parentExecutionBranch = new ExecutionBranch(0);

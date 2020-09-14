@@ -1,12 +1,16 @@
 ﻿using CaseManagement.CMMN.AspNetCore.Extensions;
-using CaseManagement.CMMN.CaseFile;
 using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Exceptions;
-using CaseManagement.CMMN.Infrastructures;
+using CaseManagement.CMMN.CaseFile.Queries;
+using CaseManagement.CMMN.Common.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.AspNetCore.Apis
@@ -14,78 +18,28 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     [Route(CMMNConstants.RouteNames.CaseFiles)]
     public class CaseFilesController : Controller
     {
-        private readonly ICaseFileService _caseFileService;
+        private readonly IMediator _mediator;
 
-        public CaseFilesController(ICaseFileService caseFileService)
+        public CaseFilesController(IMediator mediator)
         {
-            _caseFileService = caseFileService;
+            _mediator = mediator;
         }
 
         [HttpGet("count")]
-        [Authorize("get_statistic")]
-        public async Task<IActionResult> Count()
+        public async Task<IActionResult> Count(CancellationToken token)
         {
-            var result = await _caseFileService.Count();
+            var result = await _mediator.Send(new CountCaseFileQuery(), token);
             return new OkObjectResult(result);
-        }
-
-        [HttpPost("me")]
-        [Authorize("me_add_casefile")]
-        public async Task<IActionResult> AddMe([FromBody] AddCaseFileCommand parameter)
-        {
-            try
-            {
-                parameter.Owner = this.GetNameIdentifier();
-                var result = await _caseFileService.Add(parameter);
-                return new ContentResult
-                {
-                    StatusCode = (int)HttpStatusCode.Created,
-                    Content = result.ToString()
-                };
-            }
-            catch (AggregateValidationException ex)
-            {
-                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
-            }
         }
 
         [HttpPost]
         [Authorize("add_casefile")]
-        public async Task<IActionResult> Add([FromBody] AddCaseFileCommand parameter)
+        public async Task<IActionResult> Add([FromBody] AddCaseFileCommand parameter, CancellationToken token)
         {
             try
             {
-                var result = await _caseFileService.Add(parameter);
-                return new ContentResult
-                {
-                    StatusCode = (int)HttpStatusCode.Created,
-                    Content = result.ToString()
-                };
-            }
-            catch (AggregateValidationException ex)
-            {
-                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
-            }
-        }
-
-        [HttpPut("me/{id}")]
-        [Authorize("me_update_casefile")]
-        public async Task<IActionResult> UpdateMe(string id, [FromBody] UpdateCaseFileCommand parameter)
-        {
-            try
-            {
-                parameter.Id = id;
-                parameter.Performer = this.GetNameIdentifier();
-                await _caseFileService.UpdateMe(parameter);
-                return new OkResult();
-            }
-            catch (UnknownCaseFileException)
-            {
-                return new NotFoundResult();
-            }
-            catch (UnauthorizedCaseFileException)
-            {
-                return new UnauthorizedResult();
+                var result = await _mediator.Send(parameter, token);
+                return new CreatedResult(string.Empty, result);
             }
             catch (AggregateValidationException ex)
             {
@@ -95,49 +49,17 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
 
         [HttpPut("{id}")]
         [Authorize("update_casefile")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter)
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFileCommand parameter, CancellationToken token)
         {
             try
             {
                 parameter.Id = id;
-                await _caseFileService.Update(parameter);
+                await _mediator.Send(parameter, token);
                 return new OkResult();
             }
             catch (UnknownCaseFileException)
             {
                 return new NotFoundResult();
-            }
-            catch (UnauthorizedCaseFileException)
-            {
-                return new UnauthorizedResult();
-            }
-            catch (AggregateValidationException ex)
-            {
-                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
-            }
-        }
-
-        [HttpGet("me/{id}/publish")]
-        [Authorize("me_publish_casefile")]
-        public async Task<IActionResult> PublishMe(string id)
-        {
-            try
-            {
-                var cmd = new PublishCaseFileCommand
-                {
-                    Id = id,
-                    Performer = this.GetNameIdentifier()
-                };
-                var result = await _caseFileService.PublishMe(cmd);
-                return new OkObjectResult(result);
-            }
-            catch (UnknownCaseFileException)
-            {
-                return new NotFoundResult();
-            }
-            catch (UnauthorizedCaseFileException)
-            {
-                return new UnauthorizedResult();
             }
             catch (AggregateValidationException ex)
             {
@@ -147,7 +69,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
 
         [HttpGet("{id}/publish")]
         [Authorize("publish_casefile")]
-        public async Task<IActionResult> Publish(string id)
+        public async Task<IActionResult> Publish(string id, CancellationToken token)
         {
             try
             {
@@ -155,16 +77,12 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
                 {
                     Id = id
                 };
-                var result = await _caseFileService.Publish(cmd);
+                var result = await _mediator.Send(cmd, token);
                 return new OkObjectResult(result);
             }
             catch (UnknownCaseFileException)
             {
                 return new NotFoundResult();
-            }
-            catch (UnauthorizedCaseFileException)
-            {
-                return new UnauthorizedResult();
             }
             catch (AggregateValidationException ex)
             {
@@ -172,50 +90,26 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
-        [HttpGet("search")]
+        [HttpPost("search")]
         [Authorize("get_casefile")]
-        public async Task<IActionResult> Search()
+        public async Task<IActionResult> Search([FromBody] SearchCaseFileQuery query, CancellationToken token)
         {
-            var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _caseFileService.Search(query);
+            var result = await _mediator.Send(query, token);
             return new OkObjectResult(result);
-        }
-
-        [HttpGet("me/{id}")]
-        [Authorize("me_get_casefile")]
-        public async Task<IActionResult> GetMe(string id)
-        {
-            try
-            {
-                var result = await _caseFileService.GetMe(id, this.GetNameIdentifier());
-                return new OkObjectResult(result);
-            }
-            catch(UnknownCaseFileException)
-            {
-                return new NotFoundResult();
-            }
-            catch(UnauthorizedCaseFileException)
-            {
-                return new UnauthorizedResult();
-            }
         }
 
         [HttpGet("{id}")]
         [Authorize("get_casefile")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, CancellationToken token)
         {
             try
             {
-                var result = await _caseFileService.Get(id);
+                var result = await _mediator.Send(new GetCaseFileQuery { Id = id }, token);
                 return new OkObjectResult(result);
             }
             catch (UnknownCaseFileException)
             {
                 return new NotFoundResult();
-            }
-            catch (UnauthorizedCaseFileException)
-            {
-                return new UnauthorizedResult();
             }
         }
     }

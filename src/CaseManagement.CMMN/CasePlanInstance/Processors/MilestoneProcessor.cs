@@ -11,7 +11,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         {
         }
 
-        protected override Task ProtectedExecute(CMMNExecutionContext executionContext, MilestoneElementInstance elt, CancellationToken cancellationToken)
+        protected override Task ProtectedProcess(CMMNExecutionContext executionContext, MilestoneElementInstance elt, CancellationToken cancellationToken)
         {
             executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Occur);
             return Task.CompletedTask;

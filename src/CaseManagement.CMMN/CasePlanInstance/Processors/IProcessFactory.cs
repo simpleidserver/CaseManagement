@@ -7,7 +7,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
     public interface IProcessorFactory
     {
-        Task Execute<T>(CMMNExecutionContext executionContext, T instance, CancellationToken token) where T : CasePlanElementInstance;
-        Task Execute(CMMNExecutionContext executionContext, CasePlanElementInstance instance, Type type, CancellationToken token);
+        Task Execute<T>(CMMNExecutionContext executionContext, T instance, CancellationToken token) where T : BaseCaseEltInstance;
+        Task Execute(CMMNExecutionContext executionContext, BaseCaseEltInstance instance, Type type, CancellationToken token);
     }
 }

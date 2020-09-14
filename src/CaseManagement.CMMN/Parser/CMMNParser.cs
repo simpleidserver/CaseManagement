@@ -79,7 +79,7 @@ namespace CaseManagement.CMMN.Parser
             var planItems = BuildPlanItems(stage, casePlanInstanceId);
             var result = new StageElementInstance 
             { 
-                Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, stage.id, 0),
+                Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, stage.id, 0),
                 Name = stage.name 
             };
             foreach (var planItem in planItems)
@@ -99,9 +99,9 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
 
-        private static List<CasePlanElementInstance> BuildPlanItems(tStage stage, string casePlanInstanceId)
+        private static List<BaseCasePlanItemInstance> BuildPlanItems(tStage stage, string casePlanInstanceId)
         {
-            var planItems = new List<CasePlanElementInstance>();
+            var planItems = new List<BaseCasePlanItemInstance>();
             if (stage.planItem != null)
             {
                 foreach (var planItem in stage.planItem)
@@ -161,7 +161,7 @@ namespace CaseManagement.CMMN.Parser
             return planItems;
         }
 
-        private static CasePlanElementInstance BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef, string casePlanInstanceId)
+        private static BaseCasePlanItemInstance BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef, string casePlanInstanceId)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -173,8 +173,8 @@ namespace CaseManagement.CMMN.Parser
                 var humanTask = planItemDef as tHumanTask;
                 return new HumanTaskElementInstance 
                 { 
-                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
-                    EldId = id,
+                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    EltId = id,
                     NbOccurrence = 0,
                     Name = name, 
                     FormId = humanTask.caseFormRef, 
@@ -186,8 +186,8 @@ namespace CaseManagement.CMMN.Parser
             {
                 return new EmptyTaskElementInstance
                 {
-                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
-                    EldId = id,
+                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    EltId = id,
                     NbOccurrence = 0,
                     Name = name 
                 };
@@ -203,8 +203,8 @@ namespace CaseManagement.CMMN.Parser
                 };
                 return new TimerEventListener
                 {
-                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
-                    EldId = id,
+                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    EltId = id,
                     NbOccurrence = 0,
                     Name = name, 
                     TimerExpression = expression 
@@ -215,8 +215,8 @@ namespace CaseManagement.CMMN.Parser
             {
                 return new MilestoneElementInstance
                 {
-                    Id = CasePlanElementInstance.BuildCasePlanElementInstanceId(casePlanInstanceId, id, 0),
-                    EldId = id,
+                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    EltId = id,
                     NbOccurrence = 0,
                     Name = name 
                 };

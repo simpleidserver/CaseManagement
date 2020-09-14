@@ -2,9 +2,13 @@
 
 namespace CaseManagement.CMMN.Domains
 {
-    public abstract class BaseMilestoneOrTimerElementInstance : CasePlanElementInstance
+    public abstract class BaseMilestoneOrTimerElementInstance : BaseCasePlanItemInstance
     {
+        #region Properties
+
         public MilestoneEventStates? State { get; set; }
+
+        #endregion
 
         protected override void UpdateTransition(CMMNTransitions transition, DateTime executionDateTime)
         {

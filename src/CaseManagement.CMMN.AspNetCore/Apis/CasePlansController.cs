@@ -1,8 +1,7 @@
-﻿using CaseManagement.CMMN.AspNetCore.Extensions;
-using CaseManagement.CMMN.CasePlan;
-using CaseManagement.CMMN.CasePlan.Exceptions;
+﻿using CaseManagement.CMMN.CasePlan.Queries;
+using CaseManagement.CMMN.Common.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,18 +11,17 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
     [Route(CMMNConstants.RouteNames.CasePlans)]
     public class CasePlansController : Controller
     {
-        private readonly ICasePlanService _casePlanService;
+        private readonly IMediator _mediator;
 
-        public CasePlansController(ICasePlanService casePlanService)
+        public CasePlansController(IMediator mediator)
         {
-            _casePlanService = casePlanService;
+            _mediator = mediator;
         }
 
         [HttpGet("count")]
-        [Authorize("get_statistic")]
         public async Task<IActionResult> Count(CancellationToken token)
         {
-            var result = await _casePlanService.Count(token);
+            var result = await _mediator.Send(new CountCasePlanQuery(), token);
             return new OkObjectResult(result);
         }
 
@@ -33,7 +31,7 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
         {
             try
             {
-                var result = await _casePlanService.Get(id, token);
+                var result = await _mediator.Send(new GetCasePlanQuery { Id = id }, token);
                 return new OkObjectResult(result);
             }
             catch (UnknownCasePlanException)
@@ -42,12 +40,11 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
-        [HttpGet("search")]
+        [HttpPost("search")]
         [Authorize("get_caseplan")]
-        public async Task<IActionResult> Search(CancellationToken token)
+        public async Task<IActionResult> Search([FromBody] SearchCasePlanQuery query, CancellationToken token)
         {
-            var query = HttpContext.Request.Query.ToEnumerable();
-            var result = await _casePlanService.Search(query, token);
+            var result = await _mediator.Send(query, token);
             return new OkObjectResult(result);
         }
     }

@@ -11,13 +11,13 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
     public class InMemoryMessageBroker : IMessageBroker
     {
         public ConcurrentDictionary<string, BlockingCollection<object>> _workingQueues;
-        public ConcurrentBag<DeadLetterMessage> _deadLetters;
+        public ConcurrentBag<ScheduleMessage> _scheduledMessages;
         
 
         public InMemoryMessageBroker()
         {
             _workingQueues = new ConcurrentDictionary<string, BlockingCollection<object>>();
-            _deadLetters = new ConcurrentBag<DeadLetterMessage>();
+            _scheduledMessages = new ConcurrentBag<ScheduleMessage>();
         }
 
         public Task Queue(string queueName, object msg, CancellationToken token)
@@ -32,9 +32,9 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
             return Task.CompletedTask;
         }
 
-        public Task QueueDeadLetter(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
+        public Task QueueScheduleMessage(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
         {
-            _deadLetters.Add(new DeadLetterMessage
+            _scheduledMessages.Add(new ScheduleMessage
             {
                 Content = msg,
                 ElapsedTime = elapsedTime,
@@ -58,16 +58,16 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
             return Task.FromResult((T)null);
         }
 
-        public Task<List<DeadLetterMessage>> DequeueDeadLetters(CancellationToken token)
+        public Task<List<ScheduleMessage>> DequeueScheduleMessage(CancellationToken token)
         {
-            var deadLetters = _deadLetters.Where(_ => _.ElapsedTime <= DateTime.UtcNow).ToList();
-            for(int i = 0; i < deadLetters.Count; i++)
+            var scheduledMessages = _scheduledMessages.Where(_ => _.ElapsedTime <= DateTime.UtcNow).ToList();
+            for(int i = 0; i < scheduledMessages.Count; i++)
             {
-                var record = deadLetters[i];
-                _deadLetters.Remove(record);
+                var record = scheduledMessages[i];
+                _scheduledMessages.Remove(record);
             }
 
-            return Task.FromResult(deadLetters);
+            return Task.FromResult(scheduledMessages);
         }
 
         public Task Start()

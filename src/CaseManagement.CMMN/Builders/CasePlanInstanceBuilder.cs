@@ -1,15 +1,19 @@
 ﻿using CaseManagement.CMMN.Domains;
 using System;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Builders
 {
     public class CasePlanInstanceBuilder : StageInstanceBuilder
     {
-        private CasePlanInstanceBuilder(string id, string casePlanName) : base(id, casePlanName)
+        private ICollection<FileItemInstanceBuilder> _builders;
+
+        private CasePlanInstanceBuilder(string id, string casePlanName) : base(id, id, casePlanName) 
         {
+            _builders = new List<FileItemInstanceBuilder>();
         }
 
-        public static new CasePlanInstanceBuilder New(string id, string casePlanName)
+        public static CasePlanInstanceBuilder New(string id, string casePlanName)
         {
             return new CasePlanInstanceBuilder(id, casePlanName);
         }
@@ -32,9 +36,15 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
-        public new CasePlanInstanceBuilder AddFileItem(string id, string name, Action<FileItemInstanceBuilder> callback = null)
+        public CasePlanInstanceBuilder AddFileItem(string id, string name, Action<FileItemInstanceBuilder> callback = null)
         {
-            base.AddFileItem(id, name, callback);
+            var fileItemBuilder = new FileItemInstanceBuilder(CasePlanInstanceId, id, name);
+            if (callback != null)
+            {
+                callback(fileItemBuilder);
+            }
+
+            _builders.Add(fileItemBuilder);
             return this;
         }
 
@@ -44,9 +54,21 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
+        public new CasePlanInstanceBuilder AddTimerEventListener(string id, string name, Action<TimerEventListenerBuilder> callback = null)
+        {
+            base.AddTimerEventListener(id, name, callback);
+            return this;
+        }
+
         public new CasePlanInstanceAggregate Build()
         {
-            var result = CasePlanInstanceAggregate.New(Id, base.InternalBuild() as StageElementInstance);
+            var files = new List<CaseFileItemInstance>();
+            foreach(var builder in _builders)
+            {
+                files.Add(builder.Build() as CaseFileItemInstance);
+            }
+
+            var result = CasePlanInstanceAggregate.New(CasePlanInstanceId, base.InternalBuild() as StageElementInstance, files);
             return result;
         }
     }

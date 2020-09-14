@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:case="https://github.com/simpleidserver/CaseManagement" id="caseWithCaseFileItem" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
-  <cmmn:caseFileItemDefinition id="CaseFileItemDefinition_1gxrx35" name="Document" definitionType="https://github.com/simpleidserver/casemanagement/directory" />
   <cmmn:case id="testCase" name="One Process Task Case">
     <cmmn:casePlanModel id="CaseWithOneManualActivationTask" name="Case with one manual activation task">
       <cmmn:planItem id="PlanItem_0s8tly3" definitionRef="Task_13m3ndw">
         <cmmn:itemControl id="PlanItemControl_1qk4dz4">
-          <cmmn:manualActivationRule id="ManualActivationRule_0wcl9eu" />
+          <cmmn:manualActivationRule id="ManualActivationRule_0wcl9eu">
+            <cmmn:condition>true</cmmn:condition>
+          </cmmn:manualActivationRule>
         </cmmn:itemControl>
       </cmmn:planItem>
-      <cmmn:task id="Task_13m3ndw" name="Long task" />
+      <cmmn:task id="Task_13m3ndw" name="Task" />
     </cmmn:casePlanModel>
   </cmmn:case>
   <cmmndi:CMMNDI>

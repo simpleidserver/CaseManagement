@@ -1,4 +1,6 @@
-﻿namespace CaseManagement.CMMN
+﻿using System.ComponentModel;
+
+namespace CaseManagement.CMMN
 {
     public static class CMMNConstants
     {
@@ -32,6 +34,7 @@
             public const string AddReference = "addreference";
             public const string RemoveReference = "removereference";
             public const string Delete = "delete";
+            public const string Occur = "occur";
         }
 
         public static class RouteNames

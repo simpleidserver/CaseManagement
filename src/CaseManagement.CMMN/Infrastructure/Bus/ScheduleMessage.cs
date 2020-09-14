@@ -2,7 +2,7 @@
 
 namespace CaseManagement.CMMN.Infrastructure.Bus
 {
-    public class DeadLetterMessage
+    public class ScheduleMessage
     {
         public string QueueName { get; set; }
         public object Content { get; set; }

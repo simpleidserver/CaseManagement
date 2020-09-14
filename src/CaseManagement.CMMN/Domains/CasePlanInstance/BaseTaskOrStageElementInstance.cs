@@ -2,11 +2,15 @@
 
 namespace CaseManagement.CMMN.Domains
 {
-    public abstract class BaseTaskOrStageElementInstance : CasePlanElementInstance
+    public abstract class BaseTaskOrStageElementInstance : BaseCasePlanItemInstance
     {
+        #region Properties
+
         public ManualActivationRule ManualActivationRule { get; set; }
         public TaskStageStates? State { get; set; }
         public bool IsBlocking { get; set; }
+
+        #endregion
 
         public bool IsManualActivationRuleSatisfied(CasePlanInstanceExecutionContext executionContext)
         {
