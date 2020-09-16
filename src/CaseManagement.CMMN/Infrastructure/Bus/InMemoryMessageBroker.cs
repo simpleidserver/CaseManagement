@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,36 +11,30 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
 {
     public class InMemoryMessageBroker : IMessageBroker
     {
-        public ConcurrentDictionary<string, BlockingCollection<object>> _workingQueues;
-        public ConcurrentBag<ScheduleMessage> _scheduledMessages;
+        public ConcurrentDictionary<string, BlockingCollection<string>> _workingQueues;
+        public ConcurrentBag<ScheduledMessage> _scheduledMessages;
         
 
         public InMemoryMessageBroker()
         {
-            _workingQueues = new ConcurrentDictionary<string, BlockingCollection<object>>();
-            _scheduledMessages = new ConcurrentBag<ScheduleMessage>();
+            _workingQueues = new ConcurrentDictionary<string, BlockingCollection<string>>();
+            _scheduledMessages = new ConcurrentBag<ScheduledMessage>();
         }
 
         public Task Queue(string queueName, object msg, CancellationToken token)
         {
+            return Queue(queueName, JsonConvert.SerializeObject(msg), token);
+        }
+
+        public Task Queue(string queueName, string serializedMessage, CancellationToken token)
+        {
             if (!_workingQueues.ContainsKey(queueName))
             {
-                _workingQueues.TryAdd(queueName, new BlockingCollection<object> { msg });
+                _workingQueues.TryAdd(queueName, new BlockingCollection<string> { serializedMessage });
                 return Task.CompletedTask;
             }
 
-            _workingQueues[queueName].Add(msg);
-            return Task.CompletedTask;
-        }
-
-        public Task QueueScheduleMessage(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
-        {
-            _scheduledMessages.Add(new ScheduleMessage
-            {
-                Content = msg,
-                ElapsedTime = elapsedTime,
-                QueueName = queueName
-            });
+            _workingQueues[queueName].Add(serializedMessage);
             return Task.CompletedTask;
         }
 
@@ -50,15 +45,26 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
                 return Task.FromResult((T)null);
             }
 
-            if (_workingQueues[queueName].TryTake(out object msg, 100, cancellationToken))
+            if (_workingQueues[queueName].TryTake(out string msg, 100, cancellationToken))
             {
-                return Task.FromResult((T)msg);
+                return Task.FromResult(JsonConvert.DeserializeObject<T>(msg));
             }
 
             return Task.FromResult((T)null);
         }
 
-        public Task<List<ScheduleMessage>> DequeueScheduleMessage(CancellationToken token)
+        public Task QueueScheduledMessage(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
+        {
+            _scheduledMessages.Add(new ScheduledMessage
+            {
+                SerializedContent = JsonConvert.SerializeObject(msg),
+                ElapsedTime = elapsedTime,
+                QueueName = queueName
+            });
+            return Task.CompletedTask;
+        }
+
+        public Task<List<ScheduledMessage>> DequeueScheduledMessage(CancellationToken token)
         {
             var scheduledMessages = _scheduledMessages.Where(_ => _.ElapsedTime <= DateTime.UtcNow).ToList();
             for(int i = 0; i < scheduledMessages.Count; i++)

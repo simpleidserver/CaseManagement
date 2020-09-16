@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { select, Store } from '@ngrx/store';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { StartGet } from '../actions/case-files';
-import { CaseFile } from '../models/case-file.model';
-import * as fromCaseFiles from '../reducers';
-import { CaseFilesService } from '../services/casefiles.service';
+import { filter } from 'rxjs/operators';
+import { CaseFile } from '../../../stores/casefiles/models/case-file.model';
 let CmmnViewer = require('cmmn-js/lib/Modeler'),
     propertiesPanelModule = require('casemanagement-js-properties-panel'),
     propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'),
@@ -28,7 +28,13 @@ export class ViewCaseFilesComponent implements OnInit {
     viewer: any;
     caseFile: CaseFile = new CaseFile();
 
-    constructor(private store: Store<fromCaseFiles.CaseFilesState>, private route: ActivatedRoute, private formBuilder: FormBuilder, private caseFilesService: CaseFilesService, private snackBar: MatSnackBar, private translateService: TranslateService, private router: Router) {
+    constructor(private store: Store<fromAppState.AppState>,
+        private route: ActivatedRoute,
+        private formBuilder: FormBuilder,
+        private snackBar: MatSnackBar,
+        private translateService: TranslateService,
+        private actions$: ScannedActionsSubject,
+        private router: Router) {
         this.saveForm = this.formBuilder.group({
             id: new FormControl({ value: '', disabled: true }),
             name: new FormControl({ value: '' }),
@@ -56,18 +62,47 @@ export class ViewCaseFilesComponent implements OnInit {
                 cmmn: cmmnModdle
             }
         });
-        this.store.pipe(select(fromCaseFiles.selectGetResult)).subscribe((e: CaseFile) => {
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseFileActions.ActionTypes.COMPLETE_UPDATE_CASEFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('CASE_FILE_SAVED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseFileActions.ActionTypes.ERROR_UPDATE_CASEFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('ERROR_SAVE_CASE_FILE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseFileActions.ActionTypes.COMPLETE_PUBLISH_CASEFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('PUBLISH_CASE_FILE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseFileActions.ActionTypes.ERROR_PUBLISH_CASEFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('ERROR_PUBLISH_CASE_FILE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+                this.router.navigate(["/cases/casefiles/" + this.caseFile.id]);
+            });
+        this.store.pipe(select(fromAppState.selectCaseFileResult)).subscribe((e: CaseFile) => {
             if (!e) {
                 return;
             }
 
-            this.saveForm.controls['id'].setValue(e.Id);
-            this.saveForm.controls['name'].setValue(e.Name);
-            this.saveForm.controls['createDateTime'].setValue(e.CreateDateTime);
-            this.saveForm.controls['updateDateTime'].setValue(e.UpdateDateTime);
-            this.saveForm.controls['description'].setValue(e.Description);
-            this.xml = e.Payload;
-            this.viewer.importXML(e.Payload);
+            this.saveForm.controls['id'].setValue(e.id);
+            this.saveForm.controls['name'].setValue(e.name);
+            this.saveForm.controls['createDateTime'].setValue(e.createDateTime);
+            this.saveForm.controls['updateDateTime'].setValue(e.updateDateTime);
+            this.saveForm.controls['description'].setValue(e.description);
+            this.xml = e.payload;
+            this.viewer.importXML(e.payload);
             this.caseFile = e;
         });
         this.refresh();
@@ -100,40 +135,22 @@ export class ViewCaseFilesComponent implements OnInit {
                 return;
             }
 
-            let id = self.saveForm.get('id').value;
-            let cancel = self.translateService.instant('CANCEL');
-            self.caseFilesService.update(id, form.name, form.description, x).subscribe(() => {
-                self.snackBar.open(self.translateService.instant('CASE_FILE_SAVED'), cancel, {
-                    duration: 2000
-                });
-            }, () => {
-                self.snackBar.open(self.translateService.instant('ERROR_SAVE_CASE_FILE'), cancel, {
-                    duration: 2000
-                });
-            });
+            const id = self.saveForm.get('id').value;
+            const act = new fromCaseFileActions.UpdateCaseFile(id, form.name, form.description, x);
+            self.store.dispatch(act);
         });
     }
 
     onPublish(e: any) {
         e.preventDefault();
-        let self = this;
-        var id = self.route.snapshot.params['id'];
-        let cancel = self.translateService.instant('CANCEL');
-        self.caseFilesService.publish(id).subscribe((caseFileId : string) => {
-            self.snackBar.open(self.translateService.instant('PUBLISH_CASE_FILE'), cancel, {
-                duration: 2000
-            });
-            this.router.navigate(["/cases/casefiles/" + caseFileId]);
-        }, () => {
-            self.snackBar.open(self.translateService.instant('ERROR_PUBLISH_CASE_FILE'), cancel, {
-                duration: 2000
-            });
-        });
+        const id = this.route.snapshot.params['id'];
+        const act = new fromCaseFileActions.PublishCaseFile(id);
+        this.store.dispatch(act);
     }
 
     refresh() {
-        var id = this.route.snapshot.params['id'];
-        let request = new StartGet(id);
+        const id = this.route.snapshot.params['id'];
+        const request = new fromCaseFileActions.GetCaseFile(id);
         this.store.dispatch(request);
     }
 

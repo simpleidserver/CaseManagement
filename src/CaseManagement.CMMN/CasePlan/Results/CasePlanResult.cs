@@ -9,6 +9,7 @@ namespace CaseManagement.CMMN.CasePlan.Results
         public string Name { get; set; }
         public string Description { get; set; }
         public string CaseFile { get; set; }
+        public string CasePlanId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public int Version { get; set; }
         public string Owner { get; set; }
@@ -23,7 +24,8 @@ namespace CaseManagement.CMMN.CasePlan.Results
                 Id = casePlan.AggregateId,
                 Name = casePlan.Name,
                 Owner = casePlan.CaseOwner,
-                Version = casePlan.Version
+                Version = casePlan.Version,
+                CasePlanId = casePlan.CasePlanId
             };
         }
     }

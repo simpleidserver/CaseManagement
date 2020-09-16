@@ -16,6 +16,9 @@ const BASE_URL = process.env.BASE_URL || '/casemanagement/';
 
 const ROOT = path.resolve(__dirname, '..');
 
+const alias = rxPaths();
+alias["@app"] = path.resolve(__dirname, '../angularApp/app/');
+
 console.log('@@@@@@@@@ USING DEVELOPMENT @@@@@@@@@@@@@@@');
 
 module.exports = {
@@ -39,7 +42,7 @@ module.exports = {
 
     resolve: {
         extensions: ['.ts', '.js', '.json'],
-        alias: rxPaths()
+        alias: alias
     },
 
     devServer: {

@@ -43,11 +43,6 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 result = result.GroupBy(r => r.FileId).Select(r => r.First());
             }
 
-            if (MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
-            {
-                result = result.InvokeOrderBy(MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
-            }
-
             if (!string.IsNullOrWhiteSpace(parameter.Owner))
             {
                 result = result.Where(r => r.Owner == parameter.Owner);
@@ -61,6 +56,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             if (!string.IsNullOrWhiteSpace(parameter.CaseFileId))
             {
                 result = result.Where(r => r.FileId == parameter.CaseFileId);
+            }
+
+            if (MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+            {
+                result = result.InvokeOrderBy(MAPPING_WORKFLOWDEFINITIONFILE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
             }
 
             int totalLength = result.Count();

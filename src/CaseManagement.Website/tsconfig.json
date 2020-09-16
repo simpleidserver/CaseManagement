@@ -1,5 +1,11 @@
 ﻿{
+  "awesomeTypescriptLoaderOptions": {
+    "useWebpackText": true
+  },
+  "buildOnSave": false,
+  "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "angularApp",
     "target": "es5",
     "module": "es2015",
     "moduleResolution": "node",
@@ -17,15 +23,13 @@
     ],
     "typeRoots": [
       "./node_modules/@types/"
-    ]
+    ],
+    "paths": {
+      "@app/*": [ "app/*" ]
+    }
   },
   "exclude": [
     "node_modules",
     "./angularApp/main-aot.ts"
-  ],
-  "awesomeTypescriptLoaderOptions": {
-    "useWebpackText": true
-  },
-  "compileOnSave": false,
-  "buildOnSave": false
+  ]
 }

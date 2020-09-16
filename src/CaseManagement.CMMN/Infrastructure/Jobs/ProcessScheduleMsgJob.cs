@@ -38,10 +38,10 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 Thread.Sleep(_options.BlockThreadMS);
-                var scheduleMessages = await _messageBroker.DequeueScheduleMessage(cancellationToken);
+                var scheduleMessages = await _messageBroker.DequeueScheduledMessage(cancellationToken);
                 foreach (var scheduleMessage in scheduleMessages)
                 {
-                    await _messageBroker.Queue(scheduleMessage.QueueName, scheduleMessage.Content, cancellationToken);
+                    await _messageBroker.Queue(scheduleMessage.QueueName, scheduleMessage.SerializedContent, cancellationToken);
                 }
             }
         }

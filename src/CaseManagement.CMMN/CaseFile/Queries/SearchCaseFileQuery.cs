@@ -9,5 +9,6 @@ namespace CaseManagement.CMMN.CaseFile.Queries
     {
         public string Owner { get; set; }
         public string CaseFileId { get; set; }
+        public bool TakeLatest { get; set; }
     }
 }

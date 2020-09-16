@@ -1,1 +1,0 @@
-﻿import 'jquery/dist/jquery';

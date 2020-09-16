@@ -1,7 +1,7 @@
 Welcome to CaseManagement
 =========================
 
-CaseManagement is an open source framework enabling any DOTNETCORE or .NET solutions to host a CMMN engine.
+CaseManagement is an open source framework enabling any DOTNETCORE solutions to host a CMMN engine.
 It supports most of the concepts introduced by the Case Management Model And Notation (CMMN) standard version 1.1 for examples :
 
 1) Human task : Task that is performed by a Case worker.
@@ -37,14 +37,6 @@ Nuget feed: https://www.myget.org/F/advance-ict/api/v3/index.json
    casemanagement-usermanual/publishcaseplan
    casemanagement-usermanual/launchcaseinstance
    casemanagement-usermanual/viewcaseplaninstance
-
-.. toctree::
-   :maxdepth: 3
-   :hidden:
-   :caption: Performance User Guide
-   
-   performance-usermanual/monitorperformance
-   performance-usermanual/monitorstatistics
    
 .. toctree::
    :maxdepth: 3

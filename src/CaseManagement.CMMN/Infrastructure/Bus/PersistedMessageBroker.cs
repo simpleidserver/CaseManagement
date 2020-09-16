@@ -28,23 +28,34 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
 
         public Task Queue(string queueName, object message, CancellationToken token)
         {
+            return Queue(queueName, JsonConvert.SerializeObject(message), token);
+        }
+
+        public Task Queue(string queueName, string serializedMessage, CancellationToken token)
+        {
             var record = new QueueMessage
             {
                 CreationDateTime = DateTime.UtcNow,
                 QueueName = queueName,
-                SerializedContent = JsonConvert.SerializeObject(message)
+                SerializedContent = serializedMessage
             };
             return _messageBrokerStore.Queue(record, token);
         }
 
-        public Task QueueScheduleMessage(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
+        public Task QueueScheduledMessage(string queueName, object msg, DateTime elapsedTime, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var record = new ScheduledMessage
+            {
+                SerializedContent = JsonConvert.SerializeObject(msg),
+                ElapsedTime = elapsedTime,
+                QueueName = queueName
+            };
+            return _messageBrokerStore.Queue(record, token);
         }
 
-        public Task<List<ScheduleMessage>> DequeueScheduleMessage(CancellationToken token)
+        public Task<List<ScheduledMessage>> DequeueScheduledMessage(CancellationToken token)
         {
-            throw new NotImplementedException();
+            return _messageBrokerStore.DequeueScheduledMessage(token);
         }
 
         public Task Start()

@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialog, MatPaginator, MatSort } from '@angular/material';
-import { select, Store } from '@ngrx/store';
+import { MatDialog, MatPaginator, MatSnackBar, MatSort } from '@angular/material';
+import { Router } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { StartSearch } from '../actions/case-files';
-import { CaseFile } from '../models/case-file.model';
-import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
-import * as fromCaseFiles from '../reducers';
+import { filter } from 'rxjs/operators';
+import { CaseFile } from '../../../stores/casefiles/models/case-file.model';
+import { SearchCaseFilesResult } from '../../../stores/casefiles/models/search-case-files-result.model';
 import { AddCaseFileDialog } from './add-case-file-dialog';
 
 @Component({
@@ -22,20 +25,41 @@ export class ListCaseFilesComponent implements OnInit {
     length: number;
     caseFiles$: CaseFile[] = [];
 
-    constructor(private store: Store<fromCaseFiles.CaseFilesState>, private formBuilder: FormBuilder,  private dialog: MatDialog) {
+    constructor(private store: Store<fromAppState.AppState>,
+        private formBuilder: FormBuilder,
+        private dialog: MatDialog,
+        private actions$: ScannedActionsSubject,
+        private translateService: TranslateService,
+        private snackBar: MatSnackBar,
+        private route: Router) {
         this.searchForm = this.formBuilder.group({
             text: ''
         });
     }
 
     ngOnInit() {
-        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe((searchCaseFilesResult : SearchCaseFilesResult) => {
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseFileActions.ActionTypes.COMPLETE_ADD_CASEFILE))
+            .subscribe((evt : any) => {
+                this.snackBar.open(this.translateService.instant('CASES_FILE_ADDED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+                this.route.navigate(["/cases/casefiles/" + evt.id]);
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseFileActions.ActionTypes.ERROR_ADD_CASEFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('ERROR_ADD_CASE_FILE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.store.pipe(select(fromAppState.selectCaseFileLstResult)).subscribe((searchCaseFilesResult : SearchCaseFilesResult) => {
             if (!searchCaseFilesResult) {
                 return;
             }
 
-            this.caseFiles$ = searchCaseFilesResult.Content;
-            this.length = searchCaseFilesResult.TotalLength;
+            this.caseFiles$ = searchCaseFilesResult.content;
+            this.length = searchCaseFilesResult.totalLength;
         });
         this.refresh();
     }
@@ -49,11 +73,16 @@ export class ListCaseFilesComponent implements OnInit {
     }
 
     addCaseFile() {
-        let dialogRef = this.dialog.open(AddCaseFileDialog, {
+        const dialogRef = this.dialog.open(AddCaseFileDialog, {
             width: '800px'
         });
-        dialogRef.afterClosed().subscribe(() => {
-            this.refresh();
+        dialogRef.afterClosed().subscribe((e : any) => {
+            if (!e) {
+                return;
+            }
+
+            const request = new fromCaseFileActions.AddCaseFile(e.name, e.description);
+            this.store.dispatch(request);
         });
     }
 
@@ -78,7 +107,7 @@ export class ListCaseFilesComponent implements OnInit {
             direction = this.sort.direction;
         }
 
-        let request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value);
+        const request = new fromCaseFileActions.SearchCaseFiles(active, direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     }
 }

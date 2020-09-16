@@ -2,21 +2,15 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { CaseFilesRoutes } from './casefiles.routes';
-import { CaseFilesEffects } from './effects/case-files';
+import { HistoryCaseFileComponent } from './history/history.component';
 import { AddCaseFileDialog } from './list/add-case-file-dialog';
 import { ListCaseFilesComponent } from './list/list.component';
-import * as reducers from './reducers';
-import { CaseFilesService } from './services/casefiles.service';
 import { ViewCaseFilesComponent } from './view/view.component';
-import { MonacoEditorModule } from 'ngx-monaco-editor';
-import { HistoryCaseFileComponent } from './history/history.component';
 
 @NgModule({
     imports: [
@@ -27,17 +21,11 @@ import { HistoryCaseFileComponent } from './history/history.component';
         HttpClientModule,
         CaseFilesRoutes,
         MaterialModule,
-        SharedModule,
-        EffectsModule.forRoot([CaseFilesEffects]),
-        StoreModule.forRoot(reducers.appReducer),
-        StoreDevtoolsModule.instrument({
-            maxAge: 10
-        })
+        SharedModule
     ],
     entryComponents: [ AddCaseFileDialog ],
     declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent, HistoryCaseFileComponent ],
-    exports: [ListCaseFilesComponent, ViewCaseFilesComponent ],
-    providers: [ CaseFilesService ]
+    exports: [ListCaseFilesComponent, ViewCaseFilesComponent ]
 })
 
 export class CaseFilesModule { }

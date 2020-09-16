@@ -260,7 +260,7 @@ namespace CaseManagement.CMMN.Domains
             }).ToList();
             var stage = CMMNParser.ExtractStage(caseplan.XmlContent, id);
             var json = stage.ToJson();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, caseplan.CaseOwner, roles, permissions, json, DateTime.UtcNow, caseplan.AggregateId, parameters, files);
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, caseplan.CaseOwner, roles, permissions, json, DateTime.UtcNow, caseplan.AggregateId, caseplan.Name, parameters, files);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -269,7 +269,7 @@ namespace CaseManagement.CMMN.Domains
         public static CasePlanInstanceAggregate New(string id, StageElementInstance stage, ICollection<CaseFileItemInstance> caseFiles)
         {
             var result = new CasePlanInstanceAggregate();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), new List<CasePlanInstanceRole>(), stage.ToJson(), DateTime.UtcNow, null, new Dictionary<string, string>(), caseFiles);
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), new List<CasePlanInstanceRole>(), stage.ToJson(), DateTime.UtcNow, null, string.Empty, new Dictionary<string, string>(), caseFiles);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;

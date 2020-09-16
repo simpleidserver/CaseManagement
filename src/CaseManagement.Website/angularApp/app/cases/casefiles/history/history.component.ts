@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
+import { CaseFile } from '@app/stores/casefiles/models/case-file.model';
+import { SearchCaseFilesResult } from '@app/stores/casefiles/models/search-case-files-result.model';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearchHistory } from '../actions/case-files';
-import { CaseFile } from '../models/case-file.model';
-import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
-import * as fromCaseFiles from '../reducers';
 
 @Component({
     selector: 'history-case-file',
@@ -20,16 +20,16 @@ export class HistoryCaseFileComponent implements OnInit {
     length: number;
     caseFiles$: CaseFile[] = [];
 
-    constructor(private route: ActivatedRoute, private store: Store<fromCaseFiles.CaseFilesState>) { }
+    constructor(private route: ActivatedRoute, private store: Store<fromAppState.AppState>) { }
 
     ngOnInit() {
-        this.store.pipe(select(fromCaseFiles.selectSearchHistoryResult)).subscribe((searchCaseFilesResult: SearchCaseFilesResult) => {
+        this.store.pipe(select(fromAppState.selectCaseFileHistoryLstResult)).subscribe((searchCaseFilesResult: SearchCaseFilesResult) => {
             if (!searchCaseFilesResult) {
                 return;
             }
 
-            this.caseFiles$ = searchCaseFilesResult.Content;
-            this.length = searchCaseFilesResult.TotalLength;
+            this.caseFiles$ = searchCaseFilesResult.content;
+            this.length = searchCaseFilesResult.totalLength;
         });
         this.refresh();
     }
@@ -63,7 +63,7 @@ export class HistoryCaseFileComponent implements OnInit {
             direction = this.sort.direction;
         }
 
-        let request = new StartSearchHistory(this.route.snapshot.params['id'], active, direction, count, startIndex);
+        const request = new fromCaseFileActions.SearchCaseFilesHistory(this.route.snapshot.params['id'], active, direction, count, startIndex);
         this.store.dispatch(request);
     }
 }

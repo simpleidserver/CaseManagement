@@ -19,13 +19,9 @@ task ci -depends clean, release, local, pack, publish
 
 task publish {
 	exec { dotnet publish $source_dir\CaseManagement.CMMN.Host\CaseManagement.CMMN.Host.csproj -c $config -o $result_dir\services\CaseManagementApi }
-	exec { dotnet publish $source_dir\CaseManagement.Gateway.Website.Host\CaseManagement.Gateway.Website.Host.csproj -c $config -o $result_dir\services\CaseManagementGateway }
 	exec { npm install $source_dir\CaseManagement.Website --prefix $source_dir\CaseManagement.Website }
 	exec { npm run build-azure --prefix $source_dir\CaseManagement.Website }
 	exec { dotnet publish $source_dir\CaseManagement.Website -c $config -o $result_dir\services\CaseManagementWebsite }
-	exec { npm install $source_dir\CaseManagement.Performance --prefix $source_dir\CaseManagement.Performance }
-	exec { npm run build-azure --prefix $source_dir\CaseManagement.Performance }
-	exec { dotnet publish $source_dir\CaseManagement.Performance -c $config -o $result_dir\services\CaseManagementPerformance }
 }
 
 task clean {
@@ -48,16 +44,14 @@ task compile -depends clean {
 	exec { msbuild -version }
 	
 	exec { dotnet restore .\CaseManagement.sln }
-	exec { dotnet restore .\CaseManagement.AspNet.sln }
     exec { dotnet build .\CaseManagement.sln -c $config --version-suffix=$buildSuffix }
 }
  
 task pack -depends compile {
 	exec { dotnet pack $source_dir\CaseManagement.CMMN\CaseManagement.CMMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.CMMN.Persistence.EF\CaseManagement.CMMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.CMMN.SqlServer\CaseManagement.CMMN.SqlServer.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNet\CaseManagement.CMMN.AspNet.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.Gateway.Website\CaseManagement.Gateway.Website.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.Gateway.Website.AspNetCore\CaseManagement.Gateway.Website.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
 }
 
 task test {

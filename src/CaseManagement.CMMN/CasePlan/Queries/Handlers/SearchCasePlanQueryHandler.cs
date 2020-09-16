@@ -1,7 +1,7 @@
-﻿using MediatR;
-using CaseManagement.CMMN.CasePlan.Results;
+﻿using CaseManagement.CMMN.CasePlan.Results;
 using CaseManagement.CMMN.Common;
 using CaseManagement.CMMN.Persistence;
+using MediatR;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +27,8 @@ namespace CaseManagement.CMMN.CasePlan.Queries.Handlers
                 Order = request.Order,
                 CaseFileId = request.CaseFileId,
                 StartIndex = request.StartIndex,
-                CasePlanId = request.CasePlanId
+                CasePlanId = request.CasePlanId,
+                TakeLatest = request.TakeLatest
             }, cancellationToken);
             return new SearchResult<CasePlanResult>
             {

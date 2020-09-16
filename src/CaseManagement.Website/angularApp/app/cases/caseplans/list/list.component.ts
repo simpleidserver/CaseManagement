@@ -4,10 +4,10 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearch } from '../actions/caseplan';
-import { CasePlan } from '../models/caseplan.model';
-import { SearchCasePlanResult } from '../models/searchcaseplanresult.model';
-import * as fromCaseFiles from '../reducers';
+import * as fromAppState from '../../../stores/appstate';
+import { StartSearch } from '../../../stores/caseplans/actions/caseplan.actions';
+import { CasePlan } from '../../../stores/caseplans/models/caseplan.model';
+import { SearchCasePlanResult } from '../../../stores/caseplans/models/searchcaseplanresult.model';
 
 @Component({
     selector: 'list-case-plans',
@@ -22,7 +22,7 @@ export class ListCasePlansComponent implements OnInit {
     length: number;
     casePlans$: CasePlan[] = [];
 
-    constructor(private store: Store<fromCaseFiles.CasePlanState>, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
+    constructor(private store: Store<fromAppState.AppState>, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
         this.searchForm = this.formBuilder.group({
             text: '',
             caseFileId: ''
@@ -30,16 +30,16 @@ export class ListCasePlansComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.pipe(select(fromCaseFiles.selectSearchResult)).subscribe((l: SearchCasePlanResult) => {
-            if (!l || !l.Content) {
+        this.store.pipe(select(fromAppState.selectCasePlanLstResult)).subscribe((l: SearchCasePlanResult) => {
+            if (!l || !l.content) {
                 return;
             }
 
-            this.casePlans$ = l.Content;
-            this.length = l.TotalLength;
+            this.casePlans$ = l.content;
+            this.length = l.totalLength;
         });
         this.activatedRoute.queryParams.subscribe(params => {
-            var caseFileId = params['caseFileId'];
+            const caseFileId = params['caseFileId'];
             if (caseFileId) {
                 this.searchForm.controls['caseFileId'].setValue(caseFileId);
             }

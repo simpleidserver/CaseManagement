@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using CaseManagement.CMMN.SqlServer;
+using Microsoft.Extensions.Options;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading;
@@ -11,9 +12,9 @@ namespace CaseManagement.CMMN.Infrastructure.Lock
         private readonly string _connectionString;
         private SqlConnection _connection;
 
-        public SqlDistributedLock(IOptions<CMMNServerOptions> options)
+        public SqlDistributedLock(IOptions<SqlDistributedLockOptions> options)
         {
-            _connectionString = options.Value.GetConnectionString();
+            _connectionString = options.Value.ConnectionString;
         }
 
         public async Task<bool> TryAcquireLock(string id, CancellationToken token)

@@ -10,5 +10,6 @@ namespace CaseManagement.CMMN.CasePlan.Queries
         public string Owner { get; set; }
         public string CaseFileId { get; set; }
         public string CasePlanId { get; set; }
+        public bool TakeLatest { get; set; }
     }
 }

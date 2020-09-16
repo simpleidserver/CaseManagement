@@ -68,7 +68,7 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
                     if (dequeue.NbRetry < Options.NbRetry)
                     {
                         var elapsedTime = DateTime.UtcNow.AddMilliseconds(Options.DeadLetterTimeMS);
-                        await MessageBroker.QueueScheduleMessage(QueueName, dequeue, elapsedTime, cancellationToken);
+                        await MessageBroker.QueueScheduledMessage(QueueName, dequeue, elapsedTime, cancellationToken);
                     }
                 }
             }

@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator, MatSort } from '@angular/material';
-import { select, Store } from '@ngrx/store';
-import { CasePlanInstance } from '../models/caseplaninstance.model';
-import { SearchCasePlanInstanceResult } from '../models/searchcaseplaninstanceresult.model';
-import * as fromCasePlanInstance from '../reducers';
-import { StartSearch } from '../actions/caseplaninstance';
-import { merge } from 'rxjs';
-import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
+import { SearchCasePlanInstances } from '@app/stores/caseplaninstances/actions/caseplaninstance.actions';
+import { CasePlanInstanceResult } from '@app/stores/caseplaninstances/models/caseplaninstance.model';
+import { SearchCasePlanInstanceResult } from '@app/stores/caseplaninstances/models/searchcaseplaninstanceresult.model';
+import { select, Store } from '@ngrx/store';
+import { merge } from 'rxjs';
 
 @Component({
     selector: 'list-case-instances',
@@ -20,27 +20,27 @@ export class ListCasePlanInstancesComponent implements OnInit {
     length: number;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    casePlanInstances$: CasePlanInstance[] = [];
+    casePlanInstances$: CasePlanInstanceResult[] = [];
     searchForm: FormGroup;
 
-    constructor(private store: Store<fromCasePlanInstance.CasePlanInstanceState>, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
+    constructor(private store: Store<fromAppState.AppState>, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
         this.searchForm = this.formBuilder.group({
             casePlanId: ''
         });
     }
 
     ngOnInit(): void {
-        this.store.pipe(select(fromCasePlanInstance.selectSearchResult)).subscribe((searchCasePlanInstanceResult: SearchCasePlanInstanceResult) => {
+        this.store.pipe(select(fromAppState.selectCasePlanInstanceLstResult)).subscribe((searchCasePlanInstanceResult: SearchCasePlanInstanceResult) => {
             if (!searchCasePlanInstanceResult) {
                 return;
             }
 
-            this.length = searchCasePlanInstanceResult.TotalLength;
-            this.casePlanInstances$ = searchCasePlanInstanceResult.Content;
+            this.length = searchCasePlanInstanceResult.totalLength;
+            this.casePlanInstances$ = searchCasePlanInstanceResult.content;
         });
 
         this.activatedRoute.queryParams.subscribe(params => {
-            var casePlanId = params['casePlanId'];
+            const casePlanId = params['casePlanId'];
             if (casePlanId) {
                 this.searchForm.controls['casePlanId'].setValue(casePlanId);
             }
@@ -78,7 +78,7 @@ export class ListCasePlanInstancesComponent implements OnInit {
             direction = this.sort.direction;
         }
 
-        let request = new StartSearch(startIndex, count, active, direction, this.searchForm.get('casePlanId').value);
+        const request = new SearchCasePlanInstances(startIndex, count, active, direction, this.searchForm.get('casePlanId').value);
         this.store.dispatch(request);
     }
 }

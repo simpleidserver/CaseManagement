@@ -135,44 +135,6 @@ namespace CaseManagement.Identity
                     "token",
                     "id_token"
                 }
-            },
-            new OpenIdClient
-            {
-                ClientId = "caseManagementPerformanceWebsite",
-                Secrets = new List<ClientSecret>
-                {
-                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("91894b86-c57e-489a-838d-fb82621a67ee"))
-                },
-                TokenEndPointAuthMethod = "client_secret_post",
-                ApplicationType = "web",
-                UpdateDateTime = DateTime.UtcNow,
-                CreateDateTime = DateTime.UtcNow,
-                TokenExpirationTimeInSeconds = 60 * 30,
-                RefreshTokenExpirationTimeInSeconds = 60 * 30,
-                TokenSignedResponseAlg = "RS256",
-                IdTokenSignedResponseAlg = "RS256",
-                AllowedScopes = new List<OpenIdScope>
-                {
-                    SIDOpenIdConstants.StandardScopes.Profile,
-                    SIDOpenIdConstants.StandardScopes.Email,
-                    SCOPE_ROLE
-                },
-                GrantTypes = new List<string>
-                {
-                    "implicit"
-                },
-                RedirectionUrls = new List<string>
-                {
-                    "http://localhost:51725",
-                    "http://localhost:8081",
-                    "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementperformance"
-                },
-                PreferredTokenProfile = "Bearer",
-                ResponseTypes = new List<string>
-                {
-                    "token",
-                    "id_token"
-                }
             }
         };
     }

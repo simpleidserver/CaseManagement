@@ -44,7 +44,7 @@ namespace CaseManagement.CMMN.Infrastructure.Bus
         }
         public static Task ScheduleExternalEvt(this IMessageBroker messageBroker, string evtName, string casePlanInstanceId, string casePlanElementInstanceId, DateTime elapsedTime, CancellationToken token)
         {
-            return messageBroker.QueueScheduleMessage(CMMNConstants.QueueNames.ExternalEvents, new ExternalEventNotification(Guid.NewGuid().ToString())
+            return messageBroker.QueueScheduledMessage(CMMNConstants.QueueNames.ExternalEvents, new ExternalEventNotification(Guid.NewGuid().ToString())
             {
                 CasePlanElementInstanceId = casePlanElementInstanceId,
                 CasePlanInstanceId = casePlanInstanceId,

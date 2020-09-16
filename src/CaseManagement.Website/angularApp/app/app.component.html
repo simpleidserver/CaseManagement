@@ -40,9 +40,6 @@
                     <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cases/caseplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLANS" | translate }}</a>
                     <a mat-list-item *ngIf="roles === 'businessanalyst' || roles === 'caseworker'" [routerLink]="['/cases/caseplaninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLAN_INSTANCES" | translate }}</a>
                 </div>
-                <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/roles']" [routerLinkActive]="['is-active']">
-                    <mat-icon>people</mat-icon> {{ "ROLES" | translate }}
-                </a>
             </mat-nav-list>
         </mat-sidenav>
         <mat-sidenav-content>

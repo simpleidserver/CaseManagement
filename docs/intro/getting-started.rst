@@ -11,18 +11,7 @@ To launch the entire solution follow the steps below :
 
 One console application is launched for each project.
 
-The administration website is available at this URL (http://localhost:8080). Only users with **administrator** role can access to the website.
-By default there is one administrator account configured :
-
-+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Property           | Value                                                                                                                                                                  |
-+====================+========================================================================================================================================================================+
-| Login              | administrator                                                                                                                                                          |
-+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Password           | password                                                                                                                                                               |
-+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-The case managment website is available at this URL (http://localhost:8081). Only users with **businessanalyst** or **caseworker** role can access to the website.
+The case managment website is available at this URL (http://localhost:8080). Only users with **businessanalyst** or **caseworker** role can access to the website.
 By default there is one businessanalyst and one caseworker account configured :
 
 +--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

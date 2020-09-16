@@ -29,6 +29,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<CasePlanInstanceAggregate>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token)
         {
             IQueryable<CasePlanInstanceAggregate> result = _instances.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
+            {
+                result = result.Where(_ => _.CasePlanId == parameter.CasePlanId);
+            }
+
             if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

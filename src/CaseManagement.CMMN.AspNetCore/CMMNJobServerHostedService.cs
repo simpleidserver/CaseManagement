@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,9 +9,10 @@ namespace CaseManagement.CMMN.AspNetCore
     {
         private readonly ICaseJobServer _caseJobServer;
 
-        public CMMNJobServerHostedService(ICaseJobServer caseJobServer)
+        public CMMNJobServerHostedService(IServiceScopeFactory serviceScopeFactory)
         {
-            _caseJobServer = caseJobServer;
+            var scope = serviceScopeFactory.CreateScope();
+            _caseJobServer = scope.ServiceProvider.GetRequiredService<ICaseJobServer>();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

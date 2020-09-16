@@ -3,10 +3,10 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearchHistory } from '../actions/caseplan';
-import { CasePlan } from '../models/caseplan.model';
-import { SearchCasePlanResult } from '../models/searchcaseplanresult.model';
-import * as fromCasePlan from '../reducers';
+import * as fromAppState from '../../../stores/appstate';
+import { StartSearchHistory } from '../../../stores/caseplans/actions/caseplan.actions';
+import { CasePlan } from '../../../stores/caseplans/models/caseplan.model';
+import { SearchCasePlanResult } from '../../../stores/caseplans/models/searchcaseplanresult.model';
 
 @Component({
     selector: 'history-case-plan',
@@ -20,16 +20,16 @@ export class HistoryCasePlanComponent implements OnInit {
     length: number;
     casePlans$: CasePlan[] = [];
 
-    constructor(private route: ActivatedRoute, private store: Store<fromCasePlan.CasePlanState>) { }
+    constructor(private route: ActivatedRoute, private store: Store<fromAppState.AppState>) { }
 
     ngOnInit() {
-        this.store.pipe(select(fromCasePlan.selectSearchHistoryResult)).subscribe((searchCaseFilesResult: SearchCasePlanResult) => {
+        this.store.pipe(select(fromAppState.selectCasePlanHistoryLstResult)).subscribe((searchCaseFilesResult: SearchCasePlanResult) => {
             if (!searchCaseFilesResult) {
                 return;
             }
 
-            this.casePlans$ = searchCaseFilesResult.Content;
-            this.length = searchCaseFilesResult.TotalLength;
+            this.casePlans$ = searchCaseFilesResult.content;
+            this.length = searchCaseFilesResult.totalLength;
         });
         this.refresh();
     }

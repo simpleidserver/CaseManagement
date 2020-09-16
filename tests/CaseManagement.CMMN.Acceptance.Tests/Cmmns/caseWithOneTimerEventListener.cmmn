@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:case="https://github.com/simpleidserver/CaseManagement" id="caseWithCaseFileItem" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
-  <cmmn:caseFileItemDefinition id="CaseFileItemDefinition_1gxrx35" name="Document" definitionType="https://github.com/simpleidserver/casemanagement/directory" />
-  <cmmn:case id="testCase" name="One Process Task Case">
-    <cmmn:casePlanModel id="CaseWithOneTimerEventListener" name="Case with one Timer event listener">
-      <cmmn:planItem id="PlanItem_0ajy9xi" definitionRef="Task_0823suk">
-        <cmmn:entryCriterion id="EntryCriterion_0s1ltvo" sentryRef="Sentry_0xyxhqm" />
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" id="Definitions_0ybklhr" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.20.0">
+  <cmmn:case id="Case_1pidmzh">
+    <cmmn:casePlanModel id="CaseWithOneTimerEventListener" name="One Process Task Case">
+      <cmmn:planItem id="PlanItem_0j53sb4" definitionRef="Task_09hhcsq">
+        <cmmn:entryCriterion id="EntryCriterion_0ipv2hw" sentryRef="Sentry_00rn1x3" />
       </cmmn:planItem>
-      <cmmn:planItem id="PlanItem_0vm21wi" definitionRef="TimerEventListener_1kh4q8t" />
-      <cmmn:sentry id="Sentry_0xyxhqm">
-        <cmmn:planItemOnPart id="PlanItemOnPart_1g24ty1" sourceRef="PlanItem_0vm21wi">
+      <cmmn:planItem id="PlanItem_17brzny" definitionRef="TimerEventListener_0j02hnn" />
+      <cmmn:sentry id="Sentry_00rn1x3">
+        <cmmn:planItemOnPart id="PlanItemOnPart_053ckvb" sourceRef="PlanItem_17brzny">
           <cmmn:standardEvent>occur</cmmn:standardEvent>
         </cmmn:planItemOnPart>
       </cmmn:sentry>
-      <cmmn:task id="Task_0823suk" name="Task" />
-      <cmmn:timerEventListener id="TimerEventListener_1kh4q8t" name="TimerEventListener">
+      <cmmn:task id="Task_09hhcsq" name="EmptyTask" />
+      <cmmn:timerEventListener id="TimerEventListener_0j02hnn" name="timer">
         <cmmn:timerExpression>R2/P0Y0M0DT0H0M4S</cmmn:timerExpression>
       </cmmn:timerEventListener>
     </cmmn:casePlanModel>
@@ -21,31 +20,31 @@
   <cmmndi:CMMNDI>
     <cmmndi:CMMNDiagram id="CMMNDiagram_1">
       <cmmndi:Size width="500" height="500" />
-      <cmmndi:CMMNShape id="DI_CasePlanModel_1" cmmnElementRef="CasePlanModel_1">
-        <dc:Bounds x="156" y="99" width="690" height="236" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel_1isf761" cmmnElementRef="CasePlanModel_1isf761">
+        <dc:Bounds x="156" y="99" width="534" height="389" />
         <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
-      <cmmndi:CMMNShape id="PlanItem_0ajy9xi_di" cmmnElementRef="PlanItem_0ajy9xi">
-        <dc:Bounds x="591" y="169" width="100" height="80" />
+      <cmmndi:CMMNShape id="PlanItem_0j53sb4_di" cmmnElementRef="PlanItem_0j53sb4">
+        <dc:Bounds x="496" y="231" width="100" height="80" />
         <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
-      <cmmndi:CMMNShape id="PlanItem_05n2ttz_di" cmmnElementRef="PlanItem_0vm21wi">
-        <dc:Bounds x="242" y="191" width="36" height="36" />
+      <cmmndi:CMMNShape id="PlanItem_01qrc9f_di" cmmnElementRef="PlanItem_17brzny">
+        <dc:Bounds x="223" y="253" width="36" height="36" />
         <cmmndi:CMMNLabel>
-          <dc:Bounds x="216" y="227" width="87" height="24" />
+          <dc:Bounds x="227" y="289" width="27" height="13" />
         </cmmndi:CMMNLabel>
       </cmmndi:CMMNShape>
-      <cmmndi:CMMNShape id="EntryCriterion_0s1ltvo_di" cmmnElementRef="EntryCriterion_0s1ltvo">
-        <dc:Bounds x="581" y="198" width="20" height="28" />
+      <cmmndi:CMMNShape id="EntryCriterion_0ipv2hw_di" cmmnElementRef="EntryCriterion_0ipv2hw">
+        <dc:Bounds x="486" y="260" width="20" height="28" />
         <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
-      <cmmndi:CMMNEdge id="PlanItemOnPart_1g24ty1_di" cmmnElementRef="PlanItemOnPart_1g24ty1" targetCMMNElementRef="EntryCriterion_0s1ltvo" isStandardEventVisible="true">
-        <di:waypoint x="278" y="209" />
-        <di:waypoint x="430" y="209" />
-        <di:waypoint x="430" y="212" />
-        <di:waypoint x="581" y="212" />
+      <cmmndi:CMMNEdge id="PlanItemOnPart_053ckvb_di" cmmnElementRef="PlanItemOnPart_053ckvb" targetCMMNElementRef="EntryCriterion_0ipv2hw" isStandardEventVisible="true">
+        <di:waypoint x="259" y="271" />
+        <di:waypoint x="373" y="271" />
+        <di:waypoint x="373" y="274" />
+        <di:waypoint x="486" y="274" />
         <cmmndi:CMMNLabel>
-          <dc:Bounds x="413" y="200.5" width="34" height="12" />
+          <dc:Bounds x="356" y="262.5" width="34" height="13" />
         </cmmndi:CMMNLabel>
       </cmmndi:CMMNEdge>
     </cmmndi:CMMNDiagram>

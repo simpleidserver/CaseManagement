@@ -132,3 +132,22 @@ Scenario: Launch caseWithOneSEntry and check his status is completed
 	Then JSON 'children[1].state'='Completed'
 	Then JSON 'children[2].state'='Completed'
 	Then JSON 'children[3].state'='Available'
+
+Scenario: Launch caseWithOneTimerEventListener and check his status is completed
+	When execute HTTP POST JSON request 'http://localhost/case-plans/search'
+	| Key        | Value                         |
+	| casePlanId | CaseWithOneTimerEventListener |
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'casePlanId'
+	And execute HTTP POST JSON request 'http://localhost/case-plan-instances'
+	| Key        | Value        |
+	| casePlanId | $casePlanId$ |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'casePlanInstanceId'
+	And execute HTTP GET request 'http://localhost/case-plan-instances/$casePlanInstanceId$/launch'
+	And poll 'http://localhost/case-plan-instances/$casePlanInstanceId$', until 'children[1].state'='Completed'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'state'='Active'
+	Then JSON 'children[1].state'='Completed'

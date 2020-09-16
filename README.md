@@ -1,6 +1,6 @@
 # CaseManagement
 
-CaseManagement is an open source framework enabling any DOTNETCORE or .NET solutions to host a CMMN engine.
+CaseManagement is an open source framework enabling any DOTNETCORE to host a CMMN engine.
 It supports most of the concepts introduced by the Case Management Model And Notation (CMMN) standard version 1.1 for examples :
 
 1) Human task : Task that is performed by a Case worker.
@@ -24,27 +24,15 @@ For project documentation, please visit [readthedocs](https://casemanagement.rea
 |                         			 						|      																															  																					|																																										|																																								|
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `CaseManagement.CMMN` 			 						| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN)													| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.svg)](https://nuget.org/packages/CaseManagement.CMMN) 													| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.svg)](https://nuget.org/packages/CaseManagement.CMMN) 											|
-| `CaseManagement.CMMN.AspNet` 								| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.AspNet.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.AspNet)										| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.AspNet.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNet) 										| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.AspNet.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNet) 							|
 | `CaseManagement.CMMN.AspNetCore`							| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.AspNetCore.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.AspNetCore)								| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNetCore) 								| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.CMMN.AspNetCore) 					|
-| `CaseManagement.Gateway.Website`							| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.Gateway.Website.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.Gateway.Website)								| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.Gateway.Website.svg)](https://nuget.org/packages/CaseManagement.Gateway.Website) 								| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.Gateway.Website.svg)](https://nuget.org/packages/CaseManagement.Gateway.Website) 					|
-| `CaseManagement.Gateway.Website.AspNetCore`				| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.Gateway.Website.AspNetCore.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.Gateway.Website.AspNetCore)		| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.Gateway.Website.AspNetCore.svg)](https://nuget.org/packages/CaseManagement.Gateway.Website.AspNetCore) 		| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.Gateway.Website.AspNetCore)](https://nuget.org/packages/CaseManagement.Gateway.Website.AspNetCore) 	|
+| `CaseManagement.CMMN.SqlServer`							| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.SqlServer.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.SqlServer)								| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.SqlServer.svg)](https://nuget.org/packages/CaseManagement.CMMN.SqlServer) 								| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.SqlServer.svg)](https://nuget.org/packages/CaseManagement.CMMN.SqlServer) 						|
+| `CaseManagement.CMMN.Persistence.EF`						| [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.Persistence.EF.svg)](https://www.myget.org/feed/advance-ict/package/nuget/CaseManagement.CMMN.Persistence.EF)						| [![NuGet](https://img.shields.io/nuget/v/CaseManagement.CMMN.Persistence.EF.svg)](https://nuget.org/packages/CaseManagement.CMMN.Persistence.EF) 						| [![NuGet](https://img.shields.io/nuget/dt/CaseManagement.CMMN.Persistence.EF.svg)](https://nuget.org/packages/CaseManagement.CMMN.Persistence.EF) 			|
 
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Live demo
-
-### Performance website
-
-Performance live demo : [http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementperformance](http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementperformance).
-
-Administrator credentials :
-
-| Property      |      Value      |
-|---------------|-----------------|
-| login         | administrator   |
-| value         | password        |
 
 ### Case management website
 

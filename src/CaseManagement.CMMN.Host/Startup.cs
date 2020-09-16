@@ -41,21 +41,6 @@ namespace CaseManagement.CMMN.Host
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    IssuerSigningKey = ExtractKey("oauth_puk.txt"),
-                    ValidAudiences = new List<string>
-                    {
-                        "websiteGateway"
-                    },
-                    ValidIssuers = new List<string>
-                    {
-                        "http://localhost:60001"
-                    }
-                };
-            })
-            .AddJwtBearer("IdentityServer", options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
@@ -72,26 +57,27 @@ namespace CaseManagement.CMMN.Host
             services.AddAuthorization(policy =>
             {
                 // Case file
-                policy.AddPolicy("add_casefile", p => p.RequireClaim("scope", "add_casefile"));
-                policy.AddPolicy("update_casefile", p => p.RequireClaim("scope", "update_casefile"));
-                policy.AddPolicy("publish_casefile", p => p.RequireClaim("scope", "publish_casefile"));
-                policy.AddPolicy("get_casefile", p => p.RequireClaim("scope", "get_casefile"));
+                policy.AddPolicy("add_casefile", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("update_casefile", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("publish_casefile", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("get_casefile", p => p.RequireAuthenticatedUser());
                 // Case plan instance
-                policy.AddPolicy("search_caseplaninstance", p => p.RequireClaim("scope", "search_caseplaninstance"));
-                policy.AddPolicy("get_caseplaninstance", p => p.RequireClaim("scope", "get_caseplaninstance"));
-                policy.AddPolicy("add_caseplaninstance", p => p.RequireClaim("scope", "add_caseplaninstance"));
-                policy.AddPolicy("add_caseplaniteminstance", p => p.RequireClaim("scope", "add_caseplaniteminstance"));
-                policy.AddPolicy("launch_caseplaninstance", p => p.RequireClaim("scope", "launch_caseplaninstance"));
-                policy.AddPolicy("close_caseplaninstance", p => p.RequireClaim("scope", "close_caseplaninstance"));
-                policy.AddPolicy("suspend_caseplaninstance", p => p.RequireClaim("scope", "suspend_caseplaninstance"));
-                policy.AddPolicy("reactivate_caseplaninstance", p => p.RequireClaim("scope", "reactivate_caseplaninstance"));
-                policy.AddPolicy("resume_caseplaninstance", p => p.RequireClaim("scope", "resume_caseplaninstance"));
-                policy.AddPolicy("terminate_caseplaninstance", p => p.RequireClaim("scope", "terminate_caseplaninstance"));
-                policy.AddPolicy("activate_caseplaninstance", p => p.RequireClaim("scope", "activate_caseplaninstance"));
+                policy.AddPolicy("search_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("get_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("add_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("add_caseplaniteminstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("launch_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("close_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("suspend_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("reactivate_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("resume_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("terminate_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("activate_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("complete_caseplaninstance", p => p.RequireAuthenticatedUser());
                 // Case plan
-                policy.AddPolicy("get_caseplan", p => p.RequireClaim("scope", "get_caseplan"));
+                policy.AddPolicy("get_caseplan", p => p.RequireAuthenticatedUser());
                 // Case worker task
-                policy.AddPolicy("get_caseworkertasks", p => p.RequireClaim("scope", "get_caseworkertasks"));
+                policy.AddPolicy("get_caseworkertasks", p => p.RequireAuthenticatedUser());
             });
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
