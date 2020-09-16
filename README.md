@@ -16,6 +16,7 @@ It supports most of the concepts introduced by the Case Management Model And Not
 [![Build status](https://ci.appveyor.com/api/projects/status/q2ra83o0rcla41oc?svg=true)](https://ci.appveyor.com/project/simpleidserver/casemanagement)
 [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.svg)](http://myget.org/gallery/advance-ict)
 [![Documentation Status](https://readthedocs.org/projects/casemanagement/badge/?version=latest)](https://casemanagement.readthedocs.io/en/latest/)
+[![Join the chat at https://gitter.im/simpleidserver/CaseManagement](https://badges.gitter.im/simpleidserver/CaseManagement.svg)](https://gitter.im/simpleidserver/CaseManagement?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 For project documentation, please visit [readthedocs](https://casemanagement.readthedocs.io/en/latest/).
 

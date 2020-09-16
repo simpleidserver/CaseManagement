@@ -94,16 +94,24 @@ namespace CaseManagement.CMMN.Host
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            var pathBase = string.Empty;
             if (_configuration.GetChildren().Any(i => i.Key == "pathBase"))
             {
-                app.UsePathBase(_configuration["pathBase"]);
+                pathBase = _configuration["pathBase"];
+                app.UsePathBase(pathBase);
             }
 
             app.UseForwardedHeaders();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CaseManagement API V1");
+            {				
+                var edp = "/swagger/v1/swagger.json";
+                if (!string.IsNullOrWhiteSpace(pathBase))
+                {
+                    edp = $"{pathBase}{edp}";
+                }
+				
+                c.SwaggerEndpoint(edp, "CaseManagement API V1");
             });
             app.UseAuthentication();
             app.UseCors("AllowAll");

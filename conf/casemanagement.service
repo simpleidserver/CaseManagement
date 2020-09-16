@@ -3,7 +3,7 @@ Description=Case Management API
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/CaseManagementApi/CaseManagement.CMMN.Host.dll --server.urls="http://*:60005"
+ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/CaseManagementApi/CaseManagement.CMMN.Host.dll --pathBase=/casemanagementapi --server.urls="http://*:60005"
 KillMode=process
 TimeoutStopSec=5s
 Restart=always
