@@ -1,7 +1,8 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.Bus;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using CaseManagement.CMMN.ISO8601;
+using CaseManagement.Common.Bus;
+using CaseManagement.Common.Processors;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,11 +18,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _messageBroker = messageBroker;
         }
 
-        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, TimerEventListener elt, CancellationToken cancellationToken)
+        protected override async Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, TimerEventListener elt, CancellationToken cancellationToken)
         {
             if (elt.NbOccurrence == 0)
             {
-                var subExists = (await SubscriberRepository.Get(executionContext.CasePlanInstance.AggregateId, elt.Id, CMMNConstants.ExternalTransitionNames.Occur, cancellationToken) != null);
+                var subExists = (await SubscriberRepository.Get(executionContext.Instance.AggregateId, elt.Id, CMMNConstants.ExternalTransitionNames.Occur, cancellationToken) != null);
                 if (!subExists)
                 {
                     await Init(executionContext, elt, cancellationToken);
@@ -32,11 +33,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             var subscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Occur, cancellationToken);
             if (subscription.IsCaptured)
             {
-                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Occur);
+                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Occur);
             }
         }
 
-        private async Task Init(CMMNExecutionContext executionContext, TimerEventListener elt, CancellationToken token)
+        private async Task Init(ExecutionContext<CasePlanInstanceAggregate> executionContext, TimerEventListener elt, CancellationToken token)
         {
             var currentDateTime = DateTime.UtcNow;
             var elapsedTime = ISO8601Parser.ParseTime(elt.TimerExpression.Body);
@@ -62,12 +63,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                     var newInstance = elt;
                     if (i > 0)
                     {
-                        newInstance = executionContext.CasePlanInstance.TryCreateInstance(elt) as TimerEventListener;
+                        newInstance = executionContext.Instance.TryCreateInstance(elt) as TimerEventListener;
                     }
 
                     await TrySubscribe(executionContext, newInstance, CMMNConstants.ExternalTransitionNames.Occur, token);
                     await _messageBroker.ScheduleExternalEvt(CMMNConstants.ExternalTransitionNames.Occur,
-                        executionContext.CasePlanInstance.AggregateId,
+                        executionContext.Instance.AggregateId,
                         newInstance.Id,
                         currentDateTime,
                         token);
@@ -83,7 +84,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
                 await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Occur, token);
                 await _messageBroker.ScheduleExternalEvt(CMMNConstants.ExternalTransitionNames.Occur, 
-                    executionContext.CasePlanInstance.AggregateId,
+                    executionContext.Instance.AggregateId,
                     elt.Id, 
                     elapsedTime.Value, 
                     token);

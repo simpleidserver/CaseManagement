@@ -1,8 +1,8 @@
-﻿using MediatR;
-using CaseManagement.CMMN.CasePlanInstance.Results;
-using CaseManagement.CMMN.Common;
+﻿using CaseManagement.CMMN.CasePlanInstance.Results;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
+using CaseManagement.Common.Results;
+using MediatR;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

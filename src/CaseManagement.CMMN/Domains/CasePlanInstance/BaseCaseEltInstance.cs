@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Common.Exceptions;
+﻿using CaseManagement.Common.Exceptions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

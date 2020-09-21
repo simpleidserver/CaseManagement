@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Processors.FileItem;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.Common.Processors;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,7 +18,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _caseFileItemStores = caseFileItemStores;
         }
 
-        protected override async Task Handle(CMMNExecutionContext executionContext, CaseFileItemInstance elt, CancellationToken cancellationToken)
+        protected override async Task Handle(ExecutionContext<CasePlanInstanceAggregate> executionContext, CaseFileItemInstance elt, CancellationToken cancellationToken)
         {
             var update = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Update, cancellationToken);
             var replace = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Replace, cancellationToken);
@@ -34,52 +35,52 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                     // TODO : THROW EXCEPTION.
                 }
 
-                await caseFileItemStore.TryAddCaseFileItem(elt, executionContext.CasePlanInstance, cancellationToken);
+                await caseFileItemStore.TryAddCaseFileItem(elt, executionContext.Instance, cancellationToken);
                 if (update.IsCaptured)
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Update);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Update);
                     await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Update, cancellationToken);
                     return;
                 }
 
                 if (replace.IsCaptured)
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Replace);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Replace);
                     await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Replace, cancellationToken);
                     return;
                 }
 
                 if (removeChild.IsCaptured)
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.RemoveChild);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.RemoveChild);
                     await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveChild, cancellationToken);
                     return;
                 }
 
                 if (addChild.IsCaptured)
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.AddChild);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.AddChild);
                     await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddChild, cancellationToken);
                     return;
                 }
 
                 if (addReference.IsCaptured)
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.AddReference);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.AddReference);
                     await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddReference, cancellationToken);
                     return;
                 }
 
                 if (removeReference.IsCaptured)
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.RemoveReference);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.RemoveReference);
                     await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveReference, cancellationToken);
                     return;
                 }
 
                 if (delete.IsCaptured)
                 {
-                    executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Delete);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Delete);
                 }
             }
         }

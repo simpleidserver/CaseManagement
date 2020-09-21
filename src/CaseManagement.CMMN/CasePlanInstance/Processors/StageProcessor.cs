@@ -1,5 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.Common.Processors;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,23 +17,23 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _processorFactory = processorFactory;
         }
 
-        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
+        protected override async Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
         {
             var executionBranch = ExecutionBranch.Build(stageElt.Children);
             await ExecuteBranch(executionContext, executionBranch, cancellationToken);
             if (stageElt.Children.All(_ => IsElementCompleted(_)))
             {
-                executionContext.CasePlanInstance.MakeTransition(stageElt, CMMNTransitions.Complete);
+                executionContext.Instance.MakeTransition(stageElt, CMMNTransitions.Complete);
                 return;
             }
 
-            if (executionContext.CasePlanInstance.IsExitCriteriaSatisfied(stageElt))
+            if (executionContext.Instance.IsExitCriteriaSatisfied(stageElt))
             {
-                executionContext.CasePlanInstance.MakeTransition(stageElt, CMMNTransitions.Terminate);
+                executionContext.Instance.MakeTransition(stageElt, CMMNTransitions.Terminate);
             }
         }
 
-        private async Task ExecuteBranch(CMMNExecutionContext executionContext, ExecutionBranch branch, CancellationToken cancellationToken)
+        private async Task ExecuteBranch(ExecutionContext<CasePlanInstanceAggregate> executionContext, BaseExecutionBranch<BaseCasePlanItemInstance> branch, CancellationToken cancellationToken)
         {
             var taskLst = new List<Task>();
             foreach (var node in branch.Nodes)
@@ -47,9 +48,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private async Task HandleCasePlan(CMMNExecutionContext executionContext, BaseCasePlanItemInstance casePlanElementInstance, CancellationToken token)
+        private async Task HandleCasePlan(ExecutionContext<CasePlanInstanceAggregate> executionContext, BaseCasePlanItemInstance casePlanElementInstance, CancellationToken token)
         {
-            await _processorFactory.Execute(executionContext, casePlanElementInstance, casePlanElementInstance.GetType(), token);
+            await _processorFactory.Execute(executionContext, casePlanElementInstance, token);
         }
 
         private bool IsElementCompleted(BaseCasePlanItemInstance planElementInstance)

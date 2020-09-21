@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure;
-using CaseManagement.CMMN.Infrastructure.Bus;
+using CaseManagement.Common;
+using CaseManagement.Common.Bus;
+using CaseManagement.Common.Jobs;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

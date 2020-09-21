@@ -1,8 +1,8 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Results;
 using CaseManagement.CMMN.Common.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure;
 using CaseManagement.CMMN.Persistence;
+using CaseManagement.Common;
 using MediatR;
 using System;
 using System.Collections.Generic;

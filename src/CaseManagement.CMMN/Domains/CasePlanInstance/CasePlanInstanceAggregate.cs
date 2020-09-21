@@ -1,7 +1,7 @@
-﻿using CaseManagement.CMMN.Common.Exceptions;
-using CaseManagement.CMMN.Extensions;
-using CaseManagement.CMMN.Infrastructure;
+﻿using CaseManagement.CMMN.Infrastructure;
 using CaseManagement.CMMN.Parser;
+using CaseManagement.Common.Domains;
+using CaseManagement.Common.Exceptions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

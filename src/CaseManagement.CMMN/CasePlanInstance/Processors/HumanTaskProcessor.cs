@@ -1,5 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.Common.Processors;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,13 +10,13 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
     {
         public HumanTaskProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
+        protected override async Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
         {
-            executionContext.CasePlanInstance.TryAddWorkerTask(elt.Id);
+            executionContext.Instance.TryAddWorkerTask(elt.Id);
             var completeSubscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
             if (completeSubscription.IsCaptured)
             {
-                executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Complete);
+                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete);
             }
         }
     }

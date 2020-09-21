@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />
     <ProjectReference Include="..\CaseManagement.CMMN.Persistence.EF\CaseManagement.CMMN.Persistence.EF.csproj" />
-    <ProjectReference Include="..\CaseManagement.CMMN.SqlServer\CaseManagement.CMMN.SqlServer.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Migrations\" />

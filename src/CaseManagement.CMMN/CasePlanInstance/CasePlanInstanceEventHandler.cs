@@ -1,6 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures.DomainEvts;
 using CaseManagement.CMMN.Persistence;
+using CaseManagement.Common.Domains;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

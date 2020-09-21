@@ -1,0 +1,10 @@
+﻿namespace CaseManagement.BPMN
+{
+    public static class BPMNConstants
+    {
+        public static class QueueNames
+        {
+            public const string ProcessInstances = "processinstances";
+        }
+    }
+}

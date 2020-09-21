@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CaseManagement.Common.Jobs;
+using System;
 
 namespace CaseManagement.CMMN.Infrastructure.Jobs.Notifications
 {

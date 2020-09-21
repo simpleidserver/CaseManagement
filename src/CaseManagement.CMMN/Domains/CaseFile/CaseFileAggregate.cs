@@ -1,5 +1,6 @@
-﻿using CaseManagement.CMMN.Common.Exceptions;
-using CaseManagement.CMMN.Parser;
+﻿using CaseManagement.CMMN.Parser;
+using CaseManagement.Common.Domains;
+using CaseManagement.Common.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;

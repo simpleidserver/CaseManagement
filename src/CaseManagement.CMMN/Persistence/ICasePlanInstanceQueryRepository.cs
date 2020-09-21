@@ -1,6 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
+using CaseManagement.Common.Responses;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

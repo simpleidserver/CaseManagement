@@ -3,6 +3,7 @@ using CaseManagement.CMMN.CasePlanInstance.Commands;
 using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.CasePlanInstance.Queries;
 using CaseManagement.CMMN.Common.Exceptions;
+using CaseManagement.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

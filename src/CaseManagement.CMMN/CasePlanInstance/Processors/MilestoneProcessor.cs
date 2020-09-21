@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.Common.Processors;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
@@ -11,9 +12,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         {
         }
 
-        protected override Task ProtectedProcess(CMMNExecutionContext executionContext, MilestoneElementInstance elt, CancellationToken cancellationToken)
+        protected override Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, MilestoneElementInstance elt, CancellationToken cancellationToken)
         {
-            executionContext.CasePlanInstance.MakeTransition(elt, CMMNTransitions.Occur);
+            executionContext.Instance.MakeTransition(elt, CMMNTransitions.Occur);
             return Task.CompletedTask;
         }
     }

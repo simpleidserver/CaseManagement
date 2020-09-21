@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CaseManagement.Common.Domains;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 

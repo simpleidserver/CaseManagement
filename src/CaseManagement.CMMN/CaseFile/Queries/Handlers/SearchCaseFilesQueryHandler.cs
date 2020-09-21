@@ -1,7 +1,7 @@
-﻿using MediatR;
-using CaseManagement.CMMN.CaseFile.Results;
-using CaseManagement.CMMN.Common;
+﻿using CaseManagement.CMMN.CaseFile.Results;
 using CaseManagement.CMMN.Persistence;
+using CaseManagement.Common.Results;
+using MediatR;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

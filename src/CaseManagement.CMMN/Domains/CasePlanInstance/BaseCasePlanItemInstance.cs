@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using CaseManagement.Common.Processors;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace CaseManagement.CMMN.Domains
 {
-    public abstract class BaseCasePlanItemInstance : BaseCaseEltInstance
+    public abstract class BaseCasePlanItemInstance : BaseCaseEltInstance, IBranchNode
     {
         public BaseCasePlanItemInstance() : base()
         {
@@ -19,8 +20,14 @@ namespace CaseManagement.CMMN.Domains
         public RepetitionRule RepetitionRule { get; set; }
         public ICollection<Criteria> EntryCriterions { get; set; }
         public ICollection<Criteria> ExitCriterions { get; set; }
+        public ICollection<string> Incoming => EntryCriterions.SelectMany(ec => ec.SEntry.PlanItemOnParts.Select(pp => pp.SourceRef)).ToList();
 
         #endregion
+
+        public bool IsLeaf()
+        {
+            return EntryCriterions == null || !EntryCriterions.Any();
+        }
 
         protected void FeedCasePlanItem(BaseCasePlanItemInstance elt)
         {

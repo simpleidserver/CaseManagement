@@ -1,5 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.Common.Processors;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,10 +27,10 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
             if (casePlanInstance.State == CaseStates.Active)
             {
-                var executionContext = new CMMNExecutionContext { CasePlanInstance = casePlanInstance };
+                var executionContext = new CMMNExecutionContext { Instance = casePlanInstance };
                 foreach(var child in casePlanInstance.Children)
                 {
-                    await _processorFactory.Execute(executionContext, child, child.GetType(), cancellationToken);
+                    await _processorFactory.Execute(executionContext, child, cancellationToken);
                 }
 
                 if (casePlanInstance.StageContent.State == TaskStageStates.Completed)

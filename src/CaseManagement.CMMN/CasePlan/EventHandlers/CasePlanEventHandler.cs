@@ -1,7 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructures.DomainEvts;
 using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence;
+using CaseManagement.Common.Domains;
 using System.Threading;
 using System.Threading.Tasks;
 

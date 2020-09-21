@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace CaseManagement.CMMN
+﻿namespace CaseManagement.CMMN
 {
     public static class CMMNConstants
     {
@@ -14,7 +12,6 @@ namespace CaseManagement.CMMN
         public static class QueueNames
         {
             public const string ExternalEvents = "externalevts";
-            public const string DomainEvents = "domainevts";
             public const string CasePlanInstances = "caseplaninstances";
         }
 

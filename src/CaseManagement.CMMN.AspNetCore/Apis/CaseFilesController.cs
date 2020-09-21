@@ -2,14 +2,11 @@
 using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Exceptions;
 using CaseManagement.CMMN.CaseFile.Queries;
-using CaseManagement.CMMN.Common.Exceptions;
+using CaseManagement.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

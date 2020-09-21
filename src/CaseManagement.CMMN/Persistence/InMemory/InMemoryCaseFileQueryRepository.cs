@@ -1,7 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
+using CaseManagement.Common.Responses;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

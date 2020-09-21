@@ -1,7 +1,7 @@
-﻿using MediatR;
-using CaseManagement.CMMN.CaseWorkerTask.Results;
-using CaseManagement.CMMN.Common;
-using CaseManagement.CMMN.Common.Parameters;
+﻿using CaseManagement.CMMN.CaseWorkerTask.Results;
+using CaseManagement.Common.Parameters;
+using CaseManagement.Common.Results;
+using MediatR;
 using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.CaseWorkerTask.Queries

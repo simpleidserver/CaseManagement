@@ -1,7 +1,7 @@
-﻿using MediatR;
-using CaseManagement.CMMN.CasePlan.Results;
-using CaseManagement.CMMN.Common;
-using CaseManagement.CMMN.Common.Parameters;
+﻿using CaseManagement.CMMN.CasePlan.Results;
+using CaseManagement.Common.Parameters;
+using CaseManagement.Common.Results;
+using MediatR;
 
 namespace CaseManagement.CMMN.CasePlan.Queries
 {

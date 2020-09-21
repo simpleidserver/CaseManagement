@@ -1,7 +1,7 @@
 ﻿using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Results;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure;
+using CaseManagement.Common;
 using MediatR;
 using Microsoft.Extensions.Options;
 using System;

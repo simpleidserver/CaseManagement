@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Common.Parameters;
+﻿using CaseManagement.Common.Parameters;
 
 namespace CaseManagement.CMMN.Persistence.Parameters
 {

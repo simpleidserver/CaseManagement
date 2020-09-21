@@ -1,5 +1,5 @@
-﻿using MediatR;
-using CaseManagement.CMMN.Common;
+﻿using CaseManagement.Common.Results;
+using MediatR;
 
 namespace CaseManagement.CMMN.CaseFile.Queries
 {

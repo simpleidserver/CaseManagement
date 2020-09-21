@@ -1,7 +1,9 @@
-﻿using CaseManagement.CMMN.Infrastructure.Bus;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+﻿using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using CaseManagement.CMMN.Infrastructure.Jobs.Notifications;
-using CaseManagement.CMMN.Infrastructure.Lock;
+using CaseManagement.Common;
+using CaseManagement.Common.Bus;
+using CaseManagement.Common.Jobs;
+using CaseManagement.Common.Lock;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
@@ -14,7 +16,7 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
         private readonly ISubscriberRepository _subscriberRepository;
         private readonly IDistributedLock _distributedLock;
 
-        public ProcessExternalEventsJob(IMessageBroker messageBroker, IOptions<CMMNServerOptions> options, ISubscriberRepository subscriberRepository, IDistributedLock distributedLock) : base(messageBroker, options)
+        public ProcessExternalEventsJob(IMessageBroker messageBroker, IOptions<CommonOptions> options, ISubscriberRepository subscriberRepository, IDistributedLock distributedLock) : base(messageBroker, options)
         {
             _subscriberRepository = subscriberRepository;
             _distributedLock = distributedLock;

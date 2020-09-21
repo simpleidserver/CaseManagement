@@ -1,4 +1,6 @@
-﻿namespace CaseManagement.CMMN.Infrastructure.Jobs.Notifications
+﻿using CaseManagement.Common.Jobs;
+
+namespace CaseManagement.CMMN.Infrastructure.Jobs.Notifications
 {
     public class ExternalEventNotification : BaseNotification
     {

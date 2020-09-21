@@ -7,9 +7,6 @@ namespace CaseManagement.CMMN
         public CMMNServerOptions()
         {
             Metadata = new Dictionary<string, string>();
-            NbRetry = 5;
-            DeadLetterTimeMS = 1000;
-            BlockThreadMS = 20;
             SnapshotFrequency = 100;
             DefaultCMMNSchema = "<?xml version='1.0' encoding='UTF-8'?>\n" +
             "<cmmn:definitions xmlns:dc='http://www.omg.org/spec/CMMN/20151109/DC' xmlns:cmmndi='http://www.omg.org/spec/CMMN/20151109/CMMNDI' xmlns:cmmn='http://www.omg.org/spec/CMMN/20151109/MODEL' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='Definitions_0m2br72' targetNamespace='http://bpmn.io/schema/cmmn' exporter='cmmn-js (https://demo.bpmn.io/cmmn)' exporterVersion='0.19.2'>\n" +
@@ -38,10 +35,6 @@ namespace CaseManagement.CMMN
         public Dictionary<string, string> Metadata { get; set; }
 
         /// <summary>
-        /// Set the time in milliseconds used to block a thread.
-        /// </summary>
-        public int BlockThreadMS { get; set; }
-        /// <summary>
         /// Set the snapshot frequency.
         /// </summary>
         public int SnapshotFrequency { get; set; }
@@ -49,10 +42,5 @@ namespace CaseManagement.CMMN
         /// Default CMMN schema used when adding a default case file.
         /// </summary>
         public string DefaultCMMNSchema { get; set; }
-        /// <summary>
-        /// Set the number of attempts to process a message.
-        /// </summary>
-        public int NbRetry { get; set; }
-        public int DeadLetterTimeMS { get; set; }
     }
 }

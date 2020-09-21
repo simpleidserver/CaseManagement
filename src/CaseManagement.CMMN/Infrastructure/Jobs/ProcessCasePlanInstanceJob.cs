@@ -1,9 +1,11 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Processors;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.Bus;
-using CaseManagement.CMMN.Infrastructure.EvtStore;
 using CaseManagement.CMMN.Infrastructure.Jobs.Notifications;
-using CaseManagement.CMMN.Infrastructure.Lock;
+using CaseManagement.Common;
+using CaseManagement.Common.Bus;
+using CaseManagement.Common.EvtStore;
+using CaseManagement.Common.Jobs;
+using CaseManagement.Common.Lock;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
@@ -18,7 +20,7 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
         private readonly IDistributedLock _distributedLock;
         private readonly ICommitAggregateHelper _commitAggregateHelper;
 
-        public ProcessCasePlanInstanceJob(IEventStoreRepository eventStoreRepository, IMessageBroker messageBroker, IOptions<CMMNServerOptions> options, ICasePlanInstanceProcessor casePlanInstanceProcessor, IDistributedLock distributedLock, ICommitAggregateHelper commitAggregateHelper) : base(messageBroker, options)
+        public ProcessCasePlanInstanceJob(IEventStoreRepository eventStoreRepository, IMessageBroker messageBroker, IOptions<CommonOptions> options, ICasePlanInstanceProcessor casePlanInstanceProcessor, IDistributedLock distributedLock, ICommitAggregateHelper commitAggregateHelper) : base(messageBroker, options)
         {
             _eventStoreRepository = eventStoreRepository;
             _casePlanInstanceProcessor = casePlanInstanceProcessor;

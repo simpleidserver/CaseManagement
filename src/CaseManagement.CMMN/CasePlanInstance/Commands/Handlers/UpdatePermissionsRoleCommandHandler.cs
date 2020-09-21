@@ -1,8 +1,8 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Commands;
 using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure;
-using CaseManagement.CMMN.Infrastructure.EvtStore;
+using CaseManagement.Common;
+using CaseManagement.Common.EvtStore;
 using MediatR;
 using System.Linq;
 using System.Threading;
