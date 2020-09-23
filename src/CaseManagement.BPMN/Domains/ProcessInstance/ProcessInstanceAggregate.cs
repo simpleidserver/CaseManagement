@@ -1,5 +1,4 @@
 ﻿using CaseManagement.Common.Domains;
-using CaseManagement.Common.Exceptions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -14,62 +13,221 @@ namespace CaseManagement.BPMN.Domains
     {
         public ProcessInstanceAggregate()
         {
-            Elements = new ConcurrentBag<BaseFlowNode>();
+            ElementDefs = new ConcurrentBag<BaseFlowNode>();
+            ElementInstances = new ConcurrentBag<FlowNodeInstance>();
+            ExecutionPathLst = new ConcurrentBag<ExecutionPath>();
         }
 
+        public string InstanceId { get; set; }
+        public string CommonId { get; set; }
         public string ProcessFileId { get; set; }
         public string ProcessId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
-        public ConcurrentBag<BaseFlowNode> Elements { get; set; }
+        public ICollection<StartEvent> StartEvts => ElementDefs.Where(_ => _ is StartEvent).Cast<StartEvent>().ToList();
+        public ConcurrentBag<BaseFlowNode> ElementDefs { get; set; }
+        public ConcurrentBag<FlowNodeInstance> ElementInstances { get; set; }
+        public ConcurrentBag<ExecutionPath> ExecutionPathLst { get; set; }
 
         #region Getters
 
-        public bool IsIncomingSatisfied(BaseFlowNode node)
+        public bool IsIncomingSatisfied(ExecutionPointer pointer)
         {
-            // Documentation : Page 151.
-            // when a token arrives from one of the Paths, the Activity will be instantiated.
-            // It will not wait for the arrival of tokens from the other paths.
-            if (node.Incoming == null || !node.Incoming.Any())
+            var nodeDef = GetDefinition(pointer.FlowNodeId);
+            if (nodeDef.Incoming == null || !nodeDef.Incoming.Any())
             {
                 return true;
             }
 
-            var dependencies = node.Incoming.Select(_ => GetChild(BaseFlowNode.BuildTechnicalId(_, node.NbOccurrence)));
-            if (!dependencies.Any(_ => _.LastTransition == BPMNTransitions.COMPLETE))
+            var activity = nodeDef as BaseActivity;
+            if (activity == null)
             {
-                return false;
+                if (pointer.Incoming.Any())
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return pointer.Incoming.Count() >= activity.StartQuantity;
             }
 
-            return true;
+            return false;
         }
 
-        public BaseFlowNode GetChild(string technicalId)
+        public BaseFlowNode GetDefinition(string elementId)
         {
-            return Elements.FirstOrDefault(_ => _.TechnicalId == technicalId);
+            return ElementDefs.FirstOrDefault(_ => _.Id == elementId);
+        }
+
+        public BaseActivity GetActivity(string elementId)
+        {
+            return GetDefinition(elementId) as BaseActivity;
+        }
+
+        public FlowNodeInstance GetInstance(string id)
+        {
+            return ElementInstances.FirstOrDefault(_ => _.Id == id);
+        }
+
+        public FlowNodeInstance GetActiveInstance(string elementId)
+        {
+            return ElementInstances.FirstOrDefault(_ => _.FlowNodeId == elementId && _.State == FlowNodeStates.Active);
+        }
+
+        public ExecutionPath GetExecutionPath(string executionPathId)
+        {
+            return ExecutionPathLst.FirstOrDefault(_ => _.Id == executionPathId);
+        }
+
+        public ExecutionPointer GetExecutionPointer(string executionPathId, string executionPointerId)
+        {
+            var path = GetExecutionPath(executionPathId);
+            return path.Pointers.FirstOrDefault(_ => _.Id == executionPointerId);
+        }
+
+        public ExecutionPointer GetActiveExecutionPointer(string executionPathId, string flowInstanceId)
+        {
+            var path = GetExecutionPath(executionPathId);
+            return path.Pointers.FirstOrDefault(_ => _.InstanceFlowNodeId == flowInstanceId && _.IsActive);
         }
 
         #endregion
 
         #region Operations
 
-        public void MakeTransition(BaseFlowNode node, BPMNTransitions transition)
+        public void NewExecutionPath()
         {
-            MakeTransition(node.TechnicalId, transition);
+            var pathId = Guid.NewGuid().ToString();
+            var evt = new ExecutionPathCreatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pathId, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+            foreach (var startEvt in StartEvts)
+            {
+                TryAddExecutionPointer(pathId, startEvt);
+            }
         }
 
-        public void MakeTransition(string technicalId, BPMNTransitions transition)
+        public ICollection<string> CompleteExecutionPointer(ExecutionPointer pointer, ICollection<BaseToken> outcomeValues)
         {
-            var evt = new FlowNodeTransitionRaisedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, technicalId, transition, DateTime.UtcNow);
+            var node = GetDefinition(pointer.FlowNodeId);
+            var evt = new ExecutionPointerCompletedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pointer.ExecutionPathId, pointer.Id, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+            var result = new List<string>();
+            foreach (var elementId in node.Outgoing)
+            {
+                result.Add(TryAddExecutionPointer(pointer.ExecutionPathId, GetDefinition(elementId), outcomeValues));
+            }
+
+            return result;
+        }
+
+        public string LaunchNewExecutionPointer(ExecutionPointer pointer)
+        {
+            return TryAddExecutionPointer(pointer.ExecutionPathId, GetDefinition(pointer.FlowNodeId));
+        }
+
+        public void CompleteFlowNodeInstance(string id)
+        {
+            var evt = new FlowNodeInstanceCompletedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, id, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
 
-        public void AddNode(BaseFlowNode node)
+        public void UpdateState(FlowNodeInstance instance, ActivityStates state)
         {
-            var evt = new FlowNodeCreatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, node.GetType().FullName, JsonConvert.SerializeObject(node),  DateTime.UtcNow);
+            var evt = new ActivityStateUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, instance.Id, state, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
+        }
+
+        public void AddFlowNodeDef(BaseFlowNode node)
+        {
+            var evt = new FlowNodeDefCreatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, JsonConvert.SerializeObject(node),  DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        public void ConsumeMessage(MessageToken messageToken)
+        {
+            foreach(var executionPath in ExecutionPathLst)
+            {
+                ConsumeMessage(executionPath, messageToken);
+            }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private string TryAddExecutionPointer(string pathId, BaseFlowNode flowNode, ICollection<BaseToken> outcomeValues = null)
+        {
+            ICollection<BaseToken> incoming = new List<BaseToken>();
+            if (outcomeValues != null)
+            {
+                incoming = outcomeValues;
+            }
+
+            var instanceId = string.Empty;
+            if (!TryAddInstance(flowNode, out instanceId))
+            {
+                var pointer = GetActiveExecutionPointer(pathId, instanceId);
+                if (pointer != null)
+                {
+                    var e = new IncomingTokenAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pointer.ExecutionPathId, pointer.Id, JsonConvert.SerializeObject(incoming), DateTime.UtcNow);
+                    Handle(e);
+                    DomainEvents.Add(e);
+                    return pointer.Id;
+                }
+            }
+
+            var id = Guid.NewGuid().ToString();
+            var evt = new ExecutionPointerAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, id, pathId, instanceId, flowNode.Id, JsonConvert.SerializeObject(incoming), DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+            return id;
+        }
+
+        private bool TryAddInstance(BaseFlowNode node, out string instanceId)
+        {
+            return TryAddInstance(node.Id, out instanceId);
+        }
+
+        private bool TryAddInstance(string elementId, out string instanceId)
+        {
+            var instance = GetActiveInstance(elementId);
+            if (instance != null)
+            {
+                instanceId = instance.Id;
+                return false;
+            }
+
+            instanceId = Guid.NewGuid().ToString();
+            var evt = new FlowNodeInstanceAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, instanceId, elementId, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+            return true;
+        }
+
+        private void ConsumeMessage(ExecutionPath executionPath, MessageToken messageToken)
+        {
+            foreach(var pointer in executionPath.ActivePointers)
+            {
+                var nodeDef = GetDefinition(pointer.FlowNodeId) as BaseCatchEvent;
+                if(nodeDef == null)
+                {
+                    continue;
+                }
+
+                if (nodeDef.EventDefinitions.Any(_ => _.IsSatisfied(messageToken)))
+                {
+                    var tokens = new List<BaseToken> { messageToken };
+                    var evt = new IncomingTokenAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, executionPath.Id, pointer.Id, JsonConvert.SerializeObject(tokens), DateTime.UtcNow);
+                    Handle(evt);
+                    DomainEvents.Add(evt);
+                }
+            }
         }
 
         #endregion
@@ -85,14 +243,14 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public static ProcessInstanceAggregate New(string processFileId, string processId, ICollection<BaseFlowNode> elements)
+        public static ProcessInstanceAggregate New(string instanceId, string processId, string processFileId, ICollection<BaseFlowNode> elements)
         {
             var result = new ProcessInstanceAggregate();
-            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(processFileId, processId), 0, processFileId, processId, DateTime.UtcNow);
+            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(instanceId, processId, processFileId), 0, processFileId, processId, DateTime.UtcNow);
             result.Handle(evt);
             foreach (var elt in elements)
             {
-                result.AddNode(elt);
+                result.AddFlowNodeDef(elt);
             }
 
             result.DomainEvents.Add(evt);
@@ -104,12 +262,16 @@ namespace CaseManagement.BPMN.Domains
             return new ProcessInstanceAggregate
             {
                 AggregateId = AggregateId,
+                CommonId = CommonId,
+                InstanceId = InstanceId,
                 ProcessFileId = ProcessFileId,
                 ProcessId = ProcessId,
                 Version = Version,
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
-                Elements = new ConcurrentBag<BaseFlowNode>(Elements.Select(e => (BaseFlowNode)e.Clone()))
+                ElementDefs = new ConcurrentBag<BaseFlowNode>(ElementDefs.Select(_ => (BaseFlowNode)_.Clone())),
+                ElementInstances =new ConcurrentBag<FlowNodeInstance>(ElementInstances.Select(_ => (FlowNodeInstance)_.Clone())),
+                ExecutionPathLst = new ConcurrentBag<ExecutionPath>(ExecutionPathLst.Select(_ => (ExecutionPath)_.Clone()))
             };
         }
 
@@ -134,30 +296,81 @@ namespace CaseManagement.BPMN.Domains
             CreateDateTime = evt.CreateDateTime;
         }
 
-        private void Handle(FlowNodeCreatedEvent evt)
+        private void Handle(FlowNodeDefCreatedEvent evt)
         {
-            var assm = typeof(ProcessInstanceAggregate).Assembly;
-            var type = assm.GetType(evt.NodeType);
-            var elt = (BaseFlowNode)JsonConvert.DeserializeObject(evt.SerializedContent, type);
-            Elements.Add(elt);
+            var elt = BaseFlowNode.Deserialize(evt.SerializedContent);
+            ElementDefs.Add(elt);
             Version = evt.Version;
             UpdateDateTime = evt.UpdateDateTime;
         }
 
-        private void Handle(FlowNodeTransitionRaisedEvent evt)
+        private void Handle(FlowNodeInstanceAddedEvent evt)
         {
-            var child = GetChild(evt.TechnicalId);
-            if (child == null)
+            var instance = new FlowNodeInstance { FlowNodeId = evt.FlowNodeId, Id = evt.FlowNodeInstanceId };
+            ElementInstances.Add(instance);
+            Version = evt.Version;
+            UpdateDateTime = evt.CreateDateTime;
+        }
+
+        private void Handle(ExecutionPathCreatedEvent evt)
+        {
+            var path = new ExecutionPath { Id = evt.ExecutionPathId, CreateDateTime = evt.CreateDateTime };
+            ExecutionPathLst.Add(path);
+            Version = evt.Version;
+            UpdateDateTime = evt.CreateDateTime;
+        }
+
+        private void Handle(ExecutionPointerAddedEvent evt)
+        {
+            var tokens = BaseToken.DeserializeLst(evt.SerializedTokens);
+            var path = GetExecutionPath(evt.ExecutionPathId);
+            path.Pointers.Add(new ExecutionPointer
             {
-                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>( "validation",  $"unknown child '{evt.TechnicalId}'")
-                });
+                Id = evt.ExecutionPointerId,
+                ExecutionPathId = path.Id,
+                FlowNodeId = evt.FlowNodeId,
+                InstanceFlowNodeId = evt.FlowNodeInstanceId,   
+                Incoming = tokens
+            });
+            Version = evt.Version;
+            UpdateDateTime = evt.CreateDateTime;
+        }
+
+        private void Handle(ExecutionPointerCompletedEvent evt)
+        {
+            var pointer = GetExecutionPointer(evt.ExecutionPathId, evt.ExecutionPointerId);
+            pointer.IsActive = false;
+            Version = evt.Version;
+            UpdateDateTime = evt.CompletionDateTime;
+        }
+
+        private void Handle(ActivityStateUpdatedEvent evt)
+        {
+            var instance = GetInstance(evt.FlowNodeInstanceId);
+            instance.UpdateState(evt.State, evt.UpdateDateTime);
+            Version = evt.Version;
+            UpdateDateTime = evt.UpdateDateTime;
+        }
+
+        private void Handle(IncomingTokenAddedEvent evt)
+        {
+            var pointer = GetExecutionPointer(evt.ExecutionPathId, evt.ExecutionPointerId);
+            var tokens = BaseToken.DeserializeLst(evt.SerializedToken);
+            foreach(var token in tokens)
+            {
+                pointer.Incoming.Add(token);
             }
 
-            child.MakeTransition(evt.Transition, evt.ExecutionDateTime);
-            UpdateDateTime = evt.ExecutionDateTime;
             Version = evt.Version;
+            UpdateDateTime = evt.CreateDateTime;
+        }
+
+        private void Handle(FlowNodeInstanceCompletedEvent evt)
+        {
+            var instance = GetInstance(evt.FlowNodeInstanceId);
+            instance.State = FlowNodeStates.Complete;
+            Version = evt.Version;
+            UpdateDateTime = evt.ExecutionDateTime;
         }
 
         #endregion
@@ -167,11 +380,11 @@ namespace CaseManagement.BPMN.Domains
             return $"planinstance-{id}";
         }
 
-        public static string BuildId(string processFileId, string processId)
+        public static string BuildId(string instanceId, string processId, string processFileId)
         {
             using (var sha256Hash = SHA256.Create())
             {
-                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes($"{processFileId}{processId}"));
+                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes($"{instanceId}{processId}{processFileId}"));
                 var builder = new StringBuilder();
                 for (int i = 0; i < bytes.Length; i++)
                 {

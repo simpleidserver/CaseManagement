@@ -17,7 +17,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _processorFactory = processorFactory;
         }
 
-        protected override async Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
+        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
         {
             var executionBranch = ExecutionBranch.Build(stageElt.Children);
             await ExecuteBranch(executionContext, executionBranch, cancellationToken);
@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private async Task ExecuteBranch(ExecutionContext<CasePlanInstanceAggregate> executionContext, BaseExecutionBranch<BaseCasePlanItemInstance> branch, CancellationToken cancellationToken)
+        private async Task ExecuteBranch(CMMNExecutionContext executionContext, BaseExecutionBranch<BaseCasePlanItemInstance> branch, CancellationToken cancellationToken)
         {
             var taskLst = new List<Task>();
             foreach (var node in branch.Nodes)
@@ -48,7 +48,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private async Task HandleCasePlan(ExecutionContext<CasePlanInstanceAggregate> executionContext, BaseCasePlanItemInstance casePlanElementInstance, CancellationToken token)
+        private async Task HandleCasePlan(CMMNExecutionContext executionContext, BaseCasePlanItemInstance casePlanElementInstance, CancellationToken token)
         {
             await _processorFactory.Execute(executionContext, casePlanElementInstance, token);
         }

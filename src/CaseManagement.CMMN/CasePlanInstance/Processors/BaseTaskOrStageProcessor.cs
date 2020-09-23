@@ -10,7 +10,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
     {
         public BaseTaskOrStageProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        protected override async Task Process(ExecutionContext<CasePlanInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken)
+        protected override async Task Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
         {
             var terminate = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
             var manualStart = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.ManualStart, cancellationToken);
@@ -51,6 +51,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        protected abstract Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task ProtectedProcess(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
     }
 }

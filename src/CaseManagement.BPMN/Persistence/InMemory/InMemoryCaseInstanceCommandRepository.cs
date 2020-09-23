@@ -23,8 +23,9 @@ namespace CaseManagement.BPMN.Persistence.InMemory
         public Task Update(Domains.ProcessInstanceAggregate workflowInstance, CancellationToken token)
         {
             var instance = _instances.First(i => i.AggregateId == workflowInstance.AggregateId);
+            var clone = (Domains.ProcessInstanceAggregate)workflowInstance.Clone();
             _instances.Remove(instance);
-            _instances.Add((Domains.ProcessInstanceAggregate)workflowInstance.Clone());
+            _instances.Add(clone);
             return Task.CompletedTask;
         }
 

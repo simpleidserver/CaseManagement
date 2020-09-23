@@ -46,6 +46,11 @@ namespace CaseManagement.BPMN.Infrastructure.Jobs
                     throw new InvalidOperationException($"process instance '{notification.ProcessInstanceId}' doesn't exist");
                 }
 
+                if (notification.IsNewInstance)
+                {
+                    processInstance.NewExecutionPath();
+                }
+
                 await _processInstanceProcessor.Execute(processInstance, cancellationToken);
                 await _commitAggregateHelper.Commit(processInstance, processInstance.GetStreamName(), cancellationToken);
             }

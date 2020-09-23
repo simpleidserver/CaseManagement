@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.Common.Processors
 {
-    public interface IProcessor<TInst, TElt> where TInst : BaseAggregate
+    public interface IProcessor<TExec, TElt, TInst> where TExec : ExecutionContext<TInst> where TInst : BaseAggregate
     {
-        Task Execute(ExecutionContext<TInst> executionContext, TElt elt, CancellationToken cancellationToken);
+        Task<ExecutionResult> Execute(TExec executionContext, TElt elt, CancellationToken cancellationToken);
     }
 }

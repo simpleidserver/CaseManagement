@@ -2,6 +2,8 @@
 {
     public class EmptyTask : BaseTask
     {
+        public override FlowNodeTypes FlowNode => FlowNodeTypes.EMPTYTASK;
+
         public override object Clone()
         {
             var result = new EmptyTask();

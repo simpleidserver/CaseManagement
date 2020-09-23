@@ -59,7 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.RegisterAllAssignableType<IJob>(typeof(IProcessJobServer).Assembly);
             services.RegisterAllAssignableType<IJob>(typeof(ICommitAggregateHelper).Assembly);
             services.RegisterAllAssignableType(typeof(IDomainEvtConsumerGeneric<>), typeof(IProcessJobServer).Assembly);
-            services.RegisterAllAssignableType(typeof(IProcessor<,>), typeof(IProcessJobServer).Assembly);
+            services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(IProcessJobServer).Assembly);
             return services;
         }
     }

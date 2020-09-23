@@ -10,7 +10,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
     {
         public BaseMilestoneOrTimerProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        protected override async Task Process(ExecutionContext<CasePlanInstanceAggregate> executionContext, T elt, CancellationToken token)
+        protected override async Task Process(CMMNExecutionContext executionContext, T elt, CancellationToken token)
         {
             var terminateSubscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, token);
             if (elt.State == MilestoneEventStates.Available)
@@ -25,6 +25,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        protected abstract Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task ProtectedProcess(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
     }
 }

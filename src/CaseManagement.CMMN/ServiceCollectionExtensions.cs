@@ -100,7 +100,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.RegisterAllAssignableType<IJob>(typeof(ICaseJobServer).Assembly);
             services.RegisterAllAssignableType<IJob>(typeof(ICommitAggregateHelper).Assembly);
             services.RegisterAllAssignableType(typeof(IDomainEvtConsumerGeneric<>), typeof(ICaseJobServer).Assembly);
-            services.RegisterAllAssignableType(typeof(IProcessor<,>), typeof(ICaseJobServer).Assembly);
+            services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(ICaseJobServer).Assembly);
             services.RegisterAllAssignableType(typeof(ICaseFileItemStore), typeof(ICaseJobServer).Assembly);
             return services;
         }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.BPMN.Domains
@@ -8,6 +10,7 @@ namespace CaseManagement.BPMN.Domains
         public BaseCatchEvent()
         {
             EventDefinitions = new List<BaseEventDefinition>();
+            ParallelMultiple = false;
         }
 
         /// <summary>
@@ -27,6 +30,21 @@ namespace CaseManagement.BPMN.Domains
             FeedFlowNode(evt);
             evt.EventDefinitions = evt.EventDefinitions.Select(_ => (BaseEventDefinition)_.Clone()).ToList();
             evt.ParallelMultiple = ParallelMultiple;
+        }
+
+        public static new TElt Deserialize<TElt>(string json) where TElt : BaseCatchEvent
+        {
+            var jObj = JsonConvert.DeserializeObject<JObject>(json);
+            const string eventDefsName = "EventDefinitions";
+            var eventDefs = jObj[eventDefsName] as JArray;
+            jObj.Remove(eventDefsName);
+            var result = JsonConvert.DeserializeObject<TElt>(jObj.ToString());
+            foreach (JObject record in eventDefs)
+            {
+                result.EventDefinitions.Add(BaseEventDefinition.Deserialize(record));
+            }
+
+            return result;
         }
     }
 }

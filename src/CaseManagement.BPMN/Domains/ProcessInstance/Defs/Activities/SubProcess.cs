@@ -4,6 +4,8 @@ namespace CaseManagement.BPMN.Domains
 {
     public class SubProcess : BaseActivity
     {
+        public override FlowNodeTypes FlowNode => FlowNodeTypes.SUBPROCESS;
+
         public override object Clone()
         {
             return new SubProcess
@@ -12,8 +14,7 @@ namespace CaseManagement.BPMN.Domains
                 Incoming = Incoming.ToList(),
                 Name = Name,
                 Outgoing = Outgoing.ToList(),
-                StartQuantity = StartQuantity,
-                State = State
+                StartQuantity = StartQuantity
             };
         }
     }

@@ -1,5 +1,5 @@
 ﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.Common.Processors;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,9 +7,10 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
 {
     public class EmptyTaskProcessor : BaseActivityProcessor<EmptyTask>
     {
-        protected override Task Process(ExecutionContext<ProcessInstanceAggregate> context, EmptyTask elt, CancellationToken cancellationToken)
+        protected override Task<ICollection<BaseToken>> Process(BPMNExecutionContext context, EmptyTask elt, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            ICollection<BaseToken> emptyTokens = new List<BaseToken>();
+            return Task.FromResult(emptyTokens);
         }
     }
 }

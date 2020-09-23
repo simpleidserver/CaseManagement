@@ -21,9 +21,14 @@ namespace CaseManagement.BPMN
             _messageBroker = messageBroker;
         }
 
-        public Task EnqueueProcessInstance(string processInstanceId, CancellationToken token)
+        public Task EnqueueProcessInstance(string processInstanceId,  bool isNewInstance, CancellationToken token)
         {
-            return _messageBroker.QueueProcessInstance(processInstanceId, token);
+            return _messageBroker.QueueProcessInstance(processInstanceId, isNewInstance, token);
+        }
+
+        public Task EnqueueMessage(string processInstanceId, string messageName, CancellationToken token)
+        {
+            return _messageBroker.QueueMessage(processInstanceId, messageName, token);
         }
 
         public void Start()

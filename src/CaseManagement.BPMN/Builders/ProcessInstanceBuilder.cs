@@ -1,25 +1,28 @@
 ﻿using CaseManagement.BPMN.Domains;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CaseManagement.BPMN.Builders
 {
     public class ProcessInstanceBuilder
     {
-        private ProcessInstanceBuilder(string processId, string processFileId)
+        private ProcessInstanceBuilder(string instanceId, string processId, string processFileId)
         {
+            InstanceId = instanceId;
             ProcessId = processId;
             ProcessFileId = processFileId;
             Builders = new List<FlowNodeBuilder>();
         }
 
+        protected string InstanceId { get; set; }
         protected string ProcessId { get; set; }
         protected string ProcessFileId { get; set; }
         protected ICollection<FlowNodeBuilder> Builders;
 
-        public static ProcessInstanceBuilder New(string processId, string processFileId)
+        public static ProcessInstanceBuilder New(string instanceId, string processId, string processFileId)
         {
-            return new ProcessInstanceBuilder(processId, processFileId);
+            return new ProcessInstanceBuilder(instanceId, processId, processFileId);
         }
 
         #region Build events
@@ -62,7 +65,12 @@ namespace CaseManagement.BPMN.Builders
                 elts.Add(builder.Build());
             }
 
-            var result = ProcessInstanceAggregate.New(ProcessFileId, ProcessId, elts);
+            foreach(var elt in elts)
+            {
+                elt.Outgoing = elts.Where(_ => _.Incoming.Contains(elt.Id)).Select(_ => _.Id).ToList();
+            }
+
+            var result = ProcessInstanceAggregate.New(InstanceId, ProcessId, ProcessFileId, elts);
             return result;
         }
     }

@@ -12,6 +12,19 @@
         /// </summary>
         public Operation OperationRef { get; set; }
 
+        public override EvtDefTypes Type => EvtDefTypes.MESSAGE;
+
+        public override bool IsSatisfied(BaseToken token)
+        {
+            var message = token as MessageToken;
+            if (message == null || MessageRef == null || MessageRef.Name != message.Name)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override object Clone()
         {
             var result = new MessageEventDefinition

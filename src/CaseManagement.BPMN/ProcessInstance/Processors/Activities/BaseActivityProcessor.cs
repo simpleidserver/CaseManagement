@@ -1,34 +1,44 @@
 ﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.Common.Processors;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Processors
 {
-    public abstract class BaseActivityProcessor<T> : BaseFlowNodeProcessor<T> where T : BaseActivity
+    public abstract class BaseActivityProcessor<T>: BaseFlowNodeProcessor<T> where T : BaseActivity
     {
-        protected override async Task Handle(ExecutionContext<ProcessInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken)
+        protected override async Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, T elt,  CancellationToken cancellationToken)
         {
             // Page : 428 : BPMN2.0.2
-            if (elt.State == null)
+            var pointer = executionContext.Pointer;
+            var instance = executionContext.Instance.GetInstance(pointer.InstanceFlowNodeId);
+            if (instance.ActivityState == null)
             {
-                // TODO : Check number of tokens.
-                executionContext.Instance.MakeTransition(elt, BPMNTransitions.ACTIVITYREADY);
+                executionContext.Instance.UpdateState(instance, ActivityStates.READY);
             }
 
-            if (elt.State == ActivityStates.READY)
+            if (instance.ActivityState == ActivityStates.READY)
             {
-                // TODO : Check Data input Set.
-                executionContext.Instance.MakeTransition(elt, BPMNTransitions.ACTIVITYACTIVE);
+                executionContext.Instance.UpdateState(instance, ActivityStates.ACTIVE);
             }
 
-            if (elt.State == ActivityStates.ACTIVE)
+            if (instance.ActivityState == ActivityStates.ACTIVE)
             {
-                await Process(executionContext, elt, cancellationToken);
-                executionContext.Instance.MakeTransition(elt, BPMNTransitions.COMPLETE);
+                executionContext.Instance.UpdateState(instance, ActivityStates.COMPLETING);
             }
+
+            var outcome = new List<BaseToken>();
+            outcome.AddRange(executionContext.Pointer.Incoming);
+            if (instance.ActivityState == ActivityStates.COMPLETING)
+            {
+                var addOutcome = await Process(executionContext, elt, cancellationToken);
+                outcome.AddRange(addOutcome);
+                executionContext.Instance.UpdateState(instance, ActivityStates.COMPLETED);
+            }
+
+            return BPMNExecutionResult.Outcome(outcome);
         }
 
-        protected abstract Task Process(ExecutionContext<ProcessInstanceAggregate> context, T elt, CancellationToken cancellationToken);
+        protected abstract Task<ICollection<BaseToken>> Process(BPMNExecutionContext context, T elt,  CancellationToken cancellationToken);
     }
 }

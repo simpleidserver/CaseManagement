@@ -14,11 +14,12 @@ namespace CaseManagement.Common.Processors
             _serviceProvider = serviceProvider;
         }
 
-        public Task Execute<TInstance, TElt>(ExecutionContext<TInstance> executionContext, TElt instance, CancellationToken token) where TInstance : BaseAggregate
+        public Task<ExecutionResult> Execute<TInstance, TElt>(ExecutionContext<TInstance> executionContext, TElt instance, CancellationToken token) where TInstance : BaseAggregate
         {
-            var genericType = typeof(IProcessor<,>).MakeGenericType(typeof(TInstance), instance.GetType());
+            var execContext = typeof(ExecutionContext<>).MakeGenericType(typeof(TInstance));
+            var genericType = typeof(IProcessor<,,>).MakeGenericType(executionContext.GetType(), instance.GetType(), typeof(TInstance));
             var processor = _serviceProvider.GetService(genericType);
-            return (Task)genericType.GetMethod("Execute").Invoke(processor, new object[] { executionContext, instance, token });
+            return (Task<ExecutionResult>)genericType.GetMethod("Execute").Invoke(processor, new object[] { executionContext, instance, token });
         }
     }
 }

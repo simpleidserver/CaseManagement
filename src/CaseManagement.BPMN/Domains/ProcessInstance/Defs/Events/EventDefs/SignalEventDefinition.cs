@@ -7,6 +7,8 @@
         /// </summary>
         public Signal SignalRef { get; set; }
 
+        public override EvtDefTypes Type => EvtDefTypes.SIGNAL;
+
         public override object Clone()
         {
             return new SignalEventDefinition

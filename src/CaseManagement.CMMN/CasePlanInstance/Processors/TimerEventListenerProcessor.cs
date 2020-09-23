@@ -2,7 +2,6 @@
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using CaseManagement.CMMN.ISO8601;
 using CaseManagement.Common.Bus;
-using CaseManagement.Common.Processors;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _messageBroker = messageBroker;
         }
 
-        protected override async Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, TimerEventListener elt, CancellationToken cancellationToken)
+        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, TimerEventListener elt, CancellationToken cancellationToken)
         {
             if (elt.NbOccurrence == 0)
             {
@@ -37,7 +36,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private async Task Init(ExecutionContext<CasePlanInstanceAggregate> executionContext, TimerEventListener elt, CancellationToken token)
+        private async Task Init(CMMNExecutionContext executionContext, TimerEventListener elt, CancellationToken token)
         {
             var currentDateTime = DateTime.UtcNow;
             var elapsedTime = ISO8601Parser.ParseTime(elt.TimerExpression.Body);

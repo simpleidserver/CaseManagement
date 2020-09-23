@@ -31,21 +31,13 @@ namespace CaseManagement.BPMN.Builders
         public FlowNodeBuilder(string id, string name) : base(id, name)
         {
             Incoming = new List<string>();
-            Outgoing = new List<string>();
         }
 
         internal ICollection<string> Incoming { get; set; }
-        internal ICollection<string> Outgoing { get; set; }
 
         public FlowNodeBuilder AddIncoming(string incoming)
         {
             Incoming.Add(incoming);
-            return this;
-        }
-
-        public FlowNodeBuilder AddOutgoing(string outgoing)
-        {
-            Outgoing.Add(outgoing);
             return this;
         }
 
@@ -54,10 +46,29 @@ namespace CaseManagement.BPMN.Builders
         protected void FeedFlowNode(BaseFlowNode node)
         {
             node.Id = Id;
-            node.TechnicalId = BaseFlowNode.BuildTechnicalId(Id, 0);
             node.Name = Name;
             node.Incoming = Incoming;
-            node.Outgoing = Outgoing;
+        }
+    }
+
+    public abstract class ActivityNodeBuilder : FlowNodeBuilder
+    {
+        public ActivityNodeBuilder(string id, string name) : base(id, name)
+        {
+        }
+
+        public ActivityNodeBuilder SetStartQuantity(int startQuantity)
+        {
+            StartQuantity = startQuantity;
+            return this;
+        }
+
+        internal int StartQuantity { get; set; }
+
+        protected void FeedActivityNode(BaseActivity node)
+        {
+            FeedFlowNode(node);
+            node.StartQuantity = StartQuantity;
         }
     }
 
@@ -65,14 +76,14 @@ namespace CaseManagement.BPMN.Builders
 
     #region Tasks
 
-    public class EmptyTaskBuilder : FlowNodeBuilder
+    public class EmptyTaskBuilder : ActivityNodeBuilder
     {
         public EmptyTaskBuilder(string id, string name) : base(id, name) { }
 
         public override BaseFlowNode Build()
         {
             var result = new EmptyTask();
-            FeedFlowNode(result);
+            FeedActivityNode(result);
             return result;
         }
     }

@@ -18,7 +18,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _caseFileItemStores = caseFileItemStores;
         }
 
-        protected override async Task Handle(ExecutionContext<CasePlanInstanceAggregate> executionContext, CaseFileItemInstance elt, CancellationToken cancellationToken)
+        protected override async Task Handle(CMMNExecutionContext executionContext, CaseFileItemInstance elt, CancellationToken cancellationToken)
         {
             var update = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Update, cancellationToken);
             var replace = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Replace, cancellationToken);

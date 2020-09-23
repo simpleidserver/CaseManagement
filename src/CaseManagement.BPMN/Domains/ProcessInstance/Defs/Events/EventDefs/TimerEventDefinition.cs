@@ -15,6 +15,8 @@
         /// </summary>
         public string TimeDuration { get; set; }
 
+        public override EvtDefTypes Type => EvtDefTypes.TIMER;
+
         public override object Clone()
         {
             var result = new TimerEventDefinition

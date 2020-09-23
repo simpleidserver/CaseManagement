@@ -5,27 +5,21 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Processors
 {
-    public abstract class BaseFlowNodeProcessor<T> : IProcessor<ProcessInstanceAggregate, T> where T : BaseFlowNode
+    public abstract class BaseFlowNodeProcessor<TElt> : IProcessor<BPMNExecutionContext, TElt, ProcessInstanceAggregate> where TElt : BaseFlowNode
     {
-        public async Task Execute(ExecutionContext<ProcessInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken)
+        public async Task<ExecutionResult> Execute(BPMNExecutionContext executionContext, TElt elt, CancellationToken cancellationToken)
         {
-            if (elt.LastTransition == null)
+            if (!CheckIncoming(executionContext, executionContext.Pointer))
             {
-                if (CheckIncoming(executionContext, elt))
-                {
-                    executionContext.Instance.MakeTransition(elt, BPMNTransitions.CREATE);
-                }
+                return BPMNExecutionResult.Block();
             }
 
-            if (elt.LastTransition == BPMNTransitions.CREATE)
-            {
-                await Handle(executionContext, elt, cancellationToken);
-            }
+            return await Handle(executionContext, elt, cancellationToken);
         }
 
-        protected abstract Task Handle(ExecutionContext<ProcessInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, TElt elt, CancellationToken cancellationToken);
 
-        protected virtual bool CheckIncoming(ExecutionContext<ProcessInstanceAggregate> executionContext, T elt)
+        protected virtual bool CheckIncoming(BPMNExecutionContext executionContext, ExecutionPointer elt)
         {
             return executionContext.Instance.IsIncomingSatisfied(elt);
         }

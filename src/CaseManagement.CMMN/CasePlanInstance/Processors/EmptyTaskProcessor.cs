@@ -12,7 +12,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         {
         }
 
-        protected override Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, EmptyTaskElementInstance elt, CancellationToken cancellationToken)
+        protected override Task ProtectedProcess(CMMNExecutionContext executionContext, EmptyTaskElementInstance elt, CancellationToken cancellationToken)
         {
             executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete);
             return Task.CompletedTask;

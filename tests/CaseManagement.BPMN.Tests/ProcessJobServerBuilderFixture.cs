@@ -12,11 +12,13 @@ namespace CaseManagement.BPMN.Tests
 {
     public class ProcessJobServerBuilderFixture
     {
+        #region BPMN elements
+
         [Fact]
         public async Task When_Execute_Sequence_Of_Empty_Tasks()
         {
-            var id = ProcessInstanceAggregate.BuildId("processFile", "processId");
-            var processInstance = ProcessInstanceBuilder.New("processId", "processFile")
+            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
+            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
                 .AddStartEvent("1", "evt")
                 .AddEmptyTask("2", "name", _ =>
                 {
@@ -37,7 +39,8 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, CancellationToken.None);
+                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
+                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
                 var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
                 {
                     if (c == null)
@@ -45,15 +48,89 @@ namespace CaseManagement.BPMN.Tests
                         return false;
                     }
 
-                    return c.Elements.All(_ => _.LastTransition == BPMNTransitions.COMPLETE);
+                    return c.ElementInstances.Count() == 10;
                 }, CancellationToken.None);
+                Assert.Equal(10, casePlanInstance.ElementInstances.Count());
             }
             finally
             {
                 jobServer.Stop();
             }
-            string sss = "";
         }
+
+        [Fact]
+        public async Task When_Execute_StartEvent_With_MessageEventDefinition()
+        {
+            const string messageName = "alert";
+            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
+            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+                .AddStartEvent("1", "evt", _ =>
+                {
+                    _.AddMessageEvtDef("id", cb =>
+                    {
+                        cb.SetMessageRef(new Message
+                        {
+                            Name = messageName
+                        });
+                    });
+                })
+                .AddEmptyTask("2", "name", _ =>
+                {
+                    _.AddIncoming("1");
+                    _.SetStartQuantity(2);
+                })
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Any();
+                }, CancellationToken.None);
+                await jobServer.EnqueueMessage(id, messageName, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Count() == 2;
+                }, CancellationToken.None);
+                await jobServer.EnqueueMessage(id, messageName, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.First(_ => _.FlowNodeId == "2").ActivityState == ActivityStates.COMPLETED;
+                }, CancellationToken.None);
+                var startEventInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1");
+                var emptyTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
+                Assert.Equal(FlowNodeStates.Active, startEventInstance.State);
+                Assert.Equal(ActivityStates.COMPLETED, emptyTaskInstance.ActivityState);
+                Assert.Equal(FlowNodeStates.Complete, emptyTaskInstance.State);
+                Assert.Equal(1, casePlanInstance.ExecutionPathLst.Count());
+                Assert.Equal(1, casePlanInstance.ExecutionPathLst.First().ActivePointers.Count());
+                Assert.Equal(4, casePlanInstance.ExecutionPathLst.First().Pointers.Count());
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
+        #endregion
 
         private class FakeCaseJobServer
         {
@@ -91,9 +168,14 @@ namespace CaseManagement.BPMN.Tests
                 return _processJobServer.RegisterProcessInstance(processInstance, token);
             }
 
-            public Task EnqueueProcessInstance(string processInstanceId, CancellationToken token)
+            public Task EnqueueProcessInstance(string processInstanceId, bool isNewInstance, CancellationToken token)
             {
-                return _processJobServer.EnqueueProcessInstance(processInstanceId, token);
+                return _processJobServer.EnqueueProcessInstance(processInstanceId, isNewInstance, token);
+            }
+
+            public Task EnqueueMessage(string processInstanceId, string messageName, CancellationToken token)
+            {
+                return _processJobServer.EnqueueMessage(processInstanceId, messageName, token);
             }
 
             public async Task<ProcessInstanceAggregate> MonitorProcessInstance(string id, Func<ProcessInstanceAggregate, bool> callback, CancellationToken token)

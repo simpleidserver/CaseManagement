@@ -12,7 +12,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
         {
         }
 
-        protected override async Task Handle(ExecutionContext<CasePlanInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken)
+        protected override async Task Handle(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
         {
             var isNewElt = elt.LatestTransition == CMMNTransitions.Create;
             if (!executionContext.Instance.IsEntryCriteriaSatisfied(elt))
@@ -27,6 +27,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        protected abstract Task Process(ExecutionContext<CasePlanInstanceAggregate> executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
     }
 }

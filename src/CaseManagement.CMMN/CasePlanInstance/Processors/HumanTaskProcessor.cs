@@ -10,7 +10,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
     {
         public HumanTaskProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        protected override async Task ProtectedProcess(ExecutionContext<CasePlanInstanceAggregate> executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
+        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
         {
             executionContext.Instance.TryAddWorkerTask(elt.Id);
             var completeSubscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
