@@ -110,9 +110,15 @@ namespace CaseManagement.BPMN.Builders
 
         #region Build gateways
 
-        public ProcessInstanceBuilder AddExclusiveGateway(string id, string name, GatewayDirections direction)
+        public ProcessInstanceBuilder AddExclusiveGateway(string id, string name, GatewayDirections direction, string defaultSequenceFlow = null)
         {
-            Gateways.Add(new ExclusiveGateway { Id = id, Name=  name, GatewayDirection = direction });
+            Gateways.Add(new ExclusiveGateway { Id = id, Name =  name, GatewayDirection = direction, Default = defaultSequenceFlow });
+            return this;
+        }
+
+        public ProcessInstanceBuilder AddParallelGateway(string id, string name, GatewayDirections direction)
+        {
+            Gateways.Add(new ParallelGateway { Id = id, Name = name, GatewayDirection = direction });
             return this;
         }
 

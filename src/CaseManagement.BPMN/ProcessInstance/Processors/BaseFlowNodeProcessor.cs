@@ -22,5 +22,15 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
             var filteredOutgoing = outgoing.Where(_ => executionContext.Instance.IsIncomingSatisfied(_, executionContext.Pointer.Incoming));
             return filteredOutgoing.Select(_ => _.TargetRef).ToList();
         }
+
+        protected virtual ICollection<string> GetOutgoingFlowNodeIds(BPMNExecutionContext executionContext, BaseFlowNode flowNode)
+        {
+            return executionContext.Instance.GetOutgoingSequenceFlows(flowNode.Id).Select(_ => _.TargetRef).ToList();
+        }
+
+        protected virtual ICollection<string> GetIncomingFlowNodeIds(BPMNExecutionContext executionContext, BaseFlowNode flowNode)
+        {
+            return executionContext.Instance.GetIncomingSequenceFlows(flowNode.Id).Select(_ => _.SourceRef).ToList();
+        }
     }
 }

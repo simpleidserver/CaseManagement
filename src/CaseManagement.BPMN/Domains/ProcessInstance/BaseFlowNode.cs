@@ -27,6 +27,8 @@ namespace CaseManagement.BPMN.Domains
                     return Deserialize<ServiceTask>(json);
                 case FlowNodeTypes.EXCLUSIVEGATEWAY:
                     return Deserialize<ExclusiveGateway>(json);
+                case FlowNodeTypes.PARALLELGATEWAY:
+                    return Deserialize<ParallelGateway>(json);
             }
 
             return null;

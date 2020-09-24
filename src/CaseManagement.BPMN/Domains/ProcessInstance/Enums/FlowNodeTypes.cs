@@ -6,6 +6,7 @@
         EMPTYTASK = 1,
         SUBPROCESS = 2,
         SERVICETASK = 3,
-        EXCLUSIVEGATEWAY = 4
+        EXCLUSIVEGATEWAY = 4,
+        PARALLELGATEWAY = 5
     }
 }

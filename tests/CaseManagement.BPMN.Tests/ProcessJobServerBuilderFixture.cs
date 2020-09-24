@@ -300,6 +300,82 @@ namespace CaseManagement.BPMN.Tests
             }
         }
 
+        [Fact]
+        public async Task When_Execute_ParallelGateway()
+        {
+            const string messageName = "message";
+            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
+            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+                .AddMessage(messageName, "message", "item")
+                .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
+                .AddStartEvent("1", "evt", _ =>
+                {
+                    _.AddMessageEvtDef("id", cb =>
+                    {
+                        cb.SetMessageRef(messageName);
+                    });
+                })
+                .AddParallelGateway("2", "gateway", GatewayDirections.DIVERGING)
+                .AddEmptyTask("3", "name")
+                .AddEmptyTask("4", "name")
+                .AddParallelGateway("5", "gateway", GatewayDirections.CONVERGING)
+                .AddEmptyTask("6", "name")
+                .AddSequenceFlow("seq1", "sequence", "1", "2")
+                .AddSequenceFlow("seq2", "sequence", "2", "3")
+                .AddSequenceFlow("seq3", "sequence", "2", "4")
+                .AddSequenceFlow("seq4", "sequence", "3", "5")
+                .AddSequenceFlow("seq5", "sequence", "4", "5")
+                .AddSequenceFlow("seq6", "sequence", "5", "6")
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Any();
+                }, CancellationToken.None);
+                await jobServer.EnqueueMessage(id, messageName, new PersonParameter { Firstname = "user" }, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    var last = c.ElementInstances.FirstOrDefault(_ => _.FlowNodeId == "6");
+                    return c.ElementInstances.Count() == 6 && last != null && last.State == FlowNodeStates.Complete;
+                }, CancellationToken.None);
+                var startEventInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1");
+                var firstParallelGateway = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
+                var firstEmptyTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "3");
+                var secondEmptyTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "4");
+                var secondParallelGateway = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "5");
+                var thirdEmptyTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "6");
+                var secondParallelGatewayExecPointer = casePlanInstance.ExecutionPathLst.First().Pointers.First(_ => _.FlowNodeId == "5");
+                var thirdEmptyTaskExecPointer = casePlanInstance.ExecutionPathLst.First().Pointers.First(_ => _.FlowNodeId == "6");
+                Assert.Equal(FlowNodeStates.Active, startEventInstance.State);
+                Assert.Equal(FlowNodeStates.Complete, firstParallelGateway.State);
+                Assert.Equal(FlowNodeStates.Complete, firstEmptyTaskInstance.State);
+                Assert.Equal(FlowNodeStates.Complete, secondEmptyTaskInstance.State);
+                Assert.Equal(FlowNodeStates.Complete, secondParallelGateway.State);
+                Assert.Equal(FlowNodeStates.Complete, thirdEmptyTaskInstance.State);
+                Assert.Equal(2, secondParallelGatewayExecPointer.Incoming.Count());
+                Assert.Equal(1, thirdEmptyTaskExecPointer.Incoming.Count());
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
         #endregion
 
         private class FakeCaseJobServer
