@@ -1,28 +1,16 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CaseManagement.BPMN.Domains
 {
     public abstract class BaseFlowNode : BaseFlowElement, ICloneable
     {
-        public BaseFlowNode()
-        {
-            Incoming = new List<string>();
-            Outgoing = new List<string>();
-        }
-
-        public ICollection<string> Incoming { get; set; }
-        public ICollection<string> Outgoing { get; set; }
         public abstract FlowNodeTypes FlowNode { get; }
 
         protected void FeedFlowNode(BaseFlowNode node)
         {
             FeedFlowElt(node);
-            node.Incoming = Incoming.ToList();
-            node.Outgoing = Outgoing.ToList();
         }
 
         public static BaseFlowNode Deserialize(string json)
@@ -37,6 +25,8 @@ namespace CaseManagement.BPMN.Domains
                     return StartEvent.Deserialize(json);
                 case FlowNodeTypes.SERVICETASK:
                     return Deserialize<ServiceTask>(json);
+                case FlowNodeTypes.EXCLUSIVEGATEWAY:
+                    return Deserialize<ExclusiveGateway>(json);
             }
 
             return null;

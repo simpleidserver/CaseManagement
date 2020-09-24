@@ -2,5 +2,6 @@
 {
     public abstract class BaseTask : BaseActivity
     {
+        public BaseTask() : base() { }
     }
 }

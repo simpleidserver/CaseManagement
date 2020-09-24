@@ -40,7 +40,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
             var result = (await _processorFactory.Execute(context, nodeDef, token)) as BPMNExecutionResult;
             if (result.IsNext)
             {
-                var ids = context.Instance.CompleteExecutionPointer(pointer, result.Tokens);
+                var ids = context.Instance.CompleteExecutionPointer(pointer, result.NextFlowNodeIds, result.Tokens);
                 if (result.IsEltInstanceCompleted)
                 {
                     context.Instance.CompleteFlowNodeInstance(pointer.InstanceFlowNodeId);

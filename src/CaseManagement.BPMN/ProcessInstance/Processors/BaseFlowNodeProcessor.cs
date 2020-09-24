@@ -1,5 +1,7 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.Common.Processors;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,19 +11,16 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
     {
         public async Task<ExecutionResult> Execute(BPMNExecutionContext executionContext, TElt elt, CancellationToken cancellationToken)
         {
-            if (!CheckIncoming(executionContext, executionContext.Pointer))
-            {
-                return BPMNExecutionResult.Block();
-            }
-
             return await Handle(executionContext, elt, cancellationToken);
         }
 
         protected abstract Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, TElt elt, CancellationToken cancellationToken);
-
-        protected virtual bool CheckIncoming(BPMNExecutionContext executionContext, ExecutionPointer elt)
+       
+        protected virtual ICollection<string> GetNextFlowNodeIds(BPMNExecutionContext executionContext, BaseFlowNode flowNode)
         {
-            return executionContext.Instance.IsIncomingSatisfied(elt);
+            var outgoing = executionContext.Instance.GetOutgoingSequenceFlows(flowNode.Id);
+            var filteredOutgoing = outgoing.Where(_ => executionContext.Instance.IsIncomingSatisfied(_, executionContext.Pointer.Incoming));
+            return filteredOutgoing.Select(_ => _.TargetRef).ToList();
         }
     }
 }

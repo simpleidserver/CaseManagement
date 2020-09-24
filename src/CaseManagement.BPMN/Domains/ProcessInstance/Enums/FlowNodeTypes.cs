@@ -5,6 +5,7 @@
         STARTEVENT = 0,
         EMPTYTASK = 1,
         SUBPROCESS = 2,
-        SERVICETASK = 3
+        SERVICETASK = 3,
+        EXCLUSIVEGATEWAY = 4
     }
 }

@@ -28,18 +28,7 @@ namespace CaseManagement.BPMN.Builders
 
     public abstract class FlowNodeBuilder : FlowEltBuilder
     {
-        public FlowNodeBuilder(string id, string name) : base(id, name)
-        {
-            Incoming = new List<string>();
-        }
-
-        internal ICollection<string> Incoming { get; set; }
-
-        public FlowNodeBuilder AddIncoming(string incoming)
-        {
-            Incoming.Add(incoming);
-            return this;
-        }
+        public FlowNodeBuilder(string id, string name) : base(id, name) { }
 
         public abstract BaseFlowNode Build();
 
@@ -47,7 +36,6 @@ namespace CaseManagement.BPMN.Builders
         {
             node.Id = Id;
             node.Name = Name;
-            node.Incoming = Incoming;
         }
     }
 
@@ -55,6 +43,7 @@ namespace CaseManagement.BPMN.Builders
     {
         public ActivityNodeBuilder(string id, string name) : base(id, name)
         {
+            StartQuantity = 1;
         }
 
         public ActivityNodeBuilder SetStartQuantity(int startQuantity)

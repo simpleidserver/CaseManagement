@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Helpers;
 using CaseManagement.Common.Domains;
+using DynamicExpresso;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 
 namespace CaseManagement.BPMN.Domains
 {
@@ -19,6 +21,7 @@ namespace CaseManagement.BPMN.Domains
             ElementInstances = new ConcurrentBag<FlowNodeInstance>();
             ExecutionPathLst = new ConcurrentBag<ExecutionPath>();
             ItemDefs = new ConcurrentBag<ItemDefinition>();
+            SequenceFlows = new ConcurrentBag<SequenceFlow>();
             Interfaces = new ConcurrentBag<BPMNInterface>();
             Messages = new ConcurrentBag<Message>();
         }
@@ -34,33 +37,20 @@ namespace CaseManagement.BPMN.Domains
         public ConcurrentBag<BPMNInterface> Interfaces { get; set; }
         public ConcurrentBag<Message> Messages { get; set; }
         public ConcurrentBag<BaseFlowNode> ElementDefs { get; set; }
+        public ConcurrentBag<SequenceFlow> SequenceFlows { get; set; }
         public ConcurrentBag<FlowNodeInstance> ElementInstances { get; set; }
         public ConcurrentBag<ExecutionPath> ExecutionPathLst { get; set; }
 
         #region Getters
 
-        public bool IsIncomingSatisfied(ExecutionPointer pointer)
+        public bool IsIncomingSatisfied(SequenceFlow incomingSequence, ICollection<BaseToken> incomingTokens)
         {
-            var nodeDef = GetDefinition(pointer.FlowNodeId);
-            if (nodeDef.Incoming == null || !nodeDef.Incoming.Any())
+            if (!string.IsNullOrWhiteSpace(incomingSequence.ConditionExpression))
             {
-                return true;
+                return EvaluateConditionalExpression(incomingTokens, incomingSequence.ConditionExpression);
             }
 
-            var activity = nodeDef as BaseActivity;
-            if (activity == null)
-            {
-                if (pointer.Incoming.Any())
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return pointer.Incoming.Count() >= activity.StartQuantity;
-            }
-
-            return false;
+            return true;
         }
 
         public BaseFlowNode GetDefinition(string elementId)
@@ -148,6 +138,16 @@ namespace CaseManagement.BPMN.Domains
             return result != null;
         }
 
+        public ICollection<SequenceFlow> GetIncomingSequenceFlows(string elementId)
+        {
+            return SequenceFlows.Where(_ => _.TargetRef == elementId).ToList();
+        }
+
+        public ICollection<SequenceFlow> GetOutgoingSequenceFlows(string elementId)
+        {
+            return SequenceFlows.Where(_ => _.SourceRef == elementId).ToList();
+        }
+
         #endregion
 
         #region Operations
@@ -164,16 +164,15 @@ namespace CaseManagement.BPMN.Domains
             }
         }
 
-        public ICollection<string> CompleteExecutionPointer(ExecutionPointer pointer, ICollection<BaseToken> outcomeValues)
+        public ICollection<string> CompleteExecutionPointer(ExecutionPointer pointer, ICollection<string> nextFlowIds, ICollection<BaseToken> outcomeValues)
         {
-            var node = GetDefinition(pointer.FlowNodeId);
             var evt = new ExecutionPointerCompletedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pointer.ExecutionPathId, pointer.Id, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
             var result = new List<string>();
-            foreach (var elementId in node.Outgoing)
+            foreach (var nextFlowId in nextFlowIds)
             {
-                result.Add(TryAddExecutionPointer(pointer.ExecutionPathId, GetDefinition(elementId), outcomeValues));
+                result.Add(TryAddExecutionPointer(pointer.ExecutionPathId, GetDefinition(nextFlowId), outcomeValues));
             }
 
             return result;
@@ -286,6 +285,15 @@ namespace CaseManagement.BPMN.Domains
             }
         }
 
+        private bool EvaluateConditionalExpression(ICollection<BaseToken> incomingTokens, string expression)
+        {
+            var decodedExpressionBody = HttpUtility.HtmlDecode(expression);
+            var context = new ConditionalExpressionContext(incomingTokens);
+            var interpreter = new Interpreter().SetVariable("context", context);
+            var parsedExpression = interpreter.Parse(decodedExpressionBody);
+            return (bool)parsedExpression.Invoke();
+        }
+
         #endregion
 
         public static ProcessInstanceAggregate New(List<DomainEvent> evts)
@@ -299,10 +307,10 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public static ProcessInstanceAggregate New(string instanceId, string processId, string processFileId, ICollection<BaseFlowNode> elements, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs)
+        public static ProcessInstanceAggregate New(string instanceId, string processId, string processFileId, ICollection<BaseFlowNode> elements, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs, ICollection<SequenceFlow> sequenceFlows)
         {
             var result = new ProcessInstanceAggregate();
-            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(instanceId, processId, processFileId), 0, processFileId, processId, interfaces, messages, itemDefs, DateTime.UtcNow);
+            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(instanceId, processId, processFileId), 0, processFileId, processId, interfaces, messages, itemDefs, sequenceFlows, DateTime.UtcNow);
             result.Handle(evt);
             foreach (var elt in elements)
             {
@@ -356,6 +364,7 @@ namespace CaseManagement.BPMN.Domains
             Interfaces = new ConcurrentBag<BPMNInterface>(evt.Interfaces);
             Messages = new ConcurrentBag<Message>(evt.Messages);
             ItemDefs = new ConcurrentBag<ItemDefinition>(evt.ItemDefs);
+            SequenceFlows = new ConcurrentBag<SequenceFlow>(evt.SequenceFlows);
         }
 
         private void Handle(FlowNodeDefCreatedEvent evt)

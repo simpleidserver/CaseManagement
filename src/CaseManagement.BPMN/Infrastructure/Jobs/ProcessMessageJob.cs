@@ -7,6 +7,7 @@ using CaseManagement.Common.EvtStore;
 using CaseManagement.Common.Jobs;
 using CaseManagement.Common.Lock;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,7 +47,8 @@ namespace CaseManagement.BPMN.Infrastructure.Jobs
 
                 processInstance.ConsumeMessage(new MessageToken
                 {
-                    Name = notification.MessageName
+                    Name = notification.MessageName,
+                    MessageContent = notification == null ? null : notification.Content as JObject
                 });
                 await _commitAggregateHelper.Commit(processInstance, processInstance.GetStreamName(), cancellationToken);
                 await MessageBroker.QueueProcessInstance(processInstance.AggregateId, false, cancellationToken);

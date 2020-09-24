@@ -1,6 +1,4 @@
-﻿using CaseManagement.BPMN.Domains.ProcessInstance;
-
-namespace CaseManagement.BPMN.Domains
+﻿namespace CaseManagement.BPMN.Domains
 {
     public class BaseFlowElement : BaseElement
     {

@@ -2,6 +2,8 @@
 {
     public class ServiceTask : BaseTask
     {
+        public ServiceTask() : base() { }
+
         /// <summary>
         /// This attribute specifies the technology that will be used to send and receive the Messages.
         /// </summary>

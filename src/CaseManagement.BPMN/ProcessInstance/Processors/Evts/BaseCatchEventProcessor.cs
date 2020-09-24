@@ -11,6 +11,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
     {
         protected override Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, T nodeDef, CancellationToken cancellationToken)
         {
+            var flowNodeIds = GetNextFlowNodeIds(executionContext, nodeDef);
             if (nodeDef.EventDefinitions.Any())
             {
                 var lst = new List<bool>();
@@ -24,13 +25,13 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
                 {
                     var outcome = new List<BaseToken>();
                     outcome.AddRange(executionContext.Pointer.Incoming);
-                    return Task.FromResult(BPMNExecutionResult.Outcome(outcome, isEltInstanceCompleted: false, isNewExecutionPointerRequired: true));
+                    return Task.FromResult(BPMNExecutionResult.Next(flowNodeIds, executionContext.Pointer.Incoming.ToList(), isEltInstanceCompleted: false, isNewExecutionPointerRequired: true));
                 }
 
                 return Task.FromResult(BPMNExecutionResult.Block());
             }
 
-            return Task.FromResult(BPMNExecutionResult.Outcome(new List<BaseToken> { MessageToken.EmptyMessage() }));
+            return Task.FromResult(BPMNExecutionResult.Next(flowNodeIds, new List<BaseToken> { MessageToken.EmptyMessage() }));
         }
     }
 }

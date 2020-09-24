@@ -1,7 +1,6 @@
 ﻿using CaseManagement.BPMN.Domains;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CaseManagement.BPMN.Builders
 {
@@ -16,6 +15,8 @@ namespace CaseManagement.BPMN.Builders
             Messages = new List<Message>();
             ItemDefs = new List<ItemDefinition>();
             InterfaceBuilders = new List<BPMNInterfaceBuilder>();
+            SequenceFlows = new List<SequenceFlow>();
+            Gateways = new List<BaseGateway>();
         }
 
         protected string InstanceId { get; set; }
@@ -25,6 +26,8 @@ namespace CaseManagement.BPMN.Builders
         protected ICollection<Message> Messages { get; set; }
         protected ICollection<ItemDefinition> ItemDefs { get; set; } 
         protected ICollection<BPMNInterfaceBuilder> InterfaceBuilders { get; set; }
+        protected ICollection<SequenceFlow> SequenceFlows { get; set; }
+        protected ICollection<BaseGateway> Gateways { get; set; }
 
         public static ProcessInstanceBuilder New(string instanceId, string processId, string processFileId)
         {
@@ -52,6 +55,12 @@ namespace CaseManagement.BPMN.Builders
             }
 
             InterfaceBuilders.Add(builder);
+            return this;
+        }
+
+        public ProcessInstanceBuilder AddSequenceFlow(string id, string name, string sourceRef, string targetRef, string conditionExpression = null)
+        {
+            SequenceFlows.Add(new SequenceFlow { ConditionExpression = conditionExpression, SourceRef = sourceRef, TargetRef = targetRef, Id = id, Name = name });
             return this;
         }
 
@@ -99,6 +108,16 @@ namespace CaseManagement.BPMN.Builders
 
         #endregion
 
+        #region Build gateways
+
+        public ProcessInstanceBuilder AddExclusiveGateway(string id, string name, GatewayDirections direction)
+        {
+            Gateways.Add(new ExclusiveGateway { Id = id, Name=  name, GatewayDirection = direction });
+            return this;
+        }
+
+        #endregion
+
         public ProcessInstanceAggregate Build()
         {
             var elts = new List<BaseFlowNode>();
@@ -108,17 +127,17 @@ namespace CaseManagement.BPMN.Builders
                 elts.Add(builder.Build());
             }
 
-            foreach(var elt in elts)
+            foreach (var gateway in Gateways)
             {
-                elt.Outgoing = elts.Where(_ => _.Incoming.Contains(elt.Id)).Select(_ => _.Id).ToList();
+                elts.Add(gateway);
             }
 
-            foreach(var interfaceBuilder in InterfaceBuilders)
+            foreach (var interfaceBuilder in InterfaceBuilders)
             {
                 interfaces.Add(interfaceBuilder.Build());
             }
 
-            var result = ProcessInstanceAggregate.New(InstanceId, ProcessId, ProcessFileId, elts, interfaces, Messages, ItemDefs);
+            var result = ProcessInstanceAggregate.New(InstanceId, ProcessId, ProcessFileId, elts, interfaces, Messages, ItemDefs, SequenceFlows);
             return result;
         }
     }

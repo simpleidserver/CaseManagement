@@ -26,9 +26,9 @@ namespace CaseManagement.BPMN
             return _messageBroker.QueueProcessInstance(processInstanceId, isNewInstance, token);
         }
 
-        public Task EnqueueMessage(string processInstanceId, string messageName, CancellationToken token)
+        public Task EnqueueMessage(string processInstanceId, string messageName, object content, CancellationToken token)
         {
-            return _messageBroker.QueueMessage(processInstanceId, messageName, token);
+            return _messageBroker.QueueMessage(processInstanceId, messageName, content, token);
         }
 
         public void Start()

@@ -6,31 +6,33 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
 {
     public class BPMNExecutionResult : ExecutionResult
     {
-        protected BPMNExecutionResult(bool isNext = false, bool isBlocked = false, object outcome = null, bool isEltInstanceCompleted = true, bool isNewExecutionPointerRequired = false) : base(isNext, isBlocked, outcome)
+        protected BPMNExecutionResult(
+            bool isNext = false, 
+            bool isBlocked = false, 
+            object outcome = null, 
+            bool isEltInstanceCompleted = true, 
+            bool isNewExecutionPointerRequired = false, 
+            ICollection<string> nextFlowNodeIds = null) : base(isNext, isBlocked, outcome)
         {
             IsEltInstanceCompleted = isEltInstanceCompleted;
             IsNewExecutionPointerRequired = isNewExecutionPointerRequired;
-
+            NextFlowNodeIds = nextFlowNodeIds;
         }
 
         public bool IsEltInstanceCompleted { get; set; }
         public bool IsNewExecutionPointerRequired { get; set; }
-
+        public ICollection<string> NextFlowNodeIds { get; set; }
+        public ICollection<BaseToken> OutcomingTokens { get; set; }
         public ICollection<BaseToken> Tokens => OutcomeValue as ICollection<BaseToken>;
 
-        public static new BPMNExecutionResult Next()
+        public static BPMNExecutionResult Next(ICollection<string> nextFlowNodeIds, ICollection<BaseToken> outcome = null, bool isEltInstanceCompleted = true, bool isNewExecutionPointerRequired = false)
         {
-            return new BPMNExecutionResult(isNext: true);
+            return new BPMNExecutionResult(isNext: true, nextFlowNodeIds: nextFlowNodeIds, outcome: outcome, isEltInstanceCompleted: isEltInstanceCompleted, isNewExecutionPointerRequired: isNewExecutionPointerRequired);
         }
 
         public static new BPMNExecutionResult Block()
         {
             return new BPMNExecutionResult(isBlocked: true);
-        }
-
-        public static BPMNExecutionResult Outcome(ICollection<BaseToken> tokens, bool isEltInstanceCompleted = true,  bool isNewExecutionPointerRequired = false)
-        {
-            return new BPMNExecutionResult(isNext: true, outcome: tokens, isEltInstanceCompleted: isEltInstanceCompleted, isNewExecutionPointerRequired: isNewExecutionPointerRequired);
         }
     }
 }

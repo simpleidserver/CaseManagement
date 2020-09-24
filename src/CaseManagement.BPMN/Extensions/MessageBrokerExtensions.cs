@@ -17,12 +17,13 @@ namespace CaseManagement.Common.Bus
             }, token);
         }
 
-        public static Task QueueMessage(this IMessageBroker messageBroker, string processInstanceId, string messageName, CancellationToken token)
+        public static Task QueueMessage(this IMessageBroker messageBroker, string processInstanceId, string messageName, object content, CancellationToken token)
         {
             return messageBroker.Queue(BPMNConstants.QueueNames.Messages, new MessageNotification(Guid.NewGuid().ToString())
             {
                 ProcessInstanceId = processInstanceId,
-                MessageName = messageName
+                MessageName = messageName,
+                Content = content
             }, token);
         }
     }
