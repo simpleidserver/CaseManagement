@@ -76,6 +76,42 @@ namespace CaseManagement.BPMN.Builders
 
     #region Tasks
 
+    public class ServiceTaskBuilder : ActivityNodeBuilder
+    {
+        public ServiceTaskBuilder(string id, string name) : base(id, name) { }
+
+        internal string OperationRef { get; set; }
+        internal string Implementation { get; set; }
+        internal string ClassName { get; set; }
+
+        public void SetOperationRef(string operationRef)
+        {
+            OperationRef = operationRef;
+        }
+
+        public void SetImplementation(string implementation)
+        {
+            Implementation = implementation;
+        }
+
+        public void SetClassName(string className)
+        {
+            ClassName = className;
+        }
+
+        public override BaseFlowNode Build()
+        {
+            var result = new ServiceTask
+            {
+                OperationRef = OperationRef,
+                Implementation = Implementation,
+                ClassName = ClassName
+            };
+            FeedActivityNode(result);
+            return result;
+        }
+    }
+
     public class EmptyTaskBuilder : ActivityNodeBuilder
     {
         public EmptyTaskBuilder(string id, string name) : base(id, name) { }
@@ -136,14 +172,14 @@ namespace CaseManagement.BPMN.Builders
     public class MessageEvtDefBuilder
     {
         private readonly string _id;
-        private Message _messageRef;
+        private string _messageRef;
 
         public MessageEvtDefBuilder(string id)
         {
             _id = id;
         }
 
-        public void SetMessageRef(Message messageRef)
+        public void SetMessageRef(string messageRef)
         {
             _messageRef = messageRef;
         }

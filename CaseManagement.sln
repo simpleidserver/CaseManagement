@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.BPMN.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.Common.SqlServer", "src\CaseManagement.Common.SqlServer\CaseManagement.Common.SqlServer.csproj", "{4EB1F71A-2BC1-4E17-9B66-06F941F1AD8E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.BPMN.Common", "src\CaseManagement.BPMN.Common\CaseManagement.BPMN.Common.csproj", "{4B9657CB-5DA0-4B99-A49A-BB626947216F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{4EB1F71A-2BC1-4E17-9B66-06F941F1AD8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EB1F71A-2BC1-4E17-9B66-06F941F1AD8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EB1F71A-2BC1-4E17-9B66-06F941F1AD8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B9657CB-5DA0-4B99-A49A-BB626947216F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B9657CB-5DA0-4B99-A49A-BB626947216F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B9657CB-5DA0-4B99-A49A-BB626947216F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B9657CB-5DA0-4B99-A49A-BB626947216F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,6 +136,7 @@ Global
 		{46F4E3E4-E5D8-47DB-BCB5-339CFAAF8408} = {BFF5EF7E-750D-4A02-8EA6-E296D3A97266}
 		{EF871DF5-4F12-41E5-92BA-C1BEACF0EBA6} = {A632EFC3-730B-46D7-B669-91962DFA8947}
 		{4EB1F71A-2BC1-4E17-9B66-06F941F1AD8E} = {BFF5EF7E-750D-4A02-8EA6-E296D3A97266}
+		{4B9657CB-5DA0-4B99-A49A-BB626947216F} = {905BDF27-841C-47C1-AB38-E666A582489A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2CFBF2E-D493-42F7-B339-01A3070C2B5E}

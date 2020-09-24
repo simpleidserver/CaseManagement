@@ -1,4 +1,4 @@
-﻿namespace CaseManagement.BPMN.Domains
+﻿namespace CaseManagement.BPMN.Common
 {
     public enum TokenTypes
     {

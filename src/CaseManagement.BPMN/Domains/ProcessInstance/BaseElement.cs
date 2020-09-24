@@ -1,4 +1,4 @@
-﻿namespace CaseManagement.BPMN.Domains.ProcessInstance
+﻿namespace CaseManagement.BPMN.Domains
 {
     public class BaseElement
     {

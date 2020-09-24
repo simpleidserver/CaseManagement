@@ -1,4 +1,4 @@
-﻿using CaseManagement.BPMN.Domains.ProcessInstance;
+﻿using CaseManagement.BPMN.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,7 +10,7 @@ namespace CaseManagement.BPMN.Domains
         public abstract object Clone();
         public abstract EvtDefTypes Type { get; }
 
-        public virtual bool IsSatisfied(BaseToken token)
+        public virtual bool IsSatisfied(ProcessInstanceAggregate processInstance, BaseToken token)
         {
             return false;
         }

@@ -35,6 +35,8 @@ namespace CaseManagement.BPMN.Domains
                     return Deserialize<EmptyTask>(json);
                 case FlowNodeTypes.STARTEVENT:
                     return StartEvent.Deserialize(json);
+                case FlowNodeTypes.SERVICETASK:
+                    return Deserialize<ServiceTask>(json);
             }
 
             return null;

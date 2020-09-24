@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 
-namespace CaseManagement.BPMN.Domains
+namespace CaseManagement.BPMN.Common
 {
-    public abstract class BaseToken : ICloneable
+    public abstract class BaseToken
     {
         public string Name { get; set; }
         public abstract TokenTypes Type { get; }
@@ -21,7 +20,7 @@ namespace CaseManagement.BPMN.Domains
         {
             var jObj = JsonConvert.DeserializeObject<JObject>(json);
             var type = (TokenTypes)int.Parse(jObj["Type"].ToString());
-            switch(type)
+            switch (type)
             {
                 case TokenTypes.Message:
                     return JsonConvert.DeserializeObject<MessageToken>(json);
@@ -33,7 +32,7 @@ namespace CaseManagement.BPMN.Domains
         public static ICollection<BaseToken> DeserializeLst(string json)
         {
             var result = new List<BaseToken>();
-            foreach(JObject jObj in JArray.Parse(json))
+            foreach (JObject jObj in JArray.Parse(json))
             {
                 result.Add(Deserialize(jObj.ToString()));
             }

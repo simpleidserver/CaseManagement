@@ -1,7 +1,9 @@
 ﻿using CaseManagement.BPMN;
+using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.Persistence.InMemory;
+using CaseManagement.BPMN.ProcessInstance;
 using CaseManagement.BPMN.ProcessInstance.Processors;
 using CaseManagement.Common;
 using CaseManagement.Common.Bus;
@@ -60,6 +62,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.RegisterAllAssignableType<IJob>(typeof(ICommitAggregateHelper).Assembly);
             services.RegisterAllAssignableType(typeof(IDomainEvtConsumerGeneric<>), typeof(IProcessJobServer).Assembly);
             services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(IProcessJobServer).Assembly);
+            services.RegisterAllAssignableType(typeof(IServiceTaskHandler), typeof(IServiceTaskHandler).Assembly);
+            foreach(var assm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                services.RegisterAllAssignableType(typeof(IDelegateHandler), assm, true);
+            }
+
             return services;
         }
     }

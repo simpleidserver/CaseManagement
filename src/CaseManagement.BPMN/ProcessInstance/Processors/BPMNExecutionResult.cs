@@ -1,4 +1,4 @@
-﻿using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Common;
 using CaseManagement.Common.Processors;
 using System.Collections.Generic;
 

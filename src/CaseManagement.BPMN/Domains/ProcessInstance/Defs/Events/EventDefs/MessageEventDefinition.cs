@@ -1,36 +1,38 @@
-﻿namespace CaseManagement.BPMN.Domains
+﻿using CaseManagement.BPMN.Common;
+
+namespace CaseManagement.BPMN.Domains
 {
     public class MessageEventDefinition : BaseEventDefinition
     {
         /// <summary>
         /// The message MUST be supplied.
         /// </summary>
-        public Message MessageRef { get; set; }
+        public string MessageRef { get; set; }
         /// <summary>
         /// This attribute specifies the Operation that is used by the Message Event.
         /// It MUST be specified for executable Processes.
         /// </summary>
-        public Operation OperationRef { get; set; }
+        public string OperationRef { get; set; }
 
         public override EvtDefTypes Type => EvtDefTypes.MESSAGE;
 
-        public override bool IsSatisfied(BaseToken token)
+        public override bool IsSatisfied(ProcessInstanceAggregate processInstance, BaseToken token)
         {
             var message = token as MessageToken;
-            if (message == null || MessageRef == null || MessageRef.Name != message.Name)
+            if (message == null)
             {
                 return false;
             }
 
-            return true;
+            return processInstance.IsMessageCorrect(message);
         }
 
         public override object Clone()
         {
             var result = new MessageEventDefinition
             {
-                MessageRef = (Message)MessageRef.Clone(),
-                OperationRef = (Operation)OperationRef.Clone()
+                MessageRef = MessageRef,
+                OperationRef = OperationRef
             };
             FeedElt(result);
             return result;

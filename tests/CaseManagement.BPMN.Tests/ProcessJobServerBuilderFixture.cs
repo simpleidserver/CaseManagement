@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Builders;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence;
+using CaseManagement.BPMN.Tests.Delegates;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -64,14 +65,12 @@ namespace CaseManagement.BPMN.Tests
             const string messageName = "alert";
             var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
             var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+                .AddMessage(messageName, "message", string.Empty)
                 .AddStartEvent("1", "evt", _ =>
                 {
                     _.AddMessageEvtDef("id", cb =>
                     {
-                        cb.SetMessageRef(new Message
-                        {
-                            Name = messageName
-                        });
+                        cb.SetMessageRef(messageName);
                     });
                 })
                 .AddEmptyTask("2", "name", _ =>
@@ -123,6 +122,64 @@ namespace CaseManagement.BPMN.Tests
                 Assert.Equal(1, casePlanInstance.ExecutionPathLst.Count());
                 Assert.Equal(1, casePlanInstance.ExecutionPathLst.First().ActivePointers.Count());
                 Assert.Equal(4, casePlanInstance.ExecutionPathLst.First().Pointers.Count());
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
+        [Fact]
+        public async Task When_Execute_ServiceTask_With_CSHARPCallback()
+        {
+            const string messageName = "message";
+            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
+            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+                .AddMessage(messageName, "message", string.Empty)
+                .AddStartEvent("1", "evt", _ =>
+                {
+                    _.AddMessageEvtDef("id", cb =>
+                    {
+                        cb.SetMessageRef(messageName);
+                    });
+                })
+                .AddServiceTask("2", "name", _ =>
+                {
+                    _.AddIncoming("1");
+                    _.SetImplementation(BPMNConstants.ImplementationNames.CALLBACK);
+                    _.SetClassName(typeof(CreatePersonDelegate).FullName);
+                })
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Any();
+                }, CancellationToken.None);
+                await jobServer.EnqueueMessage(id, messageName, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Count() == 2;
+                }, CancellationToken.None);
+                var startEventInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1");
+                var serviceTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
+                Assert.Equal(FlowNodeStates.Active, startEventInstance.State);
+                Assert.Equal(ActivityStates.COMPLETED, serviceTaskInstance.ActivityState);
+                Assert.Equal(FlowNodeStates.Complete, serviceTaskInstance.State);
             }
             finally
             {

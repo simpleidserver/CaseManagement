@@ -2,7 +2,7 @@
 
 namespace CaseManagement.BPMN.Domains
 {
-    public class ItemDefinition : ICloneable
+    public class ItemDefinition : BaseElement, ICloneable
     {
         public ItemDefinition()
         {
@@ -26,6 +26,7 @@ namespace CaseManagement.BPMN.Domains
         {
             return new ItemDefinition
             {
+                Id = Id,
                 IsCollection = IsCollection,
                 ItemKind = ItemKind,
                 StructureRef = StructureRef

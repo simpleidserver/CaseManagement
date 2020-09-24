@@ -1,4 +1,6 @@
-﻿using CaseManagement.Common.Domains;
+﻿using CaseManagement.BPMN.Common;
+using CaseManagement.BPMN.Helpers;
+using CaseManagement.Common.Domains;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -16,6 +18,9 @@ namespace CaseManagement.BPMN.Domains
             ElementDefs = new ConcurrentBag<BaseFlowNode>();
             ElementInstances = new ConcurrentBag<FlowNodeInstance>();
             ExecutionPathLst = new ConcurrentBag<ExecutionPath>();
+            ItemDefs = new ConcurrentBag<ItemDefinition>();
+            Interfaces = new ConcurrentBag<BPMNInterface>();
+            Messages = new ConcurrentBag<Message>();
         }
 
         public string InstanceId { get; set; }
@@ -25,6 +30,9 @@ namespace CaseManagement.BPMN.Domains
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public ICollection<StartEvent> StartEvts => ElementDefs.Where(_ => _ is StartEvent).Cast<StartEvent>().ToList();
+        public ConcurrentBag<ItemDefinition> ItemDefs { get; set; }
+        public ConcurrentBag<BPMNInterface> Interfaces { get; set; }
+        public ConcurrentBag<Message> Messages { get; set; }
         public ConcurrentBag<BaseFlowNode> ElementDefs { get; set; }
         public ConcurrentBag<FlowNodeInstance> ElementInstances { get; set; }
         public ConcurrentBag<ExecutionPath> ExecutionPathLst { get; set; }
@@ -90,6 +98,54 @@ namespace CaseManagement.BPMN.Domains
         {
             var path = GetExecutionPath(executionPathId);
             return path.Pointers.FirstOrDefault(_ => _.InstanceFlowNodeId == flowInstanceId && _.IsActive);
+        }
+
+        public Message GetMessage(string messageRef)
+        {
+            return Messages.FirstOrDefault(_ => _.Id == messageRef);
+        }
+
+        public Operation GetOperation(string operationRef)
+        {
+            return Interfaces.SelectMany(_ => _.Operations).FirstOrDefault(_ => _.Id == operationRef);
+        }
+
+        public ItemDefinition GetItem(string itemRef)
+        {
+            return ItemDefs.FirstOrDefault(_ => _.Id == itemRef);
+        }
+
+        public bool IsMessageCorrect(MessageToken messageToken)
+        {
+            var message = GetMessage(messageToken.Name);
+            if (message == null || messageToken.Name != messageToken.Name)
+            {
+                return false;
+            }
+
+            var item = GetItem(message.ItemRef);
+            if (item == null)
+            {
+                return true;
+            }
+
+            var type = TypeResolver.ResolveType(item.StructureRef);
+            if (item ==  null || type == null)
+            {
+                return false;
+            }
+
+            object result = null;
+            try
+            {
+                result = JsonConvert.DeserializeObject(messageToken.MessageContent.ToString(), type);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return result != null;
         }
 
         #endregion
@@ -220,7 +276,7 @@ namespace CaseManagement.BPMN.Domains
                     continue;
                 }
 
-                if (nodeDef.EventDefinitions.Any(_ => _.IsSatisfied(messageToken)))
+                if (nodeDef.EventDefinitions.Any(_ => _.IsSatisfied(this, messageToken)))
                 {
                     var tokens = new List<BaseToken> { messageToken };
                     var evt = new IncomingTokenAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, executionPath.Id, pointer.Id, JsonConvert.SerializeObject(tokens), DateTime.UtcNow);
@@ -243,10 +299,10 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public static ProcessInstanceAggregate New(string instanceId, string processId, string processFileId, ICollection<BaseFlowNode> elements)
+        public static ProcessInstanceAggregate New(string instanceId, string processId, string processFileId, ICollection<BaseFlowNode> elements, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs)
         {
             var result = new ProcessInstanceAggregate();
-            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(instanceId, processId, processFileId), 0, processFileId, processId, DateTime.UtcNow);
+            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(instanceId, processId, processFileId), 0, processFileId, processId, interfaces, messages, itemDefs, DateTime.UtcNow);
             result.Handle(evt);
             foreach (var elt in elements)
             {
@@ -271,7 +327,10 @@ namespace CaseManagement.BPMN.Domains
                 UpdateDateTime = UpdateDateTime,
                 ElementDefs = new ConcurrentBag<BaseFlowNode>(ElementDefs.Select(_ => (BaseFlowNode)_.Clone())),
                 ElementInstances =new ConcurrentBag<FlowNodeInstance>(ElementInstances.Select(_ => (FlowNodeInstance)_.Clone())),
-                ExecutionPathLst = new ConcurrentBag<ExecutionPath>(ExecutionPathLst.Select(_ => (ExecutionPath)_.Clone()))
+                ExecutionPathLst = new ConcurrentBag<ExecutionPath>(ExecutionPathLst.Select(_ => (ExecutionPath)_.Clone())),
+                ItemDefs = new ConcurrentBag<ItemDefinition>(ItemDefs.Select(_ => (ItemDefinition)_.Clone())),
+                Messages = new ConcurrentBag<Message>(Messages.Select(_ => (Message)_.Clone())),
+                Interfaces = new ConcurrentBag<BPMNInterface>(Interfaces.Select(_ => (BPMNInterface)_.Clone()))
             };
         }
 
@@ -294,6 +353,9 @@ namespace CaseManagement.BPMN.Domains
             ProcessFileId = evt.ProcessFileId;
             ProcessId = evt.ProcessId;
             CreateDateTime = evt.CreateDateTime;
+            Interfaces = new ConcurrentBag<BPMNInterface>(evt.Interfaces);
+            Messages = new ConcurrentBag<Message>(evt.Messages);
+            ItemDefs = new ConcurrentBag<ItemDefinition>(evt.ItemDefs);
         }
 
         private void Handle(FlowNodeDefCreatedEvent evt)

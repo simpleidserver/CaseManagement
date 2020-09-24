@@ -4,6 +4,7 @@
     {
         STARTEVENT = 0,
         EMPTYTASK = 1,
-        SUBPROCESS = 2
+        SUBPROCESS = 2,
+        SERVICETASK = 3
     }
 }

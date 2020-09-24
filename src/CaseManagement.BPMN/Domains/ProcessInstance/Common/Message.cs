@@ -1,25 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CaseManagement.BPMN.Domains
 {
-    public class Message : ICloneable
+    public class Message : BaseElement, ICloneable
     {
         public Message()
         {
-            Items = new List<ItemDefinition>();
+
         }
 
+        /// <summary>
+        /// Name is a text description of the Message.
+        /// </summary>
         public string Name { get; set; }
-        public ICollection<ItemDefinition> Items { get; set; }
+        /// <summary>
+        /// An ItemDefinition is used to define the "payload" of the Message.
+        /// </summary>
+        public string ItemRef { get; set; }
 
         public object Clone()
         {
             return new Message
             {
+                Id = Id,
                 Name = Name,
-                Items = Items.Select(_ => (ItemDefinition)_.Clone()).ToList()
+                ItemRef = ItemRef
             };
         }
     }

@@ -78,13 +78,17 @@ namespace Microsoft.Extensions.DependencyInjection
             return services.RegisterAllAssignableType(typeof(T), assm);
         }
 
-        public static IServiceCollection RegisterAllAssignableType(this IServiceCollection services, Type type, Assembly assm)
+        public static IServiceCollection RegisterAllAssignableType(this IServiceCollection services, Type type, Assembly assm, bool registerClass = false)
         {
             var types = assm.GetTypes().Where(p => type.IsAssignableFrom(p) || IsAssignableToGenericType(p, type));
             var addTransientMethod = typeof(ServiceCollectionServiceExtensions).GetMethods().FirstOrDefault(m =>
                 m.Name == "AddTransient" &&
                 m.IsGenericMethod == true &&
                 m.GetGenericArguments().Count() == 2);
+            var addTransientMethodClass = typeof(ServiceCollectionServiceExtensions).GetMethods().FirstOrDefault(m =>
+                m.Name == "AddTransient" &&
+                m.IsGenericMethod == false &&
+                m.GetParameters().Count() == 2);
             foreach (var t in types)
             {
                 if (t.IsInterface || t.IsAbstract)
@@ -100,14 +104,21 @@ namespace Microsoft.Extensions.DependencyInjection
                         var genericType = type.MakeGenericType(args);
                         var method = addTransientMethod.MakeGenericMethod(new[] { genericType, t });
                         method.Invoke(services, new[] { services });
+                        if (registerClass)
+                        {
+                            addTransientMethodClass.Invoke(services, new object[] { services, t });
+                        }
                     }
                 }
                 else
                 {
                     var method = addTransientMethod.MakeGenericMethod(new[] { type, t });
                     method.Invoke(services, new[] { services });
+                    if (registerClass)
+                    {
+                        addTransientMethodClass.Invoke(services, new object[] { services, t });
+                    }
                 }
-
             }
 
             return services;

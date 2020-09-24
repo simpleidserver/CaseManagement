@@ -1,4 +1,5 @@
-﻿using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Common;
+using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Infrastructure.Jobs.Notifications;
 using CaseManagement.Common;
 using CaseManagement.Common.Bus;
