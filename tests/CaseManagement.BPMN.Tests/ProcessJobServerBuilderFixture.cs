@@ -375,6 +375,68 @@ namespace CaseManagement.BPMN.Tests
                 jobServer.Stop();
             }
         }
+        
+        [Fact]
+        public async Task When_Execute_InclusiveGateway()
+        {
+            const string messageName = "message";
+            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
+            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+                .AddMessage(messageName, "message", "item")
+                .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
+                .AddStartEvent("1", "evt", _ =>
+                {
+                    _.AddMessageEvtDef("id", cb =>
+                    {
+                        cb.SetMessageRef(messageName);
+                    });
+                })
+                .AddInclusiveGateway("2", "gateway", GatewayDirections.DIVERGING, "5")
+                .AddEmptyTask("3", "name")
+                .AddEmptyTask("4", "name")
+                .AddEmptyTask("5", "name")
+                .AddSequenceFlow("seq1", "sequence", "1", "2")
+                .AddSequenceFlow("seq2", "sequence", "2", "3", "context.GetIncomingMessage(\"Firstname\") == \"user1\"")
+                .AddSequenceFlow("seq3", "sequence", "2", "4", "context.GetIncomingMessage(\"Firstname\") == \"user2\"")
+                .AddSequenceFlow("seq4", "sequence", "2", "5")
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Any();
+                }, CancellationToken.None);
+                await jobServer.EnqueueMessage(id, messageName, new PersonParameter { }, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Count() == 3;
+                }, CancellationToken.None);
+                var startEventInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1");
+                var inclusiveGatewayInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
+                var firstEmptyTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "5");
+                Assert.Equal(FlowNodeStates.Active, startEventInstance.State);
+                Assert.Equal(FlowNodeStates.Complete, inclusiveGatewayInstance.State);
+                Assert.Equal(FlowNodeStates.Complete, firstEmptyTaskInstance.State);
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
 
         #endregion
 

@@ -122,6 +122,12 @@ namespace CaseManagement.BPMN.Builders
             return this;
         }
 
+        public ProcessInstanceBuilder AddInclusiveGateway(string id, string name, GatewayDirections direction, string defaultSequenceFlow = null)
+        {
+            Gateways.Add(new InclusiveGateway { Id = id, Name = name, GatewayDirection = direction, Default = defaultSequenceFlow });
+            return this;
+        }
+
         #endregion
 
         public ProcessInstanceAggregate Build()

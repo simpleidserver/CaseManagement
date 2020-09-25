@@ -7,6 +7,7 @@
         SUBPROCESS = 2,
         SERVICETASK = 3,
         EXCLUSIVEGATEWAY = 4,
-        PARALLELGATEWAY = 5
+        PARALLELGATEWAY = 5,
+        INCLUSIVEGATEWAY = 6
     }
 }

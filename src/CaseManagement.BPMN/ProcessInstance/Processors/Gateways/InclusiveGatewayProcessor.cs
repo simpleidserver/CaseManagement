@@ -7,16 +7,11 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Processors
 {
-    public class ExclusiveGatewayProcessor : BaseFlowNodeProcessor<ExclusiveGateway>
+    public class InclusiveGatewayProcessor : BaseFlowNodeProcessor<InclusiveGateway>
     {
-        protected override Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, ExclusiveGateway elt, CancellationToken cancellationToken)
+        protected override Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, InclusiveGateway elt, CancellationToken cancellationToken)
         {
             var flowNodeIds = GetNextFlowNodeIds(executionContext, elt);
-            if (flowNodeIds.Count() > 1)
-            {
-                throw new BPMNProcessorException(Global.MoreThanOneOutcomingSequenceFlowSatisfied);
-            }
-
             if (flowNodeIds.Count() == 0 && string.IsNullOrWhiteSpace(elt.Default))
             {
                 throw new BPMNProcessorException(Global.NoDefaultSequenceFlow);
