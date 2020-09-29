@@ -6,10 +6,10 @@
         {
             if (kvp.Equals(default(KeyValuePair<string, string>)) || string.IsNullOrWhiteSpace(kvp.Value))
             {
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
     }
 }

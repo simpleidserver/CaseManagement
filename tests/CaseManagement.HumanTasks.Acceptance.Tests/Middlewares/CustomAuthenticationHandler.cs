@@ -20,18 +20,21 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Middlewares
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var nameIdentifier = "thabart";
             var scenarioContext = _scenarioContextProvider.GetContext();
-            if (scenarioContext.ContainsKey("userId"))
+            var claims = new List<Claim>();
+            if (scenarioContext.ContainsKey("claims"))
             {
-                nameIdentifier = scenarioContext["userId"].ToString();
+                claims = scenarioContext.Get<List<Claim>>("claims");
+            }
+            else
+            {
+                claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, "Thierry Habart"),
+                    new Claim(ClaimTypes.NameIdentifier, "thabart")
+                };
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, "Thierry Habart"),
-                new Claim(ClaimTypes.NameIdentifier, nameIdentifier)
-            };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var authenticationTicket = new AuthenticationTicket(

@@ -6,6 +6,7 @@ using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,7 +59,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new NotAuthorizedException(Global.UserNotAuthorized);
             }
 
-            var parameters = _operationParametersParser.Parse(humanTaskDef.Operation.Parameters, request.OperationParameters);
+            var operationParameters = request.OperationParameters == null ? new Dictionary<string, string>() : request.OperationParameters;
+            var parameters = _operationParametersParser.Parse(humanTaskDef.Operation.Parameters, operationParameters);
             _logger.LogInformation($"Create human task '{request.HumanTaskName}'");
             var humanTaskInstance = HumanTaskInstanceAggregate.New(request.HumanTaskName, parameters, assignment, priority, request.ActivationDeferralTime, request.ExpirationTime);
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);

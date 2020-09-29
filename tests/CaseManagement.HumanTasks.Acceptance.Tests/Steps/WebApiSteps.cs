@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -52,6 +54,20 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
         public void AfterScenario()
         {
             Evt.Set();
+        }
+
+        [When("authenticate")]
+        public void WhenAuthenticate(Table table)
+        {
+            var claims = new List<Claim>();
+            foreach(var record in table.Rows)
+            {
+                var key = record["Key"];
+                var value = Parse(record["Value"]);
+                claims.Add(new Claim(key, value));
+            }
+
+            _scenarioContext.Set(claims, "claims");
         }
 
         [When("execute HTTP GET request '(.*)'")]

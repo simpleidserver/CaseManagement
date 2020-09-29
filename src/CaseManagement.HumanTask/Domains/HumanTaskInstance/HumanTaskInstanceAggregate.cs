@@ -109,6 +109,7 @@ namespace CaseManagement.HumanTask.Domains
             UpdateDateTime = evt.CreateDateTime;
             CreateDateTime = evt.CreateDateTime;
             Version = evt.Version;
+            UpdateState();
         }
 
         private void Handle(PotentialOwnerGroupNamesAssignedEvent evt)
@@ -168,7 +169,14 @@ namespace CaseManagement.HumanTask.Domains
         {
             if (State == HumanTaskInstanceStates.CREATED)
             {
-                if (ActivationDeferralTime != null && DateTime.UtcNow >= ActivationDeferralTime.Value)
+                if (ActivationDeferralTime != null)
+                {
+                    if (DateTime.UtcNow >= ActivationDeferralTime.Value)
+                    {
+                        State = HumanTaskInstanceStates.READY;
+                    }
+                }
+                else
                 {
                     State = HumanTaskInstanceStates.READY;
                 }
@@ -176,7 +184,7 @@ namespace CaseManagement.HumanTask.Domains
 
             if (State == HumanTaskInstanceStates.READY)
             {
-                if (PeopleAssignment == null && PeopleAssignment.PotentialOwner != null)
+                if (PeopleAssignment != null && PeopleAssignment.PotentialOwner != null)
                 {
                     var userAssignment = PeopleAssignment.PotentialOwner as UserIdentifiersAssignment;
                     if (userAssignment != null && userAssignment.UserIdentifiers.Count() == 1)

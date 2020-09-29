@@ -38,7 +38,7 @@ namespace CaseManagement.HumanTask.Authorization
                 }
             });
 
-            if (assignment == null)
+            if (assignment != null)
             {
                 cb(assignment.BusinessAdministrator, UserRoles.BUSINESSADMINISTRATOR, result);
                 cb(assignment.ExcludedOwner, UserRoles.EXCLUDEDOWNER, result);

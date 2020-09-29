@@ -53,6 +53,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             var humanTaskInstance = await _humanTaskInstanceQueryRepository.Get(request.HumanTaskInstanceId, cancellationToken);
             if (humanTaskInstance == null)
             {
+                _logger.LogError($"HumanTask '{request.HumanTaskInstanceId}' doesn't exist");
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 

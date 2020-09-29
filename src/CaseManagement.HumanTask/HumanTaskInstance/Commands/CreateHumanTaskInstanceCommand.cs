@@ -6,6 +6,11 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
 {
     public class CreateHumanTaskInstanceCommand : IRequest<string>
     {
+        public CreateHumanTaskInstanceCommand()
+        {
+            OperationParameters = new Dictionary<string, string>();
+        }
+
         public string HumanTaskName { get; set; }
         public IEnumerable<KeyValuePair<string, string>> Claims { get; set; }
         public int? Priority { get; set; }

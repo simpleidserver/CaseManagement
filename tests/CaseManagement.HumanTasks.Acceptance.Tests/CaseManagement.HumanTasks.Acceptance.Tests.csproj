@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\CaseFiles.feature.cs" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\ErrorHumanTaskInstances - Copier.feature.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
@@ -21,11 +22,18 @@
     <ProjectReference Include="..\..\src\CaseManagement.HumanTask.AspNetCore\CaseManagement.HumanTask.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Features\HumanTaskInstances.feature.cs">
+      <DependentUpon>HumanTaskInstances.feature</DependentUpon>
+    </Compile>
     <Compile Update="Features\ErrorHumanTaskInstances.feature.cs">
       <DependentUpon>ErrorHumanTaskInstances.feature</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <SpecFlowFeatureFiles Update="Features\HumanTaskInstances.feature">
+      <Visible>$(UsingMicrosoftNETSdk)</Visible>
+      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+    </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Features\ErrorHumanTaskInstances.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
