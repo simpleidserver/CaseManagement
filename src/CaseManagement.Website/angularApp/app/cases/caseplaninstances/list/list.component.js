@@ -8,13 +8,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator, MatSort } from '@angular/material';
-import { select, Store } from '@ngrx/store';
-import * as fromCasePlanInstance from '../reducers';
-import { StartSearch } from '../actions/caseplaninstance';
-import { merge } from 'rxjs';
 import { FormBuilder } from '@angular/forms';
+import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
+import { SearchCasePlanInstances } from '@app/stores/caseplaninstances/actions/caseplaninstance.actions';
+import { select, Store } from '@ngrx/store';
+import { merge } from 'rxjs';
 var ListCasePlanInstancesComponent = (function () {
     function ListCasePlanInstancesComponent(store, formBuilder, activatedRoute) {
         this.store = store;
@@ -28,12 +28,12 @@ var ListCasePlanInstancesComponent = (function () {
     }
     ListCasePlanInstancesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCasePlanInstance.selectSearchResult)).subscribe(function (searchCasePlanInstanceResult) {
+        this.store.pipe(select(fromAppState.selectCasePlanInstanceLstResult)).subscribe(function (searchCasePlanInstanceResult) {
             if (!searchCasePlanInstanceResult) {
                 return;
             }
-            _this.length = searchCasePlanInstanceResult.TotalLength;
-            _this.casePlanInstances$ = searchCasePlanInstanceResult.Content;
+            _this.length = searchCasePlanInstanceResult.totalLength;
+            _this.casePlanInstances$ = searchCasePlanInstanceResult.content;
         });
         this.activatedRoute.queryParams.subscribe(function (params) {
             var casePlanId = params['casePlanId'];
@@ -67,7 +67,7 @@ var ListCasePlanInstancesComponent = (function () {
         if (this.sort.direction) {
             direction = this.sort.direction;
         }
-        var request = new StartSearch(startIndex, count, active, direction, this.searchForm.get('casePlanId').value);
+        var request = new SearchCasePlanInstances(startIndex, count, active, direction, this.searchForm.get('casePlanId').value);
         this.store.dispatch(request);
     };
     __decorate([

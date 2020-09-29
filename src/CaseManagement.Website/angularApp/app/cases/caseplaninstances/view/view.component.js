@@ -8,38 +8,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-import { select, Store } from '@ngrx/store';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCasePlanInstanceActions from '@app/stores/caseplaninstances/actions/caseplaninstance.actions';
+import { CasePlanInstanceResult } from '@app/stores/caseplaninstances/models/caseplaninstance.model';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { StartGet } from '../actions/caseplaninstance';
-import { CasePlanInstance } from '../models/caseplaninstance.model';
-import * as fromCasePlanInstance from '../reducers';
-import { CasePlanInstanceService } from '../services/caseplaninstance.service';
-var FormElementView = (function () {
-    function FormElementView() {
-    }
-    return FormElementView;
-}());
-export { FormElementView };
-var FormView = (function () {
-    function FormView() {
-        this.Elements = [];
-    }
-    return FormView;
-}());
-export { FormView };
+import { filter } from 'rxjs/operators';
 var ViewCasePlanInstanceComponent = (function () {
-    function ViewCasePlanInstanceComponent(store, route, casePlanInstanceService, translateService, snackBar, formBuilder) {
+    function ViewCasePlanInstanceComponent(store, route, actions$, translateService, snackBar) {
         this.store = store;
         this.route = route;
-        this.casePlanInstanceService = casePlanInstanceService;
+        this.actions$ = actions$;
         this.translateService = translateService;
         this.snackBar = snackBar;
-        this.formBuilder = formBuilder;
-        this.form = null;
-        this.casePlanInstance = new CasePlanInstance();
+        this.casePlanInstance = new CasePlanInstanceResult();
         this.activeActivities = [];
         this.enableActivities = [];
         this.completeActivities = [];
@@ -47,92 +31,54 @@ var ViewCasePlanInstanceComponent = (function () {
     }
     ViewCasePlanInstanceComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCasePlanInstance.selectGetResult)).subscribe(function (casePlanInstance) {
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.COMPLETE_ENABLE_CASE_PLANINSTANCE_ELT; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('ACTIVITY_IS_ENABLED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.ERROR_ENABLE_CASE_PLANINSTANCE_ELT; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CANNOT_ENABLE_ACTIVITY'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.store.pipe(select(fromAppState.selectCasePlanInstanceResult)).subscribe(function (casePlanInstance) {
             if (!casePlanInstance) {
                 return;
             }
             _this.casePlanInstance = casePlanInstance;
-            _this.activeActivities = casePlanInstance.Elements.filter(function (cp) {
-                return _this.isActivity(cp) && cp.State == "Active";
+            _this.activeActivities = casePlanInstance.children.filter(function (cp) {
+                return _this.isActivity(cp) && cp.state === "Active";
             });
-            _this.enableActivities = casePlanInstance.Elements.filter(function (cp) {
-                return _this.isActivity(cp) && cp.State == "Enabled";
+            _this.enableActivities = casePlanInstance.children.filter(function (cp) {
+                return _this.isActivity(cp) && cp.state === "Enabled";
             });
-            _this.completeActivities = casePlanInstance.Elements.filter(function (cp) {
-                return _this.isActivity(cp) && cp.State == "Completed";
+            _this.completeActivities = casePlanInstance.children.filter(function (cp) {
+                return _this.isActivity(cp) && cp.state === "Completed";
             });
-            _this.milestones = casePlanInstance.Elements.filter(function (cp) {
-                return cp.Type == "milestone";
+            _this.milestones = casePlanInstance.children.filter(function (cp) {
+                return cp.type === "MILESTONE";
             });
         });
         this.refresh();
     };
-    ViewCasePlanInstanceComponent.prototype.onSubmit = function (v) {
-        var _this = this;
-        this.casePlanInstanceService.confirmForm(this.form.CasePlanInstanceId, this.form.CasePlanElementInstanceId, v).subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('FORM_IS_SUBMITTED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('CANNOT_SUBMIT_THE_FORM'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
-    };
     ViewCasePlanInstanceComponent.prototype.enable = function (casePlanElementInstance) {
-        var _this = this;
-        this.casePlanInstanceService.enable(this.casePlanInstance.Id, casePlanElementInstance.Id).subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('ACTIVITY_IS_ENABLED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('CANNOT_ENABLE_ACTIVITY'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
-    };
-    ViewCasePlanInstanceComponent.prototype.viewForm = function (casePlanElementInstance) {
-        var lng = this.translateService.getDefaultLang();
-        var formView = new FormView();
-        formView.CasePlanInstanceId = this.casePlanInstance.Id;
-        formView.CasePlanElementInstanceId = casePlanElementInstance.Id;
-        var form = casePlanElementInstance.Form;
-        form.Titles.filter(function (tr) {
-            if (tr.Language == lng) {
-                formView.Title = tr.Value;
-            }
-        });
-        var obj = {};
-        form.Elements.forEach(function (e) {
-            var formElementView = new FormElementView();
-            obj[e.Id] = '';
-            formElementView.Id = e.Id;
-            formElementView.IsRequired = e.IsRequired;
-            formElementView.Type = e.Type;
-            e.Titles.filter(function (tr) {
-                if (tr.Language == lng) {
-                    formElementView.Title = tr.Value;
-                }
-            });
-            e.Descriptions.filter(function (tr) {
-                if (tr.Language == lng) {
-                    formElementView.Description = tr.Value;
-                }
-            });
-            formView.Elements.push(formElementView);
-        });
-        this.formGroup = this.formBuilder.group(obj);
-        this.form = formView;
+        var suspendCasePlanInstance = new fromCasePlanInstanceActions.EnableCasePlanInstanceElt(this.casePlanInstance.id, casePlanElementInstance.id);
+        this.store.dispatch(suspendCasePlanInstance);
     };
     ViewCasePlanInstanceComponent.prototype.refresh = function () {
         var id = this.route.snapshot.params['id'];
-        var request = new StartGet(id);
+        var request = new fromCasePlanInstanceActions.GetCasePlanInstance(id);
         this.store.dispatch(request);
     };
     ViewCasePlanInstanceComponent.prototype.isActivity = function (casePlanElementInstance) {
-        return casePlanElementInstance.Type == "task" ||
-            casePlanElementInstance.Type == "humantask" ||
-            casePlanElementInstance.Type == "processtask";
+        return casePlanElementInstance.type === "TASK" ||
+            casePlanElementInstance.type === "HUMANTASK" ||
+            casePlanElementInstance.type === "PROCESSTASK" ||
+            casePlanElementInstance.type === "EMPTYTASK";
     };
     ViewCasePlanInstanceComponent = __decorate([
         Component({
@@ -141,7 +87,11 @@ var ViewCasePlanInstanceComponent = (function () {
             styleUrls: ['./view.component.scss'],
             encapsulation: ViewEncapsulation.None
         }),
-        __metadata("design:paramtypes", [Store, ActivatedRoute, CasePlanInstanceService, TranslateService, MatSnackBar, FormBuilder])
+        __metadata("design:paramtypes", [Store,
+            ActivatedRoute,
+            ScannedActionsSubject,
+            TranslateService,
+            MatSnackBar])
     ], ViewCasePlanInstanceComponent);
     return ViewCasePlanInstanceComponent;
 }());

@@ -13,8 +13,8 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearch } from '../actions/caseplan';
-import * as fromCaseFiles from '../reducers';
+import * as fromAppState from '../../../stores/appstate';
+import { StartSearch } from '../../../stores/caseplans/actions/caseplan.actions';
 var ListCasePlansComponent = (function () {
     function ListCasePlansComponent(store, formBuilder, activatedRoute) {
         this.store = store;
@@ -29,12 +29,12 @@ var ListCasePlansComponent = (function () {
     }
     ListCasePlansComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCaseFiles.selectSearchResult)).subscribe(function (l) {
-            if (!l || !l.Content) {
+        this.store.pipe(select(fromAppState.selectCasePlanLstResult)).subscribe(function (l) {
+            if (!l || !l.content) {
                 return;
             }
-            _this.casePlans$ = l.Content;
-            _this.length = l.TotalLength;
+            _this.casePlans$ = l.content;
+            _this.length = l.totalLength;
         });
         this.activatedRoute.queryParams.subscribe(function (params) {
             var caseFileId = params['caseFileId'];

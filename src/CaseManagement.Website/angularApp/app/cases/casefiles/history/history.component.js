@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearchHistory } from '../actions/case-files';
-import * as fromCaseFiles from '../reducers';
 var HistoryCaseFileComponent = (function () {
     function HistoryCaseFileComponent(route, store) {
         this.route = route;
@@ -23,12 +23,12 @@ var HistoryCaseFileComponent = (function () {
     }
     HistoryCaseFileComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCaseFiles.selectSearchHistoryResult)).subscribe(function (searchCaseFilesResult) {
+        this.store.pipe(select(fromAppState.selectCaseFileHistoryLstResult)).subscribe(function (searchCaseFilesResult) {
             if (!searchCaseFilesResult) {
                 return;
             }
-            _this.caseFiles$ = searchCaseFilesResult.Content;
-            _this.length = searchCaseFilesResult.TotalLength;
+            _this.caseFiles$ = searchCaseFilesResult.content;
+            _this.length = searchCaseFilesResult.totalLength;
         });
         this.refresh();
     };
@@ -56,7 +56,7 @@ var HistoryCaseFileComponent = (function () {
         if (this.sort.direction) {
             direction = this.sort.direction;
         }
-        var request = new StartSearchHistory(this.route.snapshot.params['id'], active, direction, count, startIndex);
+        var request = new fromCaseFileActions.SearchCaseFilesHistory(this.route.snapshot.params['id'], active, direction, count, startIndex);
         this.store.dispatch(request);
     };
     __decorate([

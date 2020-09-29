@@ -11,54 +11,38 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { map } from 'rxjs/operators';
-import { CaseFile } from '../models/case-file.model';
-import { SearchCaseFilesResult } from '../models/search-case-files-result.model';
 var CaseFilesService = (function () {
     function CaseFilesService(http, oauthService) {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CaseFilesService.prototype.search = function (startIndex, count, order, direction, text) {
+    CaseFilesService.prototype.search = function (startIndex, count, order, direction, text, caseFileId, takeLatest) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/me/search?start_index=" + startIndex + "&count=" + count;
+        var targetUrl = process.env.API_URL + "/case-files/search";
+        var request = { startIndex: startIndex, count: count, takeLatest: takeLatest };
         if (order) {
-            targetUrl = targetUrl + "&order_by=" + order;
+            request["orderBy"] = order;
         }
         if (direction) {
-            targetUrl = targetUrl + "&order=" + direction;
+            request["order"] = direction;
         }
         if (text) {
-            targetUrl = targetUrl + "&text=" + text;
+            request["text"] = text;
         }
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchCaseFilesResult.fromJson(res);
-        }));
-    };
-    CaseFilesService.prototype.searchCaseFileHistories = function (caseFileId, startIndex, count, order, direction) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + caseFileId + "/history/search?start_index=" + startIndex + "&count=" + count;
-        if (order) {
-            targetUrl = targetUrl + "&order_by=" + order;
+        if (caseFileId) {
+            request["caseFileId"] = caseFileId;
         }
-        if (direction) {
-            targetUrl = targetUrl + "&order=" + direction;
-        }
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return SearchCaseFilesResult.fromJson(res);
-        }));
+        return this.http.post(targetUrl, JSON.stringify(request), { headers: headers });
     };
     CaseFilesService.prototype.get = function (id) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-files/" + id;
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return CaseFile.fromJson(res);
-        }));
+        return this.http.get(targetUrl, { headers: headers });
     };
     CaseFilesService.prototype.add = function (name, description) {
         var request = JSON.stringify({ name: name, description: description });

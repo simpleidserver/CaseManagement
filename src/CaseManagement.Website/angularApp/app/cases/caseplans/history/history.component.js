@@ -12,8 +12,8 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { StartSearchHistory } from '../actions/caseplan';
-import * as fromCasePlan from '../reducers';
+import * as fromAppState from '../../../stores/appstate';
+import { StartSearchHistory } from '../../../stores/caseplans/actions/caseplan.actions';
 var HistoryCasePlanComponent = (function () {
     function HistoryCasePlanComponent(route, store) {
         this.route = route;
@@ -23,12 +23,12 @@ var HistoryCasePlanComponent = (function () {
     }
     HistoryCasePlanComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCasePlan.selectSearchHistoryResult)).subscribe(function (searchCaseFilesResult) {
+        this.store.pipe(select(fromAppState.selectCasePlanHistoryLstResult)).subscribe(function (searchCaseFilesResult) {
             if (!searchCaseFilesResult) {
                 return;
             }
-            _this.casePlans$ = searchCaseFilesResult.Content;
-            _this.length = searchCaseFilesResult.TotalLength;
+            _this.casePlans$ = searchCaseFilesResult.content;
+            _this.length = searchCaseFilesResult.totalLength;
         });
         this.refresh();
     };

@@ -9,17 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatPaginator, MatSort } from '@angular/material';
-import { select, Store } from '@ngrx/store';
+import { MatDialog, MatPaginator, MatSnackBar, MatSort } from '@angular/material';
+import { Router } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { StartSearch } from '../actions/case-files';
-import * as fromCaseFiles from '../reducers';
+import { filter } from 'rxjs/operators';
 import { AddCaseFileDialog } from './add-case-file-dialog';
 var ListCaseFilesComponent = (function () {
-    function ListCaseFilesComponent(store, formBuilder, dialog) {
+    function ListCaseFilesComponent(store, formBuilder, dialog, actions$, translateService, snackBar, route) {
         this.store = store;
         this.formBuilder = formBuilder;
         this.dialog = dialog;
+        this.actions$ = actions$;
+        this.translateService = translateService;
+        this.snackBar = snackBar;
+        this.route = route;
         this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
         this.caseFiles$ = [];
         this.searchForm = this.formBuilder.group({
@@ -28,12 +35,25 @@ var ListCaseFilesComponent = (function () {
     }
     ListCaseFilesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromCaseFiles.selectSearchResults)).subscribe(function (searchCaseFilesResult) {
+        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_ADD_CASEFILE; }))
+            .subscribe(function (evt) {
+            _this.snackBar.open(_this.translateService.instant('CASES_FILE_ADDED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.route.navigate(["/cases/casefiles/" + evt.id]);
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_ADD_CASEFILE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('ERROR_ADD_CASE_FILE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.store.pipe(select(fromAppState.selectCaseFileLstResult)).subscribe(function (searchCaseFilesResult) {
             if (!searchCaseFilesResult) {
                 return;
             }
-            _this.caseFiles$ = searchCaseFilesResult.Content;
-            _this.length = searchCaseFilesResult.TotalLength;
+            _this.caseFiles$ = searchCaseFilesResult.content;
+            _this.length = searchCaseFilesResult.totalLength;
         });
         this.refresh();
     };
@@ -49,8 +69,12 @@ var ListCaseFilesComponent = (function () {
         var dialogRef = this.dialog.open(AddCaseFileDialog, {
             width: '800px'
         });
-        dialogRef.afterClosed().subscribe(function () {
-            _this.refresh();
+        dialogRef.afterClosed().subscribe(function (e) {
+            if (!e) {
+                return;
+            }
+            var request = new fromCaseFileActions.AddCaseFile(e.name, e.description);
+            _this.store.dispatch(request);
         });
     };
     ListCaseFilesComponent.prototype.refresh = function () {
@@ -70,7 +94,7 @@ var ListCaseFilesComponent = (function () {
         if (this.sort.direction) {
             direction = this.sort.direction;
         }
-        var request = new StartSearch(active, direction, count, startIndex, this.searchForm.get('text').value);
+        var request = new fromCaseFileActions.SearchCaseFiles(active, direction, count, startIndex, this.searchForm.get('text').value);
         this.store.dispatch(request);
     };
     __decorate([
@@ -87,7 +111,13 @@ var ListCaseFilesComponent = (function () {
             templateUrl: './list.component.html',
             styleUrls: ['./list.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, FormBuilder, MatDialog])
+        __metadata("design:paramtypes", [Store,
+            FormBuilder,
+            MatDialog,
+            ScannedActionsSubject,
+            TranslateService,
+            MatSnackBar,
+            Router])
     ], ListCaseFilesComponent);
     return ListCaseFilesComponent;
 }());

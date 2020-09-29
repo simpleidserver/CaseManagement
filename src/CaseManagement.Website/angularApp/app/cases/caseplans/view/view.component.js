@@ -8,62 +8,112 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator, MatSort, MatSnackBar } from '@angular/material';
+import { MatPaginator, MatSnackBar, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-import { select, Store } from '@ngrx/store';
-import { merge } from 'rxjs';
-import * as fromCaseInstance from '../actions/caseinstance';
-import * as fromCasePlan from '../actions/caseplan';
-import * as fromCaseWorker from '../actions/caseworker';
-import * as fromFormInstance from '../actions/forminstance';
-import { CasePlan } from '../models/caseplan.model';
-import * as fromCasePlanDefinitions from '../reducers';
-import { CasePlanService } from '../services/caseplan.service';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCasePlanInstanceActions from '@app/stores/caseplaninstances/actions/caseplaninstance.actions';
+import * as fromCasePlanActions from '@app/stores/caseplans/actions/caseplan.actions';
+import { CasePlan } from '@app/stores/caseplans/models/caseplan.model';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { merge } from 'rxjs';
+import { filter } from 'rxjs/operators';
 var ViewCaseDefinitionComponent = (function () {
-    function ViewCaseDefinitionComponent(casePlanStore, route, casePlanService, translateService, snackBar) {
+    function ViewCaseDefinitionComponent(casePlanStore, route, actions$, translateService, snackBar) {
         this.casePlanStore = casePlanStore;
         this.route = route;
-        this.casePlanService = casePlanService;
+        this.actions$ = actions$;
         this.translateService = translateService;
         this.snackBar = snackBar;
         this.selectedTimer = "4000";
         this.casePlan$ = new CasePlan();
         this.casePlanInstances$ = new Array();
-        this.formInstances$ = new Array();
-        this.workerTasks$ = new Array();
         this.displayedColumns = ['id', 'state', 'create_datetime', 'actions'];
-        this.formInstanceDisplayedColumns = ['form_id', 'performer', 'status', 'update_datetime', 'create_datetime'];
-        this.workerTaskDisplayedColumns = ['type', 'status', 'performer', 'create_datetime', 'update_datetime'];
     }
     ViewCaseDefinitionComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectGetResult)).subscribe(function (casePlan) {
+        this.casePlanStore.pipe(select(fromAppState.selectCasePlanResult)).subscribe(function (casePlan) {
             if (!casePlan) {
                 return;
             }
             _this.casePlan$ = casePlan;
         });
-        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchInstanceResult)).subscribe(function (searchCasePlanInstanceResult) {
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.COMPLETE_LAUNCH_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_LAUNCHED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.ERROR_LAUNCH_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CANNOT_LAUNCH_CASE_PLAN_INSTANCE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.COMPLETE_REACTIVATE_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_REACTIVATED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.ERROR_REACTIVATE_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CANNOT_REACTIVATE_CASE_PLAN_INSTANCE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.COMPLETE_SUSPEND_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_SUSPENDED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.ERROR_SUSPEND_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CANNOT_SUSPEND_CASE_PLAN_INSTANCE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.COMPLETE_RESUME_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_RESUMED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.ERROR_RESUME_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CANNOT_RESUME_CASE_PLAN_INSTANCE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.COMPLETE_CLOSE_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_CLOSED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCasePlanInstanceActions.ActionTypes.ERROR_CLOSE_CASE_PLANINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CANNOT_CLOSE_CASE_PLAN_INSTANCE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.casePlanStore.pipe(select(fromAppState.selectCasePlanInstanceLstResult)).subscribe(function (searchCasePlanInstanceResult) {
             if (!searchCasePlanInstanceResult) {
                 return;
             }
-            _this.casePlanInstances$ = searchCasePlanInstanceResult.Content;
-            _this.casePlanInstancesLength = searchCasePlanInstanceResult.TotalLength;
-        });
-        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchFormInstancesResult)).subscribe(function (searchFormInstanceResult) {
-            if (!searchFormInstanceResult) {
-                return;
-            }
-            _this.formInstances$ = searchFormInstanceResult.Content;
-            _this.formInstancesLength = searchFormInstanceResult.TotalLength;
-        });
-        this.casePlanStore.pipe(select(fromCasePlanDefinitions.selectSearchCaseWorkerResult)).subscribe(function (searchWorkerTaskResult) {
-            if (!searchWorkerTaskResult) {
-                return;
-            }
-            _this.workerTasks$ = searchWorkerTaskResult.Content;
-            _this.workerTasksLength = searchWorkerTaskResult.TotalLength;
+            _this.casePlanInstances$ = searchCasePlanInstanceResult.content;
+            _this.casePlanInstancesLength = searchCasePlanInstanceResult.totalLength;
         });
         this.interval = setInterval(function () {
             _this.refresh();
@@ -78,80 +128,36 @@ var ViewCaseDefinitionComponent = (function () {
         }, evt.value);
     };
     ViewCaseDefinitionComponent.prototype.launchCaseInstance = function () {
-        var _this = this;
-        this.casePlanService.launchCasePlanInstance(this.route.snapshot.params['id']).subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_LAUNCHED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('CANNOT_LAUNCH_CASE_PLAN_INSTANCE'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
+        var launchCasePlanInstance = new fromCasePlanInstanceActions.LaunchCasePlanInstance(this.casePlan$.id);
+        this.casePlanStore.dispatch(launchCasePlanInstance);
     };
     ViewCaseDefinitionComponent.prototype.reactivateCaseInstance = function (caseInstance) {
-        var _this = this;
-        this.casePlanService.reactivateCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_REACTIVATED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('CANNOT_REACTIVATE_CASE_PLAN_INSTANCE'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
+        var reactivateCasePlanInstance = new fromCasePlanInstanceActions.ReactivateCasePlanInstance(caseInstance.id);
+        this.casePlanStore.dispatch(reactivateCasePlanInstance);
     };
     ViewCaseDefinitionComponent.prototype.suspendCaseInstance = function (caseInstance) {
-        var _this = this;
-        this.casePlanService.suspendCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_SUSPENDED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('CANNOT_SUSPEND_CASE_PLAN_INSTANCE'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
+        var suspendCasePlanInstance = new fromCasePlanInstanceActions.SuspendCasePlanInstance(caseInstance.id);
+        this.casePlanStore.dispatch(suspendCasePlanInstance);
     };
     ViewCaseDefinitionComponent.prototype.resumeCaseInstance = function (caseInstance) {
-        var _this = this;
-        this.casePlanService.resumeCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_RESUMED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('CANNOT_RESUME_CASE_PLAN_INSTANCE'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
+        var suspendCasePlanInstance = new fromCasePlanInstanceActions.ResumeCasePlanInstance(caseInstance.id);
+        this.casePlanStore.dispatch(suspendCasePlanInstance);
     };
     ViewCaseDefinitionComponent.prototype.closeCaseInstance = function (caseInstance) {
-        var _this = this;
-        this.casePlanService.closeCasePlanInstance(this.route.snapshot.params['id'], caseInstance.Id).subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('CASE_PLAN_INSTANCE_CLOSED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('CANNOT_CLOSE_CASE_PLAN_INSTANCE'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
+        var suspendCasePlanInstance = new fromCasePlanInstanceActions.CloseCasePlanInstance(caseInstance.id);
+        this.casePlanStore.dispatch(suspendCasePlanInstance);
     };
     ViewCaseDefinitionComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         merge(this.casePlanInstanceSort.sortChange, this.casePlanInstancePaginator.page).subscribe(function () { return _this.refreshCaseInstances(); });
-        merge(this.formInstanceSort.sortChange, this.formInstancePaginator.page).subscribe(function () { return _this.refreshFormInstances(); });
-        merge(this.workerTaskSort.sortChange, this.caseWorkerPaginator.page).subscribe(function () { return _this.refreshWorkerTasks(); });
     };
     ViewCaseDefinitionComponent.prototype.refresh = function () {
         this.refreshCaseDefinition();
         this.refreshCaseInstances();
-        this.refreshFormInstances();
-        this.refreshWorkerTasks();
     };
     ViewCaseDefinitionComponent.prototype.refreshCaseDefinition = function () {
         var id = this.route.snapshot.params['id'];
-        var loadCaseDefinition = new fromCasePlan.StartGet(id);
+        var loadCaseDefinition = new fromCasePlanActions.StartGet(id);
         this.casePlanStore.dispatch(loadCaseDefinition);
     };
     ViewCaseDefinitionComponent.prototype.refreshCaseInstances = function () {
@@ -171,48 +177,8 @@ var ViewCaseDefinitionComponent = (function () {
         if (this.casePlanInstanceSort.direction) {
             direction = this.casePlanInstanceSort.direction;
         }
-        var loadCaseInstances = new fromCaseInstance.StartSearch(this.route.snapshot.params['id'], startIndex, count, active, direction);
+        var loadCaseInstances = new fromCasePlanInstanceActions.SearchCasePlanInstances(startIndex, count, active, direction, this.route.snapshot.params['id']);
         this.casePlanStore.dispatch(loadCaseInstances);
-    };
-    ViewCaseDefinitionComponent.prototype.refreshFormInstances = function () {
-        var startIndex = 0;
-        var count = 5;
-        if (this.formInstancePaginator.pageSize) {
-            count = this.formInstancePaginator.pageSize;
-        }
-        if (this.formInstancePaginator.pageIndex && this.formInstancePaginator.pageSize) {
-            startIndex = this.formInstancePaginator.pageIndex * this.formInstancePaginator.pageSize;
-        }
-        var active = "create_datetime";
-        var direction = "desc";
-        if (this.formInstanceSort.active) {
-            active = this.formInstanceSort.active;
-        }
-        if (this.formInstanceSort.direction) {
-            direction = this.formInstanceSort.direction;
-        }
-        var loadFormInstances = new fromFormInstance.StartSearch(this.route.snapshot.params['id'], active, direction, count, startIndex);
-        this.casePlanStore.dispatch(loadFormInstances);
-    };
-    ViewCaseDefinitionComponent.prototype.refreshWorkerTasks = function () {
-        var count = 5;
-        var startIndex = 0;
-        if (this.caseWorkerPaginator.pageSize) {
-            count = this.caseWorkerPaginator.pageSize;
-        }
-        if (this.caseWorkerPaginator.pageIndex && this.caseWorkerPaginator.pageSize) {
-            startIndex = this.caseWorkerPaginator.pageIndex * this.caseWorkerPaginator.pageSize;
-        }
-        var active = "create_datetime";
-        var direction = "desc";
-        if (this.workerTaskSort.active) {
-            active = this.workerTaskSort.active;
-        }
-        if (this.workerTaskSort.direction) {
-            direction = this.workerTaskSort.direction;
-        }
-        var loadCaseWorker = new fromCaseWorker.StartSearch(this.route.snapshot.params['id'], active, direction, count, startIndex);
-        this.casePlanStore.dispatch(loadCaseWorker);
     };
     ViewCaseDefinitionComponent.prototype.ngOnDestroy = function () {
         clearInterval(this.interval);
@@ -222,25 +188,9 @@ var ViewCaseDefinitionComponent = (function () {
         __metadata("design:type", MatSort)
     ], ViewCaseDefinitionComponent.prototype, "casePlanInstanceSort", void 0);
     __decorate([
-        ViewChild('formInstanceSort'),
-        __metadata("design:type", MatSort)
-    ], ViewCaseDefinitionComponent.prototype, "formInstanceSort", void 0);
-    __decorate([
-        ViewChild('workerTaskSort'),
-        __metadata("design:type", MatSort)
-    ], ViewCaseDefinitionComponent.prototype, "workerTaskSort", void 0);
-    __decorate([
         ViewChild('casePlanInstancePaginator'),
         __metadata("design:type", MatPaginator)
     ], ViewCaseDefinitionComponent.prototype, "casePlanInstancePaginator", void 0);
-    __decorate([
-        ViewChild('formInstancePaginator'),
-        __metadata("design:type", MatPaginator)
-    ], ViewCaseDefinitionComponent.prototype, "formInstancePaginator", void 0);
-    __decorate([
-        ViewChild('caseWorkerPaginator'),
-        __metadata("design:type", MatPaginator)
-    ], ViewCaseDefinitionComponent.prototype, "caseWorkerPaginator", void 0);
     ViewCaseDefinitionComponent = __decorate([
         Component({
             selector: 'view-case-files',
@@ -248,7 +198,11 @@ var ViewCaseDefinitionComponent = (function () {
             styleUrls: ['./view.component.scss'],
             encapsulation: ViewEncapsulation.None
         }),
-        __metadata("design:paramtypes", [Store, ActivatedRoute, CasePlanService, TranslateService, MatSnackBar])
+        __metadata("design:paramtypes", [Store,
+            ActivatedRoute,
+            ScannedActionsSubject,
+            TranslateService,
+            MatSnackBar])
     ], ViewCaseDefinitionComponent);
     return ViewCaseDefinitionComponent;
 }());

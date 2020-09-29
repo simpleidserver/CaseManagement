@@ -9,43 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialogRef, MatSnackBar } from '@angular/material';
-import { CaseFilesService } from '../services/casefiles.service';
-import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { MatDialogRef } from '@angular/material';
 var AddCaseFileDialog = (function () {
-    function AddCaseFileDialog(route, dialogRef, caseFilesService, formBuilder, snackBar, translateService) {
-        this.route = route;
+    function AddCaseFileDialog(dialogRef, formBuilder) {
         this.dialogRef = dialogRef;
-        this.caseFilesService = caseFilesService;
         this.formBuilder = formBuilder;
-        this.snackBar = snackBar;
-        this.translateService = translateService;
         this.addCaseFileForm = this.formBuilder.group({
             name: '',
             description: ''
         });
     }
     AddCaseFileDialog.prototype.onSubmit = function () {
-        var _this = this;
-        this.caseFilesService.add(this.addCaseFileForm.get('name').value, this.addCaseFileForm.get('description').value).subscribe(function (caseFileId) {
-            _this.snackBar.open(_this.translateService.instant('CASES_FILE_ADDED'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-            _this.dialogRef.close();
-            _this.route.navigate(["/cases/casefiles/" + caseFileId]);
-        }, function () {
-            _this.snackBar.open(_this.translateService.instant('ERROR_ADD_CASE_FILE'), _this.translateService.instant('UNDO'), {
-                duration: 2000
-            });
-        });
+        this.dialogRef.close(this.addCaseFileForm.value);
     };
     AddCaseFileDialog = __decorate([
         Component({
             selector: 'add-case-file-dialog',
             templateUrl: 'add-case-file-dialog.html',
         }),
-        __metadata("design:paramtypes", [Router, MatDialogRef, CaseFilesService, FormBuilder, MatSnackBar, TranslateService])
+        __metadata("design:paramtypes", [MatDialogRef,
+            FormBuilder])
     ], AddCaseFileDialog);
     return AddCaseFileDialog;
 }());

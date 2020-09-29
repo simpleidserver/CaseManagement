@@ -9,14 +9,24 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import * as fromActions from '../actions/caseplan';
-export var initialState = {
+import * as fromActions from '../actions/caseplan.actions';
+export var initialCasePlanState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export function getReducer(state, action) {
-    if (state === void 0) { state = initialState; }
+export var initialSearchCasePlanState = {
+    content: null,
+    isLoading: true,
+    isErrorLoadOccured: false
+};
+export var initialSearchCasePlanHistoryState = {
+    content: null,
+    isLoading: true,
+    isErrorLoadOccured: false
+};
+export function casePlanReducer(state, action) {
+    if (state === void 0) { state = initialCasePlanState; }
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_GET:
             state.content = action.content;
@@ -25,4 +35,24 @@ export function getReducer(state, action) {
             return state;
     }
 }
-//# sourceMappingURL=get.reducer.js.map
+export function casePlanLstReducer(state, action) {
+    if (state === void 0) { state = initialSearchCasePlanState; }
+    switch (action.type) {
+        case fromActions.ActionTypes.COMPLETE_SEARCH:
+            state.content = action.content;
+            return __assign({}, state);
+        default:
+            return state;
+    }
+}
+export function casePlanHistoryLstReducer(state, action) {
+    if (state === void 0) { state = initialSearchCasePlanHistoryState; }
+    switch (action.type) {
+        case fromActions.ActionTypes.COMPLETE_SEARCH_HISTORY:
+            state.content = action.content;
+            return __assign({}, state);
+        default:
+            return state;
+    }
+}
+//# sourceMappingURL=caseplan.reducers.js.map

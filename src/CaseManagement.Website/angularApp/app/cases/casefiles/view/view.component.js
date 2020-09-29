@@ -11,21 +11,21 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { select, Store } from '@ngrx/store';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { StartGet } from '../actions/case-files';
-import { CaseFile } from '../models/case-file.model';
-import * as fromCaseFiles from '../reducers';
-import { CaseFilesService } from '../services/casefiles.service';
+import { filter } from 'rxjs/operators';
+import { CaseFile } from '../../../stores/casefiles/models/case-file.model';
 var CmmnViewer = require('cmmn-js/lib/Modeler'), propertiesPanelModule = require('casemanagement-js-properties-panel'), propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'), caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement'), cmmnModdle = require('casemanagement-cmmn-moddle/resources/cmmn');
 var ViewCaseFilesComponent = (function () {
-    function ViewCaseFilesComponent(store, route, formBuilder, caseFilesService, snackBar, translateService, router) {
+    function ViewCaseFilesComponent(store, route, formBuilder, snackBar, translateService, actions$, router) {
         this.store = store;
         this.route = route;
         this.formBuilder = formBuilder;
-        this.caseFilesService = caseFilesService;
         this.snackBar = snackBar;
         this.translateService = translateService;
+        this.actions$ = actions$;
         this.router = router;
         this.isEditorDisplayed = true;
         this.editorOptions = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
@@ -57,17 +57,42 @@ var ViewCaseFilesComponent = (function () {
                 cmmn: cmmnModdle
             }
         });
-        this.store.pipe(select(fromCaseFiles.selectGetResult)).subscribe(function (e) {
+        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_UPDATE_CASEFILE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CASE_FILE_SAVED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_UPDATE_CASEFILE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('ERROR_SAVE_CASE_FILE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_PUBLISH_CASEFILE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('PUBLISH_CASE_FILE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_PUBLISH_CASEFILE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('ERROR_PUBLISH_CASE_FILE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+            _this.router.navigate(["/cases/casefiles/" + _this.caseFile.id]);
+        });
+        this.store.pipe(select(fromAppState.selectCaseFileResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
-            _this.saveForm.controls['id'].setValue(e.Id);
-            _this.saveForm.controls['name'].setValue(e.Name);
-            _this.saveForm.controls['createDateTime'].setValue(e.CreateDateTime);
-            _this.saveForm.controls['updateDateTime'].setValue(e.UpdateDateTime);
-            _this.saveForm.controls['description'].setValue(e.Description);
-            _this.xml = e.Payload;
-            _this.viewer.importXML(e.Payload);
+            _this.saveForm.controls['id'].setValue(e.id);
+            _this.saveForm.controls['name'].setValue(e.name);
+            _this.saveForm.controls['createDateTime'].setValue(e.createDateTime);
+            _this.saveForm.controls['updateDateTime'].setValue(e.updateDateTime);
+            _this.saveForm.controls['description'].setValue(e.description);
+            _this.xml = e.payload;
+            _this.viewer.importXML(e.payload);
             _this.caseFile = e;
         });
         this.refresh();
@@ -95,38 +120,19 @@ var ViewCaseFilesComponent = (function () {
                 return;
             }
             var id = self.saveForm.get('id').value;
-            var cancel = self.translateService.instant('CANCEL');
-            self.caseFilesService.update(id, form.name, form.description, x).subscribe(function () {
-                self.snackBar.open(self.translateService.instant('CASE_FILE_SAVED'), cancel, {
-                    duration: 2000
-                });
-            }, function () {
-                self.snackBar.open(self.translateService.instant('ERROR_SAVE_CASE_FILE'), cancel, {
-                    duration: 2000
-                });
-            });
+            var act = new fromCaseFileActions.UpdateCaseFile(id, form.name, form.description, x);
+            self.store.dispatch(act);
         });
     };
     ViewCaseFilesComponent.prototype.onPublish = function (e) {
-        var _this = this;
         e.preventDefault();
-        var self = this;
-        var id = self.route.snapshot.params['id'];
-        var cancel = self.translateService.instant('CANCEL');
-        self.caseFilesService.publish(id).subscribe(function (caseFileId) {
-            self.snackBar.open(self.translateService.instant('PUBLISH_CASE_FILE'), cancel, {
-                duration: 2000
-            });
-            _this.router.navigate(["/cases/casefiles/" + caseFileId]);
-        }, function () {
-            self.snackBar.open(self.translateService.instant('ERROR_PUBLISH_CASE_FILE'), cancel, {
-                duration: 2000
-            });
-        });
+        var id = this.route.snapshot.params['id'];
+        var act = new fromCaseFileActions.PublishCaseFile(id);
+        this.store.dispatch(act);
     };
     ViewCaseFilesComponent.prototype.refresh = function () {
         var id = this.route.snapshot.params['id'];
-        var request = new StartGet(id);
+        var request = new fromCaseFileActions.GetCaseFile(id);
         this.store.dispatch(request);
     };
     ViewCaseFilesComponent.prototype.formatXML = function (xml) {
@@ -158,7 +164,13 @@ var ViewCaseFilesComponent = (function () {
             templateUrl: './view.component.html',
             styleUrls: ['./view.component.scss']
         }),
-        __metadata("design:paramtypes", [Store, ActivatedRoute, FormBuilder, CaseFilesService, MatSnackBar, TranslateService, Router])
+        __metadata("design:paramtypes", [Store,
+            ActivatedRoute,
+            FormBuilder,
+            MatSnackBar,
+            TranslateService,
+            ScannedActionsSubject,
+            Router])
     ], ViewCaseFilesComponent);
     return ViewCaseFilesComponent;
 }());
