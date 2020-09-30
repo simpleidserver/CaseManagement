@@ -1,4 +1,5 @@
-﻿using CaseManagement.HumanTask.Authorization;
+﻿using CaseManagement.Common.Jobs.Persistence;
+using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Persistence.InMemory;
@@ -29,6 +30,13 @@ namespace CaseManagement.HumanTask
         {
             var lst = new ConcurrentBag<LogicalPeopleGroup>(logicalPeopleGroups);
             _services.TryUpdateSingleton<ILogicalPeopleGroupStore>(new InMemoryLogicalPeopleGroupStore(lst));
+            return this;
+        }
+
+        public ServerBuilder AddScheduledJobs(List<ScheduleJob> jobs)
+        {
+            var lst = new ConcurrentBag<ScheduleJob>(jobs);
+            _services.TryUpdateSingleton<IScheduledJobStore>(new InMemoryScheduledJobStore(lst));
             return this;
         }
     }

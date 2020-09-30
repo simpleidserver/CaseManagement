@@ -11,9 +11,9 @@ namespace CaseManagement.Common.Jobs.Persistence
     {
         private readonly ConcurrentBag<ScheduleJob> _scheduleJobs;
 
-        public InMemoryScheduledJobStore()
+        public InMemoryScheduledJobStore(ConcurrentBag<ScheduleJob> scheduleJobs)
         {
-            _scheduleJobs = new ConcurrentBag<ScheduleJob>();
+            _scheduleJobs = scheduleJobs;
         }
 
         public Task<SchedulingResult> TryGetNextScheduling(string jobName, CancellationToken token)
@@ -24,8 +24,18 @@ namespace CaseManagement.Common.Jobs.Persistence
                 return Task.FromResult(SchedulingResult.Ignore());
             }
 
-            var expression = CronExpression.Parse(scheduleJob.CronExpression);
-            var nextUtc = expression.GetNextOccurrence(DateTime.UtcNow);
+            DateTime? nextUtc = null;
+            if (!string.IsNullOrWhiteSpace(scheduleJob.CronExpression))
+            {
+
+                var expression = CronExpression.Parse(scheduleJob.CronExpression);
+                nextUtc = expression.GetNextOccurrence(DateTime.UtcNow);
+            }
+            else if (scheduleJob.WaitIntervalMS != null)
+            {
+                nextUtc = DateTime.UtcNow.AddMilliseconds(scheduleJob.WaitIntervalMS.Value);
+            }
+
             if (nextUtc == null)
             {
                 return Task.FromResult(SchedulingResult.Ignore());

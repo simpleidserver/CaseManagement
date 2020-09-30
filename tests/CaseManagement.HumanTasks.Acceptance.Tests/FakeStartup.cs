@@ -1,6 +1,8 @@
-﻿using CaseManagement.HumanTask.AspNetCore;
+﻿using CaseManagement.Common.Jobs.Persistence;
+using CaseManagement.HumanTask.AspNetCore;
 using CaseManagement.HumanTask.Builders;
 using CaseManagement.HumanTask.Domains;
+using CaseManagement.HumanTask.Infrastructure.Jobs;
 using CaseManagement.HumanTasks.Acceptance.Tests.Middlewares;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -39,6 +41,10 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
                 {
                     addClient
+                })
+                .AddScheduledJobs(new List<ScheduleJob>
+                {
+                    ScheduleJob.New<ProcessActivationTimerJob>(1 * 1000)
                 });
         }
 

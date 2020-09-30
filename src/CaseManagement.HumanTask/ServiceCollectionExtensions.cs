@@ -41,8 +41,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddHumanTaskServerApplication(this IServiceCollection services)
         {
+            var lstScheduledJobst = new ConcurrentBag<ScheduleJob>();
             services.TryAddSingleton<IDistributedLock, InMemoryDistributedLock>();
-            services.TryAddSingleton<IScheduledJobStore, InMemoryScheduledJobStore>();
+            services.TryAddSingleton<IScheduledJobStore>(new InMemoryScheduledJobStore(lstScheduledJobst));
             services.TryAddTransient<IHumanTaskServer, HumanTaskServer>();
             services.RegisterAllAssignableType<IJob>(typeof(ProcessActivationTimerJob).Assembly);
             return services;

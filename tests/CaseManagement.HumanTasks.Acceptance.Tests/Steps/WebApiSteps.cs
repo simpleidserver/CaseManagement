@@ -56,6 +56,13 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
             Evt.Set();
         }
 
+        [When("add '(.*)' seconds into '(.*)'")]
+        public void WhenAddSeconds(int nbSeconds, string key)
+        {
+            var date = DateTime.UtcNow.AddSeconds(nbSeconds);
+            _scenarioContext.Set(date.ToString(), key);
+        }
+
         [When("authenticate")]
         public void WhenAuthenticate(Table table)
         {

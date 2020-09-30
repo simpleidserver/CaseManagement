@@ -30,6 +30,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             }
 
             _humanTaskInstances.Remove(record);
+            _humanTaskInstances.Add((HumanTaskInstanceAggregate)humanTaskInstance.Clone());
             return Task.FromResult(true);
         }
 
