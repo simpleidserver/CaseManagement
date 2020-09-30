@@ -35,12 +35,17 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     op.AddParameter("isGoldenClient", ParameterTypes.BOOL, false);
                 })
                 .Build();
+            var noPotentialOwner = HumanTaskDefBuilder.New("noPotentialOwner")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
+                .SetBusinessAdministratorUserIdentifiers(new List<string> { "businessAdmin" })
+                .Build();
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
                 {
-                    addClient
+                    addClient,
+                    noPotentialOwner
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {

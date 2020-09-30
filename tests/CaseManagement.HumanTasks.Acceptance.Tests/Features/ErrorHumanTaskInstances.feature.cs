@@ -234,6 +234,160 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to nominate and GroupNames, UserIdentifiers p" +
+            "arameters are specified")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to nominate and GroupNames, UserIdentifiers p" +
+            "arameters are specified")]
+        public virtual void CheckErrorIsReturnedWhenTryingToNominateAndGroupNamesUserIdentifiersParametersAreSpecified()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to nominate and GroupNames, UserIdentifiers p" +
+                    "arameters are specified", null, ((string[])(null)));
+#line 56
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table6.AddRow(new string[] {
+                        "groupNames",
+                        "[\"group\"]"});
+            table6.AddRow(new string[] {
+                        "userIdentifiers",
+                        "[\"user\"]"});
+#line 57
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantaskinstances/invalid/nomin" +
+                    "ate\'", ((string)(null)), table6, "When ");
+#line 61
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 63
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 64
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 65
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'GroupNames and UserIdentifiers parameters cannot be" +
+                    " specified at the same time\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to nominate and GroupNames, UserIdentifiers p" +
+            "arameters are not specified")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to nominate and GroupNames, UserIdentifiers p" +
+            "arameters are not specified")]
+        public virtual void CheckErrorIsReturnedWhenTryingToNominateAndGroupNamesUserIdentifiersParametersAreNotSpecified()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to nominate and GroupNames, UserIdentifiers p" +
+                    "arameters are not specified", null, ((string[])(null)));
+#line 67
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 68
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantaskinstances/invalid/nomin" +
+                    "ate\'", ((string)(null)), table7, "When ");
+#line 70
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 72
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 73
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 74
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameters \'GroupNames,UserIdentifiers\' are missing" +
+                    "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to nominate an unknown human task instance")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to nominate an unknown human task instance")]
+        public virtual void CheckErrorIsReturnedWhenTryingToNominateAnUnknownHumanTaskInstance()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to nominate an unknown human task instance", null, ((string[])(null)));
+#line 76
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table8.AddRow(new string[] {
+                        "groupNames",
+                        "[\"group\"]"});
+#line 77
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantaskinstances/invalid/nomin" +
+                    "ate\'", ((string)(null)), table8, "When ");
+#line 80
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 82
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 83
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 84
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task instance \'invalid\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to nominate and user is not authorized")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to nominate and user is not authorized")]
+        public virtual void CheckErrorIsReturnedWhenTryingToNominateAndUserIsNotAuthorized()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to nominate and user is not authorized", null, ((string[])(null)));
+#line 86
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table9.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 87
+ testRunner.When("authenticate", ((string)(null)), table9, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table10.AddRow(new string[] {
+                        "humanTaskName",
+                        "noPotentialOwner"});
+#line 90
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table10, "And ");
+#line 93
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 94
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table11.AddRow(new string[] {
+                        "groupNames",
+                        "[\"group\"]"});
+#line 95
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/nominate\'", ((string)(null)), table11, "When ");
+#line 98
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 100
+ testRunner.Then("HTTP status code equals to \'401\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 101
+ testRunner.Then("JSON \'status\'=\'401\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 102
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'User is not authorized\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

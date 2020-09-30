@@ -5,6 +5,7 @@ using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,7 +45,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new BadRequestException(Global.GroupNamesAndUserIdentifiersSpecified);
             }
 
-            if ((request.GroupNames == null || request.GroupNames.Any()) && (request.UserIdentifiers == null || request.UserIdentifiers.Any()))
+            if ((request.GroupNames == null || !request.GroupNames.Any()) && (request.UserIdentifiers == null || !request.UserIdentifiers.Any()))
             {
                 _logger.LogError("GroupNames or UserIdentifiers parameters must be specified");
                 throw new BadRequestException(string.Format(Global.MissingParameters, "GroupNames,UserIdentifiers"));
@@ -70,23 +71,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new BadOperationExceptions(string.Format(Global.OperationCanBePerformed, "Nominate", "Created"));
             }
 
-            if (request.GroupNames != null && request.GroupNames.Any())
-            {
-                var assign = new GroupNamesAssignment
-                {
-                    GroupNames = request.GroupNames
-                };
-                humanTaskInstance.UpdatePotentialOwners(assign);
-            }
-            else
-            {
-                var assign = new UserIdentifiersAssignment
-                {
-                    UserIdentifiers = request.UserIdentifiers
-                };
-                humanTaskInstance.UpdatePotentialOwners(assign);
-            }
-
+            var userPrincipal = request.Claims.GetUserNameIdentifier();
+            humanTaskInstance.Nominate(userPrincipal, request.GroupNames, request.UserIdentifiers);
             await _humanTaskInstanceCommandRepository.Update(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return true;

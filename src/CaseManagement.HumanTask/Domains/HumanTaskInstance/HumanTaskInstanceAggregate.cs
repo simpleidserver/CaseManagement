@@ -72,24 +72,21 @@ namespace CaseManagement.HumanTask.Domains
         /// </summary>
         public void Activate(string userPrincipal)
         {
-            var evt = new ActivatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, userPrincipal, DateTime.UtcNow);
+            var evt = new HumanTaskInstanceActivatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, userPrincipal, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
 
-        public void UpdatePotentialOwners(GroupNamesAssignment assign)
+        /// <summary>
+        /// Assign potential owners.
+        /// </summary>
+        public void Nominate(string userPrincipal, ICollection<string> groupNames, ICollection<string> userIdentifiers)
         {
-            var evt = new PotentialOwnerGroupNamesAssignedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, assign.GroupNames, DateTime.UtcNow);
+            var evt = new HumanTaskInstanceNominatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, groupNames, userIdentifiers, userPrincipal, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
 
-        public void UpdatePotentialOwners(UserIdentifiersAssignment assign)
-        {
-            var evt = new PotentialOwnerUserIdentifiersAssignedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, assign.UserIdentifiers, DateTime.UtcNow);
-            Handle(evt);
-            DomainEvents.Add(evt);
-        }
 
         #endregion
 
@@ -124,7 +121,7 @@ namespace CaseManagement.HumanTask.Domains
             }
         }
 
-        private void Handle(ActivatedEvent evt)
+        private void Handle(HumanTaskInstanceActivatedEvent evt)
         {
             var errors = new List<KeyValuePair<string, string>>();
             if (Status != HumanTaskInstanceStatus.CREATED)
@@ -150,39 +147,41 @@ namespace CaseManagement.HumanTask.Domains
             }
         }
 
-        private void Handle(PotentialOwnerGroupNamesAssignedEvent evt)
+        private void Handle(HumanTaskInstanceNominatedEvent evt)
         {
-            PeopleAssignment = new TaskPeopleAssignment
+            PeopleAssignment assign;
+            if (evt.GroupNames != null && evt.GroupNames.Any())
             {
-                PotentialOwner = new GroupNamesAssignment
+                assign = new GroupNamesAssignment
                 {
                     GroupNames = evt.GroupNames
-                }
-            };
-            UpdateState();
-            UpdateDateTime = evt.UpdateDateTime;
-            Version = evt.Version;
-        }
-
-        private void Handle(PotentialOwnerUserIdentifiersAssignedEvent evt)
-        {
-            PeopleAssignment = new TaskPeopleAssignment
+                };
+            }
+            else
             {
-                PotentialOwner = new UserIdentifiersAssignment
+                assign = new UserIdentifiersAssignment
                 {
                     UserIdentifiers = evt.UserIdentifiers
-                }
-            };
-            UpdateState();
-            UpdateDateTime = evt.UpdateDateTime;
-            Version = evt.Version;
+                };
+            }
+
+            using (var evtHistory = AddEventHistory(evt.Id, evt.UpdateDateTime, HumanTaskInstanceEventTypes.ACTIVATE, evt.UserPrincipal))
+            {
+                PeopleAssignment = new TaskPeopleAssignment
+                {
+                    PotentialOwner = assign
+                };
+                UpdateState();
+                UpdateDateTime = evt.UpdateDateTime;
+                Version = evt.Version;
+            }
         }
 
         #endregion
 
         private void UpdateState()
         {
-            if (Status == HumanTaskInstanceStatus.CREATED)
+            if (Status == HumanTaskInstanceStatus.CREATED && PeopleAssignment != null && PeopleAssignment.PotentialOwner != null)
             {
                 if (ActivationDeferralTime != null)
                 {
@@ -199,14 +198,11 @@ namespace CaseManagement.HumanTask.Domains
 
             if (Status == HumanTaskInstanceStatus.READY)
             {
-                if (PeopleAssignment != null && PeopleAssignment.PotentialOwner != null)
+                var userAssignment = PeopleAssignment.PotentialOwner as UserIdentifiersAssignment;
+                if (userAssignment != null && userAssignment.UserIdentifiers.Count() == 1)
                 {
-                    var userAssignment = PeopleAssignment.PotentialOwner as UserIdentifiersAssignment;
-                    if (userAssignment != null && userAssignment.UserIdentifiers.Count() == 1)
-                    {
-                        Status = HumanTaskInstanceStatus.RESERVED;
-                        ActualOwner = userAssignment.UserIdentifiers.First();
-                    }
+                    Status = HumanTaskInstanceStatus.RESERVED;
+                    ActualOwner = userAssignment.UserIdentifiers.First();
                 }
             }
         }

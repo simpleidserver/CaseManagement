@@ -4,10 +4,10 @@ using System.Diagnostics;
 
 namespace CaseManagement.HumanTask.Domains
 {
-    [DebuggerDisplay("Activate the human task instance")]
-    public class ActivatedEvent : DomainEvent
+    [DebuggerDisplay("Nominate the human task instance")]
+    public class HumanTaskInstanceActivatedEvent : DomainEvent
     {
-        public ActivatedEvent(string id, string aggregateId, int version, string userPrincipal, DateTime updateDateTime) : base(id, aggregateId, version)
+        public HumanTaskInstanceActivatedEvent(string id, string aggregateId, int version, string userPrincipal, DateTime updateDateTime) : base(id, aggregateId, version)
         {
             UserPrincipal = userPrincipal;
             UpdateDateTime = updateDateTime;

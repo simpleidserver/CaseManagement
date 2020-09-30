@@ -9,6 +9,7 @@ namespace CaseManagement.HumanTask.Domains
         public HumanTaskDefinitionAggregate()
         {
             ActualOwnerRequired = true;
+            Operation = new Operation();
             PeopleAssignment = new TaskPeopleAssignment();
             Renderings = new List<Rendering>();
         }

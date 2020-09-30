@@ -76,6 +76,19 @@ namespace CaseManagement.HumanTask.Builders
 
         #endregion
 
+        #region Business administrator
+
+        public HumanTaskDefBuilder SetBusinessAdministratorUserIdentifiers(ICollection<string> userIdentifiers)
+        {
+            _humanTaskDef.PeopleAssignment.BusinessAdministrator = new UserIdentifiersAssignment
+            {
+                UserIdentifiers = userIdentifiers
+            };
+            return this;
+        }
+
+        #endregion
+
         public HumanTaskDefBuilder SetOutcome(string outcome)
         {
             _humanTaskDef.Outcome = outcome;

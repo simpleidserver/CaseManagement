@@ -52,3 +52,51 @@ Scenario: Check error is returned when trying to get invalid humantask instance 
 	Then HTTP status code equals to '404'
 	Then JSON 'status'='404'
 	Then JSON 'errors.bad_request[0]'='Unknown human task instance 'invalid''
+
+Scenario: Check error is returned when trying to nominate and GroupNames, UserIdentifiers parameters are specified
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/invalid/nominate'
+	| Key             | Value     |
+	| groupNames      | ["group"] |
+	| userIdentifiers | ["user"]  |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='GroupNames and UserIdentifiers parameters cannot be specified at the same time'
+
+Scenario: Check error is returned when trying to nominate and GroupNames, UserIdentifiers parameters are not specified
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/invalid/nominate'
+	| Key             | Value     |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameters 'GroupNames,UserIdentifiers' are missing'
+	
+Scenario: Check error is returned when trying to nominate an unknown human task instance
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/invalid/nominate'
+	| Key        | Value     |
+	| groupNames | ["group"] |
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task instance 'invalid''
+	
+Scenario: Check error is returned when trying to nominate and user is not authorized
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key           | Value            |
+	| humanTaskName | noPotentialOwner |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/nominate'
+	| Key        | Value     |
+	| groupNames | ["group"] |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '401'
+	Then JSON 'status'='401'
+	Then JSON 'errors.bad_request[0]'='User is not authorized'
