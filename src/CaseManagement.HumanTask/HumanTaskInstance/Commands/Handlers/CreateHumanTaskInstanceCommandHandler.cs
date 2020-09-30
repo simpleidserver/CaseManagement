@@ -18,20 +18,20 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
         private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
         private readonly IAuthorizationHelper _authorizationHelper;
-        private readonly IOperationParametersParser _operationParametersParser;
+        private readonly IParameterParser _parameterParser;
         private readonly ILogger<CreateHumanTaskInstanceCommandHandler> _logger;
 
         public CreateHumanTaskInstanceCommandHandler(
             IHumanTaskDefQueryRepository humanTaskDefQueryRepository,
             IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
             IAuthorizationHelper authorizationHelper,
-            IOperationParametersParser operationParametersParser,
+            IParameterParser parameterParser,
             ILogger<CreateHumanTaskInstanceCommandHandler> logger)
         {
             _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
             _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
             _authorizationHelper = authorizationHelper;
-            _operationParametersParser = operationParametersParser;
+            _parameterParser = parameterParser;
             _logger = logger;
         }
 
@@ -60,7 +60,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             }
 
             var operationParameters = request.OperationParameters == null ? new Dictionary<string, string>() : request.OperationParameters;
-            var parameters = _operationParametersParser.Parse(humanTaskDef.Operation.Parameters, operationParameters);
+            var parameters = _parameterParser.ParseOperationParameters(humanTaskDef.Operation.Parameters, operationParameters);
             _logger.LogInformation($"Create human task '{request.HumanTaskName}'");
             var userPrincipal = request.Claims.GetUserNameIdentifier();
             var humanTaskInstance = HumanTaskInstanceAggregate.New(userPrincipal, request.HumanTaskName, parameters, assignment, priority, request.ActivationDeferralTime, request.ExpirationTime);

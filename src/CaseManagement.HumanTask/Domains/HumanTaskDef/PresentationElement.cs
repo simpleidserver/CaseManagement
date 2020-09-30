@@ -8,6 +8,9 @@ namespace CaseManagement.HumanTask.Domains
     {
         public PresentationElement()
         {
+            Names = new List<Text>();
+            Subjects = new List<Text>();
+            Descriptions = new List<Description>();
             PresentationParameters = new List<PresentationParameter>();
         }
 

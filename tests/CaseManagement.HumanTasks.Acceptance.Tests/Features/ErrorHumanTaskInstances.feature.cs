@@ -388,6 +388,33 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to get description of an unknown human task i" +
+            "nstance")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to get description of an unknown human task i" +
+            "nstance")]
+        public virtual void CheckErrorIsReturnedWhenTryingToGetDescriptionOfAnUnknownHumanTaskInstance()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to get description of an unknown human task i" +
+                    "nstance", null, ((string[])(null)));
+#line 104
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 105
+ testRunner.When("execute HTTP GET request \'http://localhost/humantaskinstances/invalid/description" +
+                    "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 106
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 108
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 109
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 110
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task instance \'invalid\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

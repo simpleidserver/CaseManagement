@@ -90,6 +90,26 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
 
+        [When("execute HTTP GET request '(.*)'")]
+        public async Task WhenExecuteHTTPGETRequest(string url, Table table)
+        {
+            url = Parse(url);
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url)
+            };
+            foreach(var record in table.Rows)
+            {
+                var key = record["Key"];
+                var value = Parse(record["Value"]);
+                httpRequestMessage.Headers.Add(key, value);
+            }
+
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
         [When("execute HTTP DELETE request '(.*)'")]
         public async Task WhenExecuteHTTPDELETERequest(string url)
         {

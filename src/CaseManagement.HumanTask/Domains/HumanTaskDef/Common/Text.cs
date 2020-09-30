@@ -7,7 +7,7 @@ namespace CaseManagement.HumanTask.Domains
         public string Language { get; set; }
         public string Value { get; set; }
 
-        public object Clone()
+        public virtual object Clone()
         {
             return new Text
             {

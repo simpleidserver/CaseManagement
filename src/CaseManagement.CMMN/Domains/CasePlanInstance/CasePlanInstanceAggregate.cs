@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Parser;
 using CaseManagement.Common.Domains;
 using CaseManagement.Common.Exceptions;
+using CaseManagement.Common.Expression;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

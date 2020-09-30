@@ -88,3 +88,20 @@ Scenario: Nominate a human task
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].eventType'='ACTIVATE'
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].endOwner'='potentialOwner'
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].taskStatus'='RESERVED'
+
+Scenario: Get humantask instance description
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                                                  |
+	| humanTaskName       | addClient                                              |
+	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/description'
+	| Key             | Value |
+	| Accept-Language | en-US |
+	
+	Then HTTP status code equals to '200'
+	Then html = '<b>firstname is FirstName, isGoldenClient true</b>'

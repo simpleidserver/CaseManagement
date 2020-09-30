@@ -321,6 +321,58 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Get humantask instance description")]
+        [Xunit.TraitAttribute("FeatureTitle", "HumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Get humantask instance description")]
+        public virtual void GetHumantaskInstanceDescription()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get humantask instance description", null, ((string[])(null)));
+#line 92
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table23 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table23.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 93
+ testRunner.When("authenticate", ((string)(null)), table23, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table24.AddRow(new string[] {
+                        "humanTaskName",
+                        "addClient"});
+            table24.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
+#line 96
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table24, "And ");
+#line 100
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 101
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table25.AddRow(new string[] {
+                        "Accept-Language",
+                        "en-US"});
+#line 102
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/description\'", ((string)(null)), table25, "And ");
+#line 106
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 107
+ testRunner.Then("html = \'<b>firstname is FirstName, isGoldenClient true</b>\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

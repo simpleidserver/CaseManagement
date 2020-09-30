@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using Xunit;
 
@@ -22,6 +24,14 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
         {
             var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
             Assert.Equal(code, (int)httpResponseMessage.StatusCode);
+        }
+
+        [Then("html = '(.*)'")]
+        public async Task ThenHtmlEquals(string html)
+        {
+            var httpResponseMessage = _scenarioContext["httpResponseMessage"] as HttpResponseMessage;
+            var h = await httpResponseMessage.Content.ReadAsStringAsync();
+            Assert.Equal(h, html);
         }
 
         [Then("JSON contains '(.*)'")]

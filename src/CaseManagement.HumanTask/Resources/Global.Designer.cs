@@ -106,6 +106,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Missing translation for the language &apos;{0}&apos;.
+        /// </summary>
+        internal static string MissingTranslation {
+            get {
+                return ResourceManager.GetString("MissingTranslation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à No potential owners / business administrators are assigned.
         /// </summary>
         internal static string NoPotentialOwnerBusinessAdms {

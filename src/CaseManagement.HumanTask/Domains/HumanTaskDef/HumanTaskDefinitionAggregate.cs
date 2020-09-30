@@ -10,6 +10,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             ActualOwnerRequired = true;
             Operation = new Operation();
+            PresentationElement = new PresentationElement();
             PeopleAssignment = new TaskPeopleAssignment();
             Renderings = new List<Rendering>();
         }

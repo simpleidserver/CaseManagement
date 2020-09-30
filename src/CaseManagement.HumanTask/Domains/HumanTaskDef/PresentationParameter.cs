@@ -11,7 +11,7 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// Defines its type.
         /// </summary>
-        public string Type { get; set; }
+        public ParameterTypes Type { get; set; }
         /// <summary>
         /// Define parameter.
         /// Example : htd:getInput("ClaimApprovalRequest")/cust/firstname

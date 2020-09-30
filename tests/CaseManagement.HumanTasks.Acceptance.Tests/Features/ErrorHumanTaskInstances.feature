@@ -100,3 +100,11 @@ Scenario: Check error is returned when trying to nominate and user is not author
 	Then HTTP status code equals to '401'
 	Then JSON 'status'='401'
 	Then JSON 'errors.bad_request[0]'='User is not authorized'
+
+Scenario: Check error is returned when trying to get description of an unknown human task instance
+	When execute HTTP GET request 'http://localhost/humantaskinstances/invalid/description'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task instance 'invalid''

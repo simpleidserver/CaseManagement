@@ -2,13 +2,11 @@
 
 namespace CaseManagement.HumanTask.Domains
 {
-    public class Description : ICloneable
+    public class Description : Text
     {
-        public string Language { get; set; }
-        public string Value { get; set; }
         public string ContentType { get; set; }
 
-        public object Clone()
+        public override object Clone()
         {
             return new Description
             {

@@ -5,6 +5,7 @@ using CaseManagement.HumanTask;
 using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Infrastructure.Jobs;
+using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Persistence.InMemory;
@@ -32,8 +33,9 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddHumanTaskApiApplication(this IServiceCollection services)
         {
             var logicalPeopleGroup = new ConcurrentBag<LogicalPeopleGroup>();
-            services.AddTransient<IOperationParametersParser, OperationParametersParser>();
+            services.AddTransient<IParameterParser, ParameterParser>();
             services.AddTransient<IAuthorizationHelper, AuthorizationHelper>();
+            services.AddTransient<ITranslationHelper, TranslationHelper>();
             services.AddMediatR(typeof(IHumanTaskServer));
             services.TryAddSingleton<ILogicalPeopleGroupStore>(new InMemoryLogicalPeopleGroupStore(logicalPeopleGroup));
             return services;

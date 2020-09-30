@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CaseManagement.Common.Expression;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Runtime.Serialization;
 namespace CaseManagement.CMMN.Domains
 {
     [Serializable]
-    public class CasePlanInstanceExecutionContext : ICloneable
+    public class CasePlanInstanceExecutionContext : ExpressionExecutionContext, ICloneable
     {
         public CasePlanInstanceExecutionContext()
         {

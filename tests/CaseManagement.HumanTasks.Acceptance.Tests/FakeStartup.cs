@@ -29,6 +29,9 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
             var addClient = HumanTaskDefBuilder.New("addClient")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
+                .AddDescription("en-US", "<b>firstname is $firstName$, isGoldenClient $isGoldenClient$</b>", "text/html")
+                .AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")")
+                .AddPresentationParameter("isGoldenClient", ParameterTypes.BOOL, "context.GetInput(\"isGoldenClient\")")
                 .SetOperation(op =>
                 {
                     op.AddParameter("firstName", ParameterTypes.STRING, true);
@@ -55,6 +58,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCulture();
             app.UseAuthentication();
             app.UseMvc();
         }

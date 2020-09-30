@@ -41,6 +41,39 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
+        #region Presentation element
+
+        public HumanTaskDefBuilder AddName(string language, string value)
+        {
+            _humanTaskDef.PresentationElement.Names.Add(new Text { Language = language, Value = value });
+            return this;
+        }
+
+        public HumanTaskDefBuilder AddSubject(string language, string value, string contentType)
+        {
+            _humanTaskDef.PresentationElement.Subjects.Add(new Text { Language = language, Value = value });
+            return this;
+        }
+
+        public HumanTaskDefBuilder AddDescription(string language, string value, string contentType)
+        {
+            _humanTaskDef.PresentationElement.Descriptions.Add(new Description { Language = language, Value = value, ContentType = contentType });
+            return this;
+        }
+
+        public HumanTaskDefBuilder AddPresentationParameter(string name, ParameterTypes type, string expression)
+        {
+            _humanTaskDef.PresentationElement.PresentationParameters.Add(new PresentationParameter
+            {
+                Expression = expression,
+                Name = name,
+                Type = type
+            });
+            return this;
+        }
+
+        #endregion
+
         #region Task initiator
 
         public HumanTaskDefBuilder SetTaskInitiatorUserIdentifiers(ICollection<string> userIdentifiers)

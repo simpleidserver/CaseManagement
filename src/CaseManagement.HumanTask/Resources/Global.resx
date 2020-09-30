@@ -132,6 +132,9 @@
   <data name="MissingParameters" xml:space="preserve">
     <value>Parameters '{0}' are missing</value>
   </data>
+  <data name="MissingTranslation" xml:space="preserve">
+    <value>Missing translation for the language '{0}'</value>
+  </data>
   <data name="NoPotentialOwnerBusinessAdms" xml:space="preserve">
     <value>No potential owners / business administrators are assigned</value>
   </data>

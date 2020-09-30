@@ -134,6 +134,35 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpGet("{id}/description")]
+        public async Task<IActionResult> GetDescription(string id, CancellationToken token)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetHumanTaskInstanceDescriptionQuery { HumanTaskInstanceId = id }, token);
+                return new ContentResult
+                {
+                    ContentType = result.ContentType,
+                    Content = result.Description,
+                    StatusCode = (int)HttpStatusCode.OK
+                };
+            }
+            catch (UnknownHumanTaskInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadOperationExceptions ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
         #endregion
 
 

@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Infrastructure;
+﻿using CaseManagement.Common.Expression;
 using System;
 
 namespace CaseManagement.CMMN.Domains
