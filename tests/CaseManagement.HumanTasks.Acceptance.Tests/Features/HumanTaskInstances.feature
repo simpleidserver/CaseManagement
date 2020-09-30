@@ -12,12 +12,19 @@ Scenario: Create human task instance
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskInstanceId'
 	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/details'
-	And extract JSON from body
+	And extract JSON from body into 'detailsHumanTaskInstance'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/history'
+	| Key | Value |
+	And extract JSON from body into 'historyHumanTaskInstance'
 
 	Then HTTP status code equals to '200'
-	Then JSON exists 'id'
-	Then JSON 'name'='addClient'
-	Then JSON 'status'='RESERVED'
+	Then extract JSON 'detailsHumanTaskInstance', JSON exists 'id'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'name'='addClient'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'status'='RESERVED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].userPrincipal'='taskInitiator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].eventType'='CREATED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].endOwner'='administrator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].taskStatus'='RESERVED'
 
 Scenario: Create deferred human task instance (activated after 5 seconds)
 	When authenticate
@@ -32,9 +39,19 @@ Scenario: Create deferred human task instance (activated after 5 seconds)
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskInstanceId'	
 	And poll 'http://localhost/humantaskinstances/$humanTaskInstanceId$/details', until 'status'='RESERVED'
-	And extract JSON from body
+	And extract JSON from body into 'detailsHumanTaskInstance'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/history'
+	| Key | Value |
+	And extract JSON from body into 'historyHumanTaskInstance'
 
 	Then HTTP status code equals to '200'
-	Then JSON exists 'id'
-	Then JSON 'name'='addClient'
-	Then JSON 'status'='RESERVED'
+	Then extract JSON 'detailsHumanTaskInstance', JSON exists 'id'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'name'='addClient'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'status'='RESERVED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].userPrincipal'='taskInitiator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].eventType'='CREATED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].taskStatus'='CREATED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].userPrincipal'='ProcessActivationTimer'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].eventType'='ACTIVATE'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].endOwner'='administrator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].taskStatus'='RESERVED'

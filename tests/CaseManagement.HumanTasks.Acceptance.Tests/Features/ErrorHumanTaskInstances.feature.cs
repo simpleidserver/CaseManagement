@@ -183,12 +183,12 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
-        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to get invalid humantask instance")]
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to get invalid humantask instance details")]
         [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
-        [Xunit.TraitAttribute("Description", "Check error is returned when trying to get invalid humantask instance")]
-        public virtual void CheckErrorIsReturnedWhenTryingToGetInvalidHumantaskInstance()
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to get invalid humantask instance details")]
+        public virtual void CheckErrorIsReturnedWhenTryingToGetInvalidHumantaskInstanceDetails()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to get invalid humantask instance", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to get invalid humantask instance details", null, ((string[])(null)));
 #line 39
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -201,6 +201,34 @@ this.ScenarioInitialize(scenarioInfo);
 #line 44
  testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 45
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task instance \'invalid\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to get invalid humantask instance history")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to get invalid humantask instance history")]
+        public virtual void CheckErrorIsReturnedWhenTryingToGetInvalidHumantaskInstanceHistory()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to get invalid humantask instance history", null, ((string[])(null)));
+#line 47
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 48
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantaskinstances/invalid/histo" +
+                    "ry\'", ((string)(null)), table5, "When ");
+#line 50
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 52
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 53
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 54
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task instance \'invalid\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

@@ -1,6 +1,6 @@
 ﻿namespace CaseManagement.HumanTask.Domains
 {
-    public enum HumanTaskInstanceStates
+    public enum HumanTaskInstanceStatus
     {
         CREATED = 0,
         READY = 1,

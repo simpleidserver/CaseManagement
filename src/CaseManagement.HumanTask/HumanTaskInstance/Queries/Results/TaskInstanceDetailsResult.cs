@@ -17,7 +17,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Results
                 Id = humanTaskInstance.AggregateId,
                 Name = humanTaskInstance.HumanTaskDefName,
                 Priority = humanTaskInstance.Priority,
-                Status = Enum.GetName(typeof(HumanTaskInstanceStates), humanTaskInstance.State)
+                Status = Enum.GetName(typeof(HumanTaskInstanceStatus), humanTaskInstance.Status)
             };
         }
     }

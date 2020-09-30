@@ -36,8 +36,17 @@ Scenario: Check error is returned when trying to create task and parameters are 
 	Then JSON 'errors.bad_request[0]'='Parameter 'firstName' is missing'
 	Then JSON 'errors.bad_request[1]'='Parameter 'isGoldenClient' is not a valid 'BOOL''
 
-Scenario: Check error is returned when trying to get invalid humantask instance
+Scenario: Check error is returned when trying to get invalid humantask instance details
 	When execute HTTP GET request 'http://localhost/humantaskinstances/invalid/details'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task instance 'invalid''
+
+Scenario: Check error is returned when trying to get invalid humantask instance history
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/invalid/history'
+	| Key | Value |
 	And extract JSON from body
 	
 	Then HTTP status code equals to '404'

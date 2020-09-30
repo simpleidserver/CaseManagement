@@ -71,6 +71,24 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPost("{id}/history")]
+        public async Task<IActionResult> GetHistory(string id, [FromBody] GetHumanTaskInstanceHistoryQuery parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.HumanTaskInstanceId = id;
+                var result = await _mediator.Send(parameter, token);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownHumanTaskInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         [HttpPost("nominate")]
         [Authorize("Authenticated")]
         public async Task<IActionResult> Nominate([FromBody] NominateHumanTaskInstanceCommand parameter, CancellationToken token)

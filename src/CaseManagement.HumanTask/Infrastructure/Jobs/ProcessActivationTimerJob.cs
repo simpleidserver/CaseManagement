@@ -36,7 +36,7 @@ namespace CaseManagement.HumanTask.Infrastructure.Jobs
             {
                 foreach (var instance in humanTaskListInstances)
                 {
-                    instance.Activate();
+                    instance.Activate("ProcessActivationTimer");
                     await _humanTaskInstanceCommandRepository.Update(instance, token);
                     await _humanTaskInstanceCommandRepository.SaveChanges(token);
                 }

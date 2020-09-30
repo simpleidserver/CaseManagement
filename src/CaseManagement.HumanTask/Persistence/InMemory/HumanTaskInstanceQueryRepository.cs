@@ -1,4 +1,6 @@
-﻿using CaseManagement.HumanTask.Domains;
+﻿using CaseManagement.Common.Responses;
+using CaseManagement.HumanTask.Domains;
+using CaseManagement.HumanTask.Persistence.Parameters;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,6 +14,10 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
     {
         private readonly ConcurrentBag<HumanTaskInstanceAggregate> _humanTaskInstances;
 
+        public HumanTaskInstanceQueryRepository()
+        {
+        }
+
         public HumanTaskInstanceQueryRepository(ConcurrentBag<HumanTaskInstanceAggregate> humanTaskInstances)
         {
             _humanTaskInstances = humanTaskInstances;
@@ -24,8 +30,27 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 
         public Task<ICollection<HumanTaskInstanceAggregate>> GetPendingLst(CancellationToken token)
         {
-            ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.ActivationDeferralTime != null && _.ActivationDeferralTime <= DateTime.UtcNow && _.State == HumanTaskInstanceStates.CREATED).Select(_ => (HumanTaskInstanceAggregate)_.Clone()).ToList();
+            ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.ActivationDeferralTime != null && _.ActivationDeferralTime <= DateTime.UtcNow && _.Status == HumanTaskInstanceStatus.CREATED).Select(_ => (HumanTaskInstanceAggregate)_.Clone()).ToList();
             return Task.FromResult(result);
+        }
+
+        public Task<FindResponse<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token)
+        {
+            var result = _humanTaskInstances.FirstOrDefault(_ => _.AggregateId == parameter.HumanTaskInstanceId);
+            if (result == null)
+            {
+                return Task.FromResult((FindResponse<HumanTaskInstanceEventHistory>)null);
+            }
+
+            int totalLength = result.EventHistories.Count();
+            var filtered = result.EventHistories.Skip(parameter.StartIndex).Take(parameter.Count);
+            return Task.FromResult(new FindResponse<HumanTaskInstanceEventHistory>
+            {
+                StartIndex = parameter.StartIndex,
+                Count = parameter.Count,
+                TotalLength = totalLength,
+                Content = filtered.ToList()
+            });
         }
     }
 }

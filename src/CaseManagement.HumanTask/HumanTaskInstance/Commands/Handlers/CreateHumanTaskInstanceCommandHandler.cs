@@ -62,7 +62,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             var operationParameters = request.OperationParameters == null ? new Dictionary<string, string>() : request.OperationParameters;
             var parameters = _operationParametersParser.Parse(humanTaskDef.Operation.Parameters, operationParameters);
             _logger.LogInformation($"Create human task '{request.HumanTaskName}'");
-            var humanTaskInstance = HumanTaskInstanceAggregate.New(request.HumanTaskName, parameters, assignment, priority, request.ActivationDeferralTime, request.ExpirationTime);
+            var userPrincipal = request.Claims.GetUserNameIdentifier();
+            var humanTaskInstance = HumanTaskInstanceAggregate.New(userPrincipal, request.HumanTaskName, parameters, assignment, priority, request.ActivationDeferralTime, request.ExpirationTime);
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return humanTaskInstance.AggregateId;

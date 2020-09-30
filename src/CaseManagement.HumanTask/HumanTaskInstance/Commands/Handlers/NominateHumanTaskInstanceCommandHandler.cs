@@ -64,7 +64,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new NotAuthorizedException(Global.UserNotAuthorized);
             }
 
-            if (humanTaskInstance.State != HumanTaskInstanceStates.CREATED)
+            if (humanTaskInstance.Status != HumanTaskInstanceStatus.CREATED)
             {
                 _logger.LogError("Nomination can be performed only on created human task instance");
                 throw new BadOperationExceptions(string.Format(Global.OperationCanBePerformed, "Nominate", "Created"));
