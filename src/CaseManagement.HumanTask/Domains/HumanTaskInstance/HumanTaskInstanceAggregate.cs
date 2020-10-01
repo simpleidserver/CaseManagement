@@ -87,6 +87,17 @@ namespace CaseManagement.HumanTask.Domains
             DomainEvents.Add(evt);
         }
 
+        /// <summary>
+        /// Claim responsibility for a task.
+        /// </summary>
+        /// <param name="userPrincipal"></param>
+        public void Claim(string userPrincipal)
+        {
+            var evt = new HumanTaskInstanceClaimedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, userPrincipal, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
 
         #endregion
 
@@ -117,7 +128,7 @@ namespace CaseManagement.HumanTask.Domains
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;
                 Version = evt.Version;
-                UpdateState();
+                UpdateStatus();
             }
         }
 
@@ -141,7 +152,7 @@ namespace CaseManagement.HumanTask.Domains
 
             using (var evtHistory = AddEventHistory(evt.Id, evt.UpdateDateTime, HumanTaskInstanceEventTypes.ACTIVATE, evt.UserPrincipal))
             {
-                UpdateState();
+                UpdateStatus();
                 UpdateDateTime = evt.UpdateDateTime;
                 Version = evt.Version;
             }
@@ -171,15 +182,26 @@ namespace CaseManagement.HumanTask.Domains
                 {
                     PotentialOwner = assign
                 };
-                UpdateState();
+                UpdateStatus();
                 UpdateDateTime = evt.UpdateDateTime;
+                Version = evt.Version;
+            }
+        }
+
+        private void Handle(HumanTaskInstanceClaimedEvent evt)
+        {
+            using (var evtHistory = AddEventHistory(evt.Id, evt.ExecutionDateTime, HumanTaskInstanceEventTypes.CLAIM, evt.UserPrincipal))
+            {
+                Status = HumanTaskInstanceStatus.RESERVED;
+                ActualOwner = evt.UserPrincipal;
+                UpdateDateTime = evt.ExecutionDateTime;
                 Version = evt.Version;
             }
         }
 
         #endregion
 
-        private void UpdateState()
+        private void UpdateStatus()
         {
             if (Status == HumanTaskInstanceStatus.CREATED && PeopleAssignment != null && PeopleAssignment.PotentialOwner != null)
             {

@@ -42,13 +42,18 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetBusinessAdministratorUserIdentifiers(new List<string> { "businessAdmin" })
                 .Build();
+            var multiplePotentialOwners = HumanTaskDefBuilder.New("multiplePotentialOwners")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
+                .Build();
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
                 {
                     addClient,
-                    noPotentialOwner
+                    noPotentialOwner,
+                    multiplePotentialOwners
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {
