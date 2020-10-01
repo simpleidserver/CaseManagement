@@ -86,26 +86,26 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table18.AddRow(new string[] {
+            table24.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "taskInitiator"});
 #line 5
- testRunner.When("authenticate", ((string)(null)), table18, "When ");
+ testRunner.When("authenticate", ((string)(null)), table24, "When ");
 #line hidden
-            TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table19.AddRow(new string[] {
+            table25.AddRow(new string[] {
                         "humanTaskName",
                         "addClient"});
-            table19.AddRow(new string[] {
+            table25.AddRow(new string[] {
                         "operationParameters",
                         "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
 #line 8
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table19, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table25, "And ");
 #line 12
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 13
@@ -116,12 +116,12 @@ this.ScenarioInitialize(scenarioInfo);
 #line 15
  testRunner.And("extract JSON from body into \'detailsHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table20 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
 #line 16
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
-                    "tanceId$/history\'", ((string)(null)), table20, "And ");
+                    "tanceId$/history\'", ((string)(null)), table26, "And ");
 #line 18
  testRunner.And("extract JSON from body into \'historyHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 20
@@ -156,31 +156,31 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table21 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table27 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table21.AddRow(new string[] {
+            table27.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "taskInitiator"});
 #line 30
- testRunner.When("authenticate", ((string)(null)), table21, "When ");
+ testRunner.When("authenticate", ((string)(null)), table27, "When ");
 #line 33
  testRunner.And("add \'5\' seconds into \'activationDeferralTime\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table22 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table28 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table22.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "humanTaskName",
                         "addClient"});
-            table22.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "operationParameters",
                         "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
-            table22.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "activationDeferralTime",
                         "$activationDeferralTime$"});
 #line 34
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table22, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table28, "And ");
 #line 39
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 40
@@ -191,12 +191,12 @@ this.ScenarioInitialize(scenarioInfo);
 #line 42
  testRunner.And("extract JSON from body into \'detailsHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table23 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table29 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
 #line 43
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
-                    "tanceId$/history\'", ((string)(null)), table23, "And ");
+                    "tanceId$/history\'", ((string)(null)), table29, "And ");
 #line 45
  testRunner.And("extract JSON from body into \'historyHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 47
@@ -238,58 +238,58 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table30 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table24.AddRow(new string[] {
+            table30.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "taskInitiator"});
 #line 60
- testRunner.When("authenticate", ((string)(null)), table24, "When ");
+ testRunner.When("authenticate", ((string)(null)), table30, "When ");
 #line hidden
-            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table25.AddRow(new string[] {
+            table31.AddRow(new string[] {
                         "humanTaskName",
                         "noPotentialOwner"});
 #line 63
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table25, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table31, "And ");
 #line 66
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 67
  testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table32 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table26.AddRow(new string[] {
+            table32.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "businessAdmin"});
 #line 68
- testRunner.And("authenticate", ((string)(null)), table26, "And ");
+ testRunner.And("authenticate", ((string)(null)), table32, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table27 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table27.AddRow(new string[] {
+            table33.AddRow(new string[] {
                         "userIdentifiers",
                         "[\"potentialOwner\"]"});
 #line 71
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
-                    "tanceId$/nominate\'", ((string)(null)), table27, "And ");
+                    "tanceId$/nominate\'", ((string)(null)), table33, "And ");
 #line 74
  testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
                     "d$/details\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 75
  testRunner.And("extract JSON from body into \'detailsHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table28 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
 #line 76
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
-                    "tanceId$/history\'", ((string)(null)), table28, "And ");
+                    "tanceId$/history\'", ((string)(null)), table34, "And ");
 #line 78
  testRunner.And("extract JSON from body into \'historyHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 80
@@ -331,40 +331,40 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table29 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table29.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "taskInitiator"});
 #line 93
- testRunner.When("authenticate", ((string)(null)), table29, "When ");
+ testRunner.When("authenticate", ((string)(null)), table35, "When ");
 #line hidden
-            TechTalk.SpecFlow.Table table30 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table36 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table30.AddRow(new string[] {
+            table36.AddRow(new string[] {
                         "humanTaskName",
                         "addClient"});
-            table30.AddRow(new string[] {
+            table36.AddRow(new string[] {
                         "operationParameters",
                         "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
 #line 96
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table30, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table36, "And ");
 #line 100
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 101
  testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table37 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table31.AddRow(new string[] {
+            table37.AddRow(new string[] {
                         "Accept-Language",
                         "en-US"});
 #line 102
  testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
-                    "d$/description\'", ((string)(null)), table31, "And ");
+                    "d$/description\'", ((string)(null)), table37, "And ");
 #line 106
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 107
@@ -383,36 +383,36 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table32 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table32.AddRow(new string[] {
+            table38.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "taskInitiator"});
 #line 110
- testRunner.When("authenticate", ((string)(null)), table32, "When ");
+ testRunner.When("authenticate", ((string)(null)), table38, "When ");
 #line hidden
-            TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table39 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table33.AddRow(new string[] {
+            table39.AddRow(new string[] {
                         "humanTaskName",
                         "multiplePotentialOwners"});
 #line 113
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table33, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table39, "And ");
 #line 116
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 117
  testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table40 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table34.AddRow(new string[] {
+            table40.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "administrator"});
 #line 118
- testRunner.And("authenticate", ((string)(null)), table34, "And ");
+ testRunner.And("authenticate", ((string)(null)), table40, "And ");
 #line 121
  testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
                     "d$/claim\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -422,12 +422,12 @@ this.ScenarioInitialize(scenarioInfo);
 #line 123
  testRunner.And("extract JSON from body into \'detailsHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table41 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
 #line 124
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
-                    "tanceId$/history\'", ((string)(null)), table35, "And ");
+                    "tanceId$/history\'", ((string)(null)), table41, "And ");
 #line 126
  testRunner.And("extract JSON from body into \'historyHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 128
@@ -455,6 +455,93 @@ this.ScenarioInitialize(scenarioInfo);
                     "r\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 138
  testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[1].taskStatus\'=\'RESERVED\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Start a human task instance")]
+        [Xunit.TraitAttribute("FeatureTitle", "HumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Start a human task instance")]
+        public virtual void StartAHumanTaskInstance()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Start a human task instance", null, ((string[])(null)));
+#line 140
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table42 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table42.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 141
+ testRunner.When("authenticate", ((string)(null)), table42, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table43 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table43.AddRow(new string[] {
+                        "humanTaskName",
+                        "multiplePotentialOwners"});
+#line 144
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table43, "And ");
+#line 147
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 148
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table44 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table44.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "administrator"});
+#line 149
+ testRunner.And("authenticate", ((string)(null)), table44, "And ");
+#line 152
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 153
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/details\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 154
+ testRunner.And("extract JSON from body into \'detailsHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table45 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 155
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/history\'", ((string)(null)), table45, "And ");
+#line 157
+ testRunner.And("extract JSON from body into \'historyHumanTaskInstance\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 159
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 160
+ testRunner.Then("extract JSON \'detailsHumanTaskInstance\', JSON exists \'id\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 161
+ testRunner.Then("extract JSON \'detailsHumanTaskInstance\', JSON \'name\'=\'multiplePotentialOwners\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 162
+ testRunner.Then("extract JSON \'detailsHumanTaskInstance\', JSON \'status\'=\'INPROGRESS\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 163
+ testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[0].userPrincipal\'=\'taskIni" +
+                    "tiator\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 164
+ testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[0].eventType\'=\'CREATED\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 165
+ testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[0].taskStatus\'=\'READY\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 166
+ testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[1].userPrincipal\'=\'adminis" +
+                    "trator\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 167
+ testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[1].eventType\'=\'START\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 168
+ testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[1].endOwner\'=\'administrato" +
+                    "r\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 169
+ testRunner.Then("extract JSON \'historyHumanTaskInstance\', JSON \'content[1].taskStatus\'=\'INPROGRESS" +
+                    "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

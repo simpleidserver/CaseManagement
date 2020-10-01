@@ -126,6 +126,37 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpGet("{id}/start")]
+        [Authorize("Authenticated")]
+        public async Task<IActionResult> Start(string id, CancellationToken token)
+        {
+            try
+            {
+                var cmd = new StartHumanTaskInstanceCommand { HumanTaskInstanceId = id, Claims = User.GetClaims() };
+                await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (NotAuthorizedException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.Unauthorized, Request);
+            }
+            catch (BadOperationExceptions ex)
+            {
+                var valErrors = ex.ValidationErrors.Select(_ => new KeyValuePair<string, string>("bad_request", _)).ToList();
+                return this.ToError(valErrors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
         #endregion
 
         #region Getters

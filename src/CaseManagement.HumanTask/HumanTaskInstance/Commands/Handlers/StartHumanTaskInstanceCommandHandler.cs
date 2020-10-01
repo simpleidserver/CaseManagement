@@ -1,8 +1,12 @@
-﻿using CaseManagement.Common.EvtStore;
+﻿using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
+using CaseManagement.HumanTask.Persistence;
+using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,28 +14,57 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
 {
     public class StartHumanTaskInstanceCommandHandler : IRequestHandler<StartHumanTaskInstanceCommand, bool>
     {
-        private readonly IEventStoreRepository _eventStoreRepository;
+        private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
+        private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
+        private readonly IAuthorizationHelper _authorizationHelper;
         private readonly ILogger<StartHumanTaskInstanceCommandHandler> _logger;
 
         public StartHumanTaskInstanceCommandHandler(
-            IEventStoreRepository eventStoreRepository,
+            IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository,
+            IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
+            IAuthorizationHelper authorizationHelper,
             ILogger<StartHumanTaskInstanceCommandHandler> logger)
         {
-            _eventStoreRepository = eventStoreRepository;
+            _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
+            _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
+            _authorizationHelper = authorizationHelper;
             _logger = logger;
         }
 
         public async Task<bool> Handle(StartHumanTaskInstanceCommand request, CancellationToken cancellationToken)
         {
-            var humanTaskInstanceAggregate = await _eventStoreRepository.GetLastAggregate<HumanTaskInstanceAggregate>(request.HumanTaskInstanceId, HumanTaskInstanceAggregate.GetStreamName(request.HumanTaskInstanceId));
-            if (humanTaskInstanceAggregate == null || string.IsNullOrWhiteSpace(humanTaskInstanceAggregate.AggregateId))
+            if (request.Claims == null || !request.Claims.Any())
             {
-                _logger.LogError($"Human task instance '{request.HumanTaskInstanceId}' doesn't exist");
-                throw new UnknownHumanTaskInstanceException(request.HumanTaskInstanceId);
+                _logger.LogError("User is not authenticated");
+                throw new NotAuthenticatedException(Global.UserNotAuthenticated);
             }
 
-            
-            throw new System.NotImplementedException();
+            var humanTaskInstance = await _humanTaskInstanceQueryRepository.Get(request.HumanTaskInstanceId, cancellationToken);
+            if (humanTaskInstance == null)
+            {
+                _logger.LogError($"HumanTask '{request.HumanTaskInstanceId}' doesn't exist");
+                throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
+            }
+
+
+            var roles = await _authorizationHelper.GetRoles(humanTaskInstance, request.Claims, cancellationToken);
+            if (!roles.Contains(UserRoles.POTENTIALOWNER))
+            {
+                _logger.LogError("User is not a potentiel owner");
+                throw new NotAuthorizedException(Global.UserNotAuthorized);
+            }
+
+            if (humanTaskInstance.Status != HumanTaskInstanceStatus.READY && humanTaskInstance.Status != HumanTaskInstanceStatus.RESERVED)
+            {
+                _logger.LogError("Claim operation can be performed only on READY / RESERVED human task instance");
+                throw new BadOperationExceptions(string.Format(Global.OperationCanBePerformed, "Claim", "Ready/Reserved"));
+            }
+
+            var userPrincipal = request.Claims.GetUserNameIdentifier();
+            humanTaskInstance.Start(userPrincipal);
+            await _humanTaskInstanceCommandRepository.Update(humanTaskInstance, cancellationToken);
+            await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
+            return true;
         }
     }
 }

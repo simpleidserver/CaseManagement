@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace CaseManagement.HumanTask.Domains
 {
-    [DebuggerDisplay("Execute nomination on the humantask instance")]
+    [DebuggerDisplay("Execute nomination on the human task instance")]
     public class HumanTaskInstanceNominatedEvent : DomainEvent
     {
         public HumanTaskInstanceNominatedEvent(string id, string aggregateId, int version, ICollection<string> groupNames, ICollection<string> userIdentifiers, string userPrincipal, DateTime updateDateTime) : base(id, aggregateId, version)

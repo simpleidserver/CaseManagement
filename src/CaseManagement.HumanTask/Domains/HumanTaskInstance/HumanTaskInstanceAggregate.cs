@@ -98,6 +98,17 @@ namespace CaseManagement.HumanTask.Domains
             DomainEvents.Add(evt);
         }
 
+        /// <summary>
+        /// Start human task instance.
+        /// </summary>
+        /// <param name="userPrincipal"></param>
+        public void Start(string userPrincipal)
+        {
+            var evt = new HumanTaskInstanceStartedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, userPrincipal, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
 
         #endregion
 
@@ -193,6 +204,17 @@ namespace CaseManagement.HumanTask.Domains
             using (var evtHistory = AddEventHistory(evt.Id, evt.ExecutionDateTime, HumanTaskInstanceEventTypes.CLAIM, evt.UserPrincipal))
             {
                 Status = HumanTaskInstanceStatus.RESERVED;
+                ActualOwner = evt.UserPrincipal;
+                UpdateDateTime = evt.ExecutionDateTime;
+                Version = evt.Version;
+            }
+        }
+
+        private void Handle(HumanTaskInstanceStartedEvent evt)
+        {
+            using (var evtHistory = AddEventHistory(evt.Id, evt.ExecutionDateTime, HumanTaskInstanceEventTypes.START, evt.UserPrincipal))
+            {
+                Status = HumanTaskInstanceStatus.INPROGRESS;
                 ActualOwner = evt.UserPrincipal;
                 UpdateDateTime = evt.ExecutionDateTime;
                 Version = evt.Version;

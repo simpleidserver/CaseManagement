@@ -117,7 +117,7 @@ Scenario: Check error is returned when trying to claim an unknown human task ins
 	Then JSON 'status'='404'
 	Then JSON 'errors.bad_request[0]'='Unknown human task instance 'invalid''
 
-Scenario: Check error is returned when trying to claim an authorized human task instance
+Scenario: Check error is returned when trying to claim an unauthorized human task instance
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
@@ -155,3 +155,51 @@ Scenario: Check error is returned when trying to claim a human task instance wit
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.bad_request[0]'='Operation 'Claim' can be performed only on 'Ready' human task instance state'
+
+Scenario: Check error is returned when trying to start an unknown human task instance
+	When execute HTTP GET request 'http://localhost/humantaskinstances/invalid/start'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task instance 'invalid''
+	
+Scenario: Check error is returned when trying to start an unauthorized human task instance
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key           | Value                   |
+	| humanTaskName | multiplePotentialOwners |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value   |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | badUser |
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '401'
+	Then JSON 'status'='401'
+	Then JSON 'errors.bad_request[0]'='User is not authorized'
+
+Scenario: Check error is returned when trying to start a human task instance with a status different to READY/RESERVED
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+	And add '10' seconds into 'activationDeferralTime'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                    | Value                    |
+	| humanTaskName          | multiplePotentialOwners  |
+	| activationDeferralTime | $activationDeferralTime$ |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | administrator |
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Operation 'Claim' can be performed only on 'Ready/Reserved' human task instance state'

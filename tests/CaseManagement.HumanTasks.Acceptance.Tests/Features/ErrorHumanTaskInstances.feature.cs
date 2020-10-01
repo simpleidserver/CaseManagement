@@ -438,12 +438,12 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
-        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to claim an authorized human task instance")]
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to claim an unauthorized human task instance")]
         [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
-        [Xunit.TraitAttribute("Description", "Check error is returned when trying to claim an authorized human task instance")]
-        public virtual void CheckErrorIsReturnedWhenTryingToClaimAnAuthorizedHumanTaskInstance()
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to claim an unauthorized human task instance")]
+        public virtual void CheckErrorIsReturnedWhenTryingToClaimAnUnauthorizedHumanTaskInstance()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to claim an authorized human task instance", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to claim an unauthorized human task instance", null, ((string[])(null)));
 #line 120
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -551,6 +551,148 @@ this.ScenarioInitialize(scenarioInfo);
 #line 157
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Operation \'Claim\' can be performed only on \'Ready\' " +
                     "human task instance state\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to start an unknown human task instance")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to start an unknown human task instance")]
+        public virtual void CheckErrorIsReturnedWhenTryingToStartAnUnknownHumanTaskInstance()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to start an unknown human task instance", null, ((string[])(null)));
+#line 159
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 160
+ testRunner.When("execute HTTP GET request \'http://localhost/humantaskinstances/invalid/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 161
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 163
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 164
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 165
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task instance \'invalid\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to start an unauthorized human task instance")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to start an unauthorized human task instance")]
+        public virtual void CheckErrorIsReturnedWhenTryingToStartAnUnauthorizedHumanTaskInstance()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to start an unauthorized human task instance", null, ((string[])(null)));
+#line 167
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table18.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 168
+ testRunner.When("authenticate", ((string)(null)), table18, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table19.AddRow(new string[] {
+                        "humanTaskName",
+                        "multiplePotentialOwners"});
+#line 171
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table19, "And ");
+#line 174
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 175
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table20 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table20.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "badUser"});
+#line 176
+ testRunner.And("authenticate", ((string)(null)), table20, "And ");
+#line 179
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 180
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 182
+ testRunner.Then("HTTP status code equals to \'401\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 183
+ testRunner.Then("JSON \'status\'=\'401\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 184
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'User is not authorized\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to start a human task instance with a status " +
+            "different to READY/RESERVED")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to start a human task instance with a status " +
+            "different to READY/RESERVED")]
+        public virtual void CheckErrorIsReturnedWhenTryingToStartAHumanTaskInstanceWithAStatusDifferentToREADYRESERVED()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to start a human task instance with a status " +
+                    "different to READY/RESERVED", null, ((string[])(null)));
+#line 186
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table21 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table21.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 187
+ testRunner.When("authenticate", ((string)(null)), table21, "When ");
+#line 190
+ testRunner.And("add \'10\' seconds into \'activationDeferralTime\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table22 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table22.AddRow(new string[] {
+                        "humanTaskName",
+                        "multiplePotentialOwners"});
+            table22.AddRow(new string[] {
+                        "activationDeferralTime",
+                        "$activationDeferralTime$"});
+#line 191
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table22, "And ");
+#line 195
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 196
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table23 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table23.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "administrator"});
+#line 197
+ testRunner.And("authenticate", ((string)(null)), table23, "And ");
+#line 200
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 201
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 203
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 204
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 205
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Operation \'Claim\' can be performed only on \'Ready/R" +
+                    "eserved\' human task instance state\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
