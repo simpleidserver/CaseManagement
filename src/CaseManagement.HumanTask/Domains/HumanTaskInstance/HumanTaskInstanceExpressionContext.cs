@@ -1,24 +1,9 @@
-﻿using CaseManagement.Common.Expression;
-
-namespace CaseManagement.HumanTask.Domains
+﻿namespace CaseManagement.HumanTask.Domains
 {
-    public class HumanTaskInstanceExpressionContext : ExpressionExecutionContext
+    public class HumanTaskInstanceExpressionContext : BaseExpressionContext
     {
-        private readonly HumanTaskInstanceAggregate _humanTaskInstance;
-
-        public HumanTaskInstanceExpressionContext(HumanTaskInstanceAggregate humanTaskInstance)
+        public HumanTaskInstanceExpressionContext(HumanTaskInstanceAggregate humanTaskInstance) : base(humanTaskInstance.OperationParameters)
         {
-            _humanTaskInstance = humanTaskInstance;
-        }
-
-        public string GetInput(string key)
-        {
-            if (!_humanTaskInstance.OperationParameters.ContainsKey(key))
-            {
-                return string.Empty;
-            }
-
-            return _humanTaskInstance.OperationParameters[key];
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace CaseManagement.CMMN.ISO8601
+namespace CaseManagement.Common.ISO8601
 {
     public class ISO8601Parser
     {

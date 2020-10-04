@@ -14,10 +14,6 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
     {
         private readonly ConcurrentBag<HumanTaskInstanceAggregate> _humanTaskInstances;
 
-        public HumanTaskInstanceQueryRepository()
-        {
-        }
-
         public HumanTaskInstanceQueryRepository(ConcurrentBag<HumanTaskInstanceAggregate> humanTaskInstances)
         {
             _humanTaskInstances = humanTaskInstances;
@@ -31,6 +27,19 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
         public Task<ICollection<HumanTaskInstanceAggregate>> GetPendingLst(CancellationToken token)
         {
             ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.ActivationDeferralTime != null && _.ActivationDeferralTime <= DateTime.UtcNow && _.Status == HumanTaskInstanceStatus.CREATED).Select(_ => (HumanTaskInstanceAggregate)_.Clone()).ToList();
+            return Task.FromResult(result);
+        }
+
+        public Task<ICollection<HumanTaskInstanceAggregate>> GetPendingDeadLines(CancellationToken token)
+        {
+            var currentDateTime = DateTime.UtcNow;
+            ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.DeadLines.Any(d => currentDateTime >= d.EndDateTime)
+            ).ToList();
+            foreach(var record in result)
+            {
+                record.DeadLines = record.DeadLines.Where(d => currentDateTime >= d.EndDateTime).ToList();
+            }
+
             return Task.FromResult(result);
         }
 

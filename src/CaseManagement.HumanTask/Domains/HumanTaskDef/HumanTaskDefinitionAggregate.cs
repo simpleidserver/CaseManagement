@@ -10,9 +10,10 @@ namespace CaseManagement.HumanTask.Domains
         {
             ActualOwnerRequired = true;
             Operation = new Operation();
-            PresentationElement = new PresentationElement();
-            PeopleAssignment = new TaskPeopleAssignment();
+            PresentationElement = new PresentationElementDefinition();
+            PeopleAssignment = new HumanTaskDefinitionAssignment();
             Renderings = new List<Rendering>();
+            DeadLines = new HumanTaskDefinitionDeadLines();
         }
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// Used to specify people assigned to different generic human roles, i.e. potential owners, and business administrators.
         /// </summary>
-        public TaskPeopleAssignment PeopleAssignment { get; set; }
+        public HumanTaskDefinitionAssignment PeopleAssignment { get; set; }
         /// <summary>
         /// Used to specify constraints concerning delegation of the task.
         /// </summary>
@@ -46,7 +47,7 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         ///  This element is used to specify different information used to display the task in a task list, such as name, subject and description.
         /// </summary>
-        public PresentationElement PresentationElement { get; set; }
+        public PresentationElementDefinition PresentationElement { get; set; }
         /// <summary>
         /// This optional element identifies the field (of an xsd simple type) in the output message which reflects the business result of a task.
         /// A conversion takes place to yield an outcome of type xsd:string.
@@ -64,7 +65,7 @@ namespace CaseManagement.HumanTask.Domains
         /// This element specifies different deadlines.
         /// It is optional.
         /// </summary>
-        public TaskDeadLines DeadLines { get; set; }
+        public HumanTaskDefinitionDeadLines DeadLines { get; set; }
         /// <summary>
         /// This element is used to specify subtasks of a composite task. 
         /// It is optional.
@@ -79,13 +80,13 @@ namespace CaseManagement.HumanTask.Domains
                 ActualOwnerRequired = ActualOwnerRequired,
                 Operation = (Operation)Operation?.Clone(),
                 Priority = Priority,
-                PeopleAssignment = (TaskPeopleAssignment)PeopleAssignment?.Clone(),
+                PeopleAssignment = (HumanTaskDefinitionAssignment)PeopleAssignment?.Clone(),
                 Delegation = (Delegation)Delegation?.Clone(),
-                PresentationElement = (PresentationElement)PresentationElement?.Clone(),
+                PresentationElement = (PresentationElementDefinition)PresentationElement?.Clone(),
                 Outcome = Outcome,
                 SearchBy = SearchBy,
                 Renderings = Renderings.Select(_ => (Rendering)_.Clone()).ToList(),
-                DeadLines = (TaskDeadLines)DeadLines?.Clone(),
+                DeadLines = (HumanTaskDefinitionDeadLines)DeadLines?.Clone(),
                 Composition = (Composition)Composition?.Clone()
             };
         }

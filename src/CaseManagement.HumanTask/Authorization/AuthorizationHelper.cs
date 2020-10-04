@@ -17,15 +17,31 @@ namespace CaseManagement.HumanTask.Authorization
             _logicalPeopleGroupStore = logicalPeopleGroupStore;
         }
 
+        public string GetNameIdentifier(IEnumerable<KeyValuePair<string, string>> claims)
+        {
+            var nameIdentifier = claims.FirstOrDefault(_ => _.Key == ClaimTypes.NameIdentifier);
+            if (nameIdentifier.IsEmpty())
+            {
+                return null;
+            }
+
+            return nameIdentifier.Value;
+        }
+
+        public ICollection<string> GetRoles(IEnumerable<KeyValuePair<string, string>> claims)
+        {
+            return claims.Where(_ => _.Key == ClaimTypes.Role).Select(_ => _.Value).ToList();
+        }
+
         public Task<ICollection<UserRoles>> GetRoles(HumanTaskInstanceAggregate humanTaskInstance, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
             return GetRoles(humanTaskInstance.PeopleAssignment, claims, token);
         }
 
-        public Task<ICollection<UserRoles>> GetRoles(TaskPeopleAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        public Task<ICollection<UserRoles>> GetRoles(HumanTaskInstancePeopleAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
             ICollection<UserRoles> result = new List<UserRoles>();
-            var cb = new Action<PeopleAssignment, UserRoles, ICollection<UserRoles>>(async (pas, ur, r) =>
+            var cb = new Action<PeopleAssignmentInstance, UserRoles, ICollection<UserRoles>>(async (pas, ur, r) =>
             {
                 if (pas == null)
                 {
@@ -52,18 +68,16 @@ namespace CaseManagement.HumanTask.Authorization
 
         #region Check authorization
 
-        protected virtual Task<bool> IsAuthorized(PeopleAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        protected virtual Task<bool> IsAuthorized(PeopleAssignmentInstance assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
             switch (assignment.Type)
             {
-                case PeopleAssignmentTypes.EXPRESSION:
-                    return IsAuthorized((ExpressionAssignment)assignment, claims, token);
                 case PeopleAssignmentTypes.GROUPNAMES:
-                    return IsAuthorized((GroupNamesAssignment)assignment, claims, token);
-                case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
-                    return IsAuthorized((LogicalPeopleGroupAssignment)assignment, claims, token);
+                    return CheckGroupNames(assignment.Values, claims, token);
                 case PeopleAssignmentTypes.USERIDENTFIERS:
-                    return IsAuthorized((UserIdentifiersAssignment)assignment, claims, token);
+                    return CheckUserIdentifiers(assignment.Values, claims, token);
+                case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
+                    return CheckLogicalGroup(assignment.LogicalGroup, claims, token);
             }
 
             return Task.FromResult(false);
@@ -75,9 +89,9 @@ namespace CaseManagement.HumanTask.Authorization
         /// <param name="assignment"></param>
         /// <param name="claims"></param>
         /// <returns></returns>
-        protected virtual async Task<bool> IsAuthorized(LogicalPeopleGroupAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        protected virtual async Task<bool> CheckLogicalGroup(LogicalGroupInstance assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
-            var members = await _logicalPeopleGroupStore.GetMembers(assignment.LogicalPeopleGroup, new List<KeyValuePair<string,string>>(), token);
+            var members = await _logicalPeopleGroupStore.GetMembers(assignment.Name, new List<KeyValuePair<string,string>>(), token);
             foreach(var member in members)
             {
                 if (member.Claims.All(c => claims.Any(cl => cl.Key == c.Key && cl.Value == c.Value)))
@@ -90,32 +104,20 @@ namespace CaseManagement.HumanTask.Authorization
         }
 
         /// <summary>
-        /// Check expression.
-        /// </summary>
-        /// <param name="assignment"></param>
-        /// <param name="claims"></param>
-        /// <returns></returns>
-        protected virtual Task<bool> IsAuthorized(ExpressionAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
-        {
-            // expression ???
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Check group names.
         /// </summary>
         /// <param name="assignment"></param>
         /// <param name="claims"></param>
         /// <returns></returns>
-        protected virtual Task<bool> IsAuthorized(GroupNamesAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        protected virtual Task<bool> CheckGroupNames(ICollection<string> groupNames, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
-            var roles = claims.Where(_ => _.Key == ClaimTypes.Role);
+            var roles = GetRoles(claims);
             if (!roles.Any())
             {
                 return Task.FromResult(false);
             }
 
-            if (!assignment.GroupNames.Any(_ => roles.Any(r => r.Value == _)))
+            if (!groupNames.Any(_ => roles.Any(r => r == _)))
             {
                 return Task.FromResult(false);
             }
@@ -129,15 +131,15 @@ namespace CaseManagement.HumanTask.Authorization
         /// <param name="assignment"></param>
         /// <param name="claims"></param>
         /// <returns></returns>
-        protected virtual Task<bool> IsAuthorized(UserIdentifiersAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        protected virtual Task<bool> CheckUserIdentifiers(ICollection<string> userIdentifiers, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
-            var nameIdentifier = claims.FirstOrDefault(_ => _.Key == ClaimTypes.NameIdentifier);
-            if (nameIdentifier.IsEmpty())
+            var nameIdentifier = GetNameIdentifier(claims);
+            if (string.IsNullOrEmpty(nameIdentifier))
             {
                 return Task.FromResult(false);
             }
 
-            return Task.FromResult(assignment.UserIdentifiers.Contains(nameIdentifier.Value));
+            return Task.FromResult(userIdentifiers.Contains(nameIdentifier));
         }
 
         #endregion

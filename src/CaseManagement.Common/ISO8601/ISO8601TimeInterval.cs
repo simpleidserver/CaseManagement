@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CaseManagement.CMMN.ISO8601
+namespace CaseManagement.Common.ISO8601
 {
     public class ISO8601TimeInterval
     {

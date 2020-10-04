@@ -32,6 +32,19 @@ namespace CaseManagement.HumanTask.Domains
         }
     }
 
+    public class NotificationRendering : ICloneable
+    {
+        public string Content { get; set; }
+
+        public object Clone()
+        {
+            return new NotificationRendering
+            {
+                Content = Content
+            };
+        }
+    }
+
     public abstract class RenderingElement : ICloneable
     {
         /// <summary>

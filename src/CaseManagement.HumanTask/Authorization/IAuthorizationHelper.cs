@@ -8,6 +8,18 @@ namespace CaseManagement.HumanTask.Authorization
     public interface IAuthorizationHelper
     {
         /// <summary>
+        /// Get name identifier.
+        /// </summary>
+        /// <param name="claims"></param>
+        /// <returns></returns>
+        string GetNameIdentifier(IEnumerable<KeyValuePair<string, string>> claims);
+        /// <summary>
+        /// Get roles.
+        /// </summary>
+        /// <param name="claims"></param>
+        /// <returns></returns>
+        ICollection<string> GetRoles(IEnumerable<KeyValuePair<string, string>> claims);
+        /// <summary>
         /// Get user roles.
         /// </summary>
         /// <param name="humanTaskInstance"></param>
@@ -22,6 +34,6 @@ namespace CaseManagement.HumanTask.Authorization
         /// <param name="claims"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<ICollection<UserRoles>> GetRoles(TaskPeopleAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token);
+        Task<ICollection<UserRoles>> GetRoles(HumanTaskInstancePeopleAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token);
     }
 }

@@ -36,6 +36,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IParameterParser, ParameterParser>();
             services.AddTransient<IAuthorizationHelper, AuthorizationHelper>();
             services.AddTransient<ITranslationHelper, TranslationHelper>();
+            services.AddTransient<IDeadlineParser, DeadlineParser>();
             services.AddMediatR(typeof(IHumanTaskServer));
             services.TryAddSingleton<ILogicalPeopleGroupStore>(new InMemoryLogicalPeopleGroupStore(logicalPeopleGroup));
             return services;
@@ -55,10 +56,13 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var humanTaskDefs = new ConcurrentBag<HumanTaskDefinitionAggregate>();
             var humanTaskInstances = new ConcurrentBag<HumanTaskInstanceAggregate>();
+            var notifications = new ConcurrentBag<NotificationInstanceAggregate>();
             services.TryAddSingleton<IHumanTaskDefCommandRepository>(new HumanTaskDefCommandRepository(humanTaskDefs));
             services.TryAddSingleton<IHumanTaskDefQueryRepository>(new HumanTaskDefQueryRepository(humanTaskDefs));
             services.TryAddSingleton<IHumanTaskInstanceCommandRepository>(new HumanTaskInstanceCommandRepository(humanTaskInstances));
             services.TryAddSingleton<IHumanTaskInstanceQueryRepository>(new HumanTaskInstanceQueryRepository(humanTaskInstances));
+            services.TryAddSingleton<INotificationInstanceCommandRepository>(new NotificationInstanceCommandRepository(notifications));
+            services.TryAddSingleton<INotificationInstanceQueryRepository>(new NotificationInstanceQueryRepository(notifications));
             return services;
         }
     }

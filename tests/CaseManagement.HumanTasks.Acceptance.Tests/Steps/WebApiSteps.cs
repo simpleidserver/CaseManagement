@@ -183,6 +183,44 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
 
+        [When("poll HTTP POST JSON request '(.*)', until '(.*)'='(.*)'")]
+        public async Task WhenPollHTTPPostJSONRequest(string url, string key, string value, Table table)
+        {
+            var jObj = new JObject();
+            foreach (var record in table.Rows)
+            {
+                var k = record["Key"];
+                var v = Parse(record["Value"]);
+                try
+                {
+                    jObj.Add(k, JToken.Parse(v));
+                }
+                catch
+                {
+                    jObj.Add(k, value.ToString());
+                }
+            }
+
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(Parse(url)),
+                Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
+            };
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            var json = await httpResponseMessage.Content.ReadAsStringAsync();
+            jObj = JsonConvert.DeserializeObject<JObject>(json);
+            var token = jObj.SelectToken(key);
+            if (token == null || token.ToString() != value)
+            {
+                Thread.Sleep(MS);
+                await WhenPollHTTPPostJSONRequest(url, key, value, table);
+                return;
+            }
+
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
         [When("execute HTTP POST JSON request '(.*)'")]
         public async Task WhenExecuteHTTPPostJSONRequest(string url, Table table)
         {

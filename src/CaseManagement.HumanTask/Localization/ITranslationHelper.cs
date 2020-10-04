@@ -5,7 +5,7 @@ namespace CaseManagement.HumanTask.Localization
 {
     public interface ITranslationHelper
     {
-        Translation Translate(ICollection<Description> descriptions, Dictionary<string, string> parameters);
-        Translation Translate(ICollection<Text> translations, Dictionary<string, string> parameters);
+        Translation Translate(ICollection<Description> descriptions);
+        Translation Translate(ICollection<Text> translations);
     }
 }

@@ -1,5 +1,4 @@
-﻿using CaseManagement.HumanTask.Domains;
-using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
 using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.Parser;
@@ -7,9 +6,6 @@ using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,20 +15,17 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
     {
         private readonly ILogger<GetHumanTaskInstanceDescriptionQueryHandler> _logger;
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
-        private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
         private readonly ITranslationHelper _translationHelper;
         private readonly IParameterParser _parameterParser;
 
         public GetHumanTaskInstanceDescriptionQueryHandler(
             ILogger<GetHumanTaskInstanceDescriptionQueryHandler> logger,
             IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository,
-            IHumanTaskDefQueryRepository humanTaskDefQueryRepository,
             ITranslationHelper translationHelper,
             IParameterParser parameterParser)
         {
             _logger = logger;
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
-            _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
             _translationHelper = translationHelper;
             _parameterParser = parameterParser;
         }
@@ -46,10 +39,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            var humanTaskDef = await _humanTaskDefQueryRepository.Get(humanTaskInstance.HumanTaskDefName, cancellationToken);
-            var parameters = _parameterParser.ParsePresentationParameters(humanTaskDef.PresentationElement.PresentationParameters, humanTaskInstance);
-            ICollection<Text> descriptions = humanTaskDef.PresentationElement.Descriptions.Cast<Text>().ToList();
-            var translation = _translationHelper.Translate(descriptions, parameters);
+            var translation = _translationHelper.Translate(humanTaskInstance.PresentationElement.Descriptions);
             return new TaskDescriptionResult { Description = translation.Value, ContentType = translation.ContentType };
         }
     }

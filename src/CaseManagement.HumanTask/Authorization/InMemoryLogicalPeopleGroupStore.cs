@@ -15,6 +15,12 @@ namespace CaseManagement.HumanTask.Authorization
             _logicalPeopleGroups = logicalPeopleGroups;
         }
 
+        public Task<ICollection<LogicalPeopleGroup>> GetLogicalGroups(IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        {
+            ICollection<LogicalPeopleGroup> result = _logicalPeopleGroups.Where(_ => _.Members.Any(m => m.Claims.All(c => claims.Any(cl => cl.Key == c.Key && cl.Value == c.Value)))).ToList();
+            return Task.FromResult(result);
+        }
+
         /// <summary>
         /// Get members of a given logical people group.
         /// </summary>

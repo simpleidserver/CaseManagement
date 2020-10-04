@@ -227,7 +227,6 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
 
         #endregion
 
-
         [HttpPost("start")]
         [Authorize("Authenticated")]
         public async Task<IActionResult> Start([FromBody] StartHumanTaskInstanceCommand parameter, CancellationToken token)

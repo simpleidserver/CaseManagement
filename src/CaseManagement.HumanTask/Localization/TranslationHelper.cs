@@ -4,7 +4,6 @@ using CaseManagement.HumanTask.Resources;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace CaseManagement.HumanTask.Localization
@@ -18,16 +17,16 @@ namespace CaseManagement.HumanTask.Localization
             _logger = logger;
         }
 
-        public Translation Translate(ICollection<Description> descriptions, Dictionary<string, string> parameters)
+        public Translation Translate(ICollection<Description> descriptions)
         {
             var result = descriptions.Cast<Text>().ToList();
-            var translation = Translate(result, parameters);
+            var translation = Translate(result);
             var description = descriptions.First(_ => _.Language == translation.Language);
             translation.ContentType = description.ContentType;
             return translation;
         }
 
-        public Translation Translate(ICollection<Text> translations, Dictionary<string, string> parameters)
+        public Translation Translate(ICollection<Text> translations)
         {
             var culture = Thread.CurrentThread.CurrentCulture;
             var code = culture.Name;
@@ -38,35 +37,11 @@ namespace CaseManagement.HumanTask.Localization
                 throw new BadOperationExceptions(string.Format(Global.MissingTranslation, code));
             }
 
-            var value = translation.Value;
-            var result = Parse(value, parameters);
             return new Translation
             {
-                Value = result,
+                Value = translation.Value,
                 Language = code
             };
-        }
-
-        private static string Parse(string str, Dictionary<string, string> parameters)
-        {
-            var regex = new Regex(@"\$([a-zA-Z]|_)*\$");
-            var result = regex.Replace(str, (m) =>
-            {
-                if (string.IsNullOrWhiteSpace(m.Value))
-                {
-                    return string.Empty;
-                }
-
-                var key = m.Value.TrimStart('$').TrimEnd('$');
-                if (!parameters.ContainsKey(key))
-                {
-                    return string.Empty;
-                }
-
-                return parameters[key];
-            });
-
-            return result;
         }
     }
 }

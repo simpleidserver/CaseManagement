@@ -5,9 +5,9 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
 {
     public static class HumanTaskInstanceCommandExtensions
     {
-        public static TaskPeopleAssignment ToDomain(this CreateHumanTaskInstanceAssignPeople cmd)
+        public static HumanTaskDefinitionAssignment ToDomain(this CreateHumanTaskInstanceAssignPeople cmd)
         {
-            var result = new TaskPeopleAssignment();
+            var result = new HumanTaskDefinitionAssignment();
             result.BusinessAdministrator = cmd.BusinessAdministrator?.ToDomain();
             result.ExcludedOwner = cmd.ExcludedOwner?.ToDomain();
             result.PotentialOwner = cmd.PotentialOwner?.ToDomain();
@@ -16,11 +16,11 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
             return result;
         }
 
-        private static PeopleAssignment ToDomain(this AssignPeople assignPeople)
+        private static PeopleAssignmentDefinition ToDomain(this AssignPeople assignPeople)
         {
             if (assignPeople.Expression != null)
             {
-                return new ExpressionAssignment
+                return new ExpressionAssignmentDefinition
                 {
                     Expression = assignPeople.Expression.Expression
                 };
@@ -28,7 +28,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
 
             if (assignPeople.GroupNames != null)
             {
-                return new GroupNamesAssignment
+                return new GroupNamesAssignmentDefinition
                 {
                     GroupNames = assignPeople.GroupNames.GroupNames
                 };
@@ -36,7 +36,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
 
             if (assignPeople.LogicalPeopleGroup != null)
             {
-                return new LogicalPeopleGroupAssignment
+                return new LogicalPeopleGroupAssignmentDefinition
                 {
                     LogicalPeopleGroup = assignPeople.LogicalPeopleGroup.LogicalPeopleGroup,
                     Arguments = assignPeople.LogicalPeopleGroup.Arguments
@@ -45,7 +45,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
 
             if (assignPeople.UserIdentifiers != null)
             {
-                return new UserIdentifiersAssignment
+                return new UserIdentifiersAssignmentDefinition
                 {
                     UserIdentifiers = assignPeople.UserIdentifiers.UserIdentifiers
                 };

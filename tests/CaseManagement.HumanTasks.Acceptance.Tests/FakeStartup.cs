@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 
 namespace CaseManagement.HumanTasks.Acceptance.Tests
 {
@@ -46,6 +48,31 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
                 .Build();
+            var startDeadLine = HumanTaskDefBuilder.New("startDeadLine")
+                .SetOperation(op =>
+                {
+                    op.AddParameter("firstName", ParameterTypes.STRING, true);
+                })
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
+                .AddStartDeadLine("sendReminder", (dl) =>
+                {
+                    dl.SetUntilExpression("P0Y0M0DT0H0M2S");
+                    dl.AddEscalation(eb =>
+                    {
+                        eb.AddToPart("firstName", "context.GetInput(\"firstName\")");
+                        eb.SetNotification("notification", nt =>
+                        {
+                            nt.SetOperation(op =>
+                            {
+                                op.AddParameter("firstName", ParameterTypes.STRING, true);
+                            });
+                            nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
+                            nt.AddName("en-US", "<b>firstName is $firstName$</b>");
+                            nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");                        });
+                    });
+                })
+                .Build();
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
@@ -53,11 +80,13 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 {
                     addClient,
                     noPotentialOwner,
-                    multiplePotentialOwners
+                    multiplePotentialOwners,
+                    startDeadLine
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {
-                    ScheduleJob.New<ProcessActivationTimerJob>(1 * 1000)
+                    ScheduleJob.New<ProcessActivationTimerJob>(1 * 1000),
+                    ScheduleJob.New<ProcessDeadLinesJob>(1 * 1000)
                 });
         }
 

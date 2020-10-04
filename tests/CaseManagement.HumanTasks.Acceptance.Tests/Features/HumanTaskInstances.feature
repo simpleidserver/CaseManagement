@@ -167,3 +167,25 @@ Scenario: Start a human task instance
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].eventType'='START'
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].endOwner'='administrator'
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].taskStatus'='INPROGRESS'
+
+Scenario: Check a notification is created by StartDeadLine
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                        |
+	| humanTaskName       | startDeadLine                |
+	| operationParameters | { "firstName": "FirstName" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | guest |
+	And poll HTTP POST JSON request 'http://localhost/notificationinstances/search', until 'totalLength'='1'
+	| Key | Value |
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'totalLength'='1'
+	Then JSON 'content[0].name'='notification'
+	Then JSON 'content[0].status'='READY'

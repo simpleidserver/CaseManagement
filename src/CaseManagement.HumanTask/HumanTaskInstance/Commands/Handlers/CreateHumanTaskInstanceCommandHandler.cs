@@ -1,11 +1,13 @@
 ﻿using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
+using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -19,6 +21,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
         private readonly IAuthorizationHelper _authorizationHelper;
         private readonly IParameterParser _parameterParser;
+        private readonly IDeadlineParser _deadlineParser;
         private readonly ILogger<CreateHumanTaskInstanceCommandHandler> _logger;
 
         public CreateHumanTaskInstanceCommandHandler(
@@ -26,12 +29,14 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
             IAuthorizationHelper authorizationHelper,
             IParameterParser parameterParser,
+            IDeadlineParser deadLineParser,
             ILogger<CreateHumanTaskInstanceCommandHandler> logger)
         {
             _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
             _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
             _authorizationHelper = authorizationHelper;
             _parameterParser = parameterParser;
+            _deadlineParser = deadLineParser;
             _logger = logger;
         }
 
@@ -50,28 +55,42 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.HumanTaskName));
             }
 
-            var assignment = BuildAssignment(humanTaskDef, request);
-            var priority = BuildPriority(humanTaskDef, request);
-            var roles = await _authorizationHelper.GetRoles(assignment, request.Claims, cancellationToken);
+            var operationParameters = request.OperationParameters == null ? new Dictionary<string, string>() : request.OperationParameters;
+            var parameters = _parameterParser.ParseOperationParameters(humanTaskDef.Operation.Parameters, operationParameters);
+            var assignment = EnrichAssignment(humanTaskDef, request);
+            var priority = EnrichPriority(humanTaskDef, request);
+            var assignmentInstance = _parameterParser.ParseHumanTaskInstancePeopleAssignment(assignment, parameters);
+            var roles = await _authorizationHelper.GetRoles(assignmentInstance, request.Claims, cancellationToken);
             if (!roles.Any(r => r == UserRoles.TASKINITIATOR))
             {
                 _logger.LogError("User is not a task initiator");
                 throw new NotAuthorizedException(Global.UserNotAuthorized);
             }
 
-            var operationParameters = request.OperationParameters == null ? new Dictionary<string, string>() : request.OperationParameters;
-            var parameters = _parameterParser.ParseOperationParameters(humanTaskDef.Operation.Parameters, operationParameters);
             _logger.LogInformation($"Create human task '{request.HumanTaskName}'");
             var userPrincipal = request.Claims.GetUserNameIdentifier();
-            var humanTaskInstance = HumanTaskInstanceAggregate.New(userPrincipal, request.HumanTaskName, parameters, assignment, priority, request.ActivationDeferralTime, request.ExpirationTime);
+            var id = Guid.NewGuid().ToString();
+            var deadLines = new List<HumanTaskInstanceDeadLine>();
+            if (humanTaskDef.DeadLines.StartDeadLines != null && humanTaskDef.DeadLines.StartDeadLines.Any())
+            {
+                deadLines.AddRange(_deadlineParser.Evaluate(humanTaskDef.DeadLines.StartDeadLines, HumanTaskInstanceDeadLineTypes.START, parameters));
+            }
+
+            if (humanTaskDef.DeadLines.CompletionDeadLines != null && humanTaskDef.DeadLines.CompletionDeadLines.Any())
+            {
+                deadLines.AddRange(_deadlineParser.Evaluate(humanTaskDef.DeadLines.CompletionDeadLines, HumanTaskInstanceDeadLineTypes.COMPLETION, parameters));
+            }
+
+            var presentationElementInstance = _parameterParser.ParsePresentationElement(humanTaskDef.PresentationElement, operationParameters);
+            var humanTaskInstance = HumanTaskInstanceAggregate.New(id, userPrincipal, request.HumanTaskName, parameters, assignmentInstance, priority, request.ActivationDeferralTime, request.ExpirationTime, deadLines, presentationElementInstance);
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return humanTaskInstance.AggregateId;
         }
 
-        private static TaskPeopleAssignment BuildAssignment(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)
+        private static HumanTaskDefinitionAssignment EnrichAssignment(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)
         {
-            TaskPeopleAssignment taskPeopleAssignment = humanTaskDef.PeopleAssignment;
+            HumanTaskDefinitionAssignment taskPeopleAssignment = humanTaskDef.PeopleAssignment;
             if (request.PeopleAssignment != null)
             {
                 var domain = request.PeopleAssignment.ToDomain();
@@ -104,7 +123,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             return taskPeopleAssignment;
         }
 
-        private static int BuildPriority(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)
+        private static int EnrichPriority(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)
         {
             int priority = humanTaskDef.Priority;
             if (request.Priority != null)

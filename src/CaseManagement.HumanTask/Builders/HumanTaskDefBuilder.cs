@@ -1,6 +1,7 @@
 ﻿using CaseManagement.HumanTask.Domains;
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
 namespace CaseManagement.HumanTask.Builders
 {
@@ -41,6 +42,18 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
+        #region Deadlines
+
+        public HumanTaskDefBuilder AddStartDeadLine(string name, Action<DeadLineBuilder> callback)  
+        {
+            var deadLineBuilder = new DeadLineBuilder(name);
+            callback(deadLineBuilder);
+            _humanTaskDef.DeadLines.StartDeadLines.Add(deadLineBuilder.Build());
+            return this;
+        }
+
+        #endregion
+
         #region Presentation element
 
         public HumanTaskDefBuilder AddName(string language, string value)
@@ -78,7 +91,7 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetTaskInitiatorUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _humanTaskDef.PeopleAssignment.TaskInitiator = new UserIdentifiersAssignment
+            _humanTaskDef.PeopleAssignment.TaskInitiator = new UserIdentifiersAssignmentDefinition
             {
                 UserIdentifiers = userIdentifiers
             };
@@ -91,7 +104,7 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetPotentialOwnerGroupNames(ICollection<string> groupNames)
         {
-            _humanTaskDef.PeopleAssignment.PotentialOwner = new GroupNamesAssignment
+            _humanTaskDef.PeopleAssignment.PotentialOwner = new GroupNamesAssignmentDefinition
             {
                 GroupNames = groupNames
             };
@@ -100,7 +113,7 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetPotentialOwnerUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _humanTaskDef.PeopleAssignment.PotentialOwner = new UserIdentifiersAssignment
+            _humanTaskDef.PeopleAssignment.PotentialOwner = new UserIdentifiersAssignmentDefinition
             {
                 UserIdentifiers = userIdentifiers
             };
@@ -113,7 +126,7 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetBusinessAdministratorUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _humanTaskDef.PeopleAssignment.BusinessAdministrator = new UserIdentifiersAssignment
+            _humanTaskDef.PeopleAssignment.BusinessAdministrator = new UserIdentifiersAssignmentDefinition
             {
                 UserIdentifiers = userIdentifiers
             };

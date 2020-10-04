@@ -4,36 +4,36 @@ using System.Linq;
 
 namespace CaseManagement.HumanTask.Domains
 {
-    public class TaskDeadLines : ICloneable
+    public class HumanTaskDefinitionDeadLines : ICloneable
     {
-        public TaskDeadLines()
+        public HumanTaskDefinitionDeadLines()
         {
-            StartDeadLines = new List<DeadLine>();
-            CompletionDeadLines = new List<DeadLine>();
+            StartDeadLines = new List<HumanTaskDefinitionDeadLine>();
+            CompletionDeadLines = new List<HumanTaskDefinitionDeadLine>();
         }
         /// <summary>
         /// Specifies the time until the task has to start, i.e. it has to reach state InProgress.
         /// </summary>
-        public ICollection<DeadLine> StartDeadLines { get; set; }
+        public ICollection<HumanTaskDefinitionDeadLine> StartDeadLines { get; set; }
         /// <summary>
         /// Specifies the due time of the task. 
         /// It is defined as either the period of time until the task gets due or the point in time when the task gets due. 
         /// </summary>
-        public ICollection<DeadLine> CompletionDeadLines { get; set; }
+        public ICollection<HumanTaskDefinitionDeadLine> CompletionDeadLines { get; set; }
 
         public object Clone()
         {
-            return new TaskDeadLines
+            return new HumanTaskDefinitionDeadLines
             {
-                StartDeadLines = StartDeadLines.Select(_ => (DeadLine)_.Clone()).ToList(),
-                CompletionDeadLines = CompletionDeadLines.Select(_ => (DeadLine)_.Clone()).ToList()
+                StartDeadLines = StartDeadLines.Select(_ => (HumanTaskDefinitionDeadLine)_.Clone()).ToList(),
+                CompletionDeadLines = CompletionDeadLines.Select(_ => (HumanTaskDefinitionDeadLine)_.Clone()).ToList()
             };
         }
     }
 
-    public class DeadLine : ICloneable
+    public class HumanTaskDefinitionDeadLine : ICloneable
     {
-        public DeadLine()
+        public HumanTaskDefinitionDeadLine()
         {
             Escalations = new List<Escalation>();
         }
@@ -50,7 +50,7 @@ namespace CaseManagement.HumanTask.Domains
 
         public object Clone()
         {
-            return new DeadLine
+            return new HumanTaskDefinitionDeadLine
             {
                 Name = Name,
                 For = For,

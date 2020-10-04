@@ -4,14 +4,13 @@ using System.Linq;
 
 namespace CaseManagement.HumanTask.Domains
 {
-    public class PresentationElement : ICloneable
+    public class PresentationElementInstance : ICloneable
     {
-        public PresentationElement()
+        public PresentationElementInstance()
         {
             Names = new List<Text>();
             Subjects = new List<Text>();
             Descriptions = new List<Description>();
-            PresentationParameters = new List<PresentationParameter>();
         }
 
         /// <summary>
@@ -26,19 +25,14 @@ namespace CaseManagement.HumanTask.Domains
         /// This element is a long description of the task.
         /// </summary>
         public ICollection<Description> Descriptions { get; set; }
-        /// <summary>
-        /// This element specifies parameters used in presentation elements subject and description.
-        /// </summary>
-        public ICollection<PresentationParameter> PresentationParameters { get; set; }
 
         public object Clone()
         {
-            return new PresentationElement
+            return new PresentationElementInstance
             {
                 Names = Names.Select(_ => (Text)_.Clone()).ToList(),
                 Subjects = Subjects.Select(_ => (Text)_.Clone()).ToList(),
-                Descriptions = Descriptions.Select(_ => (Description)_.Clone()).ToList(),
-                PresentationParameters = PresentationParameters.Select(_ => (PresentationParameter)_.Clone()).ToList()
+                Descriptions = Descriptions.Select(_ => (Description)_.Clone()).ToList()
             };
         }
     }
