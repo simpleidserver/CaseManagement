@@ -45,7 +45,7 @@ namespace CaseManagement.HumanTask.Infrastructure.Jobs
             var humanTaskInstanceLst = await _humanTaskInstanceQueryRepository.GetPendingDeadLines(token);
             foreach(var humanTaskInstance in humanTaskInstanceLst)
             {
-                var executionContext = new BaseExpressionContext(humanTaskInstance.OperationParameters);
+                var executionContext = new BaseExpressionContext(humanTaskInstance.InputParameters);
                 foreach(var deadLine in humanTaskInstance.DeadLines)
                 {
                     if (deadLine.Escalations != null && deadLine.Escalations.Any())
@@ -59,7 +59,7 @@ namespace CaseManagement.HumanTask.Infrastructure.Jobs
 
                             if (escalation.Notification != null)
                             {
-                                var parameters = _parameterParser.ParseToPartParameters(escalation.ToParts, humanTaskInstance.OperationParameters);
+                                var parameters = _parameterParser.ParseToPartParameters(escalation.ToParts, humanTaskInstance.InputParameters);
                                 await _mediator.Send(new CreateNotificationInstanceCommand { NotificationDef = escalation.Notification, Parameters = parameters }, token);
                             }
                         }

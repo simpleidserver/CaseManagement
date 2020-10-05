@@ -8,16 +8,19 @@ namespace CaseManagement.HumanTask.Domains
     {
         public Operation()
         {
-            Parameters = new List<Parameter>();
+            InputParameters = new List<Parameter>();
+            OutputParameters = new List<Parameter>();
         }
 
-        public ICollection<Parameter> Parameters { get; set; }
+        public ICollection<Parameter> InputParameters { get; set; }
+        public ICollection<Parameter> OutputParameters { get; set; } 
 
         public object Clone()
         {
             return new Operation
             {
-                Parameters = Parameters.Select(_ => (Parameter)_.Clone()).ToList()
+                InputParameters = InputParameters.Select(_ => (Parameter)_.Clone()).ToList(),
+                OutputParameters = OutputParameters.Select(_ => (Parameter)_.Clone()).ToList()
             };
         }
     }

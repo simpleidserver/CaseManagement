@@ -712,6 +712,288 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to complete a human task instance and no oper" +
+            "ationParameters are passed")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to complete a human task instance and no oper" +
+            "ationParameters are passed")]
+        public virtual void CheckErrorIsReturnedWhenTryingToCompleteAHumanTaskInstanceAndNoOperationParametersArePassed()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to complete a human task instance and no oper" +
+                    "ationParameters are passed", null, ((string[])(null)));
+#line 212
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 213
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantaskinstances/invalid/compl" +
+                    "ete\'", ((string)(null)), table25, "When ");
+#line 215
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 217
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 218
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 219
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'operationParameters\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to complete an unknown human task instance")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to complete an unknown human task instance")]
+        public virtual void CheckErrorIsReturnedWhenTryingToCompleteAnUnknownHumanTaskInstance()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to complete an unknown human task instance", null, ((string[])(null)));
+#line 221
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table26.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"key\": \"key\", \"value\": \"value\" }"});
+#line 222
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantaskinstances/invalid/compl" +
+                    "ete\'", ((string)(null)), table26, "When ");
+#line 225
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 227
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 228
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 229
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task instance \'invalid\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to complete a human task instance an the stat" +
+            "us is not INPROGRESS")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to complete a human task instance an the stat" +
+            "us is not INPROGRESS")]
+        public virtual void CheckErrorIsReturnedWhenTryingToCompleteAHumanTaskInstanceAnTheStatusIsNotINPROGRESS()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to complete a human task instance an the stat" +
+                    "us is not INPROGRESS", null, ((string[])(null)));
+#line 231
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table27 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table27.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 232
+ testRunner.When("authenticate", ((string)(null)), table27, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table28 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table28.AddRow(new string[] {
+                        "Key",
+                        "Value"});
+            table28.AddRow(new string[] {
+                        "humanTaskName",
+                        "addClient"});
+            table28.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"firstName\": \"firstname\", \"isGoldenClient\": \"true\" }"});
+#line 235
+    testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table28, "And ");
+#line 240
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 241
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table29 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table29.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"key\": \"key\", \"value\": \"value\" }"});
+#line 242
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/complete\'", ((string)(null)), table29, "And ");
+#line 245
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 247
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 248
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 249
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Operation \'Complete\' can be performed only on \'INPR" +
+                    "OGRESS\' human task instance state\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to complete a human task instance and pass in" +
+            "valid parameters")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to complete a human task instance and pass in" +
+            "valid parameters")]
+        public virtual void CheckErrorIsReturnedWhenTryingToCompleteAHumanTaskInstanceAndPassInvalidParameters()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to complete a human task instance and pass in" +
+                    "valid parameters", null, ((string[])(null)));
+#line 251
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table30 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table30.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 252
+ testRunner.When("authenticate", ((string)(null)), table30, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table31.AddRow(new string[] {
+                        "Key",
+                        "Value"});
+            table31.AddRow(new string[] {
+                        "humanTaskName",
+                        "addClient"});
+            table31.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"firstName\": \"firstname\", \"isGoldenClient\": \"true\" }"});
+#line 255
+    testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table31, "And ");
+#line 260
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 261
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table32 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table32.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "administrator"});
+#line 262
+ testRunner.And("authenticate", ((string)(null)), table32, "And ");
+#line 265
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table33.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"key\": \"key\" }"});
+#line 266
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/complete\'", ((string)(null)), table33, "And ");
+#line 269
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 271
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 272
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 273
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'wage\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to complete a human task instance and authent" +
+            "icated user is not the actual owner")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskInstances")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to complete a human task instance and authent" +
+            "icated user is not the actual owner")]
+        public virtual void CheckErrorIsReturnedWhenTryingToCompleteAHumanTaskInstanceAndAuthenticatedUserIsNotTheActualOwner()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to complete a human task instance and authent" +
+                    "icated user is not the actual owner", null, ((string[])(null)));
+#line 275
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table34.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "taskInitiator"});
+#line 276
+ testRunner.When("authenticate", ((string)(null)), table34, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table35.AddRow(new string[] {
+                        "Key",
+                        "Value"});
+            table35.AddRow(new string[] {
+                        "humanTaskName",
+                        "addClient"});
+            table35.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"firstName\": \"firstname\", \"isGoldenClient\": \"true\" }"});
+#line 279
+    testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table35, "And ");
+#line 284
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 285
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table36 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table36.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "administrator"});
+#line 286
+ testRunner.And("authenticate", ((string)(null)), table36, "And ");
+#line 289
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table37 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table37.AddRow(new string[] {
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        "badUser"});
+#line 290
+ testRunner.And("authenticate", ((string)(null)), table37, "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table38.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"wage\": \"2\" }"});
+#line 293
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/complete\'", ((string)(null)), table38, "And ");
+#line 296
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 298
+ testRunner.Then("HTTP status code equals to \'401\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 299
+ testRunner.Then("JSON \'status\'=\'401\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 300
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Authenticated user is not the actual owner\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

@@ -141,6 +141,9 @@
   <data name="NotActivated" xml:space="preserve">
     <value>Not yet activated</value>
   </data>
+  <data name="NotActualOwner" xml:space="preserve">
+    <value>Authenticated user is not the actual owner</value>
+  </data>
   <data name="NotSubTask" xml:space="preserve">
     <value>'{0}' is not a subtask of '{1}'</value>
   </data>

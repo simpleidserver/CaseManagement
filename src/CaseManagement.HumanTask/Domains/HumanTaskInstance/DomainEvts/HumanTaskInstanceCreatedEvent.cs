@@ -14,38 +14,41 @@ namespace CaseManagement.HumanTask.Domains
             int version, 
             string humanTaskDefName, 
             DateTime createDateTime, 
-            Dictionary<string, string> operationParameters,
+            Dictionary<string, string> inputParameters,
             HumanTaskInstancePeopleAssignment peopleAssignment, 
             int priority, 
             string userPrincipal, 
             List<HumanTaskInstanceDeadLine> deadLines, 
             PresentationElementInstance presentationElement,
             HumanTaskInstanceComposition composition,
+            Operation operation,
             DateTime? activationDeferralTime = null, 
             DateTime? expirationTime = null) : base(id, aggregateId, version)
         {
             HumanTaskDefName = humanTaskDefName;
             CreateDateTime = createDateTime;
-            OperationParameters = operationParameters;
+            InputParameters = inputParameters;
             PeopleAssignment = peopleAssignment;
             Priority = priority;
             UserPrincipal = userPrincipal;
             DeadLines = deadLines;
             PresentationElement = presentationElement;
             Composition = composition;
+            Operation = operation;
             ActivationDeferralTime = activationDeferralTime;
             ExpirationTime = expirationTime;
         }
 
         public string HumanTaskDefName { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public Dictionary<string, string> OperationParameters { get; set; }
+        public Dictionary<string, string> InputParameters { get; set; }
         public HumanTaskInstancePeopleAssignment PeopleAssignment { get; set; }
         public int Priority { get; set; }
         public string UserPrincipal { get; set; }
         public List<HumanTaskInstanceDeadLine> DeadLines { get; set; }
         public PresentationElementInstance PresentationElement { get; set; }
         public HumanTaskInstanceComposition Composition { get; set; }
+        public Operation Operation { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
     }

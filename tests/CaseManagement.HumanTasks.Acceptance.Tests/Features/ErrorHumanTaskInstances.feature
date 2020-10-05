@@ -208,3 +208,93 @@ Scenario: Check error is returned when trying to start a human task instance wit
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.bad_request[0]'='Operation 'Claim' can be performed only on 'Ready/Reserved' human task instance state'
+
+Scenario: Check error is returned when trying to complete a human task instance and no operationParameters are passed
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/invalid/complete'
+	| Key           | Value       |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'operationParameters' is missing'
+
+Scenario: Check error is returned when trying to complete an unknown human task instance
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/invalid/complete'
+	| Key                 | Value                              |
+	| operationParameters | { "key": "key", "value": "value" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task instance 'invalid''
+
+Scenario: Check error is returned when trying to complete a human task instance an the status is not INPROGRESS
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+    And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                                                  |
+	| Key                 | Value                                                  |
+	| humanTaskName       | addClient                                              |
+	| operationParameters | { "firstName": "firstname", "isGoldenClient": "true" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
+	| Key                 | Value                              |
+	| operationParameters | { "key": "key", "value": "value" } |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Operation 'Complete' can be performed only on 'INPROGRESS' human task instance state'
+
+Scenario: Check error is returned when trying to complete a human task instance and pass invalid parameters
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+    And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                                                  |
+	| Key                 | Value                                                  |
+	| humanTaskName       | addClient                                              |
+	| operationParameters | { "firstName": "firstname", "isGoldenClient": "true" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | administrator |	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
+	| Key                 | Value            |
+	| operationParameters | { "key": "key" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'wage' is missing'
+
+Scenario: Check error is returned when trying to complete a human task instance and authenticated user is not the actual owner
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+    And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                                                  |
+	| Key                 | Value                                                  |
+	| humanTaskName       | addClient                                              |
+	| operationParameters | { "firstName": "firstname", "isGoldenClient": "true" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | administrator |	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
+	And authenticate
+	| Key                                                                  | Value   |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | badUser |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
+	| Key                 | Value           |
+	| operationParameters | { "wage": "2" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '401'
+	Then JSON 'status'='401'
+	Then JSON 'errors.bad_request[0]'='Authenticated user is not the actual owner'

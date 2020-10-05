@@ -9,10 +9,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CaseManagement.HumanTasks.Acceptance.Tests
 {
@@ -36,8 +34,9 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 .AddPresentationParameter("isGoldenClient", ParameterTypes.BOOL, "context.GetInput(\"isGoldenClient\")")
                 .SetOperation(op =>
                 {
-                    op.AddParameter("firstName", ParameterTypes.STRING, true);
-                    op.AddParameter("isGoldenClient", ParameterTypes.BOOL, false);
+                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
+                    op.AddInputParameter("isGoldenClient", ParameterTypes.BOOL, false);
+                    op.AddOutputParameter("wage", ParameterTypes.INT, true);
                 })
                 .Build();
             var noPotentialOwner = HumanTaskDefBuilder.New("noPotentialOwner")
@@ -51,7 +50,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
             var startDeadLine = HumanTaskDefBuilder.New("startDeadLine")
                 .SetOperation(op =>
                 {
-                    op.AddParameter("firstName", ParameterTypes.STRING, true);
+                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
                 })
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
@@ -65,7 +64,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                         {
                             nt.SetOperation(op =>
                             {
-                                op.AddParameter("firstName", ParameterTypes.STRING, true);
+                                op.AddInputParameter("firstName", ParameterTypes.STRING, true);
                             });
                             nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
                             nt.AddName("en-US", "<b>firstName is $firstName$</b>");
@@ -78,8 +77,8 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
                 .SetOperation(op =>
                 {
-                    op.AddParameter("firstName", ParameterTypes.STRING, true);
-                    op.AddParameter("isGoldenClient", ParameterTypes.BOOL, false);
+                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
+                    op.AddInputParameter("isGoldenClient", ParameterTypes.BOOL, false);
                 })
                 .SetParallelComposition(InstantiationPatterns.AUTOMATIC, cb =>
                 {

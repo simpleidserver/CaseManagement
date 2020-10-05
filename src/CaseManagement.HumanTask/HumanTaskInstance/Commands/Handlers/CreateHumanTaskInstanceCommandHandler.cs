@@ -55,7 +55,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             }
 
             var operationParameters = request.OperationParameters == null ? new Dictionary<string, string>() : request.OperationParameters;
-            var parameters = _parameterParser.ParseOperationParameters(humanTaskDef.Operation.Parameters, operationParameters);
+            var parameters = _parameterParser.ParseOperationParameters(humanTaskDef.Operation.InputParameters, operationParameters);
             var assignment = EnrichAssignment(humanTaskDef, request);
             var priority = EnrichPriority(humanTaskDef, request);
             var assignmentInstance = _parameterParser.ParseHumanTaskInstancePeopleAssignment(assignment, parameters);
@@ -110,7 +110,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 request.ExpirationTime, 
                 deadLines, 
                 presentationElementInstance,
-                composition);
+                composition,
+                humanTaskDef.Operation);
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return humanTaskInstance.AggregateId;

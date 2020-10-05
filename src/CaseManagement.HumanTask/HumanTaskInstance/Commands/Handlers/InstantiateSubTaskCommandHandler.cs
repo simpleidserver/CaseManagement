@@ -61,7 +61,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new BadRequestException(string.Format(Global.SubTaskAlreadyCreated, request.SubTaskName));
             }
 
-            var operationParameters = _parameterParser.ParseToPartParameters(subTask.ToParts, humanTaskInstance.OperationParameters);
+            var operationParameters = _parameterParser.ParseToPartParameters(subTask.ToParts, humanTaskInstance.InputParameters);
             var result = await _mediator.Send(new CreateHumanTaskInstanceCommand 
             { 
                 Claims = request.Claims,

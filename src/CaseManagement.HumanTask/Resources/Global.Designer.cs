@@ -133,6 +133,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Authenticated user is not the actual owner.
+        /// </summary>
+        internal static string NotActualOwner {
+            get {
+                return ResourceManager.GetString("NotActualOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à &apos;{0}&apos; is not a subtask of &apos;{1}&apos;.
         /// </summary>
         internal static string NotSubTask {

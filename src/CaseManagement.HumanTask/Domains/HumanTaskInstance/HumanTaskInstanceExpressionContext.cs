@@ -2,7 +2,7 @@
 {
     public class HumanTaskInstanceExpressionContext : BaseExpressionContext
     {
-        public HumanTaskInstanceExpressionContext(HumanTaskInstanceAggregate humanTaskInstance) : base(humanTaskInstance.OperationParameters)
+        public HumanTaskInstanceExpressionContext(HumanTaskInstanceAggregate humanTaskInstance) : base(humanTaskInstance.InputParameters)
         {
         }
     }

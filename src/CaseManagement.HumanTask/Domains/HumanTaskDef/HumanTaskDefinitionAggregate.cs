@@ -14,6 +14,7 @@ namespace CaseManagement.HumanTask.Domains
             PeopleAssignment = new HumanTaskDefinitionAssignment();
             Renderings = new List<Rendering>();
             DeadLines = new HumanTaskDefinitionDeadLines();
+            CompletionBehavior = new HumanTaskDefinitionCompletionBehavior();
         }
 
         /// <summary>
@@ -71,6 +72,7 @@ namespace CaseManagement.HumanTask.Domains
         /// It is optional.
         /// </summary>
         public HumanTaskDefinitionComposition Composition { get; set; }
+        public HumanTaskDefinitionCompletionBehavior CompletionBehavior { get; set; }
 
         public object Clone()
         {
@@ -87,7 +89,8 @@ namespace CaseManagement.HumanTask.Domains
                 SearchBy = SearchBy,
                 Renderings = Renderings.Select(_ => (Rendering)_.Clone()).ToList(),
                 DeadLines = (HumanTaskDefinitionDeadLines)DeadLines?.Clone(),
-                Composition = (HumanTaskDefinitionComposition)Composition?.Clone()
+                Composition = (HumanTaskDefinitionComposition)Composition?.Clone(),
+                CompletionBehavior = (HumanTaskDefinitionCompletionBehavior)CompletionBehavior?.Clone()
             };
         }
     }

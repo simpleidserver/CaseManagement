@@ -168,6 +168,47 @@ Scenario: Start a human task instance
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].endOwner'='administrator'
 	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].taskStatus'='INPROGRESS'
 
+Scenario: Complete a human task instance
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+    And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                                                  |
+	| Key                 | Value                                                  |
+	| humanTaskName       | addClient                                              |
+	| operationParameters | { "firstName": "firstname", "isGoldenClient": "true" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | administrator |	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
+	| Key                 | Value           |
+	| operationParameters | { "wage": "2" } |
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/details'
+	And extract JSON from body into 'detailsHumanTaskInstance'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/history'
+	| Key | Value |
+	And extract JSON from body into 'historyHumanTaskInstance'
+	
+	Then HTTP status code equals to '200'
+	Then extract JSON 'detailsHumanTaskInstance', JSON exists 'id'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'name'='addClient'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'status'='COMPLETED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].userPrincipal'='taskInitiator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].eventType'='CREATED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[0].taskStatus'='RESERVED'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].userPrincipal'='administrator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].eventType'='START'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].endOwner'='administrator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[1].taskStatus'='INPROGRESS'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[2].userPrincipal'='administrator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[2].eventType'='COMPLETE'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[2].endOwner'='administrator'
+	Then extract JSON 'historyHumanTaskInstance', JSON 'content[2].taskStatus'='COMPLETED'
+
+
 Scenario: Check a notification is created by StartDeadLine
 	When authenticate
 	| Key                                                                  | Value         |

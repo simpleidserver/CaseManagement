@@ -13,7 +13,9 @@ namespace CaseManagement.HumanTask.Domains
     {
         public HumanTaskInstanceAggregate()
         {
-            OperationParameters = new Dictionary<string, string>();
+            InputParameters = new Dictionary<string, string>();
+            OutputParameters = new Dictionary<string, string>();
+            Operation = new Operation();
             EventHistories = new ConcurrentBag<HumanTaskInstanceEventHistory>();
             DeadLines = new List<HumanTaskInstanceDeadLine>();
             PresentationElement = new PresentationElementInstance();
@@ -25,7 +27,9 @@ namespace CaseManagement.HumanTask.Domains
         public HumanTaskInstanceStatus Status { get; set; }
         public string HumanTaskDefName { get; set; }
         public string ActualOwner { get; set; }
-        public Dictionary<string, string> OperationParameters { get; set; }
+        public Dictionary<string, string> InputParameters { get; set; }
+        public Dictionary<string, string> OutputParameters { get; set; }
+        public Operation Operation { get; set; }
         public int Priority { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
@@ -41,14 +45,15 @@ namespace CaseManagement.HumanTask.Domains
             string id,
             string userPrincipal, 
             string humanTaskDefName, 
-            Dictionary<string, string> operationParameters, 
+            Dictionary<string, string> inputParameters, 
             HumanTaskInstancePeopleAssignment peopleAssignment, 
             int priority, 
             DateTime? activationDeferralTime, 
             DateTime? expirationTime, 
             List<HumanTaskInstanceDeadLine> deadLines,
             PresentationElementInstance presentationElementInstance,
-            HumanTaskInstanceComposition composition)
+            HumanTaskInstanceComposition composition,
+            Operation operation)
         {
             var evt = new HumanTaskInstanceCreatedEvent(
                 Guid.NewGuid().ToString(), 
@@ -56,13 +61,14 @@ namespace CaseManagement.HumanTask.Domains
                 0, 
                 humanTaskDefName, 
                 DateTime.UtcNow, 
-                operationParameters, 
+                inputParameters, 
                 peopleAssignment, 
                 priority, 
                 userPrincipal, 
                 deadLines, 
                 presentationElementInstance,
                 composition,
+                operation,
                 activationDeferralTime,
                 expirationTime);
             var result = new HumanTaskInstanceAggregate();
@@ -80,7 +86,9 @@ namespace CaseManagement.HumanTask.Domains
                 Status = Status,
                 HumanTaskDefName = HumanTaskDefName,
                 ActualOwner = ActualOwner,
-                OperationParameters = OperationParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+                Operation = (Operation)Operation?.Clone(),
+                InputParameters = InputParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+                OutputParameters = OutputParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
                 Priority = Priority,
                 ActivationDeferralTime = ActivationDeferralTime,
                 ExpirationTime = ExpirationTime,
@@ -158,7 +166,7 @@ namespace CaseManagement.HumanTask.Domains
         }
 
         /// <summary>
-        /// 
+        /// Set parent.
         /// </summary>
         /// <param name=""></param>
         public void SetParent(string parentName, string parentId)
@@ -168,6 +176,16 @@ namespace CaseManagement.HumanTask.Domains
             DomainEvents.Add(evt);
         }
 
+        /// <summary>
+        /// Complete the human task instance.
+        /// </summary>
+        /// <param name="outputParameters"></param>
+        public void Complete(Dictionary<string, string> outputParameters, string userPrincipal)
+        {
+            var evt = new HumanTaskInstanceCompletedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, outputParameters, userPrincipal, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
 
         #endregion
 
@@ -185,7 +203,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskInstanceCreatedEvent evt)
         {
-            using(var evtHistory = AddEventHistory(evt.Id, evt.CreateDateTime, HumanTaskInstanceEventTypes.CREATED, evt.UserPrincipal))
+            using(var evtHistory = AddEventHistory(evt.Id, evt.CreateDateTime, HumanTaskInstanceEventTypes.CREATED, evt.UserPrincipal, evt.InputParameters))
             {
                 AggregateId = evt.AggregateId;
                 Status = HumanTaskInstanceStatus.CREATED;
@@ -194,10 +212,11 @@ namespace CaseManagement.HumanTask.Domains
                 ActivationDeferralTime = evt.ActivationDeferralTime;
                 ExpirationTime = evt.ExpirationTime;
                 PeopleAssignment = evt.PeopleAssignment;
-                OperationParameters = evt.OperationParameters;
+                InputParameters = evt.InputParameters;
                 PresentationElement = evt.PresentationElement;
                 DeadLines = evt.DeadLines;
                 Composition = (HumanTaskInstanceComposition)evt.Composition?.Clone();
+                Operation = (Operation)evt.Operation?.Clone();
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;
                 Version = evt.Version;
@@ -276,6 +295,17 @@ namespace CaseManagement.HumanTask.Domains
                 DeadLines = DeadLines.Where(_ => _.Type == HumanTaskInstanceDeadLineTypes.COMPLETION).ToList();
                 ActualOwner = evt.UserPrincipal;
                 UpdateDateTime = evt.ExecutionDateTime;
+                Version = evt.Version;
+            }
+        }
+
+        private void Handle(HumanTaskInstanceCompletedEvent evt)
+        {
+            using (var evtHistory = AddEventHistory(evt.Id, evt.UpdateDateTime, HumanTaskInstanceEventTypes.COMPLETE, evt.UserPrincipal, evt.OutputParameters))
+            {
+                Status = HumanTaskInstanceStatus.COMPLETED;
+                OutputParameters = evt.OutputParameters;
+                UpdateDateTime = evt.UpdateDateTime;
                 Version = evt.Version;
             }
         }
