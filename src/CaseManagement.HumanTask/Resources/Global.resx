@@ -141,8 +141,14 @@
   <data name="NotActivated" xml:space="preserve">
     <value>Not yet activated</value>
   </data>
+  <data name="NotSubTask" xml:space="preserve">
+    <value>'{0}' is not a subtask of '{1}'</value>
+  </data>
   <data name="OperationCanBePerformed" xml:space="preserve">
     <value>Operation '{0}' can be performed only on '{1}' human task instance state</value>
+  </data>
+  <data name="SubTaskAlreadyCreated" xml:space="preserve">
+    <value>The sub task '{0}' is already created</value>
   </data>
   <data name="UnknownHumanTaskDef" xml:space="preserve">
     <value>Unknown human task definition '{0}'</value>

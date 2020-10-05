@@ -1,33 +1,30 @@
 ﻿using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
-using CaseManagement.HumanTask.Localization;
-using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
 {
-    public class GetHumanTaskInstanceDescriptionQueryHandler : IRequestHandler<GetHumanTaskInstanceDescriptionQuery, TaskDescriptionResult>
+    public class GetHumanTaskInstanceSubTasksQueryHandler : IRequestHandler<GetHumanTaskInstanceSubTasksQuery, SubTasksResults>
     {
-        private readonly ILogger<GetHumanTaskInstanceDescriptionQueryHandler> _logger;
+        private readonly ILogger<GetHumanTaskInstanceSubTasksQueryHandler> _logger;
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
-        private readonly ITranslationHelper _translationHelper;
 
-        public GetHumanTaskInstanceDescriptionQueryHandler(
-            ILogger<GetHumanTaskInstanceDescriptionQueryHandler> logger,
-            IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository,
-            ITranslationHelper translationHelper)
+        public GetHumanTaskInstanceSubTasksQueryHandler(
+            ILogger<GetHumanTaskInstanceSubTasksQueryHandler> logger,
+            IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository)
         {
             _logger = logger;
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
-            _translationHelper = translationHelper;
         }
 
-        public async Task<TaskDescriptionResult> Handle(GetHumanTaskInstanceDescriptionQuery request, CancellationToken cancellationToken)
+        public async Task<SubTasksResults> Handle(GetHumanTaskInstanceSubTasksQuery request, CancellationToken cancellationToken)
         {
             var humanTaskInstance = await _humanTaskInstanceQueryRepository.Get(request.HumanTaskInstanceId, cancellationToken);
             if (humanTaskInstance == null)
@@ -36,8 +33,12 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            var translation = _translationHelper.Translate(humanTaskInstance.PresentationElement.Descriptions);
-            return new TaskDescriptionResult { Description = translation.Value, ContentType = translation.ContentType };
+            var result = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.HumanTaskDefName, cancellationToken);
+            ICollection<TaskInstanceDetailsResult> content = result.Select(_ => TaskInstanceDetailsResult.ToDto(_)).ToList();
+            return new SubTasksResults 
+            { 
+                Content = content
+            };
         }
     }
 }

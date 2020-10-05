@@ -10,6 +10,7 @@ namespace CaseManagement.HumanTask.Persistence
     public interface IHumanTaskInstanceQueryRepository
     {
         Task<HumanTaskInstanceAggregate> Get(string id, CancellationToken token);
+        Task<ICollection<HumanTaskInstanceAggregate>> GetSubTasks(string taskName, CancellationToken token);
         Task<ICollection<HumanTaskInstanceAggregate>> GetPendingLst(CancellationToken token);
         Task<ICollection<HumanTaskInstanceAggregate>> GetPendingDeadLines(CancellationToken token);
         Task<FindResponse<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token);

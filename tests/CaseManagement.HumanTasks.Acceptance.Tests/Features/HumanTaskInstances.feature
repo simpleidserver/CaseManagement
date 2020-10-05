@@ -189,3 +189,23 @@ Scenario: Check a notification is created by StartDeadLine
 	Then JSON 'totalLength'='1'
 	Then JSON 'content[0].name'='notification'
 	Then JSON 'content[0].status'='READY'
+
+Scenario: Execute a composite task
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                                                  |
+	| humanTaskName       | compositeTask                                          |
+	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | administrator |	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/subtasks'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'content[0].name'='addClient'

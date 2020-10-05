@@ -20,6 +20,7 @@ namespace CaseManagement.HumanTask.Domains
             string userPrincipal, 
             List<HumanTaskInstanceDeadLine> deadLines, 
             PresentationElementInstance presentationElement,
+            HumanTaskInstanceComposition composition,
             DateTime? activationDeferralTime = null, 
             DateTime? expirationTime = null) : base(id, aggregateId, version)
         {
@@ -31,6 +32,7 @@ namespace CaseManagement.HumanTask.Domains
             UserPrincipal = userPrincipal;
             DeadLines = deadLines;
             PresentationElement = presentationElement;
+            Composition = composition;
             ActivationDeferralTime = activationDeferralTime;
             ExpirationTime = expirationTime;
         }
@@ -43,6 +45,7 @@ namespace CaseManagement.HumanTask.Domains
         public string UserPrincipal { get; set; }
         public List<HumanTaskInstanceDeadLine> DeadLines { get; set; }
         public PresentationElementInstance PresentationElement { get; set; }
+        public HumanTaskInstanceComposition Composition { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
     }

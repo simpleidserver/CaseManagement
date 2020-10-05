@@ -225,6 +225,23 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpGet("{id}/subtasks")]
+        public async Task<IActionResult> GetSubTasks(string id, CancellationToken token)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetHumanTaskInstanceSubTasksQuery { HumanTaskInstanceId = id }, token);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownHumanTaskInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         #endregion
 
         [HttpPost("start")]

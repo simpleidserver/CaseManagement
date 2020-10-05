@@ -19,6 +19,9 @@ namespace CaseManagement.HumanTask.Domains
             PresentationElement = new PresentationElementInstance();
         }
 
+        public string HumanTaskInstanceId { get; set; }
+        public string ParentHumanTaskName { get; set; }
+        public string ParentHumanTaskId { get; set; }
         public HumanTaskInstanceStatus Status { get; set; }
         public string HumanTaskDefName { get; set; }
         public string ActualOwner { get; set; }
@@ -30,6 +33,7 @@ namespace CaseManagement.HumanTask.Domains
         public PresentationElementInstance PresentationElement { get; set; }
         public ConcurrentBag<HumanTaskInstanceEventHistory> EventHistories { get; set; }
         public ICollection<HumanTaskInstanceDeadLine> DeadLines { get; set; }
+        public HumanTaskInstanceComposition  Composition { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
 
@@ -43,7 +47,8 @@ namespace CaseManagement.HumanTask.Domains
             DateTime? activationDeferralTime, 
             DateTime? expirationTime, 
             List<HumanTaskInstanceDeadLine> deadLines,
-            PresentationElementInstance presentationElementInstance)
+            PresentationElementInstance presentationElementInstance,
+            HumanTaskInstanceComposition composition)
         {
             var evt = new HumanTaskInstanceCreatedEvent(
                 Guid.NewGuid().ToString(), 
@@ -56,8 +61,9 @@ namespace CaseManagement.HumanTask.Domains
                 priority, 
                 userPrincipal, 
                 deadLines, 
-                presentationElementInstance, 
-                activationDeferralTime, 
+                presentationElementInstance,
+                composition,
+                activationDeferralTime,
                 expirationTime);
             var result = new HumanTaskInstanceAggregate();
             result.Handle(evt);
@@ -83,7 +89,11 @@ namespace CaseManagement.HumanTask.Domains
                 EventHistories = new ConcurrentBag<HumanTaskInstanceEventHistory>(EventHistories.Select(_ => (HumanTaskInstanceEventHistory)_.Clone())),
                 DeadLines = DeadLines.Select(_ => (HumanTaskInstanceDeadLine)_.Clone()).ToList(),
                 CreateDateTime = CreateDateTime,
-                UpdateDateTime = UpdateDateTime
+                UpdateDateTime = UpdateDateTime,
+                Composition = (HumanTaskInstanceComposition)Composition?.Clone(),
+                HumanTaskInstanceId = HumanTaskInstanceId,
+                ParentHumanTaskName = ParentHumanTaskName,
+                ParentHumanTaskId = ParentHumanTaskId
             };
         }
 
@@ -147,6 +157,17 @@ namespace CaseManagement.HumanTask.Domains
             DomainEvents.Add(evt);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name=""></param>
+        public void SetParent(string parentName, string parentId)
+        {
+            var evt = new HumanTaskInstanceParentUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parentName, parentId, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
 
         #endregion
 
@@ -176,6 +197,7 @@ namespace CaseManagement.HumanTask.Domains
                 OperationParameters = evt.OperationParameters;
                 PresentationElement = evt.PresentationElement;
                 DeadLines = evt.DeadLines;
+                Composition = (HumanTaskInstanceComposition)evt.Composition?.Clone();
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;
                 Version = evt.Version;
@@ -261,6 +283,14 @@ namespace CaseManagement.HumanTask.Domains
         private void Handle(HumanTaskInstanceDeadLineRemovedEvent evt)
         {
             DeadLines = DeadLines.Where(_ => _.Name != evt.DeadLineName && _.Type != evt.DeadLineType).ToList();
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskInstanceParentUpdatedEvent evt)
+        {
+            ParentHumanTaskName = evt.ParentName;
+            ParentHumanTaskId = evt.ParentId;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

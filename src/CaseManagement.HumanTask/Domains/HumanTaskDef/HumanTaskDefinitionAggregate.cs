@@ -70,7 +70,7 @@ namespace CaseManagement.HumanTask.Domains
         /// This element is used to specify subtasks of a composite task. 
         /// It is optional.
         /// </summary>
-        public Composition Composition { get; set; }
+        public HumanTaskDefinitionComposition Composition { get; set; }
 
         public object Clone()
         {
@@ -87,7 +87,7 @@ namespace CaseManagement.HumanTask.Domains
                 SearchBy = SearchBy,
                 Renderings = Renderings.Select(_ => (Rendering)_.Clone()).ToList(),
                 DeadLines = (HumanTaskDefinitionDeadLines)DeadLines?.Clone(),
-                Composition = (Composition)Composition?.Clone()
+                Composition = (HumanTaskDefinitionComposition)Composition?.Clone()
             };
         }
     }

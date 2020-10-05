@@ -1,7 +1,6 @@
 ﻿using CaseManagement.HumanTask.Domains;
 using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 
 namespace CaseManagement.HumanTask.Builders
 {
@@ -130,6 +129,18 @@ namespace CaseManagement.HumanTask.Builders
             {
                 UserIdentifiers = userIdentifiers
             };
+            return this;
+        }
+
+        #endregion
+
+        #region Composition
+
+        public HumanTaskDefBuilder SetParallelComposition(InstantiationPatterns instantiationPattern, Action<CompositionBuilder> callback)
+        {
+            var builder = new CompositionBuilder(CompositionTypes.PARALLEL, instantiationPattern);
+            callback(builder);
+            _humanTaskDef.Composition = builder.Build();
             return this;
         }
 

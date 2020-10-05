@@ -73,6 +73,23 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     });
                 })
                 .Build();
+            var compositeTask = HumanTaskDefBuilder.New("compositeTask")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
+                .SetOperation(op =>
+                {
+                    op.AddParameter("firstName", ParameterTypes.STRING, true);
+                    op.AddParameter("isGoldenClient", ParameterTypes.BOOL, false);
+                })
+                .SetParallelComposition(InstantiationPatterns.AUTOMATIC, cb =>
+                {
+                    cb.AddSubTask("addClient", new List<ToPart>
+                    {
+                        new ToPart { Expression = "context.GetInput(\"firstName\")", Name = "firstName" },
+                        new ToPart { Expression = "context.GetInput(\"isGoldenClient\")", Name = "isGoldenClient" }
+                    });
+                })
+                .Build();
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
@@ -81,7 +98,8 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     addClient,
                     noPotentialOwner,
                     multiplePotentialOwners,
-                    startDeadLine
+                    startDeadLine,
+                    compositeTask
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {

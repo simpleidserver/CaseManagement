@@ -9,6 +9,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
         public CreateHumanTaskInstanceCommand()
         {
             OperationParameters = new Dictionary<string, string>();
+            IsCreatedByTaskParent = false;
         }
 
         public string HumanTaskName { get; set; }
@@ -18,6 +19,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
         public DateTime? ExpirationTime { get; set; }
         public CreateHumanTaskInstanceAssignPeople PeopleAssignment { get; set; }
         public Dictionary<string, string> OperationParameters { get; set; }
+        public bool IsCreatedByTaskParent { get; set; }
 
         public class CreateHumanTaskInstanceAssignPeople
         {

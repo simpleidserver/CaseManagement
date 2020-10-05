@@ -17,17 +17,20 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
         private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
         private readonly IAuthorizationHelper _authorizationHelper;
+        private readonly IMediator _mediator;
         private readonly ILogger<StartHumanTaskInstanceCommandHandler> _logger;
 
         public StartHumanTaskInstanceCommandHandler(
             IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository,
             IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
             IAuthorizationHelper authorizationHelper,
+            IMediator mediator,
             ILogger<StartHumanTaskInstanceCommandHandler> logger)
         {
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
             _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
             _authorizationHelper = authorizationHelper;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -64,6 +67,25 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             humanTaskInstance.Start(userPrincipal);
             await _humanTaskInstanceCommandRepository.Update(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
+            if (humanTaskInstance.Composition != null &&
+                humanTaskInstance.Composition.InstantiationPattern == InstantiationPatterns.AUTOMATIC &&
+                humanTaskInstance.Composition.SubTasks != null &&
+                humanTaskInstance.Composition.SubTasks.Any())
+            {
+                if (humanTaskInstance.Composition.Type == CompositionTypes.PARALLEL)
+                {
+                    foreach (var subTask in humanTaskInstance.Composition.SubTasks)
+                    {
+                        await _mediator.Send(new InstantiateSubTaskCommand
+                        {
+                            Claims = request.Claims,
+                            HumanTaskInstanceId = humanTaskInstance.AggregateId,
+                            SubTaskName = subTask.HumanTaskName
+                        }, cancellationToken);
+                    }
+                }
+            }
+
             return true;
         }
     }

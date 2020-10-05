@@ -133,11 +133,29 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à &apos;{0}&apos; is not a subtask of &apos;{1}&apos;.
+        /// </summary>
+        internal static string NotSubTask {
+            get {
+                return ResourceManager.GetString("NotSubTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Operation &apos;{0}&apos; can be performed only on &apos;{1}&apos; human task instance state.
         /// </summary>
         internal static string OperationCanBePerformed {
             get {
                 return ResourceManager.GetString("OperationCanBePerformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The sub task &apos;{0}&apos; is already created.
+        /// </summary>
+        internal static string SubTaskAlreadyCreated {
+            get {
+                return ResourceManager.GetString("SubTaskAlreadyCreated", resourceCulture);
             }
         }
         

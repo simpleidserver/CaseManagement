@@ -1,7 +1,6 @@
 ﻿using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
-using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
@@ -60,11 +59,14 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             var assignment = EnrichAssignment(humanTaskDef, request);
             var priority = EnrichPriority(humanTaskDef, request);
             var assignmentInstance = _parameterParser.ParseHumanTaskInstancePeopleAssignment(assignment, parameters);
-            var roles = await _authorizationHelper.GetRoles(assignmentInstance, request.Claims, cancellationToken);
-            if (!roles.Any(r => r == UserRoles.TASKINITIATOR))
+            if (!request.IsCreatedByTaskParent)
             {
-                _logger.LogError("User is not a task initiator");
-                throw new NotAuthorizedException(Global.UserNotAuthorized);
+                var roles = await _authorizationHelper.GetRoles(assignmentInstance, request.Claims, cancellationToken);
+                if (!roles.Any(r => r == UserRoles.TASKINITIATOR))
+                {
+                    _logger.LogError("User is not a task initiator");
+                    throw new NotAuthorizedException(Global.UserNotAuthorized);
+                }
             }
 
             _logger.LogInformation($"Create human task '{request.HumanTaskName}'");
@@ -82,7 +84,33 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             }
 
             var presentationElementInstance = _parameterParser.ParsePresentationElement(humanTaskDef.PresentationElement, operationParameters);
-            var humanTaskInstance = HumanTaskInstanceAggregate.New(id, userPrincipal, request.HumanTaskName, parameters, assignmentInstance, priority, request.ActivationDeferralTime, request.ExpirationTime, deadLines, presentationElementInstance);
+            HumanTaskInstanceComposition composition = null;
+            if (humanTaskDef.Composition != null)
+            {
+                composition = new HumanTaskInstanceComposition
+                {
+                    InstantiationPattern = humanTaskDef.Composition.InstantiationPattern,
+                    Type = humanTaskDef.Composition.Type,
+                    SubTasks = humanTaskDef.Composition.SubTasks.Select(_ => new HumanTaskInstanceSubTask
+                    {
+                        HumanTaskName = _.TaskName,
+                        ToParts = _.ToParts
+                    }).ToList()
+                };
+            }
+
+            var humanTaskInstance = HumanTaskInstanceAggregate.New(
+                id, 
+                userPrincipal, 
+                request.HumanTaskName, 
+                parameters,
+                assignmentInstance, 
+                priority, 
+                request.ActivationDeferralTime, 
+                request.ExpirationTime, 
+                deadLines, 
+                presentationElementInstance,
+                composition);
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return humanTaskInstance.AggregateId;
