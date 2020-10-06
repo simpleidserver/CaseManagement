@@ -24,9 +24,9 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             return Task.FromResult((HumanTaskInstanceAggregate)_humanTaskInstances.FirstOrDefault(_ => _.AggregateId == id)?.Clone());
         }
 
-        public Task<ICollection<HumanTaskInstanceAggregate>> GetSubTasks(string taskName, CancellationToken token)
+        public Task<ICollection<HumanTaskInstanceAggregate>> GetSubTasks(string parentHumanTaskId, CancellationToken token)
         {
-            ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.ParentHumanTaskName == taskName).Select(_ => (HumanTaskInstanceAggregate)_.Clone()).ToList();
+            ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.ParentHumanTaskId == parentHumanTaskId).Select(_ => (HumanTaskInstanceAggregate)_.Clone()).ToList();
             return Task.FromResult(result);
         }
 

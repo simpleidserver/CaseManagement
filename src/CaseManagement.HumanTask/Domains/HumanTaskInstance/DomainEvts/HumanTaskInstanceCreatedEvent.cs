@@ -22,6 +22,7 @@ namespace CaseManagement.HumanTask.Domains
             PresentationElementInstance presentationElement,
             HumanTaskInstanceComposition composition,
             Operation operation,
+            CompletionBehavior completion,
             DateTime? activationDeferralTime = null, 
             DateTime? expirationTime = null) : base(id, aggregateId, version)
         {
@@ -35,6 +36,7 @@ namespace CaseManagement.HumanTask.Domains
             PresentationElement = presentationElement;
             Composition = composition;
             Operation = operation;
+            Completion = completion;
             ActivationDeferralTime = activationDeferralTime;
             ExpirationTime = expirationTime;
         }
@@ -49,6 +51,7 @@ namespace CaseManagement.HumanTask.Domains
         public PresentationElementInstance PresentationElement { get; set; }
         public HumanTaskInstanceComposition Composition { get; set; }
         public Operation Operation { get; set; }
+        public CompletionBehavior Completion { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
     }

@@ -70,6 +70,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à At least one completion behavior must be specified.
+        /// </summary>
+        internal static string CompletionBehaviorMustBeSatisfied {
+            get {
+                return ResourceManager.GetString("CompletionBehaviorMustBeSatisfied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à GroupNames and UserIdentifiers parameters cannot be specified at the same time.
         /// </summary>
         internal static string GroupNamesAndUserIdentifiersSpecified {

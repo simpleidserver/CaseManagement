@@ -12,14 +12,24 @@ namespace CaseManagement.HumanTask.Domains
             _operationParameters = operationParameters;
         }
 
+        /// <summary>
+        /// Get the input parameter of the current task / notification.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public string GetInput(string key)
         {
-            if (!_operationParameters.ContainsKey(key))
+            return GetParameter(_operationParameters, key);
+        }
+
+        protected string GetParameter(Dictionary<string, string> parameters, string key)
+        {
+            if (!parameters.ContainsKey(key))
             {
                 return string.Empty;
             }
 
-            return _operationParameters[key];
+            return parameters[key];
         }
     }
 }

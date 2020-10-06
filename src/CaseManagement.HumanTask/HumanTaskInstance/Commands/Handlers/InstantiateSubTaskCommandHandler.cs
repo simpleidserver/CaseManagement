@@ -54,7 +54,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new BadRequestException(string.Format(Global.NotSubTask, request.SubTaskName, humanTaskInstance.HumanTaskDefName));
             }
 
-            var subTasks = await _humanTaskInstanceQueryRepository.GetSubTasks(subTask.HumanTaskName, cancellationToken);
+            var subTasks = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.AggregateId, cancellationToken);
             if (subTasks.Any(_ => _.HumanTaskDefName == request.SubTaskName))
             {
                 _logger.LogError($"The sub task '{request.SubTaskName}' is already created");

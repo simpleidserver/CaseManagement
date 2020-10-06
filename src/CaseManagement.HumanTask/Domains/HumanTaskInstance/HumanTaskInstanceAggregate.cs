@@ -19,6 +19,7 @@ namespace CaseManagement.HumanTask.Domains
             EventHistories = new ConcurrentBag<HumanTaskInstanceEventHistory>();
             DeadLines = new List<HumanTaskInstanceDeadLine>();
             PresentationElement = new PresentationElementInstance();
+            CompletionBehavior = new CompletionBehavior();
         }
 
         public string HumanTaskInstanceId { get; set; }
@@ -38,6 +39,7 @@ namespace CaseManagement.HumanTask.Domains
         public ConcurrentBag<HumanTaskInstanceEventHistory> EventHistories { get; set; }
         public ICollection<HumanTaskInstanceDeadLine> DeadLines { get; set; }
         public HumanTaskInstanceComposition  Composition { get; set; }
+        public CompletionBehavior CompletionBehavior { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
 
@@ -53,7 +55,8 @@ namespace CaseManagement.HumanTask.Domains
             List<HumanTaskInstanceDeadLine> deadLines,
             PresentationElementInstance presentationElementInstance,
             HumanTaskInstanceComposition composition,
-            Operation operation)
+            Operation operation,
+            CompletionBehavior completion)
         {
             var evt = new HumanTaskInstanceCreatedEvent(
                 Guid.NewGuid().ToString(), 
@@ -69,6 +72,7 @@ namespace CaseManagement.HumanTask.Domains
                 presentationElementInstance,
                 composition,
                 operation,
+                completion,
                 activationDeferralTime,
                 expirationTime);
             var result = new HumanTaskInstanceAggregate();
@@ -101,7 +105,8 @@ namespace CaseManagement.HumanTask.Domains
                 Composition = (HumanTaskInstanceComposition)Composition?.Clone(),
                 HumanTaskInstanceId = HumanTaskInstanceId,
                 ParentHumanTaskName = ParentHumanTaskName,
-                ParentHumanTaskId = ParentHumanTaskId
+                ParentHumanTaskId = ParentHumanTaskId,
+                CompletionBehavior = (CompletionBehavior)CompletionBehavior?.Clone()
             };
         }
 
@@ -177,6 +182,17 @@ namespace CaseManagement.HumanTask.Domains
         }
 
         /// <summary>
+        /// Skip the human task instance.
+        /// </summary>
+        /// <param name="userPrincipal"></param>
+        public void Skip(string userPrincipal)
+        {
+            var evt = new HumanTaskInstanceSkippedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, userPrincipal, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        /// <summary>
         /// Complete the human task instance.
         /// </summary>
         /// <param name="outputParameters"></param>
@@ -216,6 +232,7 @@ namespace CaseManagement.HumanTask.Domains
                 PresentationElement = evt.PresentationElement;
                 DeadLines = evt.DeadLines;
                 Composition = (HumanTaskInstanceComposition)evt.Composition?.Clone();
+                CompletionBehavior = (CompletionBehavior)evt.Completion?.Clone();
                 Operation = (Operation)evt.Operation?.Clone();
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;
@@ -306,6 +323,17 @@ namespace CaseManagement.HumanTask.Domains
                 DeadLines = new List<HumanTaskInstanceDeadLine>();
                 Status = HumanTaskInstanceStatus.COMPLETED;
                 OutputParameters = evt.OutputParameters;
+                UpdateDateTime = evt.UpdateDateTime;
+                Version = evt.Version;
+            }
+        }
+
+        private void Handle(HumanTaskInstanceSkippedEvent evt)
+        {
+            using (var evtHistory = AddEventHistory(evt.Id, evt.UpdateDateTime, HumanTaskInstanceEventTypes.COMPLETE, evt.UserPrincipal))
+            {
+                DeadLines = new List<HumanTaskInstanceDeadLine>();
+                Status = HumanTaskInstanceStatus.OBSOLETE;
                 UpdateDateTime = evt.UpdateDateTime;
                 Version = evt.Version;
             }

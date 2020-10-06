@@ -270,3 +270,36 @@ Scenario: Execute a composite task
 
 	Then HTTP status code equals to '200'
 	Then JSON 'content[0].name'='addClient'
+
+Scenario: Check the result of an automatic completion behavior
+	When authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key                 | Value                                                  |
+	| humanTaskName       | compositeTaskWithAutomaticCompletionBehavior           |
+	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskInstanceId'
+	And authenticate
+	| Key                                                                  | Value         |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | administrator |	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/subtasks'	
+	And extract JSON from body	
+	And extract '$.content[?(@.name == 'addClient')].id' from JSON body into 'subHumanTaskInstanceId'
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$subHumanTaskInstanceId$/start'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$subHumanTaskInstanceId$/complete'
+	| Key                 | Value           |
+	| operationParameters | { "wage": "3" } |	
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/details'
+	And extract JSON from body into 'detailsHumanTaskInstance'
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/subtasks'
+	And extract JSON from body into 'subTasks'
+	
+	Then HTTP status code equals to '200'
+	Then extract JSON 'detailsHumanTaskInstance', JSON exists 'id'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'name'='compositeTaskWithAutomaticCompletionBehavior'
+	Then extract JSON 'detailsHumanTaskInstance', JSON 'status'='COMPLETED'	
+	Then extract JSON 'subTasks', JSON '$.content[?(@.name == 'addClient')].status'='COMPLETED'
+	Then extract JSON 'subTasks', JSON '$.content[?(@.name == 'emptyTask')].status'='OBSOLETE'

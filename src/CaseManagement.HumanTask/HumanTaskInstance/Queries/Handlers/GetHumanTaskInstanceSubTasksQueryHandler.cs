@@ -33,7 +33,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            var result = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.HumanTaskDefName, cancellationToken);
+            var result = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.AggregateId, cancellationToken);
             ICollection<TaskInstanceDetailsResult> content = result.Select(_ => TaskInstanceDetailsResult.ToDto(_)).ToList();
             return new SubTasksResults 
             { 

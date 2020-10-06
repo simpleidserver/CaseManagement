@@ -142,6 +142,26 @@ namespace CaseManagement.HumanTask.Builders
 
         #endregion
 
+        #region Completion behavior
+
+        public HumanTaskDefBuilder SetManualCompletion(Action<CompletionBehaviorBuilder> callback)
+        {
+            var builder = new CompletionBehaviorBuilder(CompletionBehaviors.MANUAL);
+            callback(builder);
+            _humanTaskDef.CompletionBehavior = builder.Build();
+            return this;
+        }
+
+        public HumanTaskDefBuilder SetAutomaticCompletion(Action<CompletionBehaviorBuilder> callback)
+        {
+            var builder = new CompletionBehaviorBuilder(CompletionBehaviors.AUTOMATIC);
+            callback(builder);
+            _humanTaskDef.CompletionBehavior = builder.Build();
+            return this;
+        }
+
+        #endregion
+
         #region Composition
 
         public HumanTaskDefBuilder SetParallelComposition(InstantiationPatterns instantiationPattern, Action<CompositionBuilder> callback)

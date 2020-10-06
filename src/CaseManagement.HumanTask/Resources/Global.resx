@@ -120,6 +120,9 @@
   <data name="BadState" xml:space="preserve">
     <value>State is not '{0}'</value>
   </data>
+  <data name="CompletionBehaviorMustBeSatisfied" xml:space="preserve">
+    <value>At least one completion behavior must be specified</value>
+  </data>
   <data name="GroupNamesAndUserIdentifiersSpecified" xml:space="preserve">
     <value>GroupNames and UserIdentifiers parameters cannot be specified at the same time</value>
   </data>

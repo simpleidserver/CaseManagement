@@ -26,6 +26,10 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
             });
             services.AddMvc();
             services.AddLogging();
+            var emptyTask = HumanTaskDefBuilder.New("emptyTask")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
+                .Build();
             var addClient = HumanTaskDefBuilder.New("addClient")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
@@ -68,7 +72,8 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                             });
                             nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
                             nt.AddName("en-US", "<b>firstName is $firstName$</b>");
-                            nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");                        });
+                            nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");                        
+                        });
                     });
                 })
                 .Build();
@@ -115,6 +120,35 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     });
                 })
                 .Build();
+            var compositeTaskWithAutomaticCompletionBehavior = HumanTaskDefBuilder.New("compositeTaskWithAutomaticCompletionBehavior")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
+                .SetOperation(op =>
+                {
+                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
+                    op.AddInputParameter("isGoldenClient", ParameterTypes.BOOL, false);
+                })
+                .SetParallelComposition(InstantiationPatterns.AUTOMATIC, cb =>
+                {
+                    cb.AddSubTask("addClient", new List<ToPart>
+                    {
+                        new ToPart { Expression = "context.GetInput(\"firstName\")", Name = "firstName" },
+                        new ToPart { Expression = "context.GetInput(\"isGoldenClient\")", Name = "isGoldenClient" }
+                    });
+                    cb.AddSubTask("emptyTask", new List<ToPart>());
+                })
+                .SetAutomaticCompletion(cb =>
+                {
+                    cb.AddCompletion("context.GetIntOutput(\"wage\", \"addClient\") > 2", new List<Copy>
+                    {
+                        new Copy
+                        {
+                            From = "context.GetIntOutput(\"wage\", \"addClient\")",
+                            To = "wage"
+                        }
+                    });
+                })
+                .Build();
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
@@ -125,7 +159,9 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     multiplePotentialOwners,
                     startDeadLine,
                     compositeTask,
-                    completionDeadLine
+                    completionDeadLine,
+                    compositeTaskWithAutomaticCompletionBehavior,
+                    emptyTask
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {
