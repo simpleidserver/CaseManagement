@@ -72,6 +72,32 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     });
                 })
                 .Build();
+            var completionDeadLine = HumanTaskDefBuilder.New("completionDeadLine")
+                .SetOperation(op =>
+                {
+                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
+                })
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
+                .AddCompletionDeadLine("sendReminder", (dl) =>
+                {
+                    dl.SetUntilExpression("P0Y0M0DT0H0M2S");
+                    dl.AddEscalation(eb =>
+                    {
+                        eb.AddToPart("firstName", "context.GetInput(\"firstName\")");
+                        eb.SetNotification("notificationCompletion", nt =>
+                        {
+                            nt.SetOperation(op =>
+                            {
+                                op.AddInputParameter("firstName", ParameterTypes.STRING, true);
+                            });
+                            nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
+                            nt.AddName("en-US", "<b>firstName is $firstName$</b>");
+                            nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");
+                        });
+                    });
+                })
+                .Build();
             var compositeTask = HumanTaskDefBuilder.New("compositeTask")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
@@ -98,7 +124,8 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     noPotentialOwner,
                     multiplePotentialOwners,
                     startDeadLine,
-                    compositeTask
+                    compositeTask,
+                    completionDeadLine
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {

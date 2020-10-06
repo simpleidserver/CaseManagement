@@ -303,6 +303,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             using (var evtHistory = AddEventHistory(evt.Id, evt.UpdateDateTime, HumanTaskInstanceEventTypes.COMPLETE, evt.UserPrincipal, evt.OutputParameters))
             {
+                DeadLines = new List<HumanTaskInstanceDeadLine>();
                 Status = HumanTaskInstanceStatus.COMPLETED;
                 OutputParameters = evt.OutputParameters;
                 UpdateDateTime = evt.UpdateDateTime;

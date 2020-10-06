@@ -51,6 +51,14 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
+        public HumanTaskDefBuilder AddCompletionDeadLine(string name, Action<DeadLineBuilder> callback)
+        {
+            var deadLineBuilder = new DeadLineBuilder(name);
+            callback(deadLineBuilder);
+            _humanTaskDef.DeadLines.CompletionDeadLines.Add(deadLineBuilder.Build());
+            return this;
+        }
+
         #endregion
 
         #region Presentation element
