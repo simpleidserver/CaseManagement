@@ -32,13 +32,23 @@
                     <mat-icon>folder</mat-icon> {{ "CASES" | translate }}
                     <span fxFlex>
                         <span fxFlex></span>
-                        <mat-icon [@indicatorRotate]="expanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
+                        <mat-icon [@indicatorRotate]="casesExpanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
                     </span>
                 </a>
-                <div *ngIf="expanded">
+                <div *ngIf="casesExpanded">
                     <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cases/casefiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_FILES" | translate }}</a>
                     <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cases/caseplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLANS" | translate }}</a>
                     <a mat-list-item *ngIf="roles === 'businessanalyst' || roles === 'caseworker'" [routerLink]="['/cases/caseplaninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLAN_INSTANCES" | translate }}</a>
+                </div>
+                <a mat-list-item (click)="toggleHumanTasks()">
+                    <mat-icon>dynamic_form</mat-icon> {{ "HUMAN_TASKS" | translate }}
+                    <span fxFlex>
+                        <span fxFlex></span>
+                        <mat-icon [@indicatorRotate]="humanTasksExpanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
+                    </span>
+                </a>
+                <div *ngIf="humanTasksExpanded">
+                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/humantasks/humantaskdefs']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "HUMAN_TASK_DEFS" | translate }}</a>
                 </div>
             </mat-nav-list>
         </mat-sidenav>

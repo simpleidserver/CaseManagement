@@ -35,7 +35,8 @@ export class AppComponent implements OnInit {
     name: string;
     roles: any;
     url: string = process.env.BASE_URL + "assets/images/logo.svg";
-    expanded: boolean = false;
+    casesExpanded: boolean = false;
+    humanTasksExpanded: boolean = false;
 
     constructor(private route: Router, private translate: TranslateService, private oauthService: OAuthService, private router: Router) {
         translate.setDefaultLang('fr');
@@ -70,7 +71,11 @@ export class AppComponent implements OnInit {
     }
 
     toggleCases() {
-        this.expanded = !this.expanded;
+        this.casesExpanded = !this.casesExpanded;
+    }
+
+    toggleHumanTasks() {
+        this.humanTasksExpanded = !this.humanTasksExpanded;
     }
 
     init() {
@@ -97,12 +102,16 @@ export class AppComponent implements OnInit {
 
         this.router.events.subscribe((opt : any) => {
             var url = opt.urlAfterRedirects;
-            if (!url || this.expanded) {
+            if (!url || this.humanTasksExpanded || this.casesExpanded) {
                 return;
             }
 
             if (url.startsWith('/cases')) {
-                this.expanded = true;
+                this.casesExpanded = true;
+            }
+
+            if (url.startsWith('/humantasks')) {
+                this.humanTasksExpanded = true;
             }
         });
     }

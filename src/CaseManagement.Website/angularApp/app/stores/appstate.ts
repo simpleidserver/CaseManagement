@@ -1,7 +1,8 @@
 ﻿import { createSelector } from '@ngrx/store';
-import * as fromCasePlan from './caseplans/reducers/caseplan.reducers';
 import * as fromCaseFile from './casefiles/reducers/casefile.reducers';
 import * as fromCasePlanInstance from './caseplaninstances/reducers/caseplaninstance.reducers';
+import * as fromCasePlan from './caseplans/reducers/caseplan.reducers';
+import * as fromHumanTask from './humantaskdefs/reducers/humantaskdef.reducers';
 
 export interface AppState {
     casePlan: fromCasePlan.CasePlanState;
@@ -12,6 +13,7 @@ export interface AppState {
     caseFileHistoryLst: fromCaseFile.CaseFileHistoryLstState;
     casePlanInstance: fromCasePlanInstance.CasePlanInstanceState;
     casePlanInstanceLst: fromCasePlanInstance.CasePlanInstanceLstState;
+    humanTask: fromHumanTask.HumanTaskDefState;
 }
 
 export const selectCasePlan = (state: AppState) => state.casePlan;
@@ -22,6 +24,7 @@ export const selectCaseFileLst = (state: AppState) => state.caseFileLst;
 export const selectCaseFileHistoryLst = (state: AppState) => state.caseFileHistoryLst;
 export const selectCasePlanInstance = (state: AppState) => state.casePlanInstance;
 export const selectCasePlanInstanceLst = (state: AppState) => state.casePlanInstanceLst;
+export const selectHumanTask = (state: AppState) => state.humanTask;
 
 export const selectCasePlanResult = createSelector(
     selectCasePlan,
@@ -109,6 +112,17 @@ export const selectCasePlanInstanceLstResult = createSelector(
 
         return state.content;
     }
+);
+
+export const selectHumanTaskResult = createSelector(
+    selectHumanTask,
+    (state: fromHumanTask.HumanTaskDefState) => {
+        if (!state || state.content == null) {
+            return null;
+        }
+
+        return state.content;
+    }
 ); 
 
 export const appReducer = {
@@ -119,5 +133,6 @@ export const appReducer = {
     caseFileLst: fromCaseFile.caseFileLstReducer,
     caseFileHistoryLst: fromCaseFile.caseFileHistoryLstReducer,
     casePlanInstance: fromCasePlanInstance.casePlanInstanceReducer,
-    casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer
+    casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer,
+    humanTask: fromHumanTask.humanTaskDefReducer
 };

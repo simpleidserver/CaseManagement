@@ -107,5 +107,7 @@
   "USERS": "Utilisateurs",
   "ENTER_USER_ID": "Saisir l'identifiant de l'utilisateur",
   "ROLE_SAVED": "Le rôle est sauvegardé",
-  "ERROR_SAVE_ROLE": "Une erreur est survenue durant la sauvegarde du rôle"
+  "ERROR_SAVE_ROLE": "Une erreur est survenue durant la sauvegarde du rôle",
+  "HUMAN_TASKS": "Tâches humaines",
+  "HUMAN_TASK_DEFS": "Définitions des tâches humaines"
 }

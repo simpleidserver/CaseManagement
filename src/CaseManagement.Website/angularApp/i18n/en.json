@@ -107,5 +107,7 @@
   "USERS": "Users",
   "ENTER_USER_ID": "Enter user identifier",
   "ROLE_SAVED": "Role is saved",
-  "ERROR_SAVE_ROLE": "An error occured while trying to update the role"
+  "ERROR_SAVE_ROLE": "An error occured while trying to update the role",
+  "HUMAN_TASKS": "Human tasks",
+  "HUMAN_TASK_DEFS": "Human task definitions"
 }
