@@ -109,5 +109,23 @@
   "ROLE_SAVED": "Le rôle est sauvegardé",
   "ERROR_SAVE_ROLE": "Une erreur est survenue durant la sauvegarde du rôle",
   "HUMAN_TASKS": "Tâches humaines",
-  "HUMAN_TASK_DEFS": "Définitions des tâches humaines"
+  "HUMAN_TASK_DEFS": "Définitions des tâches humaines",
+  "HUMANTASK": {
+    "DEF": {
+      "VIEW": {
+        "TEXT": "Texte",
+        "SELECT": "Sélection",
+        "FIELDID": "Identifiant du champ",
+        "SELECT_LANGUAGE": "Sélectionner une langue",
+        "TRANSLATION": "Traduction",
+        "ADD": "Ajouter",
+        "TRANSLATION_EXISTS": "Il existe déjà une traduction",
+        "SELECT_FIELDTYPE": "Sélectionner le type de champ",
+        "VALUE": "Valeur",
+        "UPDATE_GLOBAL_PROPERTIES": "Mettre à jour les propriétés",
+        "UPDATE_VALUES": "Mettre à jour les valeurs",
+        "UPDATE_LABELS": "Mettre à jour les labels"
+      }
+    }
+  }
 }

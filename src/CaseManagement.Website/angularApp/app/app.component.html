@@ -41,7 +41,7 @@
                     <a mat-list-item *ngIf="roles === 'businessanalyst' || roles === 'caseworker'" [routerLink]="['/cases/caseplaninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLAN_INSTANCES" | translate }}</a>
                 </div>
                 <a mat-list-item (click)="toggleHumanTasks()">
-                    <mat-icon>dynamic_form</mat-icon> {{ "HUMAN_TASKS" | translate }}
+                    <mat-icon>format_align_justify</mat-icon> {{ "HUMAN_TASKS" | translate }}
                     <span fxFlex>
                         <span fxFlex></span>
                         <mat-icon [@indicatorRotate]="humanTasksExpanded ? 'expanded': 'collapsed'">expand_more</mat-icon>

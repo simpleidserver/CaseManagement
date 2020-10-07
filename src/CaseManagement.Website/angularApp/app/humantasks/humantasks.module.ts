@@ -10,11 +10,10 @@ import { HumanTasksRoutes } from './humantasks.routes';
         CommonModule,
         SharedModule,
         MaterialModule,
-        HumanTasksComponent,
         HumanTasksRoutes
     ],
     entryComponents: [],
-    declarations: [HumanTasksComponent ],
+    declarations: [HumanTasksComponent],
     providers: [ ]
 })
 

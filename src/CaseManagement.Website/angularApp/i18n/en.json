@@ -109,5 +109,23 @@
   "ROLE_SAVED": "Role is saved",
   "ERROR_SAVE_ROLE": "An error occured while trying to update the role",
   "HUMAN_TASKS": "Human tasks",
-  "HUMAN_TASK_DEFS": "Human task definitions"
+  "HUMAN_TASK_DEFS": "Human task definitions",
+  "HUMANTASK": {
+    "DEF": {
+      "VIEW": {
+        "TEXT": "Text",
+        "SELECT": "Select",
+        "FIELDID": "Field identifier",
+        "SELECT_LANGUAGE": "Select the language",
+        "TRANSLATION": "Translation",
+        "ADD": "Add",
+        "TRANSLATION_EXISTS": "A translation already exists",
+        "SELECT_FIELDTYPE": "Select the type of field",
+        "VALUE": "Value",
+        "UPDATE_GLOBAL_PROPERTIES": "Update properties",
+        "UPDATE_VALUES": "Update values",
+        "UPDATE_LABELS": "Update labels"
+      }
+    }
+  }
 }
