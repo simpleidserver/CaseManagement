@@ -7,6 +7,7 @@ import { Rendering } from "../../common/rendering.model";
 export class HumanTaskDef {
     constructor() {
         this.rendering = new Rendering();
+        this.operation = new Operation();
     }
 
     name: string;

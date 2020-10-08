@@ -8,6 +8,8 @@ import { SharedModule } from '@app/shared/shared.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { HumanTaskDefsRoutes } from './humantaskdefs.routes';
+import { ViewHumanTaskDefInfoComponent } from './view/info/info.component';
+import { ViewHumanTaskDefRenderingComponent } from './view/rendering/rendering.component';
 import { ViewHumanTaskDef } from './view/view.component';
 
 @NgModule({
@@ -22,7 +24,12 @@ import { ViewHumanTaskDef } from './view/view.component';
         SharedModule
     ],
     entryComponents: [],
-    declarations: [ViewHumanTaskDef, TranslateFieldPipe ],
+    declarations: [
+        ViewHumanTaskDef,
+        ViewHumanTaskDefRenderingComponent,
+        ViewHumanTaskDefInfoComponent,
+        TranslateFieldPipe
+    ],
     exports: [ ]
 })
 

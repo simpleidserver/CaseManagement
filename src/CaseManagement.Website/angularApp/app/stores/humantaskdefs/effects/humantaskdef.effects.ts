@@ -24,5 +24,19 @@ export class HumanTaskDefEffects {
                     );
             }
             )
+    );
+
+    @Effect()
+    updateHumanTaskDef = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.UPDATE_HUMANASKDEF),
+            mergeMap((evt: fromHumanTask.UpdateHumanTaskDef) => {
+                return this.humanTaskDefService.update(evt.humanTaskDef)
+                    .pipe(
+                        map(humanTaskDef => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF, content: humanTaskDef }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_HUMANASKDEF }))
+                    );
+            }
+            )
         );
 }

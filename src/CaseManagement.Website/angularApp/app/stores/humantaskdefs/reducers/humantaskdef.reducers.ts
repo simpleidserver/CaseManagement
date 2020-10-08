@@ -18,6 +18,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
         case fromActions.ActionTypes.COMPLETE_GET_HUMANTASKDEF:
             state.content = action.content;
             return { ...state };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF:
+            state.content = action.content;
+            return { ...state };
         default:
             return state;
     }

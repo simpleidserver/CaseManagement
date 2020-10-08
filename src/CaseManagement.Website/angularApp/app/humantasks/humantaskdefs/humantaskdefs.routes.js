@@ -1,11 +1,7 @@
 import { RouterModule } from '@angular/router';
-import { ListCaseFilesComponent } from './list/list.component';
-import { ViewCaseFilesComponent } from './view/view.component';
-import { HistoryCaseFileComponent } from './history/history.component';
+import { ViewHumanTaskDef } from './view/view.component';
 var routes = [
-    { path: '', component: ListCaseFilesComponent },
-    { path: ':id', component: ViewCaseFilesComponent },
-    { path: ':id/history', component: HistoryCaseFileComponent }
+    { path: ':id', component: ViewHumanTaskDef }
 ];
-export var CaseFilesRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=casefiles.routes.js.map
+export var HumanTaskDefsRoutes = RouterModule.forChild(routes);
+//# sourceMappingURL=humantaskdefs.routes.js.map

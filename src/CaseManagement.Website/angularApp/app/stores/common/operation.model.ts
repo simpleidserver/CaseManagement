@@ -1,4 +1,9 @@
 ﻿export class Operation {
+    constructor() {
+        this.inputParameters = [];
+        this.outputParameters = [];
+    }
+
     inputParameters: Parameter[];
     outputParameters: Parameter[];
 }

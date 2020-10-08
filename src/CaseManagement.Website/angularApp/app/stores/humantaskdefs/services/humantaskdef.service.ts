@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { OutputRenderingElement, OutputRenderingElementValue, Translation, OptionValue } from '../../common/rendering.model';
 import { HumanTaskDef } from '../models/humantaskdef.model';
+import { Parameter } from '../../common/operation.model';
 
 @Injectable()
 export class HumanTaskDefService {
@@ -11,6 +12,18 @@ export class HumanTaskDefService {
         console.log(humanTaskDefId);
         const record = new HumanTaskDef();
         record.name = "AddClient";
+
+        const inputParameter = new Parameter();
+        inputParameter.isRequired = true;
+        inputParameter.name = "firstname";
+        inputParameter.type = "string";
+        record.operation.inputParameters.push(inputParameter);
+
+        const outputParameter = new Parameter();
+        outputParameter.isRequired = false;
+        outputParameter.name = "wage";
+        outputParameter.type = "bool";
+        record.operation.outputParameters.push(outputParameter);
 
         const firstNameField = new OutputRenderingElement();
         const firstName = new Translation("fr", "Prenom");
@@ -52,5 +65,9 @@ export class HumanTaskDefService {
         record.rendering.output.push(lastNameField);
         record.rendering.output.push(gendersField);
         return of(record);
+    }
+
+    update(humanTaskDef: HumanTaskDef): Observable<HumanTaskDef> {
+        return of(humanTaskDef);
     }
 }

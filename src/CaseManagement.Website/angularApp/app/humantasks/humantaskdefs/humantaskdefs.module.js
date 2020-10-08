@@ -8,19 +8,19 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateFieldPipe } from '@app/infrastructure/pipes/translateFieldPipe';
+import { MaterialModule } from '@app/shared/material.module';
+import { SharedModule } from '@app/shared/shared.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
-import { MaterialModule } from '../../shared/material.module';
-import { SharedModule } from '../../shared/shared.module';
-import { CaseFilesRoutes } from './casefiles.routes';
-import { HistoryCaseFileComponent } from './history/history.component';
-import { AddCaseFileDialog } from './list/add-case-file-dialog';
-import { ListCaseFilesComponent } from './list/list.component';
-import { ViewCaseFilesComponent } from './view/view.component';
-var CaseFilesModule = (function () {
-    function CaseFilesModule() {
+import { HumanTaskDefsRoutes } from './humantaskdefs.routes';
+import { ViewHumanTaskDefInfoComponent } from './view/info/info.component';
+import { ViewHumanTaskDefRenderingComponent } from './view/rendering/rendering.component';
+import { ViewHumanTaskDef } from './view/view.component';
+var HumanTaskDefsModule = (function () {
+    function HumanTaskDefsModule() {
     }
-    CaseFilesModule = __decorate([
+    HumanTaskDefsModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
@@ -28,16 +28,21 @@ var CaseFilesModule = (function () {
                 MonacoEditorModule.forRoot(),
                 FormsModule,
                 HttpClientModule,
-                CaseFilesRoutes,
+                HumanTaskDefsRoutes,
                 MaterialModule,
                 SharedModule
             ],
-            entryComponents: [AddCaseFileDialog],
-            declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent, HistoryCaseFileComponent],
-            exports: [ListCaseFilesComponent, ViewCaseFilesComponent]
+            entryComponents: [],
+            declarations: [
+                ViewHumanTaskDef,
+                ViewHumanTaskDefRenderingComponent,
+                ViewHumanTaskDefInfoComponent,
+                TranslateFieldPipe
+            ],
+            exports: []
         })
-    ], CaseFilesModule);
-    return CaseFilesModule;
+    ], HumanTaskDefsModule);
+    return HumanTaskDefsModule;
 }());
-export { CaseFilesModule };
-//# sourceMappingURL=casefiles.module.js.map
+export { HumanTaskDefsModule };
+//# sourceMappingURL=humantaskdefs.module.js.map

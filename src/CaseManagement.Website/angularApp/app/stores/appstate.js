@@ -1,7 +1,8 @@
 import { createSelector } from '@ngrx/store';
-import * as fromCasePlan from './caseplans/reducers/caseplan.reducers';
 import * as fromCaseFile from './casefiles/reducers/casefile.reducers';
 import * as fromCasePlanInstance from './caseplaninstances/reducers/caseplaninstance.reducers';
+import * as fromCasePlan from './caseplans/reducers/caseplan.reducers';
+import * as fromHumanTask from './humantaskdefs/reducers/humantaskdef.reducers';
 export var selectCasePlan = function (state) { return state.casePlan; };
 export var selectCasePlanLst = function (state) { return state.casePlanLst; };
 export var selectCasePlanHistoryLst = function (state) { return state.casePlanHistoryLst; };
@@ -10,6 +11,7 @@ export var selectCaseFileLst = function (state) { return state.caseFileLst; };
 export var selectCaseFileHistoryLst = function (state) { return state.caseFileHistoryLst; };
 export var selectCasePlanInstance = function (state) { return state.casePlanInstance; };
 export var selectCasePlanInstanceLst = function (state) { return state.casePlanInstanceLst; };
+export var selectHumanTask = function (state) { return state.humanTask; };
 export var selectCasePlanResult = createSelector(selectCasePlan, function (state) {
     if (!state || state.content == null) {
         return null;
@@ -58,6 +60,12 @@ export var selectCasePlanInstanceLstResult = createSelector(selectCasePlanInstan
     }
     return state.content;
 });
+export var selectHumanTaskResult = createSelector(selectHumanTask, function (state) {
+    if (!state || state.content == null) {
+        return null;
+    }
+    return state.content;
+});
 export var appReducer = {
     casePlan: fromCasePlan.casePlanReducer,
     casePlanLst: fromCasePlan.casePlanLstReducer,
@@ -66,6 +74,7 @@ export var appReducer = {
     caseFileLst: fromCaseFile.caseFileLstReducer,
     caseFileHistoryLst: fromCaseFile.caseFileHistoryLstReducer,
     casePlanInstance: fromCasePlanInstance.casePlanInstanceReducer,
-    casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer
+    casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer,
+    humanTask: fromHumanTask.humanTaskDefReducer
 };
 //# sourceMappingURL=appstate.js.map

@@ -8,25 +8,25 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { CasesRoutes } from './cases.routes';
-import { CasesComponent } from './cases.component';
-var CasesModule = (function () {
-    function CasesModule() {
+import { HumanTasksComponent } from './humantasks.component';
+import { HumanTasksRoutes } from './humantasks.routes';
+var HumanTasksModule = (function () {
+    function HumanTasksModule() {
     }
-    CasesModule = __decorate([
+    HumanTasksModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
                 SharedModule,
                 MaterialModule,
-                CasesRoutes
+                HumanTasksRoutes
             ],
             entryComponents: [],
-            declarations: [CasesComponent],
+            declarations: [HumanTasksComponent],
             providers: []
         })
-    ], CasesModule);
-    return CasesModule;
+    ], HumanTasksModule);
+    return HumanTasksModule;
 }());
-export { CasesModule };
-//# sourceMappingURL=cases.module.js.map
+export { HumanTasksModule };
+//# sourceMappingURL=humantasks.module.js.map

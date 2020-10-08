@@ -31,6 +31,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 var MaterialModule = (function () {
     function MaterialModule() {
     }
@@ -69,7 +70,8 @@ var MaterialModule = (function () {
                 MatTreeModule,
                 MatStepperModule,
                 MatSortModule,
-                ScrollingModule
+                ScrollingModule,
+                DragDropModule
             ]
         })
     ], MaterialModule);

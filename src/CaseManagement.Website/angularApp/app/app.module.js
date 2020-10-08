@@ -27,6 +27,8 @@ import { CaseFilesEffects } from './stores/casefiles/effects/case-files.effects'
 import { CaseFilesService } from './stores/casefiles/services/casefiles.service';
 import { CasePlanInstanceEffects } from './stores/caseplaninstances/effects/caseplaninstance.effects';
 import { CasePlanInstanceService } from './stores/caseplaninstances/services/caseplaninstance.service';
+import { HumanTaskDefService } from './stores/humantaskdefs/services/humantaskdef.service';
+import { HumanTaskDefEffects } from './stores/humantaskdefs/effects/humantaskdef.effects';
 import { CasePlanEffects } from './stores/caseplans/effects/caseplan.effects';
 import { CasePlanService } from './stores/caseplans/services/caseplan.service';
 export function createTranslateLoader(http) {
@@ -48,7 +50,7 @@ var AppModule = (function () {
                 BrowserAnimationsModule,
                 HttpClientModule,
                 OAuthModule.forRoot(),
-                EffectsModule.forRoot([CaseFilesEffects, CasePlanInstanceEffects, CasePlanEffects]),
+                EffectsModule.forRoot([CaseFilesEffects, CasePlanInstanceEffects, CasePlanEffects, HumanTaskDefEffects]),
                 StoreModule.forRoot(appReducer),
                 StoreDevtoolsModule.instrument({
                     maxAge: 10
@@ -65,7 +67,7 @@ var AppModule = (function () {
                 AppComponent
             ],
             bootstrap: [AppComponent],
-            providers: [AuthGuard, CaseFilesService, CasePlanService, CasePlanInstanceService]
+            providers: [AuthGuard, CaseFilesService, CasePlanService, CasePlanInstanceService, HumanTaskDefService]
         })
     ], AppModule);
     return AppModule;

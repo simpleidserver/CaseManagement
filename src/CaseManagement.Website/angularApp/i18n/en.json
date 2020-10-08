@@ -110,21 +110,54 @@
   "ERROR_SAVE_ROLE": "An error occured while trying to update the role",
   "HUMAN_TASKS": "Human tasks",
   "HUMAN_TASK_DEFS": "Human task definitions",
+  "SHARED": {
+    "NAME": "Name",
+    "PRIORITY": "Priority",
+    "UPDATE": "Update",
+    "ADD": "Add"
+  },
   "HUMANTASK": {
     "DEF": {
       "VIEW": {
-        "TEXT": "Text",
-        "SELECT": "Select",
-        "FIELDID": "Field identifier",
-        "SELECT_LANGUAGE": "Select the language",
-        "TRANSLATION": "Translation",
-        "ADD": "Add",
-        "TRANSLATION_EXISTS": "A translation already exists",
-        "SELECT_FIELDTYPE": "Select the type of field",
-        "VALUE": "Value",
-        "UPDATE_GLOBAL_PROPERTIES": "Update properties",
-        "UPDATE_VALUES": "Update values",
-        "UPDATE_LABELS": "Update labels"
+        "HUMANTASKDEF_UPDATED": "Human task definition is updated",
+        "ERROR_UPDATE_HUMANTASKDEF": "An error occured while trying to update the human task definition",
+        "TASK": {
+          "TITLE": "Task",
+          "UPDATE_OPERATION": "Update operation",
+          "INPUT_PARAMETER_EXISTS": "Input parameter already exists",
+          "OUTPUT_PARAMETER_EXISTS": "Output parameter already exists",
+          "SELECT_PARAMETER_TYPE": "Select parameter type",
+          "PARAMETER_ISREQUIRED": "Parameter is required",
+          "ADD_INPUT_PARAMETER": "Add input parameter",
+          "ADD_OUTPUT_PARAMETER": "Add output parameter",
+          "UPDATE_INFO": "Update task",
+          "PARAMETER_INFO": "{{name}} (type = {{type}}, is required = {{isRequired}})"
+        },
+        "PRESENTATION": {
+          "TITLE": "Presentation"
+        },
+        "ASSIGNMENT": {
+          "TITLE": "Assignment"
+        },
+        "DEADLINES": {
+          "TITLE": "Deadlines"
+        },
+        "RENDERING": {
+          "TITLE": "Rendering",
+          "TEXT": "Text",
+          "SELECT": "Select",
+          "FIELDID": "Field identifier",
+          "SELECT_LANGUAGE": "Select the language",
+          "TRANSLATION": "Translation",
+          "ADD": "Add",
+          "TRANSLATION_EXISTS": "A translation already exists",
+          "SELECT_FIELDTYPE": "Select the type of field",
+          "VALUE": "Value",
+          "UPDATE_GLOBAL_PROPERTIES": "Update properties",
+          "UPDATE_VALUES": "Update values",
+          "UPDATE_LABELS": "Update labels",
+          "VALUE_EXISTS": "Value already exists"
+        }
       }
     }
   }

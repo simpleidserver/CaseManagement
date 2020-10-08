@@ -21,7 +21,8 @@ var AppComponent = (function () {
         this.router = router;
         this.isConnected = false;
         this.url = process.env.BASE_URL + "assets/images/logo.svg";
-        this.expanded = false;
+        this.casesExpanded = false;
+        this.humanTasksExpanded = false;
         translate.setDefaultLang('fr');
         translate.use('fr');
         this.configureAuth();
@@ -49,7 +50,10 @@ var AppComponent = (function () {
         return false;
     };
     AppComponent.prototype.toggleCases = function () {
-        this.expanded = !this.expanded;
+        this.casesExpanded = !this.casesExpanded;
+    };
+    AppComponent.prototype.toggleHumanTasks = function () {
+        this.humanTasksExpanded = !this.humanTasksExpanded;
     };
     AppComponent.prototype.init = function () {
         var claims = this.oauthService.getIdentityClaims();
@@ -75,11 +79,14 @@ var AppComponent = (function () {
         });
         this.router.events.subscribe(function (opt) {
             var url = opt.urlAfterRedirects;
-            if (!url || _this.expanded) {
+            if (!url || _this.humanTasksExpanded || _this.casesExpanded) {
                 return;
             }
             if (url.startsWith('/cases')) {
-                _this.expanded = true;
+                _this.casesExpanded = true;
+            }
+            if (url.startsWith('/humantasks')) {
+                _this.humanTasksExpanded = true;
             }
         });
     };

@@ -4,6 +4,7 @@
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="angularApp\app\infrastructure\pipes\translateFieldPipe.ts" />
     <None Remove="angularApp\app\stores\appstate.ts" />
     <None Remove="angularApp\app\stores\casefiles\reducers\casefile.reducers.ts" />
     <None Remove="angularApp\app\stores\caseplaninstances\reducers\caseplaninstance.reducers.ts" />
@@ -15,9 +16,7 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="angularApp\app\stores\workertasks\" />
-  </ItemGroup>
-  <ItemGroup>
+    <TypeScriptCompile Include="angularApp\app\infrastructure\pipes\translateFieldPipe.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\appstate.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\casefiles\reducers\casefile.reducers.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\caseplaninstances\reducers\caseplaninstance.reducers.ts" />

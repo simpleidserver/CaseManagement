@@ -110,21 +110,54 @@
   "ERROR_SAVE_ROLE": "Une erreur est survenue durant la sauvegarde du rôle",
   "HUMAN_TASKS": "Tâches humaines",
   "HUMAN_TASK_DEFS": "Définitions des tâches humaines",
+  "SHARED": {
+    "NAME": "Nom",
+    "PRIORITY": "Priorité",
+    "UPDATE": "Mettre à jour",
+    "ADD": "Ajouter"
+  },
   "HUMANTASK": {
     "DEF": {
       "VIEW": {
-        "TEXT": "Texte",
-        "SELECT": "Sélection",
-        "FIELDID": "Identifiant du champ",
-        "SELECT_LANGUAGE": "Sélectionner une langue",
-        "TRANSLATION": "Traduction",
-        "ADD": "Ajouter",
-        "TRANSLATION_EXISTS": "Il existe déjà une traduction",
-        "SELECT_FIELDTYPE": "Sélectionner le type de champ",
-        "VALUE": "Valeur",
-        "UPDATE_GLOBAL_PROPERTIES": "Mettre à jour les propriétés",
-        "UPDATE_VALUES": "Mettre à jour les valeurs",
-        "UPDATE_LABELS": "Mettre à jour les labels"
+        "HUMANTASKDEF_UPDATED": "La définition de la tâche humaine a été mise à jour",
+        "ERROR_UPDATE_HUMANTASKDEF": "Une erreur est survenue durant la mise à jour de la définition de la tâche humaine",
+        "TASK": {
+          "TITLE": "Tâche",
+          "UPDATE_OPERATION": "Mettre à jour l'opération",
+          "INPUT_PARAMETER_EXISTS": "Le paramètre d'entrée existe déjà",
+          "OUTPUT_PARAMETER_EXISTS": "Le paramètre de sortie existe déjà",
+          "SELECT_PARAMETER_TYPE": "Sélectionner le type de paramètre",
+          "PARAMETER_ISREQUIRED": "Le paramètre est requis",
+          "ADD_INPUT_PARAMETER": "Ajouter paramètre d'entrée",
+          "ADD_OUTPUT_PARAMETER": "Ajouter paramètre de sortie",
+          "UPDATE_INFO": "Mettre à jour la tâche",
+          "PARAMETER_INFO": "{{name}} (type = {{type}}, est requis= {{isRequired}})"
+        },
+        "PRESENTATION": {
+          "TITLE": "Présentation"
+        },
+        "ASSIGNMENT": {
+          "TITLE": "Assignation"
+        },
+        "DEADLINES": {
+          "TITLE": "Deadlines"
+        },
+        "RENDERING": {
+          "TITLE": "Affichage",
+          "TEXT": "Texte",
+          "SELECT": "Sélection",
+          "FIELDID": "Identifiant du champ",
+          "SELECT_LANGUAGE": "Sélectionner une langue",
+          "TRANSLATION": "Traduction",
+          "ADD": "Ajouter",
+          "TRANSLATION_EXISTS": "Il existe déjà une traduction",
+          "SELECT_FIELDTYPE": "Sélectionner le type de champ",
+          "VALUE": "Valeur",
+          "UPDATE_GLOBAL_PROPERTIES": "Mettre à jour les propriétés",
+          "UPDATE_VALUES": "Mettre à jour les valeurs",
+          "UPDATE_LABELS": "Mettre à jour les labels",
+          "VALUE_EXISTS": "La valeur existe déjà"
+        }
       }
     }
   }

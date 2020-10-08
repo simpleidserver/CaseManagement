@@ -9,21 +9,19 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import * as fromActions from '../actions/caseplaninstance.actions';
-export var initialCasePlanInstanceState = {
+import * as fromActions from '../actions/humantaskdef.actions';
+export var initialHumanTaskDefState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export var initialCasePlanInstanceLstState = {
-    content: null,
-    isLoading: true,
-    isErrorLoadOccured: false
-};
-export function casePlanInstanceReducer(state, action) {
-    if (state === void 0) { state = initialCasePlanInstanceState; }
+export function humanTaskDefReducer(state, action) {
+    if (state === void 0) { state = initialHumanTaskDefState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_GET_CASE_PLANINSTANCE:
+        case fromActions.ActionTypes.COMPLETE_GET_HUMANTASKDEF:
+            state.content = action.content;
+            return __assign({}, state);
+        case fromActions.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF:
             state.content = action.content;
             return __assign({}, state);
         default:
@@ -31,14 +29,4 @@ export function casePlanInstanceReducer(state, action) {
     }
 }
 ;
-export function casePlanInstanceLstReducer(state, action) {
-    if (state === void 0) { state = initialCasePlanInstanceLstState; }
-    switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH_CASE_PLANINSTANCES:
-            state.content = action.content;
-            return __assign({}, state);
-        default:
-            return state;
-    }
-}
-//# sourceMappingURL=caseplaninstance.reducers.js.map
+//# sourceMappingURL=humantaskdef.reducers.js.map

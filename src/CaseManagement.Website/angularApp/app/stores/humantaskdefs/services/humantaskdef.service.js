@@ -7,102 +7,63 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { OAuthService } from 'angular-oauth2-oidc';
-var CasePlanInstanceService = (function () {
-    function CasePlanInstanceService(http, oauthService) {
-        this.http = http;
-        this.oauthService = oauthService;
+import { of } from 'rxjs';
+import { OutputRenderingElement, OutputRenderingElementValue, Translation, OptionValue } from '../../common/rendering.model';
+import { HumanTaskDef } from '../models/humantaskdef.model';
+var HumanTaskDefService = (function () {
+    function HumanTaskDefService() {
     }
-    CasePlanInstanceService.prototype.search = function (startIndex, count, order, direction, casePlanId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/search";
-        var request = { startIndex: startIndex, count: count };
-        if (order) {
-            request["orderBy"] = order;
-        }
-        if (direction) {
-            request["order"] = direction;
-        }
-        if (casePlanId) {
-            request["casePlanId"] = casePlanId;
-        }
-        return this.http.post(targetUrl, request, { headers: headers });
+    HumanTaskDefService.prototype.get = function (humanTaskDefId) {
+        console.log(humanTaskDefId);
+        var record = new HumanTaskDef();
+        record.name = "AddClient";
+        var firstNameField = new OutputRenderingElement();
+        var firstName = new Translation("fr", "Prenom");
+        firstNameField.id = "firstName";
+        firstNameField.label.push(firstName);
+        firstNameField.default = "Firstname";
+        firstNameField.value = new OutputRenderingElementValue();
+        firstNameField.value.type = "string";
+        var lastNameField = new OutputRenderingElement();
+        var lastName = new Translation("fr", "Nom");
+        lastNameField.id = "lastName";
+        lastNameField.label.push(lastName);
+        lastNameField.default = "Lastname";
+        lastNameField.value = new OutputRenderingElementValue();
+        lastNameField.value.type = "string";
+        var gendersField = new OutputRenderingElement();
+        var gender = new Translation("fr", "Genre");
+        var maleFR = new Translation("fr", "M");
+        var femaleFR = new Translation("fr", "F");
+        var maleEN = new Translation("en", "M");
+        var male = new OptionValue();
+        var female = new OptionValue();
+        male.value = "m";
+        male.displayNames.push(maleFR);
+        male.displayNames.push(maleEN);
+        female.value = "f";
+        female.displayNames.push(femaleFR);
+        gendersField.id = "gender";
+        gendersField.label.push(gender);
+        gendersField.default = "Gender";
+        gendersField.value = new OutputRenderingElementValue();
+        gendersField.value.type = "select";
+        gendersField.value.values.push(male);
+        gendersField.value.values.push(female);
+        record.rendering.output.push(firstNameField);
+        record.rendering.output.push(lastNameField);
+        record.rendering.output.push(gendersField);
+        return of(record);
     };
-    CasePlanInstanceService.prototype.get = function (casePlanInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId;
-        return this.http.get(targetUrl, { headers: headers });
+    HumanTaskDefService.prototype.update = function (humanTaskDef) {
+        return of(humanTaskDef);
     };
-    CasePlanInstanceService.prototype.createCasePlanInstance = function (casePlanId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances";
-        var request = { casePlanId: casePlanId };
-        return this.http.post(targetUrl, request, { headers: headers });
-    };
-    CasePlanInstanceService.prototype.launchCasePlanInstance = function (casePlanInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/launch";
-        return this.http.get(targetUrl, { headers: headers });
-    };
-    CasePlanInstanceService.prototype.enable = function (casePlanInstanceId, casePlanElementInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/activate/" + casePlanElementInstanceId;
-        return this.http.get(targetUrl, { headers: headers });
-    };
-    CasePlanInstanceService.prototype.closeCasePlanInstance = function (casePlanInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/close";
-        return this.http.get(targetUrl, { headers: headers });
-    };
-    CasePlanInstanceService.prototype.reactivateCasePlanInstance = function (casePlanInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/reactivate";
-        return this.http.get(targetUrl, { headers: headers });
-    };
-    CasePlanInstanceService.prototype.resumeCasePlanInstance = function (casePlanInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/resume";
-        return this.http.get(targetUrl, { headers: headers });
-    };
-    CasePlanInstanceService.prototype.suspendCasePlanInstance = function (casePlanInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/suspend";
-        return this.http.get(targetUrl, { headers: headers });
-    };
-    CasePlanInstanceService.prototype.terminateCasePlanInstance = function (casePlanInstanceId) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/terminate";
-        return this.http.get(targetUrl, { headers: headers });
-    };
-    CasePlanInstanceService = __decorate([
+    HumanTaskDefService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [HttpClient, OAuthService])
-    ], CasePlanInstanceService);
-    return CasePlanInstanceService;
+        __metadata("design:paramtypes", [])
+    ], HumanTaskDefService);
+    return HumanTaskDefService;
 }());
-export { CasePlanInstanceService };
-//# sourceMappingURL=caseplaninstance.service.js.map
+export { HumanTaskDefService };
+//# sourceMappingURL=humantaskdef.service.js.map
