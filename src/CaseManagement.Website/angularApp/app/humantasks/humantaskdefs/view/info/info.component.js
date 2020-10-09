@@ -11,10 +11,10 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
+import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 var ParameterType = (function () {
     function ParameterType(type, displayName) {
         this.type = type;
@@ -56,14 +56,13 @@ var ViewHumanTaskDefInfoComponent = (function () {
                 return;
             }
             _this.infoForm.get('name').setValue(e.name);
-            _this.infoForm.get('priority').setValue(e.name);
+            _this.infoForm.get('priority').setValue(e.priority);
             _this.humanTaskDef = e;
         });
     };
     ViewHumanTaskDefInfoComponent.prototype.updateInfo = function (form) {
         this.humanTaskDef.name = form.name;
         this.humanTaskDef.priority = form.priority;
-        this.refresh();
     };
     ViewHumanTaskDefInfoComponent.prototype.addInputParameter = function (param) {
         var filteredInputParam = this.humanTaskDef.operation.inputParameters.filter(function (p) {
@@ -73,7 +72,12 @@ var ViewHumanTaskDefInfoComponent = (function () {
             this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.INPUT_PARAMETER_EXISTS'), this.translateService.instant('undo'), {
                 duration: 2000
             });
+            return;
         }
+        if (!param.isRequired) {
+            param.isRequired = false;
+        }
+        this.inputParameterForm.reset();
         this.humanTaskDef.operation.inputParameters.push(param);
     };
     ViewHumanTaskDefInfoComponent.prototype.addOutputParameter = function (param) {
@@ -84,7 +88,12 @@ var ViewHumanTaskDefInfoComponent = (function () {
             this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.OUTPUT_PARAMETER_EXISTS'), this.translateService.instant('undo'), {
                 duration: 2000
             });
+            return;
         }
+        if (!param.isRequired) {
+            param.isRequired = false;
+        }
+        this.outputParameterForm.reset();
         this.humanTaskDef.operation.outputParameters.push(param);
     };
     ViewHumanTaskDefInfoComponent.prototype.deleteInputParameter = function (param) {

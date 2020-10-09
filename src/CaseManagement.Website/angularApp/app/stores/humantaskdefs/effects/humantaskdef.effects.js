@@ -28,6 +28,21 @@ var HumanTaskDefEffects = (function () {
             return _this.humanTaskDefService.update(evt.humanTaskDef)
                 .pipe(map(function (humanTaskDef) { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF, content: humanTaskDef }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_HUMANASKDEF }); }));
         }));
+        this.addStartDeadline = this.actions$
+            .pipe(ofType(fromHumanTask.ActionTypes.ADD_START_DEADLINE), mergeMap(function (evt) {
+            return _this.humanTaskDefService.addStartDeadline(evt.id, evt.deadLine)
+                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_START_DEADLINE, content: evt.deadLine }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_ADD_START_DEADLINE }); }));
+        }));
+        this.addCompletionDeadline = this.actions$
+            .pipe(ofType(fromHumanTask.ActionTypes.ADD_COMPLETION_DEADLINE), mergeMap(function (evt) {
+            return _this.humanTaskDefService.addCompletionDeadline(evt.id, evt.deadLine)
+                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE, content: evt.deadLine }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_ADD_COMPLETION_DEADLINE }); }));
+        }));
+        this.updateHumanTaskDefInfo = this.actions$
+            .pipe(ofType(fromHumanTask.ActionTypes.UPDATE_HUMANTASKDEF_INFO), mergeMap(function (evt) {
+            return _this.humanTaskDefService.updateInfo(evt.id, evt.name, evt.priority)
+                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_HUMANTASK_INFO, name: evt.name, priority: evt.priority }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_HUMANTASK_INFO }); }));
+        }));
     }
     __decorate([
         Effect(),
@@ -37,6 +52,18 @@ var HumanTaskDefEffects = (function () {
         Effect(),
         __metadata("design:type", Object)
     ], HumanTaskDefEffects.prototype, "updateHumanTaskDef", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], HumanTaskDefEffects.prototype, "addStartDeadline", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], HumanTaskDefEffects.prototype, "addCompletionDeadline", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], HumanTaskDefEffects.prototype, "updateHumanTaskDefInfo", void 0);
     HumanTaskDefEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,

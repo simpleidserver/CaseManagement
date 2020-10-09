@@ -3,7 +3,7 @@ import { ViewHumanTaskDef } from './view/view.component';
 
 
 const routes: Routes = [
-    { path: ':id', component: ViewHumanTaskDef }
+    { path: ':id', component: ViewHumanTaskDef, loadChildren: './view/view.module#HumanTaskDefsViewModule' }
 ];
 
 export const HumanTaskDefsRoutes = RouterModule.forChild(routes);

@@ -1,5 +1,7 @@
 var Operation = (function () {
     function Operation() {
+        this.inputParameters = [];
+        this.outputParameters = [];
     }
     return Operation;
 }());

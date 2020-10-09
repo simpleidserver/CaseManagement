@@ -8,8 +8,10 @@ export class HumanTaskDef {
     constructor() {
         this.rendering = new Rendering();
         this.operation = new Operation();
+        this.deadLines = new HumanTaskDefinitionDeadLines();
     }
 
+    id: string;
     name: string;
     actualOwnerRequired: boolean;
     operation: Operation;

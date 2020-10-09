@@ -1,8 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { OutputRenderingElement, OutputRenderingElementValue, Translation, OptionValue } from '../../common/rendering.model';
+import { OutputRenderingElement, OutputRenderingElementValue, Translation, OptionValue, Rendering } from '../../common/rendering.model';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { Parameter } from '../../common/operation.model';
+import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
 @Injectable()
 export class HumanTaskDefService {
@@ -24,6 +32,13 @@ export class HumanTaskDefService {
         outputParameter.name = "wage";
         outputParameter.type = "bool";
         record.operation.outputParameters.push(outputParameter);
+
+        const startDeadline = new HumanTaskDefinitionDeadLine();
+        startDeadline.id = "id";
+        startDeadline.name = "name";
+        startDeadline.until = "FF";
+        startDeadline.for = "coucou";
+        record.deadLines.startDeadLines.push(startDeadline);
 
         const firstNameField = new OutputRenderingElement();
         const firstName = new Translation("fr", "Prenom");
@@ -69,5 +84,92 @@ export class HumanTaskDefService {
 
     update(humanTaskDef: HumanTaskDef): Observable<HumanTaskDef> {
         return of(humanTaskDef);
+    }
+
+    addStartDeadline(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<HumanTaskDefinitionDeadLine> {
+        if (id) { }
+        if (deadline) { }
+
+        deadline.id = uuidv4();
+        return of(deadline);
+    }
+
+    addCompletionDeadline(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<HumanTaskDefinitionDeadLine> {
+        if (id) { }
+        if (deadline) { }
+
+        deadline.id = uuidv4();
+        return of(deadline);
+    }
+
+    updateInfo(id: string, name: string, priority: number): Observable<boolean> {
+        if (id) { }
+        if (name) { }
+        if (priority) { }
+
+        return of(true);
+    }
+
+    addInputParameter(id: string, parameter: Parameter): Observable<boolean> {
+        if (id) { }
+        if (parameter) { }
+
+        return of(true);
+    }
+
+    addOutputParameter(id: string, parameter: Parameter): Observable<boolean> {
+        if (id) { }
+        if (parameter) { }
+
+        return of(true);
+    }
+
+    deleteInputParameter(id: string, name: string): Observable<boolean> {
+        if (id) { }
+        if (name) { }
+
+        return of(true);
+    }
+
+    deleteOutputParameter(id: string, name: string): Observable<boolean> {
+        if (id) { }
+        if (name) { }
+
+        return of(true);
+    }
+
+    updateRendering(id: string, rendering: Rendering): Observable<boolean> {
+        if (id) { }
+        if (rendering) { }
+
+        return of(true);
+    }
+
+    deleteStartDeadline(id: string, name: string): Observable<boolean> {
+        if (id) { }
+        if (name) { }
+
+        return of(true);
+    }
+
+    deleteCompletionDeadline(id: string, name: string): Observable<boolean> {
+        if (id) { }
+        if (name) { }
+
+        return of(true);
+    }
+
+    updateStartDealine(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<boolean> {
+        if (id) { }
+        if (deadline) { }
+
+        return of(true);
+    }
+
+    updateCompletionDealine(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<boolean> {
+        if (id) { }
+        if (deadline) { }
+
+        return of(true);
     }
 }

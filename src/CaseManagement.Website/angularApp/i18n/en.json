@@ -131,7 +131,17 @@
           "ADD_INPUT_PARAMETER": "Add input parameter",
           "ADD_OUTPUT_PARAMETER": "Add output parameter",
           "UPDATE_INFO": "Update task",
-          "PARAMETER_INFO": "{{name}} (type = {{type}}, is required = {{isRequired}})"
+          "PARAMETER_INFO": "{{name}} (type = {{type}}, is required = {{isRequired}})",
+          "TASK_INFO_UPDATED": "Information has been updated",
+          "ERROR_TASK_INFO_UPDATED": "An error occured while trying to update the task",
+          "DELETE_OPERATION_INPUT_PARAMETER": "Input parameter has been removed",
+          "DELETE_OPERATION_OUTPUT_PARAMETER": "Output parameter has been removed",
+          "ADD_OPERATION_OUTPUT_PARAMETER": "Output parameter has been added",
+          "ADD_OPERATION_INPUT_PARAMETER": "Input parameter has been added",
+          "ERROR_DELETE_OPERATION_INPUT_PARAMETER": "An error occured while trying to remove the input parameter",
+          "ERROR_DELETE_OPERATION_OUTPUT_PARAMETER": "An error occured while trying to remove the output parameter",
+          "ERROR_ADD_OPERATION_INPUT_PARAMETER": "An error occured while trying to add the input parameter",
+          "ERROR_ADD_OPERATION_OUTPUT_PARAMETER": "An error occured while trying to add the output parameter"
         },
         "PRESENTATION": {
           "TITLE": "Presentation"
@@ -140,7 +150,29 @@
           "TITLE": "Assignment"
         },
         "DEADLINES": {
-          "TITLE": "Deadlines"
+          "TITLE": "Deadlines",
+          "DEADLINE_NAME": "Name",
+          "SELECT_DEADLINE_TYPE": "Select the type of deadline",
+          "SELECT_DEADLINE_VALIDITYTYPE": "Select the type of validity",
+          "START_DEADLINE": "Start deadline",
+          "COMPLETION_DEADLINE": "Completion deadline",
+          "DURATION": "Duration",
+          "EXPIRATION_DATETIME": "Expiration datetime",
+          "VALIDITYVALUE": "Value",
+          "START_DEADLINES": "Start deadlines",
+          "DEADLINE_FOR": "Duration",
+          "DEADLINE_UNTIL": "Exiration",
+          "COMPLETION_DEADLINES": "Completion deadlines",
+          "START_DEADLINE_ADDED": "Start deadline has been added",
+          "COMPLETION_DEADLINE_ADDED": "Completion deadline has been added",
+          "DEADLINE_INFO": "Deadline",
+          "ESCALATIONS": "Escalations",
+          "START_DEADLINE_REMOVED": "Start deadline has been removed",
+          "ERROR_REMOVE_START_DEADLINE": "An error occured while trying to remove the start deadline",
+          "COMPLETION_DEADLINE_REMOVED": "Completion deadline has been removed",
+          "ERROR_REMOVE_COMPLETION_DEADLINE": "An error occured while trying to remove the completion deadline",
+          "UPDATE_DEADLINE": "Deadline has been updated",
+          "ERROR_UPDATE_DEADLINE":  "An error occured while trying to update the deadline"
         },
         "RENDERING": {
           "TITLE": "Rendering",
@@ -156,7 +188,9 @@
           "UPDATE_GLOBAL_PROPERTIES": "Update properties",
           "UPDATE_VALUES": "Update values",
           "UPDATE_LABELS": "Update labels",
-          "VALUE_EXISTS": "Value already exists"
+          "VALUE_EXISTS": "Value already exists",
+          "RENDERING_UPDATED": "Rendering has been updated",
+          "ERROR_UPDATE_RENDERING": "An error occured while trying to update the rendering"
         }
       }
     }

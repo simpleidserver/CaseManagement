@@ -1,9 +1,8 @@
 ﻿<div class="mleft-10 mright-10">
-    <button mat-raised-button (click)="update()" color="primary">{{ "SHARED.UPDATE" | translate }}</button>
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
         <!-- Update global information -->
         <div fxFlex="50%">
-            <h5>{{ baseTranslationKey + ".UPDATE_INFO" | translate }}</h5>
+            <h2>{{ baseTranslationKey + ".UPDATE_INFO" | translate }}</h2>
             <form [formGroup]="infoForm" (ngSubmit)="updateInfo(infoForm.value)">
                 <mat-form-field class="full-width">
                     <mat-label>{{ "SHARED.NAME" | translate }}</mat-label>
@@ -13,11 +12,12 @@
                     <mat-label>{{ "SHARED.PRIORITY" | translate }}</mat-label>
                     <input matInput type="number" formControlName="priority" />
                 </mat-form-field>
+                <button mat-raised-button color="primary">{{ "SHARED.UPDATE" | translate }}</button>
             </form>
         </div>
         <!-- Update operation parameters -->
         <div fxFlex="50%">
-            <h5>{{ baseTranslationKey + ".UPDATE_OPERATION" | translate }}</h5>
+            <h2>{{ baseTranslationKey + ".UPDATE_OPERATION" | translate }}</h2>
             <mat-accordion>
                 <!-- Manage input parameters -->
                 <mat-expansion-panel [expanded]="true">

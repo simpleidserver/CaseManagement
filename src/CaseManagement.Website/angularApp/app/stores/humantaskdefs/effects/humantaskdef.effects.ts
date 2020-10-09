@@ -38,5 +38,173 @@ export class HumanTaskDefEffects {
                     );
             }
             )
+    );
+
+    @Effect()
+    addStartDeadline = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_START_DEADLINE),
+            mergeMap((evt: fromHumanTask.AddStartDeadLine) => {
+                return this.humanTaskDefService.addStartDeadline(evt.id, evt.deadLine)
+                    .pipe(
+                        map((deadLine) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_START_DEADLINE, content: deadLine }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_START_DEADLINE }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    addCompletionDeadline = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_COMPLETION_DEADLINE),
+            mergeMap((evt: fromHumanTask.AddCompletionDeadLine) => {
+                return this.humanTaskDefService.addCompletionDeadline(evt.id, evt.deadLine)
+                    .pipe(
+                        map((deadLine) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE, content: deadLine }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_COMPLETION_DEADLINE }))
+                    );
+            }
+            )
+        );
+
+    @Effect()
+    updateHumanTaskDefInfo = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.UPDATE_HUMANTASKDEF_INFO),
+            mergeMap((evt: fromHumanTask.UpdateHumanTaskInfo) => {
+                return this.humanTaskDefService.updateInfo(evt.id, evt.name, evt.priority)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_HUMANTASK_INFO, name: evt.name, priority: evt.priority }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_HUMANTASK_INFO }))
+                    );
+            }
+            )
+        );
+
+    @Effect()
+    addInputParameterAction = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_OPERATION_INPUT_PARAMETER),
+            mergeMap((evt: fromHumanTask.AddInputParameterOperation) => {
+                return this.humanTaskDefService.addInputParameter(evt.id, evt.parameter)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER, parameter: evt.parameter }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_OPERATION_INPUT_PARAMETER }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    addOutputParameterAction = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_OPERATION_OUTPUT_PARAMETER),
+            mergeMap((evt: fromHumanTask.AddOutputParameterOperation) => {
+                return this.humanTaskDefService.addOutputParameter(evt.id, evt.parameter)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER, parameter: evt.parameter }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_OPERATION_OUTPUT_PARAMETER }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deleteInputParameterAction = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_OPERATION_INPUT_PARAMETER),
+            mergeMap((evt: fromHumanTask.DeleteInputParameterOperation) => {
+                return this.humanTaskDefService.deleteInputParameter(evt.id, evt.name)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER, parameter: evt.name }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_OPERATION_INPUT_PARAMETER }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deleteOutputParameterAction = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_OPERATION_OUTPUT_PARAMETER),
+            mergeMap((evt: fromHumanTask.DeleteInputParameterOperation) => {
+                return this.humanTaskDefService.deleteOutputParameter(evt.id, evt.name)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER, parameter: evt.name }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    updateRenderingAction = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.UPDATE_RENDERING_PARAMETER),
+            mergeMap((evt: fromHumanTask.UpdateRenderingOperation) => {
+                return this.humanTaskDefService.updateRendering(evt.id, evt.rendering)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER, rendering: evt.rendering}; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_RENDERING_PARAMETER }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deleteStartDealineAction = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_START_DEADLINE),
+            mergeMap((evt: fromHumanTask.DeleteStartDeadlineOperation) => {
+                return this.humanTaskDefService.deleteStartDeadline(evt.id, evt.name)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_START_DEALINE, name: evt.name}; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_START_DEALINE }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deleteCompletionDeadlineAction = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_COMPLETION_DEADLINE),
+            mergeMap((evt: fromHumanTask.DeleteStartDeadlineOperation) => {
+                return this.humanTaskDefService.deleteCompletionDeadline(evt.id, evt.name)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE, name: evt.name }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_COMPLETION_DEADLINE }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    updateStartDealine = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.UPDATE_START_DEADLINE),
+            mergeMap((evt: fromHumanTask.UpdateStartDeadlineOperation) => {
+                return this.humanTaskDefService.updateStartDealine(evt.id, evt.deadline)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_START_DEADLINE, deadline: evt.deadline }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_START_DEADLINE }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    updateCompletionDeadline = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.UPDATE_COMPLETION_DEADLINE),
+            mergeMap((evt: fromHumanTask.UpdateCompletionDeadlineOperation) => {
+                return this.humanTaskDefService.updateCompletionDealine(evt.id, evt.deadline)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE, deadline: evt.deadline }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_COMPLETION_DEADLINE }))
+                    );
+            }
+            )
         );
 }

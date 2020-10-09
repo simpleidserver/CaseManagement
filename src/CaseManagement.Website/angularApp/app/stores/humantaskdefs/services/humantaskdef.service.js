@@ -11,6 +11,8 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { OutputRenderingElement, OutputRenderingElementValue, Translation, OptionValue } from '../../common/rendering.model';
 import { HumanTaskDef } from '../models/humantaskdef.model';
+import { Parameter } from '../../common/operation.model';
+import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
 var HumanTaskDefService = (function () {
     function HumanTaskDefService() {
     }
@@ -18,6 +20,21 @@ var HumanTaskDefService = (function () {
         console.log(humanTaskDefId);
         var record = new HumanTaskDef();
         record.name = "AddClient";
+        var inputParameter = new Parameter();
+        inputParameter.isRequired = true;
+        inputParameter.name = "firstname";
+        inputParameter.type = "string";
+        record.operation.inputParameters.push(inputParameter);
+        var outputParameter = new Parameter();
+        outputParameter.isRequired = false;
+        outputParameter.name = "wage";
+        outputParameter.type = "bool";
+        record.operation.outputParameters.push(outputParameter);
+        var startDeadline = new HumanTaskDefinitionDeadLine();
+        startDeadline.name = "name";
+        startDeadline.until = "FF";
+        startDeadline.for = "coucou";
+        record.deadLines.startDeadLines.push(startDeadline);
         var firstNameField = new OutputRenderingElement();
         var firstName = new Translation("fr", "Prenom");
         firstNameField.id = "firstName";
@@ -58,6 +75,26 @@ var HumanTaskDefService = (function () {
     };
     HumanTaskDefService.prototype.update = function (humanTaskDef) {
         return of(humanTaskDef);
+    };
+    HumanTaskDefService.prototype.addStartDeadline = function (id, deadline) {
+        if (id) {
+        }
+        if (deadline) {
+        }
+        return of(true);
+    };
+    HumanTaskDefService.prototype.addCompletionDeadline = function (id, deadline) {
+        if (id) {
+        }
+        if (deadline) {
+        }
+        return of(true);
+    };
+    HumanTaskDefService.prototype.updateInfo = function (id, name, priority) {
+        if (id) { }
+        if (name) { }
+        if (priority) { }
+        return of(true);
     };
     HumanTaskDefService = __decorate([
         Injectable(),

@@ -5,8 +5,9 @@ import * as fromAppState from '@app/stores/appstate';
 import { Parameter } from '@app/stores/common/operation.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
-import { select, Store } from '@ngrx/store';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 
 export class ParameterType {
     constructor(public type: string, public displayName: string) { }
@@ -30,7 +31,8 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         private store: Store<fromAppState.AppState>,
         private formBuilder: FormBuilder,
         private snackBar: MatSnackBar,
-        private translateService: TranslateService) {
+        private translateService: TranslateService,
+        private actions$: ScannedActionsSubject) {
         this.infoForm = this.formBuilder.group({
             name: '',
             priority: ''
@@ -51,6 +53,76 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_HUMANTASK_INFO))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.TASK_INFO_UPDATED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_HUMANTASK_INFO))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ERROR_TASK_INFO_UPDATED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ADD_OPERATION_INPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ADD_OPERATION_OUTPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_INPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ERROR_ADD_OPERATION_INPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_OUTPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ERROR_ADD_OPERATION_OUTPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.DELETE_OPERATION_INPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.DELETE_OPERATION_OUTPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_INPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ERROR_DELETE_OPERATION_INPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
         this.store.pipe(select(fromAppState.selectHumanTaskResult)).subscribe((e: HumanTaskDef) => {
             if (!e) {
                 return;
@@ -62,9 +134,9 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         });
     }
 
-    updateInfo(form : any) {
-        this.humanTaskDef.name = form.name;
-        this.humanTaskDef.priority = form.priority;
+    updateInfo(form: any) {
+        const request = new fromHumanTaskDefActions.UpdateHumanTaskInfo(this.humanTaskDef.id, form.name, form.priority);
+        this.store.dispatch(request);
     }
 
     addInputParameter(param: Parameter) {
@@ -83,7 +155,8 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         }
 
         this.inputParameterForm.reset();
-        this.humanTaskDef.operation.inputParameters.push(param);
+        const request = new fromHumanTaskDefActions.AddInputParameterOperation(this.humanTaskDef.id, param);
+        this.store.dispatch(request);
     }
 
     addOutputParameter(param: Parameter) {
@@ -102,21 +175,17 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         }
 
         this.outputParameterForm.reset();
-        this.humanTaskDef.operation.outputParameters.push(param);
+        const request = new fromHumanTaskDefActions.AddOutputParameterOperation(this.humanTaskDef.id, param);
+        this.store.dispatch(request);
     }
 
     deleteInputParameter(param: Parameter) {
-        const index = this.humanTaskDef.operation.inputParameters.indexOf(param);
-        this.humanTaskDef.operation.inputParameters.splice(index, 1);
+        const request = new fromHumanTaskDefActions.DeleteInputParameterOperation(this.humanTaskDef.id, param.name);
+        this.store.dispatch(request);
     }
 
     deleteOutputParameter(param: Parameter) {
-        const index = this.humanTaskDef.operation.outputParameters.indexOf(param);
-        this.humanTaskDef.operation.outputParameters.splice(index, 1);
-    }
-
-    update() {
-        const request = new fromHumanTaskDefActions.UpdateHumanTaskDef(this.humanTaskDef);
+        const request = new fromHumanTaskDefActions.DeleteOutputParameterOperation(this.humanTaskDef.id, param.name);
         this.store.dispatch(request);
     }
 }

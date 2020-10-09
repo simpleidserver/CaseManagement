@@ -12,7 +12,7 @@
             <div cdkDropList
                  (cdkDropListDropped)="drop($event)"
                  class="lst-fields full-width">
-                <div class="field-container full-width" *ngFor="let field of humanTaskDef.rendering.output" cdkDrag>
+                <div class="field-container full-width" *ngFor="let field of rendering.output" cdkDrag>
                     <div style="position: relative">
                         <div style="position: absolute; top: 0px; right: 0px; z-index:10;">
                             <button mat-icon-button (click)="displaySettings(field)">

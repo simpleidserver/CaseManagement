@@ -131,7 +131,17 @@
           "ADD_INPUT_PARAMETER": "Ajouter paramètre d'entrée",
           "ADD_OUTPUT_PARAMETER": "Ajouter paramètre de sortie",
           "UPDATE_INFO": "Mettre à jour la tâche",
-          "PARAMETER_INFO": "{{name}} (type = {{type}}, est requis= {{isRequired}})"
+          "PARAMETER_INFO": "{{name}} (type = {{type}}, est requis= {{isRequired}})",
+          "TASK_INFO_UPDATED": "Les informations ont été mises à jour",
+          "ERROR_TASK_INFO_UPDATED": "Une erreur est survenue lors de la mise à jour de la tâche",
+          "DELETE_OPERATION_INPUT_PARAMETER": "Le paramètre d'entrée a été supprimé",
+          "DELETE_OPERATION_OUTPUT_PARAMETER": "Le paramètre de sortie a été supprimé",
+          "ADD_OPERATION_OUTPUT_PARAMETER": "Le paramètre de sortie a été ajouté",
+          "ADD_OPERATION_INPUT_PARAMETER": "Le paramètre d'entrée a été ajouté",
+          "ERROR_DELETE_OPERATION_INPUT_PARAMETER": "Une erreur est survenue lors de la suppression du paramètre d'entrée",
+          "ERROR_DELETE_OPERATION_OUTPUT_PARAMETER": "Une erreur est survenue lors de la suppression du paramètre de sortie",
+          "ERROR_ADD_OPERATION_INPUT_PARAMETER": "Une erreur est survenue lors de l'ajout du paramètre d'entrée",
+          "ERROR_ADD_OPERATION_OUTPUT_PARAMETER": "Une erreur est survenue lors de l'ajout du paramètre de sortie"
         },
         "PRESENTATION": {
           "TITLE": "Présentation"
@@ -140,7 +150,29 @@
           "TITLE": "Assignation"
         },
         "DEADLINES": {
-          "TITLE": "Deadlines"
+          "TITLE": "Deadlines",
+          "DEADLINE_NAME": "Nom",
+          "SELECT_DEADLINE_TYPE": "Sélectionner le type de deadline",
+          "SELECT_DEADLINE_VALIDITYTYPE": "Sélectionner un type de validité",
+          "START_DEADLINE": "Start deadline",
+          "COMPLETION_DEADLINE": "Completion deadline",
+          "DURATION": "Durée",
+          "EXPIRATION_DATETIME": "Date d'expiration",
+          "VALIDITYVALUE": "Valeur",
+          "START_DEADLINES": "Start deadlines",
+          "DEADLINE_FOR": "Durée",
+          "DEADLINE_UNTIL": "Expiration",
+          "COMPLETION_DEADLINES": "Completion deadlines",
+          "START_DEADLINE_ADDED": "Start deadline a été ajoutée",
+          "COMPLETION_DEADLINE_ADDED": "Completion deadline a été ajoutée",
+          "DEADLINE_INFO": "Deadline",
+          "ESCALATIONS": "Escalations",
+          "START_DEADLINE_REMOVED": "Start deadline a été supprimée",
+          "ERROR_REMOVE_START_DEADLINE": "Une erreur est survenue durant la suppression du start deadline",
+          "COMPLETION_DEADLINE_REMOVED": "Completion deadline a été supprimée",
+          "ERROR_REMOVE_COMPLETION_DEADLINE": "Une erreur est survenue durant la suppression du completion deadline",
+          "UPDATE_DEADLINE": "La deadline a été mise à jour",
+          "ERROR_UPDATE_DEADLINE": "Une erreur est survenue durant la mise à jour de la deadline"
         },
         "RENDERING": {
           "TITLE": "Affichage",
@@ -156,7 +188,9 @@
           "UPDATE_GLOBAL_PROPERTIES": "Mettre à jour les propriétés",
           "UPDATE_VALUES": "Mettre à jour les valeurs",
           "UPDATE_LABELS": "Mettre à jour les labels",
-          "VALUE_EXISTS": "La valeur existe déjà"
+          "VALUE_EXISTS": "La valeur existe déjà",
+          "RENDERING_UPDATED": "L'affichage a été mise à jour",
+          "ERROR_UPDATE_RENDERING": "Une erreur est survenue durant la mise à jour de l'affichage"
         }
       }
     }

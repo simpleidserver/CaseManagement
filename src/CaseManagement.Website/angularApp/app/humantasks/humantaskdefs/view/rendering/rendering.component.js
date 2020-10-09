@@ -13,6 +13,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import { OptionValue, OutputRenderingElement, Translation } from '@app/stores/common/rendering.model';
+import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -151,6 +152,10 @@ var ViewHumanTaskDefRenderingComponent = (function () {
             arr.push(key + "=" + value[0].value);
         });
         return val.value + "(" + arr.join(',') + ")";
+    };
+    ViewHumanTaskDefRenderingComponent.prototype.update = function () {
+        var request = new fromHumanTaskDefActions.UpdateHumanTaskDef(this.humanTaskDef);
+        this.store.dispatch(request);
     };
     ViewHumanTaskDefRenderingComponent = __decorate([
         Component({

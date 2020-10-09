@@ -1,17 +1,31 @@
-﻿<mat-tab-group>
-    <mat-tab label="{{ baseTranslationKey + '.TASK.TITLE' | translate }}">
-        <view-humantaskdef-info-component></view-humantaskdef-info-component>
-    </mat-tab>
-    <mat-tab label="{{ baseTranslationKey + '.PRESENTATION.TITLE' | translate }}">
-
-    </mat-tab>
-    <mat-tab label="{{ baseTranslationKey + '.ASSIGNMENT.TITLE' | translate }}">
-
-    </mat-tab>
-    <mat-tab label="{{ baseTranslationKey + '.DEADLINES.TITLE' | translate }}">
-
-    </mat-tab>
-    <mat-tab label="{{ baseTranslationKey + '.RENDERING.TITLE' | translate }}">
-        <view-humantaskdef-rendering-component></view-humantaskdef-rendering-component>
-    </mat-tab>
-</mat-tab-group>
+﻿<nav mat-tab-nav-bar>
+    <a mat-tab-link
+       [routerLink]="['/humantasks/humantaskdefs/name/task']"
+       routerLinkActive
+       #rla1="routerLinkActive"
+       [active]="rla1.isActive">
+        {{ baseTranslationKey + '.TASK.TITLE' | translate }}
+    </a>
+    <a mat-tab-link
+       [routerLink]="['/humantasks/humantaskdefs/name/assignment']"
+       routerLinkActive
+       #rla2="routerLinkActive"
+       [active]="rla2.isActive">
+        {{ baseTranslationKey + '.ASSIGNMENT.TITLE' | translate }}
+    </a>
+    <a mat-tab-link
+       [routerLink]="['/humantasks/humantaskdefs/name/deadlines']"
+       routerLinkActive
+       #rla3="routerLinkActive"
+       [active]="rla3.isActive">
+        {{ baseTranslationKey + '.DEADLINES.TITLE' | translate }}
+    </a>
+    <a mat-tab-link
+       [routerLink]="['/humantasks/humantaskdefs/name/rendering']"
+       routerLinkActive
+       #rla4="routerLinkActive"
+       [active]="rla4.isActive">
+        {{ baseTranslationKey + '.RENDERING.TITLE' | translate }}
+    </a>
+</nav>
+<router-outlet></router-outlet>

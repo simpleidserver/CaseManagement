@@ -1,5 +1,7 @@
-﻿import * as fromActions from '../actions/humantaskdef.actions';
+﻿import { Parameter } from '../../common/operation.model';
+import * as fromActions from '../actions/humantaskdef.actions';
 import { HumanTaskDef } from '../models/humantaskdef.model';
+import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
 
 export interface HumanTaskDefState{
     isLoading: boolean;
@@ -21,6 +23,197 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
         case fromActions.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF:
             state.content = action.content;
             return { ...state };
+        case fromActions.ActionTypes.COMPLETE_ADD_START_DEADLINE:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    deadLines: {
+                        ...state.content.deadLines,
+                        startDeadLines: [
+                            ...state.content.deadLines.startDeadLines,
+                            action.content
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE:
+            return { 
+                ...state,
+                content: {
+                    ...state.content,
+                    deadLines: {
+                        ...state.content.deadLines,
+                        completionDeadLines: [
+                            ...state.content.deadLines.completionDeadLines,
+                            action.content
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_HUMANTASK_INFO:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    name: action.name,
+                    priority: action.priority
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    operation: {
+                        ...state.content.operation,
+                        inputParameters: [
+                            ...state.content.operation.inputParameters,
+                            action.parameter
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    operation: {
+                        ...state.content.operation,
+                        outputParameters: [
+                            ...state.content.operation.outputParameters,
+                            action.parameter
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER:
+            var inputParameters = state.content.operation.inputParameters;
+            const param1 = inputParameters.filter(function (p: Parameter) {
+                return p.name === action.name;
+            })[0];
+            const index1 = inputParameters.indexOf(param1);
+            inputParameters.splice(index1, 1);
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    operation: {
+                        ...state.content.operation,
+                        inputParameters: [
+                            ...inputParameters
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER:
+            var outputParameters = state.content.operation.outputParameters;
+            const param2 = outputParameters.filter(function (p: Parameter) {
+                return p.name === action.name;
+            })[0];
+            const index2 = outputParameters.indexOf(param2);
+            outputParameters.splice(index2, 1);
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    operation: {
+                        ...state.content.operation,
+                        outputParameters: [
+                            ...outputParameters
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    rendering: {
+                        ...action.rendering
+                    }
+                }
+            };
+        case fromActions.ActionTypes.DELETE_START_DEADLINE:
+            var startDeadLines = state.content.deadLines.startDeadLines;
+            const filteredStartDealine = startDeadLines.filter(function (p: HumanTaskDefinitionDeadLine) {
+                return p.name === action.name;
+            })[0];
+            const startDealineIndex = startDeadLines.indexOf(filteredStartDealine);
+            startDeadLines.splice(startDealineIndex, 1);
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    deadLines: {
+                        ...state.content.deadLines,
+                        startDeadLines: [
+                            ...startDeadLines
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.DELETE_COMPLETION_DEADLINE:
+            var completionDeadLines = state.content.deadLines.completionDeadLines;
+            const filteredCompletionDeadline = completionDeadLines.filter(function (p: HumanTaskDefinitionDeadLine) {
+                return p.name === action.name;
+            })[0];
+            const completionDealineIndex = completionDeadLines.indexOf(filteredCompletionDeadline);
+            completionDeadLines.splice(completionDealineIndex, 1);
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    deadLines: {
+                        ...state.content.deadLines,
+                        completionDeadLines: [
+                            ...completionDeadLines
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_START_DEADLINE:
+            var startDealines2 = state.content.deadLines.startDeadLines;
+            const filteredStartedDeadline2 = startDealines2.filter(function (p: HumanTaskDefinitionDeadLine) {
+                return p.id === action.deadline.id;
+            })[0];
+            const startDealineIndex2 = startDealines2.indexOf(filteredStartedDeadline2);
+            startDealines2.splice(startDealineIndex2, 1);
+            startDealines2.push(action.deadline);
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    deadLines: {
+                        ...state.content.deadLines,
+                        startDeadLines: [
+                            ...startDealines2
+                        ]
+                    }
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE:
+            var completionDealines2 = state.content.deadLines.completionDeadLines;
+            const filteredCompletionDeadline2 = completionDealines2.filter(function (p: HumanTaskDefinitionDeadLine) {
+                return p.id === action.deadline.id;
+            })[0];
+            const completionDealineIndex2 = completionDealines2.indexOf(filteredCompletionDeadline2);
+            completionDealines2.splice(completionDealineIndex2, 1);
+            completionDealines2.push(action.deadline);
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    deadLines: {
+                        ...state.content.deadLines,
+                        completionDeadLines: [
+                            ...completionDealines2
+                        ]
+                    }
+                }
+            };
         default:
             return state;
     }

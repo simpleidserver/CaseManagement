@@ -10,14 +10,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { Store } from '@ngrx/store';
+import { Store, ScannedActionsSubject } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
 var ViewHumanTaskDef = (function () {
-    function ViewHumanTaskDef(store, route) {
+    function ViewHumanTaskDef(store, route, snackBar, translateService, actions$) {
         this.store = store;
         this.route = route;
+        this.snackBar = snackBar;
+        this.translateService = translateService;
+        this.actions$ = actions$;
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW";
     }
     ViewHumanTaskDef.prototype.ngOnInit = function () {
+        var _this = this;
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.HUMANTASKDEF_UPDATED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_HUMANASKDEF; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_UPDATE_HUMANTASKDEF'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
         this.refresh();
     };
     ViewHumanTaskDef.prototype.refresh = function () {
@@ -33,7 +52,10 @@ var ViewHumanTaskDef = (function () {
             encapsulation: ViewEncapsulation.None
         }),
         __metadata("design:paramtypes", [Store,
-            ActivatedRoute])
+            ActivatedRoute,
+            MatSnackBar,
+            TranslateService,
+            ScannedActionsSubject])
     ], ViewHumanTaskDef);
     return ViewHumanTaskDef;
 }());
