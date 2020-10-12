@@ -9,6 +9,8 @@ export class HumanTaskDef {
         this.rendering = new Rendering();
         this.operation = new Operation();
         this.deadLines = new HumanTaskDefinitionDeadLines();
+        this.peopleAssignment = new HumanTaskDefAssignment();
+        this.presentationElement = new PresentationElement();
     }
 
     id: string;

@@ -3,6 +3,8 @@ import { Parameter } from '../../common/operation.model';
 import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { Rendering } from '../../common/rendering.model';
+import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
+import { Escalation } from '../../common/escalation.model';
 
 export enum ActionTypes {
     START_GET_HUMANTASKDEF = "[HumanTaskDef] START_GET_HUMANTASKDEF",
@@ -46,7 +48,28 @@ export enum ActionTypes {
     ERROR_UPDATE_START_DEADLINE = "[HumanTaskDef] ERROR_UPDATE_START_DEADLINE",
     UPDATE_COMPLETION_DEADLINE = "[HumanTaskDef] UPDATE_COMPLETION_DEADLINE",
     COMPLETE_UPDATE_COMPLETION_DEADLINE = "[HumanTaskDef] COMPLETE_UPDATE_COMPLETION_DEADLINE",
-    ERROR_UPDATE_COMPLETION_DEADLINE = "[HumanTaskDef] ERROR_UPDATE_COMPLETION_DEADLINE"
+    ERROR_UPDATE_COMPLETION_DEADLINE = "[HumanTaskDef] ERROR_UPDATE_COMPLETION_DEADLINE",
+    ADD_ESCALATION_STARTDEADLINE = "[HumanTaskDef] ADD_ESCALATION_STARTDEADLINE",
+    COMPLETE_ADD_ESCALATION_STARTDEADLINE = "[HumanTaskDef] COMPLETE_ADD_ESCALATION_STARTDEADLINE",
+    ERROR_ADD_ESCALATION_STARTDEADLINE = "[HumanTaskDef] ERROR_ADD_ESCALATION_STARTDEADLINE",
+    ADD_ESCALATION_COMPLETIONDEADLINE = "[HumanTaskDef] ADD_ESCALATION_COMPLETIONDEADLINE",
+    COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE = "[HumanTaskDef] COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE",
+    ERROR_ADD_ESCALATION_COMPLETIONDEADLINE = "[HumanTaskDef] ERROR_ADD_ESCALATION_COMPLETIONDEADLINE",
+    UPDATE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] UPDATE_PEOPLE_ASSIGNMENT",
+    COMPLETE_UPDATE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] COMPLETE_UPDATE_PEOPLE_ASSIGNMENT",
+    ERROR_UPDATE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ERROR_UPDATE_PEOPLE_ASSIGNMENT",
+    UPDATE_COMPLETION_ESCALATION = "[HumanTaskDef] UPDATE_COMPLETION_ESCALATION",
+    COMPLETE_UPDATE_COMPLETION_ESCALATION = "[HumanTaskDef] COMPLETE_UPDATE_COMPLETION_ESCALATION",
+    ERROR_UPDATE_COMPLETION_ESCALATION = "[HumanTaskDef] ERROR_UPDATE_COMPLETION_ESCALATION",
+    UPDATE_START_ESCALATION = "[HumanTaskDef] UPDATE_START_ESCALATION",
+    ERROR_UPDATE_START_ESCALATION = "[HumanTaskDef] ERROR_UPDATE_START_ESCALATION",
+    COMPLETE_UPDATE_START_ESCALATION = "[HumanTaskDef] COMPLETE_UPDATE_START_ESCALATION",
+    DELETE_START_ESCALATION = "[HumanTaskDef] DELETE_START_ESCALATION",
+    ERROR_DELETE_START_ESCALATION = "[HumanTaskDef] ERROR_DELETE_START_ESCALATION",
+    COMPLETE_DELETE_START_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_START_ESCALATION",
+    DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] DELETE_COMPLETION_ESCALATION",
+    ERROR_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] ERROR_DELETE_COMPLETION_ESCALATION",
+    COMPLETE_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_COMPLETION_ESCALATION"
 }
 
 export class GetHumanTaskDef implements Action {
@@ -189,6 +212,76 @@ export class CompleteCompletionStartDeadlineOperation implements Action {
     constructor(public deadline: HumanTaskDefinitionDeadLine) { }
 }
 
+export class AddEscalationStartDeadlineOperation implements Action {
+    readonly type = ActionTypes.ADD_ESCALATION_STARTDEADLINE;
+    constructor(public id: string, public deadlineId: string, public condition: string) { }
+}
+
+export class CompleteAddEscalationStartDeadlineOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_ESCALATION_STARTDEADLINE;
+    constructor(public deadlineId: string, public condition: string, public escId: string) { }
+}
+
+export class AddEscalationCompletionDeadlineOperation implements Action {
+    readonly type = ActionTypes.ADD_ESCALATION_COMPLETIONDEADLINE;
+    constructor(public id: string, public deadlineId: string, public condition: string) { }
+}
+
+export class CompleteAddEscalationCompletionDeadlineOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE;
+    constructor(public deadlineId: string, public condition: string, public escId: string) { }
+}
+
+export class UpdatePeopleAssignmentOperation implements Action {
+    readonly type = ActionTypes.UPDATE_PEOPLE_ASSIGNMENT;
+    constructor(public id: string, public assignment: HumanTaskDefAssignment) { }
+}
+
+export class CompletePeopleAssignmentOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT;
+    constructor(public assignment: HumanTaskDefAssignment) { }
+}
+
+export class UpdateStartEscalationOperation implements Action {
+    readonly type = ActionTypes.UPDATE_START_ESCALATION;
+    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
+}
+
+export class CompleteUpdateStartEscalationOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_START_ESCALATION;
+    constructor(public deadLineId: string, public escalation: Escalation) { }
+}
+
+export class UpdateCompletionEscalationOperation implements Action {
+    readonly type = ActionTypes.UPDATE_COMPLETION_ESCALATION;
+    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
+}
+
+export class CompleteUpdateCompletionEscalationOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_COMPLETION_ESCALATION;
+    constructor(public deadLineId: string, public escalation: Escalation) { }
+}
+
+export class DeleteStartEscalationOperation implements Action {
+    readonly type = ActionTypes.DELETE_START_ESCALATION;
+    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
+}
+
+export class CompleteDeleteStartEscalationOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_START_ESCALATION;
+    constructor(public deadLineId: string, public escalation: Escalation) { }
+}
+
+export class DeleteCompletionEscalationOperation implements Action {
+    readonly type = ActionTypes.DELETE_COMPLETION_ESCALATION;
+    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
+}
+
+export class CompleteDeleteCompletionEscalationOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_COMPLETION_ESCALATION;
+    constructor(public deadLineId: string, public escalation: Escalation) { }
+}
+
 export type ActionsUnion = GetHumanTaskDef |
     GetHumanTaskDefComplete |
     UpdateHumanTaskDef |
@@ -196,7 +289,7 @@ export type ActionsUnion = GetHumanTaskDef |
     AddStartDeadLine |
     CompleteAddStartDeadLine |
     AddCompletionDeadLine |
-    CompleteCompletionDeadLine | 
+    CompleteCompletionDeadLine |
     UpdateHumanTaskInfo |
     CompleteUpdateHumanTaskInfo |
     AddInputParameterOperation |
@@ -216,4 +309,18 @@ export type ActionsUnion = GetHumanTaskDef |
     UpdateStartDeadlineOperation |
     CompleteUpdateStartDeadlineOperation |
     UpdateCompletionDeadlineOperation |
-    CompleteCompletionStartDeadlineOperation;
+    CompleteCompletionStartDeadlineOperation |
+    AddEscalationStartDeadlineOperation |
+    CompleteAddEscalationStartDeadlineOperation |
+    AddEscalationCompletionDeadlineOperation |
+    CompleteAddEscalationCompletionDeadlineOperation |
+    UpdatePeopleAssignmentOperation |
+    CompletePeopleAssignmentOperation |
+    UpdateCompletionEscalationOperation |
+    CompleteUpdateCompletionEscalationOperation |
+    UpdateStartEscalationOperation |
+    CompleteUpdateStartEscalationOperation |
+    DeleteStartEscalationOperation |
+    CompleteDeleteStartEscalationOperation |
+    DeleteCompletionEscalationOperation |
+    CompleteDeleteCompletionEscalationOperation;

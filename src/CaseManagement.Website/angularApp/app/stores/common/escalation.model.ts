@@ -7,6 +7,7 @@ export class Escalation {
         this.notification = new NotificationDefinition();
     }
 
+    id: string;
     condition: string;
     toParts: ToPart[];
     notification: NotificationDefinition;

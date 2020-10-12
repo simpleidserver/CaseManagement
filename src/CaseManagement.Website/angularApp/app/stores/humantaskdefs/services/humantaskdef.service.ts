@@ -4,6 +4,8 @@ import { OutputRenderingElement, OutputRenderingElementValue, Translation, Optio
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { Parameter } from '../../common/operation.model';
 import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
+import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
+import { Escalation } from '../../common/escalation.model';
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -169,6 +171,61 @@ export class HumanTaskDefService {
     updateCompletionDealine(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<boolean> {
         if (id) { }
         if (deadline) { }
+
+        return of(true);
+    }
+
+    addEscalationStartDeadline(id: string, startDeadlineId: string, condition: string): Observable<string> {
+        if (id) { }
+        if (startDeadlineId) { }
+        if (condition) { }
+
+        return of(uuidv4());
+    }
+
+    addEscalationCompletionDeadline(id: string, startDeadlineId: string, condition: string): Observable<string> {
+        if (id) { }
+        if (startDeadlineId) { }
+        if (condition) { }
+
+        return of(uuidv4());
+    }
+
+    updatePeopleAssignment(id: string, assignment: HumanTaskDefAssignment): Observable<boolean> {
+        if (id) { }
+        if (assignment) { }
+
+        return of(true);
+    }
+
+    updateStartEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
+        if (id) { }
+        if (deadLineId) { }
+        if (escalation) { }
+
+        return of(true);
+    }
+
+    updateCompletionEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
+        if (id) { }
+        if (deadLineId) { }
+        if (escalation) { }
+
+        return of(true);
+    }
+
+    deleteCompletionEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
+        if (id) { }
+        if (deadLineId) { }
+        if (escalation) { }
+
+        return of(true);
+    }
+
+    deleteStartEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
+        if (id) { }
+        if (deadLineId) { }
+        if (escalation) { }
 
         return of(true);
     }

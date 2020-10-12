@@ -1,0 +1,140 @@
+﻿<mat-accordion>
+    <!-- Names -->
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'SHARED.NAMES' | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <form [formGroup]="addNameForm" (ngSubmit)="addName(addNameForm.value)">
+            <!-- Language -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.SELECT_LANGUAGE' | translate }}</mat-label>
+                <mat-select formControlName="language">
+                    <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                        {{ lang.displayName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- Value -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+                <input matInput type="text" formControlName="value" />
+            </mat-form-field>
+            <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+        </form>
+        <mat-list>
+            <mat-list-item *ngFor="let name of names">
+                <button mat-icon-button (click)="deleteName(name)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                {{ name.value + " ( " + name.language +" )" }}
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>
+    <!-- Subjects -->
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'SHARED.SUBJECTS' | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <form [formGroup]="addSubjectForm" (ngSubmit)="addSubject(addSubjectForm.value)">
+            <!-- Language -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.SELECT_LANGUAGE' | translate }}</mat-label>
+                <mat-select formControlName="language">
+                    <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                        {{ lang.displayName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- Value -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+                <input matInput type="text" formControlName="value" />
+            </mat-form-field>
+            <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+        </form>
+        <mat-list>
+            <mat-list-item *ngFor="let subject of subjects">
+                <button mat-icon-button (click)="deleteSubject(name)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                {{ subject.value + "( "+ subject.language +" )" }}
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>
+    <!-- Descriptions -->
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'SHARED.DESCRIPTIONS' | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <form [formGroup]="addDescriptionForm" (ngSubmit)="addDescription(addDescriptionForm.value)">
+            <!-- Language -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.SELECT_LANGUAGE' | translate }}</mat-label>
+                <mat-select formControlName="language">
+                    <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                        {{ lang.displayName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- Value -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+                <input matInput type="text" formControlName="value" />
+            </mat-form-field>
+            <!-- ContentType -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.CONTENT_TYPE' | translate }}</mat-label>
+                <mat-select formControlName="contentType">
+                    <mat-option *ngFor="let ct of contentTypes" [value]="ct.code">
+                        {{ ct.displayName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+        </form>
+        <mat-list>
+            <mat-list-item *ngFor="let description of descriptions">
+                <button mat-icon-button (click)="deleteDescription(description)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                {{ description.value + "( "+ description.language + " )" }}
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>
+    <!-- Presentation parameters -->
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'SHARED.PRESENTATION_PARAMETERS' | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <form [formGroup]="addPresentationForm" (ngSubmit)="addPresentationParameter(addPresentationForm.value)">
+            <!-- Language -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                <input matInput type="text" formControlName="name" />
+            </mat-form-field>
+            <!-- Value -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.SELECT_TYPE' | translate }}</mat-label>
+                <mat-select formControlName="type">
+                    <mat-option *ngFor="let type of types" [value]="type.code">
+                        {{ type.displayName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- ContentType -->
+            <mat-form-field class="full-width">
+                <mat-label>{{ 'SHARED.EXPRESSION' | translate }}</mat-label>
+                <input matInput type="text" formControlName="expression" />
+            </mat-form-field>
+            <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+        </form>
+        <mat-list>
+            <mat-list-item *ngFor="let pp of presentationParameters">
+                <button mat-icon-button (click)="deletePrescriptionParameter(pp)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                {{ pp.name }}
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>
+</mat-accordion>

@@ -8,11 +8,6 @@ import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.mode
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-
-export class ParameterType {
-    constructor(public type: string, public displayName: string) { }
-}
-
 @Component({
     selector: 'view-humantaskdef-info-component',
     templateUrl: './info.component.html',
@@ -23,9 +18,6 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
     baseTranslationKey: string = "HUMANTASK.DEF.VIEW.TASK";
     humanTaskDef: HumanTaskDef = new HumanTaskDef();
     infoForm: FormGroup;
-    inputParameterForm: FormGroup;
-    outputParameterForm: FormGroup;
-    parameterTypes: ParameterType[];
 
     constructor(
         private store: Store<fromAppState.AppState>,
@@ -37,19 +29,6 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
             name: '',
             priority: ''
         });
-        this.inputParameterForm = this.formBuilder.group({
-            name: '',
-            type: '',
-            isRequired:''
-        });
-        this.outputParameterForm = this.formBuilder.group({
-            name: '',
-            type: '',
-            isRequired: ''
-        });
-        this.parameterTypes = [];
-        this.parameterTypes.push(new ParameterType("string", "string"));
-        this.parameterTypes.push(new ParameterType("bool", "boolean"));
     }
 
     ngOnInit(): void {
@@ -134,47 +113,17 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         });
     }
 
-    updateInfo(form: any) {
+    updateInfo(form: any) {        
         const request = new fromHumanTaskDefActions.UpdateHumanTaskInfo(this.humanTaskDef.id, form.name, form.priority);
         this.store.dispatch(request);
     }
 
     addInputParameter(param: Parameter) {
-        const filteredInputParam = this.humanTaskDef.operation.inputParameters.filter(function (p: Parameter) {
-            return p.name === param.name
-        });
-        if (filteredInputParam.length === 1) {
-            this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.INPUT_PARAMETER_EXISTS'), this.translateService.instant('undo'), {
-                duration: 2000
-            });
-            return;
-        }
-
-        if (!param.isRequired) {
-            param.isRequired = false;
-        }
-
-        this.inputParameterForm.reset();
         const request = new fromHumanTaskDefActions.AddInputParameterOperation(this.humanTaskDef.id, param);
         this.store.dispatch(request);
     }
 
     addOutputParameter(param: Parameter) {
-        const filteredOutputParam = this.humanTaskDef.operation.outputParameters.filter(function (p: Parameter) {
-            return p.name === param.name
-        });
-        if (filteredOutputParam.length === 1) {
-            this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.OUTPUT_PARAMETER_EXISTS'), this.translateService.instant('undo'), {
-                duration: 2000
-            });
-            return;
-        }
-
-        if (!param.isRequired) {
-            param.isRequired = false;
-        }
-
-        this.outputParameterForm.reset();
         const request = new fromHumanTaskDefActions.AddOutputParameterOperation(this.humanTaskDef.id, param);
         this.store.dispatch(request);
     }

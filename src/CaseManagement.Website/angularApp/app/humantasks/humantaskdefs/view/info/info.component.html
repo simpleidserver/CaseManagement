@@ -24,60 +24,18 @@
                     <mat-expansion-panel-header>
                         {{ baseTranslationKey + ".ADD_INPUT_PARAMETER" | translate }}
                     </mat-expansion-panel-header>
-                    <form [formGroup]="inputParameterForm" (ngSubmit)="addInputParameter(inputParameterForm.value)">
-                        <mat-form-field class="full-width">
-                            <mat-label>{{ "SHARED.NAME" | translate }}</mat-label>
-                            <input matInput type="text" formControlName="name" />
-                        </mat-form-field>
-                        <mat-form-field class="full-width">
-                            <mat-label>{{ baseTranslationKey + ".SELECT_PARAMETER_TYPE" | translate }}</mat-label>
-                            <mat-select formControlName="type">
-                                <mat-option *ngFor="let type of parameterTypes" [value]="type.type">
-                                    {{ type.displayName }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <div class="full-width">
-                            <mat-checkbox formControlName="isRequired">{{ baseTranslationKey + ".PARAMETER_ISREQUIRED" | translate }}</mat-checkbox>
-                        </div>
-                        <button mat-raised-button color="primary">{{ "SHARED.ADD" | translate }}</button>
-                    </form>
-                    <mat-list>
-                        <mat-list-item *ngFor="let param of this.humanTaskDef.operation.inputParameters">
-                            <button (click)="deleteInputParameter(param)" mat-icon-button><mat-icon>delete</mat-icon></button>
-                            {{ baseTranslationKey + '.PARAMETER_INFO' | translate : { name: param.name, type: param.type, isRequired: param.isRequired } }}
-                        </mat-list-item>
-                    </mat-list>
+                    <operationparameter-component (parameterAdded)="addInputParameter($event)"
+                                                  (parameterRemoved)="deleteInputParameter($event)"
+                                                  [parameters]="this.humanTaskDef.operation.inputParameters"></operationparameter-component>
                 </mat-expansion-panel>
                 <!-- Manage output parameters -->
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         {{ baseTranslationKey + ".ADD_OUTPUT_PARAMETER" | translate }}
                     </mat-expansion-panel-header>
-                    <form [formGroup]="outputParameterForm" (ngSubmit)="addOutputParameter(outputParameterForm.value)">
-                        <mat-form-field class="full-width">
-                            <mat-label>{{ "SHARED.NAME" | translate }}</mat-label>
-                            <input matInput type="text" formControlName="name" />
-                        </mat-form-field>
-                        <mat-form-field class="full-width">
-                            <mat-label>{{ baseTranslationKey + ".SELECT_PARAMETER_TYPE" | translate }}</mat-label>
-                            <mat-select formControlName="type">
-                                <mat-option *ngFor="let type of parameterTypes" [value]="type.type">
-                                    {{ type.displayName }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <div class="full-width">
-                            <mat-checkbox formControlName="isRequired">{{ baseTranslationKey + ".PARAMETER_ISREQUIRED" | translate }}</mat-checkbox>
-                        </div>
-                        <button mat-raised-button color="primary">{{ "SHARED.ADD" | translate }}</button>
-                    </form>
-                    <mat-list>
-                        <mat-list-item *ngFor="let param of this.humanTaskDef.operation.outputParameters">
-                            <button (click)="deleteOutputParameter(param)" mat-icon-button><mat-icon>delete</mat-icon></button>
-                            {{ baseTranslationKey + '.PARAMETER_INFO' | translate : { name: param.name, type: param.type, isRequired: param.isRequired } }}
-                        </mat-list-item>
-                    </mat-list>
+                    <operationparameter-component (parameterAdded)="addOutputParameter($event)"
+                                                  (parameterRemoved)="deleteOutputParameter($event)"
+                                                  [parameters]="this.humanTaskDef.operation.outputParameters"></operationparameter-component>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>

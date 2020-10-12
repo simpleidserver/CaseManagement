@@ -69,7 +69,7 @@
                                 <input matInput formControlName="value" name="value" />
                             </mat-form-field>
                             <mat-form-field class="full-width">
-                                <mat-label>{{ baseTranslationKey + ".SELECT_LANGUAGE" | translate }}</mat-label>
+                                <mat-label>{{ "SHARED.SELECT_LANGUAGE" | translate }}</mat-label>
                                 <mat-select formControlName="language">
                                     <mat-option *ngFor="let language of languages" [value]="language.code">{{ language.display }}</mat-option>
                                 </mat-select>

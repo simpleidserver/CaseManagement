@@ -112,9 +112,27 @@
   "HUMAN_TASK_DEFS": "Human task definitions",
   "SHARED": {
     "NAME": "Name",
+    "VALUE": "Value",
     "PRIORITY": "Priority",
     "UPDATE": "Update",
-    "ADD": "Add"
+    "ADD": "Add",
+    "CLOSE": "Close",
+    "SELECT_PARAMETER_TYPE": "Select parameter type",
+    "PARAMETER_INFO": "{{name}} (type = {{type}}, is required = {{isRequired}})",
+    "PARAMETER_ISREQUIRED": "Parameter is required",
+    "NAMES": "Names",
+    "SUBJECTS": "Subjects",
+    "SELECT_LANGUAGE": "Select the language",
+    "DESCRIPTIONS": "Descriptions",
+    "CONTENT_TYPE": "Content type",
+    "EXPRESSION": "Expression",
+    "PRESENTATION_PARAMETERS": "Presentation parameters",
+    "SELECT_ASSIGNMENT_TYPE": "Select type of assignment",
+    "LOGICALGROUP": "Logical group",
+    "USERIDENTIFIERS": "User identifiers",
+    "GROUPNAMES": "Group names",
+    "UNIQUE_VALUE": "Only one value can be inserted",
+    "SELECT_TYPE": "Select the type"
   },
   "HUMANTASK": {
     "DEF": {
@@ -126,12 +144,9 @@
           "UPDATE_OPERATION": "Update operation",
           "INPUT_PARAMETER_EXISTS": "Input parameter already exists",
           "OUTPUT_PARAMETER_EXISTS": "Output parameter already exists",
-          "SELECT_PARAMETER_TYPE": "Select parameter type",
-          "PARAMETER_ISREQUIRED": "Parameter is required",
           "ADD_INPUT_PARAMETER": "Add input parameter",
           "ADD_OUTPUT_PARAMETER": "Add output parameter",
           "UPDATE_INFO": "Update task",
-          "PARAMETER_INFO": "{{name}} (type = {{type}}, is required = {{isRequired}})",
           "TASK_INFO_UPDATED": "Information has been updated",
           "ERROR_TASK_INFO_UPDATED": "An error occured while trying to update the task",
           "DELETE_OPERATION_INPUT_PARAMETER": "Input parameter has been removed",
@@ -172,14 +187,34 @@
           "COMPLETION_DEADLINE_REMOVED": "Completion deadline has been removed",
           "ERROR_REMOVE_COMPLETION_DEADLINE": "An error occured while trying to remove the completion deadline",
           "UPDATE_DEADLINE": "Deadline has been updated",
-          "ERROR_UPDATE_DEADLINE":  "An error occured while trying to update the deadline"
+          "ERROR_UPDATE_DEADLINE": "An error occured while trying to update the deadline",
+          "ADD_ESCALATION": "Add escalation",
+          "ESCALATION_CONDITION": "Condition",
+          "ESCALATION_INFO": "Information",
+          "ESCALATION_PARAMETERS": "To parameters",
+          "NOTIFICATION": "Notification",
+          "TO_PART_NAME": "Name",
+          "TO_PART_EXPRESSION": "Expression",
+          "NOTIFICATION_NAME": "Name",
+          "NOTIFICATION_PRIORITY": "Priority",
+          "EDIT_ESCALATION": "Edit escalation",
+          "NOTIFICATION_OPERATION": "Operation",
+          "INPUT_PARAMETERS": "Input parameters",
+          "OUTPUT_PARAMETERS": "Output parameters",
+          "NOTIFICATION_ASSIGNMENT": "People assignment",
+          "BUSINESS_ADMINISTRATOR": "Business administrator",
+          "RECIPIENT": "Recipient",
+          "NOTIFICATION_PRESENTATION_ELEMENT": "Presentation elements",
+          "UPDATE_ESCALATION": "Escalation has been updated",
+          "ERROR_UPDATE_ESCALATION": "An error occured while trying to update the escalation",
+          "ESCALATION_REMOVED": "Escalation has been removed",
+          "ERROR_DELETE_ESCALATION": "An error occured while trying to delete the escalation"
         },
         "RENDERING": {
           "TITLE": "Rendering",
           "TEXT": "Text",
           "SELECT": "Select",
           "FIELDID": "Field identifier",
-          "SELECT_LANGUAGE": "Select the language",
           "TRANSLATION": "Translation",
           "ADD": "Add",
           "TRANSLATION_EXISTS": "A translation already exists",
@@ -191,6 +226,19 @@
           "VALUE_EXISTS": "Value already exists",
           "RENDERING_UPDATED": "Rendering has been updated",
           "ERROR_UPDATE_RENDERING": "An error occured while trying to update the rendering"
+        },
+        "PRESENTATION_PARAMETERS": {
+          "TITLE": "Presentation parameter"
+        },
+        "PEOPLEASSIGNMENT": {
+          "POTENTIAL_OWNER": "Potential owner",
+          "EXCLUDED_OWNER": "Exluded owner",
+          "TASK_INITIATOR": "Task initiator",
+          "TASK_STAKEHOLDER": "Task stakeholder",
+          "BUSINESS_ADMINISTRATOR": "Business administrator",
+          "RECIPIENT": "Recipient",
+          "PEOPLE_ASSIGNMENT_UPDATED": "People assignment has been updated",
+          "CANNOT_UPDATE_PEOPLE_ASSIGNMENT": "An error occured while trying to update the people assignment"
         }
       }
     }
