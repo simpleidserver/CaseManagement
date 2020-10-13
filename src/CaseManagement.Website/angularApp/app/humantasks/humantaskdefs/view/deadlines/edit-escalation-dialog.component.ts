@@ -1,5 +1,5 @@
 ﻿import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Escalation } from '@app/stores/common/escalation.model';
@@ -22,19 +22,34 @@ export class EditEscalationDialog {
         private formBuilder: FormBuilder,
         @Inject(MAT_DIALOG_DATA) public data: Escalation) {
         this.updateEscalationForm = this.formBuilder.group({
-            condition: ''
+            condition: new FormControl('', [
+                Validators.required
+            ])
         });
         this.addToPartForm = this.formBuilder.group({
-            name: '',
-            expression: ''
+            name: new FormControl('', [
+                Validators.required
+            ]),
+            expression: new FormControl('', [
+                Validators.required
+            ])
         });
         this.updateNotificationForm = this.formBuilder.group({
-            name: '',
+            name: new FormControl('', [
+                Validators.required
+            ]),
             priority: ''
         });
+        this.updateEscalationForm.get('condition').setValue(this.data.condition);
+        this.updateNotificationForm.get('name').setValue(this.data.notification.name);
+        this.updateNotificationForm.get('priority').setValue(this.data.notification.priority);
     }
 
     addToPart(form: any) {
+        if (!this.addToPartForm.valid) {
+            return;
+        }
+
         const toPart = new ToPart();
         toPart.name = form.name;
         toPart.expression = form.expression;
@@ -74,6 +89,13 @@ export class EditEscalationDialog {
     }
 
     updateEscalation() {
+        if (!this.updateEscalationForm.valid || !this.updateNotificationForm.valid) {
+            return;
+        }
+
+        this.data.condition = this.updateEscalationForm.get('condition').value;
+        this.data.notification.name = this.updateNotificationForm.get('name').value;
+        this.data.notification.priority = this.updateNotificationForm.get('priority').value;
         this.dialogRef.close(this.data);
     }
 }

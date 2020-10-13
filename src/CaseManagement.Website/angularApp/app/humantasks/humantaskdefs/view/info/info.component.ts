@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import { Parameter } from '@app/stores/common/operation.model';
@@ -26,7 +26,9 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         private translateService: TranslateService,
         private actions$: ScannedActionsSubject) {
         this.infoForm = this.formBuilder.group({
-            name: '',
+            name: new FormControl('', [
+                Validators.required
+            ]),
             priority: ''
         });
     }
@@ -113,7 +115,11 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         });
     }
 
-    updateInfo(form: any) {        
+    updateInfo(form: any) {
+        if (!this.infoForm.valid) {
+            return;
+        }
+
         const request = new fromHumanTaskDefActions.UpdateHumanTaskInfo(this.humanTaskDef.id, form.name, form.priority);
         this.store.dispatch(request);
     }

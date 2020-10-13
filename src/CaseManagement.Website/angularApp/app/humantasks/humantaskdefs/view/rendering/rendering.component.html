@@ -67,12 +67,18 @@
                             <mat-form-field class="full-width">
                                 <mat-label>{{ baseTranslationKey + ".VALUE" | translate }}</mat-label>
                                 <input matInput formControlName="value" name="value" />
+                                <mat-error *ngIf="addValueForm.get('value').hasError('required')">
+                                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field class="full-width">
                                 <mat-label>{{ "SHARED.SELECT_LANGUAGE" | translate }}</mat-label>
                                 <mat-select formControlName="language">
                                     <mat-option *ngFor="let language of languages" [value]="language.code">{{ language.display }}</mat-option>
                                 </mat-select>
+                                <mat-error *ngIf="addValueForm.get('language').hasError('required')">
+                                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field class="full-width">
                                 <mat-label>{{ baseTranslationKey + ".TRANSLATION" | translate }}</mat-label>
@@ -93,14 +99,20 @@
                         </mat-expansion-panel-header>
                         <form [formGroup]="addLabelForm" (ngSubmit)="updateLabel(addLabelForm.value)">
                             <mat-form-field class="full-width">
-                                <mat-label>{{ baseTranslationKey + ".SELECT_LANGUAGE" | translate }}</mat-label>
-                                <mat-select formControlName="language">
+                                <mat-label>{{ "SHARED.SELECT_LANGUAGE" | translate }}</mat-label>
+                                <mat-select formControlName="language" required>
                                     <mat-option *ngFor="let language of languages" [value]="language.code">{{ language.display }}</mat-option>
                                 </mat-select>
+                                <mat-error *ngIf="addLabelForm.get('language').hasError('required')">
+                                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field class="full-width">
                                 <mat-label>{{ baseTranslationKey + ".TRANSLATION" | translate }}</mat-label>
-                                <input matInput formControlName="value" name="value" />
+                                <input matInput formControlName="value" name="value" required />
+                                <mat-error *ngIf="addLabelForm.get('value').hasError('required')">
+                                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                                </mat-error>
                             </mat-form-field>
                             <button mat-raised-button color="primary">{{ baseTranslationKey + ".ADD" | translate }}</button>
                         </form>

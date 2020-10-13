@@ -1,55 +1,61 @@
 ﻿<mat-accordion>
     <!-- Potential owner -->
-    <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel [expanded]="true" hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{ baseTranslationKey + '.POTENTIAL_OWNER' | translate }}
             </mat-panel-title>
+            <mat-icon matTooltip="{{ baseTranslationKey + '.POTENTIAL_OWNER_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <peopleassignment-component [peopleAssignment]="peopleAssignment.potentialOwner"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Excluded owner -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{ baseTranslationKey + '.EXCLUDED_OWNER' | translate }}
             </mat-panel-title>
+            <mat-icon matTooltip="{{ baseTranslationKey + '.EXCLUDED_OWNER_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <peopleassignment-component [peopleAssignment]="peopleAssignment.excludedOwner"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Task initiator -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{ baseTranslationKey + '.TASK_INITIATOR' | translate }}
             </mat-panel-title>
+            <mat-icon matTooltip="{{ baseTranslationKey + '.TASK_INITIATOR_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <peopleassignment-component [peopleAssignment]="peopleAssignment.taskInitiator"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Task initiator -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{ baseTranslationKey + '.TASK_STAKEHOLDER' | translate }}
             </mat-panel-title>
+            <mat-icon matTooltip="{{ baseTranslationKey + '.TASK_STAKEHOLDER_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <peopleassignment-component [peopleAssignment]="peopleAssignment.taskStakeHolder"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Business administrator -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{ baseTranslationKey + '.BUSINESS_ADMINISTRATOR' | translate }}
             </mat-panel-title>
+            <mat-icon matTooltip="{{ baseTranslationKey + '.BUSINESS_ADMINISTRATOR_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <peopleassignment-component [peopleAssignment]="peopleAssignment.businessAdministrator"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Recipient -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>
                 {{ baseTranslationKey + '.RECIPIENT' | translate }}
             </mat-panel-title>
+            <mat-icon matTooltip="{{ baseTranslationKey + '.RECIPIENT_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <peopleassignment-component [peopleAssignment]="peopleAssignment.recipient"></peopleassignment-component>
     </mat-expansion-panel>

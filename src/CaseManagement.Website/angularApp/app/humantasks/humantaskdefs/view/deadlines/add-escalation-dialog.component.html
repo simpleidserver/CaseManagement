@@ -1,10 +1,13 @@
 ﻿<h1 mat-dialog-title>{{ baseTranslationKey + '.ADD_ESCALATION' | translate }}</h1>
 <div mat-dialog-content>
     <form [formGroup]="addEscalationForm" (ngSubmit)="onAddEscalation(addEscalationForm.value)">
-         <mat-form-field class="full-width">
-             <mat-label>{{ baseTranslationKey + '.ESCALATION_CONDITION' | translate}}</mat-label>
-             <input matInput formControlName="condition" type="text" />
-         </mat-form-field>
+        <mat-form-field class="full-width">
+            <mat-label>{{ baseTranslationKey + '.ESCALATION_CONDITION' | translate}}</mat-label>
+            <input matInput formControlName="condition" type="text" required />
+            <mat-error *ngIf="addEscalationForm.get('condition').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
         <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
     </form>
 </div>

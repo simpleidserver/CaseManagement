@@ -1,23 +1,32 @@
 ﻿<mat-accordion>
     <!-- Names -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle [expanded]="true">
         <mat-expansion-panel-header>
-            <mat-panel-title>{{ 'SHARED.NAMES' | translate }}</mat-panel-title>
+            <mat-panel-title>
+                {{ 'SHARED.NAMES' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'SHARED.NAMES_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <form [formGroup]="addNameForm" (ngSubmit)="addName(addNameForm.value)">
             <!-- Language -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.SELECT_LANGUAGE' | translate }}</mat-label>
-                <mat-select formControlName="language">
+                <mat-select formControlName="language" required>
                     <mat-option *ngFor="let lang of languages" [value]="lang.code">
                         {{ lang.displayName }}
                     </mat-option>
                 </mat-select>
+                <mat-error *ngIf="addNameForm.get('language').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <!-- Value -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
-                <input matInput type="text" formControlName="value" />
+                <input matInput type="text" formControlName="value" required />
+                <mat-error *ngIf="addNameForm.get('value').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
         </form>
@@ -31,24 +40,33 @@
         </mat-list>
     </mat-expansion-panel>
     <!-- Subjects -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
-            <mat-panel-title>{{ 'SHARED.SUBJECTS' | translate }}</mat-panel-title>
+            <mat-panel-title>
+                {{ 'SHARED.SUBJECTS' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'SHARED.SUBJECTS_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <form [formGroup]="addSubjectForm" (ngSubmit)="addSubject(addSubjectForm.value)">
             <!-- Language -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.SELECT_LANGUAGE' | translate }}</mat-label>
-                <mat-select formControlName="language">
+                <mat-select formControlName="language" required>
                     <mat-option *ngFor="let lang of languages" [value]="lang.code">
                         {{ lang.displayName }}
                     </mat-option>
                 </mat-select>
+                <mat-error *ngIf="addSubjectForm.get('language').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <!-- Value -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
-                <input matInput type="text" formControlName="value" />
+                <input matInput type="text" formControlName="value" required />
+                <mat-error *ngIf="addSubjectForm.get('value').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
         </form>
@@ -62,33 +80,43 @@
         </mat-list>
     </mat-expansion-panel>
     <!-- Descriptions -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>{{ 'SHARED.DESCRIPTIONS' | translate }}</mat-panel-title>
+            <mat-icon matTooltip="{{ 'SHARED.DESCRIPTIONS_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <form [formGroup]="addDescriptionForm" (ngSubmit)="addDescription(addDescriptionForm.value)">
             <!-- Language -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.SELECT_LANGUAGE' | translate }}</mat-label>
-                <mat-select formControlName="language">
+                <mat-select formControlName="language" required>
                     <mat-option *ngFor="let lang of languages" [value]="lang.code">
                         {{ lang.displayName }}
                     </mat-option>
                 </mat-select>
+                <mat-error *ngIf="addDescriptionForm.get('language').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <!-- Value -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
-                <input matInput type="text" formControlName="value" />
+                <input matInput type="text" formControlName="value" required />
+                <mat-error *ngIf="addDescriptionForm.get('value').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <!-- ContentType -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.CONTENT_TYPE' | translate }}</mat-label>
-                <mat-select formControlName="contentType">
+                <mat-select formControlName="contentType" required>
                     <mat-option *ngFor="let ct of contentTypes" [value]="ct.code">
                         {{ ct.displayName }}
                     </mat-option>
                 </mat-select>
+                <mat-error *ngIf="addDescriptionForm.get('contentType').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
         </form>
@@ -102,29 +130,41 @@
         </mat-list>
     </mat-expansion-panel>
     <!-- Presentation parameters -->
-    <mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
-            <mat-panel-title>{{ 'SHARED.PRESENTATION_PARAMETERS' | translate }}</mat-panel-title>
+            <mat-panel-title>
+                {{ 'SHARED.PRESENTATION_PARAMETERS' | translate }}s
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'SHARED.PRESENTATION_PARAMETERS_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
         <form [formGroup]="addPresentationForm" (ngSubmit)="addPresentationParameter(addPresentationForm.value)">
             <!-- Language -->
-            <mat-form-field class="full-width">
+            <mat-form-field class="full-width" >
                 <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
-                <input matInput type="text" formControlName="name" />
+                <input matInput type="text" formControlName="name" required />
+                <mat-error *ngIf="addPresentationForm.get('name').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <!-- Value -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.SELECT_TYPE' | translate }}</mat-label>
-                <mat-select formControlName="type">
+                <mat-select formControlName="type" required>
                     <mat-option *ngFor="let type of types" [value]="type.code">
                         {{ type.displayName }}
                     </mat-option>
                 </mat-select>
+                <mat-error *ngIf="addPresentationForm.get('type').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <!-- ContentType -->
             <mat-form-field class="full-width">
                 <mat-label>{{ 'SHARED.EXPRESSION' | translate }}</mat-label>
-                <input matInput type="text" formControlName="expression" />
+                <input matInput type="text" formControlName="expression"  required />
+                <mat-error *ngIf="addPresentationForm.get('expression').hasError('required')">
+                    {{ 'SHARED.IS_REQUIRED' | translate }}
+                </mat-error>
             </mat-form-field>
             <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
         </form>

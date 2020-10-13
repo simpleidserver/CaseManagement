@@ -1,15 +1,21 @@
 ﻿<form [formGroup]="parameterForm" (ngSubmit)="addParameter(parameterForm.value)">
     <mat-form-field class="full-width">
         <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
-        <input matInput type="text" formControlName="name" />
+        <input matInput type="text" formControlName="name" required />
+        <mat-error *ngIf="parameterForm.get('name').hasError('required')">
+            {{ 'SHARED.IS_REQUIRED' | translate }}
+        </mat-error>
     </mat-form-field>
     <mat-form-field class="full-width">
         <mat-label>{{ 'SHARED.SELECT_PARAMETER_TYPE' | translate }}</mat-label>
-        <mat-select formControlName="type">
+        <mat-select formControlName="type" required>
             <mat-option *ngFor="let type of parameterTypes" [value]="type.type">
                 {{ type.displayName }}
             </mat-option>
         </mat-select>
+        <mat-error *ngIf="parameterForm.get('type').hasError('required')">
+            {{ 'SHARED.IS_REQUIRED' | translate }}
+        </mat-error>
     </mat-form-field>
     <div class="full-width">
         <mat-checkbox formControlName="isRequired">{{  'SHARED.PARAMETER_ISREQUIRED' | translate }}</mat-checkbox>

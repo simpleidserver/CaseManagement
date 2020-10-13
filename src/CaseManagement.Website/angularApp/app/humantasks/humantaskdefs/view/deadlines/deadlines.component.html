@@ -1,37 +1,49 @@
-﻿<div class="mleft-10 mright-10">
-    <div fxLayout="column" fxLayoutGap="10px">
-        <div>
+﻿<div fxLayout="row" fxLayoutGap="10px">
+    <div fxLayout="column" fxLayoutGap="10px" fxFlex="70%">
+        <mat-card>
             <!-- Add a deadline -->
             <form [formGroup]="addDeadlineForm" (ngSubmit)="addDeadLine(addDeadlineForm.value)">
                 <!-- Deadline name -->
                 <mat-form-field class="full-width">
                     <mat-label>{{ baseTranslationKey + '.DEADLINE_NAME' | translate }}</mat-label>
-                    <input matInput type="text" formControlName="name" />
+                    <input matInput type="text" formControlName="name" required />
+                    <mat-error *ngIf="addDeadlineForm.get('name').hasError('required')">
+                        {{ 'SHARED.IS_REQUIRED' | translate }}
+                    </mat-error>
                 </mat-form-field>
                 <!-- Select type of deadline -->
                 <mat-form-field class="full-width">
                     <mat-label>{{ baseTranslationKey + '.SELECT_DEADLINE_TYPE' | translate }}</mat-label>
-                    <mat-select formControlName="deadlineType">
+                    <mat-select formControlName="deadlineType" required>
                         <mat-option value="start">{{ baseTranslationKey + ".START_DEADLINE" | translate }}</mat-option>
                         <mat-option value="completion">{{ baseTranslationKey + ".COMPLETION_DEADLINE" | translate }}</mat-option>
                     </mat-select>
+                    <mat-error *ngIf="addDeadlineForm.get('deadlineType').hasError('required')">
+                        {{ 'SHARED.IS_REQUIRED' | translate }}
+                    </mat-error>
                 </mat-form-field>
                 <!-- Select type of validity -->
                 <mat-form-field class="full-width">
                     <mat-label>{{ baseTranslationKey + '.SELECT_DEADLINE_VALIDITYTYPE' | translate }}</mat-label>
-                    <mat-select formControlName="validityType">
+                    <mat-select formControlName="validityType" required>
                         <mat-option value="duration">{{ baseTranslationKey + ".DURATION" | translate }}</mat-option>
                         <mat-option value="expiration">{{ baseTranslationKey + ".EXPIRATION_DATETIME" | translate }}</mat-option>
                     </mat-select>
+                    <mat-error *ngIf="addDeadlineForm.get('validityType').hasError('required')">
+                        {{ 'SHARED.IS_REQUIRED' | translate }}
+                    </mat-error>
                 </mat-form-field>
                 <!-- Validity -->
                 <mat-form-field class="full-width">
                     <mat-label>{{ baseTranslationKey + '.VALIDITYVALUE' | translate }}</mat-label>
                     <input matInput type="text" formControlName="validity" />
+                    <mat-error *ngIf="addDeadlineForm.get('validity').hasError('required')">
+                        {{ 'SHARED.IS_REQUIRED' | translate }}
+                    </mat-error>
                 </mat-form-field>
                 <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
             </form>
-        </div>
+        </mat-card>
         <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column">
             <div fxFlex="50%">
                 <h2>{{ baseTranslationKey + '.START_DEADLINES' | translate }}</h2>
@@ -98,57 +110,66 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="currentDeadline">
-            <mat-tab-group>
-                <mat-tab label="{{ baseTranslationKey + '.DEADLINE_INFO' | translate }}">
-                    <!-- Update deadline -->
-                    <form [formGroup]="updateDeadlineForm" (ngSubmit)="updateDeadline(updateDeadlineForm.value)">
-                        <!-- Deadline name -->
-                        <mat-form-field class="full-width">
-                            <mat-label>{{ baseTranslationKey + '.DEADLINE_NAME' | translate }}</mat-label>
-                            <input matInput type="text" formControlName="name" />
-                        </mat-form-field>
-                        <!-- Select type of validity -->
-                        <mat-form-field class="full-width">
-                            <mat-label>{{ baseTranslationKey + '.SELECT_DEADLINE_VALIDITYTYPE' | translate }}</mat-label>
-                            <mat-select formControlName="validityType">
-                                <mat-option value="duration">{{ baseTranslationKey + ".DURATION" | translate }}</mat-option>
-                                <mat-option value="expiration">{{ baseTranslationKey + ".EXPIRATION_DATETIME" | translate }}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <!-- Validity -->
-                        <mat-form-field class="full-width">
-                            <mat-label>{{ baseTranslationKey + '.VALIDITYVALUE' | translate }}</mat-label>
-                            <input matInput type="text" formControlName="validity" />
-                        </mat-form-field>
-                        <button mat-raised-button color="primary">{{ 'SHARED.UPDATE' | translate }}</button>
-                    </form>
-                </mat-tab>
-                <mat-tab label="{{ baseTranslationKey + '.ESCALATIONS' | translate }}">
-                    <button mat-raised-button color="primary" (click)="addEscalation()">{{ baseTranslationKey + '.ADD_ESCALATION' | translate }}</button>
-                    <div class="mat-elevation-z8 overflow-hidden">
-                        <table mat-table class="full-width" [dataSource]="escalations">
-                            <ng-container matColumnDef="condition">
-                                <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + '.ESCALATION_CONDITION' | translate }}</th>
-                                <td mat-cell *matCellDef="let escalation">{{escalation.condition}}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="actions">
-                                <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let escalation">
-                                    <button mat-icon-button (click)="editEscalation(escalation)">
-                                        <mat-icon>edit</mat-icon>
-                                    </button>
-                                    <button mat-icon-button (click)="deleteEscalation(escalation)">
-                                        <mat-icon>delete</mat-icon>
-                                    </button>
-                                </td>
-                            </ng-container>
-                            <tr mat-header-row *matHeaderRowDef="displayedEscalationColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedEscalationColumns;"></tr>
-                        </table>
-                    </div>
-                </mat-tab>
-            </mat-tab-group>
-        </div>
     </div>
+    <mat-card *ngIf="currentDeadline" fxFlex="30%">
+        <mat-tab-group>
+            <mat-tab label="{{ baseTranslationKey + '.DEADLINE_INFO' | translate }}">
+                <!-- Update deadline -->
+                <form [formGroup]="updateDeadlineForm" (ngSubmit)="updateDeadline(updateDeadlineForm.value)">
+                    <!-- Deadline name -->
+                    <mat-form-field class="full-width">
+                        <mat-label>{{ baseTranslationKey + '.DEADLINE_NAME' | translate }}</mat-label>
+                        <input matInput type="text" formControlName="name" required />
+                        <mat-error *ngIf="updateDeadlineForm.get('name').hasError('required')">
+                            {{ 'SHARED.IS_REQUIRED' | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                    <!-- Select type of validity -->
+                    <mat-form-field class="full-width">
+                        <mat-label>{{ baseTranslationKey + '.SELECT_DEADLINE_VALIDITYTYPE' | translate }}</mat-label>
+                        <mat-select formControlName="validityType">
+                            <mat-option value="duration">{{ baseTranslationKey + ".DURATION" | translate }}</mat-option>
+                            <mat-option value="expiration">{{ baseTranslationKey + ".EXPIRATION_DATETIME" | translate }}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="updateDeadlineForm.get('validityType').hasError('required')">
+                            {{ 'SHARED.IS_REQUIRED' | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                    <!-- Validity -->
+                    <mat-form-field class="full-width">
+                        <mat-label>{{ baseTranslationKey + '.VALIDITYVALUE' | translate }}</mat-label>
+                        <input matInput type="text" formControlName="validity" />
+                        <mat-error *ngIf="updateDeadlineForm.get('validity').hasError('required')">
+                            {{ 'SHARED.IS_REQUIRED' | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                    <button mat-raised-button color="primary">{{ 'SHARED.UPDATE' | translate }}</button>
+                </form>
+            </mat-tab>
+            <mat-tab label="{{ baseTranslationKey + '.ESCALATIONS' | translate }}">
+                <button mat-raised-button color="primary" (click)="addEscalation()">{{ baseTranslationKey + '.ADD_ESCALATION' | translate }}</button>
+                <div class="mat-elevation-z8 overflow-hidden">
+                    <table mat-table class="full-width" [dataSource]="escalations">
+                        <ng-container matColumnDef="condition">
+                            <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + '.ESCALATION_CONDITION' | translate }}</th>
+                            <td mat-cell *matCellDef="let escalation">{{escalation.condition}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let escalation">
+                                <button mat-icon-button (click)="editEscalation(escalation)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="deleteEscalation(escalation)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedEscalationColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedEscalationColumns;"></tr>
+                    </table>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card>
 </div>

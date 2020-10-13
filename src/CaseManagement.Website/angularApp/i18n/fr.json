@@ -121,18 +121,23 @@
     "PARAMETER_INFO": "{{name}} (type = {{type}}, is required = {{isRequired}})",
     "PARAMETER_ISREQUIRED": "Parameter is required",
     "NAMES": "Names",
+    "NAMES_INFO": "This element is the short title of a task.",
     "SUBJECTS": "Subjects",
+    "SUBJECTS_INFO": "This element is a longer text that describes the task..",
     "SELECT_LANGUAGE": "Select the language",
     "DESCRIPTIONS": "Descriptions",
+    "DESCRIPTIONS_INFO": "This element is a long description of the task.",
     "CONTENT_TYPE": "Content type",
     "EXPRESSION": "Expression",
     "PRESENTATION_PARAMETERS": "Presentation parameters",
+    "PRESENTATION_PARAMETERS_INFO": "This element specifies parameters used in presentation elements subject and description.",
     "SELECT_ASSIGNMENT_TYPE": "Select type of assignment",
     "LOGICALGROUP": "Logical group",
     "USERIDENTIFIERS": "User identifiers",
     "GROUPNAMES": "Group names",
     "UNIQUE_VALUE": "Only one value can be inserted",
-    "SELECT_TYPE": "Select the type"
+    "SELECT_TYPE": "Select the type",
+    "IS_REQUIRED": "Is required"
   },
   "HUMANTASK": {
     "DEF": {
@@ -140,8 +145,9 @@
         "HUMANTASKDEF_UPDATED": "Human task definition is updated",
         "ERROR_UPDATE_HUMANTASKDEF": "An error occured while trying to update the human task definition",
         "TASK": {
-          "TITLE": "Task",
+          "TITLE": "Information",
           "UPDATE_OPERATION": "Update operation",
+          "UPDATE_OPERATION_INFO": "Defining parameters that are consumed and produced when the Operation is called",
           "INPUT_PARAMETER_EXISTS": "Input parameter already exists",
           "OUTPUT_PARAMETER_EXISTS": "Output parameter already exists",
           "ADD_INPUT_PARAMETER": "Add input parameter",
@@ -162,7 +168,7 @@
           "TITLE": "Presentation"
         },
         "ASSIGNMENT": {
-          "TITLE": "Assignment"
+          "TITLE": "People assignment"
         },
         "DEADLINES": {
           "TITLE": "Deadlines",
@@ -203,12 +209,17 @@
           "OUTPUT_PARAMETERS": "Output parameters",
           "NOTIFICATION_ASSIGNMENT": "People assignment",
           "BUSINESS_ADMINISTRATOR": "Business administrator",
+          "BUSINESS_ADMINISTRATOR_INFO": "Business administrators play the same role as task stakeholders but at task definition level.",
           "RECIPIENT": "Recipient",
+          "RECIPIENT_INFO": "Notification recipients are persons who receive the notification, such as happens when a deadline is missed or when a milestone is reached.",
           "NOTIFICATION_PRESENTATION_ELEMENT": "Presentation elements",
           "UPDATE_ESCALATION": "Escalation has been updated",
           "ERROR_UPDATE_ESCALATION": "An error occured while trying to update the escalation",
           "ESCALATION_REMOVED": "Escalation has been removed",
-          "ERROR_DELETE_ESCALATION": "An error occured while trying to delete the escalation"
+          "ERROR_DELETE_ESCALATION": "An error occured while trying to delete the escalation",
+          "NOTIFICATION_OPERATION_INFO": "This element is used to specify the operation used to invoke the notification.",
+          "NOTIFICATION_ASSIGNMENT_INFO": "This element is used to specify people assigned to the notification.",
+          "NOTIFICATION_PRESENTATION_ELEMENT_INFO": "The element is used to specify different information used to display the notification, such as name, subject and description, in a task list."
         },
         "RENDERING": {
           "TITLE": "Rendering",
@@ -228,15 +239,21 @@
           "ERROR_UPDATE_RENDERING": "An error occured while trying to update the rendering"
         },
         "PRESENTATION_PARAMETERS": {
-          "TITLE": "Presentation parameter"
+          "TITLE": "Presentation parameters"
         },
         "PEOPLEASSIGNMENT": {
           "POTENTIAL_OWNER": "Potential owner",
+          "POTENTIAL_OWNER_INFO": "Potential owners of a task are persons who receive the task so that they can claim and complete it. ",
           "EXCLUDED_OWNER": "Exluded owner",
+          "EXCLUDED_OWNER_INFO": "Excluded owners are are people who cannot become an actual or potential owner and thus they cannot reserve or start the task. ",
           "TASK_INITIATOR": "Task initiator",
+          "TASK_INITIATOR_INFO": "Person who creates the task instance",
           "TASK_STAKEHOLDER": "Task stakeholder",
+          "TASK_STAKEHOLDER_INFO": "The task stakeholders are the people ultimately responsible for the oversight and outcome of the task instance.",
           "BUSINESS_ADMINISTRATOR": "Business administrator",
+          "BUSINESS_ADMINSITRATOR_INFO": "Business administrators play the same role as task stakeholders but at task definition level.",
           "RECIPIENT": "Recipient",
+          "RECIPIENT_INFO": "Notification recipients are persons who receive the notification, such as happens when a deadline is missed or when a milestone is reached.",
           "PEOPLE_ASSIGNMENT_UPDATED": "People assignment has been updated",
           "CANNOT_UPDATE_PEOPLE_ASSIGNMENT": "An error occured while trying to update the people assignment"
         }

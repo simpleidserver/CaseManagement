@@ -1,5 +1,5 @@
 ﻿import { Component, EventEmitter, Output, ViewEncapsulation, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { Parameter } from '@app/stores/common/operation.model';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,13 +34,21 @@ export class OperationParameterComponent {
         this.parameterTypes.push(new ParameterType("string", "string"));
         this.parameterTypes.push(new ParameterType("bool", "boolean"));
         this.parameterForm = this.formBuilder.group({
-            name: '',
-            type: '',
+            name: new FormControl('', [
+                Validators.required
+            ]),
+            type: new FormControl('', [
+                Validators.required
+            ]),
             isRequired: ''
         });
     }
 
-    addParameter(param : Parameter) {
+    addParameter(param: Parameter) {
+        if (!this.parameterForm.valid) {
+            return;
+        }
+
         const filteredOutputParam = this.parameters.filter(function (p: Parameter) {
             return p.name === param.name
         });

@@ -1,5 +1,5 @@
 ﻿import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PeopleAssignment } from '@app/stores/common/people-assignment.model';
 
 export class ParameterType {
@@ -38,8 +38,12 @@ export class PeopleAssignmentComponent {
     constructor(
         private formBuilder: FormBuilder) {
         this.peopleAssignmentForm = this.formBuilder.group({
-            type: '',
-            value: ''
+            type: new FormControl('', [
+                Validators.required
+            ]),
+            value: new FormControl('', [
+                Validators.required
+            ]),
         });
     }
 
@@ -50,6 +54,10 @@ export class PeopleAssignmentComponent {
     }
 
     addPeopleAssignment(form: any) {
+        if (!this.peopleAssignmentForm.valid) {
+            return;
+        }
+
         this.peopleAssignmentForm.get('value').setValue('');
         this.values.push(form.value);
         this.update();

@@ -1,6 +1,6 @@
 ﻿import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import { OptionValue, OutputRenderingElement, Rendering, Translation } from '@app/stores/common/rendering.model';
@@ -41,13 +41,23 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
         private translateService: TranslateService,
         private actions$: ScannedActionsSubject) {
         this.addLabelForm = this.formBuilder.group({
-            language: '',
-            value: ''
+            language: new FormControl('', [
+                Validators.required
+            ]),
+            value: new FormControl('', [
+                Validators.required
+            ])
         });
         this.addValueForm = this.formBuilder.group({
-            value: '',
-            language: '',
-            translation: ''
+            value: new FormControl('', [
+                Validators.required
+            ]),
+            language: new FormControl('', [
+                Validators.required
+            ]),
+            translation: new FormControl('', [
+                Validators.required
+            ])
         });
         this.languages = [];
         this.fieldTypes = [];

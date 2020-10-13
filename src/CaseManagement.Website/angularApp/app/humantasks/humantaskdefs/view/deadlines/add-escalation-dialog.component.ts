@@ -1,5 +1,5 @@
 ﻿import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 
 @Component({
@@ -14,11 +14,17 @@ export class AddEscalationDialog {
         private dialogRef: MatDialogRef<AddEscalationDialog>,
         private formBuilder: FormBuilder) {
         this.addEscalationForm = this.formBuilder.group({
-            condition: ''
+            condition: new FormControl('', [
+                Validators.required
+            ])
         });
     }
 
     onAddEscalation(form: any) {
+        if (!this.addEscalationForm.valid) {
+            return;
+        }
+
         this.dialogRef.close(form);
     }
 

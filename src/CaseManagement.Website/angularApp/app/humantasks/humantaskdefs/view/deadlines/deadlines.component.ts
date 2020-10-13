@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import { Escalation } from '@app/stores/common/escalation.model';
@@ -43,16 +43,29 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
         private dialog: MatDialog,
         private translateService: TranslateService) {
         this.addDeadlineForm = this.formBuilder.group({
-            name: '',
-            deadlineType: '',
-            validityType: '',
-            validity: ''
+            name: new FormControl('', [
+                Validators.required
+            ]),
+            deadlineType: new FormControl('', [
+                Validators.required
+            ]),
+            validityType: new FormControl('', [
+                Validators.required
+            ]),
+            validity: new FormControl('', [
+                Validators.required
+            ])
         });
         this.updateDeadlineForm = this.formBuilder.group({
-            name: '',
-            deadlineType: '',
-            validityType: '',
-            validity: ''
+            name: new FormControl('', [
+                Validators.required
+            ]),
+            validityType: new FormControl('', [
+                Validators.required
+            ]),
+            validity: new FormControl('', [
+                Validators.required
+            ])
         });
     }
 
@@ -245,6 +258,10 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
     }
 
     addDeadLine(form: any) {
+        if (!this.addDeadlineForm.valid) {
+            return;
+        }
+
         const deadline = new HumanTaskDefinitionDeadLine();
         deadline.name = form.name;
         if (form.validityType === 'duration') {
@@ -265,6 +282,10 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
     }
 
     updateDeadline(form: any) {
+        if (!this.updateDeadlineForm.valid || !this.currentDeadline) {
+            return;
+        }
+
         const deadline = new HumanTaskDefinitionDeadLine();
         deadline.id = this.currentDeadline.id;
         deadline.name = form.name;
@@ -300,12 +321,11 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
         this.currentDeadline = deadline;
         this.escalations.data = this.currentDeadline.escalations;
         this.updateDeadlineForm.get('name').setValue(deadline.name);
-        this.updateDeadlineForm.get('deadlineType').setValue(deadlineType);
         if (deadline.for) {
             this.updateDeadlineForm.get('validityType').setValue('duration');
             this.updateDeadlineForm.get('validity').setValue(deadline.for);
         } else {
-            this.updateDeadlineForm.get('expiration').setValue('duration');
+            this.updateDeadlineForm.get('validityType').setValue('expiration');
             this.updateDeadlineForm.get('validity').setValue(deadline.until);
         }
     }

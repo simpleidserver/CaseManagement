@@ -2,11 +2,16 @@
     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
         <!-- Update global information -->
         <div fxFlex="50%">
-            <h2>{{ baseTranslationKey + ".UPDATE_INFO" | translate }}</h2>
+            <h2>
+                {{ baseTranslationKey + ".UPDATE_INFO" | translate }}
+            </h2>
             <form [formGroup]="infoForm" (ngSubmit)="updateInfo(infoForm.value)">
                 <mat-form-field class="full-width">
                     <mat-label>{{ "SHARED.NAME" | translate }}</mat-label>
-                    <input matInput type="text" formControlName="name" />
+                    <input matInput type="text" formControlName="name" required />
+                    <mat-error *ngIf="infoForm.get('name').hasError('required')">
+                        {{ 'SHARED.IS_REQUIRED' | translate }}
+                    </mat-error>
                 </mat-form-field>
                 <mat-form-field class="full-width">
                     <mat-label>{{ "SHARED.PRIORITY" | translate }}</mat-label>
@@ -17,7 +22,10 @@
         </div>
         <!-- Update operation parameters -->
         <div fxFlex="50%">
-            <h2>{{ baseTranslationKey + ".UPDATE_OPERATION" | translate }}</h2>
+            <h2>
+                {{ baseTranslationKey + ".UPDATE_OPERATION" | translate }}
+                <mat-icon matTooltip="{{ baseTranslationKey + '.UPDATE_OPERATION_INFO' | translate }}">info</mat-icon>
+            </h2>
             <mat-accordion>
                 <!-- Manage input parameters -->
                 <mat-expansion-panel [expanded]="true">

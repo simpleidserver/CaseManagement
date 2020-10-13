@@ -1,5 +1,5 @@
 ﻿import { Component, Input, ViewEncapsulation } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
 import { Description } from "@app/stores/common/description.model";
 import { PresentationParameter } from "@app/stores/common/presentationparameter.model";
 import { TextDef } from "@app/stores/common/textdef.model";
@@ -44,38 +44,74 @@ export class PresentationParameterComponent {
     constructor(
         private formBuilder: FormBuilder) {
         this.addNameForm = this.formBuilder.group({
-            language: '',
-            value: ''
+            language: new FormControl('', [
+                Validators.required
+            ]),
+            value: new FormControl('', [
+                Validators.required
+            ])
         });
         this.addSubjectForm = this.formBuilder.group({
-            language: '',
-            value: ''
+            language: new FormControl('', [
+                Validators.required
+            ]),
+            value: new FormControl('', [
+                Validators.required
+            ])
         });
         this.addDescriptionForm = this.formBuilder.group({
-            language: '',
-            value: '',
-            contentType: ''
+            language: new FormControl('', [
+                Validators.required
+            ]),
+            value: new FormControl('', [
+                Validators.required
+            ]),
+            contentType: new FormControl('', [
+                Validators.required
+            ])
         });
         this.addPresentationForm = this.formBuilder.group({
-            name: '',
-            type: '',
-            expression: ''
+            name: new FormControl('', [
+                Validators.required
+            ]),
+            type: new FormControl('', [
+                Validators.required
+            ]),
+            expression: new FormControl('', [
+                Validators.required
+            ])
         });
     }
 
     addName(txt: TextDef) {
+        if (!this.addNameForm.valid) {
+            return;
+        }
+
         this.names.push(txt);
     }
 
     addSubject(sub: TextDef) {
+        if (!this.addSubjectForm.valid) {
+            return;
+        }
+
         this.subjects.push(sub);
     }
 
     addDescription(desc: Description) {
+        if (!this.addDescriptionForm.valid) {
+            return;
+        }
+
         this.descriptions.push(desc);
     }
 
     addPresentationParameter(pp: PresentationParameter) {
+        if (!this.addPresentationForm.valid) {
+            return;
+        }
+
         this.presentationParameters.push(pp);
     }
 
