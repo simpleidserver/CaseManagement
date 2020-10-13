@@ -1,4 +1,5 @@
-﻿using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.Common.Exceptions;
+using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Commands;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries;
 using MediatR;

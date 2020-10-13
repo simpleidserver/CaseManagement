@@ -1,4 +1,5 @@
-﻿using CaseManagement.HumanTask.Authorization;
+﻿using CaseManagement.Common.Exceptions;
+using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Persistence;

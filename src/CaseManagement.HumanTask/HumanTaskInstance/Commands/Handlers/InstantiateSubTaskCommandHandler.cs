@@ -1,4 +1,5 @@
-﻿using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.Common.Exceptions;
+using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;

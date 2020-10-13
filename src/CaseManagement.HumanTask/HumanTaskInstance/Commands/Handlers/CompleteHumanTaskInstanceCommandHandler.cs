@@ -1,4 +1,5 @@
-﻿using CaseManagement.Common.Expression;
+﻿using CaseManagement.Common.Exceptions;
+using CaseManagement.Common.Expression;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Parser;

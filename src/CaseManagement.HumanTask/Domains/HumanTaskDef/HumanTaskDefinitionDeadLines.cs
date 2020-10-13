@@ -38,6 +38,7 @@ namespace CaseManagement.HumanTask.Domains
             Escalations = new List<Escalation>();
         }
 
+        public string Id { get; set; }
         public string Name { get; set; }
         public string For { get; set; }
         public string Until { get; set; }
@@ -52,6 +53,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             return new HumanTaskDefinitionDeadLine
             {
+                Id = Id,
                 Name = Name,
                 For = For,
                 Until = Until,

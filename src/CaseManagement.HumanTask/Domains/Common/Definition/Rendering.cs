@@ -47,6 +47,11 @@ namespace CaseManagement.HumanTask.Domains
 
     public abstract class RenderingElement : ICloneable
     {
+        public RenderingElement()
+        {
+            Labels = new List<Translation>();
+        }
+
         /// <summary>
         /// Unique ID for each element.
         /// </summary>
@@ -54,7 +59,7 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// Label (or text) to display with the value.
         /// </summary>
-        public string Label { get; set; }
+        public ICollection<Translation> Labels { get; set; }
 
         public abstract object Clone();
     }
@@ -71,7 +76,7 @@ namespace CaseManagement.HumanTask.Domains
             return new InputRenderingElement
             {
                 Id = Id,
-                Label = Label,
+                Labels = Labels.Select(_ => (Translation)_.Clone()).ToList(),
                 Value = Value
             };
         }
@@ -93,8 +98,11 @@ namespace CaseManagement.HumanTask.Domains
         {
             return new OutputRenderingElement
             {
+                Id = Id,
+                Labels = Labels.Select(_ => (Translation)_.Clone()).ToList(),
                 XPath = XPath,
-                Value = (OutputRenderingElementValue)Value?.Clone()
+                Value = (OutputRenderingElementValue)Value?.Clone(),
+                Default = Default
             };
         }
     }
@@ -103,7 +111,7 @@ namespace CaseManagement.HumanTask.Domains
     {
         public OutputRenderingElementValue()
         {
-            Values = new List<string>();
+            Values = new List<OptionValue>();
         }
 
         /// <summary>
@@ -113,14 +121,35 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// Values
         /// </summary>
-        public IEnumerable<string> Values { get; set; }
+        public IEnumerable<OptionValue> Values { get; set; }
 
         public object Clone()
         {
             return new OutputRenderingElementValue
             {
                 Type = Type,
-                Values = Values.ToList()
+                Values = Values.Select(_ => (OptionValue)_.Clone()).ToList()
+            };
+        }
+    }
+
+
+    public class OptionValue : ICloneable
+    {
+        public OptionValue()
+        {
+            DisplayNames = new List<Translation>();
+        }
+
+        public string Value { get; set; }
+        public ICollection<Translation> DisplayNames { get; set; }
+
+        public object Clone()
+        {
+            return new OptionValue
+            {
+                Value = Value,
+                DisplayNames = DisplayNames.Select(_ => (Translation)_.Clone()).ToList()
             };
         }
     }

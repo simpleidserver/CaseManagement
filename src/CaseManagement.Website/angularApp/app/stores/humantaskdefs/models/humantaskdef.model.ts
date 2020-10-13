@@ -14,6 +14,7 @@ export class HumanTaskDef {
     }
 
     id: string;
+    version: number;
     name: string;
     actualOwnerRequired: boolean;
     operation: Operation;

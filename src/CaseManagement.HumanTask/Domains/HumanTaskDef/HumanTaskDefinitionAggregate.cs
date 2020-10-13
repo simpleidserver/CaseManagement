@@ -1,10 +1,13 @@
-﻿using System;
+﻿using CaseManagement.Common.Domains;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CaseManagement.HumanTask.Domains
 {
-    public class HumanTaskDefinitionAggregate : ICloneable
+    public class HumanTaskDefinitionAggregate : BaseAggregate
     {
         public HumanTaskDefinitionAggregate()
         {
@@ -12,11 +15,13 @@ namespace CaseManagement.HumanTask.Domains
             Operation = new Operation();
             PresentationElement = new PresentationElementDefinition();
             PeopleAssignment = new HumanTaskDefinitionAssignment();
-            Renderings = new List<Rendering>();
+            Rendering = new Rendering();
             DeadLines = new HumanTaskDefinitionDeadLines();
             CompletionBehavior = new CompletionBehavior();
         }
 
+        public DateTime CreateDateTime { get; set; }
+        public DateTime UpdateDateTime { get; set; }
         /// <summary>
         /// Used to specify the name of the task.
         /// This attribute is mandatory.
@@ -61,7 +66,7 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// This element is used to specify rendering method. It is optional.
         /// </summary>
-        public ICollection<Rendering> Renderings { get; set; }
+        public Rendering Rendering { get; set; }
         /// <summary>
         /// This element specifies different deadlines.
         /// It is optional.
@@ -74,10 +79,12 @@ namespace CaseManagement.HumanTask.Domains
         public HumanTaskDefinitionComposition Composition { get; set; }
         public CompletionBehavior CompletionBehavior { get; set; }
 
-        public object Clone()
+        public override object Clone()
         {
             return new HumanTaskDefinitionAggregate
             {
+                CreateDateTime = CreateDateTime,
+                UpdateDateTime = UpdateDateTime,
                 Name = Name,
                 ActualOwnerRequired = ActualOwnerRequired,
                 Operation = (Operation)Operation?.Clone(),
@@ -87,11 +94,48 @@ namespace CaseManagement.HumanTask.Domains
                 PresentationElement = (PresentationElementDefinition)PresentationElement?.Clone(),
                 Outcome = Outcome,
                 SearchBy = SearchBy,
-                Renderings = Renderings.Select(_ => (Rendering)_.Clone()).ToList(),
+                Rendering = (Rendering)Rendering?.Clone(),
                 DeadLines = (HumanTaskDefinitionDeadLines)DeadLines?.Clone(),
                 Composition = (HumanTaskDefinitionComposition)Composition?.Clone(),
                 CompletionBehavior = (CompletionBehavior)CompletionBehavior?.Clone()
             };
+        }
+
+        public static HumanTaskDefinitionAggregate New(string name)
+        {
+            var id = BuildHumanTaskIdentifier(name, 0);
+            var evt = new HumanTaskDefCreatedEvent(Guid.NewGuid().ToString(), id, 0, name, DateTime.UtcNow);
+            var result = new HumanTaskDefinitionAggregate();
+            result.Handle(evt);
+            return result;
+        }
+
+        public override void Handle(dynamic evt)
+        {
+            Handle(evt);
+        }
+
+        private void Handle(HumanTaskDefCreatedEvent evt) 
+        {
+            AggregateId = evt.AggregateId;
+            Version = evt.Version;
+            Name = evt.Name;
+            CreateDateTime = evt.CreateDateTime;
+        }
+
+        public static string BuildHumanTaskIdentifier(string id, int version)
+        {
+            using (var sha256Hash = SHA256.Create())
+            {
+                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes($"{id}{version}"));
+                var builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+
+                return builder.ToString();
+            }
         }
     }
 }

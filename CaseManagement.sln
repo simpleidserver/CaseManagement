@@ -33,7 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Apis", "01. Apis", "{E3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. CaseManagement", "01. CaseManagement", "{7452122A-3758-4AFD-BBC0-B3C576D12D80}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. Security", "02. Security", "{E5E1A1EB-90BC-4CB7-9893-75224AF27170}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03. Security", "03. Security", "{E5E1A1EB-90BC-4CB7-9893-75224AF27170}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. Websites", "02. Websites", "{4DF31006-8D29-454B-9D61-DFBAA1590AF3}"
 EndProject
@@ -58,6 +58,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.HumanTasks.Acceptance.Tests", "tests\CaseManagement.HumanTasks.Acceptance.Tests\CaseManagement.HumanTasks.Acceptance.Tests.csproj", "{9711CF4C-B393-401E-A8D2-E261097D3679}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.HumanTask.AspNetCore", "src\CaseManagement.HumanTask.AspNetCore\CaseManagement.HumanTask.AspNetCore.csproj", "{E80EB5E5-2399-41FF-A479-852CC85B32F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. HumanTask", "02. HumanTask", "{674D03DD-482E-4069-9AB2-5420DB0732AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.HumanTask.Host", "src\CaseManagement.HumanTask.Host\CaseManagement.HumanTask.Host.csproj", "{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +137,10 @@ Global
 		{E80EB5E5-2399-41FF-A479-852CC85B32F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E80EB5E5-2399-41FF-A479-852CC85B32F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E80EB5E5-2399-41FF-A479-852CC85B32F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -160,6 +168,8 @@ Global
 		{7F498C8B-81B7-421E-917B-F2B1143BD900} = {F1D09F77-52D3-46B7-B1FB-6FEAAE3BEB54}
 		{9711CF4C-B393-401E-A8D2-E261097D3679} = {A632EFC3-730B-46D7-B669-91962DFA8947}
 		{E80EB5E5-2399-41FF-A479-852CC85B32F9} = {F1D09F77-52D3-46B7-B1FB-6FEAAE3BEB54}
+		{674D03DD-482E-4069-9AB2-5420DB0732AF} = {E33157EC-243C-4EA0-A60B-57F2C248CE53}
+		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F} = {674D03DD-482E-4069-9AB2-5420DB0732AF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2CFBF2E-D493-42F7-B339-01A3070C2B5E}

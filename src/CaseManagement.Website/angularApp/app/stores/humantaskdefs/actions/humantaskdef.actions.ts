@@ -69,7 +69,10 @@ export enum ActionTypes {
     COMPLETE_DELETE_START_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_START_ESCALATION",
     DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] DELETE_COMPLETION_ESCALATION",
     ERROR_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] ERROR_DELETE_COMPLETION_ESCALATION",
-    COMPLETE_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_COMPLETION_ESCALATION"
+    COMPLETE_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_COMPLETION_ESCALATION",
+    ADD_HUMANTASKEF = "[HumanTaskDef] ADD_HUMANTASKDEF",
+    COMPLETE_ADD_HUMANTASKDEF = "[HumanTaskDef] COMPLETE_ADD_HUMANTASKDEF",
+    ERROR_ADD_HUMANTASKDEF = "[HumanTaskDef] ERROR_ADD_HUMANTASKDEF"
 }
 
 export class GetHumanTaskDef implements Action {
@@ -282,6 +285,16 @@ export class CompleteDeleteCompletionEscalationOperation implements Action {
     constructor(public deadLineId: string, public escalation: Escalation) { }
 }
 
+export class AddHumanTaskDefOperation implements Action {
+    readonly type = ActionTypes.ADD_HUMANTASKEF;
+    constructor(public name: string) { }
+}
+
+export class CompleteAddHumanTaskDefOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_HUMANTASKDEF;
+    constructor(public humanTaskDef: HumanTaskDef) { }
+}
+
 export type ActionsUnion = GetHumanTaskDef |
     GetHumanTaskDefComplete |
     UpdateHumanTaskDef |
@@ -323,4 +336,6 @@ export type ActionsUnion = GetHumanTaskDef |
     DeleteStartEscalationOperation |
     CompleteDeleteStartEscalationOperation |
     DeleteCompletionEscalationOperation |
-    CompleteDeleteCompletionEscalationOperation;
+    CompleteDeleteCompletionEscalationOperation |
+    AddHumanTaskDefOperation |
+    CompleteAddHumanTaskDefOperation;

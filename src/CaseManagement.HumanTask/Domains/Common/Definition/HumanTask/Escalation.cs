@@ -12,6 +12,7 @@ namespace CaseManagement.HumanTask.Domains
             Notification = new NotificationDefinition();
         }
 
+        public string Id { get; set; }
         public string Condition { get; set; }
         public NotificationDefinition Notification { get; set; }
         /// <summary>
@@ -23,6 +24,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             return new Escalation
             {
+                Id = Id,
                 Condition = Condition,
                 Notification = Notification,
                 ToParts = ToParts.Select(_ => (ToPart)_.Clone()).ToList()

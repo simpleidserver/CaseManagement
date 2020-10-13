@@ -257,6 +257,12 @@
           "PEOPLE_ASSIGNMENT_UPDATED": "People assignment has been updated",
           "CANNOT_UPDATE_PEOPLE_ASSIGNMENT": "An error occured while trying to update the people assignment"
         }
+      },
+      "LIST": {
+        "TITLE": "Human task definitions",
+        "HUMANTASK_ADDED": "Human task has been added",
+        "ERROR_ADD_HUMANTASK": "An error occured while trying to remove the human task",
+        "ADD_HUMANTASKDEF": "Add human task definition"
       }
     }
   }

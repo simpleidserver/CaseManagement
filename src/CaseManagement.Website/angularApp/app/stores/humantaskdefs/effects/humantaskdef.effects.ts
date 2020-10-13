@@ -304,5 +304,19 @@ export class HumanTaskDefEffects {
                     );
             }
             )
+    );
+
+    @Effect()
+    addHumanTaskDef = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_HUMANTASKEF),
+            mergeMap((evt: fromHumanTask.AddHumanTaskDefOperation) => {
+                return this.humanTaskDefService.addHumanTask(evt.name)
+                    .pipe(
+                        map((humanTaskDef) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_HUMANTASKDEF, humanTaskDef: humanTaskDef }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_HUMANTASKDEF }))
+                    );
+            }
+            )
         );
 }

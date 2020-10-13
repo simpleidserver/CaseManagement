@@ -1,0 +1,28 @@
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <div class="mat-h1">{{ baseTranslationKey + ".TITLE" | translate }}</div>
+    </div>
+</div>
+<div fxLayout="row">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <div fxLayout="column" fxLayoutGap="10px">
+            <div fxLayout="row" fxLayoutGap="10px">
+                <div fxFlex="70%">
+                </div>
+                <div fxFlex="30%">
+                    <mat-card>
+                        <mat-card-content>
+                            <div fxLayout="column" fxLayoutGap="10px">
+                                <button mat-raised-button color="primary" (click)="addHumanTask()">{{ baseTranslationKey + '.ADD_HUMANTASKDEF' | translate }}</button>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+            <mat-card>
+                <mat-card-content>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

@@ -6,6 +6,8 @@ import { MaterialModule } from '@app/shared/material.module';
 import { SharedModule } from '@app/shared/shared.module';
 import { HumanTaskDefsRoutes } from './humantaskdefs.routes';
 import { ViewHumanTaskDef } from './view/view.component';
+import { AddHumanTaskDefDialog } from './list/add-humantaskdef-dialog.component';
+import { ListHumanTaskDef } from './list/list.component';
 
 @NgModule({
     imports: [
@@ -16,9 +18,12 @@ import { ViewHumanTaskDef } from './view/view.component';
         MaterialModule,
         SharedModule
     ],
-    entryComponents: [],
+    entryComponents: [AddHumanTaskDefDialog],
     declarations: [
-        ViewHumanTaskDef
+        ViewHumanTaskDef,
+        ListHumanTaskDef,
+        AddHumanTaskDefDialog
+
     ],
     exports: [ ]
 })

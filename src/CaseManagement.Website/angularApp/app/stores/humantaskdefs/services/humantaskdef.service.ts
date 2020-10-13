@@ -6,6 +6,8 @@ import { Parameter } from '../../common/operation.model';
 import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
 import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
 import { Escalation } from '../../common/escalation.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -16,7 +18,7 @@ function uuidv4() {
 
 @Injectable()
 export class HumanTaskDefService {
-    constructor() { }
+    constructor(private http: HttpClient, private oauthService: OAuthService) { }
 
     get(humanTaskDefId: string): Observable<HumanTaskDef> {
         console.log(humanTaskDefId);
@@ -228,5 +230,14 @@ export class HumanTaskDefService {
         if (escalation) { }
 
         return of(true);
+    }
+
+    addHumanTask(name: string): Observable<HumanTaskDef> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const request: any = { name: name };
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs";
+        return this.http.post<HumanTaskDef>(targetUrl, request, { headers: headers });
     }
 }

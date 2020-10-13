@@ -4,27 +4,9 @@
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="angularApp\app\infrastructure\pipes\translateFieldPipe.ts" />
-    <None Remove="angularApp\app\stores\appstate.ts" />
-    <None Remove="angularApp\app\stores\casefiles\reducers\casefile.reducers.ts" />
-    <None Remove="angularApp\app\stores\caseplaninstances\reducers\caseplaninstance.reducers.ts" />
-    <None Remove="angularApp\app\stores\common\escalation.model.ts" />
-    <None Remove="angularApp\app\stores\common\notificationdefinition.model.ts" />
-    <None Remove="angularApp\app\stores\common\topart.model.ts" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="angularApp\app\infrastructure\pipes\translateFieldPipe.ts" />
-    <TypeScriptCompile Include="angularApp\app\stores\appstate.ts" />
-    <TypeScriptCompile Include="angularApp\app\stores\casefiles\reducers\casefile.reducers.ts" />
-    <TypeScriptCompile Include="angularApp\app\stores\caseplaninstances\reducers\caseplaninstance.reducers.ts" />
-    <TypeScriptCompile Include="angularApp\app\stores\common\escalation.model.ts" />
-    <TypeScriptCompile Include="angularApp\app\stores\common\notificationdefinition.model.ts" />
-    <TypeScriptCompile Include="angularApp\app\stores\common\topart.model.ts" />
   </ItemGroup>
 </Project>

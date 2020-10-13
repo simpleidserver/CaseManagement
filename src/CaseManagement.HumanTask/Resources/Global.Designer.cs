@@ -88,6 +88,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à The human task def &apos;{0}&apos; already exists.
+        /// </summary>
+        internal static string HumanTaskDefExists {
+            get {
+                return ResourceManager.GetString("HumanTaskDefExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Parameter &apos;{0}&apos; is not a valid &apos;{1}&apos;.
         /// </summary>
         internal static string InvalidParameterType {
