@@ -1,4 +1,13 @@
-﻿<nav mat-tab-nav-bar>
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <ul>
+            <li><div class="mat-h1">{{ 'HUMANTASK.DEF.LIST.TITLE' | translate }}</div></li>
+            <li class="separator"><div class="mat-h1">\</div></li>
+            <li><div class="mat-h1">{{ baseTranslationKey + '.TITLE' | translate }}</div></li>
+        </ul>
+    </div>
+</div>
+<nav mat-tab-nav-bar>
     <a mat-tab-link
        [routerLink]="['/humantasks/humantaskdefs/name/task']"
        routerLinkActive

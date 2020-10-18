@@ -1,9 +1,7 @@
 ﻿using CaseManagement.Common.Parameters;
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 
-namespace CaseManagement.CMMN.Extensions
+namespace System.Linq
 {
     public static class QueryableExtensions
     {

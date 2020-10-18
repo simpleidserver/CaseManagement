@@ -112,6 +112,8 @@
   "HUMAN_TASK_DEFS": "Human task definitions",
   "SHARED": {
     "NAME": "Name",
+    "CREATE_DATETIME": "Create datetime",
+    "UPDATE_DATETIME":  "Update datetime",
     "VALUE": "Value",
     "PRIORITY": "Priority",
     "UPDATE": "Update",
@@ -142,6 +144,7 @@
   "HUMANTASK": {
     "DEF": {
       "VIEW": {
+        "TITLE": "Human task definition",
         "HUMANTASKDEF_UPDATED": "Human task definition is updated",
         "ERROR_UPDATE_HUMANTASKDEF": "An error occured while trying to update the human task definition",
         "TASK": {

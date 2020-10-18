@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Common.Exceptions;
 using CaseManagement.HumanTask.HumanTaskDef.Commands;
+using CaseManagement.HumanTask.HumanTaskDef.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -36,6 +37,13 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                     new KeyValuePair<string, string>("bad_request", ex.Message)
                 }, HttpStatusCode.BadRequest, Request);
             }
+        }
+
+        [HttpPost(".search")]
+        public async Task<IActionResult> Search([FromBody] SearchHumanTaskDefQuery parameter, CancellationToken token)
+        {
+            var result = await _mediator.Send(parameter, token);
+            return new OkObjectResult(result);
         }
 
         #endregion

@@ -3,6 +3,7 @@ import * as fromActions from '../actions/humantaskdef.actions';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
 import { Escalation } from '../../common/escalation.model';
+import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 
 export interface HumanTaskDefState{
     isLoading: boolean;
@@ -10,7 +11,19 @@ export interface HumanTaskDefState{
     content: HumanTaskDef;
 }
 
+export interface SearchHumanTaskDefState {
+    isLoading: boolean;
+    isErrorLoadOccured: boolean;
+    content: SearchHumanTaskDefsResult;
+}
+
 export const initialHumanTaskDefState: HumanTaskDefState = {
+    content: null,
+    isLoading: true,
+    isErrorLoadOccured: false
+};
+
+export const initialHumanTaskDefsState: SearchHumanTaskDefState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
@@ -337,7 +350,6 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 return esc.id === action.escalation.id;
             })[0];
             id = dl.escalations.indexOf(esc);
-            console.log("BINGO");
             dl.escalations.splice(id, 1);
             return {
                 ...state,
@@ -353,5 +365,15 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
             };
         default:
             return state;
+    }
+};
+
+export function humanTaskDefsReducer(state = initialHumanTaskDefsState, action: fromActions.ActionsUnion) {
+    switch (action.type) {
+        case fromActions.ActionTypes.COMPLETE_SEARCH_HUMANTASKDEFS:
+            return {
+                ...state,
+                content: action.humanTaskDefsResult
+            };
     }
 };

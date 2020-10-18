@@ -8,6 +8,7 @@ import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model'
 import { Escalation } from '../../common/escalation.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -239,5 +240,23 @@ export class HumanTaskDefService {
         const request: any = { name: name };
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs";
         return this.http.post<HumanTaskDef>(targetUrl, request, { headers: headers });
+    }
+
+    search(startIndex: number, count: number, order: string, direction: string): Observable<SearchHumanTaskDefsResult> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/.search";
+        const request: any = { startIndex: startIndex, count: count };
+        if (order) {
+            request["orderBy"] = order;
+        }
+
+        if (direction) {
+            request["order"] = direction;
+        }
+
+        return this.http.post<SearchHumanTaskDefsResult>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 }

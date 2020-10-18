@@ -10,6 +10,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         public string Id { get; set; }
         public int Version { get; set; }
         public string Name { get; set; }
+        public DateTime UpdateDateTime { get; set; }
+        public DateTime CreateDateTime { get; set; }
         public bool ActualOwnerRequired { get; set; }
         public OperationResult Operation { get; set; }
         public int Priority { get; set; }
@@ -26,6 +28,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             {
                 ActualOwnerRequired = humanTaskDef.ActualOwnerRequired,
                 Id = humanTaskDef.AggregateId,
+                UpdateDateTime = humanTaskDef.UpdateDateTime,
+                CreateDateTime = humanTaskDef.CreateDateTime,
                 Name = humanTaskDef.Name,
                 Priority = humanTaskDef.Priority,
                 Version = humanTaskDef.Version,

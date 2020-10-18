@@ -91,7 +91,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table42.AddRow(new string[] {
                         "name",
-                        "name"});
+                        "newName"});
 #line 5
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table42, "When ");
 #line 8

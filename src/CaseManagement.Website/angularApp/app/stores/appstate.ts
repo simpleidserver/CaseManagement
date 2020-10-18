@@ -14,6 +14,7 @@ export interface AppState {
     casePlanInstance: fromCasePlanInstance.CasePlanInstanceState;
     casePlanInstanceLst: fromCasePlanInstance.CasePlanInstanceLstState;
     humanTask: fromHumanTask.HumanTaskDefState;
+    humanTasks: fromHumanTask.SearchHumanTaskDefState
 }
 
 export const selectCasePlan = (state: AppState) => state.casePlan;
@@ -25,6 +26,7 @@ export const selectCaseFileHistoryLst = (state: AppState) => state.caseFileHisto
 export const selectCasePlanInstance = (state: AppState) => state.casePlanInstance;
 export const selectCasePlanInstanceLst = (state: AppState) => state.casePlanInstanceLst;
 export const selectHumanTask = (state: AppState) => state.humanTask;
+export const selectHumanTasks = (state: AppState) => state.humanTasks;
 
 export const selectCasePlanResult = createSelector(
     selectCasePlan,
@@ -123,6 +125,17 @@ export const selectHumanTaskResult = createSelector(
 
         return state.content;
     }
+);
+
+export const selectHumanTasksResult = createSelector(
+    selectHumanTasks,
+    (state: fromHumanTask.SearchHumanTaskDefState) => {
+        if (!state || state.content == null) {
+            return null;
+        }
+
+        return state.content;
+    }
 ); 
 
 export const appReducer = {
@@ -134,5 +147,6 @@ export const appReducer = {
     caseFileHistoryLst: fromCaseFile.caseFileHistoryLstReducer,
     casePlanInstance: fromCasePlanInstance.casePlanInstanceReducer,
     casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer,
-    humanTask: fromHumanTask.humanTaskDefReducer
+    humanTask: fromHumanTask.humanTaskDefReducer,
+    humanTasks: fromHumanTask.humanTaskDefsReducer
 };

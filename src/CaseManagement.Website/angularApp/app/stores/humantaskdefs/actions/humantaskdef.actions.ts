@@ -5,6 +5,7 @@ import { HumanTaskDef } from '../models/humantaskdef.model';
 import { Rendering } from '../../common/rendering.model';
 import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
 import { Escalation } from '../../common/escalation.model';
+import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 
 export enum ActionTypes {
     START_GET_HUMANTASKDEF = "[HumanTaskDef] START_GET_HUMANTASKDEF",
@@ -72,7 +73,10 @@ export enum ActionTypes {
     COMPLETE_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_COMPLETION_ESCALATION",
     ADD_HUMANTASKEF = "[HumanTaskDef] ADD_HUMANTASKDEF",
     COMPLETE_ADD_HUMANTASKDEF = "[HumanTaskDef] COMPLETE_ADD_HUMANTASKDEF",
-    ERROR_ADD_HUMANTASKDEF = "[HumanTaskDef] ERROR_ADD_HUMANTASKDEF"
+    ERROR_ADD_HUMANTASKDEF = "[HumanTaskDef] ERROR_ADD_HUMANTASKDEF",
+    SEARCH_HUMANTASKDEFS = "[HumanTaskDef] SEARCH_HUMANTASKDEFS",
+    COMPLETE_SEARCH_HUMANTASKDEFS = "[HumanTaskDef] COMPLETE_SEARCH_HUMANTASKDEFS",
+    ERROR_SEARCH_HUMANTASKDEFS = "[HumanTaskDef] ERROR_SEARCH_HUMANTASKDEFS"
 }
 
 export class GetHumanTaskDef implements Action {
@@ -295,6 +299,16 @@ export class CompleteAddHumanTaskDefOperation implements Action {
     constructor(public humanTaskDef: HumanTaskDef) { }
 }
 
+export class SearchHumanTaskDefOperation implements Action {
+    readonly type = ActionTypes.SEARCH_HUMANTASKDEFS;
+    constructor(public order: string, public direction: string, public count: number, public startIndex: number) { }
+}
+
+export class CompleteSearchHumanTaskDefOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_SEARCH_HUMANTASKDEFS;
+    constructor(public humanTaskDefsResult: SearchHumanTaskDefsResult) { }
+}
+
 export type ActionsUnion = GetHumanTaskDef |
     GetHumanTaskDefComplete |
     UpdateHumanTaskDef |
@@ -338,4 +352,6 @@ export type ActionsUnion = GetHumanTaskDef |
     DeleteCompletionEscalationOperation |
     CompleteDeleteCompletionEscalationOperation |
     AddHumanTaskDefOperation |
-    CompleteAddHumanTaskDefOperation;
+    CompleteAddHumanTaskDefOperation |
+    SearchHumanTaskDefOperation |
+    CompleteSearchHumanTaskDefOperation;

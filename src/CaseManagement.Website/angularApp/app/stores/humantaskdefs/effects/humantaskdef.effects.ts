@@ -318,5 +318,19 @@ export class HumanTaskDefEffects {
                     );
             }
             )
+    );
+
+    @Effect()
+    search = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.SEARCH_HUMANTASKDEFS),
+            mergeMap((evt: fromHumanTask.SearchHumanTaskDefOperation) => {
+                return this.humanTaskDefService.search(evt.startIndex, evt.count, evt.order, evt.direction)
+                    .pipe(
+                        map((humanTaskDefsResult) => { return { type: fromHumanTask.ActionTypes.COMPLETE_SEARCH_HUMANTASKDEFS, humanTaskDefsResult: humanTaskDefsResult }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_SEARCH_HUMANTASKDEFS }))
+                    );
+            }
+            )
         );
 }
