@@ -23,14 +23,24 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             _humanTaskDefs = humanTaskDefs;
         }
 
-        public Task<HumanTaskDefinitionAggregate> Get(string name, CancellationToken token)
+        public Task<HumanTaskDefinitionAggregate> Get(string id, CancellationToken token)
         {
-            return Task.FromResult((HumanTaskDefinitionAggregate)_humanTaskDefs.FirstOrDefault(_ => _.Name == name)?.Clone());
+            return Task.FromResult((HumanTaskDefinitionAggregate)_humanTaskDefs.FirstOrDefault(_ => _.AggregateId == id)?.Clone());
+        }
+
+        public Task<HumanTaskDefinitionAggregate> GetLatest(string name, CancellationToken token)
+        {
+            return Task.FromResult((HumanTaskDefinitionAggregate)_humanTaskDefs.OrderByDescending(_ => _.Version).FirstOrDefault(_ => _.Name == name)?.Clone());
         }
 
         public Task<FindResponse<HumanTaskDefinitionAggregate>> Search(SearchHumanTaskDefParameter parameter, CancellationToken token)
         {
             IQueryable<HumanTaskDefinitionAggregate> result = _humanTaskDefs.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(parameter.Name))
+            {
+                result = result.Where(_ => _.Name == parameter.Name);
+            }
+
             if (MAPPING_HUMANTASKDEF_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_HUMANTASKDEF_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

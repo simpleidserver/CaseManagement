@@ -26,6 +26,7 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
         private translateService: TranslateService,
         private actions$: ScannedActionsSubject) {
         this.infoForm = this.formBuilder.group({
+            id: new FormControl({value: '', disabled: true}),
             name: new FormControl('', [
                 Validators.required
             ]),
@@ -109,6 +110,7 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
                 return;
             }
 
+            this.infoForm.get('id').setValue(e.id);
             this.infoForm.get('name').setValue(e.name);
             this.infoForm.get('priority').setValue(e.priority);
             this.humanTaskDef = e;

@@ -1,4 +1,5 @@
 ﻿using CaseManagement.Common.Exceptions;
+using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskDef.Commands;
 using CaseManagement.HumanTask.HumanTaskDef.Queries;
 using MediatR;
@@ -44,6 +45,23 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
         {
             var result = await _mediator.Send(parameter, token);
             return new OkObjectResult(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id, CancellationToken token)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetHumanTaskDefQuery { Id = id }, token);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
         }
 
         #endregion

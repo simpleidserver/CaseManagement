@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { OutputRenderingElement, OutputRenderingElementValue, Translation, OptionValue, Rendering } from '../../common/rendering.model';
-import { HumanTaskDef } from '../models/humantaskdef.model';
-import { Parameter } from '../../common/operation.model';
-import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
-import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
-import { Escalation } from '../../common/escalation.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { Observable, of } from 'rxjs';
+import { Escalation } from '../../common/escalation.model';
+import { Parameter } from '../../common/operation.model';
+import { Rendering } from '../../common/rendering.model';
+import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
+import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
+import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 
 function uuidv4() {
@@ -22,7 +22,12 @@ export class HumanTaskDefService {
     constructor(private http: HttpClient, private oauthService: OAuthService) { }
 
     get(humanTaskDefId: string): Observable<HumanTaskDef> {
-        console.log(humanTaskDefId);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + humanTaskDefId;
+        return this.http.get<HumanTaskDef>(targetUrl, { headers: headers });
+        /*
         const record = new HumanTaskDef();
         record.name = "AddClient";
 
@@ -85,6 +90,7 @@ export class HumanTaskDefService {
         record.rendering.output.push(lastNameField);
         record.rendering.output.push(gendersField);
         return of(record);
+        */
     }
 
     update(humanTaskDef: HumanTaskDef): Observable<HumanTaskDef> {

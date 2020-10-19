@@ -2,9 +2,11 @@
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.HumanTaskDef.Results;
 using CaseManagement.HumanTask.Persistence;
+using CaseManagement.HumanTask.Persistence.Parameters;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,8 +36,11 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new BadRequestException(string.Format(Global.MissingParameter, "name"));
             }
 
-            var result = await _humanTaskDefQueryRepository.Get(request.Name, cancellationToken);
-            if (result != null)
+            var result = await _humanTaskDefQueryRepository.Search(new SearchHumanTaskDefParameter
+            {
+                Name = request.Name
+            }, cancellationToken);
+            if (result != null && result.Content.Count() > 0)
             {
                 _logger.LogError($"the human task '{request.Name}' already exists");
                 throw new BadRequestException(string.Format(Global.HumanTaskDefExists, request.Name));

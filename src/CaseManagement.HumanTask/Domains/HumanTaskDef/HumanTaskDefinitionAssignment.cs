@@ -2,6 +2,10 @@
 {
     public class HumanTaskDefinitionAssignment
     {
+        public HumanTaskDefinitionAssignment()
+        {
+        }
+
         /// <summary>
         /// Potential owners of a task are persons who receive the task so that they can claim and complete it.
         /// A potential owner becomes the actual owner of a task by explicitly claiming it.

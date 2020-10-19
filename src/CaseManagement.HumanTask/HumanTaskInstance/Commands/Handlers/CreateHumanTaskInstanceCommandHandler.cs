@@ -47,7 +47,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new NotAuthenticatedException(Global.UserNotAuthenticated);
             }
 
-            var humanTaskDef = await _humanTaskDefQueryRepository.Get(request.HumanTaskName, cancellationToken);
+            var humanTaskDef = await _humanTaskDefQueryRepository.GetLatest(request.HumanTaskName, cancellationToken);
             if (humanTaskDef == null)
             {
                 _logger.LogError($"Human task definition '{request.HumanTaskName}' doesn't exist");

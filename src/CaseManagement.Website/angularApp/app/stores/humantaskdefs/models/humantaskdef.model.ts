@@ -1,8 +1,8 @@
 ﻿import { Operation } from "../../common/operation.model";
 import { PresentationElement } from "../../common/presentationelement.model";
+import { Rendering } from "../../common/rendering.model";
 import { HumanTaskDefAssignment } from "./humantaskdef-assignment.model";
 import { HumanTaskDefinitionDeadLines } from "./humantaskdef-deadlines";
-import { Rendering } from "../../common/rendering.model";
 
 export class HumanTaskDef {
     constructor() {
@@ -10,7 +10,7 @@ export class HumanTaskDef {
         this.operation = new Operation();
         this.deadLines = new HumanTaskDefinitionDeadLines();
         this.peopleAssignment = new HumanTaskDefAssignment();
-        this.presentationElement = new PresentationElement();
+        this.presentationElementResult = new PresentationElement();
     }
 
     id: string;
@@ -20,7 +20,7 @@ export class HumanTaskDef {
     operation: Operation;
     priority: number;
     peopleAssignment: HumanTaskDefAssignment;
-    presentationElement: PresentationElement;
+    presentationElementResult: PresentationElement;
     outcome: string;
     searchBy: string;
     rendering: Rendering;

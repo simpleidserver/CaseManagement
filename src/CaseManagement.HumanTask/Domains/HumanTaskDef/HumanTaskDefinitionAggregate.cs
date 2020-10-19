@@ -86,6 +86,8 @@ namespace CaseManagement.HumanTask.Domains
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
                 Name = Name,
+                AggregateId = AggregateId,
+                Version = Version,
                 ActualOwnerRequired = ActualOwnerRequired,
                 Operation = (Operation)Operation?.Clone(),
                 Priority = Priority,

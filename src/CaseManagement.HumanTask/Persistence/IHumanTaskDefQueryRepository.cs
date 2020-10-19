@@ -8,7 +8,8 @@ namespace CaseManagement.HumanTask.Persistence
 {
     public interface IHumanTaskDefQueryRepository
     {
-        Task<HumanTaskDefinitionAggregate> Get(string name, CancellationToken token);
+        Task<HumanTaskDefinitionAggregate> Get(string id, CancellationToken token);
+        Task<HumanTaskDefinitionAggregate> GetLatest(string name, CancellationToken token);
         Task<FindResponse<HumanTaskDefinitionAggregate>> Search(SearchHumanTaskDefParameter parameter, CancellationToken token);
     }
 }

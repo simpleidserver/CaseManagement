@@ -10,7 +10,7 @@ import { PresentationElement } from '@app/stores/common/presentationelement.mode
     encapsulation: ViewEncapsulation.None
 })
 export class ViewPresentationParametersComponent implements OnInit {
-    presentationElt: PresentationElement;
+    presentationElt: PresentationElement = new PresentationElement();
 
     constructor(
         private store: Store<fromAppState.AppState>) {
@@ -22,7 +22,7 @@ export class ViewPresentationParametersComponent implements OnInit {
                 return;
             }
 
-            this.presentationElt = e.presentationElement;
+            this.presentationElt = e.presentationElementResult;
         });
     }
 

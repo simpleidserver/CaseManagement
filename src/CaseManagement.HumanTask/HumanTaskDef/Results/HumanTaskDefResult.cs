@@ -411,12 +411,12 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             {
                 return new HumanTaskDefAssignmentResult
                 {
-                    PotentialOwner = ass.PotentialOwner == null ? null : PeopleAssignmentResult.ToDto(ass.PotentialOwner),
-                    ExcludedOwner = ass.ExcludedOwner == null ? null : PeopleAssignmentResult.ToDto(ass.ExcludedOwner),
-                    TaskInitiator = ass.TaskInitiator == null ? null : PeopleAssignmentResult.ToDto(ass.TaskInitiator),
-                    TaskStakeHolder = ass.TaskStakeHolder == null ? null : PeopleAssignmentResult.ToDto(ass.TaskStakeHolder),
-                    BusinessAdministrator = ass.BusinessAdministrator == null ? null : PeopleAssignmentResult.ToDto(ass.BusinessAdministrator),
-                    Recipient = ass.Recipient == null ? null : PeopleAssignmentResult.ToDto(ass.Recipient)
+                    PotentialOwner = ass.PotentialOwner == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.PotentialOwner),
+                    ExcludedOwner = ass.ExcludedOwner == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.ExcludedOwner),
+                    TaskInitiator = ass.TaskInitiator == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.TaskInitiator),
+                    TaskStakeHolder = ass.TaskStakeHolder == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.TaskStakeHolder),
+                    BusinessAdministrator = ass.BusinessAdministrator == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.BusinessAdministrator),
+                    Recipient = ass.Recipient == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.Recipient)
                 };
             }
         }

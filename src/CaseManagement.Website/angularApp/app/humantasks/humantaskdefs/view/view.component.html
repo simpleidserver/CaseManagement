@@ -1,49 +1,51 @@
 ﻿<div fxLayout="row" class="breadcrumb">
     <div fxFlex="80%" fxFlexOffset="10%">
         <ul>
-            <li><div class="mat-h1">{{ 'HUMANTASK.DEF.LIST.TITLE' | translate }}</div></li>
+            <li><div class="mat-h1"><a [routerLink]="['/humantasks']">{{ 'HUMANTASK.DEF.LIST.TITLE' | translate }}</a></div></li>
             <li class="separator"><div class="mat-h1">\</div></li>
             <li><div class="mat-h1">{{ baseTranslationKey + '.TITLE' | translate }}</div></li>
         </ul>
     </div>
 </div>
-<nav mat-tab-nav-bar>
-    <a mat-tab-link
-       [routerLink]="['/humantasks/humantaskdefs/name/task']"
-       routerLinkActive
-       #rla1="routerLinkActive"
-       [active]="rla1.isActive">
-        {{ baseTranslationKey + '.TASK.TITLE' | translate }}
-    </a>
-    <a mat-tab-link
-       [routerLink]="['/humantasks/humantaskdefs/name/peopleassignment']"
-       routerLinkActive
-       #rla2="routerLinkActive"
-       [active]="rla2.isActive">
-        {{ baseTranslationKey + '.ASSIGNMENT.TITLE' | translate }}
-    </a>
-    <a mat-tab-link
-       [routerLink]="['/humantasks/humantaskdefs/name/presentationelements']"
-       routerLinkActive
-       #rla3="routerLinkActive"
-       [active]="rla3.isActive">
-        {{ baseTranslationKey + '.PRESENTATION_PARAMETERS.TITLE' | translate }}
-    </a>
-    <a mat-tab-link
-       [routerLink]="['/humantasks/humantaskdefs/name/deadlines']"
-       routerLinkActive
-       #rla4="routerLinkActive"
-       [active]="rla4.isActive">
-        {{ baseTranslationKey + '.DEADLINES.TITLE' | translate }}
-    </a>
-    <a mat-tab-link
-       [routerLink]="['/humantasks/humantaskdefs/name/rendering']"
-       routerLinkActive
-       #rla5="routerLinkActive"
-       [active]="rla5.isActive">
-        {{ baseTranslationKey + '.RENDERING.TITLE' | translate }}
-    </a>
-</nav>
-<div class="mleft-10 mright-10 mt-10">
-    <router-outlet></router-outlet>
+<div *ngIf="!isErrorOccured">
+    <nav mat-tab-nav-bar>
+        <a mat-tab-link
+           [routerLink]="['/humantasks/humantaskdefs/'+id+'/task']"
+           routerLinkActive
+           #rla1="routerLinkActive"
+           [active]="rla1.isActive">
+            {{ baseTranslationKey + '.TASK.TITLE' | translate }}
+        </a>
+        <a mat-tab-link
+           [routerLink]="['/humantasks/humantaskdefs/'+id+'/peopleassignment']"
+           routerLinkActive
+           #rla2="routerLinkActive"
+           [active]="rla2.isActive">
+            {{ baseTranslationKey + '.ASSIGNMENT.TITLE' | translate }}
+        </a>
+        <a mat-tab-link
+           [routerLink]="['/humantasks/humantaskdefs/'+id+'/presentationelements']"
+           routerLinkActive
+           #rla3="routerLinkActive"
+           [active]="rla3.isActive">
+            {{ baseTranslationKey + '.PRESENTATION_PARAMETERS.TITLE' | translate }}
+        </a>
+        <a mat-tab-link
+           [routerLink]="['/humantasks/humantaskdefs/'+id+'/deadlines']"
+           routerLinkActive
+           #rla4="routerLinkActive"
+           [active]="rla4.isActive">
+            {{ baseTranslationKey + '.DEADLINES.TITLE' | translate }}
+        </a>
+        <a mat-tab-link
+           [routerLink]="['/humantasks/humantaskdefs/'+id+'/rendering']"
+           routerLinkActive
+           #rla5="routerLinkActive"
+           [active]="rla5.isActive">
+            {{ baseTranslationKey + '.RENDERING.TITLE' | translate }}
+        </a>
+    </nav>
+    <div class="mleft-10 mright-10 mt-10">
+        <router-outlet></router-outlet>
+    </div>
 </div>
