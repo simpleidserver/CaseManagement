@@ -1,7 +1,5 @@
 ﻿using CaseManagement.Common.Domains;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -105,11 +103,17 @@ namespace CaseManagement.HumanTask.Domains
 
         public static HumanTaskDefinitionAggregate New(string name)
         {
-            var id = BuildHumanTaskIdentifier(name, 0);
+            var id = Guid.NewGuid().ToString();
             var evt = new HumanTaskDefCreatedEvent(Guid.NewGuid().ToString(), id, 0, name, DateTime.UtcNow);
             var result = new HumanTaskDefinitionAggregate();
             result.Handle(evt);
             return result;
+        }
+
+        public void UpdateInfo(string name, int priority)
+        {
+            var evt = new HumanTaskInfoUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, name, priority, DateTime.UtcNow);
+            Handle(evt);
         }
 
         public override void Handle(dynamic evt)
@@ -125,19 +129,11 @@ namespace CaseManagement.HumanTask.Domains
             CreateDateTime = evt.CreateDateTime;
         }
 
-        public static string BuildHumanTaskIdentifier(string id, int version)
+        private void Handle(HumanTaskInfoUpdatedEvent evt)
         {
-            using (var sha256Hash = SHA256.Create())
-            {
-                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes($"{id}{version}"));
-                var builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-
-                return builder.ToString();
-            }
+            Name = evt.Name;
+            Priority = evt.Priority;
+            UpdateDateTime = evt.UpdateDateTime;
         }
     }
 }

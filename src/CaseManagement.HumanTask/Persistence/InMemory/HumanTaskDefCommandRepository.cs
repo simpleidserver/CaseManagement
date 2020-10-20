@@ -33,6 +33,14 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             return Task.FromResult(true);
         }
 
+        public Task<bool> Update(HumanTaskDefinitionAggregate humanTaskDef, CancellationToken token)
+        {
+            var r = _humanTaskDefs.First(_ => _.AggregateId == humanTaskDef.AggregateId);
+            _humanTaskDefs.Remove(r);
+            _humanTaskDefs.Add((HumanTaskDefinitionAggregate)humanTaskDef.Clone());
+            return Task.FromResult(true);
+        }
+
         public Task<int> SaveChanges(CancellationToken token)
         {
             return Task.FromResult(1);

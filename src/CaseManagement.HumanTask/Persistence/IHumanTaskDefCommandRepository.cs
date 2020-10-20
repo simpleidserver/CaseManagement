@@ -8,6 +8,7 @@ namespace CaseManagement.HumanTask.Persistence
     {
         Task<bool> Add(HumanTaskDefinitionAggregate humanTaskDef, CancellationToken token);
         Task<bool> Delete(string name, CancellationToken token);
+        Task<bool> Update(HumanTaskDefinitionAggregate name, CancellationToken token);
         Task<int> SaveChanges(CancellationToken token);
     }
 }

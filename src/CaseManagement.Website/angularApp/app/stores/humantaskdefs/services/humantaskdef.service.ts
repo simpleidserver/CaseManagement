@@ -27,70 +27,6 @@ export class HumanTaskDefService {
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + humanTaskDefId;
         return this.http.get<HumanTaskDef>(targetUrl, { headers: headers });
-        /*
-        const record = new HumanTaskDef();
-        record.name = "AddClient";
-
-        const inputParameter = new Parameter();
-        inputParameter.isRequired = true;
-        inputParameter.name = "firstname";
-        inputParameter.type = "string";
-        record.operation.inputParameters.push(inputParameter);
-
-        const outputParameter = new Parameter();
-        outputParameter.isRequired = false;
-        outputParameter.name = "wage";
-        outputParameter.type = "bool";
-        record.operation.outputParameters.push(outputParameter);
-
-        const startDeadline = new HumanTaskDefinitionDeadLine();
-        startDeadline.id = "id";
-        startDeadline.name = "name";
-        startDeadline.until = "FF";
-        startDeadline.for = "coucou";
-        record.deadLines.startDeadLines.push(startDeadline);
-
-        const firstNameField = new OutputRenderingElement();
-        const firstName = new Translation("fr", "Prenom");
-        firstNameField.id = "firstName";
-        firstNameField.label.push(firstName);
-        firstNameField.default = "Firstname";
-        firstNameField.value = new OutputRenderingElementValue();
-        firstNameField.value.type = "string";
-
-        const lastNameField = new OutputRenderingElement();
-        const lastName = new Translation("fr", "Nom");
-        lastNameField.id = "lastName";
-        lastNameField.label.push(lastName);
-        lastNameField.default = "Lastname";
-        lastNameField.value = new OutputRenderingElementValue();
-        lastNameField.value.type = "string";
-
-        const gendersField = new OutputRenderingElement();
-        const gender = new Translation("fr", "Genre");
-        const maleFR = new Translation("fr", "M");
-        const femaleFR = new Translation("fr", "F");
-        const maleEN = new Translation("en", "M");
-        const male = new OptionValue();
-        const female = new OptionValue();
-        male.value = "m";
-        male.displayNames.push(maleFR);
-        male.displayNames.push(maleEN);
-        female.value = "f";
-        female.displayNames.push(femaleFR);
-        gendersField.id = "gender";
-        gendersField.label.push(gender);
-        gendersField.default = "Gender";
-        gendersField.value = new OutputRenderingElementValue();
-        gendersField.value.type = "select";
-        gendersField.value.values.push(male);
-        gendersField.value.values.push(female);
-
-        record.rendering.output.push(firstNameField);
-        record.rendering.output.push(lastNameField);
-        record.rendering.output.push(gendersField);
-        return of(record);
-        */
     }
 
     update(humanTaskDef: HumanTaskDef): Observable<HumanTaskDef> {
@@ -114,11 +50,13 @@ export class HumanTaskDefService {
     }
 
     updateInfo(id: string, name: string, priority: number): Observable<boolean> {
-        if (id) { }
-        if (name) { }
-        if (priority) { }
-
-        return of(true);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/info";
+        const request: any = { name: name, priority: priority};
+        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     addInputParameter(id: string, parameter: Parameter): Observable<boolean> {
