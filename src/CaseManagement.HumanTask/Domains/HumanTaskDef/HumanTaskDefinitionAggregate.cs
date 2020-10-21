@@ -135,6 +135,18 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public void AddInputParameter(Parameter parameter)
+        {
+            var evt = new HumanTaskDefInputParameterAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameter, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void AddOutputParameter(Parameter parameter)
+        {
+            var evt = new HumanTaskDefOutputParameterAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameter, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -164,6 +176,20 @@ namespace CaseManagement.HumanTask.Domains
             PeopleAssignment.Recipient = evt.Recipient;
             PeopleAssignment.TaskInitiator = evt.TaskInitiator;
             PeopleAssignment.TaskStakeHolder = evt.TaskStakeHolder;
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefInputParameterAddedEvent evt)
+        {
+            Operation.InputParameters.Add(evt.Parameter);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefOutputParameterAddedEvent evt)
+        {
+            Operation.OutputParameters.Add(evt.Parameter);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

@@ -75,3 +75,79 @@ Scenario: Check error is returned when trying to update people assignment
 	Then HTTP status code equals to '404'
 	Then JSON 'status'='404'
 	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to add input parameter to unknown humantaskdef
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/def/parameters/input'
+	| Key  | Value |
+	And extract JSON from body
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to add input parameter and parameter is missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value           |
+	| name | inputParameter1 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
+	| Key  | Value |
+	And extract JSON from body
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'parameter' is missing'
+
+Scenario: Check error is returned when trying to add already existing input parameter
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value           |
+	| name | inputParameter2 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |
+	And extract JSON from body
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Input parameter 'parameter' already exists'
+	
+Scenario: Check error is returned when trying to add output parameter to unknown humantaskdef
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/def/parameters/output'
+	| Key  | Value |
+	And extract JSON from body
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to add output parameter and parameter is missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value           |
+	| name | outputParameter1 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
+	| Key  | Value |
+	And extract JSON from body
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'parameter' is missing'
+
+Scenario: Check error is returned when trying to add already existing output parameter
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value           |
+	| name | outputParameter2 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |
+	And extract JSON from body
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Output parameter 'parameter' already exists'

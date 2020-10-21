@@ -201,6 +201,17 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Type = Enum.GetName(typeof(ParameterTypes), par.Type)
                 };
             }
+
+            public Parameter ToDomain()
+            {
+                var type = (ParameterTypes)Enum.Parse(typeof(ParameterTypes), Type);
+                return new Parameter
+                {
+                    IsRequired = IsRequired,
+                    Name = Name,
+                    Type = type
+                };
+            }
         }
 
         public class PresentationElementDefinitionResult

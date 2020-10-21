@@ -60,17 +60,23 @@ export class HumanTaskDefService {
     }
 
     addInputParameter(id: string, parameter: Parameter): Observable<boolean> {
-        if (id) { }
-        if (parameter) { }
-
-        return of(true);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/input";
+        const request: any = { parameter: parameter };
+        return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     addOutputParameter(id: string, parameter: Parameter): Observable<boolean> {
-        if (id) { }
-        if (parameter) { }
-
-        return of(true);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/output";
+        const request: any = { parameter: parameter };
+        return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     deleteInputParameter(id: string, name: string): Observable<boolean> {

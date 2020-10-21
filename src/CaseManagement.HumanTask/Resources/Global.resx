@@ -129,6 +129,9 @@
   <data name="HumanTaskDefExists" xml:space="preserve">
     <value>The human task def '{0}' already exists</value>
   </data>
+  <data name="InputParameterExists" xml:space="preserve">
+    <value>Input parameter '{0}' already exists</value>
+  </data>
   <data name="InvalidParameterType" xml:space="preserve">
     <value>Parameter '{0}' is not a valid '{1}'</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="OperationCanBePerformed" xml:space="preserve">
     <value>Operation '{0}' can be performed only on '{1}' human task instance state</value>
+  </data>
+  <data name="OutputParameterExists" xml:space="preserve">
+    <value>Output parameter '{0}' already exists</value>
   </data>
   <data name="SubTaskAlreadyCreated" xml:space="preserve">
     <value>The sub task '{0}' is already created</value>

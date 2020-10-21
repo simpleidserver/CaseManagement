@@ -41,3 +41,37 @@ Scenario: Check humantaskdef people assignment can be updated
 	Then JSON 'name'='updatePeopleAssignment'
 	Then JSON 'peopleAssignment.potentialOwner.type'='USERIDENTIFIERS'
 	Then JSON 'peopleAssignment.potentialOwner.userIdentifiers[0]'='user1'
+
+Scenario: Check input parameter can be added
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value             |
+	| name | addInputParameter |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='addInputParameter'
+	Then JSON 'operation.inputParameters[0].name'='parameter'
+	Then JSON 'operation.inputParameters[0].type'='STRING'
+
+Scenario: Check output parameter can be added
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value             |
+	| name | addOutputParameter |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='addOutputParameter'
+	Then JSON 'operation.outputParameters[0].name'='parameter'
+	Then JSON 'operation.outputParameters[0].type'='STRING'

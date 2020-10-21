@@ -31,8 +31,8 @@ export class OperationParameterComponent {
         private snackBar: MatSnackBar,
         private formBuilder: FormBuilder) {
         this.parameterTypes = [];
-        this.parameterTypes.push(new ParameterType("string", "string"));
-        this.parameterTypes.push(new ParameterType("bool", "boolean"));
+        this.parameterTypes.push(new ParameterType("STRING", "string"));
+        this.parameterTypes.push(new ParameterType("BOOL", "boolean"));
         this.parameterForm = this.formBuilder.group({
             name: new FormControl('', [
                 Validators.required

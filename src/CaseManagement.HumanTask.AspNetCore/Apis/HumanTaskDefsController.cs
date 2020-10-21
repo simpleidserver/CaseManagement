@@ -21,8 +21,6 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             _mediator = mediator;
         }
 
-        #region Actions
-
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] AddHumanTaskDefCommand parameter, CancellationToken token)
         {
@@ -107,6 +105,54 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
-        #endregion
+        [HttpPost("{id}/parameters/input")]
+        public async Task<IActionResult> AddInputParameter(string id, [FromBody] AddHumanTaskDefInputParameterCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.Id = id;
+                await _mediator.Send(parameter, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPost("{id}/parameters/output")]
+        public async Task<IActionResult> AddOutputParameter(string id, [FromBody] AddHumanTaskDefOutputParameterCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.Id = id;
+                await _mediator.Send(parameter, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }
