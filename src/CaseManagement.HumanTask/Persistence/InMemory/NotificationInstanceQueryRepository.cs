@@ -24,7 +24,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             n.PeopleAssignment != null &&
             n.PeopleAssignment.Recipient != null &&
             (
-                (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.USERIDENTFIERS && n.PeopleAssignment.Recipient.Values.Contains(parameter.User.UserIdentifier)) ||
+                (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.USERIDENTIFIERS && n.PeopleAssignment.Recipient.Values.Contains(parameter.User.UserIdentifier)) ||
                 (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.GROUPNAMES && n.PeopleAssignment.Recipient.Values.Any(v => parameter.User.Roles.Contains(v))) ||
                 (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.LOGICALPEOPLEGROUP && n.PeopleAssignment.Recipient.LogicalGroup != null && parameter.User.LogicalGroups.Contains(n.PeopleAssignment.Recipient.LogicalGroup.Name))
             ));

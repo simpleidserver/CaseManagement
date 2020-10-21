@@ -281,6 +281,33 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update people assignment")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update people assignment")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdatePeopleAssignment()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update people assignment", null, ((string[])(null)));
+#line 71
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 72
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/assignment\'", ((string)(null)), table9, "When ");
+#line 74
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 75
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 76
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 77
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

@@ -14,7 +14,7 @@ namespace CaseManagement.HumanTask.Domains
             return new LogicalPeopleGroupAssignmentDefinition
             {
                 LogicalPeopleGroup = LogicalPeopleGroup,
-                Arguments = Arguments.ToDictionary(c => c.Key, c => c.Value)
+                Arguments = Arguments?.ToDictionary(c => c.Key, c => c.Value)
             };
         }
     }

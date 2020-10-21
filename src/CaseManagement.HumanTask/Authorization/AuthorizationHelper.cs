@@ -74,7 +74,7 @@ namespace CaseManagement.HumanTask.Authorization
             {
                 case PeopleAssignmentTypes.GROUPNAMES:
                     return CheckGroupNames(assignment.Values, claims, token);
-                case PeopleAssignmentTypes.USERIDENTFIERS:
+                case PeopleAssignmentTypes.USERIDENTIFIERS:
                     return CheckUserIdentifiers(assignment.Values, claims, token);
                 case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
                     return CheckLogicalGroup(assignment.LogicalGroup, claims, token);

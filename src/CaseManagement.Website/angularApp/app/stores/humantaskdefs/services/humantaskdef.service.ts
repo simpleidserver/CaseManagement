@@ -139,10 +139,13 @@ export class HumanTaskDefService {
     }
 
     updatePeopleAssignment(id: string, assignment: HumanTaskDefAssignment): Observable<boolean> {
-        if (id) { }
-        if (assignment) { }
-
-        return of(true);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const request: any = { peopleAssignment: assignment };
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/assignment";
+        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     updateStartEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {

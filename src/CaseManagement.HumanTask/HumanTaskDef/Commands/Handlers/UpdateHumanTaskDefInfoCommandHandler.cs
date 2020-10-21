@@ -53,7 +53,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
             result.UpdateInfo(request.Name, request.Priority);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
-            _logger.LogError($"The human task definition '{request.Id}' has been updated");
+            _logger.LogInformation($"The human task definition '{request.Id}' has been updated");
             return true;
         }
     }

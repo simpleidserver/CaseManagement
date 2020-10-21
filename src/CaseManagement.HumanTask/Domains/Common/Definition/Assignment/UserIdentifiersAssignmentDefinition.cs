@@ -10,7 +10,7 @@ namespace CaseManagement.HumanTask.Domains
             UserIdentifiers = new List<string>();
         }
 
-        public override PeopleAssignmentTypes Type => PeopleAssignmentTypes.USERIDENTFIERS;
+        public override PeopleAssignmentTypes Type => PeopleAssignmentTypes.USERIDENTIFIERS;
         public ICollection<string> UserIdentifiers { get; set; }
 
         public override object Clone()

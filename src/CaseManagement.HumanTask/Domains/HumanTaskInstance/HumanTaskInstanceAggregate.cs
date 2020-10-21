@@ -277,7 +277,7 @@ namespace CaseManagement.HumanTask.Domains
             }
             else
             {
-                assign.Type = PeopleAssignmentTypes.USERIDENTFIERS;
+                assign.Type = PeopleAssignmentTypes.USERIDENTIFIERS;
                 assign.Values = evt.UserIdentifiers;
             }
 
@@ -378,7 +378,7 @@ namespace CaseManagement.HumanTask.Domains
                 if (PeopleAssignment != null && 
                     PeopleAssignment.PotentialOwner != null && 
                     PeopleAssignment.PotentialOwner.Values.Count() == 1 && 
-                    PeopleAssignment.PotentialOwner.Type == PeopleAssignmentTypes.USERIDENTFIERS)
+                    PeopleAssignment.PotentialOwner.Type == PeopleAssignmentTypes.USERIDENTIFIERS)
                 {
                     Status = HumanTaskInstanceStatus.RESERVED;
                     ActualOwner = PeopleAssignment.PotentialOwner.Values.First();

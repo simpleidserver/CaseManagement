@@ -1,7 +1,5 @@
 ﻿using CaseManagement.Common.Domains;
 using System;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace CaseManagement.HumanTask.Domains
 {
@@ -112,7 +110,28 @@ namespace CaseManagement.HumanTask.Domains
 
         public void UpdateInfo(string name, int priority)
         {
-            var evt = new HumanTaskInfoUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, name, priority, DateTime.UtcNow);
+            var evt = new HumanTaskInfoUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, name, priority, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void UpdatePeopleAssignment(
+            PeopleAssignmentDefinition potentialOwner,
+            PeopleAssignmentDefinition excludedOwner,
+            PeopleAssignmentDefinition taskInitiator,
+            PeopleAssignmentDefinition taskStakeHolder,
+            PeopleAssignmentDefinition businessAdministrator,
+            PeopleAssignmentDefinition recipient)
+        {
+            var evt = new HumanTaskPeopleAssignedEvent(Guid.NewGuid().ToString(),
+                AggregateId,
+                Version + 1,
+                potentialOwner,
+                excludedOwner,
+                taskInitiator,
+                taskStakeHolder,
+                businessAdministrator,
+                recipient,
+                DateTime.UtcNow);
             Handle(evt);
         }
 
@@ -134,6 +153,19 @@ namespace CaseManagement.HumanTask.Domains
             Name = evt.Name;
             Priority = evt.Priority;
             UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskPeopleAssignedEvent evt)
+        {
+            PeopleAssignment.BusinessAdministrator = evt.BusinessAdministrator;
+            PeopleAssignment.ExcludedOwner = evt.ExcludedOwner;
+            PeopleAssignment.PotentialOwner = evt.PotentialOwner;
+            PeopleAssignment.Recipient = evt.Recipient;
+            PeopleAssignment.TaskInitiator = evt.TaskInitiator;
+            PeopleAssignment.TaskStakeHolder = evt.TaskStakeHolder;
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
         }
     }
 }

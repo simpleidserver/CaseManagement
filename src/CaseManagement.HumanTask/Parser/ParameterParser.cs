@@ -78,7 +78,7 @@ namespace CaseManagement.HumanTask.Parser
                 case PeopleAssignmentTypes.GROUPNAMES:
                     var groupNames = assignment as GroupNamesAssignmentDefinition;
                     return PeopleAssignmentInstance.AssignGroupNames(groupNames.GroupNames);
-                case PeopleAssignmentTypes.USERIDENTFIERS:
+                case PeopleAssignmentTypes.USERIDENTIFIERS:
                     var userIdentifiers = assignment as UserIdentifiersAssignmentDefinition;
                     return PeopleAssignmentInstance.AssignUserIdentifiers(userIdentifiers.UserIdentifiers);
                 case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:

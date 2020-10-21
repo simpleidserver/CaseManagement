@@ -19,17 +19,18 @@ export class PeopleAssignmentComponent {
     get peopleAssignment(): PeopleAssignment { return this._peopleAssignment; }
     set peopleAssignment(pa: PeopleAssignment) {
         this._peopleAssignment = pa;
+        this.peopleAssignmentForm.get('type').setValue(pa.type);
         switch (pa.type) {
-            case 'groupnames':
+            case 'GROUPNAMES':
                 this.values = pa.groupNames;
                 break;
-            case 'useridentifiers':
+            case 'USERIDENTIFIERS':
                 this.values = pa.userIdentifiers;
                 break;
-            case 'expression':
+            case 'EXPRESSION':
                 this.values = [pa.expression];
                 break;
-            case 'logicalpeoplegroup':
+            case 'LOGICALPEOPLEGROUP':
                 this.values = [pa.logicalPeopleGroup];
                 break;
         }
@@ -44,6 +45,9 @@ export class PeopleAssignmentComponent {
             value: new FormControl('', [
                 Validators.required
             ]),
+        });
+        this.peopleAssignmentForm.get('type').valueChanges.subscribe(() => {
+            this.values = [];
         });
     }
 
@@ -67,16 +71,16 @@ export class PeopleAssignmentComponent {
         const type = this.peopleAssignmentForm.get('type').value;
         this._peopleAssignment.type = type;
         switch (type) {
-            case 'groupnames':
+            case 'GROUPNAMES':
                 this._peopleAssignment.groupNames = this.values;
                 break;
-            case 'useridentifiers':
+            case 'USERIDENTIFIERS':
                 this._peopleAssignment.userIdentifiers = this.values;
                 break;
-            case 'expression':
+            case 'EXPRESSION':
                 this._peopleAssignment.expression = this.values[0];
                 break;
-            case 'logicalpeoplegroup':
+            case 'LOGICALPEOPLEGROUP':
                 this._peopleAssignment.logicalPeopleGroup = this.values[0];
                 break;
         }

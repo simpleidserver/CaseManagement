@@ -89,6 +89,24 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPut("{id}/assignment")]
+        public async Task<IActionResult> UpdatePeopleAssignment(string id, [FromBody] UpdateHumanTaskDefPeopleAssignmentCommand cmd, CancellationToken token)
+        {
+            try
+            {
+                cmd.Id = id;
+                var result = await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         #endregion
     }
 }

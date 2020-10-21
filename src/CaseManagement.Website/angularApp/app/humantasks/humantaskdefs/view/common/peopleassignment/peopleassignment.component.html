@@ -3,10 +3,10 @@
     <mat-form-field class="full-width">
         <mat-label>{{ 'SHARED.SELECT_ASSIGNMENT_TYPE' | translate }}</mat-label>
         <mat-select formControlName="type" required>
-            <mat-option value="logicalpeoplegroup">{{ 'SHARED.LOGICALGROUP' | translate }}</mat-option>
-            <mat-option value="groupnames">{{ 'SHARED.GROUPNAMES' | translate }}</mat-option>
-            <mat-option value="useridentifiers">{{ 'SHARED.USERIDENTIFIERS' | translate }}</mat-option>
-            <mat-option value="expression">{{ 'SHARED.EXPRESSION' | translate }}</mat-option>
+            <mat-option value="LOGICALPEOPLEGROUP">{{ 'SHARED.LOGICALGROUP' | translate }}</mat-option>
+            <mat-option value="GROUPNAMES">{{ 'SHARED.GROUPNAMES' | translate }}</mat-option>
+            <mat-option value="USERIDENTIFIERS">{{ 'SHARED.USERIDENTIFIERS' | translate }}</mat-option>
+            <mat-option value="EXPRESSION">{{ 'SHARED.EXPRESSION' | translate }}</mat-option>
         </mat-select>
         <mat-error *ngIf="peopleAssignmentForm.get('type').hasError('required')">
             {{ 'SHARED.IS_REQUIRED' | translate }}

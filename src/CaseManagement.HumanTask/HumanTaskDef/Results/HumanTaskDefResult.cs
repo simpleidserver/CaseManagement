@@ -480,6 +480,41 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
 
                 return null;
             }
+
+            public PeopleAssignmentDefinition ToDomain()
+            {
+                if (string.IsNullOrWhiteSpace(Type))
+                {
+                    return null;
+                }
+
+                var typeEnum = (PeopleAssignmentTypes)Enum.Parse(typeof(PeopleAssignmentTypes), Type.ToUpperInvariant());
+                switch(typeEnum)
+                {
+                    case PeopleAssignmentTypes.EXPRESSION:
+                        return new ExpressionAssignmentDefinition
+                        {
+                            Expression = Expression
+                        };
+                    case PeopleAssignmentTypes.GROUPNAMES:
+                        return new GroupNamesAssignmentDefinition
+                        {
+                            GroupNames = GroupNames
+                        };
+                    case PeopleAssignmentTypes.USERIDENTIFIERS:
+                        return new UserIdentifiersAssignmentDefinition
+                        {
+                            UserIdentifiers = UserIdentifiers
+                        };
+                    case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
+                        return new LogicalPeopleGroupAssignmentDefinition
+                        {
+                            LogicalPeopleGroup = LogicalPeopleGroup
+                        };
+                }
+
+                return null;
+            }
         }
     }
 }

@@ -67,3 +67,11 @@ Scenario: Check error is returned when trying to update information with an exis
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.bad_request[0]'='The human task def 'n1' already exists'
+
+Scenario: Check error is returned when trying to update people assignment
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/assignment'
+	| Key  | Value |
+	And extract JSON from body
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''

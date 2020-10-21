@@ -25,7 +25,7 @@ namespace CaseManagement.HumanTask.Domains
             return new PeopleAssignmentInstance
             {
                 Values = userIdentifiers,
-                Type = PeopleAssignmentTypes.USERIDENTFIERS
+                Type = PeopleAssignmentTypes.USERIDENTIFIERS
             };
         }
 

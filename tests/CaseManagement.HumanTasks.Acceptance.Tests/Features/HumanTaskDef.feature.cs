@@ -86,14 +86,14 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table47 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table48 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table47.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "name",
                         "newName"});
 #line 5
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table47, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table48, "When ");
 #line 8
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10
@@ -114,28 +114,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table48 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Key",
-                        "Value"});
-            table48.AddRow(new string[] {
-                        "name",
-                        "oldName"});
-#line 14
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table48, "When ");
-#line 17
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 18
- testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
             TechTalk.SpecFlow.Table table49 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
             table49.AddRow(new string[] {
                         "name",
+                        "oldName"});
+#line 14
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table49, "When ");
+#line 17
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 18
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table50 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table50.AddRow(new string[] {
+                        "name",
                         "newName2"});
 #line 19
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/i" +
-                    "nfo\'", ((string)(null)), table49, "And ");
+                    "nfo\'", ((string)(null)), table50, "And ");
 #line 22
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 23
@@ -144,6 +144,54 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 26
  testRunner.Then("JSON \'name\'=\'newName2\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check humantaskdef people assignment can be updated")]
+        [Xunit.TraitAttribute("FeatureTitle", "HumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check humantaskdef people assignment can be updated")]
+        public virtual void CheckHumantaskdefPeopleAssignmentCanBeUpdated()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check humantaskdef people assignment can be updated", null, ((string[])(null)));
+#line 28
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table51 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table51.AddRow(new string[] {
+                        "name",
+                        "updatePeopleAssignment"});
+#line 29
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table51, "When ");
+#line 32
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 33
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table52 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table52.AddRow(new string[] {
+                        "peopleAssignment",
+                        "{ potentialOwner : { type: \"USERIDENTIFIERS\", userIdentifiers: [ \"user1\" ]  } }"});
+#line 34
+ testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/a" +
+                    "ssignment\'", ((string)(null)), table52, "And ");
+#line 37
+ testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 38
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 40
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 41
+ testRunner.Then("JSON \'name\'=\'updatePeopleAssignment\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 42
+ testRunner.Then("JSON \'peopleAssignment.potentialOwner.type\'=\'USERIDENTIFIERS\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 43
+ testRunner.Then("JSON \'peopleAssignment.potentialOwner.userIdentifiers[0]\'=\'user1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
