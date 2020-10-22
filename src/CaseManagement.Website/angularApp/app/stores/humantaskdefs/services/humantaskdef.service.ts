@@ -10,6 +10,7 @@ import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 import { PresentationElement } from '../../common/presentationelement.model';
+import { map } from 'rxjs/operators';
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -35,19 +36,29 @@ export class HumanTaskDefService {
     }
 
     addStartDeadline(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<HumanTaskDefinitionDeadLine> {
-        if (id) { }
-        if (deadline) { }
-
-        deadline.id = uuidv4();
-        return of(deadline);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start";
+        const request: any = { deadLine: deadline };
+        return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map(_ => {
+            deadline.id = _;
+            return deadline;
+        }));
     }
 
     addCompletionDeadline(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<HumanTaskDefinitionDeadLine> {
-        if (id) { }
-        if (deadline) { }
-
-        deadline.id = uuidv4();
-        return of(deadline);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion";
+        const request: any = { deadLine: deadline };
+        return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map(_ => {
+            deadline.id = _;
+            return deadline;
+        }));
     }
 
     updateInfo(id: string, name: string, priority: number): Observable<boolean> {

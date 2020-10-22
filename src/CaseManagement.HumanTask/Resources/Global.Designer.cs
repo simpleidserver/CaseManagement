@@ -214,6 +214,24 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Parameter &apos;{0}&apos; is not a valid ISO8601 expression.
+        /// </summary>
+        internal static string ParameterNotValidISO8601 {
+            get {
+                return ResourceManager.GetString("ParameterNotValidISO8601", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Parameters &apos;{0}&apos; cannot be specified at the same time.
+        /// </summary>
+        internal static string ParametersCannotSpecifiedAtSameTime {
+            get {
+                return ResourceManager.GetString("ParametersCannotSpecifiedAtSameTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à The sub task &apos;{0}&apos; is already created.
         /// </summary>
         internal static string SubTaskAlreadyCreated {

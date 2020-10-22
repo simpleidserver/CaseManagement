@@ -1,5 +1,10 @@
 ﻿using CaseManagement.Common.Domains;
+using CaseManagement.Common.Exceptions;
+using CaseManagement.Common.ISO8601;
+using CaseManagement.HumanTask.Domains.HumanTaskDef.Events;
+using CaseManagement.HumanTask.Resources;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.HumanTask.Domains
@@ -166,6 +171,24 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public string AddStartDeadLine(HumanTaskDefinitionDeadLine deadLine)
+        {
+            var id = Guid.NewGuid().ToString();
+            deadLine.Id = id;
+            var evt = new HumanTaskDefStartDeadLineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLine, DateTime.UtcNow);
+            Handle(evt);
+            return id;
+        }
+
+        public string AddCompletionDeadLine(HumanTaskDefinitionDeadLine deadLine)
+        {
+            var id = Guid.NewGuid().ToString();
+            deadLine.Id = id;
+            var evt = new HumanTaskDefCompletionDeadLineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLine, DateTime.UtcNow);
+            Handle(evt);
+            return id;
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -234,6 +257,54 @@ namespace CaseManagement.HumanTask.Domains
             PresentationElement = evt.PresentationElt;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefStartDeadLineAddedEvent evt)
+        {
+            CheckDeadLine(evt.DeadLine);
+            DeadLines.StartDeadLines.Add(evt.DeadLine);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefCompletionDeadLineAddedEvent evt)
+        {
+            CheckDeadLine(evt.DeadLine);
+            DeadLines.CompletionDeadLines.Add(evt.DeadLine);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void CheckDeadLine(HumanTaskDefinitionDeadLine deadLine)
+        {
+            const string untilName = "deadline.until";
+            const string forName = "deadline.for";
+            var errors = new List<KeyValuePair<string, string>>();
+            if (string.IsNullOrWhiteSpace(deadLine.Name))
+            {
+                errors.Add(new KeyValuePair<string, string>("validation", string.Format(Global.MissingParameter, "deadline.name")));
+            }
+
+            if (string.IsNullOrWhiteSpace(deadLine.For) && string.IsNullOrWhiteSpace(deadLine.Until))
+            {
+                errors.Add(new KeyValuePair<string, string>("validation", string.Format(Global.MissingParameter, $"{forName},{untilName}")));
+            }
+            else if (!string.IsNullOrWhiteSpace(deadLine.Until) && !string.IsNullOrWhiteSpace(deadLine.For))
+            {
+                errors.Add(new KeyValuePair<string, string>("validation", string.Format(Global.ParametersCannotSpecifiedAtSameTime, $"{forName},{untilName}")));
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(deadLine.Until) && ISO8601Parser.ParseTimeInterval(deadLine.Until) == null)
+                {
+                    errors.Add(new KeyValuePair<string, string>("validation", string.Format(Global.ParameterNotValidISO8601, untilName)));
+                }
+            }
+
+            if (errors.Any())
+            {
+                throw new AggregateValidationException(errors);
+            }
         }
     }
 }

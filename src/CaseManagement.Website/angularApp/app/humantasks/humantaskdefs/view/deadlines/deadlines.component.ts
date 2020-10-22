@@ -85,6 +85,20 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
                 });
             });
         this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_START_DEADLINE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ERROR_ADD_START_DEADLINE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_COMPLETION_DEADLINE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.ERROR_ADD_COMPLETION_DEADLINE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
             filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_START_DEALINE))
             .subscribe(() => {
                 this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.START_DEADLINE_REMOVED'), this.translateService.instant('undo'), {

@@ -126,3 +126,37 @@ Scenario: Check presentationElement can be updated
 	Then JSON 'name'='updatePresentationElement'
 	Then JSON 'presentationElementResult.names[0].language'='fr'
 	Then JSON 'presentationElementResult.names[0].value'='bonjour'
+
+Scenario: Check add start deadline
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value            |
+	| name | addStartDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='addStartDeadline'
+	Then JSON 'deadLines.startDeadLines[0].name'='name'
+	Then JSON 'deadLines.startDeadLines[0].until'='P0Y0M0DT0H0M2S'
+
+Scenario: Check add completion deadline
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                 |
+	| name | addCompletionDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='addCompletionDeadline'
+	Then JSON 'deadLines.completionDeadLines[0].name'='name'
+	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'

@@ -177,6 +177,8 @@
         },
         "DEADLINES": {
           "TITLE": "Deadlines",
+          "ERROR_ADD_START_DEADLINE": "An error occured while trying to add the start deadline",
+          "ERROR_ADD_COMPLETION_DEADLINE": "An error occured while trying to add the completion deadline",
           "DEADLINE_NAME": "Name",
           "SELECT_DEADLINE_TYPE": "Select the type of deadline",
           "SELECT_DEADLINE_VALIDITYTYPE": "Select the type of validity",

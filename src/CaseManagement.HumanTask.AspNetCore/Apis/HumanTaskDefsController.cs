@@ -229,5 +229,69 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 }, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpPost("{id}/deadlines/start")]
+        public async Task<IActionResult> AddStartDeadline(string id, [FromBody] AddHumanTaskDefStartDeadLineCommand cmd, CancellationToken token)
+        {
+            try
+            {
+                cmd.Id = id;
+                var newId = await _mediator.Send(cmd, token);
+                return new ObjectResult(new { id = newId })
+                {
+                    StatusCode = (int)HttpStatusCode.Created
+                };
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch(AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPost("{id}/deadlines/completion")]
+        public async Task<IActionResult> AddCompletionDeadline(string id, [FromBody] AddHumanTaskDefCompletionDeadLineCommand cmd, CancellationToken token)
+        {
+            try
+            {
+                cmd.Id = id;
+                var newId = await _mediator.Send(cmd, token);
+                return new ObjectResult(new { id = newId })
+                {
+                    StatusCode = (int)HttpStatusCode.Created
+                };
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

@@ -88,6 +88,16 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Escalations = humanTaskDefinitionDeadLine.Escalations.Select(_ => EscalationResult.ToDto(_)).ToList()
                 };
             }
+
+            public HumanTaskDefinitionDeadLine ToDomain()
+            {
+                return new HumanTaskDefinitionDeadLine
+                {
+                    Name = Name,
+                    For = For,
+                    Until = Until
+                };
+            }
         }
 
         public class EscalationResult

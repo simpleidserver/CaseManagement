@@ -168,6 +168,12 @@
   <data name="OutputParameterExists" xml:space="preserve">
     <value>Output parameter '{0}' already exists</value>
   </data>
+  <data name="ParameterNotValidISO8601" xml:space="preserve">
+    <value>Parameter '{0}' is not a valid ISO8601 expression</value>
+  </data>
+  <data name="ParametersCannotSpecifiedAtSameTime" xml:space="preserve">
+    <value>Parameters '{0}' cannot be specified at the same time</value>
+  </data>
   <data name="SubTaskAlreadyCreated" xml:space="preserve">
     <value>The sub task '{0}' is already created</value>
   </data>

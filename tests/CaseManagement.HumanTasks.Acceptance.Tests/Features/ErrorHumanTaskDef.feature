@@ -171,7 +171,6 @@ Scenario: Check error is returned when trying to delete unknown input parameter
 	Then JSON 'status'='400'
 	Then JSON 'errors.bad_request[0]'='Input parameter 'parameter' doesn't exist'
 
-
 Scenario: Check error is returned when trying to delete ouput parameter from unknown humantaskdef
 	When execute HTTP DELETE request 'http://localhost/humantasksdefs/def/parameters/output/name'
 	And extract JSON from body
@@ -209,3 +208,82 @@ Scenario: Check error is returned when trying to update presentation element of 
 	Then HTTP status code equals to '404'
 	Then JSON 'status'='404'
 	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'id''
+
+Scenario: Check error is returned when trying to add start deadline and 'deadLine' parameter is missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/id/deadlines/start'
+	| Key | Value |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'deadLine' is missing'
+
+Scenario: Check error is returned when trying to add start deadline and humantaskdef is missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/id/deadlines/start'
+	| Key      | Value            |
+	| deadLine | { name: "Name" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'id''
+
+Scenario: Check error is returned when trying to add start deadline and deadline name is missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | addStartDeadlineParameter1 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value |
+	| deadLine | { }   |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Parameter 'deadline.name' is missing'
+
+Scenario: Check error is returned when trying to add start deadline and for & until parameters are missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | addStartDeadlineParameter2 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value            |
+	| deadLine | { name: "name" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Parameter 'deadline.for,deadline.until' is missing'
+
+Scenario: Check error is returned when trying to add start deadline and for & until parameters are present
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | addStartDeadlineParameter3 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value                                        |
+	| deadLine | { name: "name", for: "for", until: "until" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Parameters 'deadline.for,deadline.until' cannot be specified at the same time'
+
+Scenario: Check error is returned when trying to add start deadline and until is not a valid ISO8601 expression
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | addStartDeadlineParameter4 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value                            |
+	| deadLine | { name: "name", until: "until" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Parameter 'deadline.until' is not a valid ISO8601 expression'
