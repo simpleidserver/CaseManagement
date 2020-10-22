@@ -151,3 +151,42 @@ Scenario: Check error is returned when trying to add already existing output par
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.bad_request[0]'='Output parameter 'parameter' already exists'
+
+Scenario: Check error is returned when trying to delete input parameter from unknown humantaskdef
+	When execute HTTP DELETE request 'http://localhost/humantasksdefs/def/parameters/input/name'
+	And extract JSON from body
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to delete unknown input parameter
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value            |
+	| name | deleteParameter1 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input/name'
+	And extract JSON from body
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Input parameter 'parameter' doesn't exist'
+
+
+Scenario: Check error is returned when trying to delete ouput parameter from unknown humantaskdef
+	When execute HTTP DELETE request 'http://localhost/humantasksdefs/def/parameters/output/name'
+	And extract JSON from body
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to delete unknown output parameter
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value            |
+	| name | deleteParameter2 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output/name'
+	And extract JSON from body
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Output parameter 'parameter' doesn't exist'

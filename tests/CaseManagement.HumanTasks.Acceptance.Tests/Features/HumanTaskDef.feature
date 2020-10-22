@@ -61,7 +61,7 @@ Scenario: Check input parameter can be added
 
 Scenario: Check output parameter can be added
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
-	| Key  | Value             |
+	| Key  | Value              |
 	| name | addOutputParameter |
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
@@ -75,3 +75,38 @@ Scenario: Check output parameter can be added
 	Then JSON 'name'='addOutputParameter'
 	Then JSON 'operation.outputParameters[0].name'='parameter'
 	Then JSON 'operation.outputParameters[0].type'='STRING'
+
+Scenario: Check input parameter can be removed
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                |
+	| name | removeInputParameter |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |	
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input/parameter'
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='removeInputParameter'
+	Then JSON nb 'operation.inputParameters[*]'='0'
+
+
+Scenario: Check output parameter can be removed
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                |
+	| name | removeOutputParameter |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
+	| Key       | Value                                 |
+	| parameter | { name: 'parameter', type: 'STRING' } |	
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output/parameter'
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='removeOutputParameter'
+	Then JSON nb 'operation.outputParameters[*]'='0'

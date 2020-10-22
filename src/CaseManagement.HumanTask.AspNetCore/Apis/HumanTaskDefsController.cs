@@ -154,5 +154,55 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 }, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpDelete("{id}/parameters/input/{name}")]
+        public async Task<IActionResult> DeleteInputParameter(string id, string name, CancellationToken token)
+        {
+            try
+            {
+                var cmd = new DeleteHumanTaskDefInputParameterCommand { Id = id, ParameterName = name };
+                await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpDelete("{id}/parameters/output/{name}")]
+        public async Task<IActionResult> DeleteOutputParameter(string id, string name, CancellationToken token)
+        {
+            try
+            {
+                var cmd = new DeleteHumanTaskDefOutputParameterCommand { Id = id, ParameterName = name };
+                await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Common.Domains;
 using System;
+using System.Linq;
 
 namespace CaseManagement.HumanTask.Domains
 {
@@ -147,6 +148,18 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public void RemoveInputParameter(string parameterName)
+        {
+            var evt = new HumanTaskDefInputParameterRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameterName, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void RemoveOutputParameter(string parameterName)
+        {
+            var evt = new HumanTaskDefOutputParameterRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameterName, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -190,6 +203,22 @@ namespace CaseManagement.HumanTask.Domains
         private void Handle(HumanTaskDefOutputParameterAddedEvent evt)
         {
             Operation.OutputParameters.Add(evt.Parameter);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefInputParameterRemovedEvent evt)
+        {
+            var op = Operation.InputParameters.First(_ => _.Name == evt.ParameterName);
+            Operation.InputParameters.Remove(op);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefOutputParameterRemovedEvent evt)
+        {
+            var op = Operation.OutputParameters.First(_ => _.Name == evt.ParameterName);
+            Operation.OutputParameters.Remove(op);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

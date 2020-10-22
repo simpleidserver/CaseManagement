@@ -97,6 +97,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Input parameter &apos;{0}&apos; doesn&apos;t exist.
+        /// </summary>
+        internal static string InputParameterDoesntExist {
+            get {
+                return ResourceManager.GetString("InputParameterDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Input parameter &apos;{0}&apos; already exists.
         /// </summary>
         internal static string InputParameterExists {
@@ -183,6 +192,15 @@ namespace CaseManagement.HumanTask.Resources {
         internal static string OperationCanBePerformed {
             get {
                 return ResourceManager.GetString("OperationCanBePerformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Output parameter &apos;{0}&apos; doesn&apos;t exist.
+        /// </summary>
+        internal static string OutputParameterDoesntExist {
+            get {
+                return ResourceManager.GetString("OutputParameterDoesntExist", resourceCulture);
             }
         }
         

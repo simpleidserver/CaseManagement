@@ -57,6 +57,14 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
             Assert.Equal(value.ToLowerInvariant(), currentValue);
         }
 
+        [Then("JSON nb '(.*)'='(.*)'")]
+        public void ThenCountEqualsTo(string key, int value)
+        {
+            var jsonHttpBody = _scenarioContext["jsonHttpBody"] as JObject;
+            var currentValue = jsonHttpBody.SelectTokens(key).Count();
+            Assert.Equal(value, currentValue);
+        }
+
         [Then("JSON '(.*)' contains '(.*)'")]
         public void ThenContains(string key, string value)
         {
