@@ -160,6 +160,12 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public void UpdatePresentationElt(PresentationElementDefinition elt)
+        {
+            var evt = new HumanTaskDefPresentationEltUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, elt, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -219,6 +225,13 @@ namespace CaseManagement.HumanTask.Domains
         {
             var op = Operation.OutputParameters.First(_ => _.Name == evt.ParameterName);
             Operation.OutputParameters.Remove(op);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefPresentationEltUpdatedEvent evt)
+        {
+            PresentationElement = evt.PresentationElt;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

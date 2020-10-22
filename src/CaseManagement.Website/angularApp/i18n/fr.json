@@ -244,7 +244,9 @@
           "ERROR_UPDATE_RENDERING": "An error occured while trying to update the rendering"
         },
         "PRESENTATION_PARAMETERS": {
-          "TITLE": "Presentation parameters"
+          "TITLE": "Presentation parameters",
+          "PRESENTATIONPARAMETERS_UPDATED": "Presentation element has been updated",
+          "CANNOT_UPDATE_PRESENTATIONPARAMETERS": "An error occured while trying to update the presentation element"
         },
         "PEOPLEASSIGNMENT": {
           "POTENTIAL_OWNER": "Potential owner",

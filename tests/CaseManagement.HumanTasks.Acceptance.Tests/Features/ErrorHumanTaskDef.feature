@@ -190,3 +190,22 @@ Scenario: Check error is returned when trying to delete unknown output parameter
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.bad_request[0]'='Output parameter 'parameter' doesn't exist'
+
+Scenario: Check error is returned when trying to update presentation element and 'presentationElement' parameter is missing
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/id/presentationelts'
+	| Key  | Value            |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'presentationElement' is missing'
+
+Scenario: Check error is returned when trying to update presentation element of an unknown humantaskdef
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/id/presentationelts'
+	| Key                 | Value                                               |
+	| presentationElement | { names: [ { language: "fr", value: "bonjour" } ] } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'id''

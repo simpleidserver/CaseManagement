@@ -332,5 +332,19 @@ export class HumanTaskDefEffects {
                     );
             }
             )
+    );
+
+    @Effect()
+    updatePresentationElement = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.UPDATE_PRESENTATIONELEMENT),
+            mergeMap((evt: fromHumanTask.UpdatePresentationElementOperation) => {
+                return this.humanTaskDefService.updatePresentationElement(evt.id, evt.presentationElement)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElement: evt.presentationElement }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PRESENTATIONELEMENT }))
+                    );
+            }
+            )
         );
 }

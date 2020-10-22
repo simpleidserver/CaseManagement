@@ -6,6 +6,7 @@ import { Rendering } from '../../common/rendering.model';
 import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
 import { Escalation } from '../../common/escalation.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
+import { PresentationElement } from '../../common/presentationelement.model';
 
 export enum ActionTypes {
     START_GET_HUMANTASKDEF = "[HumanTaskDef] START_GET_HUMANTASKDEF",
@@ -77,7 +78,10 @@ export enum ActionTypes {
     SEARCH_HUMANTASKDEFS = "[HumanTaskDef] SEARCH_HUMANTASKDEFS",
     COMPLETE_SEARCH_HUMANTASKDEFS = "[HumanTaskDef] COMPLETE_SEARCH_HUMANTASKDEFS",
     ERROR_SEARCH_HUMANTASKDEFS = "[HumanTaskDef] ERROR_SEARCH_HUMANTASKDEFS",
-    GET_HUMANTASKDEF = "[HumanTaskDef] GET_HUMANTASKDEF"
+    GET_HUMANTASKDEF = "[HumanTaskDef] GET_HUMANTASKDEF",
+    UPDATE_PRESENTATIONELEMENT = "[HumanTaskDef] UPDATE_PRESENTATIONELEMENT",
+    COMPLETE_UPDATE_PRESENTATIONELEMENT = "[HumanTaskDef] COMPLETE_UPDATE_PRESENTATIONELEMENT",
+    ERROR_UPDATE_PRESENTATIONELEMENT = "[HumanTaskDef] ERROR_UPDATE_PRESENTATIONELEMENT"
 }
 
 export class GetHumanTaskDef implements Action {
@@ -310,6 +314,16 @@ export class CompleteSearchHumanTaskDefOperation implements Action {
     constructor(public humanTaskDefsResult: SearchHumanTaskDefsResult) { }
 }
 
+export class UpdatePresentationElementOperation implements Action {
+    readonly type = ActionTypes.UPDATE_PRESENTATIONELEMENT;
+    constructor(public id: string, public presentationElement: PresentationElement) { }
+}
+
+export class CompleteUpdatePresentationElementOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT;
+    constructor(public presentationElement: PresentationElement) { }
+}
+
 export type ActionsUnion = GetHumanTaskDef |
     GetHumanTaskDefComplete |
     UpdateHumanTaskDef |
@@ -355,4 +369,6 @@ export type ActionsUnion = GetHumanTaskDef |
     AddHumanTaskDefOperation |
     CompleteAddHumanTaskDefOperation |
     SearchHumanTaskDefOperation |
-    CompleteSearchHumanTaskDefOperation;
+    CompleteSearchHumanTaskDefOperation |
+    UpdatePresentationElementOperation |
+    CompleteUpdatePresentationElementOperation;

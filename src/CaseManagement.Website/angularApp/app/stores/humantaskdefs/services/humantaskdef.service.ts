@@ -9,6 +9,7 @@ import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model'
 import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
+import { PresentationElement } from '../../common/presentationelement.model';
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -215,5 +216,15 @@ export class HumanTaskDefService {
         }
 
         return this.http.post<SearchHumanTaskDefsResult>(targetUrl, JSON.stringify(request), { headers: headers });
+    }
+
+    updatePresentationElement(id: string, presentationElement: PresentationElement): Observable<boolean> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationelts";
+        const request: any = { presentationElement: presentationElement };
+        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 }

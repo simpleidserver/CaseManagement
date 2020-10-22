@@ -204,5 +204,30 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 }, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpPut("{id}/presentationelts")]
+        public async Task<IActionResult> UpdatePresentationElements(string id, [FromBody] UpdateHumanTaskDefPresentationParametersCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.Id = id;
+                await _mediator.Send(parameter, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

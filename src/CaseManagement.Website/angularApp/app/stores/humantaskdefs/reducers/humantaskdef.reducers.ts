@@ -363,6 +363,14 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     }
                 }
             };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    presentationElementResult: { ...action.presentationElement }
+                }
+            };
         default:
             return state;
     }

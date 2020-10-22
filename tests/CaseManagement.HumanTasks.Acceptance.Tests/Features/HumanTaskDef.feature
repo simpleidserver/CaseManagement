@@ -93,10 +93,9 @@ Scenario: Check input parameter can be removed
 	Then JSON 'name'='removeInputParameter'
 	Then JSON nb 'operation.inputParameters[*]'='0'
 
-
 Scenario: Check output parameter can be removed
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
-	| Key  | Value                |
+	| Key  | Value                 |
 	| name | removeOutputParameter |
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
@@ -110,3 +109,20 @@ Scenario: Check output parameter can be removed
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='removeOutputParameter'
 	Then JSON nb 'operation.outputParameters[*]'='0'
+
+Scenario: Check presentationElement can be updated
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                     |
+	| name | updatePresentationElement |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/presentationelts'
+	| Key                 | Value                                               |
+	| presentationElement | { names: [ { language: "fr", value: "bonjour" } ] } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='updatePresentationElement'
+	Then JSON 'presentationElementResult.names[0].language'='fr'
+	Then JSON 'presentationElementResult.names[0].value'='bonjour'

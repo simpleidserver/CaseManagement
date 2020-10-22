@@ -239,6 +239,17 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     PresentationParameters = presElt.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList(),
                 };
             }
+
+            public PresentationElementDefinition ToDomain()
+            {
+                return new PresentationElementDefinition
+                {
+                    Names = Names.Select(_ => _.ToDomain()).ToList(),
+                    Subjects = Subjects.Select(_ => _.ToDomain()).ToList(),
+                    Descriptions = Descriptions.Select(_ => _.ToDomain()).ToList(),
+                    PresentationParameters = PresentationParameters.Select(_ => _.ToDomain()).ToList()
+                };
+            }
         }
 
         public class RenderingResult
@@ -375,6 +386,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Value = txt.Value
                 };
             }
+
+            public Text ToDomain()
+            {
+                return new Text
+                {
+                    Language = Language,
+                    Value = Value
+                };
+            }
         }
 
         public class DescriptionResult : TextDefResult
@@ -388,6 +408,16 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Language = desc.Language,
                     Value = desc.Value,
                     ContentType = desc.ContentType
+                };
+            }
+
+            public new Description ToDomain()
+            {
+                return new Description
+                {
+                    Language = Language,
+                    Value = Value,
+                    ContentType = ContentType
                 };
             }
         }
@@ -405,6 +435,17 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Name = pp.Name,
                     Type = Enum.GetName(typeof(ParameterTypes), pp.Type),
                     Expression = pp.Expression
+                };
+            }
+
+            public PresentationParameter ToDomain()
+            {
+                var parameterType = (ParameterTypes)Enum.Parse(typeof(ParameterTypes), Type);
+                return new PresentationParameter
+                {
+                    Name = Name,
+                    Type = parameterType,
+                    Expression = Expression
                 };
             }
         }
