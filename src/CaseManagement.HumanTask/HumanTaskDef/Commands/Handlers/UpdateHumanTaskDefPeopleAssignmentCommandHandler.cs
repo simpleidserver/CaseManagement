@@ -39,7 +39,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 request.PeopleAssignment.Recipient?.ToDomain());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
-            _logger.LogInformation("The people assignement has been updated");
+            _logger.LogInformation($"Human task definition '{result.Name}', people assignment has been updated");
             return true;
         }
     }

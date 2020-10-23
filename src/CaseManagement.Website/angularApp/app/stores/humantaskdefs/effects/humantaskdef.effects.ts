@@ -157,9 +157,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.DELETE_START_DEADLINE),
             mergeMap((evt: fromHumanTask.DeleteStartDeadlineOperation) => {
-                return this.humanTaskDefService.deleteStartDeadline(evt.id, evt.name)
+                return this.humanTaskDefService.deleteStartDeadline(evt.id, evt.deadLineId)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_START_DEALINE, name: evt.name}; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_START_DEALINE, deadLineId: evt.deadLineId}; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_START_DEALINE }))
                     );
             }
@@ -171,9 +171,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.DELETE_COMPLETION_DEADLINE),
             mergeMap((evt: fromHumanTask.DeleteStartDeadlineOperation) => {
-                return this.humanTaskDefService.deleteCompletionDeadline(evt.id, evt.name)
+                return this.humanTaskDefService.deleteCompletionDeadline(evt.id, evt.deadLineId)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE, name: evt.name }; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE, deadLineId: evt.deadLineId }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_COMPLETION_DEADLINE }))
                     );
             }

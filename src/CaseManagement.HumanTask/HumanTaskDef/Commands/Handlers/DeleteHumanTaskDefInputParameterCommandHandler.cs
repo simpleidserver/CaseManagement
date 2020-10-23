@@ -41,6 +41,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
             result.RemoveInputParameter(request.ParameterName);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation($"Human task definition '{result.Name}', input parameter '{request.ParameterName}' has been removed");
             return true;
         }
     }

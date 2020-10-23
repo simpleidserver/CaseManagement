@@ -44,6 +44,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
             result.UpdatePresentationElt(request.PresentationElement.ToDomain());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation($"Human task definition '{result.Name}', presentation element has been updated");
             return true;
         }
     }

@@ -287,3 +287,45 @@ Scenario: Check error is returned when trying to add start deadline and until is
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.validation[0]'='Parameter 'deadline.until' is not a valid ISO8601 expression'
+
+Scenario: Check error is returned when trying to remove start deadline from unknown humantask definition
+	When execute HTTP DELETE request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId'
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to remove unknown start deadline
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                   |
+	| name | startDeadlineParameter1 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/deadLineId'
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Start deadline doesn't exist'
+	
+Scenario: Check error is returned when trying to remove completion deadline from unknown humantask definition
+	When execute HTTP DELETE request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId'
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to remove unknown completion deadline
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                   |
+	| name | startDeadlineParameter2 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion/deadLineId'
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Completion deadline doesn't exist'

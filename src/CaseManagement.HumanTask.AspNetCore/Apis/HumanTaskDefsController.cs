@@ -293,5 +293,47 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpDelete("{id}/deadlines/start/{deadLineId}")]
+        public async Task<IActionResult> DeleteStartDeadline(string id, string deadLineId, CancellationToken token)
+        {
+            try
+            {
+                var newId = await _mediator.Send(new DeleteHumanTaskDefStartDeadlineCommand { DeadLineId = deadLineId, Id = id }, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpDelete("{id}/deadlines/completion/{deadLineId}")]
+        public async Task<IActionResult> DeleteCompletionDeadline(string id, string deadLineId, CancellationToken token)
+        {
+            try
+            {
+                var newId = await _mediator.Send(new DeleteHumanTaskDefCompletionDeadlineCommand { DeadLineId = deadLineId, Id = id }, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

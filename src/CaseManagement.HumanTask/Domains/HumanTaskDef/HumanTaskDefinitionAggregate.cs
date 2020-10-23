@@ -6,6 +6,7 @@ using CaseManagement.HumanTask.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 
 namespace CaseManagement.HumanTask.Domains
 {
@@ -189,12 +190,24 @@ namespace CaseManagement.HumanTask.Domains
             return id;
         }
 
+        public void DeleteCompletionDeadLine(string deadLineId)
+        {
+            var evt = new HumanTaskDefCompletionDeadLineRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLineId, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void DeleteStartDeadLine(string deadLineId)
+        {
+            var evt = new HumanTaskDefStartDeadLineRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLineId, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
         }
 
-        private void Handle(HumanTaskDefCreatedEvent evt) 
+        private void Handle(HumanTaskDefCreatedEvent evt)
         {
             AggregateId = evt.AggregateId;
             Version = evt.Version;
@@ -271,6 +284,38 @@ namespace CaseManagement.HumanTask.Domains
         {
             CheckDeadLine(evt.DeadLine);
             DeadLines.CompletionDeadLines.Add(evt.DeadLine);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefCompletionDeadLineRemovedEvent evt)
+        {
+            var e = DeadLines.CompletionDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            if (e == null)
+            {
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("validation", Global.CompletionDeadLineDoesntExist)
+                });
+            }
+
+            DeadLines.CompletionDeadLines.Remove(e);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefStartDeadLineRemovedEvent evt)
+        {
+            var e = DeadLines.StartDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            if (e == null)
+            {
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("validation", Global.StartDeadLineDoesntExist)
+                });
+            }
+
+            DeadLines.StartDeadLines.Remove(e);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

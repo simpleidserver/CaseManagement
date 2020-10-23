@@ -47,6 +47,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
             result.AddOutputParameter(request.Parameter.ToDomain());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation($"Human task definition '{result.Name}', output parameter '{request.Parameter.Name}' has been added");
             return true;
         }
     }

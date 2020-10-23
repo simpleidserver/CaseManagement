@@ -79,6 +79,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Completion deadline doesn&apos;t exist.
+        /// </summary>
+        internal static string CompletionDeadLineDoesntExist {
+            get {
+                return ResourceManager.GetString("CompletionDeadLineDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à GroupNames and UserIdentifiers parameters cannot be specified at the same time.
         /// </summary>
         internal static string GroupNamesAndUserIdentifiersSpecified {
@@ -228,6 +237,15 @@ namespace CaseManagement.HumanTask.Resources {
         internal static string ParametersCannotSpecifiedAtSameTime {
             get {
                 return ResourceManager.GetString("ParametersCannotSpecifiedAtSameTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Start deadline doesn&apos;t exist.
+        /// </summary>
+        internal static string StartDeadLineDoesntExist {
+            get {
+                return ResourceManager.GetString("StartDeadLineDoesntExist", resourceCulture);
             }
         }
         

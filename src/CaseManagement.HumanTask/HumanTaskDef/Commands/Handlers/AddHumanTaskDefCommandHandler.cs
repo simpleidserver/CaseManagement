@@ -49,6 +49,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
             var humanTaskDef = HumanTaskDefinitionAggregate.New(request.Name);
             await _humanTaskDefCommandRepository.Add(humanTaskDef, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation($"the human task definition '{request.Name}' has been added");
             return HumanTaskDefResult.ToDto(humanTaskDef);
         }
     }

@@ -186,22 +186,22 @@ export class CompleteUpdateRenderingOperation implements Action {
 
 export class DeleteStartDeadlineOperation implements Action {
     readonly type = ActionTypes.DELETE_START_DEADLINE;
-    constructor(public id: string, public name: string) { }
+    constructor(public id: string, public deadLineId: string) { }
 }
 
 export class CompleteDeleteStartDeadlineOperation implements Action {
     readonly type = ActionTypes.COMPLETE_DELETE_START_DEALINE;
-    constructor(public name: string) { }
+    constructor(public deadLineId: string) { }
 }
 
 export class DeleteCompletionDeadlineOperation implements Action {
     readonly type = ActionTypes.DELETE_COMPLETION_DEADLINE;
-    constructor(public id: string, public name: string) { }
+    constructor(public id: string, public deadLineId: string) { }
 }
 
 export class CompleteDeleteCompletionDeadlineOperation implements Action {
     readonly type = ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE;
-    constructor(public name: string) { }
+    constructor(public deadLineId: string) { }
 }
 
 export class UpdateStartDeadlineOperation implements Action {

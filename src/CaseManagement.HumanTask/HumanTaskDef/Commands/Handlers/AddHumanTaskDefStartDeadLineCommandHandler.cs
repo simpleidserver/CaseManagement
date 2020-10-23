@@ -40,6 +40,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
             var id = result.AddStartDeadLine(request.DeadLine.ToDomain());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation($"Human task definition '{result.Name}', start deadline '{request.DeadLine.Name}' has been added");
             return id;
         }
     }

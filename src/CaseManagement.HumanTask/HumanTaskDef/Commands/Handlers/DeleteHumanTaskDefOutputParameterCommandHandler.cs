@@ -41,6 +41,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
             result.RemoveOutputParameter(request.ParameterName);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation($"Human task definition '{result.Name}', output parameter '{request.ParameterName}' has been removed");
             return true;
         }
     }

@@ -123,6 +123,9 @@
   <data name="CompletionBehaviorMustBeSatisfied" xml:space="preserve">
     <value>At least one completion behavior must be specified</value>
   </data>
+  <data name="CompletionDeadLineDoesntExist" xml:space="preserve">
+    <value>Completion deadline doesn't exist</value>
+  </data>
   <data name="GroupNamesAndUserIdentifiersSpecified" xml:space="preserve">
     <value>GroupNames and UserIdentifiers parameters cannot be specified at the same time</value>
   </data>
@@ -173,6 +176,9 @@
   </data>
   <data name="ParametersCannotSpecifiedAtSameTime" xml:space="preserve">
     <value>Parameters '{0}' cannot be specified at the same time</value>
+  </data>
+  <data name="StartDeadLineDoesntExist" xml:space="preserve">
+    <value>Start deadline doesn't exist</value>
   </data>
   <data name="SubTaskAlreadyCreated" xml:space="preserve">
     <value>The sub task '{0}' is already created</value>

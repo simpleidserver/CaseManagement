@@ -1,5 +1,4 @@
-﻿using CaseManagement.Common.Exceptions;
-using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
@@ -9,27 +8,24 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
 {
-    public class AddHumanTaskDefCompletionDeadLineCommandHandler : IRequestHandler<AddHumanTaskDefCompletionDeadLineCommand, string>
+    public class DeleteHumanTaskDefStartDeadlineCommandHandler : IRequestHandler<DeleteHumanTaskDefStartDeadlineCommand, bool>
     {
-        private readonly ILogger<AddHumanTaskDefCompletionDeadLineCommandHandler> _logger;
+        private readonly ILogger<DeleteHumanTaskDefStartDeadlineCommandHandler> _logger;
         private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
         private readonly IHumanTaskDefCommandRepository _humanTaskDefCommandRepository;
 
-        public AddHumanTaskDefCompletionDeadLineCommandHandler(ILogger<AddHumanTaskDefCompletionDeadLineCommandHandler> logger, IHumanTaskDefQueryRepository humanTaskDefQueryRepository, IHumanTaskDefCommandRepository humanTaskDefCommandRepository)
+        public DeleteHumanTaskDefStartDeadlineCommandHandler(
+            ILogger<DeleteHumanTaskDefStartDeadlineCommandHandler> logger,
+            IHumanTaskDefQueryRepository humanTaskDefQueryRepository,
+            IHumanTaskDefCommandRepository humanTaskDefCommandRepository)
         {
             _logger = logger;
             _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
             _humanTaskDefCommandRepository = humanTaskDefCommandRepository;
         }
 
-        public async Task<string> Handle(AddHumanTaskDefCompletionDeadLineCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeleteHumanTaskDefStartDeadlineCommand request, CancellationToken cancellationToken)
         {
-            if (request.DeadLine == null)
-            {
-                _logger.LogError("the parameter 'deadLine' is missing");
-                throw new BadRequestException(string.Format(Global.MissingParameter, "deadLine"));
-            }
-
             var result = await _humanTaskDefQueryRepository.Get(request.Id, cancellationToken);
             if (result == null)
             {
@@ -37,11 +33,10 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            var id = result.AddCompletionDeadLine(request.DeadLine.ToDomain());
+            result.DeleteStartDeadLine(request.DeadLineId);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
-            _logger.LogInformation($"Human task definition '{result.Name}', completion deadline '{request.DeadLine.Name}' has been added");
-            return id;
+            return true;
         }
     }
 }

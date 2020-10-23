@@ -154,7 +154,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
         case fromActions.ActionTypes.DELETE_START_DEADLINE:
             var startDeadLines = state.content.deadLines.startDeadLines;
             const filteredStartDealine = startDeadLines.filter(function (p: HumanTaskDefinitionDeadLine) {
-                return p.name === action.name;
+                return p.id === action.deadLineId;
             })[0];
             const startDealineIndex = startDeadLines.indexOf(filteredStartDealine);
             startDeadLines.splice(startDealineIndex, 1);
@@ -173,7 +173,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
         case fromActions.ActionTypes.DELETE_COMPLETION_DEADLINE:
             var completionDeadLines = state.content.deadLines.completionDeadLines;
             const filteredCompletionDeadline = completionDeadLines.filter(function (p: HumanTaskDefinitionDeadLine) {
-                return p.name === action.name;
+                return p.id === action.deadLineId;
             })[0];
             const completionDealineIndex = completionDeadLines.indexOf(filteredCompletionDeadline);
             completionDeadLines.splice(completionDealineIndex, 1);

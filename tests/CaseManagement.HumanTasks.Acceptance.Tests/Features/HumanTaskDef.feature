@@ -160,3 +160,42 @@ Scenario: Check add completion deadline
 	Then JSON 'name'='addCompletionDeadline'
 	Then JSON 'deadLines.completionDeadLines[0].name'='name'
 	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'
+
+Scenario: Check start deadline can be removed
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value               |
+	| name | removeStartDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/$deadLineId$'
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='removeStartDeadline'
+	Then JSON nb 'deadLines.startDeadLines[*]'='0'
+
+
+Scenario: Check completion deadline can be removed
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                    |
+	| name | removeCompletionDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion/$deadLineId$'
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='removeCompletionDeadline'
+	Then JSON nb 'deadLines.completionDeadLines[*]'='0'

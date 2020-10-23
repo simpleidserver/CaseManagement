@@ -320,13 +320,13 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
 
     removeStartDeadline(deadline: HumanTaskDefinitionDeadLine) {
         this.currentDeadline = null;
-        const request = new fromHumanTaskDefActions.DeleteStartDeadlineOperation(this.humanTaskDef.id, deadline.name);
+        const request = new fromHumanTaskDefActions.DeleteStartDeadlineOperation(this.humanTaskDef.id, deadline.id);
         this.store.dispatch(request);
     }
 
     removeCompletionDeadline(deadline: HumanTaskDefinitionDeadLine) {
         this.currentDeadline = null;
-        const request = new fromHumanTaskDefActions.DeleteCompletionDeadlineOperation(this.humanTaskDef.id, deadline.name);
+        const request = new fromHumanTaskDefActions.DeleteCompletionDeadlineOperation(this.humanTaskDef.id, deadline.id);
         this.store.dispatch(request);
     }
 
