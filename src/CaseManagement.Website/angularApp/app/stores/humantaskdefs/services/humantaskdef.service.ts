@@ -135,17 +135,23 @@ export class HumanTaskDefService {
     }
 
     updateStartDealine(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<boolean> {
-        if (id) { }
-        if (deadline) { }
-
-        return of(true);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const request: any = { deadLineInfo: deadline };
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start/" + deadline.id;
+        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     updateCompletionDealine(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<boolean> {
-        if (id) { }
-        if (deadline) { }
-
-        return of(true);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const request: any = { deadLineInfo: deadline };
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion/" + deadline.id;
+        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     addEscalationStartDeadline(id: string, startDeadlineId: string, condition: string): Observable<string> {

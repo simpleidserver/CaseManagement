@@ -183,11 +183,17 @@
   <data name="SubTaskAlreadyCreated" xml:space="preserve">
     <value>The sub task '{0}' is already created</value>
   </data>
+  <data name="UnknownCompletionDeadline" xml:space="preserve">
+    <value>Unknown completion deadline</value>
+  </data>
   <data name="UnknownHumanTaskDef" xml:space="preserve">
     <value>Unknown human task definition '{0}'</value>
   </data>
   <data name="UnknownHumanTaskInstance" xml:space="preserve">
     <value>Unknown human task instance '{0}'</value>
+  </data>
+  <data name="UnknownStartDeadline" xml:space="preserve">
+    <value>Unknown start deadline</value>
   </data>
   <data name="UserNotAuthenticated" xml:space="preserve">
     <value>User is not authenticated</value>

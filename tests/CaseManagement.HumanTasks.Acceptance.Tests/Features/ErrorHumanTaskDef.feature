@@ -329,3 +329,42 @@ Scenario: Check error is returned when trying to remove unknown completion deadl
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.validation[0]'='Completion deadline doesn't exist'
+
+Scenario: Check error is returned when trying to update start deadline and parameter is missing
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId'
+	| Key | Value |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'deadLineInfo' is missing'
+
+Scenario: Check error is returned when trying to update start deadline and humantaskdef is unknown
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId'
+	| Key          | Value            |
+	| deadLineInfo | { name: "name" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+	
+
+Scenario: Check error is returned when trying to update completion deadline and parameter is missing
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId'
+	| Key | Value |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'deadLineInfo' is missing'
+
+Scenario: Check error is returned when trying to update completion deadline and humantaskdef is unknown
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId'
+	| Key          | Value            |
+	| deadLineInfo | { name: "name" } |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''

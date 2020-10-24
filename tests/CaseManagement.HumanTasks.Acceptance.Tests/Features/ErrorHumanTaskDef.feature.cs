@@ -1142,6 +1142,136 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update start deadline and parameter is mis" +
+            "sing")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update start deadline and parameter is mis" +
+            "sing")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateStartDeadlineAndParameterIsMissing()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update start deadline and parameter is mis" +
+                    "sing", null, ((string[])(null)));
+#line 333
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 334
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
+                    "t/deadLineId\'", ((string)(null)), table38, "When ");
+#line 336
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 338
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 339
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 340
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'deadLineInfo\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update start deadline and humantaskdef is " +
+            "unknown")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update start deadline and humantaskdef is " +
+            "unknown")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateStartDeadlineAndHumantaskdefIsUnknown()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update start deadline and humantaskdef is " +
+                    "unknown", null, ((string[])(null)));
+#line 342
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table39 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table39.AddRow(new string[] {
+                        "deadLineInfo",
+                        "{ name: \"name\" }"});
+#line 343
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
+                    "t/deadLineId\'", ((string)(null)), table39, "When ");
+#line 346
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 348
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 349
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 350
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update completion deadline and parameter i" +
+            "s missing")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update completion deadline and parameter i" +
+            "s missing")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateCompletionDeadlineAndParameterIsMissing()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update completion deadline and parameter i" +
+                    "s missing", null, ((string[])(null)));
+#line 353
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table40 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 354
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
+                    "letion/deadLineId\'", ((string)(null)), table40, "When ");
+#line 356
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 358
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 359
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 360
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'deadLineInfo\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update completion deadline and humantaskde" +
+            "f is unknown")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update completion deadline and humantaskde" +
+            "f is unknown")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateCompletionDeadlineAndHumantaskdefIsUnknown()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update completion deadline and humantaskde" +
+                    "f is unknown", null, ((string[])(null)));
+#line 362
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table41 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table41.AddRow(new string[] {
+                        "deadLineInfo",
+                        "{ name: \"name\" }"});
+#line 363
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
+                    "letion/deadLineId\'", ((string)(null)), table41, "When ");
+#line 366
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 368
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 369
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 370
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

@@ -180,7 +180,6 @@ Scenario: Check start deadline can be removed
 	Then JSON 'name'='removeStartDeadline'
 	Then JSON nb 'deadLines.startDeadLines[*]'='0'
 
-
 Scenario: Check completion deadline can be removed
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
 	| Key  | Value                    |
@@ -199,3 +198,47 @@ Scenario: Check completion deadline can be removed
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='removeCompletionDeadline'
 	Then JSON nb 'deadLines.completionDeadLines[*]'='0'
+
+Scenario: Check start deadline can be updated
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value               |
+	| name | updateStartDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/$deadLineId$'
+	| Key          | Value            |
+	| deadLineInfo | { name: "name2" } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='updateStartDeadline'
+	Then JSON 'deadLines.startDeadLines[0].name'='name'
+	Then JSON 'deadLines.startDeadLines[0].until'='P0Y0M0DT0H0M2S'
+
+Scenario: Check completion deadline can be updated
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                    |
+	| name | updateCompletionDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion/$deadLineId$'
+	| Key          | Value            |
+	| deadLineInfo | { name: "name2" } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='updateCompletionDeadline'
+	Then JSON 'deadLines.completionDeadLines[0].name'='name'
+	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'

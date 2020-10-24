@@ -259,6 +259,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unknown completion deadline.
+        /// </summary>
+        internal static string UnknownCompletionDeadline {
+            get {
+                return ResourceManager.GetString("UnknownCompletionDeadline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Unknown human task definition &apos;{0}&apos;.
         /// </summary>
         internal static string UnknownHumanTaskDef {
@@ -273,6 +282,15 @@ namespace CaseManagement.HumanTask.Resources {
         internal static string UnknownHumanTaskInstance {
             get {
                 return ResourceManager.GetString("UnknownHumanTaskInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unknown start deadline.
+        /// </summary>
+        internal static string UnknownStartDeadline {
+            get {
+                return ResourceManager.GetString("UnknownStartDeadline", resourceCulture);
             }
         }
         

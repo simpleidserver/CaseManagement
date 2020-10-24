@@ -309,7 +309,7 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
             deadline.until = form.validity;
         }
 
-        if (form.deadlineType === 'start') {
+        if (this.currentDeadlineType === 'start') {
             const request = new fromHumanTaskDefActions.UpdateStartDeadlineOperation(this.humanTaskDef.id, deadline);
             this.store.dispatch(request);
         } else {

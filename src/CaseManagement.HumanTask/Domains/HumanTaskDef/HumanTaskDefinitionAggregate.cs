@@ -202,6 +202,18 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public void UpdateStartDeadline(string id, string name, string forExpr, string untilExpr)
+        {
+            var evt = new HumanTaskDefStartDeadlineUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, id, name, forExpr, untilExpr, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void UpdateCompletionDeadline(string id, string name, string forExpr, string untilExpr)
+        {
+            var evt = new HumanTaskDefCompletionDeadlineUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, id, name, forExpr, untilExpr, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -316,6 +328,54 @@ namespace CaseManagement.HumanTask.Domains
             }
 
             DeadLines.StartDeadLines.Remove(e);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefStartDeadlineUpdatedEvent evt)
+        {
+            var d = DeadLines.StartDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            if (d == null)
+            {
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("validation", Global.UnknownStartDeadline)
+                });
+            }
+
+            CheckDeadLine(new HumanTaskDefinitionDeadLine
+            {
+                Name = evt.Name,
+                For = evt.ForExpr,
+                Until = evt.UntilExpr
+            });
+            d.Name = evt.Name;
+            d.For = evt.ForExpr;
+            d.Until = evt.UntilExpr;
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefCompletionDeadlineUpdatedEvent evt)
+        {
+            var d = DeadLines.CompletionDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            if (d == null)
+            {
+                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("validation", Global.UnknownCompletionDeadline)
+                });
+            }
+
+            CheckDeadLine(new HumanTaskDefinitionDeadLine
+            {
+                Name = evt.Name,
+                For = evt.ForExpr,
+                Until = evt.UntilExpr
+            });
+            d.Name = evt.Name;
+            d.For = evt.ForExpr;
+            d.Until = evt.UntilExpr;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
