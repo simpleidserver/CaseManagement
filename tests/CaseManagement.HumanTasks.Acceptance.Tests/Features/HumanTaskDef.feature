@@ -242,3 +242,49 @@ Scenario: Check completion deadline can be updated
 	Then JSON 'name'='updateCompletionDeadline'
 	Then JSON 'deadLines.completionDeadLines[0].name'='name'
 	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'
+
+Scenario: Check escalation start deadline can be added
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                           |
+	| name | addEscalationStartDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/$deadLineId$/escalations'
+	| Key       | Value |
+	| condition | true  |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='addEscalationStartDeadline'
+	Then JSON 'deadLines.startDeadLines[0].name'='name'
+	Then JSON 'deadLines.startDeadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines.startDeadLines[0].escalations[0].condition'='true'
+
+Scenario: Check escalation completion deadline can be added
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                           |
+	| name | addEscalationCompletionDeadline |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion/$deadLineId$/escalations'
+	| Key       | Value |
+	| condition | true  |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='addEscalationCompletionDeadline'
+	Then JSON 'deadLines.completionDeadLines[0].name'='name'
+	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines.completionDeadLines[0].escalations[0].condition'='true'

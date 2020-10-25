@@ -12,13 +12,6 @@ import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 import { PresentationElement } from '../../common/presentationelement.model';
 import { map } from 'rxjs/operators';
 
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
 @Injectable()
 export class HumanTaskDefService {
     constructor(private http: HttpClient, private oauthService: OAuthService) { }
@@ -155,19 +148,23 @@ export class HumanTaskDefService {
     }
 
     addEscalationStartDeadline(id: string, startDeadlineId: string, condition: string): Observable<string> {
-        if (id) { }
-        if (startDeadlineId) { }
-        if (condition) { }
-
-        return of(uuidv4());
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const request: any = { condition: condition };
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start/" + startDeadlineId + "/escalations";
+        return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     addEscalationCompletionDeadline(id: string, startDeadlineId: string, condition: string): Observable<string> {
-        if (id) { }
-        if (startDeadlineId) { }
-        if (condition) { }
-
-        return of(uuidv4());
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const request: any = { condition: condition };
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion/" + startDeadlineId + "/escalations";
+        return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     updatePeopleAssignment(id: string, assignment: HumanTaskDefAssignment): Observable<boolean> {

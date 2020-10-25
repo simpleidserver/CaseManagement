@@ -214,6 +214,22 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public string AddEscalationStartDeadline(string startDeadlineId, string condition)
+        {
+            var result = Guid.NewGuid().ToString();
+            var evt = new HumanTaskDefEscalationStartDeadlineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, startDeadlineId, result, condition, DateTime.UtcNow);
+            Handle(evt);
+            return result;
+        }
+
+        public string AddEscalationCompletionDeadline(string completionDeadlineId, string condition)
+        {
+            var result = Guid.NewGuid().ToString();
+            var evt = new HumanTaskDefEscalationCompletionDeadlineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, completionDeadlineId, result, condition, DateTime.UtcNow);
+            Handle(evt);
+            return result;
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -328,6 +344,52 @@ namespace CaseManagement.HumanTask.Domains
             }
 
             DeadLines.StartDeadLines.Remove(e);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefEscalationStartDeadlineAddedEvent evt)
+        {
+            var errors = new List<KeyValuePair<string, string>>();
+            var completionDeadLine = DeadLines.StartDeadLines.FirstOrDefault(_ => _.Id == evt.StartDeadLineId);
+            if (completionDeadLine == null)
+            {
+                errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownStartDeadline));
+            }
+
+            if (errors.Any())
+            {
+                throw new AggregateValidationException(errors);
+            }
+
+            completionDeadLine.Escalations.Add(new Escalation
+            {
+                Condition = evt.Condition,
+                Id = evt.EscalationId
+            });
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefEscalationCompletionDeadlineAddedEvent evt)
+        {
+            var errors = new List<KeyValuePair<string, string>>();
+            var completionDeadLine = DeadLines.CompletionDeadLines.FirstOrDefault(_ => _.Id == evt.CompletionDeadLineId);
+            if (completionDeadLine == null)
+            {
+                errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownCompletionDeadline));
+            }
+
+            if (errors.Any())
+            {
+                throw new AggregateValidationException(errors);
+            }
+
+            completionDeadLine.Escalations.Add(new Escalation
+            {
+                Condition = evt.Condition,
+                Id = evt.EscalationId
+            });
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

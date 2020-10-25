@@ -395,5 +395,71 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpPost("{id}/deadlines/start/{deadLineId}/escalations")]
+        public async Task<IActionResult> AddStartDeadlineEscalation(string id, string deadLineId, [FromBody] AddHumanTaskDefEscalationStartDeadlineCommand addHumanTaskDefEscalationStartDeadlineCommand, CancellationToken token)
+        {
+            try
+            {
+                addHumanTaskDefEscalationStartDeadlineCommand.Id = id;
+                addHumanTaskDefEscalationStartDeadlineCommand.StartDeadlineId = deadLineId;
+                var newId = await _mediator.Send(addHumanTaskDefEscalationStartDeadlineCommand, token);
+                return new ObjectResult(new { id = newId })
+                {
+                    StatusCode = (int)HttpStatusCode.Created
+                };
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPost("{id}/deadlines/completion/{deadLineId}/escalations")]
+        public async Task<IActionResult> AddCompletionDeadlineEscalation(string id, string deadLineId, [FromBody] AddHumanTaskDefEscalationCompletionDeadlineCommand addHumanTaskDefEscalationCompletionDeadlineCommand, CancellationToken token)
+        {
+            try
+            {
+                addHumanTaskDefEscalationCompletionDeadlineCommand.Id = id;
+                addHumanTaskDefEscalationCompletionDeadlineCommand.CompletionDeadlineId = deadLineId;
+                var newId = await _mediator.Send(addHumanTaskDefEscalationCompletionDeadlineCommand, token);
+                return new ObjectResult(new { id = newId })
+                {
+                    StatusCode = (int)HttpStatusCode.Created
+                };
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

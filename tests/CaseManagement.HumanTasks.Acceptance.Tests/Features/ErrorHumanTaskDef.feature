@@ -368,3 +368,43 @@ Scenario: Check error is returned when trying to update completion deadline and 
 	Then HTTP status code equals to '404'
 	Then JSON 'status'='404'
 	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to add start deadline escalation and the condition parameter is missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId/escalations'
+	| Key          | Value            |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'condition' is missing'
+
+
+Scenario: Check error is returned when trying to add start deadline escalation and the humantask is unknown
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId/escalations'
+	| Key       | Value |
+	| condition | true  |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to add completion deadline escalation and the condition parameter is missing
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId/escalations'
+	| Key          | Value            |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'condition' is missing'
+
+
+Scenario: Check error is returned when trying to add completion deadline escalation and the humantask is unknown
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId/escalations'
+	| Key       | Value |
+	| condition | true  |
+	And extract JSON from body
+	
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''

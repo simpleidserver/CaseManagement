@@ -169,8 +169,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             {
                 return new NotificationDefinitionPeopleAssignmentResult
                 {
-                    BusinessAdministrator = notif.BusinessAdministrator == null ? null : PeopleAssignmentResult.ToDto(notif.BusinessAdministrator),
-                    Recipient = notif.Recipient == null ? null : PeopleAssignmentResult.ToDto(notif.Recipient)
+                    BusinessAdministrator = notif.BusinessAdministrator == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(notif.BusinessAdministrator),
+                    Recipient = notif.Recipient == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(notif.Recipient)
                 };
             }
         }
