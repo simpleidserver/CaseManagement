@@ -268,6 +268,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unknown escalation.
+        /// </summary>
+        internal static string UnknownEscalation {
+            get {
+                return ResourceManager.GetString("UnknownEscalation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Unknown human task definition &apos;{0}&apos;.
         /// </summary>
         internal static string UnknownHumanTaskDef {

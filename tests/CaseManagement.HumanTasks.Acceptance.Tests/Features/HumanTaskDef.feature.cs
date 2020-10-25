@@ -86,14 +86,14 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table84 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table90 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table84.AddRow(new string[] {
+            table90.AddRow(new string[] {
                         "name",
                         "newName"});
 #line 5
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table84, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table90, "When ");
 #line 8
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10
@@ -114,28 +114,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table85 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table91 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table85.AddRow(new string[] {
+            table91.AddRow(new string[] {
                         "name",
                         "oldName"});
 #line 14
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table85, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table91, "When ");
 #line 17
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 18
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table86 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table92 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table86.AddRow(new string[] {
+            table92.AddRow(new string[] {
                         "name",
                         "newName2"});
 #line 19
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/i" +
-                    "nfo\'", ((string)(null)), table86, "And ");
+                    "nfo\'", ((string)(null)), table92, "And ");
 #line 22
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 23
@@ -158,28 +158,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table87 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table93 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table87.AddRow(new string[] {
+            table93.AddRow(new string[] {
                         "name",
                         "updatePeopleAssignment"});
 #line 29
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table87, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table93, "When ");
 #line 32
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 33
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table88 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table94 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table88.AddRow(new string[] {
+            table94.AddRow(new string[] {
                         "peopleAssignment",
                         "{ potentialOwner : { type: \"USERIDENTIFIERS\", userIdentifiers: [ \"user1\" ]  } }"});
 #line 34
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/a" +
-                    "ssignment\'", ((string)(null)), table88, "And ");
+                    "ssignment\'", ((string)(null)), table94, "And ");
 #line 37
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 38
@@ -206,28 +206,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table89 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table95 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table89.AddRow(new string[] {
+            table95.AddRow(new string[] {
                         "name",
                         "addInputParameter"});
 #line 46
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table89, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table95, "When ");
 #line 49
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 50
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table90 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table96 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table90.AddRow(new string[] {
+            table96.AddRow(new string[] {
                         "parameter",
                         "{ name: \'parameter\', type: \'STRING\' }"});
 #line 51
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "parameters/input\'", ((string)(null)), table90, "And ");
+                    "parameters/input\'", ((string)(null)), table96, "And ");
 #line 54
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 55
@@ -254,28 +254,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table91 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table97 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table91.AddRow(new string[] {
+            table97.AddRow(new string[] {
                         "name",
                         "addOutputParameter"});
 #line 63
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table91, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table97, "When ");
 #line 66
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 67
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table92 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table98 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table92.AddRow(new string[] {
+            table98.AddRow(new string[] {
                         "parameter",
                         "{ name: \'parameter\', type: \'STRING\' }"});
 #line 68
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "parameters/output\'", ((string)(null)), table92, "And ");
+                    "parameters/output\'", ((string)(null)), table98, "And ");
 #line 71
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 72
@@ -302,28 +302,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table93 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table99 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table93.AddRow(new string[] {
+            table99.AddRow(new string[] {
                         "name",
                         "removeInputParameter"});
 #line 80
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table93, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table99, "When ");
 #line 83
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 84
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table94 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table100 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table94.AddRow(new string[] {
+            table100.AddRow(new string[] {
                         "parameter",
                         "{ name: \'parameter\', type: \'STRING\' }"});
 #line 85
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "parameters/input\'", ((string)(null)), table94, "And ");
+                    "parameters/input\'", ((string)(null)), table100, "And ");
 #line 88
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/par" +
                     "ameters/input/parameter\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -351,28 +351,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table95 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table101 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table95.AddRow(new string[] {
+            table101.AddRow(new string[] {
                         "name",
                         "removeOutputParameter"});
 #line 97
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table95, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table101, "When ");
 #line 100
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 101
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table96 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table102 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table96.AddRow(new string[] {
+            table102.AddRow(new string[] {
                         "parameter",
                         "{ name: \'parameter\', type: \'STRING\' }"});
 #line 102
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "parameters/output\'", ((string)(null)), table96, "And ");
+                    "parameters/output\'", ((string)(null)), table102, "And ");
 #line 105
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/par" +
                     "ameters/output/parameter\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -400,28 +400,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table97 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table103 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table97.AddRow(new string[] {
+            table103.AddRow(new string[] {
                         "name",
                         "updatePresentationElement"});
 #line 114
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table97, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table103, "When ");
 #line 117
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 118
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table98 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table104 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table98.AddRow(new string[] {
+            table104.AddRow(new string[] {
                         "presentationElement",
                         "{ names: [ { language: \"fr\", value: \"bonjour\" } ] }"});
 #line 119
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/p" +
-                    "resentationelts\'", ((string)(null)), table98, "And ");
+                    "resentationelts\'", ((string)(null)), table104, "And ");
 #line 122
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 123
@@ -448,28 +448,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table99 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table105 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table99.AddRow(new string[] {
+            table105.AddRow(new string[] {
                         "name",
                         "addStartDeadline"});
 #line 131
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table99, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table105, "When ");
 #line 134
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 135
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table100 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table106 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table100.AddRow(new string[] {
+            table106.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 136
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/start\'", ((string)(null)), table100, "And ");
+                    "deadlines/start\'", ((string)(null)), table106, "And ");
 #line 139
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 140
@@ -496,28 +496,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table101 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table107 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table101.AddRow(new string[] {
+            table107.AddRow(new string[] {
                         "name",
                         "addCompletionDeadline"});
 #line 148
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table101, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table107, "When ");
 #line 151
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 152
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table102 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table108 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table102.AddRow(new string[] {
+            table108.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 153
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/completion\'", ((string)(null)), table102, "And ");
+                    "deadlines/completion\'", ((string)(null)), table108, "And ");
 #line 156
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 157
@@ -544,28 +544,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table103 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table109 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table103.AddRow(new string[] {
+            table109.AddRow(new string[] {
                         "name",
                         "removeStartDeadline"});
 #line 165
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table103, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table109, "When ");
 #line 168
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 169
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table104 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table110 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table104.AddRow(new string[] {
+            table110.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 170
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/start\'", ((string)(null)), table104, "And ");
+                    "deadlines/start\'", ((string)(null)), table110, "And ");
 #line 173
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 174
@@ -597,28 +597,28 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table105 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table111 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table105.AddRow(new string[] {
+            table111.AddRow(new string[] {
                         "name",
                         "removeCompletionDeadline"});
 #line 184
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table105, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table111, "When ");
 #line 187
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 188
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table106 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table112 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table106.AddRow(new string[] {
+            table112.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 189
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/completion\'", ((string)(null)), table106, "And ");
+                    "deadlines/completion\'", ((string)(null)), table112, "And ");
 #line 192
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 193
@@ -650,42 +650,42 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table107 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table113 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table107.AddRow(new string[] {
+            table113.AddRow(new string[] {
                         "name",
                         "updateStartDeadline"});
 #line 203
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table107, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table113, "When ");
 #line 206
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 207
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table108 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table114 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table108.AddRow(new string[] {
+            table114.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 208
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/start\'", ((string)(null)), table108, "And ");
+                    "deadlines/start\'", ((string)(null)), table114, "And ");
 #line 211
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 212
  testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table109 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table115 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table109.AddRow(new string[] {
+            table115.AddRow(new string[] {
                         "deadLineInfo",
                         "{ name: \"name2\" }"});
 #line 213
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/d" +
-                    "eadlines/start/$deadLineId$\'", ((string)(null)), table109, "And ");
+                    "eadlines/start/$deadLineId$\'", ((string)(null)), table115, "And ");
 #line 216
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 217
@@ -712,42 +712,42 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table110 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table116 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table110.AddRow(new string[] {
+            table116.AddRow(new string[] {
                         "name",
                         "updateCompletionDeadline"});
 #line 225
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table110, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table116, "When ");
 #line 228
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 229
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table111 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table117 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table111.AddRow(new string[] {
+            table117.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 230
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/completion\'", ((string)(null)), table111, "And ");
+                    "deadlines/completion\'", ((string)(null)), table117, "And ");
 #line 233
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 234
  testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table112 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table118 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table112.AddRow(new string[] {
+            table118.AddRow(new string[] {
                         "deadLineInfo",
                         "{ name: \"name2\" }"});
 #line 235
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/d" +
-                    "eadlines/completion/$deadLineId$\'", ((string)(null)), table112, "And ");
+                    "eadlines/completion/$deadLineId$\'", ((string)(null)), table118, "And ");
 #line 238
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 239
@@ -774,42 +774,42 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table113 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table119 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table113.AddRow(new string[] {
+            table119.AddRow(new string[] {
                         "name",
                         "addEscalationStartDeadline"});
 #line 247
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table113, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table119, "When ");
 #line 250
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 251
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table114 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table120 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table114.AddRow(new string[] {
+            table120.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 252
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/start\'", ((string)(null)), table114, "And ");
+                    "deadlines/start\'", ((string)(null)), table120, "And ");
 #line 255
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 256
  testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table115 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table121 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table115.AddRow(new string[] {
+            table121.AddRow(new string[] {
                         "condition",
                         "true"});
 #line 257
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/start/$deadLineId$/escalations\'", ((string)(null)), table115, "And ");
+                    "deadlines/start/$deadLineId$/escalations\'", ((string)(null)), table121, "And ");
 #line 260
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 261
@@ -838,42 +838,42 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table116 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table122 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table116.AddRow(new string[] {
+            table122.AddRow(new string[] {
                         "name",
                         "addEscalationCompletionDeadline"});
 #line 270
- testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table116, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table122, "When ");
 #line 273
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 274
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table117 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table123 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table117.AddRow(new string[] {
+            table123.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
 #line 275
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/completion\'", ((string)(null)), table117, "And ");
+                    "deadlines/completion\'", ((string)(null)), table123, "And ");
 #line 278
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 279
  testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table118 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table124 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table118.AddRow(new string[] {
+            table124.AddRow(new string[] {
                         "condition",
                         "true"});
 #line 280
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
-                    "deadlines/completion/$deadLineId$/escalations\'", ((string)(null)), table118, "And ");
+                    "deadlines/completion/$deadLineId$/escalations\'", ((string)(null)), table124, "And ");
 #line 283
  testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 284
@@ -888,6 +888,140 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("JSON \'deadLines.completionDeadLines[0].until\'=\'P0Y0M0DT0H0M2S\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 290
  testRunner.Then("JSON \'deadLines.completionDeadLines[0].escalations[0].condition\'=\'true\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check escalation can be removed from start deadline")]
+        [Xunit.TraitAttribute("FeatureTitle", "HumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check escalation can be removed from start deadline")]
+        public virtual void CheckEscalationCanBeRemovedFromStartDeadline()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check escalation can be removed from start deadline", null, ((string[])(null)));
+#line 292
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table125 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table125.AddRow(new string[] {
+                        "name",
+                        "removeEscalationStartDeadline"});
+#line 293
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table125, "When ");
+#line 296
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 297
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table126 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table126.AddRow(new string[] {
+                        "deadLine",
+                        "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
+#line 298
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
+                    "deadlines/start\'", ((string)(null)), table126, "And ");
+#line 301
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 302
+ testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table127 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table127.AddRow(new string[] {
+                        "condition",
+                        "true"});
+#line 303
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
+                    "deadlines/start/$deadLineId$/escalations\'", ((string)(null)), table127, "And ");
+#line 306
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 307
+ testRunner.And("extract \'id\' from JSON body into \'escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 308
+ testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
+                    "dlines/start/$deadLineId$/escalations/$escId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 309
+ testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 310
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 312
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 313
+ testRunner.Then("JSON \'name\'=\'removeEscalationStartDeadline\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 314
+ testRunner.Then("JSON nb \'deadLines.startDeadLines[0].escalations[*]\'=\'0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check escalation can be removed from completion deadline")]
+        [Xunit.TraitAttribute("FeatureTitle", "HumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check escalation can be removed from completion deadline")]
+        public virtual void CheckEscalationCanBeRemovedFromCompletionDeadline()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check escalation can be removed from completion deadline", null, ((string[])(null)));
+#line 316
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table128 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table128.AddRow(new string[] {
+                        "name",
+                        "removeEscalationCompletionDeadline"});
+#line 317
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table128, "When ");
+#line 320
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 321
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table129 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table129.AddRow(new string[] {
+                        "deadLine",
+                        "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
+#line 322
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
+                    "deadlines/completion\'", ((string)(null)), table129, "And ");
+#line 325
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 326
+ testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table130 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table130.AddRow(new string[] {
+                        "condition",
+                        "true"});
+#line 327
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
+                    "deadlines/completion/$deadLineId$/escalations\'", ((string)(null)), table130, "And ");
+#line 330
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 331
+ testRunner.And("extract \'id\' from JSON body into \'escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 332
+ testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
+                    "dlines/completion/$deadLineId$/escalations/$escId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 333
+ testRunner.And("execute HTTP GET request \'http://localhost/humantasksdefs/$humanTaskDefId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 334
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 336
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 337
+ testRunner.Then("JSON \'name\'=\'removeEscalationCompletionDeadline\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 338
+ testRunner.Then("JSON nb \'deadLines.completionDeadLines[0].escalations[*]\'=\'0\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

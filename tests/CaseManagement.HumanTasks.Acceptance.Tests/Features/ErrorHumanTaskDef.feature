@@ -408,3 +408,82 @@ Scenario: Check error is returned when trying to add completion deadline escalat
 	Then HTTP status code equals to '404'
 	Then JSON 'status'='404'
 	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to remove escalation (start deadline) from unknown humantask definition
+	When execute HTTP DELETE request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId/escalations/escId'
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to remove escalation from unknown start deadline
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | removeEscalationParameter1 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/deadLineId/escalations/escId'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Unknown start deadline'
+
+Scenario: Check error is returned when trying to remove unknown escalation (start deadline)
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | removeEscalationParameter2 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/$deadLineId$/escalations/escId'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Unknown escalation'
+	
+
+Scenario: Check error is returned when trying to remove escalation (completion deadline) from unknown humantask definition
+	When execute HTTP DELETE request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId/escalations/escId'
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to remove escalation from unknown completion deadline
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | removeEscalationParameter3 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion/deadLineId/escalations/escId'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Unknown completion deadline'
+
+Scenario: Check error is returned when trying to remove unknown escalation (completion deadline)
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value                      |
+	| name | removeEscalationParameter4 |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion'
+	| Key      | Value                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'deadLineId'
+	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/completion/$deadLineId$/escalations/escId'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.validation[0]'='Unknown escalation'

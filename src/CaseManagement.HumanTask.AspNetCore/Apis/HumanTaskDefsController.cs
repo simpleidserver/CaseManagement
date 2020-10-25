@@ -461,5 +461,47 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpDelete("{id}/deadlines/start/{deadLineId}/escalations/{escalationId}")]
+        public async Task<IActionResult> DeleteStartDeadlineEscalation(string id, string deadLineId, string escalationId)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteHumanTaskDefEscalationStartDeadlineCommand { Id = id, DeadLineId = deadLineId, EscalationId = escalationId });
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpDelete("{id}/deadlines/completion/{deadLineId}/escalations/{escalationId}")]
+        public async Task<IActionResult> DeleteCompletionDeadlineEscalation(string id, string deadLineId, string escalationId)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteHumanTaskDefEscalationCompletionDeadlineCommand { Id = id, DeadLineId = deadLineId, EscalationId = escalationId });
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

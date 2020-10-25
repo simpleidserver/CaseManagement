@@ -6,7 +6,6 @@ using CaseManagement.HumanTask.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
 
 namespace CaseManagement.HumanTask.Domains
 {
@@ -230,6 +229,18 @@ namespace CaseManagement.HumanTask.Domains
             return result;
         }
 
+        public void DeleteEscalationCompletionDeadline(string completionDeadLineId, string escalationId)
+        {
+            var evt = new HumanTaskDefEscalationCompletionDeadlineRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, completionDeadLineId, escalationId, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void DeleteEscalationStartDeadline(string startDeadlineId, string escalationId)
+        {
+            var evt = new HumanTaskDefEscalationStartDeadlineRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, startDeadlineId, escalationId, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -440,6 +451,49 @@ namespace CaseManagement.HumanTask.Domains
             d.Until = evt.UntilExpr;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefEscalationStartDeadlineRemovedEvent evt)
+        {
+            var kvp = CheckEscalation(DeadLines.StartDeadLines, evt.StartDeadLineId, evt.EscalationId, Global.UnknownStartDeadline);
+            kvp.Key.Escalations.Remove(kvp.Value);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefEscalationCompletionDeadlineRemovedEvent evt)
+        {
+            var kvp = CheckEscalation(DeadLines.CompletionDeadLines, evt.CompletionDeadLineId, evt.EscalationId, Global.UnknownCompletionDeadline);
+            kvp.Key.Escalations.Remove(kvp.Value);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private KeyValuePair<HumanTaskDefinitionDeadLine, Escalation> CheckEscalation(
+            ICollection<HumanTaskDefinitionDeadLine> deadlines, string deadlineId, string escalationId, string unknownEscalationError)
+        {
+            var errors = new List<KeyValuePair<string, string>>();
+            var deadline = deadlines.FirstOrDefault(_ => _.Id == deadlineId);
+            Escalation esc = null;
+            if (deadline == null)
+            {
+                errors.Add(new KeyValuePair<string, string>("validation", unknownEscalationError));
+            }
+            else
+            {
+                esc = deadline.Escalations.FirstOrDefault(_ => _.Id == escalationId);
+                if (esc == null)
+                {
+                    errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownEscalation));
+                }
+            }
+
+            if (errors.Any())
+            {
+                throw new AggregateValidationException(errors);
+            }
+
+            return new KeyValuePair<HumanTaskDefinitionDeadLine, Escalation>(deadline, esc);
         }
 
         private void CheckDeadLine(HumanTaskDefinitionDeadLine deadLine)

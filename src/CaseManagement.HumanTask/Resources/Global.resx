@@ -186,6 +186,9 @@
   <data name="UnknownCompletionDeadline" xml:space="preserve">
     <value>Unknown completion deadline</value>
   </data>
+  <data name="UnknownEscalation" xml:space="preserve">
+    <value>Unknown escalation</value>
+  </data>
   <data name="UnknownHumanTaskDef" xml:space="preserve">
     <value>Unknown human task definition '{0}'</value>
   </data>
