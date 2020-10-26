@@ -1,0 +1,34 @@
+﻿<!-- Human task name -->
+<mat-form-field class="full-width">
+    <mat-label>{{ 'SHARED.NAME' | translate}}</mat-label>
+    <input [(ngModel)]="createHumanTaskInstance.humanTaskName" type="text" matInput disabled />
+</mat-form-field>
+<!-- Priority -->
+<mat-form-field class="full-width">
+    <mat-label>{{ 'SHARED.PRIORITY' | translate}}</mat-label>
+    <input [(ngModel)]="createHumanTaskInstance.priority" type="number" matInput />
+</mat-form-field>
+<!-- Activation deferral time -->
+<!--
+<mat-form-field class="full-width">
+    <mat-label>{{ 'SHARED.ACTIVATION_DEFERRAL_TIME' | translate}}</mat-label>
+    <input [(ngModel)]="createHumanTaskInstance.activationDeferralTime" (dateInput)="d($event)" [matDatepicker]="activationDeferralTimePicker" matInput />
+    <mat-datepicker-toggle matSuffix [for]="activationDeferralTimePicker"></mat-datepicker-toggle>
+    <mat-datepicker #activationDeferralTimePicker></mat-datepicker>
+</mat-form-field>
+-->
+<!-- Expiration time -->
+<!--
+<mat-form-field class="full-width">
+    <mat-label>{{ 'SHARED.EXPIRATION_TIME' | translate}}</mat-label>
+    <input [(ngModel)]="createHumanTaskInstance.expirationTime" [matDatepicker]="expirationTimePicker" matInput />
+    <mat-datepicker-toggle matSuffix [for]="expirationTimePicker"></mat-datepicker-toggle>
+    <mat-datepicker #expirationTimePicker></mat-datepicker>
+</mat-form-field>
+-->
+<!-- Operation parameter -->
+<h5>{{ 'SHARED.INPUT_PARAMETERS' | translate }}</h5>
+<mat-form-field class="full-width" *ngFor="let param of humanTaskDef.operation.inputParameters">
+    <mat-label>{{ param.name }}</mat-label>
+    <input [(ngModel)]="createHumanTaskInstance.operationParameter[param.name]" matInput />
+</mat-form-field>

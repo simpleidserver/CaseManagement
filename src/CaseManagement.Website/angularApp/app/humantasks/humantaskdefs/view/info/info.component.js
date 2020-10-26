@@ -8,104 +8,124 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
-import { select, Store } from '@ngrx/store';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-var ParameterType = (function () {
-    function ParameterType(type, displayName) {
-        this.type = type;
-        this.displayName = displayName;
-    }
-    return ParameterType;
-}());
-export { ParameterType };
+import { filter } from 'rxjs/operators';
 var ViewHumanTaskDefInfoComponent = (function () {
-    function ViewHumanTaskDefInfoComponent(store, formBuilder, snackBar, translateService) {
+    function ViewHumanTaskDefInfoComponent(store, formBuilder, snackBar, translateService, actions$) {
         this.store = store;
         this.formBuilder = formBuilder;
         this.snackBar = snackBar;
         this.translateService = translateService;
+        this.actions$ = actions$;
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW.TASK";
         this.humanTaskDef = new HumanTaskDef();
         this.infoForm = this.formBuilder.group({
-            name: '',
+            id: new FormControl({ value: '', disabled: true }),
+            name: new FormControl('', [
+                Validators.required
+            ]),
             priority: ''
         });
-        this.inputParameterForm = this.formBuilder.group({
-            name: '',
-            type: '',
-            isRequired: ''
-        });
-        this.outputParameterForm = this.formBuilder.group({
-            name: '',
-            type: '',
-            isRequired: ''
-        });
-        this.parameterTypes = [];
-        this.parameterTypes.push(new ParameterType("string", "string"));
-        this.parameterTypes.push(new ParameterType("bool", "boolean"));
     }
     ViewHumanTaskDefInfoComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_HUMANTASK_INFO; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.TASK_INFO_UPDATED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_HUMANTASK_INFO; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_TASK_INFO_UPDATED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ADD_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ADD_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_INPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_OUTPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.DELETE_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.DELETE_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_INPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_DELETE_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
         this.store.pipe(select(fromAppState.selectHumanTaskResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
+            _this.infoForm.get('id').setValue(e.id);
             _this.infoForm.get('name').setValue(e.name);
             _this.infoForm.get('priority').setValue(e.priority);
             _this.humanTaskDef = e;
         });
     };
     ViewHumanTaskDefInfoComponent.prototype.updateInfo = function (form) {
-        this.humanTaskDef.name = form.name;
-        this.humanTaskDef.priority = form.priority;
+        if (!this.infoForm.valid) {
+            return;
+        }
+        var request = new fromHumanTaskDefActions.UpdateHumanTaskInfo(this.humanTaskDef.id, form.name, form.priority);
+        this.store.dispatch(request);
     };
     ViewHumanTaskDefInfoComponent.prototype.addInputParameter = function (param) {
-        var filteredInputParam = this.humanTaskDef.operation.inputParameters.filter(function (p) {
-            return p.name === param.name;
-        });
-        if (filteredInputParam.length === 1) {
-            this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.INPUT_PARAMETER_EXISTS'), this.translateService.instant('undo'), {
-                duration: 2000
-            });
-            return;
-        }
-        if (!param.isRequired) {
-            param.isRequired = false;
-        }
-        this.inputParameterForm.reset();
-        this.humanTaskDef.operation.inputParameters.push(param);
+        var request = new fromHumanTaskDefActions.AddInputParameterOperation(this.humanTaskDef.id, param);
+        this.store.dispatch(request);
     };
     ViewHumanTaskDefInfoComponent.prototype.addOutputParameter = function (param) {
-        var filteredOutputParam = this.humanTaskDef.operation.outputParameters.filter(function (p) {
-            return p.name === param.name;
-        });
-        if (filteredOutputParam.length === 1) {
-            this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.OUTPUT_PARAMETER_EXISTS'), this.translateService.instant('undo'), {
-                duration: 2000
-            });
-            return;
-        }
-        if (!param.isRequired) {
-            param.isRequired = false;
-        }
-        this.outputParameterForm.reset();
-        this.humanTaskDef.operation.outputParameters.push(param);
+        var request = new fromHumanTaskDefActions.AddOutputParameterOperation(this.humanTaskDef.id, param);
+        this.store.dispatch(request);
     };
     ViewHumanTaskDefInfoComponent.prototype.deleteInputParameter = function (param) {
-        var index = this.humanTaskDef.operation.inputParameters.indexOf(param);
-        this.humanTaskDef.operation.inputParameters.splice(index, 1);
+        var request = new fromHumanTaskDefActions.DeleteInputParameterOperation(this.humanTaskDef.id, param.name);
+        this.store.dispatch(request);
     };
     ViewHumanTaskDefInfoComponent.prototype.deleteOutputParameter = function (param) {
-        var index = this.humanTaskDef.operation.outputParameters.indexOf(param);
-        this.humanTaskDef.operation.outputParameters.splice(index, 1);
-    };
-    ViewHumanTaskDefInfoComponent.prototype.update = function () {
-        var request = new fromHumanTaskDefActions.UpdateHumanTaskDef(this.humanTaskDef);
+        var request = new fromHumanTaskDefActions.DeleteOutputParameterOperation(this.humanTaskDef.id, param.name);
         this.store.dispatch(request);
     };
     ViewHumanTaskDefInfoComponent = __decorate([
@@ -118,7 +138,8 @@ var ViewHumanTaskDefInfoComponent = (function () {
         __metadata("design:paramtypes", [Store,
             FormBuilder,
             MatSnackBar,
-            TranslateService])
+            TranslateService,
+            ScannedActionsSubject])
     ], ViewHumanTaskDefInfoComponent);
     return ViewHumanTaskDefInfoComponent;
 }());

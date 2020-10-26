@@ -9,14 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
-import { OptionValue, OutputRenderingElement, Translation } from '@app/stores/common/rendering.model';
+import { OptionValue, OutputRenderingElement, Rendering, Translation } from '@app/stores/common/rendering.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
-import { select, Store } from '@ngrx/store';
+import { select, Store, ScannedActionsSubject } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 var Language = (function () {
     function Language(code, display) {
         this.code = code;
@@ -34,21 +34,32 @@ var FieldType = (function () {
 }());
 export { FieldType };
 var ViewHumanTaskDefRenderingComponent = (function () {
-    function ViewHumanTaskDefRenderingComponent(store, formBuilder, snackBar, translateService) {
+    function ViewHumanTaskDefRenderingComponent(store, formBuilder, snackBar, translateService, actions$) {
         this.store = store;
         this.formBuilder = formBuilder;
         this.snackBar = snackBar;
         this.translateService = translateService;
+        this.actions$ = actions$;
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW.RENDERING";
-        this.humanTaskDef = new HumanTaskDef();
+        this.rendering = new Rendering();
         this.addLabelForm = this.formBuilder.group({
-            language: '',
-            value: ''
+            language: new FormControl('', [
+                Validators.required
+            ]),
+            value: new FormControl('', [
+                Validators.required
+            ])
         });
         this.addValueForm = this.formBuilder.group({
-            value: '',
-            language: '',
-            translation: ''
+            value: new FormControl('', [
+                Validators.required
+            ]),
+            language: new FormControl('', [
+                Validators.required
+            ]),
+            translation: new FormControl('', [
+                Validators.required
+            ])
         });
         this.languages = [];
         this.fieldTypes = [];
@@ -61,15 +72,28 @@ var ViewHumanTaskDefRenderingComponent = (function () {
     }
     ViewHumanTaskDefRenderingComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.RENDERING_UPDATED'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_RENDERING_PARAMETER; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_UPDATE_RENDERING'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
         this.store.pipe(select(fromAppState.selectHumanTaskResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
-            _this.humanTaskDef = e;
+            _this.id = e.id;
+            _this.rendering = e.rendering;
         });
     };
     ViewHumanTaskDefRenderingComponent.prototype.drop = function (event) {
-        moveItemInArray(this.humanTaskDef.rendering.output, event.previousIndex, event.currentIndex);
+        moveItemInArray(this.rendering.output, event.previousIndex, event.currentIndex);
     };
     ViewHumanTaskDefRenderingComponent.prototype.updateLabel = function (translation) {
         if (!this.selectedField) {
@@ -111,11 +135,11 @@ var ViewHumanTaskDefRenderingComponent = (function () {
     ViewHumanTaskDefRenderingComponent.prototype.addField = function (fieldType) {
         var renderingElt = new OutputRenderingElement();
         renderingElt.value.type = fieldType.fieldType;
-        this.humanTaskDef.rendering.output.push(renderingElt);
+        this.rendering.output.push(renderingElt);
     };
     ViewHumanTaskDefRenderingComponent.prototype.removeField = function (elt) {
-        var index = this.humanTaskDef.rendering.output.indexOf(elt);
-        this.humanTaskDef.rendering.output.splice(index, 1);
+        var index = this.rendering.output.indexOf(elt);
+        this.rendering.output.splice(index, 1);
         this.selectedField = null;
     };
     ViewHumanTaskDefRenderingComponent.prototype.displaySettings = function (elt) {
@@ -154,7 +178,7 @@ var ViewHumanTaskDefRenderingComponent = (function () {
         return val.value + "(" + arr.join(',') + ")";
     };
     ViewHumanTaskDefRenderingComponent.prototype.update = function () {
-        var request = new fromHumanTaskDefActions.UpdateHumanTaskDef(this.humanTaskDef);
+        var request = new fromHumanTaskDefActions.UpdateRenderingOperation(this.id, this.rendering);
         this.store.dispatch(request);
     };
     ViewHumanTaskDefRenderingComponent = __decorate([
@@ -167,7 +191,8 @@ var ViewHumanTaskDefRenderingComponent = (function () {
         __metadata("design:paramtypes", [Store,
             FormBuilder,
             MatSnackBar,
-            TranslateService])
+            TranslateService,
+            ScannedActionsSubject])
     ], ViewHumanTaskDefRenderingComponent);
     return ViewHumanTaskDefRenderingComponent;
 }());

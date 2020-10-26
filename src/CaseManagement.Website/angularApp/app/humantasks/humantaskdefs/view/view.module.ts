@@ -26,7 +26,7 @@ import { HumanTaskDefsViewRoutes } from './view.routes';
         MaterialModule,
         SharedModule
     ],
-    entryComponents: [AddEscalationDialog, EditEscalationDialog],
+    entryComponents: [AddEscalationDialog, EditEscalationDialog ],
     declarations: [
         ViewHumanTaskDefRenderingComponent,
         ViewHumanTaskDefInfoComponent,

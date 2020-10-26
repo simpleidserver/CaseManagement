@@ -5,6 +5,7 @@
             <li class="separator"><div class="mat-h1">\</div></li>
             <li><div class="mat-h1">{{ baseTranslationKey + '.TITLE' | translate }}</div></li>
         </ul>
+        <button mat-raised-button color="primary" (click)="createHumanTaskInstance()">{{ baseTranslationKey + '.CREATE_HUMANTASKINSTANCE.TITLE' | translate }}</button>
     </div>
 </div>
 <div *ngIf="!isErrorOccured">

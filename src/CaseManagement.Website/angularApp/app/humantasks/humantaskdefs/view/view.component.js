@@ -9,33 +9,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { Store, ScannedActionsSubject } from '@ngrx/store';
+import { select, Store, ScannedActionsSubject } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 var ViewHumanTaskDef = (function () {
-    function ViewHumanTaskDef(store, route, snackBar, translateService, actions$) {
+    function ViewHumanTaskDef(store, actions$, snackBar, translateService, route) {
         this.store = store;
-        this.route = route;
+        this.actions$ = actions$;
         this.snackBar = snackBar;
         this.translateService = translateService;
-        this.actions$ = actions$;
+        this.route = route;
+        this.isErrorOccured = false;
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW";
     }
     ViewHumanTaskDef.prototype.ngOnInit = function () {
         var _this = this;
-        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF; }))
+        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_GET_HUMANTASKDEF; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.HUMANTASKDEF_UPDATED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.HUMANTASKDEF_DOESNT_EXIST'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
+            _this.isErrorOccured = true;
         });
-        this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_HUMANASKDEF; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_UPDATE_HUMANTASKDEF'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
+        this.store.pipe(select(fromAppState.selectHumanTaskResult)).subscribe(function (e) {
+            if (!e) {
+                return;
+            }
+            _this.id = e.id;
         });
         this.refresh();
     };
@@ -52,10 +55,10 @@ var ViewHumanTaskDef = (function () {
             encapsulation: ViewEncapsulation.None
         }),
         __metadata("design:paramtypes", [Store,
-            ActivatedRoute,
+            ScannedActionsSubject,
             MatSnackBar,
             TranslateService,
-            ScannedActionsSubject])
+            ActivatedRoute])
     ], ViewHumanTaskDef);
     return ViewHumanTaskDef;
 }());

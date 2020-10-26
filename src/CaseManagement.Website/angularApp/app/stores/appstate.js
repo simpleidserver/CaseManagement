@@ -12,6 +12,7 @@ export var selectCaseFileHistoryLst = function (state) { return state.caseFileHi
 export var selectCasePlanInstance = function (state) { return state.casePlanInstance; };
 export var selectCasePlanInstanceLst = function (state) { return state.casePlanInstanceLst; };
 export var selectHumanTask = function (state) { return state.humanTask; };
+export var selectHumanTasks = function (state) { return state.humanTasks; };
 export var selectCasePlanResult = createSelector(selectCasePlan, function (state) {
     if (!state || state.content == null) {
         return null;
@@ -66,6 +67,12 @@ export var selectHumanTaskResult = createSelector(selectHumanTask, function (sta
     }
     return state.content;
 });
+export var selectHumanTasksResult = createSelector(selectHumanTasks, function (state) {
+    if (!state || state.content == null) {
+        return null;
+    }
+    return state.content;
+});
 export var appReducer = {
     casePlan: fromCasePlan.casePlanReducer,
     casePlanLst: fromCasePlan.casePlanLstReducer,
@@ -75,6 +82,7 @@ export var appReducer = {
     caseFileHistoryLst: fromCaseFile.caseFileHistoryLstReducer,
     casePlanInstance: fromCasePlanInstance.casePlanInstanceReducer,
     casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer,
-    humanTask: fromHumanTask.humanTaskDefReducer
+    humanTask: fromHumanTask.humanTaskDefReducer,
+    humanTasks: fromHumanTask.humanTaskDefsReducer
 };
 //# sourceMappingURL=appstate.js.map
