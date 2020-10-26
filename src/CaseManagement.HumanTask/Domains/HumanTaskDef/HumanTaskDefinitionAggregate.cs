@@ -253,6 +253,12 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public void UpdateRendering(Rendering rendering)
+        {
+            var evt = new HumanTaskDefRenderingUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, rendering, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -497,6 +503,13 @@ namespace CaseManagement.HumanTask.Domains
             kvp.Value.Condition = evt.Escalation.Condition;
             kvp.Value.Notification = evt.Escalation.Notification;
             kvp.Value.ToParts = evt.Escalation.ToParts;
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefRenderingUpdatedEvent evt)
+        {
+            Rendering = evt.Rendering;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

@@ -1774,6 +1774,69 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update rendering and parameter rendering i" +
+            "s missing")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update rendering and parameter rendering i" +
+            "s missing")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateRenderingAndParameterRenderingIsMissing()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update rendering and parameter rendering i" +
+                    "s missing", null, ((string[])(null)));
+#line 529
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table56 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 530
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/rendering\'", ((string)(null)), table56, "When ");
+#line 532
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 534
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 535
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 536
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'rendering\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update rendering and humantaskdef is missi" +
+            "ng")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update rendering and humantaskdef is missi" +
+            "ng")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateRenderingAndHumantaskdefIsMissing()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update rendering and humantaskdef is missi" +
+                    "ng", null, ((string[])(null)));
+#line 538
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table57 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table57.AddRow(new string[] {
+                        "rendering",
+                        "{ output : [ { xPath: \'xpath\' }] }"});
+#line 539
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/rendering\'", ((string)(null)), table57, "When ");
+#line 542
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 544
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 545
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 546
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

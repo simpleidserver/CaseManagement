@@ -389,3 +389,19 @@ Scenario: Check escalation of a completion deadline can be updated
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updateEscalationCompletionDeadline'
 	Then JSON 'deadLines.completionDeadLines[0].escalations[0].condition'='false'
+
+Scenario: Check rendering can be updated
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value           |
+	| name | updateRendering |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'	
+	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/rendering'
+	| Key       | Value                              |
+	| rendering | { output : [ { xPath: 'xpath' }] } |
+	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'name'='updateRendering'
+	Then JSON 'rendering.output[0].xPath'='xPath'

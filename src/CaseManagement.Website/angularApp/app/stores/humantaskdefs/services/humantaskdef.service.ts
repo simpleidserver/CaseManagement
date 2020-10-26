@@ -103,10 +103,13 @@ export class HumanTaskDefService {
     }
 
     updateRendering(id: string, rendering: Rendering): Observable<boolean> {
-        if (id) { }
-        if (rendering) { }
-
-        return of(true);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/rendering";
+        const request: any = { rendering: rendering};
+        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     deleteStartDeadline(id: string, deadLineId: string): Observable<boolean> {

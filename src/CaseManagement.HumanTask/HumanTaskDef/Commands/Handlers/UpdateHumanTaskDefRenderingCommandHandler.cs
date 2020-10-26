@@ -1,0 +1,50 @@
+﻿using CaseManagement.Common.Exceptions;
+using CaseManagement.HumanTask.Exceptions;
+using CaseManagement.HumanTask.Persistence;
+using CaseManagement.HumanTask.Resources;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
+{
+    public class UpdateHumanTaskDefRenderingCommandHandler : IRequestHandler<UpdateHumanTaskDefRenderingCommand, bool>
+    {
+        private readonly IHumanTaskDefCommandRepository _humanTaskDefCommandRepository;
+        private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
+        private readonly ILogger<UpdateHumanTaskDefRenderingCommandHandler> _logger;
+
+        public UpdateHumanTaskDefRenderingCommandHandler(
+            IHumanTaskDefCommandRepository humanTaskDefCommandRepository,
+            IHumanTaskDefQueryRepository humanTaskDefQueryRepository,
+            ILogger<UpdateHumanTaskDefRenderingCommandHandler> logger)
+        {
+            _humanTaskDefCommandRepository = humanTaskDefCommandRepository;
+            _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
+            _logger = logger;
+        }
+
+        public async Task<bool> Handle(UpdateHumanTaskDefRenderingCommand request, CancellationToken cancellationToken)
+        {
+            if (request.Rendering == null)
+            {
+                _logger.LogError("the parameter 'rendering' is missing");
+                throw new BadRequestException(string.Format(Global.MissingParameter, "rendering"));
+            }
+
+            var result = await _humanTaskDefQueryRepository.Get(request.Id, cancellationToken);
+            if (result == null)
+            {
+                _logger.LogError($"The human task definition '{request.Id}' doesn't exist");
+                throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
+            }
+
+            result.UpdateRendering(request.Rendering.ToDomain());
+            await _humanTaskDefCommandRepository.Update(result, cancellationToken);
+            await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation("The rendering has been updated");
+            return true;
+        }
+    }
+}

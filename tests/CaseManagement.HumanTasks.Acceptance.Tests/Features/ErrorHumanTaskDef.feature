@@ -525,3 +525,22 @@ Scenario: Check error is returned when trying to update escalation of a completi
 	Then HTTP status code equals to '404'
 	Then JSON 'status'='404'
 	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to update rendering and parameter rendering is missing
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/rendering'
+	| Key        | Value                  |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'rendering' is missing'
+
+Scenario: Check error is returned when trying to update rendering and humantaskdef is missing
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/rendering'
+	| Key       | Value                              |
+	| rendering | { output : [ { xPath: 'xpath' }] } |
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''

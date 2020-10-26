@@ -331,6 +331,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Output = rd.Output.Select(_ => OutputRenderingElementResult.ToDto(_)).ToList()
                 };
             }
+
+            public Rendering ToDomain()
+            {
+                return new Rendering
+                {
+                    Input = Input.Select(_ => _.ToDomain()).ToList(),
+                    Output = Output.Select(_ => _.ToDomain()).ToList()
+                };
+            }
         }
 
         public class TranslationResult
@@ -344,6 +353,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Language = translation.Language,
                     Value = translation.Value
+                };
+            }
+
+            public Translation ToDomain()
+            {
+                return new Translation
+                {
+                    Language = Language,
+                    Value = Value
                 };
             }
         }
@@ -377,6 +395,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     DisplayNames = ov.DisplayNames.Select(_ => TranslationResult.ToDto(_)).ToList()
                 };
             }
+
+            public OptionValue ToDomain()
+            {
+                return new OptionValue
+                {
+                    Value = Value,
+                    DisplayNames = DisplayNames.Select(_ => _.ToDomain()).ToList()
+                };
+            }
         }
 
         public class InputRenderingElementResult : RenderingElementResult
@@ -390,6 +417,16 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Id = inputRendering.Id,
                     Label = inputRendering.Labels.Select(_ => TranslationResult.ToDto(_)).ToList(),
                     Value = inputRendering.Value
+                };
+            }
+
+            public InputRenderingElement ToDomain()
+            {
+                return new InputRenderingElement
+                {
+                    Id = Id,
+                    Labels = Label.Select(_ => _.ToDomain()).ToList(),
+                    Value = Value
                 };
             }
         }
@@ -411,6 +448,18 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Default = outputRendering.Default
                 };
             }
+
+            public OutputRenderingElement ToDomain()
+            {
+                return new OutputRenderingElement
+                {
+                    Id =  Id,
+                    Default = Default,
+                    XPath = XPath,
+                    Value = Value?.ToDomain(),
+                    Labels = Label.Select(_ => _.ToDomain()).ToList()
+                };
+            }
         }
 
         public class OutputRenderingElementValueResult
@@ -429,6 +478,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Type = rv.Type,
                     Values = rv.Values.Select(_ => OptionValueResult.ToDto(_)).ToList()
+                };
+            }
+
+            public OutputRenderingElementValue ToDomain()
+            {
+                return new OutputRenderingElementValue
+                {
+                    Type = Type,
+                    Values = Values.Select(_ => _.ToDomain()).ToList()
                 };
             }
         }
