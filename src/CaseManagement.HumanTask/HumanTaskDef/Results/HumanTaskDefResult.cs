@@ -122,6 +122,17 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Notification = esc.Notification == null ? null : NotificationDefResult.ToDto(esc.Notification)
                 };
             }
+
+            public Escalation ToDomain()
+            {
+                return new Escalation
+                {
+                    Id = Id,
+                    Condition = Condition,
+                    Notification = Notification?.ToDomain(),
+                    ToParts = ToParts.Select(_ => _.ToDomain()).ToList()
+                };
+            }
         }
 
         public class ToPartResult
@@ -135,6 +146,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Expression = p.Expression,
                     Name = p.Name
+                };
+            }
+
+            public ToPart ToDomain()
+            {
+                return new ToPart
+                {
+                    Name = Name,
+                    Expression = Expression
                 };
             }
         }
@@ -158,6 +178,18 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Priority = notif.Priority
                 };
             }
+
+            public NotificationDefinition ToDomain()
+            {
+                return new NotificationDefinition
+                {
+                    Name = Name,
+                    Priority = Priority,
+                    Operation = Operation?.ToDomain(),
+                    PeopleAssignment = PeopleAssignment?.ToDomain(),
+                    PresentationElement = PresentationElement?.ToDomain()
+                };
+            }
         }
 
         public class NotificationDefinitionPeopleAssignmentResult
@@ -171,6 +203,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     BusinessAdministrator = notif.BusinessAdministrator == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(notif.BusinessAdministrator),
                     Recipient = notif.Recipient == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(notif.Recipient)
+                };
+            }
+
+            public NotificationDefinitionPeopleAssignment ToDomain()
+            {
+                return new NotificationDefinitionPeopleAssignment
+                {
+                    Recipient = Recipient?.ToDomain(),
+                    BusinessAdministrator = BusinessAdministrator?.ToDomain()
                 };
             }
         }
@@ -194,6 +235,15 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     OutputParameters = operation.OutputParameters.Select(_ => ParameterResult.ToDto(_)).ToList()
                 };
             }
+
+            public Operation ToDomain()
+            {
+                return new Operation
+                {
+                    InputParameters = InputParameters.Select(_ => _.ToDomain()).ToList(),
+                    OutputParameters = OutputParameters.Select(_ => _.ToDomain()).ToList()
+                };
+            }
         }
 
         public class ParameterResult
@@ -214,7 +264,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
 
             public Parameter ToDomain()
             {
-                var type = (ParameterTypes)Enum.Parse(typeof(ParameterTypes), Type);
+                var type = (ParameterTypes)Enum.Parse(typeof(ParameterTypes), Type.ToUpperInvariant());
                 return new Parameter
                 {
                     IsRequired = IsRequired,
@@ -450,7 +500,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
 
             public PresentationParameter ToDomain()
             {
-                var parameterType = (ParameterTypes)Enum.Parse(typeof(ParameterTypes), Type);
+                var parameterType = (ParameterTypes)Enum.Parse(typeof(ParameterTypes), Type.ToUpper());
                 return new PresentationParameter
                 {
                     Name = Name,

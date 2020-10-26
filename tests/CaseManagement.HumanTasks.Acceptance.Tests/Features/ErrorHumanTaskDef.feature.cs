@@ -1644,6 +1644,136 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update escalation of a start deadline and " +
+            "escalation parameter is missing")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update escalation of a start deadline and " +
+            "escalation parameter is missing")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateEscalationOfAStartDeadlineAndEscalationParameterIsMissing()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a start deadline and " +
+                    "escalation parameter is missing", null, ((string[])(null)));
+#line 491
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table52 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 492
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
+                    "t/deadLineId/escalations/escalationId\'", ((string)(null)), table52, "When ");
+#line 494
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 496
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 497
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 498
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'escalation\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update escalation of a start deadline and " +
+            "humantask definition is unknown")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update escalation of a start deadline and " +
+            "humantask definition is unknown")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateEscalationOfAStartDeadlineAndHumantaskDefinitionIsUnknown()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a start deadline and " +
+                    "humantask definition is unknown", null, ((string[])(null)));
+#line 500
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table53 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table53.AddRow(new string[] {
+                        "escalation",
+                        "{ condition: \"false\" }"});
+#line 501
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
+                    "t/deadLineId/escalations/escalationId\'", ((string)(null)), table53, "When ");
+#line 504
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 506
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 507
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 508
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update escalation of a completion deadline" +
+            " and escalation parameter is missing")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update escalation of a completion deadline" +
+            " and escalation parameter is missing")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateEscalationOfACompletionDeadlineAndEscalationParameterIsMissing()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a completion deadline" +
+                    " and escalation parameter is missing", null, ((string[])(null)));
+#line 510
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table54 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 511
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
+                    "letion/deadLineId/escalations/escalationId\'", ((string)(null)), table54, "When ");
+#line 513
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 515
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 516
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 517
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'escalation\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update escalation of a completion deadline" +
+            " and humantask definition is unknown")]
+        [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
+        [Xunit.TraitAttribute("Description", "Check error is returned when trying to update escalation of a completion deadline" +
+            " and humantask definition is unknown")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdateEscalationOfACompletionDeadlineAndHumantaskDefinitionIsUnknown()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a completion deadline" +
+                    " and humantask definition is unknown", null, ((string[])(null)));
+#line 519
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table55 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table55.AddRow(new string[] {
+                        "escalation",
+                        "{ condition: \"false\" }"});
+#line 520
+ testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
+                    "letion/deadLineId/escalations/escalationId\'", ((string)(null)), table55, "When ");
+#line 523
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 525
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 526
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 527
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

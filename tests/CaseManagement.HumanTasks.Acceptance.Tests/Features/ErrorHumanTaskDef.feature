@@ -487,3 +487,41 @@ Scenario: Check error is returned when trying to remove unknown escalation (comp
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
 	Then JSON 'errors.validation[0]'='Unknown escalation'
+
+Scenario: Check error is returned when trying to update escalation of a start deadline and escalation parameter is missing
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId/escalations/escalationId'
+	| Key           | Value       |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'escalation' is missing'
+
+Scenario: Check error is returned when trying to update escalation of a start deadline and humantask definition is unknown
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/start/deadLineId/escalations/escalationId'
+	| Key        | Value                  |
+	| escalation | { condition: "false" } |
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''
+
+Scenario: Check error is returned when trying to update escalation of a completion deadline and escalation parameter is missing
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId/escalations/escalationId'
+	| Key           | Value       |
+	And extract JSON from body
+
+	Then HTTP status code equals to '400'
+	Then JSON 'status'='400'
+	Then JSON 'errors.bad_request[0]'='Parameter 'escalation' is missing'
+
+Scenario: Check error is returned when trying to update escalation of a completion deadline and humantask definition is unknown
+	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/deadlines/completion/deadLineId/escalations/escalationId'
+	| Key        | Value                  |
+	| escalation | { condition: "false" } |
+	And extract JSON from body
+
+	Then HTTP status code equals to '404'
+	Then JSON 'status'='404'
+	Then JSON 'errors.bad_request[0]'='Unknown human task definition 'def''

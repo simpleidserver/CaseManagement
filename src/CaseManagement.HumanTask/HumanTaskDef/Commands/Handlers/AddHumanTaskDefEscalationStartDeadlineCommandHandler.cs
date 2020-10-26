@@ -42,7 +42,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
 
             var id = result.AddEscalationStartDeadline(request.StartDeadlineId, request.Condition);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
-            await _humanTaskDefCommandRepository.Add(result, cancellationToken);
+            await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
+            _logger.LogInformation("Escalation has been added to start deadline");
             return id;
         }
     }

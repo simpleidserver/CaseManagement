@@ -241,6 +241,18 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
+        public void UpdateEscalationStartDeadline(string completionDeadLineId, string escalationId, Escalation escalation)
+        {
+            var evt = new HumanTaskDefEscalationStartDeadlineUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, completionDeadLineId, escalationId, escalation, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void UpdateEscalationCompletionDeadline(string completionDeadLineId, string escalationId, Escalation escalation)
+        {
+            var evt = new HumanTaskDefEscalationCompletionDeadlineUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, completionDeadLineId, escalationId, escalation, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public override void Handle(dynamic evt)
         {
             Handle(evt);
@@ -465,6 +477,26 @@ namespace CaseManagement.HumanTask.Domains
         {
             var kvp = CheckEscalation(DeadLines.CompletionDeadLines, evt.CompletionDeadLineId, evt.EscalationId, Global.UnknownCompletionDeadline);
             kvp.Key.Escalations.Remove(kvp.Value);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefEscalationStartDeadlineUpdatedEvent evt)
+        {
+            var kvp = CheckEscalation(DeadLines.StartDeadLines, evt.CompletionDeadLineId, evt.EscalationId, Global.UnknownStartDeadline);
+            kvp.Value.Condition = evt.Escalation.Condition;
+            kvp.Value.Notification = evt.Escalation.Notification;
+            kvp.Value.ToParts = evt.Escalation.ToParts;
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefEscalationCompletionDeadlineUpdatedEvent evt)
+        {
+            var kvp = CheckEscalation(DeadLines.CompletionDeadLines, evt.CompletionDeadLineId, evt.EscalationId, Global.UnknownCompletionDeadline);
+            kvp.Value.Condition = evt.Escalation.Condition;
+            kvp.Value.Notification = evt.Escalation.Notification;
+            kvp.Value.ToParts = evt.Escalation.ToParts;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
