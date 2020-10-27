@@ -63,6 +63,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. HumanTask", "02. HumanT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.HumanTask.Host", "src\CaseManagement.HumanTask.Host\CaseManagement.HumanTask.Host.csproj", "{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaseManagement.Tasklist.Website", "src\CaseManagement.Tasklist.Website\CaseManagement.Tasklist.Website.csproj", "{BF5C827C-057A-419D-9AD4-11DFC7D83EBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,10 @@ Global
 		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF5C827C-057A-419D-9AD4-11DFC7D83EBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF5C827C-057A-419D-9AD4-11DFC7D83EBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF5C827C-057A-419D-9AD4-11DFC7D83EBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF5C827C-057A-419D-9AD4-11DFC7D83EBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +176,7 @@ Global
 		{E80EB5E5-2399-41FF-A479-852CC85B32F9} = {F1D09F77-52D3-46B7-B1FB-6FEAAE3BEB54}
 		{674D03DD-482E-4069-9AB2-5420DB0732AF} = {E33157EC-243C-4EA0-A60B-57F2C248CE53}
 		{BB4412BE-83FB-40C8-90B8-B91C084D6A7F} = {674D03DD-482E-4069-9AB2-5420DB0732AF}
+		{BF5C827C-057A-419D-9AD4-11DFC7D83EBF} = {4DF31006-8D29-454B-9D61-DFBAA1590AF3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2CFBF2E-D493-42F7-B339-01A3070C2B5E}

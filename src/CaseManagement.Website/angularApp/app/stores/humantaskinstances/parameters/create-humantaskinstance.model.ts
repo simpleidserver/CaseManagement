@@ -3,5 +3,5 @@
     priority: number;
     activationDeferralTime: Date;
     expirationTime: Date;
-    operationParameter: any;
+    operationParameters: any;
 }

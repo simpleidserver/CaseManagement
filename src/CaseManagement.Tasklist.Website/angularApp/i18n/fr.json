@@ -1,0 +1,32 @@
+{
+  "WELCOME": "Welcome {{name}}",
+  "CHOOSE_SESSION": "Choose session",
+  "DISCONNECT": "Disconnect",
+  "AUTHENTICATE": "Authenticate",
+  "LANGUAGES": "Languages",
+  "FRENCH": "French",
+  "ENGLISH": "English",
+  "MENU": {
+    "TASKS": "Tasks"
+  },
+  "SHARED": {
+    "SEARCH": "Search"
+  },
+  "TASKS": {
+    "LIST": {
+      "TITLE": "Tasks",
+      "ID": "Id",
+      "PRIORITY": "Priority",
+      "NAME": "Name",
+      "SUBJECT": "Subject",
+      "OWNER": "Owner",
+      "CREATED_DATETIME": "Created datetime",
+      "STATUS": "Status",
+      "STATUSENUM": {
+        "CREATED": "Created",
+        "READY": "Ready",
+        "RESERVED": "Reserved"
+      }
+    }
+  }
+}

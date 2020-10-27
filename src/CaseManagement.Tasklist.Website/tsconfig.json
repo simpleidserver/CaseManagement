@@ -1,0 +1,35 @@
+﻿{
+  "awesomeTypescriptLoaderOptions": {
+    "useWebpackText": true
+  },
+  "buildOnSave": false,
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "angularApp",
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "typeRoots": [
+      "./node_modules/@types/"
+    ],
+    "paths": {
+      "@app/*": [ "app/*" ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "./angularApp/main-aot.ts"
+  ]
+}

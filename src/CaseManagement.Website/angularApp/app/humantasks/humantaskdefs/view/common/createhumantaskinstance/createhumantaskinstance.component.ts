@@ -39,9 +39,9 @@ export class CreateHumanTaskInstanceComponent {
     private refreshOperationParameter() {
         const self = this;
         if (this._humanTaskDef && this._createHumanTaskInstance) {
-            this._createHumanTaskInstance.operationParameter = {};
+            this._createHumanTaskInstance.operationParameters = {};
             this._humanTaskDef.operation.inputParameters.forEach(function (p: Parameter) {
-                self._createHumanTaskInstance.operationParameter[p.name] = '';
+                self._createHumanTaskInstance.operationParameters[p.name] = '';
             });
         }
     }

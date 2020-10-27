@@ -12,6 +12,11 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 {
     public class HumanTaskInstanceQueryRepository : IHumanTaskInstanceQueryRepository
     {
+        private static Dictionary<string, string> MAPPING_HUMANTASKINSTANCE_TO_PROPERTYNAME = new Dictionary<string, string>
+        {
+            { "priority", "Priority" },
+            { "createdTime", "CreateDateTime" },
+        };
         private readonly ConcurrentBag<HumanTaskInstanceAggregate> _humanTaskInstances;
 
         public HumanTaskInstanceQueryRepository(ConcurrentBag<HumanTaskInstanceAggregate> humanTaskInstances)
@@ -70,16 +75,26 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 
         public Task<FindResponse<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token)
         {
-            IEnumerable<HumanTaskInstanceAggregate> content = _humanTaskInstances;
+            IQueryable<HumanTaskInstanceAggregate> content = _humanTaskInstances.AsQueryable();
             if (parameter.StatusLst != null && parameter.StatusLst.Any())
             {
-                content = _humanTaskInstances.Where(_ => parameter.StatusLst.Contains(_.Status));
+                content = content.Where(_ => parameter.StatusLst.Contains(_.Status));
+            }
+            
+            if (!string.IsNullOrWhiteSpace(parameter.ActualOwner))
+            {
+                content = content.Where(_ => !string.IsNullOrWhiteSpace(_.ActualOwner) && _.ActualOwner.StartsWith(parameter.ActualOwner, StringComparison.InvariantCultureIgnoreCase));
             }
 
             content = content.Where(_ => _.PeopleAssignment != null &&
                 (IsAuthorized(_.PeopleAssignment.PotentialOwner, parameter.UserIdentifier, parameter.GroupNames) ||
                 IsAuthorized(_.PeopleAssignment.BusinessAdministrator, parameter.UserIdentifier, parameter.GroupNames) ||
-                IsAuthorized(_.PeopleAssignment.TaskInitiator, parameter.UserIdentifier, parameter.GroupNames))).ToList();
+                IsAuthorized(_.PeopleAssignment.TaskInitiator, parameter.UserIdentifier, parameter.GroupNames)));
+            if (MAPPING_HUMANTASKINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+            {
+                content = content.InvokeOrderBy(MAPPING_HUMANTASKINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+            }
+
             int totalLength = content.Count();
             var result = content.Skip(parameter.StartIndex).Take(parameter.Count);
             return Task.FromResult(new FindResponse<HumanTaskInstanceAggregate>

@@ -10,6 +10,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries
     public class SearchHumanTaskInstanceDetailsQuery : BaseSearchParameter, IRequest<SearchResult<TaskInstanceDetailsResult>>
     {
         public ICollection<HumanTaskInstanceStatus> StatusLst { get; set; }
+        public string ActualOwner { get; set; }
         public IEnumerable<KeyValuePair<string, string>> Claims { get; set; }
     }
 }

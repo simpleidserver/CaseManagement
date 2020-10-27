@@ -41,7 +41,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 Order = request.Order,
                 OrderBy = request.OrderBy,
                 StartIndex = request.StartIndex,
-                StatusLst = request.StatusLst
+                StatusLst = request.StatusLst,
+                ActualOwner = request.ActualOwner                
             }, cancellationToken);
             var content = new List<TaskInstanceDetailsResult>();
             foreach(var record in result.Content)

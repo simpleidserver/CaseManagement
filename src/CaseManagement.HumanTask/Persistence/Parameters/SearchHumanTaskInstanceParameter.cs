@@ -14,5 +14,6 @@ namespace CaseManagement.HumanTask.Persistence.Parameters
         public string UserIdentifier { get; set; }
         public ICollection<string> GroupNames { get; set; }
         public ICollection<HumanTaskInstanceStatus> StatusLst { get; set; }
+        public string ActualOwner { get; set; }
     }
 }

@@ -80,6 +80,7 @@ namespace CaseManagement.HumanTask.Host
                 app.UsePathBase(pathBase);
             }
 
+            app.UseCulture();
             app.UseForwardedHeaders();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
