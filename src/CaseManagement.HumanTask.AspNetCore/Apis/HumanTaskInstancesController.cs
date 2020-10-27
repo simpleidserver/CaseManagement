@@ -280,6 +280,14 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPost(".search")]
+        public async Task<IActionResult> Search([FromBody] SearchHumanTaskInstanceDetailsQuery query)
+        {
+            query.Claims = User.GetClaims();
+            var result = await _mediator.Send(query);
+            return new OkObjectResult(result);
+        }
+
         #endregion
 
         [HttpPost("start")]

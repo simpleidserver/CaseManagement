@@ -187,17 +187,25 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
         public async Task WhenPollHTTPPostJSONRequest(string url, string key, string value, Table table)
         {
             var jObj = new JObject();
+            var dic = new Dictionary<string, string>();
             foreach (var record in table.Rows)
             {
                 var k = record["Key"];
                 var v = Parse(record["Value"]);
-                try
+                if (k == "Accept-Language")
                 {
-                    jObj.Add(k, JToken.Parse(v));
+                    dic.Add(k, v);
                 }
-                catch
+                else
                 {
-                    jObj.Add(k, value.ToString());
+                    try
+                    {
+                        jObj.Add(k, JToken.Parse(v));
+                    }
+                    catch
+                    {
+                        jObj.Add(k, value.ToString());
+                    }
                 }
             }
 
@@ -207,6 +215,11 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
                 RequestUri = new Uri(Parse(url)),
                 Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
             };
+            foreach(var kvp in dic)
+            {
+                httpRequestMessage.Headers.Add(kvp.Key, kvp.Value);
+            }
+
             var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
             var json = await httpResponseMessage.Content.ReadAsStringAsync();
             jObj = JsonConvert.DeserializeObject<JObject>(json);
@@ -225,17 +238,25 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
         public async Task WhenExecuteHTTPPostJSONRequest(string url, Table table)
         {
             var jObj = new JObject();
+            var dic = new Dictionary<string, string>();
             foreach (var record in table.Rows)
             {
-                var key = record["Key"];
-                var value = Parse(record["Value"]);
-                try
+                var k = record["Key"];
+                var v = Parse(record["Value"]);
+                if (k == "Accept-Language")
                 {
-                    jObj.Add(key, JToken.Parse(value));
+                    dic.Add(k, v);
                 }
-                catch
+                else
                 {
-                    jObj.Add(key, value.ToString());
+                    try
+                    {
+                        jObj.Add(k, JToken.Parse(v));
+                    }
+                    catch
+                    {
+                        jObj.Add(k, v.ToString());
+                    }
                 }
             }
 
@@ -245,6 +266,11 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests.Steps
                 RequestUri = new Uri(Parse(url)),
                 Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
             };
+            foreach (var kvp in dic)
+            {
+                httpRequestMessage.Headers.Add(kvp.Key, kvp.Value);
+            }
+
             var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }

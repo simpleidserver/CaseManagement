@@ -67,5 +67,46 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
                 Content = filtered.ToList()
             });
         }
+
+        public Task<FindResponse<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token)
+        {
+            IEnumerable<HumanTaskInstanceAggregate> content = _humanTaskInstances;
+            if (parameter.StatusLst != null && parameter.StatusLst.Any())
+            {
+                content = _humanTaskInstances.Where(_ => parameter.StatusLst.Contains(_.Status));
+            }
+
+            content = content.Where(_ => _.PeopleAssignment != null &&
+                (IsAuthorized(_.PeopleAssignment.PotentialOwner, parameter.UserIdentifier, parameter.GroupNames) ||
+                IsAuthorized(_.PeopleAssignment.BusinessAdministrator, parameter.UserIdentifier, parameter.GroupNames) ||
+                IsAuthorized(_.PeopleAssignment.TaskInitiator, parameter.UserIdentifier, parameter.GroupNames))).ToList();
+            int totalLength = content.Count();
+            var result = content.Skip(parameter.StartIndex).Take(parameter.Count);
+            return Task.FromResult(new FindResponse<HumanTaskInstanceAggregate>
+            {
+                Content = result.ToList(),
+                Count = parameter.Count,
+                StartIndex = parameter.StartIndex,
+                TotalLength = totalLength
+            });
+        }
+
+        private static bool IsAuthorized(PeopleAssignmentInstance peopleAssignment, string userIdentifier, ICollection<string> groupNames)
+        {
+            if (peopleAssignment == null)
+            {
+                return false;
+            }
+
+            switch(peopleAssignment.Type)
+            {
+                case PeopleAssignmentTypes.GROUPNAMES:
+                    return peopleAssignment.Values.Any(_ => groupNames.Contains(_));
+                case PeopleAssignmentTypes.USERIDENTIFIERS:
+                    return peopleAssignment.Values.Contains(userIdentifier);
+            }
+
+            return false;
+        }
     }
 }

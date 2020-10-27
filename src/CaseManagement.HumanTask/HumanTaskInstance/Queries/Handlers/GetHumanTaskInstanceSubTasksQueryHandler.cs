@@ -1,9 +1,11 @@
 ﻿using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
+using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -14,13 +16,16 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
     public class GetHumanTaskInstanceSubTasksQueryHandler : IRequestHandler<GetHumanTaskInstanceSubTasksQuery, SubTasksResults>
     {
         private readonly ILogger<GetHumanTaskInstanceSubTasksQueryHandler> _logger;
+        private readonly ITranslationHelper _translationHelper;
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
 
         public GetHumanTaskInstanceSubTasksQueryHandler(
             ILogger<GetHumanTaskInstanceSubTasksQueryHandler> logger,
+            ITranslationHelper translationHelper,
             IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository)
         {
             _logger = logger;
+            _translationHelper = translationHelper;
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
         }
 
@@ -33,8 +38,26 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
+            var callbackTxt = new Func<ICollection<Domains.Text>, Localization.Translation>((t) =>
+            {
+                if (t == null || !t.Any())
+                {
+                    return null;
+                }
+
+                try
+                {
+                    return _translationHelper.Translate(t);
+                }
+                catch (BadOperationExceptions) { return null; }
+            });
             var result = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.AggregateId, cancellationToken);
-            ICollection<TaskInstanceDetailsResult> content = result.Select(_ => TaskInstanceDetailsResult.ToDto(_)).ToList();
+            ICollection<TaskInstanceDetailsResult> content = result.Select(_ =>
+            {
+                var name = callbackTxt(_.PresentationElement.Names);
+                var subject = callbackTxt(_.PresentationElement.Subjects);
+                return TaskInstanceDetailsResult.ToDto(_, name, subject);
+            }).ToList();
             return new SubTasksResults 
             { 
                 Content = content

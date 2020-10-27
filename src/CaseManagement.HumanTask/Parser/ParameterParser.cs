@@ -98,6 +98,24 @@ namespace CaseManagement.HumanTask.Parser
         {
             var result = new PresentationElementInstance();
             var parameters = ParsePresentationParameters(presentationElement.PresentationParameters, operationParameters);
+            if (presentationElement.Names != null && presentationElement.Names.Any())
+            {
+                foreach(var name in presentationElement.Names)
+                {
+                    name.Value = ParsePresentationContent(name.Value, parameters);
+                    result.Names.Add(name);
+                }
+            }
+
+            if (presentationElement.Subjects != null && presentationElement.Subjects.Any())
+            {
+                foreach (var subject in presentationElement.Subjects)
+                {
+                    subject.Value = ParsePresentationContent(subject.Value, parameters);
+                    result.Subjects.Add(subject);
+                }
+            }
+
             if (presentationElement.Descriptions != null && presentationElement.Descriptions.Any())
             {
                 foreach (var description in presentationElement.Descriptions)

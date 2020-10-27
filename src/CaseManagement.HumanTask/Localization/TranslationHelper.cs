@@ -21,7 +21,13 @@ namespace CaseManagement.HumanTask.Localization
         {
             var result = descriptions.Cast<Text>().ToList();
             var translation = Translate(result);
-            var description = descriptions.First(_ => _.Language == translation.Language);
+            var description = descriptions.FirstOrDefault(_ => _.Language == translation.Language);
+            if (description == null)
+            {
+                _logger.LogError($"Missing translation for the language '{translation.Language}'");
+                throw new BadOperationExceptions(string.Format(Global.MissingTranslation, translation.Language));
+            }
+
             translation.ContentType = description.ContentType;
             return translation;
         }

@@ -1,5 +1,4 @@
-﻿using CaseManagement.HumanTask.Persistence.Parameters;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 
 namespace System.Collections.Generic
@@ -24,6 +23,11 @@ namespace System.Collections.Generic
             }
 
             return claims.First(_ => _.Key == ClaimTypes.NameIdentifier).Value;
+        }
+
+        public static ICollection<string> GetGroupNames(this IEnumerable<KeyValuePair<string, string>> claims)
+        {
+            return claims.Where(_ => _.Key == ClaimTypes.Role).Select(_ => _.Value).ToList();
         }
     }
 }

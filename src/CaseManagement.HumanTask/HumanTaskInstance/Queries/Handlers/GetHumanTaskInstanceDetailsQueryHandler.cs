@@ -1,9 +1,14 @@
-﻿using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.HumanTask.Domains;
+using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
+using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,13 +17,16 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
     public class GetHumanTaskInstanceDetailsQueryHandler : IRequestHandler<GetHumanTaskInstanceDetailsQuery, TaskInstanceDetailsResult>
     {
         private readonly ILogger<GetHumanTaskInstanceDetailsQueryHandler> _logger;
+        private readonly ITranslationHelper _translationHelper;
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
 
         public GetHumanTaskInstanceDetailsQueryHandler(
             ILogger<GetHumanTaskInstanceDetailsQueryHandler> logger,
+            ITranslationHelper translationHelper,
             IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository)
         {
             _logger = logger;
+            _translationHelper = translationHelper;
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
         }
 
@@ -31,7 +39,22 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            return TaskInstanceDetailsResult.ToDto(humanTaskInstance);
+            var callbackTxt = new Func<ICollection<Text>, Localization.Translation>((t) =>
+            {
+                if (t == null || !t.Any())
+                {
+                    return null;
+                }
+
+                try
+                {
+                    return _translationHelper.Translate(t);
+                }
+                catch (BadOperationExceptions) { return null; }
+            });
+            var name = callbackTxt(humanTaskInstance.PresentationElement.Names);
+            var subject = callbackTxt(humanTaskInstance.PresentationElement.Subjects);
+            return TaskInstanceDetailsResult.ToDto(humanTaskInstance, name, subject);
         }
     }
 }

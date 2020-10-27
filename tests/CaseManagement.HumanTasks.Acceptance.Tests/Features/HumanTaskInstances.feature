@@ -303,3 +303,31 @@ Scenario: Check the result of an automatic completion behavior
 	Then extract JSON 'detailsHumanTaskInstance', JSON 'status'='COMPLETED'	
 	Then extract JSON 'subTasks', JSON '$.content[?(@.name == 'addClient')].status'='COMPLETED'
 	Then extract JSON 'subTasks', JSON '$.content[?(@.name == 'emptyTask')].status'='OBSOLETE'
+
+Scenario: Search human task instances
+	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
+	| Key  | Value           |
+	| name | searchHumanTask |
+	And extract JSON from body
+	And extract 'id' from JSON body into 'humanTaskDefId'
+	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/assignment'
+    | Key              | Value                                                                                                                                                        |
+    | peopleAssignment | { potentialOwner : { type: "USERIDENTIFIERS", userIdentifiers: [ "user1" ]  }, taskInitiator : { type: "USERIDENTIFIERS", userIdentifiers: [ "user1" ]  }  } |
+	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/presentationelts'
+	| Key                 | Value                                               |
+	| presentationElement | { names: [ { language: "fr", value: "bonjour" } ] } |
+	And authenticate
+	| Key                                                                  | Value |
+	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | user1 |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	| Key           | Value           |
+	| humanTaskName | searchHumanTask |
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/.search'
+	| Key             | Value |
+	| Accept-Language | fr    |
+	And extract JSON from body
+		
+	Then HTTP status code equals to '200'
+	Then JSON 'content[0].name'='searchHumanTask'
+	Then JSON 'content[0].actualOwner'='user1'
+	Then JSON 'content[0].presentationName'='bonjour'
