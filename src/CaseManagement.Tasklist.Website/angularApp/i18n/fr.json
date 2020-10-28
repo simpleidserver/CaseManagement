@@ -10,11 +10,30 @@
     "TASKS": "Tasks"
   },
   "SHARED": {
-    "SEARCH": "Search"
+    "SEARCH": "Search",
+    "IS_REQUIRED": "Is required",
+    "ADD": "Add",
+    "UPDATE": "Update",
+    "CANCEL": "Cancel"
+  },
+  "NOMINATE": {
+    "TITLE": "Nominate",
+    "SELECT_ASSIGNMENT_TYPE": "Select type of assignment",
+    "GROUPNAMES": "Group names",
+    "USERIDENTIFIERS": "User identifiers",
+    "ADD": "Add",
+    "VALUE": "Value"
   },
   "TASKS": {
     "LIST": {
+      "TASK_CLAIMED": "Task has been claimed",
+      "ERROR_CLAIM_TASK": "An error occured while trying to claim the task",
       "TITLE": "Tasks",
+      "TASK_STARTED": "Task has been started",
+      "ERROR_START_TASK": "An error occured while trying to start the task",
+      "TASK_NOMINATED": "Task has been nominated",
+      "ERROR_NOMINATE_TASK": "An error occured while trying to nominate the task",
+      "ACTIONS": "Actions",
       "ID": "Id",
       "PRIORITY": "Priority",
       "NAME": "Name",
@@ -25,7 +44,14 @@
       "STATUSENUM": {
         "CREATED": "Created",
         "READY": "Ready",
-        "RESERVED": "Reserved"
+        "RESERVED": "Reserved",
+        "INPROGRESS": "In progress"
+      },
+      "ACTIONSENUM": {
+        "START": "Start",
+        "CLAIM": "Claim",
+        "NOMINATE": "Nominate",
+        "COMPLETE": "Complete"
       }
     }
   }

@@ -1,14 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort } from '@angular/material';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatDialog, MatPaginator, MatSnackBar, MatSort } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
+import * as fromTaskActions from '@app/stores/tasks/actions/tasks.actions';
 import { SearchTasksResult } from '@app/stores/tasks/models/search-tasks-result.model';
 import { Task } from '@app/stores/tasks/models/task.model';
-import { select, Store } from '@ngrx/store';
-import { merge } from 'rxjs';
-import { SearchTasks } from '../../stores/tasks/actions/tasks.actions';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { merge } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { SearchTasks } from '../../stores/tasks/actions/tasks.actions';
+import { NominateParameter } from '../../stores/tasks/parameters/nominate-parameter';
+import { NominateTaskDialogComponent } from './nominate-task-dialog.component';
 
 @Component({
     selector: 'list-tasks-component',
@@ -16,7 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     styleUrls: ['./list.component.scss']
 })
 export class ListTasksComponent implements OnInit {
-    displayedColumns: string[] = ['priority', 'presentationName', 'presentationSubject', 'actualOwner', 'status', 'createdTime'];
+    displayedColumns: string[] = ['priority', 'presentationName', 'presentationSubject', 'actualOwner', 'status', 'createdTime', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     baseTranslationKey: string = "TASKS.LIST";
@@ -28,6 +32,9 @@ export class ListTasksComponent implements OnInit {
         private translate: TranslateService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
+        private snackBar: MatSnackBar,
+        private actions$: ScannedActionsSubject,
+        public dialog: MatDialog,
         private formBuilder: FormBuilder) {
         this.searchTasksForm = this.formBuilder.group({
             actualOwner: new FormControl(''),
@@ -36,6 +43,51 @@ export class ListTasksComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_START_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_STARTED'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+                this.refresh();
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_START_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_START_TASK'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_NOMINATE_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_NOMINATED'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+                this.refresh();
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_NOMINATE_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_NOMINATE_TASK'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_CLAIM_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_CLAIMED'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+                this.refresh();
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_CLAIM_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_CLAIM_TASK'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
         this.store.pipe(select(fromAppState.selectTaskLstResult)).subscribe((l: SearchTasksResult) => {
             if (!l || !l.content) {
                 return;
@@ -115,6 +167,34 @@ export class ListTasksComponent implements OnInit {
         let direction = this.getDirection();
         let request = new SearchTasks(active, direction, count, startIndex, this.searchTasksForm.get('actualOwner').value, this.searchTasksForm.get('status').value);
         this.store.dispatch(request);
+    }
+
+    executeAction(act: string, task: Task) {
+        switch (act) {
+            case 'START':
+                {
+                    const request = new fromTaskActions.StartTask(task.id);
+                    this.store.dispatch(request);
+                }
+                break;
+            case 'NOMINATE':
+                const dialogRef = this.dialog.open(NominateTaskDialogComponent);
+                dialogRef.afterClosed().subscribe((result: NominateParameter) => {
+                    if (!result) {
+                        return;
+                    }
+
+                    const act = new fromTaskActions.NominateTask(task.id, result);
+                    this.store.dispatch(act);
+                });
+                break;
+            case 'CLAIM':
+                {
+                    const act = new fromTaskActions.ClaimTask(task.id);
+                    this.store.dispatch(act);
+                }
+                break;
+        }
     }
 
     private getOrder() {

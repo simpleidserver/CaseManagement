@@ -358,7 +358,9 @@ namespace CaseManagement.HumanTask.Domains
 
         private void UpdateStatus()
         {
-            if (Status == HumanTaskInstanceStatus.CREATED && PeopleAssignment != null && PeopleAssignment.PotentialOwner != null)
+            if (Status == HumanTaskInstanceStatus.CREATED && PeopleAssignment != null && 
+                PeopleAssignment.PotentialOwner != null &&
+                PeopleAssignment.PotentialOwner.Values.Any())
             {
                 if (ActivationDeferralTime != null)
                 {

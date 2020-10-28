@@ -54,7 +54,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
             });
             var name = callbackTxt(humanTaskInstance.PresentationElement.Names);
             var subject = callbackTxt(humanTaskInstance.PresentationElement.Subjects);
-            return TaskInstanceDetailsResult.ToDto(humanTaskInstance, name, subject);
+            return TaskInstanceDetailsResult.ToDto(humanTaskInstance, name, subject, null, null);
         }
     }
 }

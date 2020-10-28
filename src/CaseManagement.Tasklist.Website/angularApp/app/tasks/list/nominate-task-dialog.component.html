@@ -1,0 +1,35 @@
+﻿<h1 mat-dialog-title>{{ baseTranslationKey + ".TITLE" | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="nominateParameterForm" (ngSubmit)="addPeopleAssignment(nominateParameterForm.value)">
+        <!-- Select type of assignment -->
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>{{ baseTranslationKey + '.SELECT_ASSIGNMENT_TYPE' | translate }}</mat-label>
+            <mat-select formControlName="type" required>
+                <mat-option value="GROUPNAMES">{{ baseTranslationKey + '.GROUPNAMES' | translate }}</mat-option>
+                <mat-option value="USERIDENTIFIERS">{{ baseTranslationKey + '.USERIDENTIFIERS' | translate }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="nominateParameterForm.get('type').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- Add one or more values -->
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>{{ baseTranslationKey + '.VALUE' | translate }}</mat-label>
+            <input matInput type="text" formControlName="value" required />
+            <mat-error *ngIf="nominateParameterForm.get('value').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <button mat-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+    </form>
+    <mat-list>
+        <mat-list-item *ngFor="let val of values">
+            <button (click)="deleteValue(val)" mat-icon-button><mat-icon>delete</mat-icon></button>
+            {{ val }}
+        </mat-list-item>
+    </mat-list>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="update()">{{ 'SHARED.UPDATE' | translate }}</button>
+    <button mat-button mat-dialog-close>{{ 'SHARED.CANCEL' | translate }}</button>
+</div>

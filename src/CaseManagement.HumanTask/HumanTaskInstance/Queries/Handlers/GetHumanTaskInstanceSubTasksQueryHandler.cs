@@ -1,4 +1,5 @@
-﻿using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.HumanTask.Authorization;
+using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
 using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.Persistence;
@@ -56,7 +57,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
             {
                 var name = callbackTxt(_.PresentationElement.Names);
                 var subject = callbackTxt(_.PresentationElement.Subjects);
-                return TaskInstanceDetailsResult.ToDto(_, name, subject);
+                return TaskInstanceDetailsResult.ToDto(_, name, subject, null, null);
             }).ToList();
             return new SubTasksResults 
             { 

@@ -4,9 +4,17 @@
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="angularApp\app\stores\tasks\parameters\nominate-parameter.ts" />
+    <None Remove="angularApp\app\tasks\list\nominate-task-dialog.component.ts" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="angularApp\app\stores\tasks\parameters\nominate-parameter.ts" />
+    <TypeScriptCompile Include="angularApp\app\tasks\list\nominate-task-dialog.component.ts" />
   </ItemGroup>
 </Project>

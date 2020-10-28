@@ -1,4 +1,5 @@
 ﻿using CaseManagement.Common.Results;
+using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
 using CaseManagement.HumanTask.Localization;
@@ -17,15 +18,18 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
     public class SearchHumanTaskInstanceDetailsQueryHandler : IRequestHandler<SearchHumanTaskInstanceDetailsQuery, SearchResult<TaskInstanceDetailsResult>>
     {
         private readonly ILogger<SearchHumanTaskInstanceDetailsQueryHandler> _logger;
+        private readonly IAuthorizationHelper _authorizationHelper;
         private readonly ITranslationHelper _translationHelper;
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
 
         public SearchHumanTaskInstanceDetailsQueryHandler(
             ILogger<SearchHumanTaskInstanceDetailsQueryHandler> logger,
+            IAuthorizationHelper authorizationHelper,
             ITranslationHelper translationHelper,
             IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository)
         {
             _logger = logger;
+            _authorizationHelper = authorizationHelper;
             _translationHelper = translationHelper;
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
         }
@@ -33,10 +37,12 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
         public async Task<SearchResult<TaskInstanceDetailsResult>> Handle(SearchHumanTaskInstanceDetailsQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Search human task instance");
+            var nameIdentifier = _authorizationHelper.GetNameIdentifier(request.Claims);
+            var roles = _authorizationHelper.GetRoles(request.Claims);
             var result = await _humanTaskInstanceQueryRepository.Search(new SearchHumanTaskInstanceParameter
             {
-                UserIdentifier = request.Claims.GetUserNameIdentifier(),
-                GroupNames = request.Claims.GetGroupNames(),
+                UserIdentifier = nameIdentifier,
+                GroupNames = roles,
                 Count = request.Count,
                 Order = request.Order,
                 OrderBy = request.OrderBy,
@@ -60,9 +66,10 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                     }
                     catch (BadOperationExceptions) { return null; }
                 });
+                var appRoles = await _authorizationHelper.GetRoles(record, request.Claims, cancellationToken);
                 var name = callbackTxt(record.PresentationElement.Names);
                 var subject = callbackTxt(record.PresentationElement.Subjects);
-                content.Add(TaskInstanceDetailsResult.ToDto(record, name, subject));
+                content.Add(TaskInstanceDetailsResult.ToDto(record, name, subject, appRoles, _authorizationHelper.GetNameIdentifier(request.Claims)));
             }
 
             return new SearchResult<TaskInstanceDetailsResult>

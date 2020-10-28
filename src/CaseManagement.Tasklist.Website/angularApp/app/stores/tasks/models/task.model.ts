@@ -13,4 +13,5 @@ export class Task {
     createdTime: Date;
     lastModifiedTime: Date;
     hasPotentialOwners: boolean;
+    possibleActions: string[];
 }

@@ -8,11 +8,11 @@
         <mat-card>
             <mat-card-content>
                 <form [formGroup]="searchTasksForm" (ngSubmit)="onSearchTasks()">
-                    <mat-form-field class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>{{ baseTranslationKey + ".OWNER" | translate }}</mat-label>
                         <input matInput formControlName="actualOwner" />
                     </mat-form-field>
-                    <mat-form-field class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>{{ baseTranslationKey + ".STATUS" | translate }}</mat-label>
                         <mat-select formControlName="status" multiple>
                             <mat-option value="CREATED">{{ baseTranslationKey + '.STATUSENUM.CREATED' | translate }}</mat-option>
@@ -60,6 +60,18 @@
                     <ng-container matColumnDef="createdTime">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ baseTranslationKey + ".CREATED_DATETIME" | translate }}</th>
                         <td mat-cell *matCellDef="let task">{{task.createdTime | date:'medium'}}</td>
+                    </ng-container>
+                    <!-- Actions -->
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let task">
+                            <div *ngIf="task.possibleActions.length > 0">
+                                <button mat-button [matMenuTriggerFor]="actions">{{ baseTranslationKey + ".ACTIONS" | translate }}</button>
+                                <mat-menu #actions="matMenu">
+                                    <button (click)="executeAction(act, task)" mat-menu-item *ngFor="let act of task.possibleActions">{{ baseTranslationKey + ".ACTIONSENUM." + act | translate }}</button>
+                                </mat-menu>
+                            </div>
+                        </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

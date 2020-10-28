@@ -6,6 +6,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { ListTasksComponent } from './list/list.component';
+import { NominateTaskDialogComponent } from './list/nominate-task-dialog.component';
 import { HomeRoutes } from './tasks.routes';
 
 @NgModule({
@@ -19,12 +20,18 @@ import { HomeRoutes } from './tasks.routes';
         SharedModule
     ],
 
+    entryComponents: [
+        NominateTaskDialogComponent
+    ],
+
     declarations: [
-        ListTasksComponent
+        ListTasksComponent,
+        NominateTaskDialogComponent
     ],
 
     exports: [
-        ListTasksComponent
+        ListTasksComponent,
+        NominateTaskDialogComponent
     ],
 
     providers: [ ]

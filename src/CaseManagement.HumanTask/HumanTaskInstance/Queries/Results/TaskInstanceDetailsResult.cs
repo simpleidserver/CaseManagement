@@ -1,5 +1,7 @@
-﻿using CaseManagement.HumanTask.Domains;
+﻿using CaseManagement.HumanTask.Authorization;
+using CaseManagement.HumanTask.Domains;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Results
@@ -20,8 +22,22 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Results
         public DateTime CreatedTime { get; set; }
         public DateTime LastModifiedTime { get; set; }
         public bool HasPotentialOwners { get; set; }
+        public ICollection<string> PossibleActions { get; set; }
 
-        public static TaskInstanceDetailsResult ToDto(HumanTaskInstanceAggregate humanTaskInstance, Localization.Translation name, Localization.Translation subject)
+        public enum TaskinstanceActions
+        {
+            NOMINATE = 0,
+            CLAIM = 1,
+            START = 2,
+            COMPLETE = 3
+        }
+
+        public static TaskInstanceDetailsResult ToDto(
+            HumanTaskInstanceAggregate humanTaskInstance, 
+            Localization.Translation name, 
+            Localization.Translation subject, 
+            ICollection<UserRoles> userRoles,
+            string currentUser)
         {
             return new TaskInstanceDetailsResult
             {
@@ -37,8 +53,56 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Results
                 CreatedTime = humanTaskInstance.CreateDateTime,
                 LastModifiedTime = humanTaskInstance.UpdateDateTime,
                 HasPotentialOwners = humanTaskInstance.PeopleAssignment.PotentialOwner != null ? humanTaskInstance.PeopleAssignment.PotentialOwner.Values.Any() : false,
-                Status = Enum.GetName(typeof(HumanTaskInstanceStatus), humanTaskInstance.Status)
+                Status = Enum.GetName(typeof(HumanTaskInstanceStatus), humanTaskInstance.Status),
+                PossibleActions = GetPossibleActions(
+                    humanTaskInstance.Status,
+                    humanTaskInstance.ActualOwner,
+                    userRoles,
+                    currentUser).Select(_ => _.ToString()).ToList()
             };
+        }
+
+        private static ICollection<TaskinstanceActions> GetPossibleActions(HumanTaskInstanceStatus status, string actualOwner, ICollection<UserRoles> userRoles, string currentUser)
+        {
+            var result = new List<TaskinstanceActions>();
+            if (userRoles == null || string.IsNullOrWhiteSpace(currentUser))
+            {
+                return result;
+            }
+
+            if (status == HumanTaskInstanceStatus.CREATED)
+            {
+                if (userRoles.Contains(UserRoles.BUSINESSADMINISTRATOR))
+                {
+                    result.Add(TaskinstanceActions.NOMINATE);
+                }
+            }
+
+            if (status == HumanTaskInstanceStatus.READY)
+            {
+                if (userRoles.Contains(UserRoles.POTENTIALOWNER))
+                {
+                    result.Add(TaskinstanceActions.CLAIM);
+                }
+            }
+
+            if (status == HumanTaskInstanceStatus.RESERVED)
+            {
+                if (actualOwner == currentUser)
+                {
+                    result.Add(TaskinstanceActions.START);
+                }
+            }
+
+            if (status == HumanTaskInstanceStatus.INPROGRESS)
+            {
+                if (actualOwner == currentUser)
+                {
+                    result.Add(TaskinstanceActions.COMPLETE);
+                }
+            }
+
+            return result;
         }
     }
 }
