@@ -194,6 +194,11 @@ export class ListTasksComponent implements OnInit {
                     this.store.dispatch(act);
                 }
                 break;
+            case 'COMPLETE':
+                {
+                    this.router.navigate(['/tasks/' + task.id]);
+                }
+                break;
         }
     }
 

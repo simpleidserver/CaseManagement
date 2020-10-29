@@ -1,6 +1,9 @@
 import { Action } from '@ngrx/store';
 import { SearchTasksResult } from '../models/search-tasks-result.model';
 import { NominateParameter } from '../parameters/nominate-parameter';
+import { Rendering } from '../models/rendering';
+import { Task } from '../models/task.model';
+import { SearchTaskHistoryResult } from '../models/search-task-history-result.model';
 
 export enum ActionTypes {
     SEARCH_TASKS = "[Tasks] SEARCH_TASKS",
@@ -14,7 +17,10 @@ export enum ActionTypes {
     COMPLETE_NOMINATE_TASK = "[Tasks] COMPLETE_NOMINATE_TASK",
     CLAIM_TASK = "[Tasks] CLAIM_TASK",
     ERROR_CLAIM_TASK = "[Tasks] ERROR_CLAIM_TASK",
-    COMPLETE_CLAIM_TASK = "[Tasks] COMPLETE_CLAIM_TASK"
+    COMPLETE_CLAIM_TASK = "[Tasks] COMPLETE_CLAIM_TASK",
+    GET_TASK = "[Tasks] GET_TASK",
+    ERROR_GET_TASK = "[Tasks] ERROR_GET_TASK",
+    COMPLETE_GET_TASK = "[Tasks] COMPLETE_GET_TASK"
 }
 
 export class SearchTasks implements Action {
@@ -42,8 +48,20 @@ export class ClaimTask implements Action {
     constructor(public humanTaskInstanceId: string) { }
 }
 
+export class RenderingTask implements Action {
+    readonly type = ActionTypes.GET_TASK
+    constructor(public humanTaskInstanceId: string, public order: string, public direction: string) { }
+}
+
+export class CompleteRenderingTask implements Action {
+    readonly type = ActionTypes.COMPLETE_GET_TASK
+    constructor(public rendering: Rendering, public task: Task, public description: string, public searchTaskHistory: SearchTaskHistoryResult) { }
+}
+
 export type ActionsUnion = SearchTasks |
     CompleteSearchTasks |
     StartTask |
     NominateTask |
-    ClaimTask;
+    ClaimTask |
+    RenderingTask |
+    CompleteRenderingTask;

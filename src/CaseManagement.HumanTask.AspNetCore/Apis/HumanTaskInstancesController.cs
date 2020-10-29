@@ -288,6 +288,23 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             return new OkObjectResult(result);
         }
 
+        [HttpGet("{id}/rendering")]
+        public async Task<IActionResult> GetRendering(string id, CancellationToken token)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetRenderingQuery { HumanTaskInstanceId = id }, token);
+                return new OkObjectResult(result);
+            }
+            catch(UnknownHumanTaskInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         #endregion
 
         [HttpPost("start")]

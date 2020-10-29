@@ -3,9 +3,11 @@ import * as fromTask from './tasks/reducers/tasks.reducers';
 
 export interface AppState {
     taskLst: fromTask.TaskLstState;
+    task: fromTask.TaskState;
 }
 
 export const selectTaskLst = (state: AppState) => state.taskLst;
+export const selectTask = (state: AppState) => state.task;
 
 export const selectTaskLstResult = createSelector(
     selectTaskLst,
@@ -19,5 +21,6 @@ export const selectTaskLstResult = createSelector(
 );
 
 export const appReducer = {
-    taskLst: fromTask.taskLstReducer
+    taskLst: fromTask.taskLstReducer,
+    task: fromTask.taskReducer
 };

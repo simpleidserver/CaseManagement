@@ -34,6 +34,7 @@ namespace CaseManagement.HumanTask.Domains
         public int Priority { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
+        public Rendering Rendering { get; set; }
         public HumanTaskInstancePeopleAssignment PeopleAssignment { get; set; }
         public PresentationElementInstance PresentationElement { get; set; }
         public ConcurrentBag<HumanTaskInstanceEventHistory> EventHistories { get; set; }
@@ -56,7 +57,8 @@ namespace CaseManagement.HumanTask.Domains
             PresentationElementInstance presentationElementInstance,
             HumanTaskInstanceComposition composition,
             Operation operation,
-            CompletionBehavior completion)
+            CompletionBehavior completion,
+            Rendering rendering)
         {
             var evt = new HumanTaskInstanceCreatedEvent(
                 Guid.NewGuid().ToString(), 
@@ -73,6 +75,7 @@ namespace CaseManagement.HumanTask.Domains
                 composition,
                 operation,
                 completion,
+                rendering,
                 activationDeferralTime,
                 expirationTime);
             var result = new HumanTaskInstanceAggregate();
@@ -106,6 +109,7 @@ namespace CaseManagement.HumanTask.Domains
                 HumanTaskInstanceId = HumanTaskInstanceId,
                 ParentHumanTaskName = ParentHumanTaskName,
                 ParentHumanTaskId = ParentHumanTaskId,
+                Rendering = (Rendering)Rendering?.Clone(),
                 CompletionBehavior = (CompletionBehavior)CompletionBehavior?.Clone()
             };
         }
@@ -234,6 +238,7 @@ namespace CaseManagement.HumanTask.Domains
                 Composition = (HumanTaskInstanceComposition)evt.Composition?.Clone();
                 CompletionBehavior = (CompletionBehavior)evt.Completion?.Clone();
                 Operation = (Operation)evt.Operation?.Clone();
+                Rendering = evt.Rendering;
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;
                 Version = evt.Version;

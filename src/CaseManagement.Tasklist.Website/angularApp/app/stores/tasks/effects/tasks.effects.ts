@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, SearchTasks, StartTask, NominateTask, ClaimTask } from '../actions/tasks.actions';
+import { ActionTypes, SearchTasks, StartTask, NominateTask, ClaimTask, RenderingTask } from '../actions/tasks.actions';
 import { TasksService } from '../services/tasks.service';
 
 @Injectable()
@@ -68,4 +68,20 @@ export class TasksEffects {
             )
         );
 
+    @Effect()
+    getTask$= this.actions$
+        .pipe(
+            ofType(ActionTypes.GET_TASK),
+            mergeMap((evt: RenderingTask) => {
+                let renderingCall = this.tasksService.getRendering(evt.humanTaskInstanceId);
+                let detailsCall = this.tasksService.getDetails(evt.humanTaskInstanceId);
+                let descriptionCall = this.tasksService.getDescription(evt.humanTaskInstanceId);
+                let searchTaskHistoryCall = this.tasksService.searchTaskHistory(evt.humanTaskInstanceId, 0, 200, evt.order, evt.direction);
+                return forkJoin([renderingCall, detailsCall, descriptionCall, searchTaskHistoryCall]).pipe(
+                    map((results) => { return { type: ActionTypes.COMPLETE_GET_TASK, rendering: results[0], task: results[1], description: results[2], searchTaskHistory: results[3] }; }),
+                    catchError(() => of({ type: ActionTypes.ERROR_GET_TASK }))
+                )
+            }
+            )
+        );
 }

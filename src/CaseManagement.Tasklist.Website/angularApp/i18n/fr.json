@@ -14,7 +14,8 @@
     "IS_REQUIRED": "Is required",
     "ADD": "Add",
     "UPDATE": "Update",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "SUBMIT": "Submit"
   },
   "NOMINATE": {
     "TITLE": "Nominate",
@@ -25,6 +26,12 @@
     "VALUE": "Value"
   },
   "TASKS": {
+    "VIEW": {
+      "TITLE": "Task",
+      "NAME": "Name",
+      "SUBJECT": "Subject",
+      "PRIORITY": "Priority"
+    },
     "LIST": {
       "TASK_CLAIMED": "Task has been claimed",
       "ERROR_CLAIM_TASK": "An error occured while trying to claim the task",

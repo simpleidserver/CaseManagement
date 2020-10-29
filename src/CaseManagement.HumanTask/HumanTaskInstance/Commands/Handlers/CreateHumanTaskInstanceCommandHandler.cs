@@ -112,7 +112,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 presentationElementInstance,
                 composition,
                 humanTaskDef.Operation,
-                humanTaskDef.CompletionBehavior);
+                humanTaskDef.CompletionBehavior,
+                humanTaskDef.Rendering);
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return humanTaskInstance.AggregateId;

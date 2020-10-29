@@ -1,0 +1,46 @@
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <ul>
+            <li><div class="mat-h1"><a [routerLink]="['/tasks']">{{ "TASKS.LIST.TITLE" | translate }}</a></div></li>
+            <li class="separator"><div class="mat-h1">\</div></li>
+            <li><div class="mat-h1">{{ baseTranslationKey + '.TITLE' | translate }}</div></li>
+        </ul>
+    </div>
+</div>
+<div fxLayout="row">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <mat-card>
+            <mat-card-content>
+                <!-- Name -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ baseTranslationKey + ".NAME" | translate }}</mat-label>
+                    <input matInput type="text" [(ngModel)]="task.presentationName" disabled />
+                </mat-form-field>
+                <!-- Subject -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ baseTranslationKey + ".SUBJECT" | translate }}</mat-label>
+                    <input matInput type="text" [(ngModel)]="task.presentationSubject" disabled />
+                </mat-form-field>
+                <!-- Priority -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ baseTranslationKey + ".PRIORITY" | translate }}</mat-label>
+                    <input matInput type="number" [(ngModel)]="task.priority" disabled />
+                </mat-form-field>
+                <form [formGroup]="submitForm" (ngSubmit)="onSubmit(submitForm.value)">
+                    <div *ngFor="let field of rendering.output">
+                        <mat-form-field class="full-width" appearance="outline">
+                            <mat-label>{{ field.labels | translateField }}</mat-label>
+                            <input *ngIf="field.value.type === 'string'" matInput type="text" formControlName="{{field.id}}" name="{{field.id}}" />
+                            <mat-select *ngIf="field.value.type === 'select'" formControlName="{{field.id}}">
+                                <mat-option *ngFor="let opt of field.value.values" [value]="opt.value">
+                                    {{ field.displayNames | translateField }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <button mat-raised-button color="primary">{{ 'SHARED.SUBMIT' | translate }}</button>
+                </form>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
