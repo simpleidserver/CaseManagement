@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { of, forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, SearchTasks, StartTask, NominateTask, ClaimTask, RenderingTask } from '../actions/tasks.actions';
+import { ActionTypes, ClaimTask, NominateTask, RenderingTask, SearchTasks, StartTask, SubmitTask } from '../actions/tasks.actions';
 import { TasksService } from '../services/tasks.service';
 
 @Injectable()
@@ -81,6 +81,20 @@ export class TasksEffects {
                     map((results) => { return { type: ActionTypes.COMPLETE_GET_TASK, rendering: results[0], task: results[1], description: results[2], searchTaskHistory: results[3] }; }),
                     catchError(() => of({ type: ActionTypes.ERROR_GET_TASK }))
                 )
+            }
+            )
+    );
+
+    @Effect()
+    completeTask$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.SUBMIT_TASK),
+            mergeMap((evt: SubmitTask) => {
+                return this.tasksService.completeTask(evt.humanTaskInstanceId, evt.operationParameters)
+                    .pipe(
+                        map(() => { return { type: ActionTypes.COMPLETE_SUBMIT_TASK }; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_SUBMIT_TASK }))
+                    );
             }
             )
         );

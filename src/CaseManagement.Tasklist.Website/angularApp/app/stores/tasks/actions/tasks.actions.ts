@@ -20,7 +20,10 @@ export enum ActionTypes {
     COMPLETE_CLAIM_TASK = "[Tasks] COMPLETE_CLAIM_TASK",
     GET_TASK = "[Tasks] GET_TASK",
     ERROR_GET_TASK = "[Tasks] ERROR_GET_TASK",
-    COMPLETE_GET_TASK = "[Tasks] COMPLETE_GET_TASK"
+    COMPLETE_GET_TASK = "[Tasks] COMPLETE_GET_TASK",
+    SUBMIT_TASK = "[Tasks] SUBMIT_TASK",
+    ERROR_SUBMIT_TASK = "[Tasks] ERROR_SUBMIT_TASK",
+    COMPLETE_SUBMIT_TASK = "[Tasks] COMPLETE_SUBMIT_TASK"
 }
 
 export class SearchTasks implements Action {
@@ -58,10 +61,16 @@ export class CompleteRenderingTask implements Action {
     constructor(public rendering: Rendering, public task: Task, public description: string, public searchTaskHistory: SearchTaskHistoryResult) { }
 }
 
+export class SubmitTask implements Action {
+    readonly type = ActionTypes.SUBMIT_TASK
+    constructor(public humanTaskInstanceId: string, public operationParameters: any) { }
+}
+
 export type ActionsUnion = SearchTasks |
     CompleteSearchTasks |
     StartTask |
     NominateTask |
     ClaimTask |
     RenderingTask |
-    CompleteRenderingTask;
+    CompleteRenderingTask |
+    SubmitTask;

@@ -111,4 +111,16 @@ export class TasksService {
 
         return this.http.post<SearchTaskHistoryResult>(targetUrl, JSON.stringify(request), { headers: headers });
     }
+
+    completeTask(humanTaskInstanceId: string, operationParameters: any) : Observable<boolean> {
+        let headers = new HttpHeaders();
+        const defaultLang = this.translate.currentLang;
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Accept-Language', defaultLang);
+        const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/complete";
+        const request: any = { operationParameters: operationParameters };
+        return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
+    }
 }

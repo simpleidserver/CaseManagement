@@ -36,7 +36,9 @@
       "USER_PRINCIPAL": "Owner",
       "EVENT_TYPE": "Event type",
       "START_OWNER": "Start owner",
-      "END_OWNER": "End owner"
+      "END_OWNER": "End owner",
+      "TASK_COMPLETED": "Task has been completed",
+      "ERROR_COMPLETE_TASK": "An error occured while trying to complete the task"
     },
     "LIST": {
       "TASK_CLAIMED": "Task has been claimed",
@@ -58,7 +60,8 @@
         "CREATED": "Created",
         "READY": "Ready",
         "RESERVED": "Reserved",
-        "INPROGRESS": "In progress"
+        "INPROGRESS": "In progress",
+        "COMPLETED": "Completed"
       },
       "ACTIONSENUM": {
         "START": "Start",

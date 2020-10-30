@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSnackBar, MatSort, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromTaskActions from '@app/stores/tasks/actions/tasks.actions';
@@ -8,7 +8,9 @@ import { OutputRenderingElement, Rendering } from '@app/stores/tasks/models/rend
 import { TaskHistory } from '@app/stores/tasks/models/task-history.model';
 import { Task } from '@app/stores/tasks/models/task.model';
 import { TaskState } from '@app/stores/tasks/reducers/tasks.reducers';
-import { select, Store } from '@ngrx/store';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'view-task-component',
@@ -27,9 +29,28 @@ export class ViewTaskComponent implements OnInit {
     constructor(
         private store: Store<fromAppState.AppState>,
         private route: ActivatedRoute,
+        private translate: TranslateService,
+        private snackBar: MatSnackBar,
+        private actions$: ScannedActionsSubject,
         private formBuilder: FormBuilder) { }
 
     ngOnInit() {
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_SUBMIT_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_COMPLETED'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+                this.refresh();
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_SUBMIT_TASK))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_SUBMIT_TASK'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
+
         this.store.pipe(select(fromAppState.selectTask)).subscribe((r: TaskState) => {
             if (!r) {
                 return;
@@ -66,6 +87,8 @@ export class ViewTaskComponent implements OnInit {
     }
 
     onSubmit(e: any) {
-        console.log(e);
+        const id = this.route.snapshot.params['id'];
+        const req = new fromTaskActions.SubmitTask(id, e);
+        this.store.dispatch(req);
     }
 }
