@@ -29,8 +29,14 @@
     "VIEW": {
       "TITLE": "Task",
       "NAME": "Name",
+      "HISTORY": "History",
       "SUBJECT": "Subject",
-      "PRIORITY": "Priority"
+      "PRIORITY": "Priority",
+      "EVENT_TIME": "Reception datetime",
+      "USER_PRINCIPAL": "Owner",
+      "EVENT_TYPE": "Event type",
+      "START_OWNER": "Start owner",
+      "END_OWNER": "End owner"
     },
     "LIST": {
       "TASK_CLAIMED": "Task has been claimed",

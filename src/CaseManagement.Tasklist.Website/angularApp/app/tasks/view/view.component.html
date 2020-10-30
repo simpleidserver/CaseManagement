@@ -41,6 +41,39 @@
                     <button mat-raised-button color="primary">{{ 'SHARED.SUBMIT' | translate }}</button>
                 </form>
             </mat-card-content>
+            <mat-tab-group>
+                <mat-tab label="{{ baseTranslationKey + '.HISTORY' | translate }}">
+                    <table class="full-width" mat-table [dataSource]="histories$" matSortActive="eventTime" matSortDirection="desc" matSort>
+                        <!-- Event time -->
+                        <ng-container matColumnDef="eventTime">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ baseTranslationKey + ".EVENT_TIME" | translate }}</th>
+                            <td mat-cell *matCellDef="let history">{{ history.eventTime | date:'medium' }}</td>
+                        </ng-container>
+                        <!-- User principal -->
+                        <ng-container matColumnDef="userPrincipal">
+                            <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".USER_PRINCIPAL" | translate }}</th>
+                            <td mat-cell *matCellDef="let history">{{ history.userPrincipal }}</td>
+                        </ng-container>
+                        <!-- Event type -->
+                        <ng-container matColumnDef="eventType">
+                            <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".EVENT_TYPE" | translate }}</th>
+                            <td mat-cell *matCellDef="let history">{{ history.eventType }}</td>
+                        </ng-container>
+                        <!-- Start owner -->
+                        <ng-container matColumnDef="startOwner">
+                            <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".START_OWNER" | translate }}</th>
+                            <td mat-cell *matCellDef="let history">{{ history.startOwner }}</td>
+                        </ng-container>
+                        <!-- Start owner -->
+                        <ng-container matColumnDef="endOwner">
+                            <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".END_OWNER" | translate }}</th>
+                            <td mat-cell *matCellDef="let history">{{ history.endOwner }}</td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </mat-tab>
+            </mat-tab-group>
         </mat-card>
     </div>
 </div>

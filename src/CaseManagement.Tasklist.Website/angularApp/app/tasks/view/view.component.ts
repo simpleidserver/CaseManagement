@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatSort, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromTaskActions from '@app/stores/tasks/actions/tasks.actions';
 import { OutputRenderingElement, Rendering } from '@app/stores/tasks/models/rendering';
+import { TaskHistory } from '@app/stores/tasks/models/task-history.model';
+import { Task } from '@app/stores/tasks/models/task.model';
 import { TaskState } from '@app/stores/tasks/reducers/tasks.reducers';
 import { select, Store } from '@ngrx/store';
-import { Task } from '../../stores/tasks/models/task.model';
 
 @Component({
     selector: 'view-task-component',
@@ -15,8 +17,11 @@ import { Task } from '../../stores/tasks/models/task.model';
 })
 export class ViewTaskComponent implements OnInit {
     baseTranslationKey: string = "TASKS.VIEW";
+    @ViewChild(MatSort) sort: MatSort;
+    displayedColumns: string[] = ["eventTime", "userPrincipal", "eventType", "startOwner", "endOwner"];
     rendering: Rendering = new Rendering();
     task: Task = new Task();
+    histories$: MatTableDataSource<TaskHistory>;
     submitForm: FormGroup;
 
     constructor(
@@ -42,6 +47,11 @@ export class ViewTaskComponent implements OnInit {
                         grp[oe.id] = new FormControl('');
                     });
                 }
+            }
+
+            if (r.searchTaskHistory) {
+                this.histories$ = new MatTableDataSource(r.searchTaskHistory.content);
+                this.histories$.sort = this.sort;
             }
 
             this.submitForm = this.formBuilder.group(grp);
