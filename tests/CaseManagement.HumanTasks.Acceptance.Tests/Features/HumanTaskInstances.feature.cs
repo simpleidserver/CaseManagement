@@ -708,8 +708,8 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
 #line 224
- testRunner.And("poll HTTP POST JSON request \'http://localhost/notificationinstances/search\', unti" +
-                    "l \'totalLength\'=\'1\'", ((string)(null)), table178, "And ");
+ testRunner.And("poll HTTP POST JSON request \'http://localhost/notificationinstances/.search\', unt" +
+                    "il \'totalLength\'=\'1\'", ((string)(null)), table178, "And ");
 #line 226
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 228
@@ -772,9 +772,9 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
 #line 246
- testRunner.And("poll HTTP POST JSON request \'http://localhost/notificationinstances/search\', unti" +
-                    "l \'$.content[?(@.name == \'notificationCompletion\')].name\'=\'notificationCompletio" +
-                    "n\'", ((string)(null)), table182, "And ");
+ testRunner.And("poll HTTP POST JSON request \'http://localhost/notificationinstances/.search\', unt" +
+                    "il \'$.content[?(@.name == \'notificationCompletion\')].name\'=\'notificationCompleti" +
+                    "on\'", ((string)(null)), table182, "And ");
 #line 248
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 250

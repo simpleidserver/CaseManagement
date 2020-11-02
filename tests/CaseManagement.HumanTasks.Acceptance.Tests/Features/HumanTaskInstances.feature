@@ -221,7 +221,7 @@ Scenario: Check a notification is created by StartDeadLine
 	And authenticate
 	| Key                                                                  | Value |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | guest |
-	And poll HTTP POST JSON request 'http://localhost/notificationinstances/search', until 'totalLength'='1'
+	And poll HTTP POST JSON request 'http://localhost/notificationinstances/.search', until 'totalLength'='1'
 	| Key | Value |
 	And extract JSON from body
 
@@ -243,7 +243,7 @@ Scenario: Check a notification is created by CompletionDeadLine
 	And authenticate
 	| Key                                                                  | Value |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | guest |
-	And poll HTTP POST JSON request 'http://localhost/notificationinstances/search', until '$.content[?(@.name == 'notificationCompletion')].name'='notificationCompletion'
+	And poll HTTP POST JSON request 'http://localhost/notificationinstances/.search', until '$.content[?(@.name == 'notificationCompletion')].name'='notificationCompletion'
 	| Key | Value |
 	And extract JSON from body
 
