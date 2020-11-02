@@ -7,7 +7,8 @@
   "FRENCH": "French",
   "ENGLISH": "English",
   "MENU": {
-    "TASKS": "Tasks"
+    "TASKS": "Tasks",
+    "NOTIFICATIONS": "Notifications"
   },
   "SHARED": {
     "SEARCH": "Search",
@@ -68,6 +69,21 @@
         "CLAIM": "Claim",
         "NOMINATE": "Nominate",
         "COMPLETE": "Complete"
+      }
+    }
+  },
+  "NOTIFICATIONS": {
+    "LIST": {
+      "TITLE": "Notifications",
+      "NAME": "Name",
+      "PRIORITY": "Priority",
+      "STATUS": "Status",
+      "STATUSENUM": {
+        "CREATED": "Created",
+        "READY": "Ready",
+        "RESERVED": "Reserved",
+        "INPROGRESS": "In progress",
+        "COMPLETED": "Completed"
       }
     }
   }

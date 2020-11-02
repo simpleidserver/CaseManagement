@@ -195,6 +195,9 @@
   <data name="UnknownHumanTaskInstance" xml:space="preserve">
     <value>Unknown human task instance '{0}'</value>
   </data>
+  <data name="UnknownNotification" xml:space="preserve">
+    <value>Unknown notification '{0}'</value>
+  </data>
   <data name="UnknownStartDeadline" xml:space="preserve">
     <value>Unknown start deadline</value>
   </data>

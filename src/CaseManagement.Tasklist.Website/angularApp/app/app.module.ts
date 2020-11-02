@@ -17,8 +17,10 @@ import { AuthGuard } from './infrastructure/auth-guard.service';
 import { MaterialModule } from './shared/material.module';
 import { SharedModule } from './shared/shared.module';
 import { appReducer } from './stores/appstate';
+import { NotificationsEffects } from './stores/notifications/effects/notifications.effects';
 import { TasksEffects } from './stores/tasks/effects/tasks.effects';
 import { TasksService } from './stores/tasks/services/tasks.service';
+import { NotificationsService } from './stores/notifications/services/notifications.service';
 
 export function createTranslateLoader(http: HttpClient) {
     const url = process.env.BASE_URL + 'assets/i18n/';
@@ -36,7 +38,7 @@ export function createTranslateLoader(http: HttpClient) {
         BrowserAnimationsModule,
         HttpClientModule,
         OAuthModule.forRoot(),
-        EffectsModule.forRoot([TasksEffects]),
+        EffectsModule.forRoot([TasksEffects, NotificationsEffects]),
         StoreModule.forRoot(appReducer),
         StoreDevtoolsModule.instrument({
             maxAge: 10
@@ -53,6 +55,6 @@ export function createTranslateLoader(http: HttpClient) {
         AppComponent
     ],
     bootstrap: [AppComponent],
-    providers: [AuthGuard, TasksService]
+    providers: [AuthGuard, TasksService, NotificationsService]
 })
 export class AppModule { }

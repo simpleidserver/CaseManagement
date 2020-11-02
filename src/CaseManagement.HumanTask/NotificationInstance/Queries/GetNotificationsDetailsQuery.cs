@@ -1,13 +1,10 @@
-﻿using CaseManagement.Common.Parameters;
-using CaseManagement.Common.Results;
-using CaseManagement.HumanTask.NotificationInstance.Queries.Results;
+﻿using CaseManagement.HumanTask.NotificationInstance.Queries.Results;
 using MediatR;
-using System.Collections.Generic;
 
 namespace CaseManagement.HumanTask.NotificationInstance.Queries
 {
-    public class GetNotificationsDetailsQuery : BaseSearchParameter, IRequest<SearchResult<NotificationDetailsResult>>
+    public class GetNotificationsDetailsQuery : IRequest<NotificationDetailsResult>
     {
-        public IEnumerable<KeyValuePair<string, string>> Claims { get; set; }
+        public string NotificationId { get; set; }
     }
 }

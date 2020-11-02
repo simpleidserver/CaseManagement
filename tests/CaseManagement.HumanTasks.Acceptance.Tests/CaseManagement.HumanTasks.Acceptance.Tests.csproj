@@ -23,6 +23,9 @@
     <ProjectReference Include="..\..\src\CaseManagement.HumanTask.AspNetCore\CaseManagement.HumanTask.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Features\ErrorNotificationInstances.feature.cs">
+      <DependentUpon>ErrorNotificationInstances.feature</DependentUpon>
+    </Compile>
     <Compile Update="Features\HumanTaskDef.feature.cs">
       <DependentUpon>HumanTaskDef.feature</DependentUpon>
     </Compile>
@@ -37,6 +40,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <SpecFlowFeatureFiles Update="Features\ErrorNotificationInstances.feature">
+      <Visible>$(UsingMicrosoftNETSdk)</Visible>
+      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+    </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Features\HumanTaskDef.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>

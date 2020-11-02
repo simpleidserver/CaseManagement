@@ -8,6 +8,7 @@ namespace CaseManagement.HumanTask.Persistence
 {
     public interface INotificationInstanceQueryRepository
     {
+        Task<NotificationInstanceAggregate> Get(string id, CancellationToken token);
         Task<FindResponse<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token);
     }
 }

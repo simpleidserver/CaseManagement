@@ -1,0 +1,39 @@
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <div class="mat-h1">{{ baseTranslationKey + ".TITLE" | translate }}</div>
+    </div>
+</div>
+<div fxLayout="row">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <mat-card>
+            <mat-card-content>
+                <table mat-table class="full-width" matSortActive="createdTime" matSortDirection="desc" [dataSource]="notifications$" matSort>
+                    <!-- Name -->
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ baseTranslationKey + ".NAME" | translate }}</th>
+                        <td mat-cell *matCellDef="let notification">{{notification.name}}</td>
+                    </ng-container>
+                    <!-- Priority -->
+                    <ng-container matColumnDef="priority">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ baseTranslationKey + ".PRIORITY" | translate }}</th>
+                        <td mat-cell *matCellDef="let notification">{{notification.priority}}</td>
+                    </ng-container>
+                    <!-- Status -->
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".STATUS" | translate }}</th>
+                        <td mat-cell *matCellDef="let notification">
+                            <mat-chip-list>
+                                <mat-chip>
+                                    {{ baseTranslationKey + '.STATUSENUM.' + notification.status | translate }}
+                                </mat-chip>
+                            </mat-chip-list>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

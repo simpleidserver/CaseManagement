@@ -18,6 +18,11 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             _notifications = notifications;
         }
 
+        public Task<NotificationInstanceAggregate> Get(string id, CancellationToken token)
+        {
+            return Task.FromResult(_notifications.FirstOrDefault(_ => _.AggregateId == id));
+        }
+
         public Task<FindResponse<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token)
         {
             var result = _notifications.Where(n =>

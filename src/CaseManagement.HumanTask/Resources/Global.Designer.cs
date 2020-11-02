@@ -295,6 +295,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unknown notification &apos;{0}&apos;.
+        /// </summary>
+        internal static string UnknownNotification {
+            get {
+                return ResourceManager.GetString("UnknownNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Unknown start deadline.
         /// </summary>
         internal static string UnknownStartDeadline {

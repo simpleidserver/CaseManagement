@@ -4,9 +4,18 @@
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="angularApp\app\stores\notifications\models\notification.model.ts" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="angularApp\app\notifications\list\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="angularApp\app\stores\notifications\models\notification.model.ts" />
   </ItemGroup>
 </Project>
