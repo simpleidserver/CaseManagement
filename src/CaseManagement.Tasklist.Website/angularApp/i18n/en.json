@@ -76,6 +76,8 @@
     "LIST": {
       "TITLE": "Notifications",
       "NAME": "Name",
+      "SUBJECT": "Subject",
+      "CREATED_DATETIME": "Created datetime",
       "PRIORITY": "Priority",
       "STATUS": "Status",
       "STATUSENUM": {

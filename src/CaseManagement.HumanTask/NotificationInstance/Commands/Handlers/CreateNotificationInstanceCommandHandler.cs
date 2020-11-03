@@ -35,6 +35,7 @@ namespace CaseManagement.HumanTask.NotificationInstance.Commands.Handlers
             var assignmentInstance = _parameterParser.ParseNotificationInstancePeopleAssignment(request.NotificationDef.PeopleAssignment, parameters);
             var id = Guid.NewGuid().ToString();
             var notificationInstance = NotificationInstanceAggregate.New(id,
+                request.NotificationDef.Priority,
                 request.NotificationDef.Name,
                 parameters,
                 presentationElt,

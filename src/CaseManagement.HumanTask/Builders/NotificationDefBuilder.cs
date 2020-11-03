@@ -16,7 +16,7 @@ namespace CaseManagement.HumanTask.Builders
             };
         }
 
-        public NotificationDefBuilder SetPriority(string priority)
+        public NotificationDefBuilder SetPriority(int priority)
         {
             _notification.Priority = priority;
             return this;

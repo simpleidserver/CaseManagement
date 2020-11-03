@@ -19,7 +19,7 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// This element is used to specify the priority of the notification.
         /// </summary>
-        public string Priority { get; set; }
+        public int Priority { get; set; }
         /// <summary>
         /// This element is used to specify people assigned to the notification. 
         /// </summary>

@@ -163,7 +163,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         {
             public string Name { get; set; }
             public OperationResult Operation { get; set; }
-            public string Priority { get; set; }
+            public int Priority { get; set; }
             public NotificationDefinitionPeopleAssignmentResult PeopleAssignment { get; set; }
             public PresentationElementDefinitionResult PresentationElement { get; set; }
 

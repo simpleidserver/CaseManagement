@@ -1,12 +1,15 @@
 ﻿using CaseManagement.Common.Results;
 using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Exceptions;
+using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.NotificationInstance.Queries.Results;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Persistence.Parameters;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,17 +21,20 @@ namespace CaseManagement.HumanTask.NotificationInstance.Queries.Handlers
         private readonly ILogger<SearchNotificationsDetailsQueryHandler> _logger;
         private readonly IAuthorizationHelper _authorizationHelper;
         private readonly ILogicalPeopleGroupStore _logicalPeopleGroupStore;
+        private readonly ITranslationHelper _translationHelper;
         private readonly INotificationInstanceQueryRepository _notificationInstanceQueryRepository;
 
         public SearchNotificationsDetailsQueryHandler(
             ILogger<SearchNotificationsDetailsQueryHandler> logger,
             IAuthorizationHelper authorizationHelper,
             ILogicalPeopleGroupStore logicalPeopleGroupStore,
+            ITranslationHelper translationHelper,
             INotificationInstanceQueryRepository notificationInstanceQueryRepository)
         {
             _logger = logger;
             _authorizationHelper = authorizationHelper;
             _logicalPeopleGroupStore = logicalPeopleGroupStore;
+            _translationHelper = translationHelper;
             _notificationInstanceQueryRepository = notificationInstanceQueryRepository;
         }
 
@@ -54,12 +60,33 @@ namespace CaseManagement.HumanTask.NotificationInstance.Queries.Handlers
                 StartIndex = request.StartIndex,
                 User = userClaims
             }, cancellationToken);
+            var content = new List<NotificationDetailsResult>();
+            foreach (var record in result.Content)
+            {
+                var callbackTxt = new Func<ICollection<Domains.Text>, Translation>((t) =>
+                {
+                    if (t == null || !t.Any())
+                    {
+                        return null;
+                    }
+
+                    try
+                    {
+                        return _translationHelper.Translate(t);
+                    }
+                    catch (BadOperationExceptions) { return null; }
+                });
+                var name = callbackTxt(record.PresentationElement.Names);
+                var subject = callbackTxt(record.PresentationElement.Subjects);
+                content.Add(NotificationDetailsResult.ToDto(record, name, subject));
+            }
+
             return new SearchResult<NotificationDetailsResult>
             {
                 StartIndex = result.StartIndex,
                 TotalLength = result.TotalLength,
                 Count = result.Count,
-                Content = result.Content.Select(_ => NotificationDetailsResult.ToDto(_))
+                Content = content
             };
         }
     }

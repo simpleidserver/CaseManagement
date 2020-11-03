@@ -7,6 +7,7 @@ import { SearchNotificationResult } from '@app/stores/notifications/models/searc
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
 import { SearchNotifications } from '@app/stores/notifications/actions/notifications.actions';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'list-notifications-component',
@@ -14,7 +15,7 @@ import { SearchNotifications } from '@app/stores/notifications/actions/notificat
     styleUrls: ['./list.component.scss']
 })
 export class ListNotificationsComponent implements OnInit {
-    displayedColumns: string[] = ['name', 'priority', 'status'];
+    displayedColumns: string[] = ['priority', 'presentationName', 'presentationSubject', 'status', 'createdTime'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     baseTranslationKey: string = "NOTIFICATIONS.LIST";
@@ -24,6 +25,7 @@ export class ListNotificationsComponent implements OnInit {
     constructor(private store: Store<fromAppState.AppState>,
         private activatedRoute: ActivatedRoute,
         private router: Router,
+        private translate: TranslateService,
         public dialog: MatDialog) {
     }
 
@@ -42,6 +44,9 @@ export class ListNotificationsComponent implements OnInit {
             this.paginator.pageSize = p.get('pageSize');
             this.paginator.pageIndex = p.get('pageIndex');
             this.refresh()
+        });
+        this.translate.onLangChange.subscribe(() => {
+            this.refresh();
         });
     }
 

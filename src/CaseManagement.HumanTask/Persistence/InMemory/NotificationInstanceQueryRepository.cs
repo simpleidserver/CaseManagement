@@ -11,6 +11,11 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 {
     public class NotificationInstanceQueryRepository : INotificationInstanceQueryRepository
     {
+        private static Dictionary<string, string> MAPPING_NOTIFICATIONINSTANCE_TO_PROPERTYNAME = new Dictionary<string, string>
+        {
+            { "priority", "Priority" },
+            { "createdTime", "CreateDateTime" },
+        };
         private readonly ConcurrentBag<NotificationInstanceAggregate> _notifications;
 
         public NotificationInstanceQueryRepository(ConcurrentBag<NotificationInstanceAggregate> notifications)
@@ -25,15 +30,20 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 
         public Task<FindResponse<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token)
         {
-            var result = _notifications.Where(n =>
+            IQueryable<NotificationInstanceAggregate> result = _notifications.Where(n =>
             n.PeopleAssignment != null &&
             n.PeopleAssignment.Recipient != null &&
             (
                 (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.USERIDENTIFIERS && n.PeopleAssignment.Recipient.Values.Contains(parameter.User.UserIdentifier)) ||
                 (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.GROUPNAMES && n.PeopleAssignment.Recipient.Values.Any(v => parameter.User.Roles.Contains(v))) ||
                 (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.LOGICALPEOPLEGROUP && n.PeopleAssignment.Recipient.LogicalGroup != null && parameter.User.LogicalGroups.Contains(n.PeopleAssignment.Recipient.LogicalGroup.Name))
-            ));
+            )).AsQueryable();
             int totalLength = result.Count();
+            if (MAPPING_NOTIFICATIONINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+            {
+                result = result.InvokeOrderBy(MAPPING_NOTIFICATIONINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+            }
+
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
             return Task.FromResult(new FindResponse<NotificationInstanceAggregate>
             {
