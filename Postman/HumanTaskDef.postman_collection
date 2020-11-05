@@ -1,0 +1,63 @@
+{
+	"variables": [],
+	"info": {
+		"name": "HumanTask",
+		"_postman_id": "a876efa0-15cd-16ef-2414-fbf2f925111f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add human task def",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"humanTaskDefId\", jsonData[\"id\"]);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:60006/humantasksdefs",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"{{$guid}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update human task def information",
+			"request": {
+				"url": "http://localhost:60006/humantasksdefs/{{humanTaskDefId}}/info",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"newname\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

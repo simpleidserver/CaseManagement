@@ -4,6 +4,7 @@ namespace CaseManagement.HumanTask.Domains
 {
     public class PresentationParameter : ICloneable
     {
+        public long Id { get; set; }
         /// <summary>
         /// Uniquely identifies the parameter definition.
         /// </summary>
@@ -22,6 +23,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             return new PresentationParameter
             {
+                Id = Id,
                 Name = Name,
                 Type = Type,
                 Expression = Expression

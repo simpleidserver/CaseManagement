@@ -35,13 +35,13 @@ namespace CaseManagement.HumanTask.Authorization
 
         public Task<ICollection<UserRoles>> GetRoles(HumanTaskInstanceAggregate humanTaskInstance, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
-            return GetRoles(humanTaskInstance.PeopleAssignment, claims, token);
+            return GetRoles(humanTaskInstance.PeopleAssignments, claims, token);
         }
 
-        public Task<ICollection<UserRoles>> GetRoles(HumanTaskInstancePeopleAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        public Task<ICollection<UserRoles>> GetRoles(ICollection<PeopleAssignmentInstance> peopleAssignments, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
             ICollection<UserRoles> result = new List<UserRoles>();
-            var cb = new Action<PeopleAssignmentInstance, UserRoles, ICollection<UserRoles>>(async (pas, ur, r) =>
+            var cb = new Action<ICollection<PeopleAssignmentInstance>, UserRoles, ICollection<UserRoles>>(async (pas, ur, r) =>
             {
                 if (pas == null)
                 {
@@ -54,92 +54,50 @@ namespace CaseManagement.HumanTask.Authorization
                 }
             });
 
-            if (assignment != null)
-            {
-                cb(assignment.BusinessAdministrator, UserRoles.BUSINESSADMINISTRATOR, result);
-                cb(assignment.ExcludedOwner, UserRoles.EXCLUDEDOWNER, result);
-                cb(assignment.PotentialOwner, UserRoles.POTENTIALOWNER, result);
-                cb(assignment.TaskInitiator, UserRoles.TASKINITIATOR, result);
-                cb(assignment.TaskStakeHolder, UserRoles.TASKSTAKEHODLER, result);
-            }
-
+            cb(peopleAssignments.GetBusinessAdministrators(), UserRoles.BUSINESSADMINISTRATOR, result);
+            cb(peopleAssignments.GetExcludedOwners(), UserRoles.EXCLUDEDOWNER, result);
+            cb(peopleAssignments.GetPotentialOwners(), UserRoles.POTENTIALOWNER, result);
+            cb(peopleAssignments.GetTaskInitiators(), UserRoles.TASKINITIATOR, result);
+            cb(peopleAssignments.GetTaskStakeHolders(), UserRoles.TASKSTAKEHODLER, result);
             return Task.FromResult(result);
         }
 
         #region Check authorization
 
-        protected virtual Task<bool> IsAuthorized(PeopleAssignmentInstance assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
+        protected virtual async Task<bool> IsAuthorized(ICollection<PeopleAssignmentInstance> assignments, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
-            switch (assignment.Type)
+            var nameIdentifier = GetNameIdentifier(claims);
+            var roles = GetRoles(claims);
+            foreach (var assignment in assignments)
             {
-                case PeopleAssignmentTypes.GROUPNAMES:
-                    return CheckGroupNames(assignment.Values, claims, token);
-                case PeopleAssignmentTypes.USERIDENTIFIERS:
-                    return CheckUserIdentifiers(assignment.Values, claims, token);
-                case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
-                    return CheckLogicalGroup(assignment.LogicalGroup, claims, token);
-            }
-
-            return Task.FromResult(false);
-        }
-        
-        /// <summary>
-        /// Check logical people group.
-        /// </summary>
-        /// <param name="assignment"></param>
-        /// <param name="claims"></param>
-        /// <returns></returns>
-        protected virtual async Task<bool> CheckLogicalGroup(LogicalGroupInstance assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
-        {
-            var members = await _logicalPeopleGroupStore.GetMembers(assignment.Name, new List<KeyValuePair<string,string>>(), token);
-            foreach(var member in members)
-            {
-                if (member.Claims.All(c => claims.Any(cl => cl.Key == c.Key && cl.Value == c.Value)))
+                switch(assignment.Type)
                 {
-                    return true;
+                    case PeopleAssignmentTypes.USERIDENTIFIERS:
+                        if (assignment.Value == nameIdentifier)
+                        {
+                            return true;
+                        }
+                        break;
+                    case PeopleAssignmentTypes.GROUPNAMES:
+                        if (roles.Contains(assignment.Value))
+                        {
+                            return true;
+                        }
+                        break;
+                    case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
+                        var members = await _logicalPeopleGroupStore.GetMembers(assignment.Value, new List<KeyValuePair<string, string>>(), token);
+                        foreach (var member in members)
+                        {
+                            if (member.Claims.All(c => claims.Any(cl => cl.Key == c.Key && cl.Value == c.Value)))
+                            {
+                                return true;
+                            }
+                        }
+                        break;
                 }
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Check group names.
-        /// </summary>
-        /// <param name="assignment"></param>
-        /// <param name="claims"></param>
-        /// <returns></returns>
-        protected virtual Task<bool> CheckGroupNames(ICollection<string> groupNames, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
-        {
-            var roles = GetRoles(claims);
-            if (!roles.Any())
-            {
-                return Task.FromResult(false);
-            }
-
-            if (!groupNames.Any(_ => roles.Any(r => r == _)))
-            {
-                return Task.FromResult(false);
-            }
-
-            return Task.FromResult(true);
-        }
-
-        /// <summary>
-        /// Check user identifiers.
-        /// </summary>
-        /// <param name="assignment"></param>
-        /// <param name="claims"></param>
-        /// <returns></returns>
-        protected virtual Task<bool> CheckUserIdentifiers(ICollection<string> userIdentifiers, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
-        {
-            var nameIdentifier = GetNameIdentifier(claims);
-            if (string.IsNullOrEmpty(nameIdentifier))
-            {
-                return Task.FromResult(false);
-            }
-
-            return Task.FromResult(userIdentifiers.Contains(nameIdentifier));
         }
 
         #endregion

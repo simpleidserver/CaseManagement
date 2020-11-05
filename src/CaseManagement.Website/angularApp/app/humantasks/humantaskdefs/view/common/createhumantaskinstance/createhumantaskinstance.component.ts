@@ -1,7 +1,7 @@
 ﻿import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { CreateHumanTaskInstance } from '@app/stores/humantaskinstances/parameters/create-humantaskinstance.model';
-import { Parameter } from '@app/stores/common/operation.model';
+import { Parameter } from '@app/stores/common/parameter.model';
 
 @Component({
     selector: 'createhumantaskinstance-component',
@@ -40,7 +40,9 @@ export class CreateHumanTaskInstanceComponent {
         const self = this;
         if (this._humanTaskDef && this._createHumanTaskInstance) {
             this._createHumanTaskInstance.operationParameters = {};
-            this._humanTaskDef.operation.inputParameters.forEach(function (p: Parameter) {
+            this._humanTaskDef.operationParameters.filter(function (o: Parameter) {
+                return o.usage === 'INPUT';
+            }).forEach(function (p: Parameter) {
                 self._createHumanTaskInstance.operationParameters[p.name] = '';
             });
         }

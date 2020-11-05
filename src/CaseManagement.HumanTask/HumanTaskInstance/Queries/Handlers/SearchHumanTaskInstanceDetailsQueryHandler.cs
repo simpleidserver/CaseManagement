@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Common.Results;
 using CaseManagement.HumanTask.Authorization;
+using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
 using CaseManagement.HumanTask.Localization;
@@ -53,7 +54,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
             var content = new List<TaskInstanceDetailsResult>();
             foreach(var record in result.Content)
             {
-                var callbackTxt = new Func<ICollection<Domains.Text>, Localization.Translation>((t) =>
+                var callbackTxt = new Func<ICollection<PresentationElementInstance>, Localization.Translation>((t) =>
                 {
                     if (t == null || !t.Any())
                     {
@@ -67,8 +68,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                     catch (BadOperationExceptions) { return null; }
                 });
                 var appRoles = await _authorizationHelper.GetRoles(record, request.Claims, cancellationToken);
-                var name = callbackTxt(record.PresentationElement.Names);
-                var subject = callbackTxt(record.PresentationElement.Subjects);
+                var name = callbackTxt(record.Names);
+                var subject = callbackTxt(record.Subjects);
                 content.Add(TaskInstanceDetailsResult.ToDto(record, name, subject, appRoles, _authorizationHelper.GetNameIdentifier(request.Claims)));
             }
 

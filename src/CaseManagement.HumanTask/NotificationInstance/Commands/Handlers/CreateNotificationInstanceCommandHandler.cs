@@ -29,10 +29,14 @@ namespace CaseManagement.HumanTask.NotificationInstance.Commands.Handlers
         public async Task<string> Handle(CreateNotificationInstanceCommand request, CancellationToken cancellationToken)
         {
             var operationParameters = request.Parameters == null ? new Dictionary<string, string>() : request.Parameters;
-            var parameters = _parameterParser.ParseOperationParameters(request.NotificationDef.Operation.InputParameters, operationParameters);
+            var parameters = _parameterParser.ParseOperationParameters(request.NotificationDef.InputParameters, operationParameters);
             _logger.LogInformation($"Create notification '{request.NotificationDef.Name}'");
-            var presentationElt = _parameterParser.ParsePresentationElement(request.NotificationDef.PresentationElement, parameters);
-            var assignmentInstance = _parameterParser.ParseNotificationInstancePeopleAssignment(request.NotificationDef.PeopleAssignment, parameters);
+            var presentationElt = _parameterParser.ParsePresentationElements(request.NotificationDef.PresentationElements, 
+                request.NotificationDef.PresentationParameters,
+                parameters);
+            var assignmentInstance = _parameterParser.ParsePeopleAssignments(
+                request.NotificationDef.PeopleAssignments,
+                parameters);
             var id = Guid.NewGuid().ToString();
             var notificationInstance = NotificationInstanceAggregate.New(id,
                 request.NotificationDef.Priority,

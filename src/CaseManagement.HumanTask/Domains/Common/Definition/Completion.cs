@@ -4,26 +4,6 @@ using System.Linq;
 
 namespace CaseManagement.HumanTask.Domains
 {
-    public class CompletionBehavior : ICloneable
-    {
-        public CompletionBehavior()
-        {
-            Completions = new List<Completion>();
-        }
-
-        public CompletionBehaviors CompletionAction { get; set; }
-        public ICollection<Completion> Completions { get; set; }
-
-        public object Clone()
-        {
-            return new CompletionBehavior
-            {
-                CompletionAction = CompletionAction,
-                Completions = Completions.Select(_ => (Completion)_.Clone()).ToList()
-            };
-        }
-    }
-
     public class Completion : ICloneable
     {
         public Completion()
@@ -31,6 +11,7 @@ namespace CaseManagement.HumanTask.Domains
             CopyLst = new List<Copy>();
         }
 
+        public long Id { get; set; }
         public string Condition { get; set; }
         public ICollection<Copy> CopyLst { get; set; }
 
@@ -38,6 +19,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             return new Completion
             {
+                Id = Id,
                 Condition = Condition,
                 CopyLst = CopyLst.Select(_ => (Copy)_.Clone()).ToList()
             };
@@ -46,6 +28,7 @@ namespace CaseManagement.HumanTask.Domains
 
     public class Copy : ICloneable
     {
+        public long Id { get; set; }
         public string From { get; set; }
         public string To { get; set; }
 
@@ -53,6 +36,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             return new Copy
             {
+                Id = Id,
                 From = From,
                 To = To
             };

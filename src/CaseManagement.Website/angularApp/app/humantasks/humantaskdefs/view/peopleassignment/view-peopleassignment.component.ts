@@ -3,7 +3,6 @@ import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import { PeopleAssignment } from '@app/stores/common/people-assignment.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { HumanTaskDefAssignment } from '@app/stores/humantaskdefs/models/humantaskdef-assignment.model';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +14,7 @@ import { filter } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class ViewTaskPeopleAssignmentComponent implements OnInit {
-    peopleAssignment: HumanTaskDefAssignment = new HumanTaskDefAssignment();
+    peopleAssignments: PeopleAssignment[] = [];
     id: string = '';
     baseTranslationKey: string = "HUMANTASK.DEF.VIEW.PEOPLEASSIGNMENT";
 
@@ -47,10 +46,11 @@ export class ViewTaskPeopleAssignmentComponent implements OnInit {
             }
 
             this.id = e.id;
-            this.peopleAssignment = e.peopleAssignment;
+            this.peopleAssignments = e.peopleAssignments;
         });
     }
 
+    /*
     updatePotentialOwner(evt: PeopleAssignment) {
         this.peopleAssignment.potentialOwner = evt;
     }
@@ -74,9 +74,10 @@ export class ViewTaskPeopleAssignmentComponent implements OnInit {
     updateRecipient(evt: PeopleAssignment) {
         this.peopleAssignment.recipient = evt;
     }
+    */
 
     update() {
-        const request = new fromHumanTaskDefActions.UpdatePeopleAssignmentOperation(this.id, this.peopleAssignment);
+        const request = new fromHumanTaskDefActions.UpdatePeopleAssignmentOperation(this.id, this.peopleAssignments);
         this.store.dispatch(request);
     }
 }

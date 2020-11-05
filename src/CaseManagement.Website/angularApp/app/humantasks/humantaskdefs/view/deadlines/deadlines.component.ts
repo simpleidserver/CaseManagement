@@ -4,7 +4,7 @@ import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import { Escalation } from '@app/stores/common/escalation.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { HumanTaskDefinitionDeadLine } from '@app/stores/humantaskdefs/models/humantaskdef-deadlines';
+import { Deadline } from '@app/stores/humantaskdefs/models/deadline';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,9 +30,9 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
     addDeadlineForm: FormGroup;
     updateDeadlineForm: FormGroup;
     currentDeadlineType: string;
-    currentDeadline: HumanTaskDefinitionDeadLine;
-    startDeadlines: MatTableDataSource<HumanTaskDefinitionDeadLine> = new MatTableDataSource<HumanTaskDefinitionDeadLine>();
-    completionDeadlines: MatTableDataSource<HumanTaskDefinitionDeadLine> = new MatTableDataSource<HumanTaskDefinitionDeadLine>();
+    currentDeadline: Deadline;
+    startDeadlines: MatTableDataSource<Deadline> = new MatTableDataSource<Deadline>();
+    completionDeadlines: MatTableDataSource<Deadline> = new MatTableDataSource<Deadline>();
     escalations: MatTableDataSource<Escalation> = new MatTableDataSource<Escalation>();
 
     constructor(
@@ -252,20 +252,17 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
             }
 
             this.humanTaskDef = e;
-            this.startDeadlines.data = this.humanTaskDef.deadLines.startDeadLines;
-            this.completionDeadlines.data = this.humanTaskDef.deadLines.completionDeadLines;
+            this.startDeadlines.data = this.humanTaskDef.deadLines.filter(function (d: Deadline) {
+                return d.usage === 'START';
+            });
+            this.completionDeadlines.data = this.humanTaskDef.deadLines.filter(function (d: Deadline) {
+                return d.usage === 'COMPLETION';
+            });
             if (this.currentDeadline) {
                 const id = this.currentDeadline.id;
-                if (this.currentDeadlineType === 'start') {
-                    this.currentDeadline = this.humanTaskDef.deadLines.startDeadLines.filter(function (v: HumanTaskDefinitionDeadLine) {
-                        return v.id === id;
-                    })[0];
-                } else {
-                    this.currentDeadline = this.humanTaskDef.deadLines.completionDeadLines.filter(function (v: HumanTaskDefinitionDeadLine) {
-                        return v.id === id;
-                    })[0];
-                }
-
+                this.currentDeadline = this.humanTaskDef.deadLines.filter(function (v: Deadline) {
+                    return v.id === id;
+                })[0];
                 this.escalations.data = this.currentDeadline.escalations;
             }
         });
@@ -276,7 +273,7 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
             return;
         }
 
-        const deadline = new HumanTaskDefinitionDeadLine();
+        const deadline = new Deadline();
         deadline.name = form.name;
         if (form.validityType === 'duration') {
             deadline.for = form.validity;
@@ -300,7 +297,7 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
             return;
         }
 
-        const deadline = new HumanTaskDefinitionDeadLine();
+        const deadline = new Deadline();
         deadline.id = this.currentDeadline.id;
         deadline.name = form.name;
         if (form.validityType === 'duration') {
@@ -318,19 +315,19 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
         }
     }
 
-    removeStartDeadline(deadline: HumanTaskDefinitionDeadLine) {
+    removeStartDeadline(deadline: Deadline) {
         this.currentDeadline = null;
         const request = new fromHumanTaskDefActions.DeleteStartDeadlineOperation(this.humanTaskDef.id, deadline.id);
         this.store.dispatch(request);
     }
 
-    removeCompletionDeadline(deadline: HumanTaskDefinitionDeadLine) {
+    removeCompletionDeadline(deadline: Deadline) {
         this.currentDeadline = null;
         const request = new fromHumanTaskDefActions.DeleteCompletionDeadlineOperation(this.humanTaskDef.id, deadline.id);
         this.store.dispatch(request);
     }
 
-    edit(deadlineType: string, deadline: HumanTaskDefinitionDeadLine) {
+    edit(deadlineType: string, deadline: Deadline) {
         this.currentDeadlineType = deadlineType;
         this.currentDeadline = deadline;
         this.escalations.data = this.currentDeadline.escalations;

@@ -1,7 +1,7 @@
 ﻿import { Component, EventEmitter, Output, ViewEncapsulation, Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
-import { Parameter } from '@app/stores/common/operation.model';
+import { Parameter } from '@app/stores/common/parameter.model';
 import { TranslateService } from '@ngx-translate/core';
 
 export class ParameterType {

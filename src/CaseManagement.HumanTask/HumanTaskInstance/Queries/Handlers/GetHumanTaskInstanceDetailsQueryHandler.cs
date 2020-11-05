@@ -39,7 +39,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            var callbackTxt = new Func<ICollection<Text>, Localization.Translation>((t) =>
+            var callbackTxt = new Func<ICollection<PresentationElementInstance>, Localization.Translation>((t) =>
             {
                 if (t == null || !t.Any())
                 {
@@ -52,8 +52,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 }
                 catch (BadOperationExceptions) { return null; }
             });
-            var name = callbackTxt(humanTaskInstance.PresentationElement.Names);
-            var subject = callbackTxt(humanTaskInstance.PresentationElement.Subjects);
+            var name = callbackTxt(humanTaskInstance.Names);
+            var subject = callbackTxt(humanTaskInstance.Subjects);
             return TaskInstanceDetailsResult.ToDto(humanTaskInstance, name, subject, null, null);
         }
     }

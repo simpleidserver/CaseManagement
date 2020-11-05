@@ -15,7 +15,7 @@ import { MatSnackBar } from '@angular/material';
     encapsulation: ViewEncapsulation.None
 })
 export class ViewPresentationParametersComponent implements OnInit {
-    presentationElt: PresentationElement = new PresentationElement();
+    presentationElts: PresentationElement[] = [];
     baseTranslationKey: string = "HUMANTASK.DEF.VIEW.PRESENTATION_PARAMETERS";
     humanTaskDef: HumanTaskDef;
 
@@ -47,12 +47,12 @@ export class ViewPresentationParametersComponent implements OnInit {
             }
 
             this.humanTaskDef = e;
-            this.presentationElt = e.presentationElementResult;
+            this.presentationElts = e.presentationElements;
         });
     }
 
     update() {
-        const request = new fromHumanTaskDefActions.UpdatePresentationElementOperation(this.humanTaskDef.id, this.presentationElt);
+        const request = new fromHumanTaskDefActions.UpdatePresentationElementOperation(this.humanTaskDef.id, this.presentationElts);
         this.store.dispatch(request);
     }
 }

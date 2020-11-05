@@ -12,7 +12,7 @@ namespace CaseManagement.HumanTask.Domains
         }
 
         public string Name { get; set; }
-        public HumanTaskInstanceDeadLineTypes Type { get; set; }
+        public DeadlineUsages Usage { get; set; }
         public DateTime EndDateTime { get; set; }
         public ICollection<Escalation> Escalations { get; set; }
 
@@ -21,7 +21,7 @@ namespace CaseManagement.HumanTask.Domains
             return new HumanTaskInstanceDeadLine
             {
                 Name = Name,
-                Type = Type,
+                Usage = Usage,
                 EndDateTime = EndDateTime,
                 Escalations = Escalations.Select(_ => (Escalation)_.Clone()).ToList()
             };

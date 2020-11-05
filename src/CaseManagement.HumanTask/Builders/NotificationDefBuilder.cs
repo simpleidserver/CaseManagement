@@ -22,11 +22,27 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
-        public NotificationDefBuilder SetOperation(Action<OperationBuilder> callback)
+        public NotificationDefBuilder AddInputOperationParameter(string name, ParameterTypes type, bool isRequired)
         {
-            var builder = new OperationBuilder();
-            callback(builder);
-            _notification.Operation = builder.Build();
+            _notification.OperationParameters.Add(new Parameter
+            {
+                Name = name,
+                Type = type,
+                IsRequired = isRequired,
+                Usage = ParameterUsages.INPUT
+            });
+            return this;
+        }
+
+        public NotificationDefBuilder AddOutputOperationParameter(string name, ParameterTypes type, bool isRequired)
+        {
+            _notification.OperationParameters.Add(new Parameter
+            {
+                Name = name,
+                Type = type,
+                IsRequired = isRequired,
+                Usage = ParameterUsages.OUTPUT
+            });
             return this;
         }
 
@@ -34,25 +50,41 @@ namespace CaseManagement.HumanTask.Builders
 
         public NotificationDefBuilder AddName(string language, string value)
         {
-            _notification.PresentationElement.Names.Add(new Text { Language = language, Value = value });
+            _notification.PresentationElements.Add(new PresentationElementDefinition
+            {
+                Language = language,
+                Value = value,
+                Usage = PresentationElementUsages.NAME
+            });
             return this;
         }
 
         public NotificationDefBuilder AddSubject(string language, string value, string contentType)
         {
-            _notification.PresentationElement.Subjects.Add(new Text { Language = language, Value = value });
+            _notification.PresentationElements.Add(new PresentationElementDefinition
+            {
+                Language = language,
+                Value = value,
+                Usage = PresentationElementUsages.SUBJECT
+            });
             return this;
         }
 
         public NotificationDefBuilder AddDescription(string language, string value, string contentType)
         {
-            _notification.PresentationElement.Descriptions.Add(new Description { Language = language, Value = value, ContentType = contentType });
+            _notification.PresentationElements.Add(new PresentationElementDefinition
+            {
+                Language = language,
+                Value = value,
+                ContentType = contentType,
+                Usage = PresentationElementUsages.DESCRIPTION
+            });
             return this;
         }
 
         public NotificationDefBuilder AddPresentationParameter(string name, ParameterTypes type, string expression)
         {
-            _notification.PresentationElement.PresentationParameters.Add(new PresentationParameter
+            _notification.PresentationParameters.Add(new PresentationParameter
             {
                 Expression = expression,
                 Name = name,
@@ -67,19 +99,31 @@ namespace CaseManagement.HumanTask.Builders
 
         public NotificationDefBuilder SetRecipientGroupNames(ICollection<string> groupNames)
         {
-            _notification.PeopleAssignment.Recipient = new GroupNamesAssignmentDefinition
+            foreach(var groupName in groupNames)
             {
-                GroupNames = groupNames
-            };
+                _notification.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Type = PeopleAssignmentTypes.GROUPNAMES,
+                    Usage = PeopleAssignmentUsages.RECIPIENT,
+                    Value = groupName
+                });
+            }
+
             return this;
         }
 
         public NotificationDefBuilder SetRecipientUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _notification.PeopleAssignment.Recipient = new UserIdentifiersAssignmentDefinition
+            foreach (var userIdentifier in userIdentifiers)
             {
-                UserIdentifiers = userIdentifiers
-            };
+                _notification.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Type = PeopleAssignmentTypes.USERIDENTIFIERS,
+                    Usage = PeopleAssignmentUsages.RECIPIENT,
+                    Value = userIdentifier
+                });
+            }
+
             return this;
         }
 
@@ -89,10 +133,16 @@ namespace CaseManagement.HumanTask.Builders
 
         public NotificationDefBuilder SetBusinessAdministratorUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _notification.PeopleAssignment.BusinessAdministrator = new UserIdentifiersAssignmentDefinition
+            foreach (var userIdentifier in userIdentifiers)
             {
-                UserIdentifiers = userIdentifiers
-            };
+                _notification.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Type = PeopleAssignmentTypes.USERIDENTIFIERS,
+                    Usage = PeopleAssignmentUsages.BUSINESSADMINISTRATOR,
+                    Value = userIdentifier
+                });
+            }
+
             return this;
         }
 

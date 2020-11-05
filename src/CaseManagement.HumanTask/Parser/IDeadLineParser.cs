@@ -6,7 +6,7 @@ namespace CaseManagement.HumanTask.Parser
 {
     public interface IDeadlineParser
     {
-        ICollection<HumanTaskInstanceDeadLine> Evaluate(ICollection<HumanTaskDefinitionDeadLine> deadLines, HumanTaskInstanceDeadLineTypes type, Dictionary<string, string> parameters);
+        ICollection<HumanTaskInstanceDeadLine> Evaluate(ICollection<HumanTaskDefinitionDeadLine> deadLines, Dictionary<string, string> parameters);
         DateTime? Evaluate(HumanTaskDefinitionDeadLine deadLine, BaseExpressionContext expressionContext);
     }
 }

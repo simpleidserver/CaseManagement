@@ -13,14 +13,14 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         public DateTime UpdateDateTime { get; set; }
         public DateTime CreateDateTime { get; set; }
         public bool ActualOwnerRequired { get; set; }
-        public OperationResult Operation { get; set; }
         public int Priority { get; set; }
-        public HumanTaskDefAssignmentResult PeopleAssignment { get; set; }
-        public PresentationElementDefinitionResult PresentationElementResult { get; set; }
         public string Outcome { get; set; }
         public string SearchBy { get; set; }
-        public RenderingResult Rendering { get; set; }
-        public HumanTaskDefinitionDeadLinesResult DeadLines { get; set; }
+        public ICollection<ParameterResult> OperationParameters { get; set; }
+        public ICollection<PeopleAssignmentDefinitionResult> PeopleAssignments { get; set; }
+        public ICollection<PresentationElementDefinitionResult> PresentationElements { get; set; }
+        public ICollection<RenderingElementResult> RenderingElements { get; set; }
+        public ICollection<HumanTaskDefinitionDeadLineResult> DeadLines { get; set; }
 
         public static HumanTaskDefResult ToDto(HumanTaskDefinitionAggregate humanTaskDef)
         {
@@ -35,33 +35,12 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 Version = humanTaskDef.Version,
                 SearchBy = humanTaskDef.SearchBy,
                 Outcome = humanTaskDef.Outcome,
-                Operation = humanTaskDef.Operation == null ? null : OperationResult.ToDto(humanTaskDef.Operation),
-                PeopleAssignment = humanTaskDef.PeopleAssignment == null ? null : HumanTaskDefAssignmentResult.ToDto(humanTaskDef.PeopleAssignment),
-                PresentationElementResult = humanTaskDef.PresentationElement == null ? null : PresentationElementDefinitionResult.ToDto(humanTaskDef.PresentationElement),
-                Rendering = humanTaskDef.Rendering == null ? null : RenderingResult.ToDto(humanTaskDef.Rendering),
-                DeadLines = humanTaskDef.DeadLines == null ? null : HumanTaskDefinitionDeadLinesResult.ToDto(humanTaskDef.DeadLines)
+                OperationParameters = humanTaskDef.OperationParameters.Select(_ => ParameterResult.ToDto(_)).ToList(),
+                PeopleAssignments = humanTaskDef.PeopleAssignments.Select(_ => PeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
+                PresentationElements = humanTaskDef.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
+                RenderingElements = humanTaskDef.RenderingElements.Select(_ => RenderingElementResult.ToDto(_)).ToList(),
+                DeadLines = humanTaskDef.DeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList()
             };
-        }
-
-        public class HumanTaskDefinitionDeadLinesResult
-        {
-            public HumanTaskDefinitionDeadLinesResult()
-            {
-                StartDeadLines = new List<HumanTaskDefinitionDeadLineResult>();
-                CompletionDeadLines = new List<HumanTaskDefinitionDeadLineResult>();
-            }
-
-            public ICollection<HumanTaskDefinitionDeadLineResult> StartDeadLines { get; set; }
-            public ICollection<HumanTaskDefinitionDeadLineResult> CompletionDeadLines { get; set; }
-
-            public static HumanTaskDefinitionDeadLinesResult ToDto(HumanTaskDefinitionDeadLines humanTaskDefinitionDeadLines)
-            {
-                return new HumanTaskDefinitionDeadLinesResult
-                {
-                    StartDeadLines = humanTaskDefinitionDeadLines.StartDeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList(),
-                    CompletionDeadLines = humanTaskDefinitionDeadLines.CompletionDeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList()
-                };
-            }
         }
 
         public class HumanTaskDefinitionDeadLineResult
@@ -75,6 +54,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             public string Name { get; set; }
             public string For { get; set; }
             public string Until { get; set; }
+            public string Usage { get; set; }
             public ICollection<EscalationResult> Escalations { get; set; }
 
             public static HumanTaskDefinitionDeadLineResult ToDto(HumanTaskDefinitionDeadLine humanTaskDefinitionDeadLine)
@@ -85,6 +65,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Id = humanTaskDefinitionDeadLine.Id,
                     Name = humanTaskDefinitionDeadLine.Name,
                     Until = humanTaskDefinitionDeadLine.Until,
+                    Usage = Enum.GetName(typeof(DeadlineUsages), humanTaskDefinitionDeadLine.Usage).ToUpperInvariant(),
                     Escalations = humanTaskDefinitionDeadLine.Escalations.Select(_ => EscalationResult.ToDto(_)).ToList()
                 };
             }
@@ -162,20 +143,22 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         public class NotificationDefResult
         {
             public string Name { get; set; }
-            public OperationResult Operation { get; set; }
             public int Priority { get; set; }
-            public NotificationDefinitionPeopleAssignmentResult PeopleAssignment { get; set; }
-            public PresentationElementDefinitionResult PresentationElement { get; set; }
+            public string Rendering { get; set; }
+            public ICollection<ParameterResult> OperationParameters { get; set; }
+            public ICollection<PeopleAssignmentDefinitionResult> PeopleAssignments { get; set; }
+            public ICollection<PresentationElementDefinitionResult> PresentationElements { get; set; }
 
             public static NotificationDefResult ToDto(NotificationDefinition notif)
             {
                 return new NotificationDefResult
                 {
                     Name = notif.Name,
-                    Operation = notif.Operation == null ? null : OperationResult.ToDto(notif.Operation),
-                    PeopleAssignment = notif.PeopleAssignment == null ? null : NotificationDefinitionPeopleAssignmentResult.ToDto(notif.PeopleAssignment),
-                    PresentationElement = notif.PresentationElement == null ? null : PresentationElementDefinitionResult.ToDto(notif.PresentationElement),
-                    Priority = notif.Priority
+                    OperationParameters = notif.OperationParameters.Select(_ => ParameterResult.ToDto(_)).ToList(),
+                    PeopleAssignments = notif.PeopleAssignments.Select(_ => PeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
+                    PresentationElements = notif.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
+                    Priority = notif.Priority,
+                    Rendering = notif.Rendering
                 };
             }
 
@@ -185,63 +168,10 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Name = Name,
                     Priority = Priority,
-                    Operation = Operation?.ToDomain(),
-                    PeopleAssignment = PeopleAssignment?.ToDomain(),
-                    PresentationElement = PresentationElement?.ToDomain()
-                };
-            }
-        }
-
-        public class NotificationDefinitionPeopleAssignmentResult
-        {
-            public PeopleAssignmentResult Recipient { get; set; }
-            public PeopleAssignmentResult BusinessAdministrator { get; set; }
-
-            public static NotificationDefinitionPeopleAssignmentResult ToDto(NotificationDefinitionPeopleAssignment notif)
-            {
-                return new NotificationDefinitionPeopleAssignmentResult
-                {
-                    BusinessAdministrator = notif.BusinessAdministrator == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(notif.BusinessAdministrator),
-                    Recipient = notif.Recipient == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(notif.Recipient)
-                };
-            }
-
-            public NotificationDefinitionPeopleAssignment ToDomain()
-            {
-                return new NotificationDefinitionPeopleAssignment
-                {
-                    Recipient = Recipient?.ToDomain(),
-                    BusinessAdministrator = BusinessAdministrator?.ToDomain()
-                };
-            }
-        }
-
-        public class OperationResult
-        {
-            public OperationResult()
-            {
-                InputParameters = new List<ParameterResult>();
-                OutputParameters = new List<ParameterResult>();
-            }
-
-            public ICollection<ParameterResult> InputParameters { get; set; }
-            public ICollection<ParameterResult> OutputParameters { get; set; }
-
-            public static OperationResult ToDto(Operation operation)
-            {
-                return new OperationResult
-                {
-                    InputParameters = operation.InputParameters.Select(_ => ParameterResult.ToDto(_)).ToList(),
-                    OutputParameters = operation.OutputParameters.Select(_ => ParameterResult.ToDto(_)).ToList()
-                };
-            }
-
-            public Operation ToDomain()
-            {
-                return new Operation
-                {
-                    InputParameters = InputParameters.Select(_ => _.ToDomain()).ToList(),
-                    OutputParameters = OutputParameters.Select(_ => _.ToDomain()).ToList()
+                    Rendering = Rendering,
+                    OperationParameters = OperationParameters.Select(_ => _.ToDomain()).ToList(),
+                    PeopleAssignments = PeopleAssignments.Select(_ => _.ToDomain()).ToList(),
+                    PresentationElements = PresentationElements.Select(_ => _.ToDomain()).ToList()
                 };
             }
         }
@@ -251,6 +181,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             public string Name { get; set; }
             public string Type { get; set; }
             public bool IsRequired { get; set; }
+            public string Usage { get; set; }
 
             public static ParameterResult ToDto(Parameter par)
             {
@@ -258,7 +189,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     IsRequired = par.IsRequired,
                     Name = par.Name,
-                    Type = Enum.GetName(typeof(ParameterTypes), par.Type)
+                    Type = Enum.GetName(typeof(ParameterTypes), par.Type),
+                    Usage = Enum.GetName(typeof(ParameterUsages), par.Usage).ToUpperInvariant()
                 };
             }
 
@@ -276,27 +208,19 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
 
         public class PresentationElementDefinitionResult
         {
-            public PresentationElementDefinitionResult()
-            {
-                Names = new List<TextDefResult>();
-                Subjects = new List<TextDefResult>();
-                Descriptions = new List<DescriptionResult>();
-                PresentationParameters = new List<PresentationParameterResult>();
-            }
-
-            public ICollection<TextDefResult> Names { get; set; }
-            public ICollection<TextDefResult> Subjects { get; set; }
-            public ICollection<DescriptionResult> Descriptions { get; set; }
-            public ICollection<PresentationParameterResult> PresentationParameters { get; set; }
+            public string Usage { get; set; }
+            public string Language { get; set; }
+            public string Value { get; set; }
+            public string ContentType { get; set; }
 
             public static PresentationElementDefinitionResult ToDto(PresentationElementDefinition presElt)
             {
                 return new PresentationElementDefinitionResult
                 {
-                    Names = presElt.Names.Select(_ => TextDefResult.ToDto(_)).ToList(),
-                    Subjects = presElt.Subjects.Select(_ => TextDefResult.ToDto(_)).ToList(),
-                    Descriptions = presElt.Descriptions.Select(_ => DescriptionResult.ToDto(_)).ToList(),
-                    PresentationParameters = presElt.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList(),
+                    ContentType = presElt.ContentType,
+                    Language = presElt.Language,
+                    Usage = Enum.GetName(typeof(PresentationElementUsages), presElt.Usage),
+                    Value = presElt.Value
                 };
             }
 
@@ -304,40 +228,52 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             {
                 return new PresentationElementDefinition
                 {
-                    Names = Names.Select(_ => _.ToDomain()).ToList(),
-                    Subjects = Subjects.Select(_ => _.ToDomain()).ToList(),
-                    Descriptions = Descriptions.Select(_ => _.ToDomain()).ToList(),
-                    PresentationParameters = PresentationParameters.Select(_ => _.ToDomain()).ToList()
+                    ContentType = ContentType,
+                    Language = Language,
+                    Value = Value,
+                    Usage = (PresentationElementUsages)Enum.Parse(typeof(PresentationElementUsages), Usage.ToUpperInvariant())
                 };
             }
         }
 
-        public class RenderingResult
+        public class RenderingElementResult
         {
-            public RenderingResult()
+            public RenderingElementResult()
             {
-                Input = new List<InputRenderingElementResult>();
-                Output = new List<OutputRenderingElementResult>();
+                Labels = new List<TranslationResult>();
+                Values = new List<OptionValueResult>();
             }
 
-            public ICollection<InputRenderingElementResult> Input { get; set; }
-            public ICollection<OutputRenderingElementResult> Output { get; set; }
+            public string Id { get; set; }
+            public string XPath { get; set; }
+            public string ValueType { get; set; }
+            public string Default { get; set; }
+            public IEnumerable<OptionValueResult> Values { get; set; }
+            public IEnumerable<TranslationResult> Labels { get; set; }
 
-            public static RenderingResult ToDto(Rendering rd)
+            public static RenderingElementResult ToDto(RenderingElement rd)
             {
-                return new RenderingResult
+                return new RenderingElementResult
                 {
-                    Input = rd.Input.Select(_ => InputRenderingElementResult.ToDto(_)).ToList(),
-                    Output = rd.Output.Select(_ => OutputRenderingElementResult.ToDto(_)).ToList()
+                    Id = rd.Id,
+                    Default = rd.Default,
+                    ValueType = rd.ValueType,
+                    XPath = rd.XPath,
+                    Values = rd.Values?.Select(_ => OptionValueResult.ToDto(_)),
+                    Labels = rd.Labels?.Select(_ => TranslationResult.ToDto(_))
                 };
             }
 
-            public Rendering ToDomain()
+            public RenderingElement ToDomain()
             {
-                return new Rendering
+                return new RenderingElement
                 {
-                    Input = Input.Select(_ => _.ToDomain()).ToList(),
-                    Output = Output.Select(_ => _.ToDomain()).ToList()
+                    Id = Id,
+                    XPath = XPath,
+                    ValueType = ValueType,
+                    Default = Default,
+                    Values = Values?.Select(_ => _.ToDomain()),
+                    Labels = Labels?.Select(_ => _.ToDomain()).ToList()
                 };
             }
         }
@@ -366,17 +302,6 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             }
         }
 
-        public class RenderingElementResult
-        {
-            public RenderingElementResult()
-            {
-                Label = new List<TranslationResult>();
-            }
-
-            public string Id { get; set; }
-            public ICollection<TranslationResult> Label { get; set; }
-        }
-
         public class OptionValueResult
         {
             public OptionValueResult()
@@ -402,140 +327,6 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Value = Value,
                     DisplayNames = DisplayNames.Select(_ => _.ToDomain()).ToList()
-                };
-            }
-        }
-
-        public class InputRenderingElementResult : RenderingElementResult
-        {
-            public string Value { get; set; }
-
-            public static InputRenderingElementResult ToDto(InputRenderingElement inputRendering)
-            {
-                return new InputRenderingElementResult
-                {
-                    Id = inputRendering.Id,
-                    Label = inputRendering.Labels.Select(_ => TranslationResult.ToDto(_)).ToList(),
-                    Value = inputRendering.Value
-                };
-            }
-
-            public InputRenderingElement ToDomain()
-            {
-                return new InputRenderingElement
-                {
-                    Id = Id,
-                    Labels = Label.Select(_ => _.ToDomain()).ToList(),
-                    Value = Value
-                };
-            }
-        }
-
-        public class OutputRenderingElementResult : RenderingElementResult
-        {
-            public string XPath { get; set; }
-            public OutputRenderingElementValueResult Value { get; set; }
-            public string Default { get; set; }
-
-            public static OutputRenderingElementResult ToDto(OutputRenderingElement outputRendering)
-            {
-                return new OutputRenderingElementResult
-                {
-                    Id = outputRendering.Id,
-                    Label = outputRendering.Labels.Select(_ => TranslationResult.ToDto(_)).ToList(),
-                    XPath = outputRendering.XPath,
-                    Value = outputRendering.Value == null ? null : OutputRenderingElementValueResult.ToDto(outputRendering.Value),
-                    Default = outputRendering.Default
-                };
-            }
-
-            public OutputRenderingElement ToDomain()
-            {
-                return new OutputRenderingElement
-                {
-                    Id =  Id,
-                    Default = Default,
-                    XPath = XPath,
-                    Value = Value?.ToDomain(),
-                    Labels = Label.Select(_ => _.ToDomain()).ToList()
-                };
-            }
-        }
-
-        public class OutputRenderingElementValueResult
-        {
-            public OutputRenderingElementValueResult()
-            {
-                Values = new List<OptionValueResult>();
-            }
-
-            public string Type { get; set; }
-            public ICollection<OptionValueResult> Values { get; set; }
-
-            public static OutputRenderingElementValueResult ToDto(OutputRenderingElementValue rv)
-            {
-                return new OutputRenderingElementValueResult
-                {
-                    Type = rv.Type,
-                    Values = rv.Values.Select(_ => OptionValueResult.ToDto(_)).ToList()
-                };
-            }
-
-            public OutputRenderingElementValue ToDomain()
-            {
-                return new OutputRenderingElementValue
-                {
-                    Type = Type,
-                    Values = Values.Select(_ => _.ToDomain()).ToList()
-                };
-            }
-        }
-
-        public class TextDefResult
-        {
-            public string Language { get; set; }
-            public string Value { get; set; }
-
-            public static TextDefResult ToDto(Text txt)
-            {
-                return new TextDefResult
-                {
-                    Language = txt.Language,
-                    Value = txt.Value
-                };
-            }
-
-            public Text ToDomain()
-            {
-                return new Text
-                {
-                    Language = Language,
-                    Value = Value
-                };
-            }
-        }
-
-        public class DescriptionResult : TextDefResult
-        {
-            public string ContentType { get; set; }
-
-            public static DescriptionResult ToDto(Description desc)
-            {
-                return new DescriptionResult
-                {
-                    Language = desc.Language,
-                    Value = desc.Value,
-                    ContentType = desc.ContentType
-                };
-            }
-
-            public new Description ToDomain()
-            {
-                return new Description
-                {
-                    Language = Language,
-                    Value = Value,
-                    ContentType = ContentType
                 };
             }
         }
@@ -568,122 +359,35 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             }
         }
 
-        public class HumanTaskDefAssignmentResult
+        public class PeopleAssignmentDefinitionResult
         {
-            public PeopleAssignmentResult PotentialOwner { get; set; }
-            public PeopleAssignmentResult ExcludedOwner { get; set; }
-            public PeopleAssignmentResult TaskInitiator { get; set; }
-            public PeopleAssignmentResult TaskStakeHolder { get; set; }
-            public PeopleAssignmentResult BusinessAdministrator { get; set; }
-            public PeopleAssignmentResult Recipient { get; set; }
-
-            public static HumanTaskDefAssignmentResult ToDto(HumanTaskDefinitionAssignment ass)
-            {
-                return new HumanTaskDefAssignmentResult
-                {
-                    PotentialOwner = ass.PotentialOwner == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.PotentialOwner),
-                    ExcludedOwner = ass.ExcludedOwner == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.ExcludedOwner),
-                    TaskInitiator = ass.TaskInitiator == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.TaskInitiator),
-                    TaskStakeHolder = ass.TaskStakeHolder == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.TaskStakeHolder),
-                    BusinessAdministrator = ass.BusinessAdministrator == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.BusinessAdministrator),
-                    Recipient = ass.Recipient == null ? new PeopleAssignmentResult() : PeopleAssignmentResult.ToDto(ass.Recipient)
-                };
-            }
-        }
-
-        public class PeopleAssignmentResult
-        {
-            public PeopleAssignmentResult()
-            {
-                GroupNames = new List<string>();
-                UserIdentifiers = new List<string>();
-            }
-
             public string Type { get; set; }
-            public string Expression { get; set; }
-            public ICollection<string> GroupNames { get; set; }
-            public ICollection<string> UserIdentifiers { get; set; }
-            public string LogicalPeopleGroup { get; set; }
+            public string Usage { get; set; }
+            public string Value { get; set; }
 
-            public static PeopleAssignmentResult ToDto(PeopleAssignmentDefinition peopleAssignment)
+            public static PeopleAssignmentDefinitionResult ToDto(PeopleAssignmentDefinition peopleAssignment)
             {
-                var type = Enum.GetName(typeof(PeopleAssignmentTypes), peopleAssignment.Type);
-                var expr = peopleAssignment as ExpressionAssignmentDefinition;
-                if (expr != null)
+                return new PeopleAssignmentDefinitionResult
                 {
-                    return new PeopleAssignmentResult
-                    {
-                        Type = type,
-                        Expression = expr.Expression
-                    };
-                }
-
-                var userIds = peopleAssignment as UserIdentifiersAssignmentDefinition;
-                if (userIds != null)
-                {
-                    return new PeopleAssignmentResult
-                    {
-                        Type = type,
-                        UserIdentifiers = userIds.UserIdentifiers
-                    };
-                }
-
-                var groupNames = peopleAssignment as GroupNamesAssignmentDefinition;
-                if (groupNames != null)
-                {
-                    return new PeopleAssignmentResult
-                    {
-                        Type = type,
-                        GroupNames = groupNames.GroupNames
-                    };
-                }
-
-                var logicalGroup = peopleAssignment as LogicalPeopleGroupAssignmentDefinition;
-                if (logicalGroup != null)
-                {
-                    return new PeopleAssignmentResult
-                    {
-                        Type = type,
-                        LogicalPeopleGroup = logicalGroup.LogicalPeopleGroup
-                    };
-                }
-
-                return null;
+                    Type = Enum.GetName(typeof(PeopleAssignmentTypes), peopleAssignment.Type),
+                    Usage = Enum.GetName(typeof(PeopleAssignmentUsages), peopleAssignment.Usage),
+                    Value = peopleAssignment.Value
+                };
             }
 
             public PeopleAssignmentDefinition ToDomain()
             {
-                if (string.IsNullOrWhiteSpace(Type))
+                if (string.IsNullOrWhiteSpace(Type) || string.IsNullOrWhiteSpace(Usage))
                 {
                     return null;
                 }
 
-                var typeEnum = (PeopleAssignmentTypes)Enum.Parse(typeof(PeopleAssignmentTypes), Type.ToUpperInvariant());
-                switch(typeEnum)
+                return new PeopleAssignmentDefinition
                 {
-                    case PeopleAssignmentTypes.EXPRESSION:
-                        return new ExpressionAssignmentDefinition
-                        {
-                            Expression = Expression
-                        };
-                    case PeopleAssignmentTypes.GROUPNAMES:
-                        return new GroupNamesAssignmentDefinition
-                        {
-                            GroupNames = GroupNames
-                        };
-                    case PeopleAssignmentTypes.USERIDENTIFIERS:
-                        return new UserIdentifiersAssignmentDefinition
-                        {
-                            UserIdentifiers = UserIdentifiers
-                        };
-                    case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
-                        return new LogicalPeopleGroupAssignmentDefinition
-                        {
-                            LogicalPeopleGroup = LogicalPeopleGroup
-                        };
-                }
-
-                return null;
+                    Usage = (PeopleAssignmentUsages)Enum.Parse(typeof(PeopleAssignmentUsages), Usage.ToUpperInvariant()),
+                    Type = (PeopleAssignmentTypes)Enum.Parse(typeof(PeopleAssignmentTypes), Type.ToUpperInvariant()),
+                    Value = Value
+                };
             }
         }
     }

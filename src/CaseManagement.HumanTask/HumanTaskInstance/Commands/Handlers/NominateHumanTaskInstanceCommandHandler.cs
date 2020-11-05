@@ -2,6 +2,7 @@
 using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
+using CaseManagement.HumanTask.HumanTaskInstance.Queries;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;

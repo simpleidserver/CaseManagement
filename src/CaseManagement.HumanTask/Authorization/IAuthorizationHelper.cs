@@ -30,10 +30,10 @@ namespace CaseManagement.HumanTask.Authorization
         /// <summary>
         /// Get user roles.
         /// </summary>
-        /// <param name="assignment"></param>
+        /// <param name="peopleAssignments"></param>
         /// <param name="claims"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<ICollection<UserRoles>> GetRoles(HumanTaskInstancePeopleAssignment assignment, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token);
+        Task<ICollection<UserRoles>> GetRoles(ICollection<PeopleAssignmentInstance> peopleAssignments, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token);
     }
 }

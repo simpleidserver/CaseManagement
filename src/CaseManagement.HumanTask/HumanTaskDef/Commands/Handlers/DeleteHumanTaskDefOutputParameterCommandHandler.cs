@@ -32,7 +32,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            if (!result.Operation.OutputParameters.Any(_ => _.Name == request.ParameterName))
+            if (!result.OutputParameters.Any(_ => _.Name == request.ParameterName))
             {
                 _logger.LogError($"The output parameter '{request.ParameterName}' doesn't exist");
                 throw new BadRequestException(string.Format(Global.OutputParameterDoesntExist, "parameter"));

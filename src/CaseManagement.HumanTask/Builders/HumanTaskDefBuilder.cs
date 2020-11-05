@@ -33,11 +33,27 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
-        public HumanTaskDefBuilder SetOperation(Action<OperationBuilder> callback)
+        public HumanTaskDefBuilder AddInputOperationParameter(string name, ParameterTypes type, bool isRequired)
         {
-            var builder = new OperationBuilder();
-            callback(builder);
-            _humanTaskDef.Operation = builder.Build();
+            _humanTaskDef.OperationParameters.Add(new Parameter
+             {
+                 Name = name,
+                 Type = type,
+                 IsRequired = isRequired,
+                 Usage = ParameterUsages.INPUT
+             });
+            return this;
+        }
+
+        public HumanTaskDefBuilder AddOutputOperationParameter(string name, ParameterTypes type, bool isRequired)
+        {
+            _humanTaskDef.OperationParameters.Add(new Parameter
+            {
+                Name = name,
+                Type = type,
+                IsRequired = isRequired,
+                Usage = ParameterUsages.OUTPUT
+            });
             return this;
         }
 
@@ -45,17 +61,17 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder AddStartDeadLine(string name, Action<DeadLineBuilder> callback)  
         {
-            var deadLineBuilder = new DeadLineBuilder(name);
+            var deadLineBuilder = new DeadLineBuilder(name, DeadlineUsages.START);
             callback(deadLineBuilder);
-            _humanTaskDef.DeadLines.StartDeadLines.Add(deadLineBuilder.Build());
+            _humanTaskDef.DeadLines.Add(deadLineBuilder.Build());
             return this;
         }
 
         public HumanTaskDefBuilder AddCompletionDeadLine(string name, Action<DeadLineBuilder> callback)
         {
-            var deadLineBuilder = new DeadLineBuilder(name);
+            var deadLineBuilder = new DeadLineBuilder(name, DeadlineUsages.COMPLETION);
             callback(deadLineBuilder);
-            _humanTaskDef.DeadLines.CompletionDeadLines.Add(deadLineBuilder.Build());
+            _humanTaskDef.DeadLines.Add(deadLineBuilder.Build());
             return this;
         }
 
@@ -65,25 +81,41 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder AddName(string language, string value)
         {
-            _humanTaskDef.PresentationElement.Names.Add(new Text { Language = language, Value = value });
+            _humanTaskDef.PresentationElements.Add(new PresentationElementDefinition
+            {
+                Language = language,
+                Value = value,
+                Usage = PresentationElementUsages.NAME
+            });
             return this;
         }
 
         public HumanTaskDefBuilder AddSubject(string language, string value, string contentType)
         {
-            _humanTaskDef.PresentationElement.Subjects.Add(new Text { Language = language, Value = value });
+            _humanTaskDef.PresentationElements.Add(new PresentationElementDefinition
+            {
+                Language = language,
+                Value = value,
+                Usage = PresentationElementUsages.SUBJECT
+            });
             return this;
         }
 
         public HumanTaskDefBuilder AddDescription(string language, string value, string contentType)
         {
-            _humanTaskDef.PresentationElement.Descriptions.Add(new Description { Language = language, Value = value, ContentType = contentType });
+            _humanTaskDef.PresentationElements.Add(new PresentationElementDefinition
+            {
+                Language = language,
+                Value = value,
+                ContentType = contentType,
+                Usage = PresentationElementUsages.DESCRIPTION
+            });
             return this;
         }
 
         public HumanTaskDefBuilder AddPresentationParameter(string name, ParameterTypes type, string expression)
         {
-            _humanTaskDef.PresentationElement.PresentationParameters.Add(new PresentationParameter
+            _humanTaskDef.PresentationParameters.Add(new PresentationParameter
             {
                 Expression = expression,
                 Name = name,
@@ -98,10 +130,16 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetTaskInitiatorUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _humanTaskDef.PeopleAssignment.TaskInitiator = new UserIdentifiersAssignmentDefinition
+            foreach (var userIdentifier in userIdentifiers)
             {
-                UserIdentifiers = userIdentifiers
-            };
+                _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Usage = PeopleAssignmentUsages.TASKINITIATOR,
+                    Type = PeopleAssignmentTypes.USERIDENTIFIERS,
+                    Value = userIdentifier
+                });
+            }
+
             return this;
         }
 
@@ -111,19 +149,31 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetPotentialOwnerGroupNames(ICollection<string> groupNames)
         {
-            _humanTaskDef.PeopleAssignment.PotentialOwner = new GroupNamesAssignmentDefinition
+            foreach (var groupName in groupNames)
             {
-                GroupNames = groupNames
-            };
+                _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Usage = PeopleAssignmentUsages.POTENTIALOWNER,
+                    Type = PeopleAssignmentTypes.GROUPNAMES,
+                    Value = groupName
+                });
+            }
+
             return this;
         }
 
         public HumanTaskDefBuilder SetPotentialOwnerUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _humanTaskDef.PeopleAssignment.PotentialOwner = new UserIdentifiersAssignmentDefinition
+            foreach (var userIdentifier in userIdentifiers)
             {
-                UserIdentifiers = userIdentifiers
-            };
+                _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Usage = PeopleAssignmentUsages.POTENTIALOWNER,
+                    Type = PeopleAssignmentTypes.USERIDENTIFIERS,
+                    Value = userIdentifier
+                });
+            }
+
             return this;
         }
 
@@ -133,10 +183,16 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetBusinessAdministratorUserIdentifiers(ICollection<string> userIdentifiers)
         {
-            _humanTaskDef.PeopleAssignment.BusinessAdministrator = new UserIdentifiersAssignmentDefinition
+            foreach(var userIdentifier in userIdentifiers)
             {
-                UserIdentifiers = userIdentifiers
-            };
+                _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Usage = PeopleAssignmentUsages.BUSINESSADMINISTRATOR,
+                    Type = PeopleAssignmentTypes.USERIDENTIFIERS,
+                    Value = userIdentifier
+                });
+            }
+
             return this;
         }
 
@@ -146,17 +202,19 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetManualCompletion(Action<CompletionBehaviorBuilder> callback)
         {
-            var builder = new CompletionBehaviorBuilder(CompletionBehaviors.MANUAL);
+            var builder = new CompletionBehaviorBuilder();
             callback(builder);
-            _humanTaskDef.CompletionBehavior = builder.Build();
+            _humanTaskDef.CompletionAction = CompletionBehaviors.MANUAL;
+            _humanTaskDef.Completions = builder.Build();
             return this;
         }
 
         public HumanTaskDefBuilder SetAutomaticCompletion(Action<CompletionBehaviorBuilder> callback)
         {
-            var builder = new CompletionBehaviorBuilder(CompletionBehaviors.AUTOMATIC);
+            var builder = new CompletionBehaviorBuilder();
             callback(builder);
-            _humanTaskDef.CompletionBehavior = builder.Build();
+            _humanTaskDef.CompletionAction = CompletionBehaviors.AUTOMATIC;
+            _humanTaskDef.Completions = builder.Build();
             return this;
         }
 
@@ -166,9 +224,11 @@ namespace CaseManagement.HumanTask.Builders
 
         public HumanTaskDefBuilder SetParallelComposition(InstantiationPatterns instantiationPattern, Action<CompositionBuilder> callback)
         {
-            var builder = new CompositionBuilder(CompositionTypes.PARALLEL, instantiationPattern);
+            var builder = new CompositionBuilder();
             callback(builder);
-            _humanTaskDef.Composition = builder.Build();
+            _humanTaskDef.Type = CompositionTypes.PARALLEL;
+            _humanTaskDef.InstantiationPattern = instantiationPattern;
+            _humanTaskDef.SubTasks = builder.Build();
             return this;
         }
 

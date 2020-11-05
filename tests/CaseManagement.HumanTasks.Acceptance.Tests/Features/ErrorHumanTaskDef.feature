@@ -190,19 +190,20 @@ Scenario: Check error is returned when trying to delete unknown output parameter
 	Then JSON 'status'='400'
 	Then JSON 'errors.bad_request[0]'='Output parameter 'parameter' doesn't exist'
 
-Scenario: Check error is returned when trying to update presentation element and 'presentationElement' parameter is missing
+Scenario: Check error is returned when trying to update presentation element and 'presentationElements' parameter is missing
 	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/id/presentationelts'
 	| Key  | Value            |
 	And extract JSON from body
 	
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
-	Then JSON 'errors.bad_request[0]'='Parameter 'presentationElement' is missing'
+	Then JSON 'errors.bad_request[0]'='Parameter 'presentationElements' is missing'
 
 Scenario: Check error is returned when trying to update presentation element of an unknown humantaskdef
 	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/id/presentationelts'
-	| Key                 | Value                                               |
-	| presentationElement | { names: [ { language: "fr", value: "bonjour" } ] } |
+	| Key                    | Value                                                      |
+	| presentationElements   | [ { usage: "SUBJECT", language: "fr", value: "bonjour" } ] |
+	| presentationParameters | [ ]                                                        |
 	And extract JSON from body
 	
 	Then HTTP status code equals to '404'
@@ -533,12 +534,12 @@ Scenario: Check error is returned when trying to update rendering and parameter 
 
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
-	Then JSON 'errors.bad_request[0]'='Parameter 'rendering' is missing'
+	Then JSON 'errors.bad_request[0]'='Parameter 'renderingelements' is missing'
 
 Scenario: Check error is returned when trying to update rendering and humantaskdef is missing
 	When execute HTTP PUT JSON request 'http://localhost/humantasksdefs/def/rendering'
-	| Key       | Value                              |
-	| rendering | { output : [ { xPath: 'xpath' }] } |
+	| Key               | Value                 |
+	| renderingElements | [ { xPath: 'xpath' }] |
 	And extract JSON from body
 
 	Then HTTP status code equals to '404'

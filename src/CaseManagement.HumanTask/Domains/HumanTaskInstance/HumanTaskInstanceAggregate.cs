@@ -15,11 +15,11 @@ namespace CaseManagement.HumanTask.Domains
         {
             InputParameters = new Dictionary<string, string>();
             OutputParameters = new Dictionary<string, string>();
-            Operation = new Operation();
             EventHistories = new ConcurrentBag<HumanTaskInstanceEventHistory>();
             DeadLines = new List<HumanTaskInstanceDeadLine>();
-            PresentationElement = new PresentationElementInstance();
-            CompletionBehavior = new CompletionBehavior();
+            PresentationElements = new List<PresentationElementInstance>();
+            Completions = new List<Completion>();
+            SubTasks = new List<HumanTaskInstanceSubTask>();
         }
 
         public string HumanTaskInstanceId { get; set; }
@@ -28,37 +28,53 @@ namespace CaseManagement.HumanTask.Domains
         public HumanTaskInstanceStatus Status { get; set; }
         public string HumanTaskDefName { get; set; }
         public string ActualOwner { get; set; }
-        public Dictionary<string, string> InputParameters { get; set; }
-        public Dictionary<string, string> OutputParameters { get; set; }
-        public Operation Operation { get; set; }
         public int Priority { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
-        public Rendering Rendering { get; set; }
-        public HumanTaskInstancePeopleAssignment PeopleAssignment { get; set; }
-        public PresentationElementInstance PresentationElement { get; set; }
-        public ConcurrentBag<HumanTaskInstanceEventHistory> EventHistories { get; set; }
-        public ICollection<HumanTaskInstanceDeadLine> DeadLines { get; set; }
-        public HumanTaskInstanceComposition  Composition { get; set; }
-        public CompletionBehavior CompletionBehavior { get; set; }
+        public CompositionTypes Type { get; set; }
+        public InstantiationPatterns InstantiationPattern { get; set; }
+        public CompletionBehaviors CompletionBehavior { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
+        public Dictionary<string, string> InputParameters { get; set; }
+        public Dictionary<string, string> OutputParameters { get; set; }
+        public ICollection<Parameter> OperationParameters { get; set; }
+        public ICollection<Parameter> InputOperationParameters { get => OperationParameters.Where(_ => _.Usage == ParameterUsages.INPUT).ToList(); }
+        public ICollection<Parameter> OutputOperationParameters { get => OperationParameters.Where(_ => _.Usage == ParameterUsages.OUTPUT).ToList(); }
+        public ICollection<RenderingElement> RenderingElements { get; set; }
+        public ICollection<Completion> Completions { get; set; }
+        public ICollection<PresentationElementInstance> PresentationElements { get; set; }
+        public ICollection<PresentationElementInstance> Names { get => PresentationElements.Where(_ => _.Usage == PresentationElementUsages.NAME).ToList(); }
+        public ICollection<PresentationElementInstance> Subjects { get => PresentationElements.Where(_ => _.Usage == PresentationElementUsages.SUBJECT).ToList(); }
+        public ICollection<PresentationElementInstance> Descriptions { get => PresentationElements.Where(_ => _.Usage == PresentationElementUsages.DESCRIPTION).ToList(); }
+        public ICollection<HumanTaskInstanceDeadLine> DeadLines { get; set; }
+        public ICollection<PeopleAssignmentInstance> PeopleAssignments { get; set; }
+        public ICollection<HumanTaskInstanceSubTask> SubTasks { get; set; }
+        public ICollection<PeopleAssignmentInstance> PotentialOwners { get => PeopleAssignments.GetPotentialOwners().ToList(); }
+        public ICollection<PeopleAssignmentInstance> BusinessAdministrators { get => PeopleAssignments.GetBusinessAdministrators().ToList(); }
+        public ICollection<PeopleAssignmentInstance> ExcludedOwners { get => PeopleAssignments.GetExcludedOwners().ToList(); }
+        public ICollection<PeopleAssignmentInstance> TaskInitiators { get => PeopleAssignments.GetTaskInitiators().ToList(); }
+        public ICollection<PeopleAssignmentInstance> TaskStakeHolders { get => PeopleAssignments.GetTaskStakeHolders().ToList(); }
+        public ConcurrentBag<HumanTaskInstanceEventHistory> EventHistories { get; set; }
 
         public static HumanTaskInstanceAggregate New(
             string id,
             string userPrincipal, 
             string humanTaskDefName, 
             Dictionary<string, string> inputParameters, 
-            HumanTaskInstancePeopleAssignment peopleAssignment, 
+            ICollection<PeopleAssignmentInstance> peopleAssignments, 
             int priority, 
             DateTime? activationDeferralTime, 
             DateTime? expirationTime, 
-            List<HumanTaskInstanceDeadLine> deadLines,
-            PresentationElementInstance presentationElementInstance,
-            HumanTaskInstanceComposition composition,
-            Operation operation,
-            CompletionBehavior completion,
-            Rendering rendering)
+            ICollection<HumanTaskInstanceDeadLine> deadLines,
+            ICollection<PresentationElementInstance> presentationElements,
+            CompositionTypes type,
+            InstantiationPatterns instantiationPattern,
+            ICollection<HumanTaskInstanceSubTask> subTasks,
+            ICollection<Parameter> operationParameters,
+            CompletionBehaviors completionBehavior,
+            ICollection<Completion> completions,
+            ICollection<RenderingElement> renderingElts)
         {
             var evt = new HumanTaskInstanceCreatedEvent(
                 Guid.NewGuid().ToString(), 
@@ -66,16 +82,19 @@ namespace CaseManagement.HumanTask.Domains
                 0, 
                 humanTaskDefName, 
                 DateTime.UtcNow, 
-                inputParameters, 
-                peopleAssignment, 
+                inputParameters,
+                peopleAssignments, 
                 priority, 
                 userPrincipal, 
                 deadLines, 
-                presentationElementInstance,
-                composition,
-                operation,
-                completion,
-                rendering,
+                presentationElements,
+                type,
+                instantiationPattern,
+                subTasks,
+                operationParameters,
+                completionBehavior,
+                completions,
+                renderingElts,
                 activationDeferralTime,
                 expirationTime);
             var result = new HumanTaskInstanceAggregate();
@@ -93,24 +112,27 @@ namespace CaseManagement.HumanTask.Domains
                 Status = Status,
                 HumanTaskDefName = HumanTaskDefName,
                 ActualOwner = ActualOwner,
-                Operation = (Operation)Operation?.Clone(),
+                OperationParameters = OperationParameters.Select(_ => (Parameter)_.Clone()).ToList(),
                 InputParameters = InputParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
                 OutputParameters = OutputParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
                 Priority = Priority,
                 ActivationDeferralTime = ActivationDeferralTime,
                 ExpirationTime = ExpirationTime,
-                PresentationElement = (PresentationElementInstance)PresentationElement?.Clone(),
-                PeopleAssignment = (HumanTaskInstancePeopleAssignment)PeopleAssignment?.Clone(),
+                PresentationElements = PresentationElements.Select(_ => (PresentationElementInstance)_.Clone()).ToList(),
+                PeopleAssignments = PeopleAssignments.Select(_ => (PeopleAssignmentInstance)_.Clone()).ToList(),
                 EventHistories = new ConcurrentBag<HumanTaskInstanceEventHistory>(EventHistories.Select(_ => (HumanTaskInstanceEventHistory)_.Clone())),
                 DeadLines = DeadLines.Select(_ => (HumanTaskInstanceDeadLine)_.Clone()).ToList(),
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
-                Composition = (HumanTaskInstanceComposition)Composition?.Clone(),
+                SubTasks = SubTasks.Select(_ => (HumanTaskInstanceSubTask)_.Clone()).ToList(),
+                InstantiationPattern = InstantiationPattern,
+                Type = Type,
                 HumanTaskInstanceId = HumanTaskInstanceId,
                 ParentHumanTaskName = ParentHumanTaskName,
                 ParentHumanTaskId = ParentHumanTaskId,
-                Rendering = (Rendering)Rendering?.Clone(),
-                CompletionBehavior = (CompletionBehavior)CompletionBehavior?.Clone()
+                Completions = Completions.Select(_ => (Completion)_.Clone()).ToList(),
+                RenderingElements = RenderingElements.Select(_ => (RenderingElement)_.Clone()).ToList(),
+                CompletionBehavior = CompletionBehavior
             };
         }
 
@@ -135,9 +157,9 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// Assign potential owners.
         /// </summary>
-        public void Nominate(string userPrincipal, ICollection<string> groupNames, ICollection<string> userIdentifiers)
+        public void Nominate(string userPrincipal, IEnumerable<string> groupNames, IEnumerable<string> userIdentifiers)
         {
-            var evt = new HumanTaskInstanceNominatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, groupNames, userIdentifiers, userPrincipal, DateTime.UtcNow);
+            var evt = new HumanTaskInstanceNominatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, userIdentifiers, groupNames, userPrincipal, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -167,9 +189,9 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// Remove the deadline.
         /// </summary>
-        public void RemoveDeadLine(string name, HumanTaskInstanceDeadLineTypes type)
+        public void RemoveDeadLine(string name, DeadlineUsages usage)
         {
-            var evt = new HumanTaskInstanceDeadLineRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, name, type, DateTime.UtcNow);
+            var evt = new HumanTaskInstanceDeadLineRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, name, usage, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -231,14 +253,17 @@ namespace CaseManagement.HumanTask.Domains
                 Priority = evt.Priority;
                 ActivationDeferralTime = evt.ActivationDeferralTime;
                 ExpirationTime = evt.ExpirationTime;
-                PeopleAssignment = evt.PeopleAssignment;
+                PeopleAssignments = evt.PeopleAssignments;
                 InputParameters = evt.InputParameters;
-                PresentationElement = evt.PresentationElement;
+                PresentationElements = evt.PresentationElements;
                 DeadLines = evt.DeadLines;
-                Composition = (HumanTaskInstanceComposition)evt.Composition?.Clone();
-                CompletionBehavior = (CompletionBehavior)evt.Completion?.Clone();
-                Operation = (Operation)evt.Operation?.Clone();
-                Rendering = evt.Rendering;
+                Type = evt.Type;
+                SubTasks = evt.SubTasks;
+                InstantiationPattern = evt.InstantiationPattern;
+                CompletionBehavior = evt.CompletionBehavior;
+                Completions = evt.Completions;
+                OperationParameters = evt.OperationParameters;
+                RenderingElements = evt.RenderingElts;
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;
                 Version = evt.Version;
@@ -274,24 +299,34 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskInstanceNominatedEvent evt)
         {
-            var assign = new PeopleAssignmentInstance();
-            if (evt.GroupNames != null && evt.GroupNames.Any())
-            {
-                assign.Type = PeopleAssignmentTypes.GROUPNAMES;
-                assign.Values = evt.GroupNames;
-            }
-            else
-            {
-                assign.Type = PeopleAssignmentTypes.USERIDENTIFIERS;
-                assign.Values = evt.UserIdentifiers;
-            }
-
             using (var evtHistory = AddEventHistory(evt.Id, evt.UpdateDateTime, HumanTaskInstanceEventTypes.ACTIVATE, evt.UserPrincipal))
             {
-                PeopleAssignment = new HumanTaskInstancePeopleAssignment
+                if (evt.UserIdentifiers != null && evt.UserIdentifiers.Any())
                 {
-                    PotentialOwner = assign
-                };
+                    foreach(var userIdentifier in evt.UserIdentifiers)
+                    {
+                        PeopleAssignments.Add(new PeopleAssignmentInstance
+                        {
+                            Type = PeopleAssignmentTypes.USERIDENTIFIERS,
+                            Usage = PeopleAssignmentUsages.POTENTIALOWNER,
+                            Value = userIdentifier
+                        });
+                    }
+                }
+
+                if (evt.GroupNames != null && evt.GroupNames.Any())
+                {
+                    foreach (var groupName in evt.GroupNames)
+                    {
+                        PeopleAssignments.Add(new PeopleAssignmentInstance
+                        {
+                            Type = PeopleAssignmentTypes.GROUPNAMES,
+                            Usage = PeopleAssignmentUsages.POTENTIALOWNER,
+                            Value = groupName
+                        });
+                    }
+                }
+
                 UpdateStatus();
                 UpdateDateTime = evt.UpdateDateTime;
                 Version = evt.Version;
@@ -314,7 +349,7 @@ namespace CaseManagement.HumanTask.Domains
             using (var evtHistory = AddEventHistory(evt.Id, evt.ExecutionDateTime, HumanTaskInstanceEventTypes.START, evt.UserPrincipal))
             {
                 Status = HumanTaskInstanceStatus.INPROGRESS;
-                DeadLines = DeadLines.Where(_ => _.Type == HumanTaskInstanceDeadLineTypes.COMPLETION).ToList();
+                DeadLines = DeadLines.Where(_ => _.Usage == DeadlineUsages.COMPLETION).ToList();
                 ActualOwner = evt.UserPrincipal;
                 UpdateDateTime = evt.ExecutionDateTime;
                 Version = evt.Version;
@@ -346,7 +381,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskInstanceDeadLineRemovedEvent evt)
         {
-            DeadLines = DeadLines.Where(_ => _.Name != evt.DeadLineName && _.Type != evt.DeadLineType).ToList();
+            DeadLines = DeadLines.Where(_ => _.Name != evt.DeadLineName && _.Usage != evt.Usage).ToList();
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -363,9 +398,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void UpdateStatus()
         {
-            if (Status == HumanTaskInstanceStatus.CREATED && PeopleAssignment != null && 
-                PeopleAssignment.PotentialOwner != null &&
-                PeopleAssignment.PotentialOwner.Values.Any())
+            if (Status == HumanTaskInstanceStatus.CREATED && PotentialOwners.Any())
             {
                 if (ActivationDeferralTime != null)
                 {
@@ -382,13 +415,10 @@ namespace CaseManagement.HumanTask.Domains
 
             if (Status == HumanTaskInstanceStatus.READY)
             {
-                if (PeopleAssignment != null && 
-                    PeopleAssignment.PotentialOwner != null && 
-                    PeopleAssignment.PotentialOwner.Values.Count() == 1 && 
-                    PeopleAssignment.PotentialOwner.Type == PeopleAssignmentTypes.USERIDENTIFIERS)
+                if (PotentialOwners.Count() == 1 && PotentialOwners.First().Type == PeopleAssignmentTypes.USERIDENTIFIERS)
                 {
                     Status = HumanTaskInstanceStatus.RESERVED;
-                    ActualOwner = PeopleAssignment.PotentialOwner.Values.First();
+                    ActualOwner = PotentialOwners.First().Value;
                 }
             }
         }

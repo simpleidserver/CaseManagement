@@ -1,4 +1,5 @@
-﻿using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.HumanTask.Domains;
+using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.NotificationInstance.Queries.Results;
 using CaseManagement.HumanTask.Persistence;
@@ -38,7 +39,7 @@ namespace CaseManagement.HumanTask.NotificationInstance.Queries.Handlers
                 throw new UnknownNotificationException(string.Format(Global.UnknownNotification, request.NotificationId));
             }
 
-            var callbackTxt = new Func<ICollection<Domains.Text>, Translation>((t) =>
+            var callbackTxt = new Func<ICollection<PresentationElementInstance>, Localization.Translation>((t) =>
             {
                 if (t == null || !t.Any())
                 {
@@ -51,8 +52,8 @@ namespace CaseManagement.HumanTask.NotificationInstance.Queries.Handlers
                 }
                 catch (BadOperationExceptions) { return null; }
             });
-            var name = callbackTxt(result.PresentationElement.Names);
-            var subject = callbackTxt(result.PresentationElement.Subjects);
+            var name = callbackTxt(result.Names);
+            var subject = callbackTxt(result.Subjects);
             return NotificationDetailsResult.ToDto(result, name, subject);
         }
     }

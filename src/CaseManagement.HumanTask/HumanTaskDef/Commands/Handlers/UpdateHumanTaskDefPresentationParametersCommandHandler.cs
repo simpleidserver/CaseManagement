@@ -3,8 +3,10 @@ using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
+using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,10 +30,16 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
 
         public async Task<bool> Handle(UpdateHumanTaskDefPresentationParametersCommand request, CancellationToken cancellationToken)
         {
-            if (request.PresentationElement == null)
+            if (request.PresentationElements == null)
             {
-                _logger.LogError("the parameter 'presentationElement' is missing");
-                throw new BadRequestException(string.Format(Global.MissingParameter, "presentationElement"));
+                _logger.LogError("the parameter 'presentationElements' is missing");
+                throw new BadRequestException(string.Format(Global.MissingParameter, "presentationElements"));
+            }
+
+            if (request.PresentationParameters == null)
+            {
+                _logger.LogError("the parameter 'presentationParameters' is missing");
+                throw new BadRequestException(string.Format(Global.MissingParameter, "presentationParameters"));
             }
 
             var result = await _humanTaskDefQueryRepository.Get(request.Id, cancellationToken);
@@ -41,7 +49,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            result.UpdatePresentationElt(request.PresentationElement.ToDomain());
+            result.UpdatePresentationElts(request.PresentationElements.Select(_ => _.ToDomain()).ToList());
+            result.UpdatePresentationParameters(request.PresentationParameters.Select(_ => _.ToDomain()).ToList());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
             _logger.LogInformation($"Human task definition '{result.Name}', presentation element has been updated");

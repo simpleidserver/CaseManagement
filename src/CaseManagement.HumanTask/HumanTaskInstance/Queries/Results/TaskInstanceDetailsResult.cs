@@ -52,7 +52,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Results
                 ParentTaskId = humanTaskInstance.ParentHumanTaskId,
                 CreatedTime = humanTaskInstance.CreateDateTime,
                 LastModifiedTime = humanTaskInstance.UpdateDateTime,
-                HasPotentialOwners = humanTaskInstance.PeopleAssignment.PotentialOwner != null ? humanTaskInstance.PeopleAssignment.PotentialOwner.Values.Any() : false,
+                HasPotentialOwners = humanTaskInstance.PotentialOwners.Any(),
                 Status = Enum.GetName(typeof(HumanTaskInstanceStatus), humanTaskInstance.Status),
                 PossibleActions = GetPossibleActions(
                     humanTaskInstance.Status,

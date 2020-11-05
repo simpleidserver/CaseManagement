@@ -17,26 +17,29 @@ namespace CaseManagement.HumanTask.Localization
             _logger = logger;
         }
 
-        public Translation Translate(ICollection<Description> descriptions)
-        {
-            var result = descriptions.Cast<Text>().ToList();
-            var translation = Translate(result);
-            var description = descriptions.FirstOrDefault(_ => _.Language == translation.Language);
-            if (description == null)
-            {
-                _logger.LogError($"Missing translation for the language '{translation.Language}'");
-                throw new BadOperationExceptions(string.Format(Global.MissingTranslation, translation.Language));
-            }
-
-            translation.ContentType = description.ContentType;
-            return translation;
-        }
-
-        public Translation Translate(ICollection<Text> translations)
+        public Translation Translate(ICollection<PresentationElementDefinition> translations)
         {
             var culture = Thread.CurrentThread.CurrentCulture;
             var code = culture.Name;
             var translation = translations.FirstOrDefault(_ => _.Language == code);
+            if (translation == null)
+            {
+                _logger.LogError($"Missing translation for the language '{code}'");
+                throw new BadOperationExceptions(string.Format(Global.MissingTranslation, code));
+            }
+
+            return new Translation
+            {
+                Value = translation.Value,
+                Language = code
+            };
+        }
+
+        public Translation Translate(ICollection<PresentationElementInstance> presentationElts)
+        {
+            var culture = Thread.CurrentThread.CurrentCulture;
+            var code = culture.Name;
+            var translation = presentationElts.FirstOrDefault(_ => _.Language == code);
             if (translation == null)
             {
                 _logger.LogError($"Missing translation for the language '{code}'");

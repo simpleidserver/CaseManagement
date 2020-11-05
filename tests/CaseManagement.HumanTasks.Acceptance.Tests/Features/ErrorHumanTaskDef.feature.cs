@@ -695,14 +695,14 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [Xunit.FactAttribute(DisplayName="Check error is returned when trying to update presentation element and \'presentat" +
-            "ionElement\' parameter is missing")]
+            "ionElements\' parameter is missing")]
         [Xunit.TraitAttribute("FeatureTitle", "ErrorHumanTaskDef")]
         [Xunit.TraitAttribute("Description", "Check error is returned when trying to update presentation element and \'presentat" +
-            "ionElement\' parameter is missing")]
-        public virtual void CheckErrorIsReturnedWhenTryingToUpdatePresentationElementAndPresentationElementParameterIsMissing()
+            "ionElements\' parameter is missing")]
+        public virtual void CheckErrorIsReturnedWhenTryingToUpdatePresentationElementAndPresentationElementsParameterIsMissing()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update presentation element and \'presentat" +
-                    "ionElement\' parameter is missing", null, ((string[])(null)));
+                    "ionElements\' parameter is missing", null, ((string[])(null)));
 #line 193
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -720,7 +720,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 199
  testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 200
- testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'presentationElement\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'presentationElements\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -742,18 +742,21 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
             table25.AddRow(new string[] {
-                        "presentationElement",
-                        "{ names: [ { language: \"fr\", value: \"bonjour\" } ] }"});
+                        "presentationElements",
+                        "[ { usage: \"SUBJECT\", language: \"fr\", value: \"bonjour\" } ]"});
+            table25.AddRow(new string[] {
+                        "presentationParameters",
+                        "[ ]"});
 #line 203
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/id/presentationelt" +
                     "s\'", ((string)(null)), table25, "When ");
-#line 206
+#line 207
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 208
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 209
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 210
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 211
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'id\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -768,23 +771,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline and \'deadLine\' paramete" +
                     "r is missing", null, ((string[])(null)));
-#line 212
+#line 213
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 213
+#line 214
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs/id/deadlines/star" +
                     "t\'", ((string)(null)), table26, "When ");
-#line 215
+#line 216
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 217
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 218
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 219
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 220
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'deadLine\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -799,7 +802,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline and humantaskdef is mis" +
                     "sing", null, ((string[])(null)));
-#line 221
+#line 222
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -809,16 +812,16 @@ this.ScenarioInitialize(scenarioInfo);
             table27.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"Name\" }"});
-#line 222
+#line 223
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs/id/deadlines/star" +
                     "t\'", ((string)(null)), table27, "When ");
-#line 225
+#line 226
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 227
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 228
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 229
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 230
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'id\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -833,7 +836,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline and deadline name is mi" +
                     "ssing", null, ((string[])(null)));
-#line 231
+#line 232
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -843,11 +846,11 @@ this.ScenarioInitialize(scenarioInfo);
             table28.AddRow(new string[] {
                         "name",
                         "addStartDeadlineParameter1"});
-#line 232
+#line 233
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table28, "When ");
-#line 235
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 236
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 237
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table29 = new TechTalk.SpecFlow.Table(new string[] {
@@ -856,16 +859,16 @@ this.ScenarioInitialize(scenarioInfo);
             table29.AddRow(new string[] {
                         "deadLine",
                         "{ }"});
-#line 237
+#line 238
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "deadlines/start\'", ((string)(null)), table29, "And ");
-#line 240
+#line 241
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 242
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 243
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 244
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 245
  testRunner.Then("JSON \'errors.validation[0]\'=\'Parameter \'deadline.name\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -880,7 +883,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline and for & until paramet" +
                     "ers are missing", null, ((string[])(null)));
-#line 246
+#line 247
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -890,11 +893,11 @@ this.ScenarioInitialize(scenarioInfo);
             table30.AddRow(new string[] {
                         "name",
                         "addStartDeadlineParameter2"});
-#line 247
+#line 248
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table30, "When ");
-#line 250
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 251
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 252
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
@@ -903,16 +906,16 @@ this.ScenarioInitialize(scenarioInfo);
             table31.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\" }"});
-#line 252
+#line 253
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "deadlines/start\'", ((string)(null)), table31, "And ");
-#line 255
+#line 256
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 257
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 258
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 259
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 260
  testRunner.Then("JSON \'errors.validation[0]\'=\'Parameter \'deadline.for,deadline.until\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -927,7 +930,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline and for & until paramet" +
                     "ers are present", null, ((string[])(null)));
-#line 261
+#line 262
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -937,11 +940,11 @@ this.ScenarioInitialize(scenarioInfo);
             table32.AddRow(new string[] {
                         "name",
                         "addStartDeadlineParameter3"});
-#line 262
+#line 263
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table32, "When ");
-#line 265
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 266
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 267
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
@@ -950,16 +953,16 @@ this.ScenarioInitialize(scenarioInfo);
             table33.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", for: \"for\", until: \"until\" }"});
-#line 267
+#line 268
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "deadlines/start\'", ((string)(null)), table33, "And ");
-#line 270
+#line 271
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 272
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 273
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 274
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 275
  testRunner.Then("JSON \'errors.validation[0]\'=\'Parameters \'deadline.for,deadline.until\' cannot be s" +
                     "pecified at the same time\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -975,7 +978,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline and until is not a vali" +
                     "d ISO8601 expression", null, ((string[])(null)));
-#line 276
+#line 277
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -985,11 +988,11 @@ this.ScenarioInitialize(scenarioInfo);
             table34.AddRow(new string[] {
                         "name",
                         "addStartDeadlineParameter4"});
-#line 277
+#line 278
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table34, "When ");
-#line 280
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 281
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 282
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
@@ -998,16 +1001,16 @@ this.ScenarioInitialize(scenarioInfo);
             table35.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"until\" }"});
-#line 282
+#line 283
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "deadlines/start\'", ((string)(null)), table35, "And ");
-#line 285
+#line 286
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 287
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 288
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 289
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 290
  testRunner.Then("JSON \'errors.validation[0]\'=\'Parameter \'deadline.until\' is not a valid ISO8601 ex" +
                     "pression\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -1023,19 +1026,19 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove start deadline from unknown humanta" +
                     "sk definition", null, ((string[])(null)));
-#line 291
+#line 292
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 292
+#line 293
  testRunner.When("execute HTTP DELETE request \'http://localhost/humantasksdefs/def/deadlines/start/" +
                     "deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 293
+#line 294
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 295
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 296
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 297
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 298
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1047,7 +1050,7 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void CheckErrorIsReturnedWhenTryingToRemoveUnknownStartDeadline()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove unknown start deadline", null, ((string[])(null)));
-#line 299
+#line 300
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1057,22 +1060,22 @@ this.ScenarioInitialize(scenarioInfo);
             table36.AddRow(new string[] {
                         "name",
                         "startDeadlineParameter1"});
-#line 300
+#line 301
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table36, "When ");
-#line 303
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 304
- testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 305
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 306
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
                     "dlines/start/deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 306
+#line 307
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 308
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 309
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 310
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 311
  testRunner.Then("JSON \'errors.validation[0]\'=\'Start deadline doesn\'t exist\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1087,19 +1090,19 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove completion deadline from unknown hu" +
                     "mantask definition", null, ((string[])(null)));
-#line 312
+#line 313
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 313
+#line 314
  testRunner.When("execute HTTP DELETE request \'http://localhost/humantasksdefs/def/deadlines/comple" +
                     "tion/deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 314
+#line 315
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 316
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 317
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 318
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 319
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1111,7 +1114,7 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void CheckErrorIsReturnedWhenTryingToRemoveUnknownCompletionDeadline()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove unknown completion deadline", null, ((string[])(null)));
-#line 320
+#line 321
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1121,22 +1124,22 @@ this.ScenarioInitialize(scenarioInfo);
             table37.AddRow(new string[] {
                         "name",
                         "startDeadlineParameter2"});
-#line 321
+#line 322
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table37, "When ");
-#line 324
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 325
- testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 326
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 327
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
                     "dlines/completion/deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 327
+#line 328
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 329
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 330
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 331
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 332
  testRunner.Then("JSON \'errors.validation[0]\'=\'Completion deadline doesn\'t exist\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1151,23 +1154,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update start deadline and parameter is mis" +
                     "sing", null, ((string[])(null)));
-#line 333
+#line 334
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 334
+#line 335
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
                     "t/deadLineId\'", ((string)(null)), table38, "When ");
-#line 336
+#line 337
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 338
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 339
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 340
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 341
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'deadLineInfo\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1182,7 +1185,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update start deadline and humantaskdef is " +
                     "unknown", null, ((string[])(null)));
-#line 342
+#line 343
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1192,16 +1195,16 @@ this.ScenarioInitialize(scenarioInfo);
             table39.AddRow(new string[] {
                         "deadLineInfo",
                         "{ name: \"name\" }"});
-#line 343
+#line 344
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
                     "t/deadLineId\'", ((string)(null)), table39, "When ");
-#line 346
+#line 347
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 348
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 349
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 350
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 351
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1216,23 +1219,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update completion deadline and parameter i" +
                     "s missing", null, ((string[])(null)));
-#line 353
+#line 354
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table40 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 354
+#line 355
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
                     "letion/deadLineId\'", ((string)(null)), table40, "When ");
-#line 356
+#line 357
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 358
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 359
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 360
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 361
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'deadLineInfo\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1247,7 +1250,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update completion deadline and humantaskde" +
                     "f is unknown", null, ((string[])(null)));
-#line 362
+#line 363
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1257,16 +1260,16 @@ this.ScenarioInitialize(scenarioInfo);
             table41.AddRow(new string[] {
                         "deadLineInfo",
                         "{ name: \"name\" }"});
-#line 363
+#line 364
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
                     "letion/deadLineId\'", ((string)(null)), table41, "When ");
-#line 366
+#line 367
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 368
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 369
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 370
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 371
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1281,23 +1284,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline escalation and the cond" +
                     "ition parameter is missing", null, ((string[])(null)));
-#line 372
+#line 373
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table42 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 373
+#line 374
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs/def/deadlines/sta" +
                     "rt/deadLineId/escalations\'", ((string)(null)), table42, "When ");
-#line 375
+#line 376
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 377
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 378
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 379
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 380
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'condition\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1312,7 +1315,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add start deadline escalation and the huma" +
                     "ntask is unknown", null, ((string[])(null)));
-#line 382
+#line 383
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1322,16 +1325,16 @@ this.ScenarioInitialize(scenarioInfo);
             table43.AddRow(new string[] {
                         "condition",
                         "true"});
-#line 383
+#line 384
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs/def/deadlines/sta" +
                     "rt/deadLineId/escalations\'", ((string)(null)), table43, "When ");
-#line 386
+#line 387
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 388
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 389
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 390
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 391
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1346,23 +1349,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add completion deadline escalation and the" +
                     " condition parameter is missing", null, ((string[])(null)));
-#line 392
+#line 393
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table44 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 393
+#line 394
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs/def/deadlines/com" +
                     "pletion/deadLineId/escalations\'", ((string)(null)), table44, "When ");
-#line 395
+#line 396
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 397
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 398
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 399
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 400
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'condition\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1377,7 +1380,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to add completion deadline escalation and the" +
                     " humantask is unknown", null, ((string[])(null)));
-#line 402
+#line 403
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1387,16 +1390,16 @@ this.ScenarioInitialize(scenarioInfo);
             table45.AddRow(new string[] {
                         "condition",
                         "true"});
-#line 403
+#line 404
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs/def/deadlines/com" +
                     "pletion/deadLineId/escalations\'", ((string)(null)), table45, "When ");
-#line 406
+#line 407
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 408
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 409
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 410
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 411
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1411,19 +1414,19 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove escalation (start deadline) from un" +
                     "known humantask definition", null, ((string[])(null)));
-#line 412
+#line 413
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 413
+#line 414
  testRunner.When("execute HTTP DELETE request \'http://localhost/humantasksdefs/def/deadlines/start/" +
                     "deadLineId/escalations/escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 414
+#line 415
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 416
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 417
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 418
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 419
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1438,7 +1441,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove escalation from unknown start deadl" +
                     "ine", null, ((string[])(null)));
-#line 420
+#line 421
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1448,22 +1451,22 @@ this.ScenarioInitialize(scenarioInfo);
             table46.AddRow(new string[] {
                         "name",
                         "removeEscalationParameter1"});
-#line 421
+#line 422
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table46, "When ");
-#line 424
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 425
- testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 426
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 427
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
                     "dlines/start/deadLineId/escalations/escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 427
+#line 428
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 429
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 430
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 431
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 432
  testRunner.Then("JSON \'errors.validation[0]\'=\'Unknown start deadline\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1478,7 +1481,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove unknown escalation (start deadline)" +
                     "", null, ((string[])(null)));
-#line 433
+#line 434
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1488,11 +1491,11 @@ this.ScenarioInitialize(scenarioInfo);
             table47.AddRow(new string[] {
                         "name",
                         "removeEscalationParameter2"});
-#line 434
+#line 435
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table47, "When ");
-#line 437
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 438
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 439
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table48 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1501,23 +1504,23 @@ this.ScenarioInitialize(scenarioInfo);
             table48.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
-#line 439
+#line 440
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "deadlines/start\'", ((string)(null)), table48, "And ");
-#line 442
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 443
- testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 444
+ testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 445
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
                     "dlines/start/$deadLineId$/escalations/escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 445
+#line 446
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 447
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 448
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 449
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 450
  testRunner.Then("JSON \'errors.validation[0]\'=\'Unknown escalation\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1532,19 +1535,19 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove escalation (completion deadline) fr" +
                     "om unknown humantask definition", null, ((string[])(null)));
-#line 452
+#line 453
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 453
+#line 454
  testRunner.When("execute HTTP DELETE request \'http://localhost/humantasksdefs/def/deadlines/comple" +
                     "tion/deadLineId/escalations/escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 454
+#line 455
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 456
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 457
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 458
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 459
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1559,7 +1562,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove escalation from unknown completion " +
                     "deadline", null, ((string[])(null)));
-#line 460
+#line 461
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1569,22 +1572,22 @@ this.ScenarioInitialize(scenarioInfo);
             table49.AddRow(new string[] {
                         "name",
                         "removeEscalationParameter3"});
-#line 461
+#line 462
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table49, "When ");
-#line 464
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 465
- testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 466
+ testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 467
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
                     "dlines/completion/deadLineId/escalations/escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 467
+#line 468
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 469
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 470
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 471
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 472
  testRunner.Then("JSON \'errors.validation[0]\'=\'Unknown completion deadline\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1599,7 +1602,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to remove unknown escalation (completion dead" +
                     "line)", null, ((string[])(null)));
-#line 473
+#line 474
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1609,11 +1612,11 @@ this.ScenarioInitialize(scenarioInfo);
             table50.AddRow(new string[] {
                         "name",
                         "removeEscalationParameter4"});
-#line 474
+#line 475
  testRunner.When("execute HTTP POST JSON request \'http://localhost/humantasksdefs\'", ((string)(null)), table50, "When ");
-#line 477
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 478
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 479
  testRunner.And("extract \'id\' from JSON body into \'humanTaskDefId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table51 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1622,23 +1625,23 @@ this.ScenarioInitialize(scenarioInfo);
             table51.AddRow(new string[] {
                         "deadLine",
                         "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
-#line 479
+#line 480
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "deadlines/completion\'", ((string)(null)), table51, "And ");
-#line 482
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 483
- testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 484
+ testRunner.And("extract \'id\' from JSON body into \'deadLineId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 485
  testRunner.And("execute HTTP DELETE request \'http://localhost/humantasksdefs/$humanTaskDefId$/dea" +
                     "dlines/completion/$deadLineId$/escalations/escId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 485
+#line 486
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 487
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 488
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 489
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 490
  testRunner.Then("JSON \'errors.validation[0]\'=\'Unknown escalation\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1653,23 +1656,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a start deadline and " +
                     "escalation parameter is missing", null, ((string[])(null)));
-#line 491
+#line 492
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table52 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 492
+#line 493
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
                     "t/deadLineId/escalations/escalationId\'", ((string)(null)), table52, "When ");
-#line 494
+#line 495
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 496
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 497
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 498
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 499
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'escalation\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1684,7 +1687,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a start deadline and " +
                     "humantask definition is unknown", null, ((string[])(null)));
-#line 500
+#line 501
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1694,16 +1697,16 @@ this.ScenarioInitialize(scenarioInfo);
             table53.AddRow(new string[] {
                         "escalation",
                         "{ condition: \"false\" }"});
-#line 501
+#line 502
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/star" +
                     "t/deadLineId/escalations/escalationId\'", ((string)(null)), table53, "When ");
-#line 504
+#line 505
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 506
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 507
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 508
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 509
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1718,23 +1721,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a completion deadline" +
                     " and escalation parameter is missing", null, ((string[])(null)));
-#line 510
+#line 511
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table54 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 511
+#line 512
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
                     "letion/deadLineId/escalations/escalationId\'", ((string)(null)), table54, "When ");
-#line 513
+#line 514
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 515
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 516
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 517
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 518
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'escalation\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1749,7 +1752,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update escalation of a completion deadline" +
                     " and humantask definition is unknown", null, ((string[])(null)));
-#line 519
+#line 520
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1759,16 +1762,16 @@ this.ScenarioInitialize(scenarioInfo);
             table55.AddRow(new string[] {
                         "escalation",
                         "{ condition: \"false\" }"});
-#line 520
+#line 521
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/deadlines/comp" +
                     "letion/deadLineId/escalations/escalationId\'", ((string)(null)), table55, "When ");
-#line 523
+#line 524
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 525
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 526
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 527
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 528
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -1783,23 +1786,23 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update rendering and parameter rendering i" +
                     "s missing", null, ((string[])(null)));
-#line 529
+#line 530
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table56 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-#line 530
+#line 531
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/rendering\'", ((string)(null)), table56, "When ");
-#line 532
+#line 533
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 534
- testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 535
- testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 536
- testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'rendering\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 537
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'renderingelements\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -1813,7 +1816,7 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Check error is returned when trying to update rendering and humantaskdef is missi" +
                     "ng", null, ((string[])(null)));
-#line 538
+#line 539
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
@@ -1821,17 +1824,17 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
             table57.AddRow(new string[] {
-                        "rendering",
-                        "{ output : [ { xPath: \'xpath\' }] }"});
-#line 539
+                        "renderingElements",
+                        "[ { xPath: \'xpath\' }]"});
+#line 540
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/rendering\'", ((string)(null)), table57, "When ");
-#line 542
+#line 543
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 544
- testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 545
- testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 546
+ testRunner.Then("JSON \'status\'=\'404\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 547
  testRunner.Then("JSON \'errors.bad_request[0]\'=\'Unknown human task definition \'def\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

@@ -1,28 +1,39 @@
-﻿import { Operation } from "../../common/operation.model";
+﻿import { Parameter } from "../../common/parameter.model";
+import { PeopleAssignment } from "../../common/people-assignment.model";
 import { PresentationElement } from "../../common/presentationelement.model";
-import { Rendering } from "../../common/rendering.model";
-import { HumanTaskDefAssignment } from "./humantaskdef-assignment.model";
-import { HumanTaskDefinitionDeadLines } from "./humantaskdef-deadlines";
+import { RenderingElement } from "../../common/rendering.model";
+import { Deadline } from "./deadline";
 
 export class HumanTaskDef {
     constructor() {
-        this.rendering = new Rendering();
-        this.operation = new Operation();
-        this.deadLines = new HumanTaskDefinitionDeadLines();
-        this.peopleAssignment = new HumanTaskDefAssignment();
-        this.presentationElementResult = new PresentationElement();
+        this.operationParameters = [];
+        this.peopleAssignments = [];
+        this.presentationElements = [];
+        this.deadLines = [];
     }
 
     id: string;
     version: number;
     name: string;
+    updateDateTime: Date;
+    createDateTime: Date;
     actualOwnerRequired: boolean;
-    operation: Operation;
     priority: number;
-    peopleAssignment: HumanTaskDefAssignment;
-    presentationElementResult: PresentationElement;
     outcome: string;
     searchBy: string;
-    rendering: Rendering;
-    deadLines: HumanTaskDefinitionDeadLines;
+    operationParameters: Parameter[];
+    get inputOperationParameters() {
+        return this.operationParameters.filter(function (v: Parameter) {
+            return v.usage == 'INPUT';
+        });
+    }
+    get outputOperationParameters() {
+        return this.operationParameters.filter(function (v: Parameter) {
+            return v.usage == 'OUTPUT';
+        });
+    }
+    peopleAssignments: PeopleAssignment[];
+    presentationElements: PresentationElement[];
+    renderingElements: RenderingElement[];
+    deadLines: Deadline[];
 }

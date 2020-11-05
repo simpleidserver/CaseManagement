@@ -8,7 +8,7 @@ namespace CaseManagement.HumanTask.Parser
 {
     public class DeadlineParser : IDeadlineParser
     {
-        public virtual ICollection<HumanTaskInstanceDeadLine> Evaluate(ICollection<HumanTaskDefinitionDeadLine> deadLines, HumanTaskInstanceDeadLineTypes type, Dictionary<string, string> parameters)
+        public virtual ICollection<HumanTaskInstanceDeadLine> Evaluate(ICollection<HumanTaskDefinitionDeadLine> deadLines, Dictionary<string, string> parameters)
         {
             var expressionContext = new BaseExpressionContext(parameters);
             var result = new List<HumanTaskInstanceDeadLine>();
@@ -21,7 +21,7 @@ namespace CaseManagement.HumanTask.Parser
                     {
                         EndDateTime = nextUTC.Value,
                         Name = deadLine.Name,
-                        Type = type,
+                        Usage = deadLine.Usage,
                         Escalations = deadLine.Escalations
                     });
                 }

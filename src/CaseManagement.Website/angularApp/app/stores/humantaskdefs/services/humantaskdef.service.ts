@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable, of } from 'rxjs';
 import { Escalation } from '../../common/escalation.model';
-import { Parameter } from '../../common/operation.model';
-import { Rendering } from '../../common/rendering.model';
-import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
-import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
+import { Parameter } from '../../common/parameter.model';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 import { PresentationElement } from '../../common/presentationelement.model';
 import { map } from 'rxjs/operators';
+import { Deadline } from '../models/deadline';
+import { RenderingElement } from '../../common/rendering.model';
+import { PeopleAssignment } from '../../common/people-assignment.model';
 
 @Injectable()
 export class HumanTaskDefService {
@@ -28,7 +28,7 @@ export class HumanTaskDefService {
         return of(humanTaskDef);
     }
 
-    addStartDeadline(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<HumanTaskDefinitionDeadLine> {
+    addStartDeadline(id: string, deadline: Deadline): Observable<Deadline> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -41,7 +41,7 @@ export class HumanTaskDefService {
         }));
     }
 
-    addCompletionDeadline(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<HumanTaskDefinitionDeadLine> {
+    addCompletionDeadline(id: string, deadline: Deadline): Observable<Deadline> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -102,13 +102,13 @@ export class HumanTaskDefService {
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
 
-    updateRendering(id: string, rendering: Rendering): Observable<boolean> {
+    updateRendering(id: string, renderingElements: RenderingElement[]): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/rendering";
-        const request: any = { rendering: rendering};
+        const request: any = { renderingElements: renderingElements};
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
@@ -130,7 +130,7 @@ export class HumanTaskDefService {
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
 
-    updateStartDealine(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<boolean> {
+    updateStartDealine(id: string, deadline: Deadline): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -140,7 +140,7 @@ export class HumanTaskDefService {
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    updateCompletionDealine(id: string, deadline: HumanTaskDefinitionDeadLine): Observable<boolean> {
+    updateCompletionDealine(id: string, deadline: Deadline): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -174,12 +174,12 @@ export class HumanTaskDefService {
         }));
     }
 
-    updatePeopleAssignment(id: string, assignment: HumanTaskDefAssignment): Observable<boolean> {
+    updatePeopleAssignment(id: string, peopleAssignments: PeopleAssignment[]): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const request: any = { peopleAssignment: assignment };
+        const request: any = { peopleAssignments: peopleAssignments };
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/assignment";
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
@@ -249,13 +249,13 @@ export class HumanTaskDefService {
         return this.http.post<SearchHumanTaskDefsResult>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    updatePresentationElement(id: string, presentationElement: PresentationElement): Observable<boolean> {
+    updatePresentationElement(id: string, presentationElements: PresentationElement[]): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationelts";
-        const request: any = { presentationElement: presentationElement };
+        const request: any = { presentationElements: presentationElements };
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 }

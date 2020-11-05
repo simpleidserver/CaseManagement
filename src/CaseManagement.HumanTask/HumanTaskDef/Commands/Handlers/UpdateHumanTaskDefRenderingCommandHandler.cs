@@ -4,6 +4,7 @@ using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,10 +28,10 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
 
         public async Task<bool> Handle(UpdateHumanTaskDefRenderingCommand request, CancellationToken cancellationToken)
         {
-            if (request.Rendering == null)
+            if (request.RenderingElements == null)
             {
-                _logger.LogError("the parameter 'rendering' is missing");
-                throw new BadRequestException(string.Format(Global.MissingParameter, "rendering"));
+                _logger.LogError("the parameter 'renderingElements' is missing");
+                throw new BadRequestException(string.Format(Global.MissingParameter, "renderingElements"));
             }
 
             var result = await _humanTaskDefQueryRepository.Get(request.Id, cancellationToken);
@@ -40,7 +41,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            result.UpdateRendering(request.Rendering.ToDomain());
+            result.UpdateRendering(request.RenderingElements.Select(_ => _.ToDomain()).ToList());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
             _logger.LogInformation("The rendering has been updated");

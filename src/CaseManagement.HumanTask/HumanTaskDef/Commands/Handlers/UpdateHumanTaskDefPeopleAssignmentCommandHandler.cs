@@ -1,8 +1,10 @@
-﻿using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.HumanTask.Domains;
+using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,13 +32,12 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            result.UpdatePeopleAssignment(
-                request.PeopleAssignment.PotentialOwner?.ToDomain(),
-                request.PeopleAssignment.ExcludedOwner?.ToDomain(),
-                request.PeopleAssignment.TaskInitiator?.ToDomain(),
-                request.PeopleAssignment.TaskStakeHolder?.ToDomain(),
-                request.PeopleAssignment.BusinessAdministrator?.ToDomain(),
-                request.PeopleAssignment.Recipient?.ToDomain());
+            result.UpdatePeopleAssignment(request.PeopleAssignments.Select(_ => new PeopleAssignmentDefinition
+            {
+                Type = _.Type,
+                Usage = _.Usage,
+                Value = _.Value
+            }).ToArray());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
             _logger.LogInformation($"Human task definition '{result.Name}', people assignment has been updated");

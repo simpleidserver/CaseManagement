@@ -15,30 +15,36 @@ namespace CaseManagement.HumanTask.Domains
             string humanTaskDefName, 
             DateTime createDateTime, 
             Dictionary<string, string> inputParameters,
-            HumanTaskInstancePeopleAssignment peopleAssignment, 
+            ICollection<PeopleAssignmentInstance> peopleAssignments, 
             int priority, 
             string userPrincipal, 
-            List<HumanTaskInstanceDeadLine> deadLines, 
-            PresentationElementInstance presentationElement,
-            HumanTaskInstanceComposition composition,
-            Operation operation,
-            CompletionBehavior completion,
-            Rendering rendering,
+            ICollection<HumanTaskInstanceDeadLine> deadLines, 
+            ICollection<PresentationElementInstance> presentationElements,
+            CompositionTypes type,
+            InstantiationPatterns instantiationPattern,
+            ICollection<HumanTaskInstanceSubTask> subTasks,
+            ICollection<Parameter> operationParameters,
+            CompletionBehaviors completionBehavior,
+            ICollection<Completion> completions,
+            ICollection<RenderingElement> renderingElts,
             DateTime? activationDeferralTime = null, 
             DateTime? expirationTime = null) : base(id, aggregateId, version)
         {
             HumanTaskDefName = humanTaskDefName;
             CreateDateTime = createDateTime;
             InputParameters = inputParameters;
-            PeopleAssignment = peopleAssignment;
+            PeopleAssignments = peopleAssignments;
             Priority = priority;
             UserPrincipal = userPrincipal;
             DeadLines = deadLines;
-            PresentationElement = presentationElement;
-            Composition = composition;
-            Operation = operation;
-            Completion = completion;
-            Rendering = rendering;
+            PresentationElements = presentationElements;
+            Type = type;
+            InstantiationPattern = instantiationPattern;
+            SubTasks = subTasks;
+            OperationParameters = operationParameters;
+            CompletionBehavior = completionBehavior;
+            Completions = completions;
+            RenderingElts = renderingElts;
             ActivationDeferralTime = activationDeferralTime;
             ExpirationTime = expirationTime;
         }
@@ -46,15 +52,18 @@ namespace CaseManagement.HumanTask.Domains
         public string HumanTaskDefName { get; set; }
         public DateTime CreateDateTime { get; set; }
         public Dictionary<string, string> InputParameters { get; set; }
-        public HumanTaskInstancePeopleAssignment PeopleAssignment { get; set; }
+        public ICollection<PeopleAssignmentInstance> PeopleAssignments { get; set; }
         public int Priority { get; set; }
         public string UserPrincipal { get; set; }
-        public List<HumanTaskInstanceDeadLine> DeadLines { get; set; }
-        public PresentationElementInstance PresentationElement { get; set; }
-        public HumanTaskInstanceComposition Composition { get; set; }
-        public Operation Operation { get; set; }
-        public CompletionBehavior Completion { get; set; }
-        public Rendering Rendering { get; set; }
+        public ICollection<HumanTaskInstanceDeadLine> DeadLines { get; set; }
+        public ICollection<PresentationElementInstance> PresentationElements { get; set; }
+        public CompositionTypes Type { get; set; }
+        public InstantiationPatterns InstantiationPattern { get; set; }
+        public ICollection<HumanTaskInstanceSubTask> SubTasks { get; set; }
+        public ICollection<Parameter> OperationParameters { get; set; }
+        public CompletionBehaviors CompletionBehavior { get; set; }
+        public ICollection<Completion> Completions { get; set; }
+        public ICollection<RenderingElement> RenderingElts { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
     }

@@ -12,29 +12,9 @@ export class ParameterType {
     encapsulation: ViewEncapsulation.None
 })
 export class PeopleAssignmentComponent {
-    private _peopleAssignment: PeopleAssignment = new PeopleAssignment();
     peopleAssignmentForm: FormGroup;
     values: string[] = [];
-    @Input()
-    get peopleAssignment(): PeopleAssignment { return this._peopleAssignment; }
-    set peopleAssignment(pa: PeopleAssignment) {
-        this._peopleAssignment = pa;
-        this.peopleAssignmentForm.get('type').setValue(pa.type);
-        switch (pa.type) {
-            case 'GROUPNAMES':
-                this.values = pa.groupNames;
-                break;
-            case 'USERIDENTIFIERS':
-                this.values = pa.userIdentifiers;
-                break;
-            case 'EXPRESSION':
-                this.values = [pa.expression];
-                break;
-            case 'LOGICALPEOPLEGROUP':
-                this.values = [pa.logicalPeopleGroup];
-                break;
-        }
-    }
+    @Input() peopleAssignments: PeopleAssignment[] = [];
 
     constructor(
         private formBuilder: FormBuilder) {
@@ -69,20 +49,12 @@ export class PeopleAssignmentComponent {
 
     private update() {
         const type = this.peopleAssignmentForm.get('type').value;
-        this._peopleAssignment.type = type;
-        switch (type) {
-            case 'GROUPNAMES':
-                this._peopleAssignment.groupNames = this.values;
-                break;
-            case 'USERIDENTIFIERS':
-                this._peopleAssignment.userIdentifiers = this.values;
-                break;
-            case 'EXPRESSION':
-                this._peopleAssignment.expression = this.values[0];
-                break;
-            case 'LOGICALPEOPLEGROUP':
-                this._peopleAssignment.logicalPeopleGroup = this.values[0];
-                break;
-        }
+        const self = this;
+        this.values.forEach(function (v: string) {
+            const pa = new PeopleAssignment();
+            pa.type = type;
+            pa.value = v;
+            self.peopleAssignments.push(pa);
+        });
     }
 }

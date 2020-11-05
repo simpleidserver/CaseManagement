@@ -35,7 +35,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            var translation = _translationHelper.Translate(humanTaskInstance.PresentationElement.Descriptions);
+            var translation = _translationHelper.Translate(humanTaskInstance.Descriptions);
             return new TaskDescriptionResult { Description = translation.Value, ContentType = translation.ContentType };
         }
     }

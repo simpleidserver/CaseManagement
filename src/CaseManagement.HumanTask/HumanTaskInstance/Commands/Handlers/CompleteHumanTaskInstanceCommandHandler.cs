@@ -64,7 +64,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             }
 
             var operationParameters = request.OperationParameters;
-            var parameters = _parameterParser.ParseOperationParameters(humanTaskInstance.Operation.OutputParameters, operationParameters);
+            var parameters = _parameterParser.ParseOperationParameters(humanTaskInstance.OutputOperationParameters, operationParameters);
             var nameIdentifier = request.Claims.GetUserNameIdentifier();
             if (nameIdentifier != humanTaskInstance.ActualOwner)
             {
@@ -82,7 +82,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             if(!string.IsNullOrWhiteSpace(humanTaskInstance.ParentHumanTaskId))
             {
                 var parentTask = await _humanTaskInstanceQueryRepository.Get(humanTaskInstance.ParentHumanTaskId, cancellationToken);
-                if (parentTask.CompletionBehavior != null && parentTask.CompletionBehavior.CompletionAction == CompletionBehaviors.AUTOMATIC)
+                if (parentTask.CompletionBehavior == CompletionBehaviors.AUTOMATIC)
                 {
                     completionResult = await CheckCompletionBehavior(parentTask, new Dictionary<string, string>(), cancellationToken, false);
                     if (completionResult.IsSatisfied)
@@ -103,7 +103,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
 
         private async Task<CompletionBehaviorResult> CheckCompletionBehavior(HumanTaskInstanceAggregate humanTaskInstance, Dictionary<string, string> parameters, CancellationToken token, bool raiseException = true)
         {
-            if (humanTaskInstance.CompletionBehavior == null || !humanTaskInstance.CompletionBehavior.Completions.Any())
+            if (humanTaskInstance.Completions == null || !humanTaskInstance.Completions.Any())
             {
                 return new CompletionBehaviorResult
                 {
@@ -114,7 +114,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             var subTasks = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.AggregateId, token);
             var executionContext = new HumanTaskInstanceExpressionContext(humanTaskInstance, parameters, subTasks);
             var result = new Dictionary<string, string>();
-            foreach (var completion in humanTaskInstance.CompletionBehavior.Completions)
+            foreach (var completion in humanTaskInstance.Completions)
             {
                 if (string.IsNullOrWhiteSpace(completion.Condition) || ExpressionParser.IsValid(completion.Condition, executionContext))
                 {

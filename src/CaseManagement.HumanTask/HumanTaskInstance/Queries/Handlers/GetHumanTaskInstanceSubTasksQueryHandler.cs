@@ -1,4 +1,5 @@
 ﻿using CaseManagement.HumanTask.Authorization;
+using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
 using CaseManagement.HumanTask.Localization;
@@ -39,7 +40,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            var callbackTxt = new Func<ICollection<Domains.Text>, Localization.Translation>((t) =>
+            var callbackTxt = new Func<ICollection<PresentationElementInstance>, Localization.Translation>((t) =>
             {
                 if (t == null || !t.Any())
                 {
@@ -55,8 +56,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
             var result = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.AggregateId, cancellationToken);
             ICollection<TaskInstanceDetailsResult> content = result.Select(_ =>
             {
-                var name = callbackTxt(_.PresentationElement.Names);
-                var subject = callbackTxt(_.PresentationElement.Subjects);
+                var name = callbackTxt(_.Names);
+                var subject = callbackTxt(_.Subjects);
                 return TaskInstanceDetailsResult.ToDto(_, name, subject, null, null);
             }).ToList();
             return new SubTasksResults 

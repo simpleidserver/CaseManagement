@@ -970,9 +970,9 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
             table191.AddRow(new string[] {
-                        "peopleAssignment",
-                        "{ potentialOwner : { type: \"USERIDENTIFIERS\", userIdentifiers: [ \"user1\" ]  }, ta" +
-                            "skInitiator : { type: \"USERIDENTIFIERS\", userIdentifiers: [ \"user1\" ]  }  }"});
+                        "peopleAssignments",
+                        "[ { \"type\": \"USERIDENTIFIERS\", \"value\": \"user1\", \"usage\" : \"POTENTIALOWNER\" }, { " +
+                            "\"type\" : \"USERIDENTIFIERS\", \"value\": \"user1\", \"usage\" : \"TASKINITIATOR\" } ]"});
 #line 313
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/a" +
                     "ssignment\'", ((string)(null)), table191, "And ");
@@ -981,8 +981,11 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
             table192.AddRow(new string[] {
-                        "presentationElement",
-                        "{ names: [ { language: \"fr\", value: \"bonjour\" } ] }"});
+                        "presentationElements",
+                        "[ { \"language\" : \"fr\", \"value\": \"bonjour\", \"usage\" : \"NAME\" } ]"});
+            table192.AddRow(new string[] {
+                        "presentationParameters",
+                        "[ ]"});
 #line 316
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/p" +
                     "resentationelts\'", ((string)(null)), table192, "And ");
@@ -993,7 +996,7 @@ this.ScenarioInitialize(scenarioInfo);
             table193.AddRow(new string[] {
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         "user1"});
-#line 319
+#line 320
  testRunner.And("authenticate", ((string)(null)), table193, "And ");
 #line hidden
             TechTalk.SpecFlow.Table table194 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1002,7 +1005,7 @@ this.ScenarioInitialize(scenarioInfo);
             table194.AddRow(new string[] {
                         "humanTaskName",
                         "searchHumanTask"});
-#line 322
+#line 323
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table194, "And ");
 #line hidden
             TechTalk.SpecFlow.Table table195 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1011,17 +1014,17 @@ this.ScenarioInitialize(scenarioInfo);
             table195.AddRow(new string[] {
                         "Accept-Language",
                         "fr"});
-#line 325
+#line 326
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/.search\'", ((string)(null)), table195, "And ");
-#line 328
+#line 329
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 330
- testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 331
- testRunner.Then("JSON \'content[0].name\'=\'searchHumanTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 332
- testRunner.Then("JSON \'content[0].actualOwner\'=\'user1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].name\'=\'searchHumanTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 333
+ testRunner.Then("JSON \'content[0].actualOwner\'=\'user1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 334
  testRunner.Then("JSON \'content[0].presentationName\'=\'bonjour\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

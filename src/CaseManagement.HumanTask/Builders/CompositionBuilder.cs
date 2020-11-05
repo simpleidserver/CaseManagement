@@ -5,24 +5,16 @@ namespace CaseManagement.HumanTask.Builders
 {
     public class CompositionBuilder
     {
-        private readonly CompositionTypes _type;
-        private readonly InstantiationPatterns _pattern;
-        private readonly HumanTaskDefinitionComposition _composition;
+        private readonly ICollection<HumanTaskDefinitionSubTask> _subTasks;
 
-        public CompositionBuilder(CompositionTypes type, InstantiationPatterns pattern)
+        public CompositionBuilder()
         {
-            _type = type;
-            _pattern = pattern;
-            _composition = new HumanTaskDefinitionComposition
-            {
-                InstantiationPattern = pattern,
-                Type = type
-            };
+            _subTasks = new List<HumanTaskDefinitionSubTask>();
         }
 
         public CompositionBuilder AddSubTask(string taskName, ICollection<ToPart> toParts)
         {
-            _composition.SubTasks.Add(new HumanTaskDefinitionSubTask
+            _subTasks.Add(new HumanTaskDefinitionSubTask
             {
                 TaskName = taskName,
                 ToParts = toParts
@@ -30,9 +22,9 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
-        public HumanTaskDefinitionComposition Build()
+        public ICollection<HumanTaskDefinitionSubTask> Build()
         {
-            return _composition;
+            return _subTasks;
         }
     }
 }

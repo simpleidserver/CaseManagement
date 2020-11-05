@@ -46,11 +46,11 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new BadRequestException(string.Format(Global.HumanTaskDefExists, request.Name));
             }
 
-            var humanTaskDef = HumanTaskDefinitionAggregate.New(request.Name);
-            await _humanTaskDefCommandRepository.Add(humanTaskDef, cancellationToken);
+            var res = HumanTaskDefinitionAggregate.New(request.Name);
+            await _humanTaskDefCommandRepository.Add(res, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
             _logger.LogInformation($"the human task definition '{request.Name}' has been added");
-            return HumanTaskDefResult.ToDto(humanTaskDef);
+            return HumanTaskDefResult.ToDto(res);
         }
     }
 }

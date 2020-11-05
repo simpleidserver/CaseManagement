@@ -55,10 +55,10 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             }
 
             var operationParameters = request.OperationParameters == null ? new Dictionary<string, string>() : request.OperationParameters;
-            var parameters = _parameterParser.ParseOperationParameters(humanTaskDef.Operation.InputParameters, operationParameters);
+            var parameters = _parameterParser.ParseOperationParameters(humanTaskDef.InputParameters, operationParameters);
             var assignment = EnrichAssignment(humanTaskDef, request);
             var priority = EnrichPriority(humanTaskDef, request);
-            var assignmentInstance = _parameterParser.ParseHumanTaskInstancePeopleAssignment(assignment, parameters);
+            var assignmentInstance = _parameterParser.ParsePeopleAssignments(assignment, parameters);
             if (!request.IsCreatedByTaskParent)
             {
                 var roles = await _authorizationHelper.GetRoles(assignmentInstance, request.Claims, cancellationToken);
@@ -72,33 +72,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             _logger.LogInformation($"Create human task '{request.HumanTaskName}'");
             var userPrincipal = request.Claims.GetUserNameIdentifier();
             var id = Guid.NewGuid().ToString();
-            var deadLines = new List<HumanTaskInstanceDeadLine>();
-            if (humanTaskDef.DeadLines.StartDeadLines != null && humanTaskDef.DeadLines.StartDeadLines.Any())
-            {
-                deadLines.AddRange(_deadlineParser.Evaluate(humanTaskDef.DeadLines.StartDeadLines, HumanTaskInstanceDeadLineTypes.START, parameters));
-            }
-
-            if (humanTaskDef.DeadLines.CompletionDeadLines != null && humanTaskDef.DeadLines.CompletionDeadLines.Any())
-            {
-                deadLines.AddRange(_deadlineParser.Evaluate(humanTaskDef.DeadLines.CompletionDeadLines, HumanTaskInstanceDeadLineTypes.COMPLETION, parameters));
-            }
-
-            var presentationElementInstance = _parameterParser.ParsePresentationElement(humanTaskDef.PresentationElement, operationParameters);
-            HumanTaskInstanceComposition composition = null;
-            if (humanTaskDef.Composition != null)
-            {
-                composition = new HumanTaskInstanceComposition
-                {
-                    InstantiationPattern = humanTaskDef.Composition.InstantiationPattern,
-                    Type = humanTaskDef.Composition.Type,
-                    SubTasks = humanTaskDef.Composition.SubTasks.Select(_ => new HumanTaskInstanceSubTask
-                    {
-                        HumanTaskName = _.TaskName,
-                        ToParts = _.ToParts
-                    }).ToList()
-                };
-            }
-
+            var deadLines = _deadlineParser.Evaluate(humanTaskDef.DeadLines, parameters);
+            var presentationElements = _parameterParser.ParsePresentationElements(humanTaskDef.PresentationElements, humanTaskDef.PresentationParameters, operationParameters);
             var humanTaskInstance = HumanTaskInstanceAggregate.New(
                 id, 
                 userPrincipal, 
@@ -107,51 +82,42 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 assignmentInstance, 
                 priority, 
                 request.ActivationDeferralTime, 
-                request.ExpirationTime, 
-                deadLines, 
-                presentationElementInstance,
-                composition,
-                humanTaskDef.Operation,
-                humanTaskDef.CompletionBehavior,
-                humanTaskDef.Rendering);
+                request.ExpirationTime,
+                deadLines,
+                presentationElements,
+                humanTaskDef.Type,
+                humanTaskDef.InstantiationPattern,
+                humanTaskDef.SubTasks.Select(_ => new HumanTaskInstanceSubTask
+                {
+                    HumanTaskName = _.TaskName,
+                    ToParts = _.ToParts
+                }).ToList(),
+                humanTaskDef.OperationParameters,
+                humanTaskDef.CompletionAction,
+                humanTaskDef.Completions,
+                humanTaskDef.RenderingElements);
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return humanTaskInstance.AggregateId;
         }
 
-        private static HumanTaskDefinitionAssignment EnrichAssignment(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)
+        private static ICollection<PeopleAssignmentDefinition> EnrichAssignment(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)
         {
-            HumanTaskDefinitionAssignment taskPeopleAssignment = humanTaskDef.PeopleAssignment;
-            if (request.PeopleAssignment != null)
+            var result = humanTaskDef.PeopleAssignments.ToList();
+            if (request.PeopleAssignments != null)
             {
-                var domain = request.PeopleAssignment.ToDomain();
-                if (domain.BusinessAdministrator != null)
+                foreach(var peopleAssignment in request.PeopleAssignments)
                 {
-                    taskPeopleAssignment.BusinessAdministrator = domain.BusinessAdministrator;
-                }
-
-                if (domain.ExcludedOwner != null)
-                {
-                    taskPeopleAssignment.ExcludedOwner = domain.ExcludedOwner;
-                }
-
-                if (domain.PotentialOwner != null)
-                {
-                    taskPeopleAssignment.PotentialOwner = domain.PotentialOwner;
-                }
-
-                if (domain.Recipient != null)
-                {
-                    taskPeopleAssignment.Recipient = domain.Recipient;
-                }
-
-                if (domain.TaskStakeHolder != null)
-                {
-                    taskPeopleAssignment.TaskStakeHolder = domain.TaskStakeHolder;
+                    result.Add(new PeopleAssignmentDefinition
+                    {
+                        Type = peopleAssignment.Type,
+                        Usage = peopleAssignment.Usage,
+                        Value = peopleAssignment.Value
+                    });
                 }
             }
 
-            return taskPeopleAssignment;
+            return result;
         }
 
         private static int EnrichPriority(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)

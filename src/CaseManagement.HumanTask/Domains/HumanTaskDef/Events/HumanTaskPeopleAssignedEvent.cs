@@ -11,29 +11,14 @@ namespace CaseManagement.HumanTask.Domains
             string id,
             string aggregateId,
             int version,
-            PeopleAssignmentDefinition potentialOwner,
-            PeopleAssignmentDefinition excludedOwner,
-            PeopleAssignmentDefinition taskInitiator,
-            PeopleAssignmentDefinition taskStakeHolder,
-            PeopleAssignmentDefinition businessAdministrator,
-            PeopleAssignmentDefinition recipient,
+            PeopleAssignmentDefinition[] peopleAssignments,
             DateTime updateDateTime) : base(id, aggregateId, version)
         {
-            PotentialOwner = potentialOwner;
-            ExcludedOwner = excludedOwner;
-            TaskInitiator = taskInitiator;
-            TaskStakeHolder = taskStakeHolder;
-            BusinessAdministrator = businessAdministrator;
-            Recipient = recipient;
+            PeopleAssignments = peopleAssignments;
             UpdateDateTime = updateDateTime;
         }
 
-        public PeopleAssignmentDefinition PotentialOwner { get; set; }
-        public PeopleAssignmentDefinition ExcludedOwner { get; set; }
-        public PeopleAssignmentDefinition TaskInitiator { get; set; }
-        public PeopleAssignmentDefinition TaskStakeHolder { get; set; }
-        public PeopleAssignmentDefinition BusinessAdministrator { get; set; }
-        public PeopleAssignmentDefinition Recipient { get; set; }
+        public PeopleAssignmentDefinition[] PeopleAssignments { get; set; }
         public DateTime UpdateDateTime { get; set; }
     }
 }

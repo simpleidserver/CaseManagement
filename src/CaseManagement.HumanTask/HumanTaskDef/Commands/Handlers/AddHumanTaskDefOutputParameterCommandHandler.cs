@@ -38,7 +38,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new BadRequestException(string.Format(Global.MissingParameter, "parameter"));
             }
 
-            if (result.Operation.OutputParameters.Any(_ => _.Name == request.Parameter.Name))
+            if (result.OutputParameters.Any(_ => _.Name == request.Parameter.Name))
             {
                 _logger.LogError($"The input parameter '{request.Parameter.Name}' already exists");
                 throw new BadRequestException(string.Format(Global.OutputParameterExists, "parameter"));

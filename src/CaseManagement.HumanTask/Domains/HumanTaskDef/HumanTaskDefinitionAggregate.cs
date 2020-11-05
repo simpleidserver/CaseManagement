@@ -14,12 +14,14 @@ namespace CaseManagement.HumanTask.Domains
         public HumanTaskDefinitionAggregate()
         {
             ActualOwnerRequired = true;
-            Operation = new Operation();
-            PresentationElement = new PresentationElementDefinition();
-            PeopleAssignment = new HumanTaskDefinitionAssignment();
-            Rendering = new Rendering();
-            DeadLines = new HumanTaskDefinitionDeadLines();
-            CompletionBehavior = new CompletionBehavior();
+            OperationParameters = new List<Parameter>();
+            PresentationElements = new List<PresentationElementDefinition>();
+            PeopleAssignments = new List<PeopleAssignmentDefinition>();
+            RenderingElements = new List<RenderingElement>();
+            DeadLines = new List<HumanTaskDefinitionDeadLine>();
+            Completions = new List<Completion>();
+            SubTasks = new List<HumanTaskDefinitionSubTask>();
+            PresentationParameters = new List<PresentationParameter>();
         }
 
         public DateTime CreateDateTime { get; set; }
@@ -37,25 +39,9 @@ namespace CaseManagement.HumanTask.Domains
         /// </summary>
         public bool ActualOwnerRequired { get; set; }
         /// <summary>
-        /// This element is used to specify the operation used to invoke the task.
-        /// </summary>
-        public Operation Operation { get; set; }
-        /// <summary>
         /// Specify the priority of the task (from 0 to 10).
         /// </summary>
         public int Priority { get; set; }
-        /// <summary>
-        /// Used to specify people assigned to different generic human roles, i.e. potential owners, and business administrators.
-        /// </summary>
-        public HumanTaskDefinitionAssignment PeopleAssignment { get; set; }
-        /// <summary>
-        /// Used to specify constraints concerning delegation of the task.
-        /// </summary>
-        public Delegation Delegation { get; set; }
-        /// <summary>
-        ///  This element is used to specify different information used to display the task in a task list, such as name, subject and description.
-        /// </summary>
-        public PresentationElementDefinition PresentationElement { get; set; }
         /// <summary>
         /// This optional element identifies the field (of an xsd simple type) in the output message which reflects the business result of a task.
         /// A conversion takes place to yield an outcome of type xsd:string.
@@ -66,20 +52,44 @@ namespace CaseManagement.HumanTask.Domains
         /// </summary>
         public string SearchBy { get; set; }
         /// <summary>
+        /// This element is used to specify subtasks of a composite task. 
+        /// It is optional.
+        /// </summary>
+        public CompositionTypes Type { get; set; }
+        public InstantiationPatterns InstantiationPattern { get; set; }
+        public CompletionBehaviors CompletionAction { get; set; }
+        public ICollection<Completion> Completions { get; set; }
+        /// <summary>
+        /// This element is used to specify the operation used to invoke the task.
+        /// </summary>
+        public ICollection<Parameter> OperationParameters { get; set; }
+        public ICollection<Parameter> InputParameters { get => OperationParameters.Where(_ => _.Usage == ParameterUsages.INPUT).ToList() ; }
+        public ICollection<Parameter> OutputParameters { get => OperationParameters.Where(_ => _.Usage == ParameterUsages.OUTPUT).ToList(); }
+        /// <summary>
+        /// This optional attribute specifies the way sub-tasks are instantiated.
+        /// </summary>
+        public ICollection<HumanTaskDefinitionSubTask> SubTasks { get; set; }
+        /// <summary>
         /// This element is used to specify rendering method. It is optional.
         /// </summary>
-        public Rendering Rendering { get; set; }
+        public ICollection<RenderingElement> RenderingElements { get; set; }
         /// <summary>
         /// This element specifies different deadlines.
         /// It is optional.
         /// </summary>
-        public HumanTaskDefinitionDeadLines DeadLines { get; set; }
+        public ICollection<HumanTaskDefinitionDeadLine> DeadLines { get; set; }
         /// <summary>
-        /// This element is used to specify subtasks of a composite task. 
-        /// It is optional.
+        /// Used to specify people assigned to different generic human roles, i.e. potential owners, and business administrators.
         /// </summary>
-        public HumanTaskDefinitionComposition Composition { get; set; }
-        public CompletionBehavior CompletionBehavior { get; set; }
+        public ICollection<PeopleAssignmentDefinition> PeopleAssignments { get; set; }
+        /// <summary>
+        ///  This element is used to specify different information used to display the task in a task list, such as name, subject and description.
+        /// </summary>
+        public ICollection<PresentationElementDefinition> PresentationElements { get; set; }
+        /// <summary>
+        /// This element specifies parameters used in presentation elements subject and description.
+        /// </summary>
+        public ICollection<PresentationParameter> PresentationParameters { get; set; }
 
         public override object Clone()
         {
@@ -91,17 +101,20 @@ namespace CaseManagement.HumanTask.Domains
                 AggregateId = AggregateId,
                 Version = Version,
                 ActualOwnerRequired = ActualOwnerRequired,
-                Operation = (Operation)Operation?.Clone(),
+                OperationParameters = OperationParameters.Select(_ => (Parameter)_.Clone()).ToList(),
                 Priority = Priority,
-                PeopleAssignment = (HumanTaskDefinitionAssignment)PeopleAssignment?.Clone(),
-                Delegation = (Delegation)Delegation?.Clone(),
-                PresentationElement = (PresentationElementDefinition)PresentationElement?.Clone(),
+                PeopleAssignments = PeopleAssignments.Select(_ => (PeopleAssignmentDefinition)_.Clone()).ToList(),
+                PresentationElements = PresentationElements.Select(_ => (PresentationElementDefinition)_.Clone()).ToList(),
+                PresentationParameters = PresentationParameters.Select(_ => (PresentationParameter)_.Clone()).ToList(),
                 Outcome = Outcome,
                 SearchBy = SearchBy,
-                Rendering = (Rendering)Rendering?.Clone(),
-                DeadLines = (HumanTaskDefinitionDeadLines)DeadLines?.Clone(),
-                Composition = (HumanTaskDefinitionComposition)Composition?.Clone(),
-                CompletionBehavior = (CompletionBehavior)CompletionBehavior?.Clone()
+                RenderingElements = RenderingElements.Select(_ => (RenderingElement)_.Clone()).ToList(),
+                DeadLines = DeadLines.Select(_ => (HumanTaskDefinitionDeadLine)_.Clone()).ToList(),
+                CompletionAction = CompletionAction,
+                InstantiationPattern = InstantiationPattern,
+                Type = Type,
+                SubTasks = SubTasks.Select(_ => (HumanTaskDefinitionSubTask)_.Clone()).ToList(),
+                Completions = Completions.Select(_ => (Completion)_.Clone()).ToList()
             };
         }
 
@@ -120,23 +133,12 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
-        public void UpdatePeopleAssignment(
-            PeopleAssignmentDefinition potentialOwner,
-            PeopleAssignmentDefinition excludedOwner,
-            PeopleAssignmentDefinition taskInitiator,
-            PeopleAssignmentDefinition taskStakeHolder,
-            PeopleAssignmentDefinition businessAdministrator,
-            PeopleAssignmentDefinition recipient)
+        public void UpdatePeopleAssignment(params PeopleAssignmentDefinition[] peopleAssigments)
         {
             var evt = new HumanTaskPeopleAssignedEvent(Guid.NewGuid().ToString(),
                 AggregateId,
-                Version + 1,
-                potentialOwner,
-                excludedOwner,
-                taskInitiator,
-                taskStakeHolder,
-                businessAdministrator,
-                recipient,
+                Version + 1, 
+                peopleAssigments,
                 DateTime.UtcNow);
             Handle(evt);
         }
@@ -165,9 +167,15 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
-        public void UpdatePresentationElt(PresentationElementDefinition elt)
+        public void UpdatePresentationElts(IEnumerable<PresentationElementDefinition> elts)
         {
-            var evt = new HumanTaskDefPresentationEltUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, elt, DateTime.UtcNow);
+            var evt = new HumanTaskDefPresentationEltsUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, elts, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void UpdatePresentationParameters(ICollection<PresentationParameter> pars)
+        {
+            var evt = new HumanTaskDefPresentationParsUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pars, DateTime.UtcNow);
             Handle(evt);
         }
 
@@ -175,6 +183,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             var id = Guid.NewGuid().ToString();
             deadLine.Id = id;
+            deadLine.Usage = DeadlineUsages.START;
             var evt = new HumanTaskDefStartDeadLineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLine, DateTime.UtcNow);
             Handle(evt);
             return id;
@@ -184,6 +193,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             var id = Guid.NewGuid().ToString();
             deadLine.Id = id;
+            deadLine.Usage = DeadlineUsages.COMPLETION;
             var evt = new HumanTaskDefCompletionDeadLineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLine, DateTime.UtcNow);
             Handle(evt);
             return id;
@@ -253,9 +263,9 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
-        public void UpdateRendering(Rendering rendering)
+        public void UpdateRendering(ICollection<RenderingElement> renderingElements)
         {
-            var evt = new HumanTaskDefRenderingUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, rendering, DateTime.UtcNow);
+            var evt = new HumanTaskDefRenderingUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, renderingElements, DateTime.UtcNow);
             Handle(evt);
         }
 
@@ -282,49 +292,76 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskPeopleAssignedEvent evt)
         {
-            PeopleAssignment.BusinessAdministrator = evt.BusinessAdministrator;
-            PeopleAssignment.ExcludedOwner = evt.ExcludedOwner;
-            PeopleAssignment.PotentialOwner = evt.PotentialOwner;
-            PeopleAssignment.Recipient = evt.Recipient;
-            PeopleAssignment.TaskInitiator = evt.TaskInitiator;
-            PeopleAssignment.TaskStakeHolder = evt.TaskStakeHolder;
+            PeopleAssignments.Clear();
+            foreach(var l in evt.PeopleAssignments)
+            {
+                PeopleAssignments.Add(l);
+            }
+
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
 
         private void Handle(HumanTaskDefInputParameterAddedEvent evt)
         {
-            Operation.InputParameters.Add(evt.Parameter);
+            OperationParameters.Add(new Parameter
+            {
+                IsRequired = evt.Parameter.IsRequired,
+                Name = evt.Parameter.Name,
+                Type = evt.Parameter.Type,
+                Usage = ParameterUsages.INPUT
+            });
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
 
         private void Handle(HumanTaskDefOutputParameterAddedEvent evt)
         {
-            Operation.OutputParameters.Add(evt.Parameter);
+            OperationParameters.Add(new Parameter
+            {
+                IsRequired = evt.Parameter.IsRequired,
+                Name = evt.Parameter.Name,
+                Type = evt.Parameter.Type,
+                Usage = ParameterUsages.OUTPUT
+            });
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
 
         private void Handle(HumanTaskDefInputParameterRemovedEvent evt)
         {
-            var op = Operation.InputParameters.First(_ => _.Name == evt.ParameterName);
-            Operation.InputParameters.Remove(op);
+            var op = OperationParameters.FirstOrDefault(_ => _.Usage == ParameterUsages.INPUT && _.Name == evt.ParameterName);
+            OperationParameters.Remove(op);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
 
         private void Handle(HumanTaskDefOutputParameterRemovedEvent evt)
         {
-            var op = Operation.OutputParameters.First(_ => _.Name == evt.ParameterName);
-            Operation.OutputParameters.Remove(op);
+            var op = OperationParameters.FirstOrDefault(_ => _.Usage == ParameterUsages.OUTPUT && _.Name == evt.ParameterName);
+            OperationParameters.Remove(op);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
 
-        private void Handle(HumanTaskDefPresentationEltUpdatedEvent evt)
+        private void Handle(HumanTaskDefPresentationEltsUpdatedEvent evt)
         {
-            PresentationElement = evt.PresentationElt;
+            foreach(var p in evt.PresentationElts)
+            {
+                PresentationElements.Add(p);
+            }
+
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefPresentationParsUpdatedEvent evt)
+        {
+            foreach(var p in evt.PresentationParameters)
+            {
+                PresentationParameters.Add(p);
+            }
+
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -332,7 +369,7 @@ namespace CaseManagement.HumanTask.Domains
         private void Handle(HumanTaskDefStartDeadLineAddedEvent evt)
         {
             CheckDeadLine(evt.DeadLine);
-            DeadLines.StartDeadLines.Add(evt.DeadLine);
+            DeadLines.Add(evt.DeadLine);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -340,14 +377,14 @@ namespace CaseManagement.HumanTask.Domains
         private void Handle(HumanTaskDefCompletionDeadLineAddedEvent evt)
         {
             CheckDeadLine(evt.DeadLine);
-            DeadLines.CompletionDeadLines.Add(evt.DeadLine);
+            DeadLines.Add(evt.DeadLine);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
 
         private void Handle(HumanTaskDefCompletionDeadLineRemovedEvent evt)
         {
-            var e = DeadLines.CompletionDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            var e = DeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId && _.Usage == DeadlineUsages.COMPLETION);
             if (e == null)
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
@@ -356,14 +393,14 @@ namespace CaseManagement.HumanTask.Domains
                 });
             }
 
-            DeadLines.CompletionDeadLines.Remove(e);
+            DeadLines.Remove(e);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
 
         private void Handle(HumanTaskDefStartDeadLineRemovedEvent evt)
         {
-            var e = DeadLines.StartDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            var e = DeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId && _.Usage == DeadlineUsages.START);
             if (e == null)
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
@@ -372,7 +409,7 @@ namespace CaseManagement.HumanTask.Domains
                 });
             }
 
-            DeadLines.StartDeadLines.Remove(e);
+            DeadLines.Remove(e);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -380,7 +417,8 @@ namespace CaseManagement.HumanTask.Domains
         private void Handle(HumanTaskDefEscalationStartDeadlineAddedEvent evt)
         {
             var errors = new List<KeyValuePair<string, string>>();
-            var completionDeadLine = DeadLines.StartDeadLines.FirstOrDefault(_ => _.Id == evt.StartDeadLineId);
+            var completionDeadLine = DeadLines.FirstOrDefault(_ => _.Id == evt.StartDeadLineId && 
+            _.Usage == DeadlineUsages.START);
             if (completionDeadLine == null)
             {
                 errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownStartDeadline));
@@ -403,7 +441,7 @@ namespace CaseManagement.HumanTask.Domains
         private void Handle(HumanTaskDefEscalationCompletionDeadlineAddedEvent evt)
         {
             var errors = new List<KeyValuePair<string, string>>();
-            var completionDeadLine = DeadLines.CompletionDeadLines.FirstOrDefault(_ => _.Id == evt.CompletionDeadLineId);
+            var completionDeadLine = DeadLines.FirstOrDefault(_ => _.Id == evt.CompletionDeadLineId && _.Usage == DeadlineUsages.COMPLETION);
             if (completionDeadLine == null)
             {
                 errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownCompletionDeadline));
@@ -425,7 +463,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefStartDeadlineUpdatedEvent evt)
         {
-            var d = DeadLines.StartDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            var d = DeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId && _.Usage == DeadlineUsages.START);
             if (d == null)
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
@@ -449,7 +487,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefCompletionDeadlineUpdatedEvent evt)
         {
-            var d = DeadLines.CompletionDeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            var d = DeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId && _.Usage == DeadlineUsages.COMPLETION);
             if (d == null)
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
@@ -473,7 +511,9 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefEscalationStartDeadlineRemovedEvent evt)
         {
-            var kvp = CheckEscalation(DeadLines.StartDeadLines, evt.StartDeadLineId, evt.EscalationId, Global.UnknownStartDeadline);
+            var kvp = CheckEscalation(DeadLines.Where(_ => _.Usage == DeadlineUsages.START).ToList(), 
+                evt.StartDeadLineId, evt.EscalationId, 
+                Global.UnknownStartDeadline);
             kvp.Key.Escalations.Remove(kvp.Value);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
@@ -481,7 +521,9 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefEscalationCompletionDeadlineRemovedEvent evt)
         {
-            var kvp = CheckEscalation(DeadLines.CompletionDeadLines, evt.CompletionDeadLineId, evt.EscalationId, Global.UnknownCompletionDeadline);
+            var kvp = CheckEscalation(DeadLines.Where(_ => _.Usage == DeadlineUsages.COMPLETION).ToList(),
+                evt.CompletionDeadLineId, evt.EscalationId,
+                Global.UnknownCompletionDeadline);
             kvp.Key.Escalations.Remove(kvp.Value);
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
@@ -489,7 +531,9 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefEscalationStartDeadlineUpdatedEvent evt)
         {
-            var kvp = CheckEscalation(DeadLines.StartDeadLines, evt.CompletionDeadLineId, evt.EscalationId, Global.UnknownStartDeadline);
+            var kvp = CheckEscalation(DeadLines.Where(_ => _.Usage == DeadlineUsages.START).ToList(),
+                evt.CompletionDeadLineId, evt.EscalationId, 
+                Global.UnknownStartDeadline);
             kvp.Value.Condition = evt.Escalation.Condition;
             kvp.Value.Notification = evt.Escalation.Notification;
             kvp.Value.ToParts = evt.Escalation.ToParts;
@@ -499,7 +543,9 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefEscalationCompletionDeadlineUpdatedEvent evt)
         {
-            var kvp = CheckEscalation(DeadLines.CompletionDeadLines, evt.CompletionDeadLineId, evt.EscalationId, Global.UnknownCompletionDeadline);
+            var kvp = CheckEscalation(DeadLines.Where(_ => _.Usage == DeadlineUsages.COMPLETION).ToList(), 
+                evt.CompletionDeadLineId, evt.EscalationId, 
+                Global.UnknownCompletionDeadline);
             kvp.Value.Condition = evt.Escalation.Condition;
             kvp.Value.Notification = evt.Escalation.Notification;
             kvp.Value.ToParts = evt.Escalation.ToParts;
@@ -509,7 +555,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefRenderingUpdatedEvent evt)
         {
-            Rendering = evt.Rendering;
+            RenderingElements = evt.RenderingElements;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

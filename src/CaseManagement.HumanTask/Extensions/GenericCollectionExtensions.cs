@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using CaseManagement.HumanTask.Common;
+using CaseManagement.HumanTask.Domains;
+using CaseManagement.HumanTask.HumanTaskInstance.Commands;
+using System.Linq;
 using System.Security.Claims;
 
 namespace System.Collections.Generic
@@ -29,5 +32,34 @@ namespace System.Collections.Generic
         {
             return claims.Where(_ => _.Key == ClaimTypes.Role).Select(_ => _.Value).ToList();
         }
+
+        #region People assignments
+
+        public static ICollection<PeopleAssignmentInstance> GetPotentialOwners(this ICollection<PeopleAssignmentInstance> peopleAssignments)
+        {
+            return peopleAssignments.Where(_ => _.Usage == PeopleAssignmentUsages.POTENTIALOWNER).ToList();
+        }
+
+        public static ICollection<PeopleAssignmentInstance> GetBusinessAdministrators(this ICollection<PeopleAssignmentInstance> peopleAssignments)
+        {
+            return peopleAssignments.Where(_ => _.Usage == PeopleAssignmentUsages.BUSINESSADMINISTRATOR).ToList();
+        }
+
+        public static ICollection<PeopleAssignmentInstance> GetExcludedOwners(this ICollection<PeopleAssignmentInstance> peopleAssignments)
+        {
+            return peopleAssignments.Where(_ => _.Usage == PeopleAssignmentUsages.EXCLUDEDOWNER).ToList();
+        }
+
+        public static ICollection<PeopleAssignmentInstance> GetTaskInitiators(this ICollection<PeopleAssignmentInstance> peopleAssignments)
+        {
+            return peopleAssignments.Where(_ => _.Usage == PeopleAssignmentUsages.TASKINITIATOR).ToList();
+        }
+
+        public static ICollection<PeopleAssignmentInstance> GetTaskStakeHolders(this ICollection<PeopleAssignmentInstance> peopleAssignments)
+        {
+            return peopleAssignments.Where(_ => _.Usage == PeopleAssignmentUsages.TASKSTAKEHOLDER).ToList();
+        }
+
+        #endregion
     }
 }

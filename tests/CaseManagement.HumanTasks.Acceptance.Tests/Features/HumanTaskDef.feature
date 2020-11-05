@@ -32,15 +32,15 @@ Scenario: Check humantaskdef people assignment can be updated
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/assignment'
-    | Key              | Value                                                                          |
-    | peopleAssignment | { potentialOwner : { type: "USERIDENTIFIERS", userIdentifiers: [ "user1" ]  } } |
+    | Key               | Value                                                                        |
+    | peopleAssignments | [ { type: "USERIDENTIFIERS", value: "user1", "usage" : "POTENTIALOWNER"  } ] |
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updatePeopleAssignment'
-	Then JSON 'peopleAssignment.potentialOwner.type'='USERIDENTIFIERS'
-	Then JSON 'peopleAssignment.potentialOwner.userIdentifiers[0]'='user1'
+	Then JSON 'peopleAssignments[0].type'='USERIDENTIFIERS'
+	Then JSON 'peopleAssignments[0].value'='user1'
 
 Scenario: Check input parameter can be added
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -56,8 +56,9 @@ Scenario: Check input parameter can be added
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='addInputParameter'
-	Then JSON 'operation.inputParameters[0].name'='parameter'
-	Then JSON 'operation.inputParameters[0].type'='STRING'
+	Then JSON 'operationParameters[0].name'='parameter'
+	Then JSON 'operationParameters[0].type'='STRING'
+	Then JSON 'operationParameters[0].usage'='INPUT'
 
 Scenario: Check output parameter can be added
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -73,8 +74,9 @@ Scenario: Check output parameter can be added
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='addOutputParameter'
-	Then JSON 'operation.outputParameters[0].name'='parameter'
-	Then JSON 'operation.outputParameters[0].type'='STRING'
+	Then JSON 'operationParameters[0].name'='parameter'
+	Then JSON 'operationParameters[0].type'='STRING'
+	Then JSON 'operationParameters[0].usage'='OUTPUT'
 
 Scenario: Check input parameter can be removed
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -117,15 +119,17 @@ Scenario: Check presentationElement can be updated
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/presentationelts'
-	| Key                 | Value                                               |
-	| presentationElement | { names: [ { language: "fr", value: "bonjour" } ] } |
+	| Key                    | Value                                                     |
+	| presentationElements   | [ { language: "fr", value: "bonjour", "usage": "NAME" } ] |
+	| presentationParameters | [ ]                                                       |
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
 	
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updatePresentationElement'
-	Then JSON 'presentationElementResult.names[0].language'='fr'
-	Then JSON 'presentationElementResult.names[0].value'='bonjour'
+	Then JSON 'presentationElements[0].language'='fr'
+	Then JSON 'presentationElements[0].value'='bonjour'
+	Then JSON 'presentationElements[0].usage'='NAME'
 
 Scenario: Check add start deadline
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -141,8 +145,9 @@ Scenario: Check add start deadline
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='addStartDeadline'
-	Then JSON 'deadLines.startDeadLines[0].name'='name'
-	Then JSON 'deadLines.startDeadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines[0].name'='name'
+	Then JSON 'deadLines[0].usage'='START'
+	Then JSON 'deadLines[0].until'='P0Y0M0DT0H0M2S'
 
 Scenario: Check add completion deadline
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -158,8 +163,9 @@ Scenario: Check add completion deadline
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='addCompletionDeadline'
-	Then JSON 'deadLines.completionDeadLines[0].name'='name'
-	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines[0].name'='name'
+	Then JSON 'deadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines[0].usage'='COMPLETION'
 
 Scenario: Check start deadline can be removed
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -218,8 +224,8 @@ Scenario: Check start deadline can be updated
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updateStartDeadline'
-	Then JSON 'deadLines.startDeadLines[0].name'='name'
-	Then JSON 'deadLines.startDeadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines[0].name'='name'
+	Then JSON 'deadLines[0].until'='P0Y0M0DT0H0M2S'
 
 Scenario: Check completion deadline can be updated
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -240,8 +246,8 @@ Scenario: Check completion deadline can be updated
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updateCompletionDeadline'
-	Then JSON 'deadLines.completionDeadLines[0].name'='name'
-	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines[0].name'='name'
+	Then JSON 'deadLines[0].until'='P0Y0M0DT0H0M2S'
 
 Scenario: Check escalation start deadline can be added
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -262,9 +268,10 @@ Scenario: Check escalation start deadline can be added
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='addEscalationStartDeadline'
-	Then JSON 'deadLines.startDeadLines[0].name'='name'
-	Then JSON 'deadLines.startDeadLines[0].until'='P0Y0M0DT0H0M2S'
-	Then JSON 'deadLines.startDeadLines[0].escalations[0].condition'='true'
+	Then JSON 'deadLines[0].name'='name'
+	Then JSON 'deadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines[0].escalations[0].condition'='true'
+	Then JSON 'deadLines[0].usage'='START'
 
 Scenario: Check escalation completion deadline can be added
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -285,9 +292,10 @@ Scenario: Check escalation completion deadline can be added
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='addEscalationCompletionDeadline'
-	Then JSON 'deadLines.completionDeadLines[0].name'='name'
-	Then JSON 'deadLines.completionDeadLines[0].until'='P0Y0M0DT0H0M2S'
-	Then JSON 'deadLines.completionDeadLines[0].escalations[0].condition'='true'
+	Then JSON 'deadLines[0].name'='name'
+	Then JSON 'deadLines[0].until'='P0Y0M0DT0H0M2S'
+	Then JSON 'deadLines[0].escalations[0].condition'='true'
+	Then JSON 'deadLines[0].usage'='COMPLETION'
 
 Scenario: Check escalation can be removed from start deadline
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -361,7 +369,7 @@ Scenario: Check escalation of a start deadline can be updated
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updateEscalationStartDeadline'
-	Then JSON 'deadLines.startDeadLines[0].escalations[0].condition'='false'
+	Then JSON 'deadLines[0].escalations[0].condition'='false'
 
 
 Scenario: Check escalation of a completion deadline can be updated
@@ -388,7 +396,7 @@ Scenario: Check escalation of a completion deadline can be updated
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updateEscalationCompletionDeadline'
-	Then JSON 'deadLines.completionDeadLines[0].escalations[0].condition'='false'
+	Then JSON 'deadLines[0].escalations[0].condition'='false'
 
 Scenario: Check rendering can be updated
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'
@@ -397,11 +405,11 @@ Scenario: Check rendering can be updated
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'	
 	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/rendering'
-	| Key       | Value                              |
-	| rendering | { output : [ { xPath: 'xpath' }] } |
+	| Key               | Value                 |
+	| renderingElements | [ { xPath: 'xpath' }] |
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updateRendering'
-	Then JSON 'rendering.output[0].xPath'='xPath'
+	Then JSON 'renderingElements[0].xPath'='xPath'

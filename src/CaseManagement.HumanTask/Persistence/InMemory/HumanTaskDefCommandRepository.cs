@@ -17,7 +17,15 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 
         public Task<bool> Add(HumanTaskDefinitionAggregate humanTaskDef, CancellationToken token)
         {
-            _humanTaskDefs.Add((HumanTaskDefinitionAggregate)humanTaskDef);
+            _humanTaskDefs.Add(humanTaskDef);
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> Update(HumanTaskDefinitionAggregate humanTaskDef, CancellationToken token)
+        {
+            var r = _humanTaskDefs.First(_ => _.AggregateId == humanTaskDef.AggregateId);
+            _humanTaskDefs.Remove(r);
+            _humanTaskDefs.Add((HumanTaskDefinitionAggregate)humanTaskDef.Clone());
             return Task.FromResult(true);
         }
 
@@ -30,14 +38,6 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             }
 
             _humanTaskDefs.Remove(record);
-            return Task.FromResult(true);
-        }
-
-        public Task<bool> Update(HumanTaskDefinitionAggregate humanTaskDef, CancellationToken token)
-        {
-            var r = _humanTaskDefs.First(_ => _.AggregateId == humanTaskDef.AggregateId);
-            _humanTaskDefs.Remove(r);
-            _humanTaskDefs.Add((HumanTaskDefinitionAggregate)humanTaskDef.Clone());
             return Task.FromResult(true);
         }
 

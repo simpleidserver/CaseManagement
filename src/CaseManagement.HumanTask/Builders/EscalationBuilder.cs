@@ -7,11 +7,12 @@ namespace CaseManagement.HumanTask.Builders
     {
         private readonly HumanTaskDefinitionDeadLine _deadLine;
 
-        public DeadLineBuilder(string name)
+        public DeadLineBuilder(string name, DeadlineUsages usage)
         {
             _deadLine = new HumanTaskDefinitionDeadLine
             {
-                Name = name
+                Name = name,
+                Usage = usage
             };
         }
 

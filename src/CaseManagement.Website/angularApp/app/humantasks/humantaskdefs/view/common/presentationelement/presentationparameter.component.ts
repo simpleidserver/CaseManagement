@@ -1,8 +1,7 @@
 ﻿import { Component, Input, ViewEncapsulation } from "@angular/core";
-import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
-import { Description } from "@app/stores/common/description.model";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { PresentationParameter } from "@app/stores/common/presentationparameter.model";
-import { TextDef } from "@app/stores/common/textdef.model";
+import { PresentationElement } from "@app/stores/common/presentationelement.model";
 
 export class Language {
     constructor(public code: string, public displayName: string) { }
@@ -36,9 +35,9 @@ export class PresentationParameterComponent {
     addSubjectForm: FormGroup;
     addDescriptionForm: FormGroup;
     addPresentationForm: FormGroup;
-    @Input() names: TextDef[];
-    @Input() subjects: TextDef[];
-    @Input() descriptions: Description[];
+    @Input() names: PresentationElement[];
+    @Input() subjects: PresentationElement[];
+    @Input() descriptions: PresentationElement[];
     @Input() presentationParameters: PresentationParameter[];
 
     constructor(
@@ -83,27 +82,30 @@ export class PresentationParameterComponent {
         });
     }
 
-    addName(txt: TextDef) {
+    addName(txt: PresentationElement) {
         if (!this.addNameForm.valid) {
             return;
         }
 
+        txt.usage = 'NAME';
         this.names.push(txt);
     }
 
-    addSubject(sub: TextDef) {
+    addSubject(sub: PresentationElement) {
         if (!this.addSubjectForm.valid) {
             return;
         }
 
+        sub.usage = 'SUBJECT';
         this.subjects.push(sub);
     }
 
-    addDescription(desc: Description) {
+    addDescription(desc: PresentationElement) {
         if (!this.addDescriptionForm.valid) {
             return;
         }
 
+        desc.usage = 'DESCRIPTION';
         this.descriptions.push(desc);
     }
 
@@ -115,17 +117,17 @@ export class PresentationParameterComponent {
         this.presentationParameters.push(pp);
     }
 
-    deleteName(txt: TextDef) {
+    deleteName(txt: PresentationElement) {
         const index = this.names.indexOf(txt);
         this.names.splice(index, 1);
     }
 
-    deleteSubject(sub: TextDef) {
+    deleteSubject(sub: PresentationElement) {
         const index = this.subjects.indexOf(sub);
         this.subjects.splice(index, 1);
     }
 
-    deleteDescription(desc: Description) {
+    deleteDescription(desc: PresentationElement) {
         const index = this.descriptions.indexOf(desc);
         this.descriptions.splice(index, 1);
     }

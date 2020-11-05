@@ -1,12 +1,12 @@
 ﻿import { Action } from '@ngrx/store';
-import { Parameter } from '../../common/operation.model';
-import { HumanTaskDefinitionDeadLine } from '../models/humantaskdef-deadlines';
-import { HumanTaskDef } from '../models/humantaskdef.model';
-import { Rendering } from '../../common/rendering.model';
-import { HumanTaskDefAssignment } from '../models/humantaskdef-assignment.model';
 import { Escalation } from '../../common/escalation.model';
-import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
+import { Parameter } from '../../common/parameter.model';
+import { PeopleAssignment } from '../../common/people-assignment.model';
 import { PresentationElement } from '../../common/presentationelement.model';
+import { RenderingElement } from '../../common/rendering.model';
+import { Deadline } from '../models/deadline';
+import { HumanTaskDef } from '../models/humantaskdef.model';
+import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 
 export enum ActionTypes {
     START_GET_HUMANTASKDEF = "[HumanTaskDef] START_GET_HUMANTASKDEF",
@@ -106,22 +106,22 @@ export class UpdateHumanTaskDefComplete implements Action {
 
 export class AddStartDeadLine implements Action {
     readonly type = ActionTypes.ADD_START_DEADLINE;
-    constructor(public id: string, public deadLine: HumanTaskDefinitionDeadLine) { }
+    constructor(public id: string, public deadLine: Deadline) { }
 }
 
 export class CompleteAddStartDeadLine implements Action {
     readonly type = ActionTypes.COMPLETE_ADD_START_DEADLINE;
-    constructor(public content: HumanTaskDefinitionDeadLine) { }
+    constructor(public content: Deadline) { }
 }
 
 export class AddCompletionDeadLine implements Action {
     readonly type = ActionTypes.ADD_COMPLETION_DEADLINE;
-    constructor(public id: string, public deadLine: HumanTaskDefinitionDeadLine) { }
+    constructor(public id: string, public deadLine: Deadline) { }
 }
 
 export class CompleteCompletionDeadLine implements Action {
     readonly type = ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE;
-    constructor(public content: HumanTaskDefinitionDeadLine) { }
+    constructor(public content: Deadline) { }
 }
 
 export class UpdateHumanTaskInfo implements Action {
@@ -176,12 +176,12 @@ export class CompleteDeleteOutputParameterOperation implements Action {
 
 export class UpdateRenderingOperation implements Action {
     readonly type = ActionTypes.UPDATE_RENDERING_PARAMETER;
-    constructor(public id: string, public rendering: Rendering) { }
+    constructor(public id: string, public renderingElements: RenderingElement[]) { }
 }
 
 export class CompleteUpdateRenderingOperation implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER;
-    constructor(public rendering: Rendering) { }
+    constructor(public renderingElements: RenderingElement[]) { }
 }
 
 export class DeleteStartDeadlineOperation implements Action {
@@ -206,22 +206,22 @@ export class CompleteDeleteCompletionDeadlineOperation implements Action {
 
 export class UpdateStartDeadlineOperation implements Action {
     readonly type = ActionTypes.UPDATE_START_DEADLINE;
-    constructor(public id: string, public deadline: HumanTaskDefinitionDeadLine) { }
+    constructor(public id: string, public deadline: Deadline) { }
 }
 
 export class CompleteUpdateStartDeadlineOperation implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_START_DEADLINE;
-    constructor(public deadline: HumanTaskDefinitionDeadLine) { }
+    constructor(public deadline: Deadline) { }
 }
 
 export class UpdateCompletionDeadlineOperation implements Action {
     readonly type = ActionTypes.UPDATE_COMPLETION_DEADLINE;
-    constructor(public id: string, public deadline: HumanTaskDefinitionDeadLine) { }
+    constructor(public id: string, public deadline: Deadline) { }
 }
 
 export class CompleteCompletionStartDeadlineOperation implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE;
-    constructor(public deadline: HumanTaskDefinitionDeadLine) { }
+    constructor(public deadline: Deadline) { }
 }
 
 export class AddEscalationStartDeadlineOperation implements Action {
@@ -246,12 +246,12 @@ export class CompleteAddEscalationCompletionDeadlineOperation implements Action 
 
 export class UpdatePeopleAssignmentOperation implements Action {
     readonly type = ActionTypes.UPDATE_PEOPLE_ASSIGNMENT;
-    constructor(public id: string, public assignment: HumanTaskDefAssignment) { }
+    constructor(public id: string, public peopleAssignments: PeopleAssignment[]) { }
 }
 
 export class CompletePeopleAssignmentOperation implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT;
-    constructor(public assignment: HumanTaskDefAssignment) { }
+    constructor(public peopleAssignments: PeopleAssignment[]) { }
 }
 
 export class UpdateStartEscalationOperation implements Action {
@@ -316,12 +316,12 @@ export class CompleteSearchHumanTaskDefOperation implements Action {
 
 export class UpdatePresentationElementOperation implements Action {
     readonly type = ActionTypes.UPDATE_PRESENTATIONELEMENT;
-    constructor(public id: string, public presentationElement: PresentationElement) { }
+    constructor(public id: string, public presentationElements: PresentationElement[]) { }
 }
 
 export class CompleteUpdatePresentationElementOperation implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT;
-    constructor(public presentationElement: PresentationElement) { }
+    constructor(public presentationElements: PresentationElement[]) { }
 }
 
 export type ActionsUnion = GetHumanTaskDef |

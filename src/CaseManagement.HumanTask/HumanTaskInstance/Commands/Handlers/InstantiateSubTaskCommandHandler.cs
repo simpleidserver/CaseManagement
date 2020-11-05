@@ -48,7 +48,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            var subTask = humanTaskInstance.Composition.SubTasks.FirstOrDefault(_ => _.HumanTaskName == request.SubTaskName);
+            var subTask = humanTaskInstance.SubTasks.FirstOrDefault(_ => _.HumanTaskName == request.SubTaskName);
             if (subTask == null)
             {
                 _logger.LogError($"'{request.SubTaskName}' is not a subtask of '{humanTaskInstance.HumanTaskDefName}'");

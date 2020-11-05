@@ -1,12 +1,12 @@
 ﻿import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
-import { OptionValue, OutputRenderingElement, Rendering, Translation } from '@app/stores/common/rendering.model';
+import { OptionValue, RenderingElement, Translation } from '@app/stores/common/rendering.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
-import { select, Store, ScannedActionsSubject } from '@ngrx/store';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
@@ -29,8 +29,8 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
     addLabelForm: FormGroup;
     addValueForm: FormGroup;
     id: string;
-    selectedField: OutputRenderingElement;
-    rendering: Rendering = new Rendering();
+    selectedField: RenderingElement;
+    renderingElements: RenderingElement[] = [];
     languages: Language[];
     fieldTypes: FieldType[];
 
@@ -90,12 +90,12 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
             }
 
             this.id = e.id;
-            this.rendering = e.rendering;
+            this.renderingElements = e.renderingElements;
         });
     }
 
     drop(event: CdkDragDrop<string[]>) {
-        moveItemInArray(this.rendering.output, event.previousIndex, event.currentIndex);
+        moveItemInArray(this.renderingElements, event.previousIndex, event.currentIndex);
     }
 
     updateLabel(translation: Translation) {
@@ -103,7 +103,7 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
             return;
         }
 
-        const filteredLabels = this.selectedField.label.filter(function (l: Translation) {
+        const filteredLabels = this.selectedField.labels.filter(function (l: Translation) {
             return l.language === translation.language;
         });
         if (filteredLabels.length === 1) {
@@ -113,16 +113,16 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
             return;
         }
 
-        this.selectedField.label.push(translation);
+        this.selectedField.labels.push(translation);
         this.addLabelForm.reset();
     }
 
     addValue(form : any) {
-        if (!this.selectedField || this.selectedField.value.type !== 'select') {
+        if (!this.selectedField || this.selectedField.valueType !== 'select') {
             return;
         }
 
-        const filteredValue = this.selectedField.value.values.filter(function (f: OptionValue) {
+        const filteredValue = this.selectedField.values.filter(function (f: OptionValue) {
             return f.value === form.value && f.displayNames.filter(function (d: Translation) {
                 return d.language === form.language;
             }).length > 0;
@@ -137,23 +137,23 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
         const optValue = new OptionValue();
         optValue.value = form.value;
         optValue.displayNames.push(new Translation(form.language, form.translation));
-        this.selectedField.value.values.push(optValue);
+        this.selectedField.values.push(optValue);
         this.addValueForm.reset();
     }
 
     addField(fieldType: FieldType) {
-        const renderingElt = new OutputRenderingElement();
-        renderingElt.value.type = fieldType.fieldType;
-        this.rendering.output.push(renderingElt);
+        const renderingElt = new RenderingElement();
+        renderingElt.valueType = fieldType.fieldType;
+        this.renderingElements.push(renderingElt);
     }
 
-    removeField(elt: OutputRenderingElement) {
-        const index = this.rendering.output.indexOf(elt);
-        this.rendering.output.splice(index, 1);
+    removeField(elt: RenderingElement) {
+        const index = this.renderingElements.indexOf(elt);
+        this.renderingElements.splice(index, 1);
         this.selectedField = null;
     }
 
-    displaySettings(elt: OutputRenderingElement) {
+    displaySettings(elt: RenderingElement) {
         this.selectedField = elt;
     }
 
@@ -162,8 +162,8 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
             return;
         }
 
-        const index = this.selectedField.value.values.indexOf(val);
-        this.selectedField.value.values.splice(index, 1);
+        const index = this.selectedField.values.indexOf(val);
+        this.selectedField.values.splice(index, 1);
     }
 
     deleteLabel(lbl: Translation) {
@@ -171,8 +171,8 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
             return;
         }
 
-        const index = this.selectedField.label.indexOf(lbl);
-        this.selectedField.label.splice(index, 1);
+        const index = this.selectedField.labels.indexOf(lbl);
+        this.selectedField.labels.splice(index, 1);
     }
 
     joinDisplayNames(val: OptionValue) {
@@ -196,7 +196,7 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit {
     }
 
     update() {
-        const request = new fromHumanTaskDefActions.UpdateRenderingOperation(this.id ,this.rendering);
+        const request = new fromHumanTaskDefActions.UpdateRenderingOperation(this.id ,this.renderingElements);
         this.store.dispatch(request);
     }
 }

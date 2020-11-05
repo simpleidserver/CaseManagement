@@ -2,7 +2,7 @@
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
-import { Parameter } from '@app/stores/common/operation.model';
+import { Parameter } from '@app/stores/common/parameter.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';

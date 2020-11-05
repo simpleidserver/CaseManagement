@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { MatDialogRef } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Escalation } from '@app/stores/common/escalation.model';
-import { Parameter } from '@app/stores/common/operation.model';
+import { Parameter } from '@app/stores/common/parameter.model';
 import { PeopleAssignment } from '@app/stores/common/people-assignment.model';
 import { ToPart } from '@app/stores/common/topart.model';
 
@@ -16,6 +16,16 @@ export class EditEscalationDialog {
     updateEscalationForm: FormGroup;
     addToPartForm: FormGroup;
     updateNotificationForm: FormGroup;
+    get businessAdministrator() {
+        return this.data.notification.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'BUSINESSADMINISTRATOR';
+        })[0];
+    }
+    get recipient() {
+        return this.data.notification.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'RECIPIENT';
+        })[0];
+    }
 
     constructor(
         private dialogRef: MatDialogRef<EditEscalationDialog>,
@@ -63,29 +73,33 @@ export class EditEscalationDialog {
     }
 
     updateBusinessAdministrator(evt: PeopleAssignment) {
-        this.data.notification.peopleAssignment.businessAdministrator = evt;
+        const record = this.businessAdministrator;
+        this.updatePeopleAssignment(record, evt, 'BUSINESSADMINISTRATOR');
     }
 
     updateRecipient(evt: PeopleAssignment) {
-        this.data.notification.peopleAssignment.recipient = evt;
+        const record = this.recipient;
+        this.updatePeopleAssignment(record, evt, 'RECIPIENT');
     }
 
     addInputParameter(param: Parameter) {
-        this.data.notification.operation.inputParameters.push(param);
+        param.usage = 'INPUT';
+        this.data.notification.operationParameters.push(param);
     }
 
     addOutputParameter(param: Parameter) {
-        this.data.notification.operation.outputParameters.push(param);
+        param.usage = 'OUTPUT';
+        this.data.notification.operationParameters.push(param);
     }
 
     deleteInputParameter(param: Parameter) {
-        const i = this.data.notification.operation.inputParameters.indexOf(param);
-        this.data.notification.operation.outputParameters.splice(i, 1);
+        const i = this.data.notification.operationParameters.indexOf(param);
+        this.data.notification.operationParameters.splice(i, 1);
     }
 
     deleteOutputParameter(param: Parameter) {
-        const i = this.data.notification.operation.outputParameters.indexOf(param);
-        this.data.notification.operation.outputParameters.splice(i, 1);
+        const i = this.data.notification.operationParameters.indexOf(param);
+        this.data.notification.operationParameters.splice(i, 1);
     }
 
     updateEscalation() {
@@ -97,5 +111,15 @@ export class EditEscalationDialog {
         this.data.notification.name = this.updateNotificationForm.get('name').value;
         this.data.notification.priority = this.updateNotificationForm.get('priority').value;
         this.dialogRef.close(this.data);
+    }
+
+    private updatePeopleAssignment(pa: PeopleAssignment, newPa: PeopleAssignment, usage: string) {
+        if (pa) {
+            const index = this.data.notification.peopleAssignments.indexOf(pa);
+            this.data.notification.peopleAssignments.splice(index, 1);
+        }
+
+        newPa.usage = usage;
+        this.data.notification.peopleAssignments.push(newPa);
     }
 }

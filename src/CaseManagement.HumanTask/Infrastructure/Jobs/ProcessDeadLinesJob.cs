@@ -65,7 +65,7 @@ namespace CaseManagement.HumanTask.Infrastructure.Jobs
                         }
                     }
 
-                    humanTaskInstance.RemoveDeadLine(deadLine.Name, deadLine.Type);
+                    humanTaskInstance.RemoveDeadLine(deadLine.Name, deadLine.Usage);
                 }
 
                 await _humanTaskInstanceCommandRepository.Update(humanTaskInstance, token);

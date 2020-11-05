@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Common.Results;
 using CaseManagement.HumanTask.Authorization;
+using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Localization;
 using CaseManagement.HumanTask.NotificationInstance.Queries.Results;
@@ -63,7 +64,7 @@ namespace CaseManagement.HumanTask.NotificationInstance.Queries.Handlers
             var content = new List<NotificationDetailsResult>();
             foreach (var record in result.Content)
             {
-                var callbackTxt = new Func<ICollection<Domains.Text>, Translation>((t) =>
+                var callbackTxt = new Func<ICollection<PresentationElementInstance>, Localization.Translation>((t) =>
                 {
                     if (t == null || !t.Any())
                     {
@@ -76,8 +77,8 @@ namespace CaseManagement.HumanTask.NotificationInstance.Queries.Handlers
                     }
                     catch (BadOperationExceptions) { return null; }
                 });
-                var name = callbackTxt(record.PresentationElement.Names);
-                var subject = callbackTxt(record.PresentationElement.Subjects);
+                var name = callbackTxt(record.Names);
+                var subject = callbackTxt(record.Subjects);
                 content.Add(NotificationDetailsResult.ToDto(record, name, subject));
             }
 

@@ -7,15 +7,15 @@ namespace CaseManagement.HumanTask.Domains
     [DebuggerDisplay("Remove deadline")]
     public class HumanTaskInstanceDeadLineRemovedEvent : DomainEvent
     {
-        public HumanTaskInstanceDeadLineRemovedEvent(string id, string aggregateId, int version, string deadLineName, HumanTaskInstanceDeadLineTypes type, DateTime updateDateTime) : base(id, aggregateId, version)
+        public HumanTaskInstanceDeadLineRemovedEvent(string id, string aggregateId, int version, string deadLineName, DeadlineUsages usage, DateTime updateDateTime) : base(id, aggregateId, version)
         {
             DeadLineName = deadLineName;
-            DeadLineType = type;
+            Usage = usage;
             UpdateDateTime = updateDateTime;
         }
 
         public string DeadLineName { get; set; }
-        public HumanTaskInstanceDeadLineTypes DeadLineType { get; set; }
+        public DeadlineUsages Usage { get; set; }
         public DateTime UpdateDateTime { get; set; }
     }
 }

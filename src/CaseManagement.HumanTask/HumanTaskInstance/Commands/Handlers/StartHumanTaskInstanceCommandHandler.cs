@@ -67,14 +67,11 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             humanTaskInstance.Start(userPrincipal);
             await _humanTaskInstanceCommandRepository.Update(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
-            if (humanTaskInstance.Composition != null &&
-                humanTaskInstance.Composition.InstantiationPattern == InstantiationPatterns.AUTOMATIC &&
-                humanTaskInstance.Composition.SubTasks != null &&
-                humanTaskInstance.Composition.SubTasks.Any())
+            if (humanTaskInstance.InstantiationPattern == InstantiationPatterns.AUTOMATIC && humanTaskInstance.SubTasks.Any())
             {
-                if (humanTaskInstance.Composition.Type == CompositionTypes.PARALLEL)
+                if (humanTaskInstance.Type == CompositionTypes.PARALLEL)
                 {
-                    foreach (var subTask in humanTaskInstance.Composition.SubTasks)
+                    foreach (var subTask in humanTaskInstance.SubTasks)
                     {
                         await _mediator.Send(new InstantiateSubTaskCommand
                         {

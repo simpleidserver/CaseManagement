@@ -19,110 +19,37 @@ namespace CaseManagement.HumanTask.Parser
             { ParameterTypes.STRING, (str) => !string.IsNullOrEmpty(str)  },
         };
 
-        public virtual NotificationInstancePeopleAssignment ParseNotificationInstancePeopleAssignment(NotificationDefinitionPeopleAssignment assignmentDef, Dictionary<string, string> parameters)
+        public virtual ICollection<PeopleAssignmentInstance> ParsePeopleAssignments(ICollection<PeopleAssignmentDefinition> assignments, Dictionary<string, string> parameters)
         {
-            var result = new NotificationInstancePeopleAssignment();
-            if (assignmentDef.BusinessAdministrator != null)
+            var result = new List<PeopleAssignmentInstance>();
+            var executionContext = new BaseExpressionContext(parameters);
+            foreach (var record in assignments)
             {
-                result.BusinessAdministrator = ParsePeopleAssignment(assignmentDef.BusinessAdministrator, parameters);
-            }
-
-            if (assignmentDef.Recipient != null)
-            {
-                result.Recipient = ParsePeopleAssignment(assignmentDef.Recipient, parameters);
+                var value = record.Type == PeopleAssignmentTypes.EXPRESSION ? ExpressionParser.GetString(record.Value, executionContext) : record.Value;
+                result.Add(new PeopleAssignmentInstance
+                {
+                    Type = record.Type,
+                    Usage = record.Usage,
+                    Value = record.Value
+                });
             }
 
             return result;
         }
 
-        public virtual HumanTaskInstancePeopleAssignment ParseHumanTaskInstancePeopleAssignment(HumanTaskDefinitionAssignment assignmentDef, Dictionary<string, string> parameters)
+        public virtual ICollection<PresentationElementInstance> ParsePresentationElements(ICollection<PresentationElementDefinition> presentationElements, ICollection<PresentationParameter> presentationParameters, Dictionary<string, string> operationParameters)
         {
-            var result = new HumanTaskInstancePeopleAssignment();
-            if (assignmentDef.BusinessAdministrator != null)
+            var result = new List<PresentationElementInstance>();
+            var parameters = ParsePresentationParameters(presentationParameters, operationParameters);
+            foreach(var presentationElt in presentationElements)
             {
-                result.BusinessAdministrator = ParsePeopleAssignment(assignmentDef.BusinessAdministrator, parameters);
-            }
-
-            if (assignmentDef.ExcludedOwner != null)
-            {
-                result.ExcludedOwner = ParsePeopleAssignment(assignmentDef.ExcludedOwner, parameters);
-            }
-
-            if (assignmentDef.PotentialOwner != null)
-            {
-                result.PotentialOwner = ParsePeopleAssignment(assignmentDef.PotentialOwner, parameters);
-            }
-
-            if (assignmentDef.Recipient != null)
-            {
-                result.Recipient = ParsePeopleAssignment(assignmentDef.Recipient, parameters);
-            }
-
-            if (assignmentDef.TaskInitiator != null)
-            {
-                result.TaskInitiator = ParsePeopleAssignment(assignmentDef.TaskInitiator, parameters);
-            }
-
-            if (assignmentDef.TaskStakeHolder != null)
-            {
-                result.TaskStakeHolder = ParsePeopleAssignment(assignmentDef.TaskStakeHolder, parameters);
-            }
-
-            return result;
-        }
-
-        public virtual PeopleAssignmentInstance ParsePeopleAssignment(PeopleAssignmentDefinition assignment, Dictionary<string, string> parameters)
-        {
-            switch (assignment.Type)
-            {
-                case PeopleAssignmentTypes.GROUPNAMES:
-                    var groupNames = assignment as GroupNamesAssignmentDefinition;
-                    return PeopleAssignmentInstance.AssignGroupNames(groupNames.GroupNames);
-                case PeopleAssignmentTypes.USERIDENTIFIERS:
-                    var userIdentifiers = assignment as UserIdentifiersAssignmentDefinition;
-                    return PeopleAssignmentInstance.AssignUserIdentifiers(userIdentifiers.UserIdentifiers);
-                case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
-                    var logicalGroup = assignment as LogicalPeopleGroupAssignmentDefinition;
-                    return PeopleAssignmentInstance.AssignLogicalGroup(logicalGroup.LogicalPeopleGroup, logicalGroup.Arguments);
-                case PeopleAssignmentTypes.EXPRESSION:
-                    var expr = assignment as ExpressionAssignmentDefinition;
-                    var executionContext = new BaseExpressionContext(parameters);
-                    var userIdentifier = ExpressionParser.GetString(expr.Expression, executionContext);
-                    return PeopleAssignmentInstance.AssignUserIdentifiers(new List<string> { userIdentifier });
-            }
-
-            return null;
-        }
-
-        public virtual PresentationElementInstance ParsePresentationElement(PresentationElementDefinition presentationElement, Dictionary<string, string> operationParameters)
-        {
-            var result = new PresentationElementInstance();
-            var parameters = ParsePresentationParameters(presentationElement.PresentationParameters, operationParameters);
-            if (presentationElement.Names != null && presentationElement.Names.Any())
-            {
-                foreach(var name in presentationElement.Names)
+                result.Add(new PresentationElementInstance
                 {
-                    name.Value = ParsePresentationContent(name.Value, parameters);
-                    result.Names.Add(name);
-                }
-            }
-
-            if (presentationElement.Subjects != null && presentationElement.Subjects.Any())
-            {
-                foreach (var subject in presentationElement.Subjects)
-                {
-                    subject.Value = ParsePresentationContent(subject.Value, parameters);
-                    result.Subjects.Add(subject);
-                }
-            }
-
-            if (presentationElement.Descriptions != null && presentationElement.Descriptions.Any())
-            {
-                foreach (var description in presentationElement.Descriptions)
-                {
-                    description.Value = ParsePresentationContent(description.Value, parameters);
-                    result.Descriptions.Add(description);
-                }
+                    ContentType = presentationElt.ContentType,
+                    Language = presentationElt.Language,
+                    Usage = presentationElt.Usage,
+                    Value = ParsePresentationContent(presentationElt.Value, parameters)
+                });
             }
 
             return result;

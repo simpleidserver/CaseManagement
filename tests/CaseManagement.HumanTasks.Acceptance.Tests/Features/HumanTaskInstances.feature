@@ -291,7 +291,7 @@ Scenario: Check the result of an automatic completion behavior
 	And execute HTTP GET request 'http://localhost/humantaskinstances/$subHumanTaskInstanceId$/start'
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$subHumanTaskInstanceId$/complete'
 	| Key                 | Value           |
-	| operationParameters | { "wage": "3" } |	
+	| operationParameters | { "wage": "3" } |
 	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/details'
 	And extract JSON from body into 'detailsHumanTaskInstance'
 	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/subtasks'
@@ -311,11 +311,12 @@ Scenario: Search human task instances
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/assignment'
-    | Key              | Value                                                                                                                                                        |
-    | peopleAssignment | { potentialOwner : { type: "USERIDENTIFIERS", userIdentifiers: [ "user1" ]  }, taskInitiator : { type: "USERIDENTIFIERS", userIdentifiers: [ "user1" ]  }  } |
+    | Key               | Value                                                                                                                                                        |
+    | peopleAssignments | [ { "type": "USERIDENTIFIERS", "value": "user1", "usage" : "POTENTIALOWNER" }, { "type" : "USERIDENTIFIERS", "value": "user1", "usage" : "TASKINITIATOR" } ] |
 	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/presentationelts'
-	| Key                 | Value                                               |
-	| presentationElement | { names: [ { language: "fr", value: "bonjour" } ] } |
+	| Key                    | Value                                                           |
+	| presentationElements   | [ { "language" : "fr", "value": "bonjour", "usage" : "NAME" } ] |
+	| presentationParameters | [ ]                                                             |
 	And authenticate
 	| Key                                                                  | Value |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | user1 |

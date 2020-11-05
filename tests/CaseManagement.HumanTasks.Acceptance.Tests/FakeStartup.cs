@@ -36,12 +36,9 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 .AddDescription("en-US", "<b>firstname is $firstName$, isGoldenClient $isGoldenClient$</b>", "text/html")
                 .AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")")
                 .AddPresentationParameter("isGoldenClient", ParameterTypes.BOOL, "context.GetInput(\"isGoldenClient\")")
-                .SetOperation(op =>
-                {
-                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
-                    op.AddInputParameter("isGoldenClient", ParameterTypes.BOOL, false);
-                    op.AddOutputParameter("wage", ParameterTypes.INT, true);
-                })
+                .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("isGoldenClient", ParameterTypes.BOOL, false)
+                .AddOutputOperationParameter("wage", ParameterTypes.INT, true)
                 .Build();
             var noPotentialOwner = HumanTaskDefBuilder.New("noPotentialOwner")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
@@ -52,10 +49,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
                 .Build();
             var startDeadLine = HumanTaskDefBuilder.New("startDeadLine")
-                .SetOperation(op =>
-                {
-                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
-                })
+                .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
                 .AddStartDeadLine("sendReminder", (dl) =>
@@ -66,10 +60,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                         eb.AddToPart("firstName", "context.GetInput(\"firstName\")");
                         eb.SetNotification("notification", nt =>
                         {
-                            nt.SetOperation(op =>
-                            {
-                                op.AddInputParameter("firstName", ParameterTypes.STRING, true);
-                            });
+                            nt.AddInputOperationParameter("firstName", ParameterTypes.STRING, true);
                             nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
                             nt.AddName("en-US", "<b>firstName is $firstName$</b>");
                             nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");                        
@@ -78,10 +69,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 })
                 .Build();
             var completionDeadLine = HumanTaskDefBuilder.New("completionDeadLine")
-                .SetOperation(op =>
-                {
-                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
-                })
+                .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator", "guest" })
                 .AddCompletionDeadLine("sendReminder", (dl) =>
@@ -92,10 +80,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                         eb.AddToPart("firstName", "context.GetInput(\"firstName\")");
                         eb.SetNotification("notificationCompletion", nt =>
                         {
-                            nt.SetOperation(op =>
-                            {
-                                op.AddInputParameter("firstName", ParameterTypes.STRING, true);
-                            });
+                            nt.AddInputOperationParameter("firstName", ParameterTypes.STRING, true);
                             nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
                             nt.AddName("en-US", "<b>firstName is $firstName$</b>");
                             nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");
@@ -106,11 +91,8 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
             var compositeTask = HumanTaskDefBuilder.New("compositeTask")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
-                .SetOperation(op =>
-                {
-                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
-                    op.AddInputParameter("isGoldenClient", ParameterTypes.BOOL, false);
-                })
+                .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("isGoldenClient", ParameterTypes.BOOL, false)
                 .SetParallelComposition(InstantiationPatterns.AUTOMATIC, cb =>
                 {
                     cb.AddSubTask("addClient", new List<ToPart>
@@ -123,11 +105,8 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
             var compositeTaskWithAutomaticCompletionBehavior = HumanTaskDefBuilder.New("compositeTaskWithAutomaticCompletionBehavior")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "administrator" })
-                .SetOperation(op =>
-                {
-                    op.AddInputParameter("firstName", ParameterTypes.STRING, true);
-                    op.AddInputParameter("isGoldenClient", ParameterTypes.BOOL, false);
-                })
+                .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("isGoldenClient", ParameterTypes.BOOL, false)
                 .SetParallelComposition(InstantiationPatterns.AUTOMATIC, cb =>
                 {
                     cb.AddSubTask("addClient", new List<ToPart>

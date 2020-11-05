@@ -4,12 +4,13 @@ using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
 {
-    public class GetRenderingQueryHandler : IRequestHandler<GetRenderingQuery, Rendering>
+    public class GetRenderingQueryHandler : IRequestHandler<GetRenderingQuery, ICollection<RenderingElement>>
     {
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
         private readonly ILogger<GetRenderingQueryHandler> _logger;
@@ -22,7 +23,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
             _logger = logger;
         }
 
-        public async Task<Rendering> Handle(GetRenderingQuery request, CancellationToken cancellationToken)
+        public async Task<ICollection<RenderingElement>> Handle(GetRenderingQuery request, CancellationToken cancellationToken)
         {
             var result = await _humanTaskInstanceQueryRepository.Get(request.HumanTaskInstanceId, cancellationToken);
             if (result == null)
@@ -31,7 +32,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            return result.Rendering;
+            return result.RenderingElements;
         }
     }
 }

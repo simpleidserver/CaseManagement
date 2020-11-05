@@ -5,19 +5,16 @@ namespace CaseManagement.HumanTask.Builders
 {
     public class CompletionBehaviorBuilder
     {
-        private readonly CompletionBehavior _completion;
+        private readonly ICollection<Completion> _completions;
 
-        public CompletionBehaviorBuilder(CompletionBehaviors behavior)
+        public CompletionBehaviorBuilder()
         {
-            _completion = new CompletionBehavior
-            {
-                CompletionAction = behavior
-            };
+            _completions = new List<Completion>();
         }
 
         public CompletionBehaviorBuilder AddCompletion(string condition, ICollection<Copy> copyLst)
         {
-            _completion.Completions.Add(new Completion
+            _completions.Add(new Completion
             {
                 Condition = condition,
                 CopyLst = copyLst
@@ -25,9 +22,9 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
-        public CompletionBehavior Build()
+        public ICollection<Completion> Build()
         {
-            return _completion;
+            return _completions;
         }
     }
 }

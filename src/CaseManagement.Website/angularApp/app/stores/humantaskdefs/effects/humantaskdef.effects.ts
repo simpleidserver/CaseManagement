@@ -143,9 +143,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.UPDATE_RENDERING_PARAMETER),
             mergeMap((evt: fromHumanTask.UpdateRenderingOperation) => {
-                return this.humanTaskDefService.updateRendering(evt.id, evt.rendering)
+                return this.humanTaskDefService.updateRendering(evt.id, evt.renderingElements)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER, rendering: evt.rendering}; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER, renderingElements: evt.renderingElements}; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_RENDERING_PARAMETER }))
                     );
             }
@@ -241,9 +241,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.UPDATE_PEOPLE_ASSIGNMENT),
             mergeMap((evt: fromHumanTask.UpdatePeopleAssignmentOperation) => {
-                return this.humanTaskDefService.updatePeopleAssignment(evt.id, evt.assignment)
+                return this.humanTaskDefService.updatePeopleAssignment(evt.id, evt.peopleAssignments)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT, assignment: evt.assignment }; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT, peopleAssignments: evt.peopleAssignments }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PEOPLE_ASSIGNMENT }))
                     );
             }
@@ -339,9 +339,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.UPDATE_PRESENTATIONELEMENT),
             mergeMap((evt: fromHumanTask.UpdatePresentationElementOperation) => {
-                return this.humanTaskDefService.updatePresentationElement(evt.id, evt.presentationElement)
+                return this.humanTaskDefService.updatePresentationElement(evt.id, evt.presentationElements)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElement: evt.presentationElement }; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElements: evt.presentationElements }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PRESENTATIONELEMENT }))
                     );
             }

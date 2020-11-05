@@ -86,10 +86,9 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
                 content = content.Where(_ => !string.IsNullOrWhiteSpace(_.ActualOwner) && _.ActualOwner.StartsWith(parameter.ActualOwner, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            content = content.Where(_ => _.PeopleAssignment != null &&
-                (IsAuthorized(_.PeopleAssignment.PotentialOwner, parameter.UserIdentifier, parameter.GroupNames) ||
-                IsAuthorized(_.PeopleAssignment.BusinessAdministrator, parameter.UserIdentifier, parameter.GroupNames) ||
-                IsAuthorized(_.PeopleAssignment.TaskInitiator, parameter.UserIdentifier, parameter.GroupNames)));
+            content = content.Where(_ => (IsAuthorized(_.PotentialOwners, parameter.UserIdentifier, parameter.GroupNames) ||
+                IsAuthorized(_.BusinessAdministrators, parameter.UserIdentifier, parameter.GroupNames) ||
+                IsAuthorized(_.TaskInitiators, parameter.UserIdentifier, parameter.GroupNames)));
             if (MAPPING_HUMANTASKINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 content = content.InvokeOrderBy(MAPPING_HUMANTASKINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
@@ -106,19 +105,25 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             });
         }
 
-        private static bool IsAuthorized(PeopleAssignmentInstance peopleAssignment, string userIdentifier, ICollection<string> groupNames)
+        private static bool IsAuthorized(ICollection<PeopleAssignmentInstance> peopleAssignments, string userIdentifier, ICollection<string> groupNames)
         {
-            if (peopleAssignment == null)
+            foreach(var peopleAssignment in peopleAssignments)
             {
-                return false;
-            }
-
-            switch(peopleAssignment.Type)
-            {
-                case PeopleAssignmentTypes.GROUPNAMES:
-                    return peopleAssignment.Values.Any(_ => groupNames.Contains(_));
-                case PeopleAssignmentTypes.USERIDENTIFIERS:
-                    return peopleAssignment.Values.Contains(userIdentifier);
+                switch(peopleAssignment.Type)
+                {
+                    case PeopleAssignmentTypes.GROUPNAMES:
+                        if (groupNames.Contains(peopleAssignment.Value))
+                        {
+                            return true;
+                        }
+                        break;
+                    case PeopleAssignmentTypes.USERIDENTIFIERS:
+                        if (peopleAssignment.Value == userIdentifier)
+                        {
+                            return true;
+                        }
+                        break;
+                }
             }
 
             return false;

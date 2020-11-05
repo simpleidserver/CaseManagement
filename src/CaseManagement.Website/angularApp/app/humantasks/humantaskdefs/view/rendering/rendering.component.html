@@ -12,7 +12,7 @@
             <div cdkDropList
                  (cdkDropListDropped)="drop($event)"
                  class="lst-fields full-width">
-                <div class="field-container full-width" *ngFor="let field of rendering.output" cdkDrag>
+                <div class="field-container full-width" *ngFor="let field of renderingElements.output" cdkDrag>
                     <div style="position: relative">
                         <div style="position: absolute; top: 0px; right: 0px; z-index:10;">
                             <button mat-icon-button (click)="displaySettings(field)">
@@ -23,9 +23,9 @@
                             </button>
                         </div>
                         <mat-form-field class="full-width">
-                            <mat-label>{{ field.label | translateField }}</mat-label>
-                            <input *ngIf="field.value.type === 'string'" matInput type="text" name="{{field.id}}" disabled />
-                            <mat-select *ngIf="field.value.type === 'select'">
+                            <mat-label>{{ field.labels | translateField }}</mat-label>
+                            <input *ngIf="field.valueType === 'string'" matInput type="text" name="{{field.id}}" disabled />
+                            <mat-select *ngIf="field.valueType === 'select'">
                                 <mat-option *ngFor="let opt of field.value.values" [value]="opt.value">
                                     {{ opt.displayNames | translateField }}
                                 </mat-option>

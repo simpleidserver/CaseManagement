@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace CaseManagement.HumanTask.Domains.HumanTaskDef.Events
+namespace CaseManagement.HumanTask.Domains
 {
     [DebuggerDisplay("Add completion deadline")]
     public class HumanTaskDefCompletionDeadLineAddedEvent : DomainEvent

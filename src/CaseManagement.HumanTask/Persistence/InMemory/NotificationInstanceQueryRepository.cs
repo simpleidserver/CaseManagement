@@ -31,13 +31,27 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
         public Task<FindResponse<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token)
         {
             IQueryable<NotificationInstanceAggregate> result = _notifications.Where(n =>
-            n.PeopleAssignment != null &&
-            n.PeopleAssignment.Recipient != null &&
-            (
-                (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.USERIDENTIFIERS && n.PeopleAssignment.Recipient.Values.Contains(parameter.User.UserIdentifier)) ||
-                (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.GROUPNAMES && n.PeopleAssignment.Recipient.Values.Any(v => parameter.User.Roles.Contains(v))) ||
-                (n.PeopleAssignment.Recipient.Type == PeopleAssignmentTypes.LOGICALPEOPLEGROUP && n.PeopleAssignment.Recipient.LogicalGroup != null && parameter.User.LogicalGroups.Contains(n.PeopleAssignment.Recipient.LogicalGroup.Name))
-            )).AsQueryable();
+            {
+                return n.PeopleAssignments.Any(p =>
+                {
+                    if (p.Usage != PeopleAssignmentUsages.RECIPIENT)
+                    {
+                        return false;
+                    }
+
+                    switch (p.Type)
+                    {
+                        case PeopleAssignmentTypes.USERIDENTIFIERS:
+                            return p.Value == parameter.User.UserIdentifier;
+                        case PeopleAssignmentTypes.LOGICALPEOPLEGROUP:
+                            return parameter.User.LogicalGroups.Contains(p.Value);
+                        case PeopleAssignmentTypes.GROUPNAMES:
+                            return parameter.User.Roles.Contains(p.Value);
+                    }
+
+                    return false;
+                });
+            }).AsQueryable();
             int totalLength = result.Count();
             if (MAPPING_NOTIFICATIONINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
