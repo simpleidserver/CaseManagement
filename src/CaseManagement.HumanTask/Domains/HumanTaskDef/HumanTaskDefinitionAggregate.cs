@@ -5,6 +5,7 @@ using CaseManagement.HumanTask.Domains.HumanTaskDef.Events;
 using CaseManagement.HumanTask.Resources;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace CaseManagement.HumanTask.Domains
@@ -346,6 +347,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefPresentationEltsUpdatedEvent evt)
         {
+            PresentationElements.Clear();
             foreach(var p in evt.PresentationElts)
             {
                 PresentationElements.Add(p);
@@ -357,7 +359,8 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefPresentationParsUpdatedEvent evt)
         {
-            foreach(var p in evt.PresentationParameters)
+            PresentationParameters.Clear();
+            foreach (var p in evt.PresentationParameters)
             {
                 PresentationParameters.Add(p);
             }
@@ -535,8 +538,68 @@ namespace CaseManagement.HumanTask.Domains
                 evt.CompletionDeadLineId, evt.EscalationId, 
                 Global.UnknownStartDeadline);
             kvp.Value.Condition = evt.Escalation.Condition;
-            kvp.Value.Notification = evt.Escalation.Notification;
-            kvp.Value.ToParts = evt.Escalation.ToParts;
+            kvp.Value.Notification.OperationParameters.Clear();
+            kvp.Value.Notification.PeopleAssignments.Clear();
+            kvp.Value.Notification.PresentationElements.Clear();
+            kvp.Value.Notification.PresentationParameters.Clear();
+            kvp.Value.ToParts.Clear();
+            kvp.Value.Notification = new NotificationDefinition
+            {
+                Name = evt.Escalation.Notification.Name,
+                Priority = evt.Escalation.Notification.Priority,
+                Rendering = evt.Escalation.Notification.Rendering
+            };
+            foreach(var operationParameter in evt.Escalation.Notification.OperationParameters)
+            {
+                kvp.Value.Notification.OperationParameters.Add(new Parameter
+                {
+                    IsRequired = operationParameter.IsRequired,
+                    Name = operationParameter.Name,
+                    Type = operationParameter.Type,
+                    Usage = operationParameter.Usage
+                });
+            }
+
+            foreach(var peopleAssignment in evt.Escalation.Notification.PeopleAssignments)
+            {
+                kvp.Value.Notification.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Type = peopleAssignment.Type,
+                    Usage = peopleAssignment.Usage,
+                    Value = peopleAssignment.Value
+                });
+            }
+
+            foreach(var presentationElt in evt.Escalation.Notification.PresentationElements)
+            {
+                kvp.Value.Notification.PresentationElements.Add(new PresentationElementDefinition
+                {
+                    ContentType = presentationElt.ContentType,
+                    Value = presentationElt.Value,
+                    Language = presentationElt.Language,
+                    Usage = presentationElt.Usage
+                });
+            }
+
+            foreach(var presentationParameter in evt.Escalation.Notification.PresentationParameters)
+            {
+                kvp.Value.Notification.PresentationParameters.Add(new PresentationParameter
+                {
+                    Expression = presentationParameter.Expression,
+                    Name = presentationParameter.Name,
+                    Type = presentationParameter.Type
+                });
+            }
+
+            foreach(var toPart in evt.Escalation.ToParts)
+            {
+                kvp.Value.ToParts.Add(new ToPart
+                {
+                    Expression = toPart.Expression,
+                    Name = toPart.Name
+                });
+            }
+
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -555,6 +618,30 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefRenderingUpdatedEvent evt)
         {
+            RenderingElements.Clear();
+            foreach(var renderingElt in evt.RenderingElements)
+            {
+                RenderingElements.Add(new RenderingElement
+                {
+                    Default = renderingElt.Default,
+                    Labels = renderingElt.Labels.Select(_ => new Translation
+                    {
+                        Language = _.Language,
+                        Value = _.Value
+                    }).ToList(),
+                    Values = renderingElt.Values.Select(_ => new OptionValue
+                    {
+                        DisplayNames = _.DisplayNames.Select(d => new Translation
+                        {
+                            Language = d.Language,
+                            Value = d.Value
+                        }).ToList()
+                    }).ToList(),
+                    ValueType = renderingElt.ValueType,
+                    XPath = renderingElt.XPath
+                });
+            }
+
             RenderingElements = evt.RenderingElements;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;

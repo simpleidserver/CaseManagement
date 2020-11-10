@@ -1,12 +1,12 @@
 ﻿import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
-import { PeopleAssignment } from '@app/stores/common/people-assignment.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { PeopleAssignment } from '@app/stores/common/people-assignment.model';
 
 @Component({
     selector: 'view-task-peopleassignment-component',
@@ -14,8 +14,13 @@ import { filter } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class ViewTaskPeopleAssignmentComponent implements OnInit {
-    peopleAssignments: PeopleAssignment[] = [];
     id: string = '';
+    potentialOwners: PeopleAssignment[] = [];
+    excludedOwners: PeopleAssignment[] = [];
+    taskInitiators: PeopleAssignment[] = [];
+    taskStakeHolders: PeopleAssignment[] = [];
+    businessAdministrators: PeopleAssignment[] = [];
+    recipients: PeopleAssignment[] = [];
     baseTranslationKey: string = "HUMANTASK.DEF.VIEW.PEOPLEASSIGNMENT";
 
     constructor(
@@ -46,38 +51,24 @@ export class ViewTaskPeopleAssignmentComponent implements OnInit {
             }
 
             this.id = e.id;
-            this.peopleAssignments = e.peopleAssignments;
+            this.potentialOwners = HumanTaskDef.getPotentialOwners(e);
+            this.excludedOwners = HumanTaskDef.getExcludedOwners(e);
+            this.taskInitiators = HumanTaskDef.getTaskInitiators(e);
+            this.taskStakeHolders = HumanTaskDef.getTaskStakeHolders(e);
+            this.businessAdministrators = HumanTaskDef.getBusinessAdministrators(e);
+            this.recipients = HumanTaskDef.getRecipients(e);
         });
     }
 
-    /*
-    updatePotentialOwner(evt: PeopleAssignment) {
-        this.peopleAssignment.potentialOwner = evt;
-    }
-
-    updateExcludedOwner(evt: PeopleAssignment) {
-        this.peopleAssignment.excludedOwner = evt;
-    }
-
-    updateTaskInitiator(evt: PeopleAssignment) {
-        this.peopleAssignment.taskInitiator = evt;
-    }
-
-    updateTaskStakeHolder(evt: PeopleAssignment) {
-        this.peopleAssignment.taskStakeHolder = evt;
-    }
-
-    updateBusinessAdministrator(evt: PeopleAssignment) {
-        this.peopleAssignment.businessAdministrator = evt;
-    }
-
-    updateRecipient(evt: PeopleAssignment) {
-        this.peopleAssignment.recipient = evt;
-    }
-    */
-
     update() {
-        const request = new fromHumanTaskDefActions.UpdatePeopleAssignmentOperation(this.id, this.peopleAssignments);
+        let peopleAssignments: PeopleAssignment[] = [];
+        peopleAssignments = peopleAssignments.concat(
+            this.potentialOwners,
+            this.excludedOwners,
+            this.taskInitiators,
+            this.businessAdministrators,
+            this.recipients);
+        const request = new fromHumanTaskDefActions.UpdatePeopleAssignmentOperation(this.id, peopleAssignments);
         this.store.dispatch(request);
     }
 }

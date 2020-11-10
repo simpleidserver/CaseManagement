@@ -28,11 +28,11 @@
                 </mat-form-field>
                 <div *ngIf="task.status != 'COMPLETE'">
                     <form [formGroup]="submitForm" (ngSubmit)="onSubmit(submitForm.value)">
-                        <div *ngFor="let field of rendering.output">
+                        <div *ngFor="let field of renderingElts">
                             <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>{{ field.labels | translateField }}</mat-label>
-                                <input *ngIf="field.value.type === 'string'" matInput type="text" formControlName="{{field.id}}" name="{{field.id}}" />
-                                <mat-select *ngIf="field.value.type === 'select'" formControlName="{{field.id}}">
+                                <input *ngIf="field.valueType === 'string'" matInput type="text" formControlName="{{field.id}}" name="{{field.id}}" />
+                                <mat-select *ngIf="field.valueType=== 'select'" formControlName="{{field.id}}">
                                     <mat-option *ngFor="let opt of field.value.values" [value]="opt.value">
                                         {{ field.displayNames | translateField }}
                                     </mat-option>

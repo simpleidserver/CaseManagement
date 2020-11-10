@@ -6,6 +6,9 @@ import { Escalation } from '@app/stores/common/escalation.model';
 import { Parameter } from '@app/stores/common/parameter.model';
 import { PeopleAssignment } from '@app/stores/common/people-assignment.model';
 import { ToPart } from '@app/stores/common/topart.model';
+import { NotificationDefinition } from '@app/stores/common/notificationdefinition.model';
+import { PresentationElement } from '@app/stores/common/presentationelement.model';
+import { PresentationParameter } from '@app/stores/common/presentationparameter.model';
 
 @Component({
     selector: 'edit-escalation-dialog',
@@ -16,16 +19,14 @@ export class EditEscalationDialog {
     updateEscalationForm: FormGroup;
     addToPartForm: FormGroup;
     updateNotificationForm: FormGroup;
-    get businessAdministrator() {
-        return this.data.notification.peopleAssignments.filter(function (p: PeopleAssignment) {
-            return p.usage === 'BUSINESSADMINISTRATOR';
-        })[0];
-    }
-    get recipient() {
-        return this.data.notification.peopleAssignments.filter(function (p: PeopleAssignment) {
-            return p.usage === 'RECIPIENT';
-        })[0];
-    }
+    businessAdministrators: PeopleAssignment[] = [];
+    recipients: PeopleAssignment[] = [];
+    inputParameters: Parameter[] = [];
+    outputParameters: Parameter[] = [];
+    names: PresentationElement[] = [];
+    subjects: PresentationElement[] = [];
+    descriptions: PresentationElement[] = [];
+    presentationParameters: PresentationParameter[] = [];
 
     constructor(
         private dialogRef: MatDialogRef<EditEscalationDialog>,
@@ -53,6 +54,14 @@ export class EditEscalationDialog {
         this.updateEscalationForm.get('condition').setValue(this.data.condition);
         this.updateNotificationForm.get('name').setValue(this.data.notification.name);
         this.updateNotificationForm.get('priority').setValue(this.data.notification.priority);
+        this.businessAdministrators = NotificationDefinition.getBusinessAdministrators(data.notification);
+        this.recipients = NotificationDefinition.getRecipients(data.notification);
+        this.inputParameters = NotificationDefinition.getInputParameters(data.notification);
+        this.outputParameters = NotificationDefinition.getOutputParameter(data.notification);
+        this.names = NotificationDefinition.getNames(data.notification);
+        this.subjects = NotificationDefinition.getSubjects(data.notification);
+        this.descriptions = NotificationDefinition.getDescriptions(data.notification);
+        this.presentationParameters = data.notification.presentationParameters;
     }
 
     addToPart(form: any) {
@@ -70,16 +79,6 @@ export class EditEscalationDialog {
     deleteToPart(toPart: ToPart) {
         const index = this.data.toParts.indexOf(toPart);
         this.data.toParts.splice(index, 1);
-    }
-
-    updateBusinessAdministrator(evt: PeopleAssignment) {
-        const record = this.businessAdministrator;
-        this.updatePeopleAssignment(record, evt, 'BUSINESSADMINISTRATOR');
-    }
-
-    updateRecipient(evt: PeopleAssignment) {
-        const record = this.recipient;
-        this.updatePeopleAssignment(record, evt, 'RECIPIENT');
     }
 
     addInputParameter(param: Parameter) {
@@ -107,19 +106,27 @@ export class EditEscalationDialog {
             return;
         }
 
+        let peopleAssignments: PeopleAssignment[] = [];
+        peopleAssignments = peopleAssignments.concat(
+            this.businessAdministrators,
+            this.recipients);
+        let presentationElements: PresentationElement[] = [];
+        presentationElements = presentationElements.concat(
+            this.names,
+            this.subjects,
+            this.descriptions
+        );
+        let parameters: Parameter[] = [];
+        parameters = parameters.concat(
+            this.inputParameters,
+            this.outputParameters);
         this.data.condition = this.updateEscalationForm.get('condition').value;
         this.data.notification.name = this.updateNotificationForm.get('name').value;
         this.data.notification.priority = this.updateNotificationForm.get('priority').value;
+        this.data.notification.peopleAssignments = peopleAssignments;
+        this.data.notification.presentationParameters = this.presentationParameters;
+        this.data.notification.operationParameters = parameters;
+        this.data.notification.presentationElements = presentationElements;
         this.dialogRef.close(this.data);
-    }
-
-    private updatePeopleAssignment(pa: PeopleAssignment, newPa: PeopleAssignment, usage: string) {
-        if (pa) {
-            const index = this.data.notification.peopleAssignments.indexOf(pa);
-            this.data.notification.peopleAssignments.splice(index, 1);
-        }
-
-        newPa.usage = usage;
-        this.data.notification.peopleAssignments.push(newPa);
     }
 }

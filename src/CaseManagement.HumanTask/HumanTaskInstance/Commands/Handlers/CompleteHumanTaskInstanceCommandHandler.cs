@@ -44,7 +44,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 throw new NotAuthenticatedException(Global.UserNotAuthenticated);
             }
 
-            if (request.OperationParameters == null || !request.OperationParameters.Any())
+            if (request.OperationParameters == null)
             {
                 _logger.LogError("Output data must be specified");
                 throw new BadRequestException(string.Format(Global.MissingParameter, "operationParameters"));

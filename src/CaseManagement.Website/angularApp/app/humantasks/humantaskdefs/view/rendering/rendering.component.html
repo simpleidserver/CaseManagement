@@ -12,7 +12,7 @@
             <div cdkDropList
                  (cdkDropListDropped)="drop($event)"
                  class="lst-fields full-width">
-                <div class="field-container full-width" *ngFor="let field of renderingElements.output" cdkDrag>
+                <div class="field-container full-width" *ngFor="let field of renderingElements" cdkDrag>
                     <div style="position: relative">
                         <div style="position: absolute; top: 0px; right: 0px; z-index:10;">
                             <button mat-icon-button (click)="displaySettings(field)">
@@ -26,7 +26,7 @@
                             <mat-label>{{ field.labels | translateField }}</mat-label>
                             <input *ngIf="field.valueType === 'string'" matInput type="text" name="{{field.id}}" disabled />
                             <mat-select *ngIf="field.valueType === 'select'">
-                                <mat-option *ngFor="let opt of field.value.values" [value]="opt.value">
+                                <mat-option *ngFor="let opt of field.values" [value]="opt.value">
                                     {{ opt.displayNames | translateField }}
                                 </mat-option>
                             </mat-select>
@@ -51,7 +51,7 @@
                         <!-- Select the type -->
                         <mat-form-field class="full-width">
                             <mat-label>{{ baseTranslationKey + ".SELECT_FIELDTYPE" | translate }}</mat-label>
-                            <mat-select [(ngModel)]="selectedField.value.type">
+                            <mat-select [(ngModel)]="selectedField.valueType">
                                 <mat-option *ngFor="let fieldType of fieldTypes" [value]="fieldType.fieldType">
                                     {{ fieldType.displayName | translate }}
                                 </mat-option>
@@ -59,7 +59,7 @@
                         </mat-form-field>
                     </mat-expansion-panel>
                     <!-- Update values -->
-                    <mat-expansion-panel *ngIf="selectedField.value.type == 'select'">
+                    <mat-expansion-panel *ngIf="selectedField.valueType == 'select'">
                         <mat-expansion-panel-header>
                             {{ baseTranslationKey + ".UPDATE_VALUES" | translate }}
                         </mat-expansion-panel-header>
@@ -87,7 +87,7 @@
                             <button mat-raised-button color="primary">{{ baseTranslationKey + ".ADD" | translate }}</button>
                         </form>
                         <mat-list>
-                            <mat-list-item *ngFor="let value of selectedField.value.values">
+                            <mat-list-item *ngFor="let value of selectedField.values">
                                 <button (click)="deleteValue(value)" mat-icon-button><mat-icon>delete</mat-icon></button> {{ joinDisplayNames(value) }}
                             </mat-list-item>
                         </mat-list>
@@ -117,7 +117,7 @@
                             <button mat-raised-button color="primary">{{ baseTranslationKey + ".ADD" | translate }}</button>
                         </form>
                         <mat-list>
-                            <mat-list-item *ngFor="let label of selectedField.label">
+                            <mat-list-item *ngFor="let label of selectedField.labels">
                                 <button (click)="deleteLabel(label)" mat-icon-button><mat-icon>delete</mat-icon></button> {{ label.value }} ({{ label.language }})
                             </mat-list-item>
                         </mat-list>

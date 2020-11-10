@@ -4,7 +4,7 @@ import { MatSnackBar, MatSort, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromTaskActions from '@app/stores/tasks/actions/tasks.actions';
-import { OutputRenderingElement, Rendering } from '@app/stores/tasks/models/rendering';
+import { RenderingElement } from '@app/stores/tasks/models/rendering';
 import { TaskHistory } from '@app/stores/tasks/models/task-history.model';
 import { Task } from '@app/stores/tasks/models/task.model';
 import { TaskState } from '@app/stores/tasks/reducers/tasks.reducers';
@@ -21,7 +21,7 @@ export class ViewTaskComponent implements OnInit {
     baseTranslationKey: string = "TASKS.VIEW";
     @ViewChild(MatSort) sort: MatSort;
     displayedColumns: string[] = ["eventTime", "userPrincipal", "eventType", "startOwner", "endOwner"];
-    rendering: Rendering = new Rendering();
+    renderingElts: RenderingElement[] = [];
     task: Task = new Task();
     histories$: MatTableDataSource<TaskHistory>;
     submitForm: FormGroup;
@@ -61,10 +61,10 @@ export class ViewTaskComponent implements OnInit {
             }
 
             const grp: any = {};
-            if (r.rendering) {
-                this.rendering = r.rendering;
-                if (r.rendering.output && r.rendering.output.length > 0) {
-                    r.rendering.output.forEach((oe: OutputRenderingElement) => {
+            if (r.renderingElts) {
+                this.renderingElts = r.renderingElts;
+                if (r.renderingElts && r.renderingElts.length > 0) {
+                    r.renderingElts.forEach((oe: RenderingElement) => {
                         grp[oe.id] = new FormControl('');
                     });
                 }

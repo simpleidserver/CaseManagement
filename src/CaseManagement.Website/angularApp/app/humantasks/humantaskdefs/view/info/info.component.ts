@@ -17,6 +17,8 @@ import { filter } from 'rxjs/operators';
 export class ViewHumanTaskDefInfoComponent implements OnInit {
     baseTranslationKey: string = "HUMANTASK.DEF.VIEW.TASK";
     humanTaskDef: HumanTaskDef = new HumanTaskDef();
+    inputOperationParameters: Parameter[] = [];
+    outputOperationParameters: Parameter[] = [];
     infoForm: FormGroup;
 
     constructor(
@@ -114,6 +116,8 @@ export class ViewHumanTaskDefInfoComponent implements OnInit {
             this.infoForm.get('name').setValue(e.name);
             this.infoForm.get('priority').setValue(e.priority);
             this.humanTaskDef = e;
+            this.inputOperationParameters = HumanTaskDef.getInputOperationParameters(this.humanTaskDef);
+            this.outputOperationParameters = HumanTaskDef.getOutputOperationParameters(this.humanTaskDef);
         });
     }
 

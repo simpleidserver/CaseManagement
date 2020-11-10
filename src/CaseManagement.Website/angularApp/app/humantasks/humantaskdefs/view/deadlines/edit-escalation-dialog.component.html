@@ -67,13 +67,13 @@
                         <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
                             <div fxFlex="50%">
                                 <h3>{{ baseTranslationKey + ".INPUT_PARAMETERS" | translate }}</h3>
-                                <operationparameter-component [parameters]="data.notification.operation.inputParameters"
+                                <operationparameter-component [parameters]="inputParameters"
                                                               (parameterAdded)="addInputParameter($event)"
                                                               (parameterRemoved)="deleteInputParameter($event)"></operationparameter-component>
                             </div>
                             <div fxFlex="50%">
                                 <h3>{{ baseTranslationKey + ".OUTPUT_PARAMETERS" | translate }}</h3>
-                                <operationparameter-component [parameters]="data.notification.operation.outputParameters"
+                                <operationparameter-component [parameters]="outputParameters"
                                                               (parameterAdded)="addOutputParameter($event)"
                                                               (parameterRemoved)="deleteOutputParameter($event)">></operationparameter-component>
                             </div>
@@ -96,8 +96,8 @@
                                     </mat-panel-title>
                                     <mat-icon matTooltip="{{ baseTranslationKey + '.BUSINESS_ADMINISTRATOR_INFO' | translate }}">info</mat-icon>
                                 </mat-expansion-panel-header>
-                                <peopleassignment-component [peopleAssignment]="data.notification.peopleAssignment.businessAdministrator"
-                                                            (updated)="updateBusinessAdministrator($event)"></peopleassignment-component>
+                                <peopleassignment-component usage="BUSINESSADMINISTRATOR" 
+                                                            [peopleAssignments]="businessAdministrators"></peopleassignment-component>
                             </mat-expansion-panel>
                             <!-- Recipient -->
                             <mat-expansion-panel hideToggle>
@@ -107,8 +107,7 @@
                                     </mat-panel-title>
                                     <mat-icon matTooltip="{{ baseTranslationKey + '.RECIPIENT_INFO' | translate }}">info</mat-icon>
                                 </mat-expansion-panel-header>
-                                <peopleassignment-component [peopleAssignment]="data.notification.peopleAssignment.recipient"
-                                                            (updated)="updateRecipient($event)"></peopleassignment-component>
+                                <peopleassignment-component usage="RECIPIENT" [peopleAssignments]="recipients"></peopleassignment-component>
                             </mat-expansion-panel>
                         </mat-accordion>
                     </mat-expansion-panel>
@@ -120,10 +119,10 @@
                             </mat-panel-title>
                             <mat-icon matTooltip="{{ baseTranslationKey + '.NOTIFICATION_PRESENTATION_ELEMENT_INFO' | translate }}">info</mat-icon>
                         </mat-expansion-panel-header>
-                        <presentationparameter-component [names]="data.notification.presentationElement.names"
-                                                         [subjects]="data.notification.presentationElement.subjects"
-                                                         [descriptions]="data.notification.presentationElement.descriptions"
-                                                         [presentationParameters]="data.notification.presentationElement.presentationParameters"></presentationparameter-component>
+                        <presentationparameter-component [names]="names"
+                                                         [subjects]="subjects"
+                                                         [descriptions]="descriptions"
+                                                         [presentationParameters]="presentationParameters"></presentationparameter-component>
                     </mat-expansion-panel>
                 </mat-accordion>
             </div>

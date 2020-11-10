@@ -411,7 +411,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table14.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage: \'INPUT\' }"});
 #line 106
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/input\'", ((string)(null)), table14, "And ");
@@ -421,7 +421,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table15.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage: \'INPUT\' }"});
 #line 109
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/input\'", ((string)(null)), table15, "And ");
@@ -540,7 +540,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table20.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage: \'OUTPUT\' }"});
 #line 144
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/output\'", ((string)(null)), table20, "And ");
@@ -550,7 +550,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table21.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage: \'OUTPUT\' }"});
 #line 147
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/output\'", ((string)(null)), table21, "And ");

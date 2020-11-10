@@ -104,11 +104,11 @@ Scenario: Check error is returned when trying to add already existing input para
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
-	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |
+	| Key       | Value                                                 |
+	| parameter | { name: 'parameter', type: 'STRING', usage: 'INPUT' } |
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
-	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |
+	| Key       | Value                                                 |
+	| parameter | { name: 'parameter', type: 'STRING', usage: 'INPUT' } |
 	And extract JSON from body
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'
@@ -142,11 +142,11 @@ Scenario: Check error is returned when trying to add already existing output par
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
-	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |
+	| Key       | Value                                                  |
+	| parameter | { name: 'parameter', type: 'STRING', usage: 'OUTPUT' } |
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
-	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |
+	| Key       | Value                                                  |
+	| parameter | { name: 'parameter', type: 'STRING', usage: 'OUTPUT' } |
 	And extract JSON from body
 	Then HTTP status code equals to '400'
 	Then JSON 'status'='400'

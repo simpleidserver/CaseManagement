@@ -7,7 +7,7 @@
             </mat-panel-title>
             <mat-icon matTooltip="{{ baseTranslationKey + '.POTENTIAL_OWNER_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
-        <peopleassignment-component [peopleAssignment]="peopleAssignment.potentialOwner"></peopleassignment-component>
+        <peopleassignment-component usage="POTENTIALOWNER" [peopleAssignments]="potentialOwners"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Excluded owner -->
     <mat-expansion-panel hideToggle>
@@ -17,7 +17,7 @@
             </mat-panel-title>
             <mat-icon matTooltip="{{ baseTranslationKey + '.EXCLUDED_OWNER_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
-        <peopleassignment-component [peopleAssignment]="peopleAssignment.excludedOwner"></peopleassignment-component>
+        <peopleassignment-component usage="EXCLUDEDOWNER" [peopleAssignments]="excludedOwners"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Task initiator -->
     <mat-expansion-panel hideToggle>
@@ -27,7 +27,7 @@
             </mat-panel-title>
             <mat-icon matTooltip="{{ baseTranslationKey + '.TASK_INITIATOR_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
-        <peopleassignment-component [peopleAssignment]="peopleAssignment.taskInitiator"></peopleassignment-component>
+        <peopleassignment-component usage="TASKINITIATOR" [peopleAssignments]="taskInitiators"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Task initiator -->
     <mat-expansion-panel hideToggle>
@@ -37,7 +37,7 @@
             </mat-panel-title>
             <mat-icon matTooltip="{{ baseTranslationKey + '.TASK_STAKEHOLDER_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
-        <peopleassignment-component [peopleAssignment]="peopleAssignment.taskStakeHolder"></peopleassignment-component>
+        <peopleassignment-component usage="TASKSTAKEHOLDER" [peopleAssignments]="taskStakeHolders"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Business administrator -->
     <mat-expansion-panel hideToggle>
@@ -47,7 +47,7 @@
             </mat-panel-title>
             <mat-icon matTooltip="{{ baseTranslationKey + '.BUSINESS_ADMINISTRATOR_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
-        <peopleassignment-component [peopleAssignment]="peopleAssignment.businessAdministrator"></peopleassignment-component>
+        <peopleassignment-component usage="BUSINESSADMINISTRATOR" [peopleAssignments]="businessAdministrators"></peopleassignment-component>
     </mat-expansion-panel>
     <!-- Recipient -->
     <mat-expansion-panel hideToggle>
@@ -57,7 +57,7 @@
             </mat-panel-title>
             <mat-icon matTooltip="{{ baseTranslationKey + '.RECIPIENT_INFO' | translate }}">info</mat-icon>
         </mat-expansion-panel-header>
-        <peopleassignment-component [peopleAssignment]="peopleAssignment.recipient"></peopleassignment-component>
+        <peopleassignment-component usage="RECIPIENT" [peopleAssignments]="recipients"></peopleassignment-component>
     </mat-expansion-panel>
 </mat-accordion>
 <button mat-raised-button color="primary" (click)="update()">{{ "SHARED.UPDATE" | translate }}</button>

@@ -30,12 +30,17 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.Property<string>("HumanTaskDefinitionAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("NotificationInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("HumanTaskDefinitionAggregateAggregateId");
+
+                    b.HasIndex("NotificationInstanceAggregateAggregateId");
 
                     b.ToTable("DomainEvent");
                 });
@@ -53,9 +58,14 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.Property<string>("HumanTaskDefinitionAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("HumanTaskDefinitionAggregateAggregateId");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
 
                     b.ToTable("Completion");
                 });
@@ -94,9 +104,14 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.Property<string>("HumanTaskDefinitionDeadLineId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<long?>("HumanTaskInstanceDeadLineId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("HumanTaskDefinitionDeadLineId");
+
+                    b.HasIndex("HumanTaskInstanceDeadLineId");
 
                     b.ToTable("Escalation");
                 });
@@ -191,6 +206,152 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.ToTable("HumanTaskDefinitionSubTask");
                 });
 
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", b =>
+                {
+                    b.Property<string>("AggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ActivationDeferralTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ActualOwner")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CompletionBehavior")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpirationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("HumanTaskDefName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HumanTaskInstanceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InputParameters")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InstantiationPattern")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OutputParameters")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ParentHumanTaskId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ParentHumanTaskName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("AggregateId");
+
+                    b.ToTable("HumanTaskInstanceAggregate");
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskInstanceDeadLine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("EndDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Usage")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
+
+                    b.ToTable("HumanTaskInstanceDeadLine");
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskInstanceEventHistory", b =>
+                {
+                    b.Property<string>("EventId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EndOwner")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EventTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EventType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HumanTaskIdentifier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("StartOwner")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TaskStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserPrincipal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EventId");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
+
+                    b.ToTable("HumanTaskInstanceEventHistory");
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskInstanceSubTask", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("HumanTaskName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
+
+                    b.ToTable("HumanTaskInstanceSubTask");
+                });
+
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.NotificationDefinition", b =>
                 {
                     b.Property<long>("Id")
@@ -217,6 +378,40 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                         .HasFilter("[EscalationId] IS NOT NULL");
 
                     b.ToTable("NotificationDefinition");
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.NotificationInstanceAggregate", b =>
+                {
+                    b.Property<string>("AggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NotificationName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OperationParameters")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Rendering")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("AggregateId");
+
+                    b.ToTable("NotificationInstanceAggregate");
                 });
 
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.OptionValue", b =>
@@ -249,6 +444,9 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.Property<string>("HumanTaskDefinitionAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("IsRequired")
                         .HasColumnType("bit");
 
@@ -267,6 +465,8 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HumanTaskDefinitionAggregateAggregateId");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
 
                     b.HasIndex("NotificationDefinitionId");
 
@@ -304,6 +504,37 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.ToTable("PeopleAssignmentDefinition");
                 });
 
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.PeopleAssignmentInstance", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NotificationInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Usage")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
+
+                    b.HasIndex("NotificationInstanceAggregateAggregateId");
+
+                    b.ToTable("PeopleAssignmentInstance");
+                });
+
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.PresentationElementDefinition", b =>
                 {
                     b.Property<long>("Id")
@@ -336,6 +567,55 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasIndex("NotificationDefinitionId");
 
                     b.ToTable("PresentationElementDefinition");
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.PresentationElementInstance", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Language")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotificationInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NotificationInstanceAggregateAggregateId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NotificationInstanceAggregateAggregateId2")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NotificationInstanceAggregateAggregateId3")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Usage")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
+
+                    b.HasIndex("NotificationInstanceAggregateAggregateId");
+
+                    b.HasIndex("NotificationInstanceAggregateAggregateId1");
+
+                    b.HasIndex("NotificationInstanceAggregateAggregateId2");
+
+                    b.HasIndex("NotificationInstanceAggregateAggregateId3");
+
+                    b.ToTable("PresentationElementInstance");
                 });
 
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.PresentationParameter", b =>
@@ -380,6 +660,9 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.Property<string>("HumanTaskDefinitionAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("HumanTaskInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ValueType")
                         .HasColumnType("nvarchar(max)");
 
@@ -389,6 +672,8 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HumanTaskDefinitionAggregateAggregateId");
+
+                    b.HasIndex("HumanTaskInstanceAggregateAggregateId");
 
                     b.ToTable("RenderingElement");
                 });
@@ -409,6 +694,9 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.Property<long?>("HumanTaskDefinitionSubTaskId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("HumanTaskInstanceSubTaskId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -417,6 +705,8 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasIndex("EscalationId");
 
                     b.HasIndex("HumanTaskDefinitionSubTaskId");
+
+                    b.HasIndex("HumanTaskInstanceSubTaskId");
 
                     b.ToTable("ToPart");
                 });
@@ -454,6 +744,10 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskDefinitionAggregate", null)
                         .WithMany("DomainEvents")
                         .HasForeignKey("HumanTaskDefinitionAggregateAggregateId");
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.NotificationInstanceAggregate", null)
+                        .WithMany("DomainEvents")
+                        .HasForeignKey("NotificationInstanceAggregateAggregateId");
                 });
 
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.Completion", b =>
@@ -461,6 +755,11 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskDefinitionAggregate", null)
                         .WithMany("Completions")
                         .HasForeignKey("HumanTaskDefinitionAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("Completions")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -478,6 +777,11 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                         .WithMany("Escalations")
                         .HasForeignKey("HumanTaskDefinitionDeadLineId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceDeadLine", null)
+                        .WithMany("Escalations")
+                        .HasForeignKey("HumanTaskInstanceDeadLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskDefinitionDeadLine", b =>
@@ -493,6 +797,30 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskDefinitionAggregate", null)
                         .WithMany("SubTasks")
                         .HasForeignKey("HumanTaskDefinitionAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskInstanceDeadLine", b =>
+                {
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("DeadLines")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskInstanceEventHistory", b =>
+                {
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("EventHistories")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.HumanTaskInstanceSubTask", b =>
+                {
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("SubTasks")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -519,6 +847,11 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                         .HasForeignKey("HumanTaskDefinitionAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("OperationParameters")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CaseManagement.HumanTask.Domains.NotificationDefinition", null)
                         .WithMany("OperationParameters")
                         .HasForeignKey("NotificationDefinitionId");
@@ -536,6 +869,19 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                         .HasForeignKey("NotificationDefinitionId");
                 });
 
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.PeopleAssignmentInstance", b =>
+                {
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("PeopleAssignments")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.NotificationInstanceAggregate", null)
+                        .WithMany("PeopleAssignments")
+                        .HasForeignKey("NotificationInstanceAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.PresentationElementDefinition", b =>
                 {
                     b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskDefinitionAggregate", null)
@@ -546,6 +892,31 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasOne("CaseManagement.HumanTask.Domains.NotificationDefinition", null)
                         .WithMany("PresentationElements")
                         .HasForeignKey("NotificationDefinitionId");
+                });
+
+            modelBuilder.Entity("CaseManagement.HumanTask.Domains.PresentationElementInstance", b =>
+                {
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("PresentationElements")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.NotificationInstanceAggregate", null)
+                        .WithMany("Descriptions")
+                        .HasForeignKey("NotificationInstanceAggregateAggregateId");
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.NotificationInstanceAggregate", null)
+                        .WithMany("Names")
+                        .HasForeignKey("NotificationInstanceAggregateAggregateId1");
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.NotificationInstanceAggregate", null)
+                        .WithMany("PresentationElements")
+                        .HasForeignKey("NotificationInstanceAggregateAggregateId2")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.NotificationInstanceAggregate", null)
+                        .WithMany("Subjects")
+                        .HasForeignKey("NotificationInstanceAggregateAggregateId3");
                 });
 
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.PresentationParameter", b =>
@@ -566,6 +937,10 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                         .WithMany("RenderingElements")
                         .HasForeignKey("HumanTaskDefinitionAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceAggregate", null)
+                        .WithMany("RenderingElements")
+                        .HasForeignKey("HumanTaskInstanceAggregateAggregateId");
                 });
 
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.ToPart", b =>
@@ -578,6 +953,10 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskDefinitionSubTask", null)
                         .WithMany("ToParts")
                         .HasForeignKey("HumanTaskDefinitionSubTaskId");
+
+                    b.HasOne("CaseManagement.HumanTask.Domains.HumanTaskInstanceSubTask", null)
+                        .WithMany("ToParts")
+                        .HasForeignKey("HumanTaskInstanceSubTaskId");
                 });
 
             modelBuilder.Entity("CaseManagement.HumanTask.Domains.Translation", b =>

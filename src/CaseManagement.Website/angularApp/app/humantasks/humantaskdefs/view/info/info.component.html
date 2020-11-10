@@ -38,7 +38,8 @@
                     </mat-expansion-panel-header>
                     <operationparameter-component (parameterAdded)="addInputParameter($event)"
                                                   (parameterRemoved)="deleteInputParameter($event)"
-                                                  [parameters]="this.humanTaskDef.operation.inputParameters"></operationparameter-component>
+                                                  usage="INPUT"
+                                                  [parameters]="inputOperationParameters"></operationparameter-component>
                 </mat-expansion-panel>
                 <!-- Manage output parameters -->
                 <mat-expansion-panel>
@@ -47,7 +48,8 @@
                     </mat-expansion-panel-header>
                     <operationparameter-component (parameterAdded)="addOutputParameter($event)"
                                                   (parameterRemoved)="deleteOutputParameter($event)"
-                                                  [parameters]="this.humanTaskDef.operation.outputParameters"></operationparameter-component>
+                                                  usage="OUTPUT"
+                                                  [parameters]="outputOperationParameters"></operationparameter-component>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>

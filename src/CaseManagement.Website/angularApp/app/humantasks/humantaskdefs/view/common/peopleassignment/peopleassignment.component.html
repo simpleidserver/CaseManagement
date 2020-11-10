@@ -23,8 +23,8 @@
     <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
 </form>
 <mat-list>
-    <mat-list-item *ngFor="let val of values">
-        <button (click)="deleteValue(val)" mat-icon-button><mat-icon>delete</mat-icon></button>
-        {{ val }}
+    <mat-list-item *ngFor="let peopleAssignment of peopleAssignments">
+        <button (click)="deleteValue(peopleAssignment)" mat-icon-button><mat-icon>delete</mat-icon></button>
+        {{ peopleAssignment.value }}
     </mat-list-item>
 </mat-list>

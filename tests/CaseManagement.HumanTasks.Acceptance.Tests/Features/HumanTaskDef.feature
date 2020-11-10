@@ -49,8 +49,8 @@ Scenario: Check input parameter can be added
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
-	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |
+	| Key       | Value                                                  |
+	| parameter | { name: 'parameter', type: 'STRING', usage : 'INPUT' } |
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
 
@@ -68,7 +68,7 @@ Scenario: Check output parameter can be added
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
 	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |
+	| parameter | { name: 'parameter', type: 'STRING', usage: 'OUTPUT' } |
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
 
@@ -85,8 +85,8 @@ Scenario: Check input parameter can be removed
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input'
-	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |	
+	| Key       | Value                                                  |
+	| parameter | { name: 'parameter', type: 'STRING', usage : 'INPUT' } |	
 	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/input/parameter'
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
@@ -102,8 +102,8 @@ Scenario: Check output parameter can be removed
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output'
-	| Key       | Value                                 |
-	| parameter | { name: 'parameter', type: 'STRING' } |	
+	| Key       | Value                                                  |
+	| parameter | { name: 'parameter', type: 'STRING', usage: 'OUTPUT' } |
 	And execute HTTP DELETE request 'http://localhost/humantasksdefs/$humanTaskDefId$/parameters/output/parameter'
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
@@ -352,8 +352,8 @@ Scenario: Check escalation of a start deadline can be updated
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start'
-	| Key      | Value                                     |
-	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S" } |
+	| Key      | Value                                                     |
+	| deadLine | { name: "name", until: "P0Y0M0DT0H0M2S", usage: 'START' } |
 	And extract JSON from body
 	And extract 'id' from JSON body into 'deadLineId'
 	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/$deadLineId$/escalations'
@@ -362,8 +362,8 @@ Scenario: Check escalation of a start deadline can be updated
 	And extract JSON from body
 	And extract 'id' from JSON body into 'escId'
 	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/deadlines/start/$deadLineId$/escalations/$escId$'
-	| Key        | Value                  |
-	| escalation | { condition: "false" } |
+	| Key        | Value                                                                                                                                                   |
+	| escalation | { condition: "false", notification : { operationParameters : [ ], peopleAssignments : [ ], presentationElements : [ ], presentationParameters : [ ] } } |
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
 

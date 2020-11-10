@@ -224,7 +224,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table103.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage : \'INPUT\' }"});
 #line 51
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/input\'", ((string)(null)), table103, "And ");
@@ -274,7 +274,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table105.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage: \'OUTPUT\' }"});
 #line 69
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/output\'", ((string)(null)), table105, "And ");
@@ -324,7 +324,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table107.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage : \'INPUT\' }"});
 #line 87
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/input\'", ((string)(null)), table107, "And ");
@@ -373,7 +373,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table109.AddRow(new string[] {
                         "parameter",
-                        "{ name: \'parameter\', type: \'STRING\' }"});
+                        "{ name: \'parameter\', type: \'STRING\', usage: \'OUTPUT\' }"});
 #line 104
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "parameters/output\'", ((string)(null)), table109, "And ");
@@ -1071,7 +1071,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table139.AddRow(new string[] {
                         "deadLine",
-                        "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\" }"});
+                        "{ name: \"name\", until: \"P0Y0M0DT0H0M2S\", usage: \'START\' }"});
 #line 354
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/" +
                     "deadlines/start\'", ((string)(null)), table139, "And ");
@@ -1099,7 +1099,8 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table141.AddRow(new string[] {
                         "escalation",
-                        "{ condition: \"false\" }"});
+                        "{ condition: \"false\", notification : { operationParameters : [ ], peopleAssignmen" +
+                            "ts : [ ], presentationElements : [ ], presentationParameters : [ ] } }"});
 #line 364
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/d" +
                     "eadlines/start/$deadLineId$/escalations/$escId$\'", ((string)(null)), table141, "And ");

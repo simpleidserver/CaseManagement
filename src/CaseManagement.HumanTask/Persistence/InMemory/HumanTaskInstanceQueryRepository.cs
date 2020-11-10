@@ -41,16 +41,9 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             return Task.FromResult(result);
         }
 
-        public Task<ICollection<HumanTaskInstanceAggregate>> GetPendingDeadLines(CancellationToken token)
+        public Task<ICollection<HumanTaskInstanceAggregate>> GetPendingDeadLines(CancellationToken token, DateTime currentDateTime)
         {
-            var currentDateTime = DateTime.UtcNow;
-            ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.DeadLines.Any(d => currentDateTime >= d.EndDateTime)
-            ).ToList();
-            foreach(var record in result)
-            {
-                record.DeadLines = record.DeadLines.Where(d => currentDateTime >= d.EndDateTime).ToList();
-            }
-
+            ICollection<HumanTaskInstanceAggregate> result = _humanTaskInstances.Where(_ => _.DeadLines.Any(d => currentDateTime >= d.EndDateTime)).ToList();
             return Task.FromResult(result);
         }
 

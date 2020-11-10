@@ -63,7 +63,6 @@ namespace CaseManagement.HumanTask.EF.Startup
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer();
             services.AddHumanTaskStoreEF(options =>
@@ -71,6 +70,7 @@ namespace CaseManagement.HumanTask.EF.Startup
                 options.UseSqlServer(_configuration.GetConnectionString("db"), o => o.MigrationsAssembly(migrationsAssembly));
             });
             services.AddSwaggerGen();
+            services.AddHostedService<HumanTaskJobServerHostedService>();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;

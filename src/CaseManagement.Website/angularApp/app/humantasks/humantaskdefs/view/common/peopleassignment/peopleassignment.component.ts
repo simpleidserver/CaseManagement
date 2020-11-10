@@ -12,9 +12,25 @@ export class ParameterType {
     encapsulation: ViewEncapsulation.None
 })
 export class PeopleAssignmentComponent {
+    _peopleAssignments: PeopleAssignment[]; 
     peopleAssignmentForm: FormGroup;
-    values: string[] = [];
-    @Input() peopleAssignments: PeopleAssignment[] = [];
+    @Input() usage: string = '';
+    @Input()
+    get peopleAssignments() {
+        return this._peopleAssignments;
+    }
+    set peopleAssignments(v: PeopleAssignment[]) {
+        if (!v) {
+            return;
+        }
+
+        
+        if (v.length > 0) {
+            this.peopleAssignmentForm.get('type').setValue(v[0].type);
+        }
+
+        this._peopleAssignments = v;
+    }
 
     constructor(
         private formBuilder: FormBuilder) {
@@ -27,14 +43,17 @@ export class PeopleAssignmentComponent {
             ]),
         });
         this.peopleAssignmentForm.get('type').valueChanges.subscribe(() => {
-            this.values = [];
+            if (!this._peopleAssignments) {
+                return;
+            }
+
+            this._peopleAssignments.splice(0, this._peopleAssignments.length);
         });
     }
 
-    deleteValue(val: string) {
-        const index = this.values.indexOf(val);
-        this.values.splice(index, 1);
-        this.update();
+    deleteValue(val: PeopleAssignment) {
+        const index = this._peopleAssignments.indexOf(val);
+        this._peopleAssignments.splice(index, 1);
     }
 
     addPeopleAssignment(form: any) {
@@ -42,19 +61,12 @@ export class PeopleAssignmentComponent {
             return;
         }
 
-        this.peopleAssignmentForm.get('value').setValue('');
-        this.values.push(form.value);
-        this.update();
-    }
-
-    private update() {
+        const pa = new PeopleAssignment();
         const type = this.peopleAssignmentForm.get('type').value;
-        const self = this;
-        this.values.forEach(function (v: string) {
-            const pa = new PeopleAssignment();
-            pa.type = type;
-            pa.value = v;
-            self.peopleAssignments.push(pa);
-        });
+        pa.value = form.value;
+        pa.type = type;
+        pa.usage = this.usage;
+        this._peopleAssignments.push(pa);
+        this.peopleAssignmentForm.get('value').setValue('');
     }
 }

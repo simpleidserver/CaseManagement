@@ -89,6 +89,7 @@ export class PresentationParameterComponent {
 
         txt.usage = 'NAME';
         this.names.push(txt);
+        this.addNameForm.get('value').setValue('');
     }
 
     addSubject(sub: PresentationElement) {
@@ -98,6 +99,7 @@ export class PresentationParameterComponent {
 
         sub.usage = 'SUBJECT';
         this.subjects.push(sub);
+        this.addSubjectForm.get('value').setValue('');
     }
 
     addDescription(desc: PresentationElement) {
@@ -107,6 +109,7 @@ export class PresentationParameterComponent {
 
         desc.usage = 'DESCRIPTION';
         this.descriptions.push(desc);
+        this.addDescriptionForm.get('value').setValue('');
     }
 
     addPresentationParameter(pp: PresentationParameter) {
@@ -115,6 +118,7 @@ export class PresentationParameterComponent {
         }
 
         this.presentationParameters.push(pp);
+        this.addPresentationForm.reset();
     }
 
     deleteName(txt: PresentationElement) {

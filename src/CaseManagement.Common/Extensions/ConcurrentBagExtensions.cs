@@ -11,7 +11,7 @@ namespace System.Collections.Concurrent
             {
                 T result;
                 bag.TryTake(out result);
-                if (result.Equals(item))
+                if (result == null || result.Equals(item))
                 {
                     break;
                 }

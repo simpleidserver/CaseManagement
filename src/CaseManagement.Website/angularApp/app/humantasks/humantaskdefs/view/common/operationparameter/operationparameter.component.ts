@@ -14,14 +14,10 @@ export class ParameterType {
     encapsulation: ViewEncapsulation.None
 })
 export class OperationParameterComponent {
-    private _parameters: Parameter[];
     parameterTypes: ParameterType[];
     parameterForm: FormGroup;
-    @Input()
-    get parameters(): Parameter[] { return this._parameters; }
-    set parameters(pa: Parameter[]) {
-        this._parameters = JSON.parse(JSON.stringify(pa));
-    }
+    @Input() usage: string;
+    @Input() parameters: Parameter[] = [];
 
     @Output() parameterAdded = new EventEmitter<Parameter>();
     @Output() parameterRemoved = new EventEmitter<Parameter>();
@@ -63,14 +59,15 @@ export class OperationParameterComponent {
             param.isRequired = false;
         }
 
-        this._parameters.push(param);
+        param.usage = this.usage;
+        this.parameters.push(param);
         this.parameterForm.reset();
         this.parameterAdded.emit(param);
     }
 
     deleteParameter(param: Parameter) {
-        const index = this._parameters.indexOf(param);
-        this._parameters.splice(index, 1);
+        const index = this.parameters.indexOf(param);
+        this.parameters.splice(index, 1);
         this.parameterRemoved.emit(param);
     }
 }

@@ -1,44 +1,25 @@
-﻿export class Rendering {
-    constructor() {
-        this.input = [];
-        this.output = [];
+﻿export class Translation {
+    constructor(lng: string, val: string) {
+        this.language = lng;
+        this.value = val;
     }
 
-    input: InputRenderingElement[];
-    output: OutputRenderingElement[];
-}
-
-export class Translation {
     language: string;
     value: string;
 }
 
 export class RenderingElement {
     constructor() {
+        this.values = [];
         this.labels = [];
     }
 
-    id: string;   
-    labels: Translation[];
-}
-
-export class InputRenderingElement extends RenderingElement {
-    value: string;
-}
-
-export class OutputRenderingElement extends RenderingElement {
+    id: string;
     xPath: string;
-    value: OutputRenderingElementValue;
+    valueType: string;
     default: string;
-}
-
-export class OutputRenderingElementValue {
-    constructor() {
-        this.values = [];
-    }
-
-    type: string;
     values: OptionValue[];
+    labels: Translation[];
 }
 
 export class OptionValue {

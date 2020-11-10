@@ -6,9 +6,9 @@ import { Observable, of } from 'rxjs';
 import { SearchTasksResult } from '../models/search-tasks-result.model';
 import { Task } from '../models/task.model';
 import { NominateParameter } from '../parameters/nominate-parameter';
-import { Rendering } from '../models/rendering';
 import { map, catchError } from 'rxjs/operators';
 import { SearchTaskHistoryResult } from '../models/search-task-history-result.model';
+import { RenderingElement } from '../models/rendering';
 
 @Injectable()
 export class TasksService {
@@ -59,14 +59,14 @@ export class TasksService {
         return this.http.post<boolean>(targetUrl, JSON.stringify(nominate), { headers: headers });
     }
 
-    getRendering(humanTaskInstanceId: string): Observable<Rendering> {
+    getRendering(humanTaskInstanceId: string): Observable<RenderingElement[]> {
         let headers = new HttpHeaders();
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         headers = headers.set('Content-Type', 'application/json');
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/rendering";
-        return this.http.get<Rendering>(targetUrl, { headers: headers }).pipe(
+        return this.http.get<RenderingElement[]>(targetUrl, { headers: headers }).pipe(
             map((r) => { return r; }),
-            catchError(() => { return of(new Rendering()); }));
+            catchError(() => { return of([]); }));
     }
 
     getDetails(humanTaskInstanceId: string): Observable<Task> {

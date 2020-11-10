@@ -7,6 +7,7 @@ import { filter } from 'rxjs/operators';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { TranslateService } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material';
+import { PresentationParameter } from '@app/stores/common/presentationparameter.model';
 
 @Component({
     selector: 'view-presentationparameters-component',
@@ -15,9 +16,12 @@ import { MatSnackBar } from '@angular/material';
     encapsulation: ViewEncapsulation.None
 })
 export class ViewPresentationParametersComponent implements OnInit {
-    presentationElts: PresentationElement[] = [];
     baseTranslationKey: string = "HUMANTASK.DEF.VIEW.PRESENTATION_PARAMETERS";
     humanTaskDef: HumanTaskDef;
+    names: PresentationElement[] = [];
+    subjects: PresentationElement[] = [];
+    descriptions: PresentationElement[] = [];
+    presentationParameters: PresentationParameter[] = [];
 
     constructor(
         private store: Store<fromAppState.AppState>,
@@ -47,12 +51,20 @@ export class ViewPresentationParametersComponent implements OnInit {
             }
 
             this.humanTaskDef = e;
-            this.presentationElts = e.presentationElements;
+            this.names = HumanTaskDef.getNames(e);
+            this.subjects = HumanTaskDef.getSubjects(e);
+            this.descriptions = HumanTaskDef.getDescriptions(e);
+            this.presentationParameters = e.presentationParameters;
         });
     }
 
     update() {
-        const request = new fromHumanTaskDefActions.UpdatePresentationElementOperation(this.humanTaskDef.id, this.presentationElts);
+        let presentationElts: PresentationElement[] = [];
+        presentationElts = presentationElts.concat(
+            this.names,
+            this.subjects,
+            this.descriptions);
+        const request = new fromHumanTaskDefActions.UpdatePresentationElementOperation(this.humanTaskDef.id, presentationElts, this.presentationParameters);
         this.store.dispatch(request);
     }
 }

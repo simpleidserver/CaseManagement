@@ -339,9 +339,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.UPDATE_PRESENTATIONELEMENT),
             mergeMap((evt: fromHumanTask.UpdatePresentationElementOperation) => {
-                return this.humanTaskDefService.updatePresentationElement(evt.id, evt.presentationElements)
+                return this.humanTaskDefService.updatePresentationElement(evt.id, evt.presentationElements, evt.presentationParameters)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElements: evt.presentationElements }; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElements: evt.presentationElements, presentationParameters: evt.presentationParameters }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PRESENTATIONELEMENT }))
                     );
             }

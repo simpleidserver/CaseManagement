@@ -102,9 +102,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    operationParameters: {
+                    operationParameters: [
                         ...inputParameters
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER:
@@ -118,9 +118,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    operationParameters: {
+                    operationParameters: [
                         ...outputParameters
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER:
@@ -128,9 +128,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    renderingElements: {
+                    renderingElements: [
                         ...action.renderingElements
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.DELETE_START_DEADLINE:
@@ -144,9 +144,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...startDeadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.DELETE_COMPLETION_DEADLINE:
@@ -160,9 +160,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...completionDeadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_UPDATE_START_DEADLINE:
@@ -177,9 +177,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...startDealines2
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE:
@@ -194,9 +194,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...completionDealines2
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_ADD_ESCALATION_STARTDEADLINE:
@@ -211,9 +211,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...state.content.deadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE:
@@ -228,9 +228,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...state.content.deadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT:
@@ -255,9 +255,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...state.content.deadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_UPDATE_START_ESCALATION:
@@ -274,9 +274,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...state.content.deadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_DELETE_START_ESCALATION:
@@ -292,9 +292,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...state.content.deadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_DELETE_COMPLETION_ESCALATION:
@@ -310,9 +310,9 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    deadLines: {
+                    deadLines: [
                         ...state.content.deadLines
-                    }
+                    ]
                 }
             };
         case fromActions.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT:
@@ -320,7 +320,8 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 ...state,
                 content: {
                     ...state.content,
-                    presentationElements: [ ...action.presentationElements ]
+                    presentationElements: [...action.presentationElements],
+                    presentationParameters: [ ...action.presentationParameters]
                 }
             };
         default:

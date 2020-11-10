@@ -11,6 +11,7 @@ namespace CaseManagement.HumanTask.Domains
             ToParts = new List<ToPart>();
         }
 
+        public long Id { get; set; }
         public string HumanTaskName { get; set; }
         public ICollection<ToPart> ToParts { get; set; }
 

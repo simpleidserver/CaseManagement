@@ -3,7 +3,6 @@ using CaseManagement.Common.Exceptions;
 using CaseManagement.HumanTask.Resources;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +14,7 @@ namespace CaseManagement.HumanTask.Domains
         {
             InputParameters = new Dictionary<string, string>();
             OutputParameters = new Dictionary<string, string>();
-            EventHistories = new ConcurrentBag<HumanTaskInstanceEventHistory>();
+            EventHistories = new List<HumanTaskInstanceEventHistory>();
             DeadLines = new List<HumanTaskInstanceDeadLine>();
             PresentationElements = new List<PresentationElementInstance>();
             Completions = new List<Completion>();
@@ -55,7 +54,7 @@ namespace CaseManagement.HumanTask.Domains
         public ICollection<PeopleAssignmentInstance> ExcludedOwners { get => PeopleAssignments.GetExcludedOwners().ToList(); }
         public ICollection<PeopleAssignmentInstance> TaskInitiators { get => PeopleAssignments.GetTaskInitiators().ToList(); }
         public ICollection<PeopleAssignmentInstance> TaskStakeHolders { get => PeopleAssignments.GetTaskStakeHolders().ToList(); }
-        public ConcurrentBag<HumanTaskInstanceEventHistory> EventHistories { get; set; }
+        public ICollection<HumanTaskInstanceEventHistory> EventHistories { get; set; }
 
         public static HumanTaskInstanceAggregate New(
             string id,
@@ -120,7 +119,7 @@ namespace CaseManagement.HumanTask.Domains
                 ExpirationTime = ExpirationTime,
                 PresentationElements = PresentationElements.Select(_ => (PresentationElementInstance)_.Clone()).ToList(),
                 PeopleAssignments = PeopleAssignments.Select(_ => (PeopleAssignmentInstance)_.Clone()).ToList(),
-                EventHistories = new ConcurrentBag<HumanTaskInstanceEventHistory>(EventHistories.Select(_ => (HumanTaskInstanceEventHistory)_.Clone())),
+                EventHistories = EventHistories.Select(_ => (HumanTaskInstanceEventHistory)_.Clone()).ToList(),
                 DeadLines = DeadLines.Select(_ => (HumanTaskInstanceDeadLine)_.Clone()).ToList(),
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
@@ -381,7 +380,17 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskInstanceDeadLineRemovedEvent evt)
         {
-            DeadLines = DeadLines.Where(_ => _.Name != evt.DeadLineName && _.Usage != evt.Usage).ToList();
+            var clonedDeadlines = DeadLines
+                .Where(_ => _.Name != evt.DeadLineName && _.Usage == evt.Usage)
+                .Select(_ => _.Clone())
+                .Cast<HumanTaskInstanceDeadLine>()
+                .ToList();
+            DeadLines.Clear();
+            foreach(var clonedDeadline in clonedDeadlines)
+            {
+                DeadLines.Add(clonedDeadline);
+            }
+
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

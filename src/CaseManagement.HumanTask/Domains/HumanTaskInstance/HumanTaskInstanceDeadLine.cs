@@ -10,7 +10,8 @@ namespace CaseManagement.HumanTask.Domains
         {
             Escalations = new List<Escalation>();
         }
-
+        
+        public long Id { get; set; }
         public string Name { get; set; }
         public DeadlineUsages Usage { get; set; }
         public DateTime EndDateTime { get; set; }

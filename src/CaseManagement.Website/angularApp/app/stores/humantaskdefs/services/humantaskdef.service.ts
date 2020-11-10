@@ -11,6 +11,7 @@ import { map } from 'rxjs/operators';
 import { Deadline } from '../models/deadline';
 import { RenderingElement } from '../../common/rendering.model';
 import { PeopleAssignment } from '../../common/people-assignment.model';
+import { PresentationParameter } from '../../common/presentationparameter.model';
 
 @Injectable()
 export class HumanTaskDefService {
@@ -249,13 +250,13 @@ export class HumanTaskDefService {
         return this.http.post<SearchHumanTaskDefsResult>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    updatePresentationElement(id: string, presentationElements: PresentationElement[]): Observable<boolean> {
+    updatePresentationElement(id: string, presentationElements: PresentationElement[], presentationParameters: PresentationParameter[]): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationelts";
-        const request: any = { presentationElements: presentationElements };
+        const request: any = { presentationElements: presentationElements, presentationParameters: presentationParameters };
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 }

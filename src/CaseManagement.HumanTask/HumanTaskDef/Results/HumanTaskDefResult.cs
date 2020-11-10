@@ -21,6 +21,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         public ICollection<PresentationElementDefinitionResult> PresentationElements { get; set; }
         public ICollection<RenderingElementResult> RenderingElements { get; set; }
         public ICollection<HumanTaskDefinitionDeadLineResult> DeadLines { get; set; }
+        public ICollection<PresentationParameterResult> PresentationParameters { get; set; }
 
         public static HumanTaskDefResult ToDto(HumanTaskDefinitionAggregate humanTaskDef)
         {
@@ -39,7 +40,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 PeopleAssignments = humanTaskDef.PeopleAssignments.Select(_ => PeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
                 PresentationElements = humanTaskDef.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
                 RenderingElements = humanTaskDef.RenderingElements.Select(_ => RenderingElementResult.ToDto(_)).ToList(),
-                DeadLines = humanTaskDef.DeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList()
+                DeadLines = humanTaskDef.DeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList(),
+                PresentationParameters = humanTaskDef.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList()
             };
         }
 
@@ -148,6 +150,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             public ICollection<ParameterResult> OperationParameters { get; set; }
             public ICollection<PeopleAssignmentDefinitionResult> PeopleAssignments { get; set; }
             public ICollection<PresentationElementDefinitionResult> PresentationElements { get; set; }
+            public ICollection<PresentationParameterResult> PresentationParameters { get; set; }
 
             public static NotificationDefResult ToDto(NotificationDefinition notif)
             {
@@ -157,6 +160,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     OperationParameters = notif.OperationParameters.Select(_ => ParameterResult.ToDto(_)).ToList(),
                     PeopleAssignments = notif.PeopleAssignments.Select(_ => PeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
                     PresentationElements = notif.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
+                    PresentationParameters = notif.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList(),
                     Priority = notif.Priority,
                     Rendering = notif.Rendering
                 };
@@ -171,7 +175,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Rendering = Rendering,
                     OperationParameters = OperationParameters.Select(_ => _.ToDomain()).ToList(),
                     PeopleAssignments = PeopleAssignments.Select(_ => _.ToDomain()).ToList(),
-                    PresentationElements = PresentationElements.Select(_ => _.ToDomain()).ToList()
+                    PresentationElements = PresentationElements.Select(_ => _.ToDomain()).ToList(),
+                    PresentationParameters = PresentationParameters.Select(_ => _.ToDomain()).ToList()
                 };
             }
         }
@@ -197,11 +202,13 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             public Parameter ToDomain()
             {
                 var type = (ParameterTypes)Enum.Parse(typeof(ParameterTypes), Type.ToUpperInvariant());
+                var usage = (ParameterUsages)Enum.Parse(typeof(ParameterUsages), Usage.ToUpperInvariant());
                 return new Parameter
                 {
                     IsRequired = IsRequired,
                     Name = Name,
-                    Type = type
+                    Type = type,
+                    Usage = usage
                 };
             }
         }
@@ -272,7 +279,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     XPath = XPath,
                     ValueType = ValueType,
                     Default = Default,
-                    Values = Values?.Select(_ => _.ToDomain()),
+                    Values = Values?.Select(_ => _.ToDomain()).ToList(),
                     Labels = Labels?.Select(_ => _.ToDomain()).ToList()
                 };
             }

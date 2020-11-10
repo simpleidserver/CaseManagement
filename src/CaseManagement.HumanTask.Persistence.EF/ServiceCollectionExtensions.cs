@@ -12,6 +12,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddTransient<IHumanTaskDefCommandRepository, HumanTaskDefCommandRepository>();
             services.AddTransient<IHumanTaskDefQueryRepository, HumanTaskDefQueryRepository>();
+            services.AddTransient<IHumanTaskInstanceCommandRepository, HumanTaskInstanceCommandRepository>();
+            services.AddTransient<IHumanTaskInstanceQueryRepository, HumanTaskInstanceQueryRepository>();
+            services.AddTransient<INotificationInstanceCommandRepository, NotificationInstanceCommandRepository>();
+            services.AddTransient<INotificationInstanceQueryRepository, NotificationInstanceQueryRepository>();
             services.AddDbContext<HumanTaskDBContext>(optionsAction);
             return services;
         }

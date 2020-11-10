@@ -252,12 +252,8 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
             }
 
             this.humanTaskDef = e;
-            this.startDeadlines.data = this.humanTaskDef.deadLines.filter(function (d: Deadline) {
-                return d.usage === 'START';
-            });
-            this.completionDeadlines.data = this.humanTaskDef.deadLines.filter(function (d: Deadline) {
-                return d.usage === 'COMPLETION';
-            });
+            this.startDeadlines.data = HumanTaskDef.getStartDeadlines(e);
+            this.completionDeadlines.data = HumanTaskDef.getCompletionDeadlines(e);
             if (this.currentDeadline) {
                 const id = this.currentDeadline.id;
                 this.currentDeadline = this.humanTaskDef.deadLines.filter(function (v: Deadline) {
@@ -282,9 +278,11 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
         }
 
         if (form.deadlineType === 'start') {
+            deadline.usage = 'START';
             const request = new fromHumanTaskDefActions.AddStartDeadLine(this.humanTaskDef.id, deadline);
             this.store.dispatch(request);
         } else {
+            deadline.usage = 'COMPLETION';
             const request = new fromHumanTaskDefActions.AddCompletionDeadLine(this.humanTaskDef.id, deadline);
             this.store.dispatch(request);
         }
@@ -299,6 +297,7 @@ export class ViewHumanTaskDefDeadlinesComponent implements OnInit {
 
         const deadline = new Deadline();
         deadline.id = this.currentDeadline.id;
+        deadline.usage = this.currentDeadline.usage;
         deadline.name = form.name;
         if (form.validityType === 'duration') {
             deadline.for = form.validity;

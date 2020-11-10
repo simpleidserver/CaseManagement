@@ -1,9 +1,9 @@
 import { Action } from '@ngrx/store';
-import { SearchTasksResult } from '../models/search-tasks-result.model';
-import { NominateParameter } from '../parameters/nominate-parameter';
-import { Rendering } from '../models/rendering';
-import { Task } from '../models/task.model';
+import { RenderingElement } from '../models/rendering';
 import { SearchTaskHistoryResult } from '../models/search-task-history-result.model';
+import { SearchTasksResult } from '../models/search-tasks-result.model';
+import { Task } from '../models/task.model';
+import { NominateParameter } from '../parameters/nominate-parameter';
 
 export enum ActionTypes {
     SEARCH_TASKS = "[Tasks] SEARCH_TASKS",
@@ -58,7 +58,7 @@ export class RenderingTask implements Action {
 
 export class CompleteRenderingTask implements Action {
     readonly type = ActionTypes.COMPLETE_GET_TASK
-    constructor(public rendering: Rendering, public task: Task, public description: string, public searchTaskHistory: SearchTaskHistoryResult) { }
+    constructor(public renderingElts: RenderingElement[], public task: Task, public description: string, public searchTaskHistory: SearchTaskHistoryResult) { }
 }
 
 export class SubmitTask implements Action {

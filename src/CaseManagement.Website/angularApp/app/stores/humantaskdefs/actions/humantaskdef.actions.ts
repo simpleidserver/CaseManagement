@@ -7,6 +7,7 @@ import { RenderingElement } from '../../common/rendering.model';
 import { Deadline } from '../models/deadline';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
+import { PresentationParameter } from '../../common/presentationparameter.model';
 
 export enum ActionTypes {
     START_GET_HUMANTASKDEF = "[HumanTaskDef] START_GET_HUMANTASKDEF",
@@ -316,12 +317,12 @@ export class CompleteSearchHumanTaskDefOperation implements Action {
 
 export class UpdatePresentationElementOperation implements Action {
     readonly type = ActionTypes.UPDATE_PRESENTATIONELEMENT;
-    constructor(public id: string, public presentationElements: PresentationElement[]) { }
+    constructor(public id: string, public presentationElements: PresentationElement[], public presentationParameters: PresentationParameter[]) { }
 }
 
 export class CompleteUpdatePresentationElementOperation implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT;
-    constructor(public presentationElements: PresentationElement[]) { }
+    constructor(public presentationElements: PresentationElement[], public presentationParameters: PresentationParameter[]) { }
 }
 
 export type ActionsUnion = GetHumanTaskDef |

@@ -24,7 +24,7 @@ namespace CaseManagement.HumanTask.Domains
         /// </summary>
         public string XPath { get; set; }
         public string ValueType { get; set; }
-        public IEnumerable<OptionValue> Values { get; set; }
+        public ICollection<OptionValue> Values { get; set; }
         /// <summary>
         /// Can provide default value to display in the form
         /// </summary>

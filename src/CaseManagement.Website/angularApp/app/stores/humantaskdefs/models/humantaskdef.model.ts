@@ -3,6 +3,7 @@ import { PeopleAssignment } from "../../common/people-assignment.model";
 import { PresentationElement } from "../../common/presentationelement.model";
 import { RenderingElement } from "../../common/rendering.model";
 import { Deadline } from "./deadline";
+import { PresentationParameter } from "../../common/presentationparameter.model";
 
 export class HumanTaskDef {
     constructor() {
@@ -22,18 +23,74 @@ export class HumanTaskDef {
     outcome: string;
     searchBy: string;
     operationParameters: Parameter[];
-    get inputOperationParameters() {
-        return this.operationParameters.filter(function (v: Parameter) {
-            return v.usage == 'INPUT';
+    static getInputOperationParameters(hd : HumanTaskDef): Parameter[] {
+        return hd.operationParameters.filter(function (v: Parameter) {
+            return v.usage === 'INPUT';
         });
     }
-    get outputOperationParameters() {
-        return this.operationParameters.filter(function (v: Parameter) {
-            return v.usage == 'OUTPUT';
+    static getOutputOperationParameters(hd: HumanTaskDef) : Parameter[] {
+        return hd.operationParameters.filter(function (v: Parameter) {
+            return v.usage === 'OUTPUT';
         });
     }
     peopleAssignments: PeopleAssignment[];
+    static getPotentialOwners(hd: HumanTaskDef) {
+        return hd.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'POTENTIALOWNER';
+        });        
+    }
+    static getExcludedOwners(hd: HumanTaskDef) {
+        return hd.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'EXCLUDEDOWNER';
+        });
+    }
+    static getTaskInitiators(hd: HumanTaskDef) {
+        return hd.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'TASKINITIATOR';
+        });
+    }
+    static getTaskStakeHolders(hd: HumanTaskDef) {
+        return hd.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'TASKSTAKEHOLDER';
+        });
+    }
+    static getBusinessAdministrators(hd: HumanTaskDef) {
+        return hd.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'BUINESSADMINISTRATOR';
+        });
+    }
+    static getRecipients(hd: HumanTaskDef) {
+        return hd.peopleAssignments.filter(function (p: PeopleAssignment) {
+            return p.usage === 'RECIPIENT';
+        });
+    }
     presentationElements: PresentationElement[];
+    static getNames(hd: HumanTaskDef) {
+        return hd.presentationElements.filter(function (pe: PresentationElement) {
+            return pe.usage === 'NAME';
+        });
+    }
+    static getDescriptions(hd: HumanTaskDef) {
+        return hd.presentationElements.filter(function (pe: PresentationElement) {
+            return pe.usage === 'DESCRIPTION';
+        });
+    }
+    static getSubjects(hd: HumanTaskDef) {
+        return hd.presentationElements.filter(function (pe: PresentationElement) {
+            return pe.usage === 'SUBJECT';
+        });
+    }
+    static getStartDeadlines(hd: HumanTaskDef) {
+        return hd.deadLines.filter(function (d: Deadline) {
+            return d.usage === 'START';
+        });
+    }
+    static getCompletionDeadlines(hd: HumanTaskDef) {
+        return hd.deadLines.filter(function (d: Deadline) {
+            return d.usage === 'COMPLETION';
+        });
+    }
     renderingElements: RenderingElement[];
+    presentationParameters: PresentationParameter[];
     deadLines: Deadline[];
 }

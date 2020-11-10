@@ -25,17 +25,52 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
 
         public Task<HumanTaskDefinitionAggregate> Get(string id, CancellationToken token)
         {
-            return _humanTaskDBContext.HumanTaskDefinitions.FirstOrDefaultAsync(_ => _.AggregateId == id, token);
+            return _humanTaskDBContext.HumanTaskDefinitions
+                .Include(_ => _.OperationParameters)
+                .Include(_ => _.PeopleAssignments)
+                .Include(_ => _.PresentationElements)
+                .Include(_ => _.PresentationParameters)
+                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
+                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.OperationParameters)
+                .FirstOrDefaultAsync(_ => _.AggregateId == id, token);
         }
 
         public Task<HumanTaskDefinitionAggregate> GetLatest(string name, CancellationToken token)
         {
-            return _humanTaskDBContext.HumanTaskDefinitions.OrderByDescending(_ => _.Version).FirstOrDefaultAsync(_ => _.Name == name, token);
+            return _humanTaskDBContext.HumanTaskDefinitions
+                .Include(_ => _.OperationParameters)
+                .Include(_ => _.PeopleAssignments)
+                .Include(_ => _.PresentationElements)
+                .Include(_ => _.PresentationParameters)
+                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
+                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.OperationParameters)
+                .OrderByDescending(_ => _.Version).FirstOrDefaultAsync(_ => _.Name == name, token);
         }
 
         public async Task<FindResponse<HumanTaskDefinitionAggregate>> Search(SearchHumanTaskDefParameter parameter, CancellationToken token)
         {
-            IQueryable<HumanTaskDefinitionAggregate> result = _humanTaskDBContext.HumanTaskDefinitions;
+            IQueryable<HumanTaskDefinitionAggregate> result = _humanTaskDBContext.HumanTaskDefinitions
+                .Include(_ => _.OperationParameters)
+                .Include(_ => _.PresentationElements)
+                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
+                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.OperationParameters)
+                .Include(_ => _.PresentationParameters)
+                .Include(_ => _.PeopleAssignments);
             if (!string.IsNullOrWhiteSpace(parameter.Name))
             {
                 result = result.Where(_ => _.Name == parameter.Name);
