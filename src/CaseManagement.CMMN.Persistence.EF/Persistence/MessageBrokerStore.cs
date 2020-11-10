@@ -1,4 +1,4 @@
-﻿using CaseManagement.CMMN.Infrastructure.Bus;
+﻿using CaseManagement.Common.Bus;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

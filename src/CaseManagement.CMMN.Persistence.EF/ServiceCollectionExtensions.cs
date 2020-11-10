@@ -1,8 +1,8 @@
-﻿using CaseManagement.CMMN.Infrastructure.Bus;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+﻿using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.EF;
 using CaseManagement.CMMN.Persistence.EF.Persistence;
+using CaseManagement.Common.Bus;
 using Microsoft.EntityFrameworkCore;
 using System;
 

@@ -1,5 +1,5 @@
-﻿using CaseManagement.CMMN.Infrastructure.Bus;
-using CaseManagement.CMMN.Persistence.EF.Models;
+﻿using CaseManagement.CMMN.Persistence.EF.Models;
+using CaseManagement.Common.Bus;
 
 namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
 {

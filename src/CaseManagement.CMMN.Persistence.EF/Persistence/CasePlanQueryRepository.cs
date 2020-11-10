@@ -1,9 +1,8 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Extensions;
 using CaseManagement.CMMN.Persistence.EF.DomainMapping;
 using CaseManagement.CMMN.Persistence.EF.Models;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.CMMN.Persistence.Responses;
+using CaseManagement.Common.Responses;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
