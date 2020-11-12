@@ -8,6 +8,7 @@ namespace CaseManagement.BPMN.Domains
     {
         public FlowNodeInstance()
         {
+            Metadata = new Dictionary<string, string>();
             ActivityStates = new List<ActivityStateHistory>();
         }
 
@@ -15,6 +16,7 @@ namespace CaseManagement.BPMN.Domains
         public string FlowNodeId { get; set; }
         public FlowNodeStates State { get; set; }
         public ActivityStates? ActivityState { get; set; }
+        public Dictionary<string, string> Metadata { get; set; }
         public ICollection<ActivityStateHistory> ActivityStates { get; set; }
 
         public object Clone()
@@ -25,6 +27,7 @@ namespace CaseManagement.BPMN.Domains
                 FlowNodeId = FlowNodeId,
                 State = State,
                 ActivityState = ActivityState,
+                Metadata = Metadata.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
                 ActivityStates = ActivityStates.Select(_ => (ActivityStateHistory)_.Clone()).ToList()
             };
         }

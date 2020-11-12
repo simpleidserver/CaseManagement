@@ -3,12 +3,13 @@ using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.Persistence.InMemory;
-using CaseManagement.BPMN.ProcessInstance;
 using CaseManagement.BPMN.ProcessInstance.Processors;
+using CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers;
 using CaseManagement.Common;
 using CaseManagement.Common.Bus;
 using CaseManagement.Common.Domains;
 using CaseManagement.Common.EvtStore;
+using CaseManagement.Common.Factories;
 using CaseManagement.Common.Jobs;
 using CaseManagement.Common.Lock;
 using CaseManagement.Common.Processors;
@@ -20,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddProcessJobServer(this IServiceCollection services, Action<CommonOptions> callbackOpts = null)
+        public static void AddProcessJobServer(this IServiceCollection services, Action<CommonOptions> callbackOpts = null, Action<BPMNServerOptions> callbackServerOpts = null)
         {
             if (callbackOpts == null)
             {
@@ -32,6 +33,15 @@ namespace Microsoft.Extensions.DependencyInjection
             else
             {
                 services.Configure(callbackOpts);
+            }
+
+            if (callbackServerOpts == null)
+            {
+                services.Configure<BPMNServerOptions>((o) => { });
+            }
+            else
+            {
+                services.Configure(callbackServerOpts);
             }
 
             services.AddCommon()
@@ -46,6 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IEventStoreRepository, InMemoryEventStoreRepository>();
             services.TryAddSingleton<IMessageBroker, InMemoryMessageBroker>();
             services.TryAddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
+            services.TryAddTransient<IHttpClientFactory, HttpClientFactory>();
             return services;
         }
 
@@ -63,6 +74,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.RegisterAllAssignableType(typeof(IDomainEvtConsumerGeneric<>), typeof(IProcessJobServer).Assembly);
             services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(IProcessJobServer).Assembly);
             services.RegisterAllAssignableType(typeof(IServiceTaskHandler), typeof(IServiceTaskHandler).Assembly);
+            services.RegisterAllAssignableType(typeof(IUserServerTaskHandler), typeof(IUserServerTaskHandler).Assembly);
             foreach(var assm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 services.RegisterAllAssignableType(typeof(IDelegateHandler), assm, true);

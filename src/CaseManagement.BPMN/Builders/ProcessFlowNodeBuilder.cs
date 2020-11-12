@@ -113,6 +113,37 @@ namespace CaseManagement.BPMN.Builders
         }
     }
 
+    public class UserTaskBuilder : ActivityNodeBuilder
+    {
+        private string _implementation;
+        private string _humanTaskName;
+
+        public UserTaskBuilder(string id, string name) : base(id, name) { }
+
+        public UserTaskBuilder SetImplementation(string implementation)
+        {
+            _implementation = implementation;
+            return this;
+        }
+
+        public UserTaskBuilder SetWebservice(string humanTaskName)
+        {
+            _humanTaskName = humanTaskName;
+            return SetImplementation(BPMNConstants.UserTaskImplementations.WEBSERVICE);
+        }
+
+        public override BaseFlowNode Build()
+        {
+            var result = new UserTask
+            {
+                Implementation = _implementation,
+                HumanTaskName = _humanTaskName
+            };
+            FeedActivityNode(result);
+            return result;
+        }
+    }
+
     #endregion
 
     #region Events

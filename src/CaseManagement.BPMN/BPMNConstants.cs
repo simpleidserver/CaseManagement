@@ -6,11 +6,17 @@
         {
             public const string ProcessInstances = "processinstances";
             public const string Messages = "messages";
+            public const string StateTransitions = "statetransitions";
         }
 
         public static class ImplementationNames
         {
             public const string CALLBACK = "##csharpcallback";
+        }
+
+        public static class UserTaskImplementations
+        {
+            public const string WEBSERVICE = "##WebService";
         }
     }
 }

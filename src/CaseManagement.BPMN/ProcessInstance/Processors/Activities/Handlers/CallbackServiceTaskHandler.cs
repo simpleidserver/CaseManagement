@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CaseManagement.BPMN.ProcessInstance.Processors
+namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
 {
     public class CallbackServiceTaskHandler : IServiceTaskHandler
     {

@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Helpers;
 using CaseManagement.Common.Domains;
+using CaseManagement.Common.Jobs;
 using DynamicExpresso;
 using Newtonsoft.Json;
 using System;
@@ -24,6 +25,7 @@ namespace CaseManagement.BPMN.Domains
             SequenceFlows = new ConcurrentBag<SequenceFlow>();
             Interfaces = new ConcurrentBag<BPMNInterface>();
             Messages = new ConcurrentBag<Message>();
+            StateTransitions = new ConcurrentBag<StateTransitionToken>();
         }
 
         public string InstanceId { get; set; }
@@ -40,6 +42,7 @@ namespace CaseManagement.BPMN.Domains
         public ConcurrentBag<SequenceFlow> SequenceFlows { get; set; }
         public ConcurrentBag<FlowNodeInstance> ElementInstances { get; set; }
         public ConcurrentBag<ExecutionPath> ExecutionPathLst { get; set; }
+        public ConcurrentBag<StateTransitionToken> StateTransitions { get; set; }
 
         #region Getters
 
@@ -204,6 +207,30 @@ namespace CaseManagement.BPMN.Domains
             DomainEvents.Add(evt);
         }
 
+        public void UpdateMetadata(string flowNodeInstanceId, string key, string value)
+        {
+            var evt = new MetadataUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, flowNodeInstanceId, key, value, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        public void ConsumeStateTransition(StateTransitionToken stateTransitionToken)
+        {
+            var nodeInstance = GetInstance(stateTransitionToken.FlowNodeInstanceId);
+            if (nodeInstance == null)
+            {
+                return;
+            }
+
+            var evt = new StateTransitionReceivedEvent(Guid.NewGuid().ToString(),
+                AggregateId,
+                Version + 1,
+                stateTransitionToken,
+                DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
         public void ConsumeMessage(MessageToken messageToken)
         {
             foreach(var executionPath in ExecutionPathLst)
@@ -338,7 +365,8 @@ namespace CaseManagement.BPMN.Domains
                 ExecutionPathLst = new ConcurrentBag<ExecutionPath>(ExecutionPathLst.Select(_ => (ExecutionPath)_.Clone())),
                 ItemDefs = new ConcurrentBag<ItemDefinition>(ItemDefs.Select(_ => (ItemDefinition)_.Clone())),
                 Messages = new ConcurrentBag<Message>(Messages.Select(_ => (Message)_.Clone())),
-                Interfaces = new ConcurrentBag<BPMNInterface>(Interfaces.Select(_ => (BPMNInterface)_.Clone()))
+                Interfaces = new ConcurrentBag<BPMNInterface>(Interfaces.Select(_ => (BPMNInterface)_.Clone())),
+                StateTransitions = new ConcurrentBag<StateTransitionToken>(StateTransitions.Select(_ => (StateTransitionToken)_.Clone()))
             };
         }
 
@@ -352,6 +380,19 @@ namespace CaseManagement.BPMN.Domains
         public override void Handle(dynamic evt)
         {
             Handle(evt);
+        }
+
+        private void Handle(MetadataUpdatedEvent evt)
+        {
+            var instance = GetInstance(evt.FlowNodeInstanceId);
+            instance.Metadata.Add(evt.Key, evt.Value);
+        }
+
+        private void Handle(StateTransitionReceivedEvent evt)
+        {
+            StateTransitions.Add(evt.StateTransitionToken);
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
         }
 
         private void Handle(ProcessInstanceCreatedEvent evt)

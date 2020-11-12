@@ -2,6 +2,7 @@
 {
     public enum TokenTypes
     {
-        Message = 0
+        Message = 0,
+        StateTransition = 1
     }
 }

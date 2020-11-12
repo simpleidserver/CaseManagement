@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
 {
-    public class ServiceTaskProcessor : BaseActivityProcessor<ServiceTask>
+    public class UserTaskProcessor : BaseActivityProcessor<UserTask>
     {
-        private readonly IEnumerable<IServiceTaskHandler> _handlers;
+        private readonly IEnumerable<IUserServerTaskHandler> _handlers;
 
-        public ServiceTaskProcessor(IEnumerable<IServiceTaskHandler> handlers)
+        public UserTaskProcessor(IEnumerable<IUserServerTaskHandler> handlers)
         {
             _handlers = handlers;
         }
 
-        protected override async Task<ICollection<BaseToken>> Process(BPMNExecutionContext context, ServiceTask elt, CancellationToken cancellationToken)
+        protected override async Task<ICollection<BaseToken>> Process(BPMNExecutionContext context, UserTask elt, CancellationToken cancellationToken)
         {
             var handler = _handlers.First(_ => _.Implementation == elt.Implementation);
             var result = await handler.Execute(context, elt, cancellationToken);

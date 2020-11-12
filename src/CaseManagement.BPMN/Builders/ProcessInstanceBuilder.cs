@@ -106,6 +106,18 @@ namespace CaseManagement.BPMN.Builders
             return this;
         }
 
+        public ProcessInstanceBuilder AddUserTask(string id, string name, Action<UserTaskBuilder> callback = null)
+        {
+            var userTaskBuilder = new UserTaskBuilder(id, name);
+            if (callback != null)
+            {
+                callback(userTaskBuilder);
+            }
+
+            Builders.Add(userTaskBuilder);
+            return this;
+        }
+
         #endregion
 
         #region Build gateways

@@ -1,5 +1,6 @@
 ﻿using CaseManagement.BPMN;
 using CaseManagement.BPMN.Infrastructure.Jobs.Notifications;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,17 @@ namespace CaseManagement.Common.Bus
                 ProcessInstanceId = processInstanceId,
                 MessageName = messageName,
                 Content = content
+            }, token);
+        }
+
+        public static Task QueueStateTransition(this IMessageBroker messageBroker, string processInstanceId, string flowNodeInstanceId, string state, JObject jObj, CancellationToken token)
+        {
+            return messageBroker.Queue(BPMNConstants.QueueNames.StateTransitions, new StateTransitionNotification(Guid.NewGuid().ToString())
+            {
+                Content = jObj,
+                State = state,
+                ProcessInstanceId = processInstanceId,
+                FlowNodeInstanceId = flowNodeInstanceId
             }, token);
         }
     }

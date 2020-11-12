@@ -2,6 +2,7 @@
 using CaseManagement.Common;
 using CaseManagement.Common.Bus;
 using CaseManagement.Common.Jobs;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,11 @@ namespace CaseManagement.BPMN
         public Task EnqueueMessage(string processInstanceId, string messageName, object content, CancellationToken token)
         {
             return _messageBroker.QueueMessage(processInstanceId, messageName, content, token);
+        }
+
+        public Task EnqueueStateTransition(string processInstanceId, string flowNodeInstanceId, string state, JObject jObj, CancellationToken token)
+        {
+            return _messageBroker.QueueStateTransition(processInstanceId, flowNodeInstanceId, state, jObj, token);
         }
 
         public void Start()

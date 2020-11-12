@@ -3,9 +3,14 @@ using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.Tests.Delegates;
 using CaseManagement.BPMN.Tests.ItemDefs;
+using CaseManagement.Common.Factories;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Moq.Protected;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -438,6 +443,60 @@ namespace CaseManagement.BPMN.Tests
             }
         }
 
+        [Fact]
+        public async Task When_Execute_UserTask()
+        {
+            var humanTaskInstanceId = Guid.NewGuid().ToString();
+            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
+            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+                .AddStartEvent("1", "evt")
+                .AddUserTask("2", "userTask", (cb) =>
+                {
+                    cb.SetWebservice("humanTask");
+                })
+                .AddSequenceFlow("seq1", "sequence", "1", "2")
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            try
+            {
+                jobServer.HttpMessageHandler.Protected()
+                    .As<IHttpMessageHandler>()
+                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new HttpResponseMessage
+                    {
+                        Content = new StringContent("{ 'id' : '{"+ humanTaskInstanceId + "}' }")
+                    });
+                await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
+                jobServer.Start();
+                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.Count() == 2;
+                }, CancellationToken.None);
+                var ei = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
+                await jobServer.EnqueueStateTransition(casePlanInstance.AggregateId, ei.Id, "COMPLETED", new JObject(), CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                {
+                    if (c == null)
+                    {
+                        return false;
+                    }
+
+                    return c.ElementInstances.All(_ => _.State == FlowNodeStates.Complete);
+                }, CancellationToken.None);
+                Assert.True(casePlanInstance.ElementInstances.All(_ => _.State == FlowNodeStates.Complete));
+            }
+            finally
+            {
+                jobServer.Stop();
+            }
+        }
+
         #endregion
 
         private class FakeCaseJobServer
@@ -445,15 +504,24 @@ namespace CaseManagement.BPMN.Tests
             private IServiceProvider _serviceProvider;
             private IProcessJobServer _processJobServer;
             private IProcessInstanceQueryRepository _processInstanceQueryRepository;
+            private FakeHttpClientFactory _factory;
 
             private FakeCaseJobServer()
             {
+                _factory = new FakeHttpClientFactory();
                 var serviceCollection = new ServiceCollection();
-                serviceCollection.AddProcessJobServer();
+                serviceCollection.AddLogging();
+                serviceCollection.AddProcessJobServer(callbackServerOpts: o =>
+                {
+                    o.WSHumanTaskAPI = "http://localhost";
+                });
+                serviceCollection.AddSingleton<IHttpClientFactory>(_factory);
                 _serviceProvider = serviceCollection.BuildServiceProvider();
                 _processJobServer = _serviceProvider.GetRequiredService<IProcessJobServer>();
                 _processInstanceQueryRepository = _serviceProvider.GetRequiredService<IProcessInstanceQueryRepository>();
             }
+
+            public Mock<HttpMessageHandler> HttpMessageHandler => _factory.MockHttpHandler;
 
             public static FakeCaseJobServer New()
             {
@@ -481,6 +549,11 @@ namespace CaseManagement.BPMN.Tests
                 return _processJobServer.EnqueueProcessInstance(processInstanceId, isNewInstance, token);
             }
 
+            public Task EnqueueStateTransition(string processInstanceId, string flowNodeInstanceId, string state, JObject jObj, CancellationToken token)
+            {
+                return _processJobServer.EnqueueStateTransition(processInstanceId, flowNodeInstanceId, state, jObj, token);
+            }
+
             public Task EnqueueMessage(string processInstanceId, string messageName, object content, CancellationToken token)
             {
                 return _processJobServer.EnqueueMessage(processInstanceId, messageName, content, token);
@@ -499,5 +572,25 @@ namespace CaseManagement.BPMN.Tests
                 }
             }
         }
+
+        private class FakeHttpClientFactory : IHttpClientFactory
+        {
+            public FakeHttpClientFactory()
+            {
+                MockHttpHandler = new Mock<HttpMessageHandler>();
+            }
+
+            public HttpClient Build()
+            {
+                return new HttpClient(MockHttpHandler.Object);
+            }
+
+            public Mock<HttpMessageHandler> MockHttpHandler { get; private set; }
+        }
+    }
+
+    public interface IHttpMessageHandler
+    {
+        Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);
     }
 }

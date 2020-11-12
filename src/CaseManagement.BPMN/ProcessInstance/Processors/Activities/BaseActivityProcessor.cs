@@ -1,11 +1,12 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Domains;
+using CaseManagement.BPMN.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CaseManagement.BPMN.ProcessInstance.Processors
+namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
 {
     public abstract class BaseActivityProcessor<T>: BaseFlowNodeProcessor<T> where T : BaseActivity
     {
@@ -39,9 +40,16 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
             outcome.AddRange(executionContext.Pointer.Incoming);
             if (instance.ActivityState == ActivityStates.COMPLETING)
             {
-                var addOutcome = await Process(executionContext, elt, cancellationToken);
-                outcome.AddRange(addOutcome);
-                executionContext.Instance.UpdateState(instance, ActivityStates.COMPLETED);
+                try
+                {
+                    var addOutcome = await Process(executionContext, elt, cancellationToken);
+                    outcome.AddRange(addOutcome);
+                    executionContext.Instance.UpdateState(instance, ActivityStates.COMPLETED);
+                }
+                catch(FlowNodeInstanceBlockedException)
+                {
+                    return BPMNExecutionResult.Block();
+                }
             }
 
             return BPMNExecutionResult.Next(flowNodeIds, outcome);

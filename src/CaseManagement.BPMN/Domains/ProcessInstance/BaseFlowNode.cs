@@ -31,6 +31,8 @@ namespace CaseManagement.BPMN.Domains
                     return Deserialize<ParallelGateway>(json);
                 case FlowNodeTypes.INCLUSIVEGATEWAY:
                     return Deserialize<InclusiveGateway>(json);
+                case FlowNodeTypes.USERTASK:
+                    return Deserialize<UserTask>(json);
             }
 
             return null;

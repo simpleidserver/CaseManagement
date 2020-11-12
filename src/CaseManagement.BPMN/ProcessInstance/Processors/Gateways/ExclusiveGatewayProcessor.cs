@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CaseManagement.BPMN.ProcessInstance.Processors
+namespace CaseManagement.BPMN.ProcessInstance.Processors.Gateways
 {
     public class ExclusiveGatewayProcessor : BaseFlowNodeProcessor<ExclusiveGateway>
     {
