@@ -29,4 +29,8 @@
     <Folder Include="Domains\Common\Definition\Assignment\" />
     <Folder Include="Domains\Common\Instance\" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
 </Project>

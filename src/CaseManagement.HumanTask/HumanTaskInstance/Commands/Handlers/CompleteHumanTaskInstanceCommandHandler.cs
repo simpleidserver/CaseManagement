@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Common.Exceptions;
 using CaseManagement.Common.Expression;
+using CaseManagement.Common.Factories;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Parser;
@@ -7,8 +8,12 @@ using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,6 +25,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
         private readonly IParameterParser _parameterParser;
         private readonly IMediator _mediator;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<CompleteHumanTaskInstanceCommandHandler> _logger;
 
         public CompleteHumanTaskInstanceCommandHandler(
@@ -27,12 +33,14 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
             IParameterParser parameteParser,
             IMediator mediator,
+            IHttpClientFactory httpClientFactory,
             ILogger<CompleteHumanTaskInstanceCommandHandler> logger)
         {
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
             _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
             _parameterParser = parameteParser;
             _mediator = mediator;
+            _httpClientFactory = httpClientFactory;
             _logger = logger;
         }
 
@@ -88,6 +96,30 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                     if (completionResult.IsSatisfied)
                     {
                         await Complete(parentTask, new Dictionary<string, string>(), nameIdentifier, cancellationToken);
+                    }
+                }
+            }
+
+            if (humanTaskInstance.InputParameters.ContainsKey("flowNodeInstanceId") 
+                && humanTaskInstance.InputParameters.ContainsKey("flowNodeElementInstanceId"))
+            {
+                foreach (var cb in humanTaskInstance.CallbackOperations)
+                {
+                    var jObj = new JObject
+                    {
+                        { "flowNodeElementInstanceId", humanTaskInstance.InputParameters["flowNodeElementInstanceId"] },
+                        { "state", "COMPLETED" }
+                    };
+                    using (var httpClient = _httpClientFactory.Build())
+                    {
+                        var u = cb.Url.Replace("{id}", humanTaskInstance.InputParameters["flowNodeInstanceId"]); 
+                        var req = new HttpRequestMessage
+                        {
+                            Method = HttpMethod.Post,
+                            RequestUri = new Uri(u),
+                            Content = new StringContent(jObj.ToString(), Encoding.UTF8 , "application/json")
+                        };
+                        await httpClient.SendAsync(req, cancellationToken);
                     }
                 }
             }

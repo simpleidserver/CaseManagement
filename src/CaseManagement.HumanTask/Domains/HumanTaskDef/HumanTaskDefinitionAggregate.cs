@@ -5,7 +5,6 @@ using CaseManagement.HumanTask.Domains.HumanTaskDef.Events;
 using CaseManagement.HumanTask.Resources;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 
 namespace CaseManagement.HumanTask.Domains
@@ -15,6 +14,7 @@ namespace CaseManagement.HumanTask.Domains
         public HumanTaskDefinitionAggregate()
         {
             ActualOwnerRequired = true;
+            CallbackOperations = new List<CallbackOperation>();
             OperationParameters = new List<Parameter>();
             PresentationElements = new List<PresentationElementDefinition>();
             PeopleAssignments = new List<PeopleAssignmentDefinition>();
@@ -59,6 +59,7 @@ namespace CaseManagement.HumanTask.Domains
         public CompositionTypes Type { get; set; }
         public InstantiationPatterns InstantiationPattern { get; set; }
         public CompletionBehaviors CompletionAction { get; set; }
+        public ICollection<CallbackOperation> CallbackOperations { get; set; }
         public ICollection<Completion> Completions { get; set; }
         /// <summary>
         /// This element is used to specify the operation used to invoke the task.
@@ -115,7 +116,8 @@ namespace CaseManagement.HumanTask.Domains
                 InstantiationPattern = InstantiationPattern,
                 Type = Type,
                 SubTasks = SubTasks.Select(_ => (HumanTaskDefinitionSubTask)_.Clone()).ToList(),
-                Completions = Completions.Select(_ => (Completion)_.Clone()).ToList()
+                Completions = Completions.Select(_ => (Completion)_.Clone()).ToList(),
+                CallbackOperations = CallbackOperations.Select(_ => (CallbackOperation)_.Clone()).ToList()
             };
         }
 
@@ -200,6 +202,15 @@ namespace CaseManagement.HumanTask.Domains
             return id;
         }
 
+        public string AddCallbackOperation(CallbackOperation operation)
+        {
+            var id = Guid.NewGuid().ToString();
+            operation.Id = id;
+            var evt = new HumanTaskDefCallbackOperationAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, operation, DateTime.UtcNow);
+            Handle(evt);
+            return id;
+        }
+
         public void DeleteCompletionDeadLine(string deadLineId)
         {
             var evt = new HumanTaskDefCompletionDeadLineRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLineId, DateTime.UtcNow);
@@ -273,6 +284,17 @@ namespace CaseManagement.HumanTask.Domains
         public override void Handle(dynamic evt)
         {
             Handle(evt);
+        }
+
+        private void Handle(HumanTaskDefCallbackOperationAddedEvent evt)
+        {
+            CallbackOperations.Add(new CallbackOperation
+            {
+                Id = evt.CallbackOperation.Id,
+                Url = evt.CallbackOperation.Url
+            });
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
         }
 
         private void Handle(HumanTaskDefCreatedEvent evt)

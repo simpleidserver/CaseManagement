@@ -22,6 +22,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         public ICollection<RenderingElementResult> RenderingElements { get; set; }
         public ICollection<HumanTaskDefinitionDeadLineResult> DeadLines { get; set; }
         public ICollection<PresentationParameterResult> PresentationParameters { get; set; }
+        public ICollection<CallbackOperationResult> CallbackOperations { get; set; }
 
         public static HumanTaskDefResult ToDto(HumanTaskDefinitionAggregate humanTaskDef)
         {
@@ -41,8 +42,32 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 PresentationElements = humanTaskDef.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
                 RenderingElements = humanTaskDef.RenderingElements.Select(_ => RenderingElementResult.ToDto(_)).ToList(),
                 DeadLines = humanTaskDef.DeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList(),
-                PresentationParameters = humanTaskDef.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList()
+                PresentationParameters = humanTaskDef.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList(),
+                CallbackOperations = humanTaskDef.CallbackOperations.Select(_ => CallbackOperationResult.ToDto(_)).ToList()
             };
+        }
+
+        public class CallbackOperationResult
+        {
+            public string Id { get; set; }
+            public string Url { get; set; }
+
+            public static CallbackOperationResult ToDto(CallbackOperation op)
+            {
+                return new CallbackOperationResult
+                {
+                    Url = op.Url
+                };
+            }
+
+            public CallbackOperation ToDomain()
+            {
+                return new CallbackOperation
+                {
+                    Id = Id,
+                    Url = Url
+                };
+            }
         }
 
         public class HumanTaskDefinitionDeadLineResult

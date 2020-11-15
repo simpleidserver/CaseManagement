@@ -38,6 +38,31 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPost("{id}/callbackoperations")]
+        public async Task<IActionResult> AddCallbackOperation(string id, [FromBody] AddCallbackOperationCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.HumanTaskDefId = id;
+                var result = await _mediator.Send(parameter, token);
+                return new CreatedResult(string.Empty, new { id = result });
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         [HttpPost(".search")]
         public async Task<IActionResult> Search([FromBody] SearchHumanTaskDefQuery parameter, CancellationToken token)
         {

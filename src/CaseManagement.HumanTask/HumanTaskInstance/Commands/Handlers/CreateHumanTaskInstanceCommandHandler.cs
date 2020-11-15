@@ -95,7 +95,12 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 humanTaskDef.OperationParameters,
                 humanTaskDef.CompletionAction,
                 humanTaskDef.Completions,
-                humanTaskDef.RenderingElements);
+                humanTaskDef.RenderingElements,
+                humanTaskDef.CallbackOperations.Select(_ => new CallbackOperation
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Url = _.Url
+                }).ToList());
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             return humanTaskInstance.AggregateId;

@@ -38,7 +38,12 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                 {
                     var obj = new JObject
                     {
-                        { "humanTaskName", userTask.HumanTaskName }
+                        { "humanTaskName", userTask.HumanTaskName },
+                        { "operationParameters", new JObject
+                        {
+                            { "flowNodeInstanceId", executionContext.Instance.AggregateId },
+                            { "flowNodeElementInstanceId", pointer.InstanceFlowNodeId }
+                        }}
                     };
                     var content = new StringContent(obj.ToString(), Encoding.UTF8, "application/json");
                     var request = new HttpRequestMessage

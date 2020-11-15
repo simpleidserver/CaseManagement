@@ -27,6 +27,7 @@ namespace CaseManagement.HumanTask.Domains
             CompletionBehaviors completionBehavior,
             ICollection<Completion> completions,
             ICollection<RenderingElement> renderingElts,
+            ICollection<CallbackOperation> callbackOperations,
             DateTime? activationDeferralTime = null, 
             DateTime? expirationTime = null) : base(id, aggregateId, version)
         {
@@ -45,6 +46,7 @@ namespace CaseManagement.HumanTask.Domains
             CompletionBehavior = completionBehavior;
             Completions = completions;
             RenderingElts = renderingElts;
+            CallbackOperations = callbackOperations;
             ActivationDeferralTime = activationDeferralTime;
             ExpirationTime = expirationTime;
         }
@@ -64,6 +66,7 @@ namespace CaseManagement.HumanTask.Domains
         public CompletionBehaviors CompletionBehavior { get; set; }
         public ICollection<Completion> Completions { get; set; }
         public ICollection<RenderingElement> RenderingElts { get; set; }
+        public ICollection<CallbackOperation> CallbackOperations { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
     }

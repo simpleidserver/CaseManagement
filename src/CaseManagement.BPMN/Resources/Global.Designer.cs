@@ -77,5 +77,23 @@ namespace CaseManagement.BPMN.Resources {
                 return ResourceManager.GetString("NoDefaultSequenceFlow", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à process element instance &apos;{0}&apos; is unknown.
+        /// </summary>
+        internal static string UnknownProcessElementInstance {
+            get {
+                return ResourceManager.GetString("UnknownProcessElementInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à process instance &apos;{0}&apos; is unknown.
+        /// </summary>
+        internal static string UnknownProcessInstance {
+            get {
+                return ResourceManager.GetString("UnknownProcessInstance", resourceCulture);
+            }
+        }
     }
 }

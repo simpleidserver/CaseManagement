@@ -123,4 +123,10 @@
   <data name="NoDefaultSequenceFlow" xml:space="preserve">
     <value>there is not default sequence flow</value>
   </data>
+  <data name="UnknownProcessElementInstance" xml:space="preserve">
+    <value>process element instance '{0}' is unknown</value>
+  </data>
+  <data name="UnknownProcessInstance" xml:space="preserve">
+    <value>process instance '{0}' is unknown</value>
+  </data>
 </root>

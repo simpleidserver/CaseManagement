@@ -1,4 +1,5 @@
-﻿using CaseManagement.Common.Jobs;
+﻿using CaseManagement.Common.Factories;
+using CaseManagement.Common.Jobs;
 using CaseManagement.Common.Jobs.Persistence;
 using CaseManagement.Common.Lock;
 using CaseManagement.HumanTask;
@@ -57,6 +58,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var humanTaskDefs = new ConcurrentBag<HumanTaskDefinitionAggregate>();
             var humanTaskInstances = new ConcurrentBag<HumanTaskInstanceAggregate>();
             var notifications = new ConcurrentBag<NotificationInstanceAggregate>();
+            services.AddTransient<IHttpClientFactory, HttpClientFactory>();
             services.TryAddSingleton<IHumanTaskDefCommandRepository>(new HumanTaskDefCommandRepository(humanTaskDefs));
             services.TryAddSingleton<IHumanTaskDefQueryRepository>(new HumanTaskDefQueryRepository(humanTaskDefs));
             services.TryAddSingleton<IHumanTaskInstanceCommandRepository>(new HumanTaskInstanceCommandRepository(humanTaskInstances));

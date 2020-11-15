@@ -1,7 +1,6 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Helpers;
 using CaseManagement.Common.Domains;
-using CaseManagement.Common.Jobs;
 using DynamicExpresso;
 using Newtonsoft.Json;
 using System;
@@ -339,12 +338,12 @@ namespace CaseManagement.BPMN.Domains
             var result = new ProcessInstanceAggregate();
             var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(instanceId, processId, processFileId), 0, processFileId, processId, interfaces, messages, itemDefs, sequenceFlows, DateTime.UtcNow);
             result.Handle(evt);
+            result.DomainEvents.Add(evt);
             foreach (var elt in elements)
             {
                 result.AddFlowNodeDef(elt);
             }
 
-            result.DomainEvents.Add(evt);
             return result;
         }
 

@@ -2,6 +2,11 @@
 {
     public static class BPMNConstants
     {
+        public static class RouteNames
+        {
+            public const string ProcessInstances = "processinstances";
+        }
+
         public static class QueueNames
         {
             public const string ProcessInstances = "processinstances";

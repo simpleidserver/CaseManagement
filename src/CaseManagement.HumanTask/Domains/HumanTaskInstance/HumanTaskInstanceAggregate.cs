@@ -19,6 +19,7 @@ namespace CaseManagement.HumanTask.Domains
             PresentationElements = new List<PresentationElementInstance>();
             Completions = new List<Completion>();
             SubTasks = new List<HumanTaskInstanceSubTask>();
+            CallbackOperations = new List<CallbackOperation>();
         }
 
         public string HumanTaskInstanceId { get; set; }
@@ -55,6 +56,7 @@ namespace CaseManagement.HumanTask.Domains
         public ICollection<PeopleAssignmentInstance> TaskInitiators { get => PeopleAssignments.GetTaskInitiators().ToList(); }
         public ICollection<PeopleAssignmentInstance> TaskStakeHolders { get => PeopleAssignments.GetTaskStakeHolders().ToList(); }
         public ICollection<HumanTaskInstanceEventHistory> EventHistories { get; set; }
+        public ICollection<CallbackOperation> CallbackOperations { get; set; }
 
         public static HumanTaskInstanceAggregate New(
             string id,
@@ -73,7 +75,8 @@ namespace CaseManagement.HumanTask.Domains
             ICollection<Parameter> operationParameters,
             CompletionBehaviors completionBehavior,
             ICollection<Completion> completions,
-            ICollection<RenderingElement> renderingElts)
+            ICollection<RenderingElement> renderingElts,
+            ICollection<CallbackOperation> callbackOperations)
         {
             var evt = new HumanTaskInstanceCreatedEvent(
                 Guid.NewGuid().ToString(), 
@@ -94,6 +97,7 @@ namespace CaseManagement.HumanTask.Domains
                 completionBehavior,
                 completions,
                 renderingElts,
+                callbackOperations,
                 activationDeferralTime,
                 expirationTime);
             var result = new HumanTaskInstanceAggregate();
@@ -131,6 +135,7 @@ namespace CaseManagement.HumanTask.Domains
                 ParentHumanTaskId = ParentHumanTaskId,
                 Completions = Completions.Select(_ => (Completion)_.Clone()).ToList(),
                 RenderingElements = RenderingElements.Select(_ => (RenderingElement)_.Clone()).ToList(),
+                CallbackOperations = CallbackOperations.Select(_ => (CallbackOperation)_.Clone()).ToList(),
                 CompletionBehavior = CompletionBehavior
             };
         }
@@ -262,6 +267,7 @@ namespace CaseManagement.HumanTask.Domains
                 CompletionBehavior = evt.CompletionBehavior;
                 Completions = evt.Completions;
                 OperationParameters = evt.OperationParameters;
+                CallbackOperations = evt.CallbackOperations;
                 RenderingElements = evt.RenderingElts;
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;

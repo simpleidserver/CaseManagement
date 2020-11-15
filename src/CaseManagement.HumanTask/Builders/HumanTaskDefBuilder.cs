@@ -57,6 +57,15 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
+        public HumanTaskDefBuilder AddCallbackOperation(string url)
+        {
+            _humanTaskDef.CallbackOperations.Add(new CallbackOperation
+            {
+                Url = url
+            });
+            return this;
+        }
+
         #region Deadlines
 
         public HumanTaskDefBuilder AddStartDeadLine(string name, Action<DeadLineBuilder> callback)  

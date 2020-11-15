@@ -13,6 +13,7 @@ using CaseManagement.Common.Factories;
 using CaseManagement.Common.Jobs;
 using CaseManagement.Common.Lock;
 using CaseManagement.Common.Processors;
+using MediatR;
 using NEventStore;
 using System;
 using System.Collections.Concurrent;
@@ -21,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddProcessJobServer(this IServiceCollection services, Action<CommonOptions> callbackOpts = null, Action<BPMNServerOptions> callbackServerOpts = null)
+        public static ServerBuilder AddProcessJobServer(this IServiceCollection services, Action<CommonOptions> callbackOpts = null, Action<BPMNServerOptions> callbackServerOpts = null)
         {
             if (callbackOpts == null)
             {
@@ -45,18 +46,14 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddCommon()
-                .AddProcessServerApplication();
+                .AddProcessServerApplication()
+                .AddProcessApiApplication();
+            return new ServerBuilder(services);
         }
 
-        private static IServiceCollection AddCommon(this IServiceCollection services)
+        private static IServiceCollection AddProcessApiApplication(this IServiceCollection services)
         {
-            var wireup = Wireup.Init().UsingInMemoryPersistence().Build();
-            services.TryAddSingleton<IStoreEvents>(wireup);
-            services.TryAddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
-            services.TryAddSingleton<IEventStoreRepository, InMemoryEventStoreRepository>();
-            services.TryAddSingleton<IMessageBroker, InMemoryMessageBroker>();
-            services.TryAddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
-            services.TryAddTransient<IHttpClientFactory, HttpClientFactory>();
+            services.AddMediatR(typeof(IProcessJobServer));
             return services;
         }
 
@@ -80,6 +77,18 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.RegisterAllAssignableType(typeof(IDelegateHandler), assm, true);
             }
 
+            return services;
+        }
+
+        private static IServiceCollection AddCommon(this IServiceCollection services)
+        {
+            var wireup = Wireup.Init().UsingInMemoryPersistence().Build();
+            services.TryAddSingleton<IStoreEvents>(wireup);
+            services.TryAddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
+            services.TryAddSingleton<IEventStoreRepository, InMemoryEventStoreRepository>();
+            services.TryAddSingleton<IMessageBroker, InMemoryMessageBroker>();
+            services.TryAddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
+            services.TryAddTransient<IHttpClientFactory, HttpClientFactory>();
             return services;
         }
     }
