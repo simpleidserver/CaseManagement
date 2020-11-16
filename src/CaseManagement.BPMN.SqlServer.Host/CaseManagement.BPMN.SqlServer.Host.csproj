@@ -11,12 +11,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />
-    <ProjectReference Include="..\CaseManagement.CMMN.Persistence.EF\CaseManagement.CMMN.Persistence.EF.csproj" />
-    <ProjectReference Include="..\CaseManagement.Common.SqlServer\CaseManagement.Common.SqlServer.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\CaseManagement.BPMN.AspNetCore\CaseManagement.BPMN.AspNetCore.csproj" />
+    <ProjectReference Include="..\CaseManagement.BPMN.Persistence.EF\CaseManagement.BPMN.Persistence.EF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="openid_puk.txt">

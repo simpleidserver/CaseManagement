@@ -17,6 +17,11 @@ namespace CaseManagement.BPMN.Domains
         {
             var jObj = JsonConvert.DeserializeObject<JObject>(json);
             var flowNode = (FlowNodeTypes)int.Parse(jObj["FlowNode"].ToString());
+            return Deserialize(json, flowNode);
+        }
+
+        public static BaseFlowNode Deserialize(string json, FlowNodeTypes flowNode)
+        {
             switch (flowNode)
             {
                 case FlowNodeTypes.EMPTYTASK:
