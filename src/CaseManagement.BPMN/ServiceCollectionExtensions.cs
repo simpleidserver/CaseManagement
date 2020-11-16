@@ -54,6 +54,9 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddProcessApiApplication(this IServiceCollection services)
         {
             services.AddMediatR(typeof(IProcessJobServer));
+            var processFiles = new ConcurrentBag<ProcessFileAggregate>();
+            services.AddSingleton<IProcessFileCommandRepository>(new InMemoryProcessFileCommandRepository(processFiles));
+            services.AddSingleton<IProcessFileQueryRepository>(new InMemoryProcessFileQueryRepository(processFiles));
             return services;
         }
 

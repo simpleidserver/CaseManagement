@@ -322,6 +322,12 @@ namespace CaseManagement.BPMN.Domains
 
         #endregion
 
+        public static ProcessInstanceAggregate New(string processFileId, string payload)
+        {
+            var result = new ProcessInstanceAggregate();
+            return result;
+        }
+
         public static ProcessInstanceAggregate New(List<DomainEvent> evts)
         {
             var result = new ProcessInstanceAggregate();

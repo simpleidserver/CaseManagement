@@ -31,5 +31,12 @@ namespace CaseManagement.BPMN
 
             return this;
         }
+
+        public ServerBuilder AddProcessFiles(ConcurrentBag<ProcessFileAggregate> processFiles)
+        {
+            _services.AddSingleton<IProcessFileCommandRepository>(new InMemoryProcessFileCommandRepository(processFiles));
+            _services.AddSingleton<IProcessFileQueryRepository>(new InMemoryProcessFileQueryRepository(processFiles));
+            return this;
+        }
     }
 }

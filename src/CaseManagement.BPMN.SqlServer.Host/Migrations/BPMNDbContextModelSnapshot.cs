@@ -272,6 +272,40 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.ToTable("OperationModel");
                 });
 
+            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ProcessFileModel", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProcessFiles");
+                });
+
             modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", b =>
                 {
                     b.Property<string>("AggregateId")

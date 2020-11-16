@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BPMNFileNotValid" xml:space="preserve">
+    <value>bpmn file is not valid</value>
+  </data>
   <data name="MoreThanOneOutcomingSequenceFlowSatisfied" xml:space="preserve">
     <value>there is more one one outcoming sequence flow</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="UnknownProcessElementInstance" xml:space="preserve">
     <value>process element instance '{0}' is unknown</value>
+  </data>
+  <data name="UnknownProcessFile" xml:space="preserve">
+    <value>unknown process file '{0}'</value>
   </data>
   <data name="UnknownProcessInstance" xml:space="preserve">
     <value>process instance '{0}' is unknown</value>

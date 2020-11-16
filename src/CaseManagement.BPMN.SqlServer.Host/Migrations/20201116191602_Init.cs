@@ -3,10 +3,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ProcessFiles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Version = table.Column<int>(nullable: false),
+                    FileId = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    CreateDateTime = table.Column<DateTime>(nullable: false),
+                    UpdateDateTime = table.Column<DateTime>(nullable: false),
+                    Payload = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProcessFiles", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "ProcessInstances",
                 columns: table => new
@@ -368,6 +387,9 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
             migrationBuilder.DropTable(
                 name: "OperationModel");
+
+            migrationBuilder.DropTable(
+                name: "ProcessFiles");
 
             migrationBuilder.DropTable(
                 name: "SequenceFlowModel");

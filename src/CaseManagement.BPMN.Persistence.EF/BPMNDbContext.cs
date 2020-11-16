@@ -1,5 +1,7 @@
 ﻿using CaseManagement.BPMN.Persistence.EF.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.Persistence.EF
 {
@@ -8,6 +10,7 @@ namespace CaseManagement.BPMN.Persistence.EF
         public BPMNDbContext(DbContextOptions<BPMNDbContext> dbContextOptions) : base(dbContextOptions) { }
 
         public DbSet<ProcessInstanceModel> ProcessInstances { get; set; }
+        public DbSet<ProcessFileModel> ProcessFiles { get; set; }   
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -11,7 +11,6 @@ namespace CaseManagement.BPMN.Persistence.EF.Configuration
         public void Configure(EntityTypeBuilder<FlowNodeInstanceModel> builder)
         {
             builder.HasKey(_ => _.Id);
-            builder.Property(_ => _.Id).ValueGeneratedOnAdd();
             builder.Property(_ => _.Metadata).HasConversion(v => JsonConvert.SerializeObject(v),
                 v => v == null ? new Dictionary<string, string>() : JsonConvert.DeserializeObject<Dictionary<string, string>>(v));
             builder.HasMany(_ => _.ActivityStates).WithOne().OnDelete(DeleteBehavior.Cascade);

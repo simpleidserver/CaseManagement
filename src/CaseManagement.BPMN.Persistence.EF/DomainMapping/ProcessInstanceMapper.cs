@@ -40,7 +40,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             return new FlowNodeInstance
             {
                 State = flowNodeInstance.State,
-                Id = flowNodeInstance.Id.ToString(),
+                Id = flowNodeInstance.Id,
                 Metadata = flowNodeInstance.Metadata,
                 ActivityState = flowNodeInstance.ActivityState,
                 FlowNodeId = flowNodeInstance.FlowNodeId,
@@ -126,7 +126,6 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
         public static BaseFlowNode ToDomain(this FlowNodeModel flowNode)
         {
             var result = BaseFlowNode.Deserialize(flowNode.SerializedContent, flowNode.Type);
-            result.Id = flowNode.Id.ToString();
             result.Name = flowNode.Name;
             return result;
         }
@@ -157,7 +156,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             return new SequenceFlow
             {
                 ConditionExpression = sequenceFlow.ConditionExpression,
-                Id = sequenceFlow.Id.ToString(),
+                Id = sequenceFlow.EltId,
                 Name = sequenceFlow.Name,
                 SourceRef = sequenceFlow.SourceRef,
                 TargetRef = sequenceFlow.TargetRef
@@ -196,6 +195,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             return new FlowNodeInstanceModel
             {
                 State = flowNodeInstance.State,
+                Id = flowNodeInstance.Id,
                 Metadata = flowNodeInstance.Metadata,
                 ActivityState = flowNodeInstance.ActivityState,
                 FlowNodeId = flowNodeInstance.FlowNodeId,
@@ -313,7 +313,8 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
                 ConditionExpression = sequenceFlow.ConditionExpression,
                 Name = sequenceFlow.Name,
                 SourceRef = sequenceFlow.SourceRef,
-                TargetRef = sequenceFlow.TargetRef
+                TargetRef = sequenceFlow.TargetRef,
+                EltId = sequenceFlow.Id
             };
         }
 

@@ -61,6 +61,15 @@ namespace CaseManagement.BPMN.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à bpmn file is not valid.
+        /// </summary>
+        internal static string BPMNFileNotValid {
+            get {
+                return ResourceManager.GetString("BPMNFileNotValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à there is more one one outcoming sequence flow.
         /// </summary>
         internal static string MoreThanOneOutcomingSequenceFlowSatisfied {
@@ -84,6 +93,15 @@ namespace CaseManagement.BPMN.Resources {
         internal static string UnknownProcessElementInstance {
             get {
                 return ResourceManager.GetString("UnknownProcessElementInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à unknown process file &apos;{0}&apos;.
+        /// </summary>
+        internal static string UnknownProcessFile {
+            get {
+                return ResourceManager.GetString("UnknownProcessFile", resourceCulture);
             }
         }
         

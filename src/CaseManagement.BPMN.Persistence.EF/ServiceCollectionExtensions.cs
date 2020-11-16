@@ -12,6 +12,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddTransient<IProcessInstanceCommandRepository, ProcessInstanceCommandRepository>();
             services.AddTransient<IProcessInstanceQueryRepository, ProcessInstanceQueryRepository>();
+            services.AddTransient<IProcessFileCommandRepository, ProcessFileCommandRepository>();
+            services.AddTransient<IProcessFileQueryRepository, ProcessFileQueryRepository>();
             services.AddDbContext<BPMNDbContext>(optionsAction);
             return services;
         }
