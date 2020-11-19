@@ -126,10 +126,10 @@ namespace CaseManagement.BPMN.Builders
             return this;
         }
 
-        public UserTaskBuilder SetWebservice(string humanTaskName)
+        public UserTaskBuilder SetWsHumanTask(string humanTaskName)
         {
             _humanTaskName = humanTaskName;
-            return SetImplementation(BPMNConstants.UserTaskImplementations.WEBSERVICE);
+            return SetImplementation(BPMNConstants.UserTaskImplementations.WSHUMANTASK);
         }
 
         public override BaseFlowNode Build()

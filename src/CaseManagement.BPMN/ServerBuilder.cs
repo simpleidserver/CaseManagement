@@ -2,9 +2,11 @@
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.Persistence.InMemory;
 using CaseManagement.Common;
-using CaseManagement.Common.EvtStore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace CaseManagement.BPMN
@@ -34,6 +36,23 @@ namespace CaseManagement.BPMN
 
         public ServerBuilder AddProcessFiles(ConcurrentBag<ProcessFileAggregate> processFiles)
         {
+            _services.AddSingleton<IProcessFileCommandRepository>(new InMemoryProcessFileCommandRepository(processFiles));
+            _services.AddSingleton<IProcessFileQueryRepository>(new InMemoryProcessFileQueryRepository(processFiles));
+            return this;
+        }
+
+        public ServerBuilder AddProcessFiles(List<string> lst)
+        {
+            var processFiles = new ConcurrentBag<ProcessFileAggregate>();
+            foreach (var path in lst)
+            {
+                var bpmnTxt = File.ReadAllText(path);
+                var name = Path.GetFileName(path);
+                var processFile = ProcessFileAggregate.New(name, name, name, 0, bpmnTxt);
+                processFile.Publish();
+                processFiles.Add(processFile);
+            }
+
             _services.AddSingleton<IProcessFileCommandRepository>(new InMemoryProcessFileCommandRepository(processFiles));
             _services.AddSingleton<IProcessFileQueryRepository>(new InMemoryProcessFileQueryRepository(processFiles));
             return this;

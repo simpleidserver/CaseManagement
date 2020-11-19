@@ -13,20 +13,20 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
 {
-    public class WebServiceUserTaskHandler : IUserServerTaskHandler
+    public class WsHumanTaskHandler : IUserServerTaskHandler
     {
         private readonly BPMNServerOptions _options;
         private readonly IHttpClientFactory _httpClientFactory;
         private const string HUMANTASK_INSTANCE_ID_NAME = "humantaskinstanceid";
 
-        public WebServiceUserTaskHandler(IOptions<BPMNServerOptions> options,
+        public WsHumanTaskHandler(IOptions<BPMNServerOptions> options,
             IHttpClientFactory httpClientFactory)
         {
             _options = options.Value;
             _httpClientFactory = httpClientFactory;
         }
 
-        public string Implementation => BPMNConstants.UserTaskImplementations.WEBSERVICE;
+        public string Implementation => BPMNConstants.UserTaskImplementations.WSHUMANTASK;
 
         public async Task<ICollection<BaseToken>> Execute(BPMNExecutionContext executionContext, UserTask userTask, CancellationToken token)
         {

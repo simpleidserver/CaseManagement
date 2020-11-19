@@ -1,18 +1,21 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
+using CaseManagement.BPMN.Parser;
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.ProcessInstance.Results;
 using CaseManagement.BPMN.Resources;
 using CaseManagement.Common;
+using CaseManagement.Common.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
 {
-    public class CreateProcessInstanceCommandHandler : IRequestHandler<CreateProcessInstanceCommand, ProcessInstanceResult>
+    public class CreateProcessInstanceCommandHandler : IRequestHandler<CreateProcessInstanceCommand, SearchResult<ProcessInstanceResult>>
     {
         private readonly ILogger<CreateProcessInstanceCommandHandler> _logger;
         private readonly IProcessFileQueryRepository _processFileQueryRepository;
@@ -28,7 +31,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
             _commitAggregateHelper = commitAggregateHelper;
         }
 
-        public async Task<ProcessInstanceResult> Handle(CreateProcessInstanceCommand request, CancellationToken cancellationToken)
+        public async Task<SearchResult<ProcessInstanceResult>> Handle(CreateProcessInstanceCommand request, CancellationToken cancellationToken)
         {
             var workflowDefinition = await _processFileQueryRepository.Get(request.ProcessFileId, cancellationToken);
             if (workflowDefinition == null)
@@ -37,8 +40,24 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
                 throw new UnknownProcessFileException(string.Format(Global.UnknownProcessFile, request.ProcessFileId));
             }
 
-            ProcessInstanceAggregate.New(workflowDefinition.AggregateId, workflowDefinition.Payload);
-            throw new NotImplementedException();
+            var processInstances = BPMNParser.BuildInstances(workflowDefinition.Payload, request.ProcessFileId);
+            var result = new List<ProcessInstanceResult>();
+            foreach(var processInstance in processInstances)
+            {
+                var pi = ProcessInstanceAggregate.New(request.ProcessFileId,
+                    processInstance.ElementDefs.ToList(),
+                    processInstance.Interfaces.ToList(),
+                    processInstance.Messages.ToList(),
+                    processInstance.ItemDefs.ToList(),
+                    processInstance.SequenceFlows.ToList());
+                await _commitAggregateHelper.Commit(pi, pi.GetStreamName(), cancellationToken);
+                result.Add(ProcessInstanceResult.ToDto(pi));
+            }
+
+            return new SearchResult<ProcessInstanceResult>
+            {
+                Content = result
+            };
         }
     }
 }

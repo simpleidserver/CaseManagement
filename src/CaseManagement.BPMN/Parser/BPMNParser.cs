@@ -1,6 +1,5 @@
 ﻿using CaseManagement.BPMN.Builders;
 using CaseManagement.BPMN.Domains;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -42,16 +41,27 @@ namespace CaseManagement.BPMN.Parser
             var processes = definitions.Items.Where(_ => _ is tProcess).Cast<tProcess>();
             foreach(var process in processes)
             {
-                var builder = ProcessInstanceBuilder.New(Guid.NewGuid().ToString(), process.id, processFileId);
+                var builder = ProcessInstanceBuilder.New(processFileId);
                 foreach(var item in process.Items)
                 {
                     tStartEvent startEvt;
                     tTask task;
                     tSequenceFlow sequenceFlow;
                     tExclusiveGateway exclusiveGateway;
+                    tUserTask userTask;
                     if ((startEvt = item as tStartEvent) != null)
                     {
                         builder.AddStartEvent(startEvt.id, startEvt.name);
+                    }
+                    else if ((userTask = item as tUserTask) != null)
+                    {
+                        builder.AddUserTask(userTask.id, userTask.name, (cb) =>
+                        {
+                            if (userTask.implementation == BPMNConstants.UserTaskImplementations.WSHUMANTASK)
+                            {
+                                cb.SetWsHumanTask(userTask.wsHumanTaskDefName);
+                            }
+                        });
                     }
                     else if((task = item as tTask) != null)
                     {

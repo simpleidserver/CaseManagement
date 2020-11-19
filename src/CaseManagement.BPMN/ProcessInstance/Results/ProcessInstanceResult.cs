@@ -7,10 +7,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
 {
     public class ProcessInstanceResult
     {
-        public string InstanceId { get; set; }
-        public string CommonId { get; set; }
+        public string Id { get; set; }
         public string ProcessFileId { get; set; }
-        public string ProcessId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public ICollection<FlowNodeInstanceResult> ElementInstances { get; set; }
@@ -19,11 +17,9 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
         {
             return new ProcessInstanceResult
             {
-                InstanceId = processInstance.InstanceId,
-                CommonId = processInstance.CommonId,
-                CreateDateTime = processInstance.CreateDateTime,
+                Id = processInstance.AggregateId,
                 ProcessFileId = processInstance.ProcessFileId,
-                ProcessId = processInstance.ProcessId,
+                CreateDateTime = processInstance.CreateDateTime,
                 UpdateDateTime = processInstance.UpdateDateTime,
                 ElementInstances = processInstance.ElementInstances.Select(_ => FlowNodeInstanceResult.ToDto(_)).ToList()
             };

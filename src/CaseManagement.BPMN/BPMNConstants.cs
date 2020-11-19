@@ -2,6 +2,7 @@
 {
     public static class BPMNConstants
     {
+        public const string BPMNNamespace = "https://github.com/simpleidserver/CaseManagement";
         public static class RouteNames
         {
             public const string ProcessInstances = "processinstances";
@@ -22,6 +23,7 @@
         public static class UserTaskImplementations
         {
             public const string WEBSERVICE = "##WebService";
+            public const string WSHUMANTASK = "##WsHumanTask";
         }
     }
 }

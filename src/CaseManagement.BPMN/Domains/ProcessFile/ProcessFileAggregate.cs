@@ -32,7 +32,7 @@ namespace CaseManagement.BPMN.Domains
         public static ProcessFileAggregate New(IEnumerable<DomainEvent> domainEvts)
         {
             var result = new ProcessFileAggregate();
-            foreach(var domainEvt in domainEvts)
+            foreach (var domainEvt in domainEvts)
             {
                 result.Handle(domainEvt);
             }
@@ -75,6 +75,13 @@ namespace CaseManagement.BPMN.Domains
         public override void Handle(dynamic evt)
         {
             Handle(evt);
+        }
+
+        private void Handle(ProcessFilePublishedEvent evt)
+        {
+            Status = ProcessFileStatus.Published;
+            Version = evt.Version;
+            UpdateDateTime = evt.PublishedDateTime;
         }
 
         public string GetStreamName()

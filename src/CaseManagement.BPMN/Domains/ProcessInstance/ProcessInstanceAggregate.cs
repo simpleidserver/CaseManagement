@@ -1,5 +1,6 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Helpers;
+using CaseManagement.BPMN.Parser;
 using CaseManagement.Common.Domains;
 using DynamicExpresso;
 using Newtonsoft.Json;
@@ -27,10 +28,7 @@ namespace CaseManagement.BPMN.Domains
             StateTransitions = new ConcurrentBag<StateTransitionToken>();
         }
 
-        public string InstanceId { get; set; }
-        public string CommonId { get; set; }
         public string ProcessFileId { get; set; }
-        public string ProcessId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public ICollection<StartEvent> StartEvts => ElementDefs.Where(_ => _ is StartEvent).Cast<StartEvent>().ToList();
@@ -322,12 +320,6 @@ namespace CaseManagement.BPMN.Domains
 
         #endregion
 
-        public static ProcessInstanceAggregate New(string processFileId, string payload)
-        {
-            var result = new ProcessInstanceAggregate();
-            return result;
-        }
-
         public static ProcessInstanceAggregate New(List<DomainEvent> evts)
         {
             var result = new ProcessInstanceAggregate();
@@ -339,10 +331,10 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public static ProcessInstanceAggregate New(string instanceId, string processId, string processFileId, ICollection<BaseFlowNode> elements, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs, ICollection<SequenceFlow> sequenceFlows)
+        public static ProcessInstanceAggregate New(string processFileId, ICollection<BaseFlowNode> elements, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs, ICollection<SequenceFlow> sequenceFlows)
         {
             var result = new ProcessInstanceAggregate();
-            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), BuildId(instanceId, processId, processFileId), 0, processFileId, processId, interfaces, messages, itemDefs, sequenceFlows, DateTime.UtcNow);
+            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFileId, interfaces, messages, itemDefs, sequenceFlows, DateTime.UtcNow);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             foreach (var elt in elements)
@@ -358,10 +350,7 @@ namespace CaseManagement.BPMN.Domains
             return new ProcessInstanceAggregate
             {
                 AggregateId = AggregateId,
-                CommonId = CommonId,
-                InstanceId = InstanceId,
                 ProcessFileId = ProcessFileId,
-                ProcessId = ProcessId,
                 Version = Version,
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
@@ -405,7 +394,6 @@ namespace CaseManagement.BPMN.Domains
             AggregateId = evt.AggregateId;
             Version = evt.Version;
             ProcessFileId = evt.ProcessFileId;
-            ProcessId = evt.ProcessId;
             CreateDateTime = evt.CreateDateTime;
             Interfaces = new ConcurrentBag<BPMNInterface>(evt.Interfaces);
             Messages = new ConcurrentBag<Message>(evt.Messages);
@@ -495,21 +483,6 @@ namespace CaseManagement.BPMN.Domains
         public static string GetStreamName(string id)
         {
             return $"planinstance-{id}";
-        }
-
-        public static string BuildId(string instanceId, string processId, string processFileId)
-        {
-            using (var sha256Hash = SHA256.Create())
-            {
-                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes($"{instanceId}{processId}{processFileId}"));
-                var builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-
-                return builder.ToString();
-            }
         }
     }
 }

@@ -20,6 +20,23 @@ namespace CaseManagement.BPMN.AspNetCore.Apis
             _mediator = mediator;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] CreateProcessInstanceCommand createProcessInstanceCommand, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _mediator.Send(createProcessInstanceCommand, cancellationToken);
+                return new OkObjectResult(result);
+            }
+            catch(UnknownProcessFileException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {

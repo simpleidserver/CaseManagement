@@ -2998,7 +2998,9 @@ namespace CaseManagement.BPMN.Parser {
         private System.Xml.XmlQualifiedName[] categoryValueRefField;
         
         private string nameField;
-        
+
+        private string wsHumanTaskDefNameField;
+
         /// <remarks/>
         public tAuditing auditing {
             get {
@@ -3038,6 +3040,19 @@ namespace CaseManagement.BPMN.Parser {
             }
             set {
                 this.nameField = value;
+            }
+        }
+
+        [System.Xml.Serialization.XmlAttributeAttribute("wsHumanTaskDefName", Namespace = BPMNConstants.BPMNNamespace)]
+        public string wsHumanTaskDefName
+        {
+            get
+            {
+                return this.wsHumanTaskDefNameField;
+            }
+            set
+            {
+                this.wsHumanTaskDefNameField = value;
             }
         }
     }

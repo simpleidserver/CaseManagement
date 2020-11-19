@@ -19,7 +19,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Gateways
 
             if (flowNodeIds.Count() == 0 && string.IsNullOrWhiteSpace(elt.Default))
             {
-                throw new BPMNProcessorException(Global.NoDefaultSequenceFlow);
+                return Task.FromResult(BPMNExecutionResult.Block());
             }
 
             if (flowNodeIds.Count() == 0)

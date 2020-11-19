@@ -6,10 +6,8 @@ namespace CaseManagement.BPMN.Builders
 {
     public class ProcessInstanceBuilder
     {
-        private ProcessInstanceBuilder(string instanceId, string processId, string processFileId)
+        private ProcessInstanceBuilder(string processFileId)
         {
-            InstanceId = instanceId;
-            ProcessId = processId;
             ProcessFileId = processFileId;
             Builders = new List<FlowNodeBuilder>();
             Messages = new List<Message>();
@@ -19,8 +17,6 @@ namespace CaseManagement.BPMN.Builders
             Gateways = new List<BaseGateway>();
         }
 
-        protected string InstanceId { get; set; }
-        protected string ProcessId { get; set; }
         protected string ProcessFileId { get; set; }
         protected ICollection<FlowNodeBuilder> Builders;
         protected ICollection<Message> Messages { get; set; }
@@ -29,9 +25,9 @@ namespace CaseManagement.BPMN.Builders
         protected ICollection<SequenceFlow> SequenceFlows { get; set; }
         protected ICollection<BaseGateway> Gateways { get; set; }
 
-        public static ProcessInstanceBuilder New(string instanceId, string processId, string processFileId)
+        public static ProcessInstanceBuilder New(string processFileId)
         {
-            return new ProcessInstanceBuilder(instanceId, processId, processFileId);
+            return new ProcessInstanceBuilder(processFileId);
         }
 
         public ProcessInstanceBuilder AddMessage(string id, string name, string itemRef)
@@ -161,7 +157,7 @@ namespace CaseManagement.BPMN.Builders
                 interfaces.Add(interfaceBuilder.Build());
             }
 
-            var result = ProcessInstanceAggregate.New(InstanceId, ProcessId, ProcessFileId, elts, interfaces, Messages, ItemDefs, SequenceFlows);
+            var result = ProcessInstanceAggregate.New(ProcessFileId, elts, interfaces, Messages, ItemDefs, SequenceFlows);
             return result;
         }
     }

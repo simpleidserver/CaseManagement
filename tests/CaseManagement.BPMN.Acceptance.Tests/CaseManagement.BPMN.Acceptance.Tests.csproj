@@ -32,4 +32,9 @@
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
     </SpecFlowFeatureFiles>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Bpmns\CreateUserAccount.bpmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

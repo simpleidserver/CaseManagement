@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CaseManagement.BPMN.Acceptance.Tests
 {
@@ -21,6 +23,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Bpmns"), "*.bpmn").ToList();
             var sp = services.BuildServiceProvider();
             var httpClientFactory = sp.GetRequiredService<CaseManagement.Common.Factories.IHttpClientFactory>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -38,11 +41,11 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                 .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
                 .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
                 .Build();
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddStartEvent("1", "evt")
                 .AddUserTask("2", "userTask", (cb) =>
                 {
-                    cb.SetWebservice("emptyTask");
+                    cb.SetWsHumanTask("emptyTask");
                 })
                 .AddSequenceFlow("seq1", "sequence", "1", "2")
                 .Build();
@@ -61,6 +64,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests
             {
                 o.WSHumanTaskAPI = "http://localhost";
             })
+            .AddProcessFiles(files)
             .AddProcessInstances(new ConcurrentBag<ProcessInstanceAggregate>
             {
                 processInstance

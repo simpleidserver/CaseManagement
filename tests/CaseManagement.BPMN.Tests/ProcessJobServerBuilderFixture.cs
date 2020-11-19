@@ -24,8 +24,7 @@ namespace CaseManagement.BPMN.Tests
         [Fact]
         public async Task When_Execute_Sequence_Of_Empty_Tasks()
         {
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddStartEvent("1", "evt")
                 .AddEmptyTask("2", "name")
                 .AddEmptyTask("3", "name")
@@ -40,9 +39,9 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -63,8 +62,7 @@ namespace CaseManagement.BPMN.Tests
         public async Task When_Execute_StartEvent_With_MessageEventDefinition()
         {
             const string messageName = "alert";
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddMessage(messageName, "message", string.Empty)
                 .AddStartEvent("1", "evt", _ =>
                 {
@@ -84,8 +82,8 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -94,8 +92,8 @@ namespace CaseManagement.BPMN.Tests
 
                     return c.ElementInstances.Any();
                 }, CancellationToken.None);
-                await jobServer.EnqueueMessage(id, messageName, null, CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, null, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -104,8 +102,8 @@ namespace CaseManagement.BPMN.Tests
 
                     return c.ElementInstances.Count() == 2;
                 }, CancellationToken.None);
-                await jobServer.EnqueueMessage(id, messageName, null, CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, null, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -133,8 +131,7 @@ namespace CaseManagement.BPMN.Tests
         public async Task When_Execute_ServiceTask_With_CSHARPCallback()
         {
             const string messageName = "message";
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddMessage(messageName, "message", string.Empty)
                 .AddStartEvent("1", "evt", _ =>
                 {
@@ -155,8 +152,8 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -165,8 +162,8 @@ namespace CaseManagement.BPMN.Tests
 
                     return c.ElementInstances.Any();
                 }, CancellationToken.None);
-                await jobServer.EnqueueMessage(id, messageName, null, CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, null, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -191,8 +188,7 @@ namespace CaseManagement.BPMN.Tests
         public async Task When_Execute_ConditionalSequenceFlow()
         {
             const string messageName = "message";
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddMessage(messageName, "message", "item")
                 .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
                 .AddStartEvent("1", "evt", _ =>
@@ -212,8 +208,8 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -222,8 +218,8 @@ namespace CaseManagement.BPMN.Tests
 
                     return c.ElementInstances.Any();
                 }, CancellationToken.None);
-                await jobServer.EnqueueMessage(id, messageName, new PersonParameter { Firstname = "user" }, CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, new PersonParameter { Firstname = "user" }, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -248,8 +244,7 @@ namespace CaseManagement.BPMN.Tests
         public async Task When_Execute_ExclusiveGateway()
         {
             const string messageName = "message";
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddMessage(messageName, "message", "item")
                 .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
                 .AddStartEvent("1", "evt", _ =>
@@ -271,8 +266,8 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -281,8 +276,8 @@ namespace CaseManagement.BPMN.Tests
 
                     return c.ElementInstances.Any();
                 }, CancellationToken.None);
-                await jobServer.EnqueueMessage(id, messageName, new PersonParameter { Firstname = "user" }, CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, new PersonParameter { Firstname = "user" }, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -309,8 +304,7 @@ namespace CaseManagement.BPMN.Tests
         public async Task When_Execute_ParallelGateway()
         {
             const string messageName = "message";
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddMessage(messageName, "message", "item")
                 .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
                 .AddStartEvent("1", "evt", _ =>
@@ -337,8 +331,8 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -347,8 +341,8 @@ namespace CaseManagement.BPMN.Tests
 
                     return c.ElementInstances.Any();
                 }, CancellationToken.None);
-                await jobServer.EnqueueMessage(id, messageName, new PersonParameter { Firstname = "user" }, CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, new PersonParameter { Firstname = "user" }, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -385,8 +379,7 @@ namespace CaseManagement.BPMN.Tests
         public async Task When_Execute_InclusiveGateway()
         {
             const string messageName = "message";
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("1")
                 .AddMessage(messageName, "message", "item")
                 .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
                 .AddStartEvent("1", "evt", _ =>
@@ -410,8 +403,8 @@ namespace CaseManagement.BPMN.Tests
             {
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -420,8 +413,8 @@ namespace CaseManagement.BPMN.Tests
 
                     return c.ElementInstances.Any();
                 }, CancellationToken.None);
-                await jobServer.EnqueueMessage(id, messageName, new PersonParameter { }, CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, new PersonParameter { }, CancellationToken.None);
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -447,12 +440,11 @@ namespace CaseManagement.BPMN.Tests
         public async Task When_Execute_UserTask()
         {
             var humanTaskInstanceId = Guid.NewGuid().ToString();
-            var id = ProcessInstanceAggregate.BuildId("1", "processId", "processFile");
-            var processInstance = ProcessInstanceBuilder.New("1", "processId", "processFile")
+            var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddStartEvent("1", "evt")
                 .AddUserTask("2", "userTask", (cb) =>
                 {
-                    cb.SetWebservice("humanTask");
+                    cb.SetWsHumanTask("humanTask");
                 })
                 .AddSequenceFlow("seq1", "sequence", "1", "2")
                 .Build();
@@ -468,8 +460,8 @@ namespace CaseManagement.BPMN.Tests
                     });
                 await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
                 jobServer.Start();
-                await jobServer.EnqueueProcessInstance(id, true, CancellationToken.None);
-                var casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+                var casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
@@ -480,7 +472,7 @@ namespace CaseManagement.BPMN.Tests
                 }, CancellationToken.None);
                 var ei = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
                 await jobServer.EnqueueStateTransition(casePlanInstance.AggregateId, ei.Id, "COMPLETED", new JObject(), CancellationToken.None);
-                casePlanInstance = await jobServer.MonitorProcessInstance(id, (c) =>
+                casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {
                     if (c == null)
                     {
