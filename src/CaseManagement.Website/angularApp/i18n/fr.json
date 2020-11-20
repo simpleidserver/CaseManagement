@@ -19,7 +19,6 @@
   "SUBMIT": "Submit",
   "ID": "Identifier",
   "ENTER_CASE_FILE_DESCRIPTION": "Enter description",
-  "EDITOR": "Editor",
   "XML": "Xml",
   "CASE_FILE": "Case file",
   "SAVE": "Save",
@@ -111,9 +110,9 @@
   "HUMAN_TASKS": "Human tasks",
   "HUMAN_TASK_DEFS": "Human task definitions",
   "BPMNS": "BPMNS",
-  "BPMN_FILES": "Fichiers BPMNS",
-  "EDIT_BPMN_FILE": "Editer fichier BPMN",
-  "VIEW_BPMN_FILE_HISTORY": "Voir l'historique du fichier Bpmn",
+  "BPMN_FILES": "BPMN files",
+  "EDIT_BPMN_FILE": "Edit BPMN file",
+  "VIEW_BPMN_FILE_HISTORY": "View history of the BPMN file",
   "SHARED": {
     "NAME": "Name",
     "ID": "Identifier",
@@ -147,7 +146,31 @@
     "GROUPNAMES": "Group names",
     "UNIQUE_VALUE": "Only one value can be inserted",
     "SELECT_TYPE": "Select the type",
-    "IS_REQUIRED": "Is required"
+    "IS_REQUIRED": "Is required",
+    "SAVE": "Save",
+    "PUBLISH": "Publish",
+    "EDITOR": "Editor",
+    "XML": "Xml"
+  },
+  "BPMN": {
+    "TITLES": {
+      "BPMNFILES": "BPMN files",
+      "BPMNFILE": "BPMN file"
+    },
+    "ACTIONS": {
+      "VIEW_BPMNFILE_HISTORY": "View history of the BPMN file",
+      "EDIT_BPMNFILE": "Edit bpmn file"
+    },
+    "INFORMATION": {
+      "ID": "Identifier",
+      "CREATE_DATETIME": "Create datetime",
+      "UPDATE_DATETIME": "Update datetime",
+      "ENTER_FILE_NAME": "Enter file name",
+      "ENTER_DESCRIPTION": "Enter file description",
+      "FILE_NAME": "File name",
+      "VERSION": "Version",
+      "STATUS": "Status"
+    }
   },
   "HUMANTASK": {
     "DEF": {

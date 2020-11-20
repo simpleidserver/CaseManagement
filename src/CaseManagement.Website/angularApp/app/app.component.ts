@@ -15,7 +15,11 @@ import { authConfig } from './auth.config';
         '../../node_modules/cmmn-js/dist/assets/diagram-js.css',
         '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn.css',
         '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn-codes.css',
-        '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn-embedded.css'
+        '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn-embedded.css',
+        '../../node_modules/bpmn-js/dist/assets/diagram-js.css',
+        '../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn.css',
+        '../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css',
+        '../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
     ],
     encapsulation: ViewEncapsulation.None,
     animations: [

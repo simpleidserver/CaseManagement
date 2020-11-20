@@ -8,6 +8,7 @@ import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { BpmnFilesRoutes } from './bpmnfiles.routes';
 import { ListBpmnFilesComponent } from './list/list.component';
+import { ViewBpmnFileComponent } from './view/view.component';
 
 @NgModule({
     imports: [
@@ -21,7 +22,7 @@ import { ListBpmnFilesComponent } from './list/list.component';
         SharedModule
     ],
     entryComponents: [ ],
-    declarations: [ ListBpmnFilesComponent ],
+    declarations: [ ListBpmnFilesComponent, ViewBpmnFileComponent ],
     exports: [ ListBpmnFilesComponent  ]
 })
 

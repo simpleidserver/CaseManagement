@@ -17,6 +17,7 @@ export interface AppState {
     humanTask: fromHumanTask.HumanTaskDefState;
     humanTasks: fromHumanTask.SearchHumanTaskDefState;
     bpmnFiles: fromBpmnFiles.BpmnFileLstState;
+    bpmnFile: fromBpmnFiles.BpmnFileState;
 }
 
 export const selectCasePlan = (state: AppState) => state.casePlan;
@@ -30,6 +31,7 @@ export const selectCasePlanInstanceLst = (state: AppState) => state.casePlanInst
 export const selectHumanTask = (state: AppState) => state.humanTask;
 export const selectHumanTasks = (state: AppState) => state.humanTasks;
 export const selectBpmnFiles = (state: AppState) => state.bpmnFiles;
+export const selectBpmnFile = (state: AppState) => state.bpmnFile;
 
 export const selectCasePlanResult = createSelector(
     selectCasePlan,
@@ -150,6 +152,17 @@ export const selectBpmnFilesResult = createSelector(
 
         return state.content;
     }
+);
+
+export const selectBpmnFileResult = createSelector(
+    selectBpmnFile,
+    (state: fromBpmnFiles.BpmnFileState) => {
+        if (!state || state.content == null) {
+            return null;
+        }
+
+        return state.content;
+    }
 ); 
 
 export const appReducer = {
@@ -163,5 +176,6 @@ export const appReducer = {
     casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer,
     humanTask: fromHumanTask.humanTaskDefReducer,
     humanTasks: fromHumanTask.humanTaskDefsReducer,
-    bpmnFiles: fromBpmnFiles.bpmnFileLstReducer
+    bpmnFiles: fromBpmnFiles.bpmnFileLstReducer,
+    bpmnFile: fromBpmnFiles.bpmnFileReducer
 };

@@ -1,0 +1,58 @@
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <ul>
+            <li><div class="mat-h1"><a [routerLink]="['/bpmns/bpmnfiles']">{{ "BPMN.TITLES.BPMNFILES" | translate }}</a></div></li>
+            <li class="separator"><div class="mat-h1">\</div></li>
+            <li>
+                <div class="mat-h1">
+                    {{ 'BPMN.TITLES.BPMNFILE' | translate }} ({{bpmnFile.status}})
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div fxLayout="row" fxLayoutGap="10px" fxFlexFill>
+    <div fxFlex="20%" class="form-case-file">
+        <div>
+            <button mat-raised-button color="primary" [routerLink]="['/bpmns/bpmnfiles/' + bpmnFile.fileId + '/history']">
+                <mat-icon>history</mat-icon> {{ 'BPMN.ACTIONS.VIEW_BPMNFILE_HISTORY' | translate}}
+            </button>
+        </div>
+        <form [formGroup]="saveForm" (ngSubmit)="onSave(saveForm.value)" class="mt-10">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="{{ 'BPMN.INFORMATION.ID' | translate }}" name="id" formControlName="id" />
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <input matInput placeholder="{{ 'BPMN.INFORMATION.CREATE_DATETIME' | translate }}" name="createDateTime" formControlName="createDateTime" readonly />
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <input matInput placeholder="{{ 'BPMN.INFORMATION.UPDATE_DATETIME' | translate }}" name="updateDateTime" formControlName="updateDateTime" readonly />
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <input matInput placeholder="{{ 'BPMN.INFORMATION.ENTER_FILE_NAME' | translate }}" name="name" formControlName="name" />
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <textarea matInput placeholder="{{ 'BPMN.INFORMATION.ENTER_DESCRIPTION' | translate }}" name="description" formControlName="description"></textarea>
+            </mat-form-field>
+            <div *ngIf="bpmnFile.status === 'Edited'">
+                <button mat-raised-button color="primary">{{ 'SHARED.SAVE' | translate }}</button>
+                <button mat-raised-button color="primary" class="ml-10" (click)="onPublish($event)">{{ 'SHARED.PUBLISH' | translate }}</button>
+            </div>
+        </form>
+    </div>
+    <div fxFlex="60%">
+        <div class="cpp-properties-tab-bar">
+            <ul class="cpp-properties-tabs-links">
+                <li class="cpp-properties-tab-link cpp-active" [class.cpp-active]="isEditorDisplayed" (click)="navigate(true)">
+                    <a href data-tab-target>{{ 'SHARED.EDITOR' | translate }}</a>
+                </li>
+                <li class="cpp-properties-tab-link" [class.cpp-active]="!isEditorDisplayed" (click)="navigate(false)">
+                    <a href data-tab-target>{{ 'SHARED.XML' | translate }}</a>
+                </li>
+            </ul>
+        </div>
+        <div id="canvas" [style.display]="isEditorDisplayed ? 'block' : 'none'" fxFlexFill></div>
+        <ngx-monaco-editor [style.display]="isEditorDisplayed ? 'none' : 'block'" class="txt-editor" [options]="editorOptions" [(ngModel)]="xml" (ngModelChange)="onXmlChange($event)"></ngx-monaco-editor>
+    </div>
+    <div id="properties" fxFlex="20%"></div>
+</div>

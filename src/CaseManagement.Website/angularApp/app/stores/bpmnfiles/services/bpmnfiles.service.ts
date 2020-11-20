@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable } from 'rxjs';
 import { SearchBpmnFilesResult } from '../models/search-bpmn-files-result.model';
+import { BpmnFile } from '../models/bpmn-file.model';
 
 @Injectable()
 export class BpmnFilesService {
@@ -24,5 +25,12 @@ export class BpmnFilesService {
         }
 
         return this.http.post<SearchBpmnFilesResult>(targetUrl, JSON.stringify(request), { headers: headers });
+    }
+
+    get(id: string): Observable<BpmnFile> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id;
+        return this.http.get<BpmnFile>(targetUrl, { headers: headers });
     }
 }

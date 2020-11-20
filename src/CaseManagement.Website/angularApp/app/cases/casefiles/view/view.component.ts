@@ -7,7 +7,7 @@ import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.a
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { CaseFile } from '../../../stores/casefiles/models/case-file.model';
+import { CaseFile } from '@app/stores/casefiles/models/case-file.model';
 let CmmnViewer = require('cmmn-js/lib/Modeler'),
     propertiesPanelModule = require('casemanagement-js-properties-panel'),
     propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'),

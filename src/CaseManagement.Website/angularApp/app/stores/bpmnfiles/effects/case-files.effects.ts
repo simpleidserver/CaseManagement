@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, SearchBpmnFiles } from '../actions/bpmn-files.actions';
+import { ActionTypes, GetBpmnFile, SearchBpmnFiles } from '../actions/bpmn-files.actions';
 import { BpmnFilesService } from '../services/bpmnfiles.service';
 
 @Injectable()
@@ -25,4 +25,18 @@ export class BpmnFilesEffects {
             }
             )
     );
+
+    @Effect()
+    getBpmnFile$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.START_GET_BPMNFILE),
+            mergeMap((evt: GetBpmnFile) => {
+                return this.bpmnFilesService.get(evt.id)
+                    .pipe(
+                        map(bpmnFile => { return { type: ActionTypes.COMPLETE_GET_BPMNFILE, bpmnFile: bpmnFile }; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_GET_BPMNFILE }))
+                    );
+            }
+            )
+        );
 }
