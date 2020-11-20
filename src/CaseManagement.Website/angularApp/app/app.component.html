@@ -40,6 +40,16 @@
                     <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cases/caseplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLANS" | translate }}</a>
                     <a mat-list-item *ngIf="roles === 'businessanalyst' || roles === 'caseworker'" [routerLink]="['/cases/caseplaninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CASE_PLAN_INSTANCES" | translate }}</a>
                 </div>
+                <a mat-list-item (click)="toggleBpmnFiles()">
+                    <mat-icon>timeline</mat-icon> {{ "BPMNS" | translate }}
+                    <span fxFlex>
+                        <span fxFlex></span>
+                        <mat-icon [@indicatorRotate]="bpmnsExpanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
+                    </span>
+                </a>
+                <div *ngIf="bpmnsExpanded">
+                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/bpmns/bpmnfiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "BPMN_FILES" | translate }}</a>
+                </div>
                 <a mat-list-item (click)="toggleHumanTasks()">
                     <mat-icon>format_align_justify</mat-icon> {{ "HUMAN_TASKS" | translate }}
                     <span fxFlex>

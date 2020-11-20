@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
     url: string = process.env.BASE_URL + "assets/images/logo.svg";
     casesExpanded: boolean = false;
     humanTasksExpanded: boolean = false;
+    bpmnsExpanded: boolean = false;
 
     constructor(private route: Router, private translate: TranslateService, private oauthService: OAuthService, private router: Router) {
         translate.setDefaultLang('fr');
@@ -78,6 +79,10 @@ export class AppComponent implements OnInit {
         this.humanTasksExpanded = !this.humanTasksExpanded;
     }
 
+    toggleBpmnFiles() {
+        this.bpmnsExpanded = !this.bpmnsExpanded;
+    }
+
     init() {
         var claims: any = this.oauthService.getIdentityClaims();
         if (!claims) {
@@ -112,6 +117,10 @@ export class AppComponent implements OnInit {
 
             if (url.startsWith('/humantasks')) {
                 this.humanTasksExpanded = true;
+            }
+
+            if (url.startsWith('/bpmns')) {
+                this.bpmnsExpanded = true;
             }
         });
     }

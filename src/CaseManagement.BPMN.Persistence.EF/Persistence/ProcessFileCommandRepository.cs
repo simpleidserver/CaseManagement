@@ -1,6 +1,5 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence.EF.DomainMapping;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 

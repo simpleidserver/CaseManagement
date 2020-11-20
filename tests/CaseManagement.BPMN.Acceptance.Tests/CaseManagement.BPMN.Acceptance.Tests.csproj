@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\CaseFiles.feature.cs" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\ProcessInstances - Copier.feature.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
@@ -22,11 +23,18 @@
     <ProjectReference Include="..\..\src\CaseManagement.HumanTask.AspNetCore\CaseManagement.HumanTask.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Features\ProcessFiles.feature.cs">
+      <DependentUpon>ProcessFiles.feature</DependentUpon>
+    </Compile>
     <Compile Update="Features\ProcessInstances.feature.cs">
       <DependentUpon>ProcessInstances.feature</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <SpecFlowFeatureFiles Update="Features\ProcessFiles.feature">
+      <Visible>$(UsingMicrosoftNETSdk)</Visible>
+      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+    </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Features\ProcessInstances.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>

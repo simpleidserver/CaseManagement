@@ -6,6 +6,7 @@
         public static class RouteNames
         {
             public const string ProcessInstances = "processinstances";
+            public const string ProcessFiles = "processfiles";
         }
 
         public static class QueueNames

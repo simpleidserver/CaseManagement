@@ -3,6 +3,7 @@ import * as fromCaseFile from './casefiles/reducers/casefile.reducers';
 import * as fromCasePlanInstance from './caseplaninstances/reducers/caseplaninstance.reducers';
 import * as fromCasePlan from './caseplans/reducers/caseplan.reducers';
 import * as fromHumanTask from './humantaskdefs/reducers/humantaskdef.reducers';
+import * as fromBpmnFiles from './bpmnfiles/reducers/bpmnfile.reducers';
 
 export interface AppState {
     casePlan: fromCasePlan.CasePlanState;
@@ -14,7 +15,8 @@ export interface AppState {
     casePlanInstance: fromCasePlanInstance.CasePlanInstanceState;
     casePlanInstanceLst: fromCasePlanInstance.CasePlanInstanceLstState;
     humanTask: fromHumanTask.HumanTaskDefState;
-    humanTasks: fromHumanTask.SearchHumanTaskDefState
+    humanTasks: fromHumanTask.SearchHumanTaskDefState;
+    bpmnFiles: fromBpmnFiles.BpmnFileLstState;
 }
 
 export const selectCasePlan = (state: AppState) => state.casePlan;
@@ -27,6 +29,7 @@ export const selectCasePlanInstance = (state: AppState) => state.casePlanInstanc
 export const selectCasePlanInstanceLst = (state: AppState) => state.casePlanInstanceLst;
 export const selectHumanTask = (state: AppState) => state.humanTask;
 export const selectHumanTasks = (state: AppState) => state.humanTasks;
+export const selectBpmnFiles = (state: AppState) => state.bpmnFiles;
 
 export const selectCasePlanResult = createSelector(
     selectCasePlan,
@@ -138,6 +141,17 @@ export const selectHumanTasksResult = createSelector(
     }
 ); 
 
+export const selectBpmnFilesResult = createSelector(
+    selectBpmnFiles,
+    (state: fromBpmnFiles.BpmnFileLstState) => {
+        if (!state || state.content == null) {
+            return null;
+        }
+
+        return state.content;
+    }
+); 
+
 export const appReducer = {
     casePlan: fromCasePlan.casePlanReducer,
     casePlanLst: fromCasePlan.casePlanLstReducer,
@@ -148,5 +162,6 @@ export const appReducer = {
     casePlanInstance: fromCasePlanInstance.casePlanInstanceReducer,
     casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer,
     humanTask: fromHumanTask.humanTaskDefReducer,
-    humanTasks: fromHumanTask.humanTaskDefsReducer
+    humanTasks: fromHumanTask.humanTaskDefsReducer,
+    bpmnFiles: fromBpmnFiles.bpmnFileLstReducer
 };

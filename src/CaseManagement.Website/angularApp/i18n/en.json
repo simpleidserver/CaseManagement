@@ -110,6 +110,10 @@
   "ERROR_SAVE_ROLE": "An error occured while trying to update the role",
   "HUMAN_TASKS": "Human tasks",
   "HUMAN_TASK_DEFS": "Human task definitions",
+  "BPMNS": "BPMNS",
+  "BPMN_FILES": "BPMN files",
+  "EDIT_BPMN_FILE": "Edit BPMN file",
+  "VIEW_BPMN_FILE_HISTORY": "View history of the BPMN file",
   "SHARED": {
     "NAME": "Name",
     "ID": "Identifier",

@@ -27,6 +27,8 @@ import { HumanTaskDefEffects } from './stores/humantaskdefs/effects/humantaskdef
 import { HumanTaskDefService } from './stores/humantaskdefs/services/humantaskdef.service';
 import { HumanTaskInstEffects } from './stores/humantaskinstances/effects/humantaskinst.effects';
 import { HumanTaskInstService } from './stores/humantaskinstances/services/humantaskinst.service';
+import { BpmnFilesEffects } from './stores/bpmnfiles/effects/case-files.effects';
+import { BpmnFilesService } from './stores/bpmnfiles/services/bpmnfiles.service';
 
 export function createTranslateLoader(http: HttpClient) {
     const url = process.env.BASE_URL + 'assets/i18n/';
@@ -44,7 +46,7 @@ export function createTranslateLoader(http: HttpClient) {
         BrowserAnimationsModule,
         HttpClientModule,
         OAuthModule.forRoot(),
-        EffectsModule.forRoot([CaseFilesEffects, CasePlanInstanceEffects, CasePlanEffects, HumanTaskDefEffects, HumanTaskInstEffects]),
+        EffectsModule.forRoot([CaseFilesEffects, CasePlanInstanceEffects, CasePlanEffects, HumanTaskDefEffects, HumanTaskInstEffects, BpmnFilesEffects]),
         StoreModule.forRoot(appReducer),
         StoreDevtoolsModule.instrument({
             maxAge: 10
@@ -61,6 +63,6 @@ export function createTranslateLoader(http: HttpClient) {
         AppComponent
     ],
     bootstrap: [AppComponent],
-    providers: [AuthGuard, CaseFilesService, CasePlanService, CasePlanInstanceService, HumanTaskDefService, HumanTaskInstService ]
+    providers: [AuthGuard, CaseFilesService, CasePlanService, CasePlanInstanceService, HumanTaskDefService, HumanTaskInstService, BpmnFilesService ]
 })
 export class AppModule { }
