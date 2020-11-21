@@ -7,6 +7,7 @@ namespace CaseManagement.BPMN.Persistence
     public interface IProcessFileCommandRepository
     {
         Task Add(ProcessFileAggregate processFile, CancellationToken token);
+        Task Update(ProcessFileAggregate processFile, CancellationToken token);
         Task<int> SaveChanges(CancellationToken token);
     }
 }

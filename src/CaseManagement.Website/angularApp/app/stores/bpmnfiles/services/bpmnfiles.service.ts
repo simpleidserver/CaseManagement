@@ -4,6 +4,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable } from 'rxjs';
 import { SearchBpmnFilesResult } from '../models/search-bpmn-files-result.model';
 import { BpmnFile } from '../models/bpmn-file.model';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class BpmnFilesService {
@@ -32,5 +33,24 @@ export class BpmnFilesService {
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id;
         return this.http.get<BpmnFile>(targetUrl, { headers: headers });
+    }
+
+    update(id: string, name: string, description: string, payload: string) : Observable<any> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id;
+        const request: any = { name: name, description: description, payload: payload };
+        return this.http.put<any>(targetUrl, JSON.stringify(request), { headers: headers });
+    }
+
+    publish(id: string): Observable<any> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id + "/publish";
+        return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
+            return res['id'];
+        }));
     }
 }

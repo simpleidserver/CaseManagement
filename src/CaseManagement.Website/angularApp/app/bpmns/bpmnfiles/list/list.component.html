@@ -12,7 +12,11 @@
                         <table mat-table class="full-width" [dataSource]="bpmnFiles$" matSortActive="create_datetime" matSortDirection="desc" matSort>
                             <ng-container matColumnDef="name">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "BPMN.INFORMATION.FILE_NAME" | translate }}</th>
-                                <td mat-cell *matCellDef="let bpmn">{{bpmn.name}}</td>
+                                <td mat-cell *matCellDef="let bpmn">
+                                    <a [routerLink]="['/bpmns/bpmnfiles/' + bpmn.id]" target="_blank">
+                                        {{ bpmn.name }}
+                                    </a>
+                                </td>
                             </ng-container>
                             <ng-container matColumnDef="version">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "BPMN.INFORMATION.VERSION" | translate }}</th>
@@ -37,12 +41,9 @@
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let bpmn">
-                                    <button mat-icon-button matTooltip="{{ 'BPMN.ACTIONS.EDIT_BPMNFILE' | translate }}" [routerLink]="['/bpmns/bpmnfiles/' + bpmn.id]">
-                                        <mat-icon>edit</mat-icon>
-                                    </button>
-                                    <button mat-icon-button matTooltip="{{ 'BPMN.ACTIONS.VIEW_BPMNFILE_HISTORY' | translate }}" [routerLink]="['/bpmns/bpmnfiles/' + bpmn.fileId + '/history']">
-                                        <mat-icon>history</mat-icon>
-                                    </button>
+                                    <a [routerLink]="['/bpmns/bpmnfiles/' + bpmn.fileId + '/history']" target="_blank">
+                                        {{ 'BPMN.ACTIONS.VIEW_BPMNFILE_HISTORY' | translate }}
+                                    </a>
                                 </td>
                             </ng-container>
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

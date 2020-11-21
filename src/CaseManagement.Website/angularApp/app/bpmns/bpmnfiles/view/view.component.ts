@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import { BpmnFile } from '@app/stores/bpmnfiles/models/bpmn-file.model';
 import * as fromBpmnFileActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
-import { select, Store } from '@ngrx/store';
-let BpmnViewer = require('bpmn-js/lib/Modeler');
+import { select, Store, ScannedActionsSubject } from '@ngrx/store';
+import { filter } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
+import { SidenavService } from '@app/shared/SidenavService';
+let BpmnViewer = require('bpmn-js/lib/Modeler'),
+    propertiesPanelModule = require('bpmn-js-properties-panel'),
+    propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/bpmn');
 
 @Component({
     selector: 'view-bpmn-file',
@@ -22,7 +28,12 @@ export class ViewBpmnFileComponent implements OnInit {
 
     constructor(private store: Store<fromAppState.AppState>,
         private route: ActivatedRoute,
-        private formBuilder: FormBuilder) {
+        private actions$: ScannedActionsSubject,
+        private snackBar: MatSnackBar,
+        private translateService: TranslateService,
+        private formBuilder: FormBuilder,
+        private router: Router,
+        private sidenavService: SidenavService) {
         this.saveForm = this.formBuilder.group({
             id: new FormControl({ value: '', disabled: true }),
             name: new FormControl({ value: '' }),
@@ -33,13 +44,53 @@ export class ViewBpmnFileComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log(BpmnViewer);
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnFileActions.ActionTypes.ERROR_GET_BPMNFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.ERROR_GET_BPMNFILE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnFileActions.ActionTypes.COMPLETE_UPDATE_BPMNFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.BPMNFILE_UPDATED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnFileActions.ActionTypes.ERROR_UPDATE_BPMNFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.ERROR_UPDATE_BPMNFILE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnFileActions.ActionTypes.COMPLETE_PUBLISH_BPMNFILE))
+            .subscribe((e) => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.BPMNFILE_PUBLISHED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+                this.router.navigate(["/bpmns/bpmnfiles/" + e.id]);
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnFileActions.ActionTypes.ERROR_PUBLISH_BPMNFILE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.ERROR_PUBLISH_BPMNFILE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
         this.viewer = new BpmnViewer.default({
             additionalModules: [
+                propertiesPanelModule,
+                propertiesProviderModule
             ],
             container: "#canvas",
             keyboard: {
                 bindTo: window
+            },
+            propertiesPanel: {
+                parent: '#properties'
             }
         });
         this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((e: BpmnFile) => {
@@ -57,6 +108,7 @@ export class ViewBpmnFileComponent implements OnInit {
             this.bpmnFile = e;
         });
         this.refresh();
+        this.sidenavService.close();
     }
 
     navigate(isEditorDisplayed: boolean) {
@@ -79,16 +131,24 @@ export class ViewBpmnFileComponent implements OnInit {
         this.viewer.importXML(evt);
     }
 
-    onSave() {
-        this.viewer.saveXML({}, function (e: any) {
+    onSave(form: any) {
+        const self = this;
+        this.viewer.saveXML({}, function (e: any, x: any) {
             if (e) {
                 return;
             }
+
+            const id = self.saveForm.get('id').value;
+            const act = new fromBpmnFileActions.UpdateBpmnFile(id, form.name, form.description, x);
+            self.store.dispatch(act);
         });
     }
 
     onPublish(e: any) {
         e.preventDefault();
+        const id = this.route.snapshot.params['id'];
+        const act = new fromBpmnFileActions.PublishBpmnFile(id);
+        this.store.dispatch(act);
     }
 
     refresh() {

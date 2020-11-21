@@ -158,7 +158,7 @@
       "BPMNFILE": "BPMN file"
     },
     "ACTIONS": {
-      "VIEW_BPMNFILE_HISTORY": "View history of the BPMN file",
+      "VIEW_BPMNFILE_HISTORY": "View history",
       "EDIT_BPMNFILE": "Edit bpmn file"
     },
     "INFORMATION": {
@@ -170,6 +170,13 @@
       "FILE_NAME": "File name",
       "VERSION": "Version",
       "STATUS": "Status"
+    },
+    "MESSAGES": {
+      "BPMNFILE_UPDATED": "BPMN file has been updated",
+      "ERROR_UPDATE_BPMNFILE": "An error occured while trying to update the BPMN file",
+      "BPMNFILE_PUBLISHED": "BPMN file has been published",
+      "ERROR_PUBLISH_BPMNFILE": "An error occured while trying to publish the BPMN file",
+      "ERROR_GET_BPMNFILE": "An error occured while trying to get the BPMN file"
     }
   },
   "HUMANTASK": {

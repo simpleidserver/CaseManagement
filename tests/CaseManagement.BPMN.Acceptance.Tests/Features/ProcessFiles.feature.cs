@@ -103,6 +103,141 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Add process file")]
+        [Xunit.TraitAttribute("FeatureTitle", "ProcessFiles")]
+        [Xunit.TraitAttribute("Description", "Add process file")]
+        public virtual void AddProcessFile()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add process file", null, ((string[])(null)));
+#line 12
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table2.AddRow(new string[] {
+                        "name",
+                        "Name.bpmn"});
+            table2.AddRow(new string[] {
+                        "description",
+                        "description"});
+#line 13
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/processfiles\'", ((string)(null)), table2, "When ");
+#line 17
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 18
+ testRunner.And("extract \'id\' from JSON body into \'newProcessFile\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 19
+ testRunner.And("poll \'http://localhost/processfiles/$newProcessFile$\', until \'name\'=\'Name.bpmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 20
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 22
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 23
+ testRunner.Then("JSON \'name\'=\'Name.bpmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 24
+ testRunner.Then("JSON \'description\'=\'description\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Update process file")]
+        [Xunit.TraitAttribute("FeatureTitle", "ProcessFiles")]
+        [Xunit.TraitAttribute("Description", "Update process file")]
+        public virtual void UpdateProcessFile()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update process file", null, ((string[])(null)));
+#line 26
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table3.AddRow(new string[] {
+                        "name",
+                        "Name.bpmn"});
+            table3.AddRow(new string[] {
+                        "description",
+                        "description"});
+#line 27
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/processfiles\'", ((string)(null)), table3, "When ");
+#line 31
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 32
+ testRunner.And("extract \'id\' from JSON body into \'newProcessFile\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table4.AddRow(new string[] {
+                        "name",
+                        "NewName.bpmn"});
+            table4.AddRow(new string[] {
+                        "description",
+                        "NewDescription"});
+#line 33
+ testRunner.And("execute HTTP PUT JSON request \'http://localhost/processfiles/$newProcessFile$\'", ((string)(null)), table4, "And ");
+#line 37
+ testRunner.And("poll \'http://localhost/processfiles/$newProcessFile$\', until \'name\'=\'NewName.bpmn" +
+                    "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 38
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 40
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 41
+ testRunner.Then("JSON \'name\'=\'NewName.bpmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 42
+ testRunner.Then("JSON \'description\'=\'NewDescription\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Publish process file")]
+        [Xunit.TraitAttribute("FeatureTitle", "ProcessFiles")]
+        [Xunit.TraitAttribute("Description", "Publish process file")]
+        public virtual void PublishProcessFile()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Publish process file", null, ((string[])(null)));
+#line 44
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table5.AddRow(new string[] {
+                        "name",
+                        "PublishProcessFile.bpmn"});
+            table5.AddRow(new string[] {
+                        "description",
+                        "description"});
+#line 45
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/processfiles\'", ((string)(null)), table5, "When ");
+#line 49
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 50
+ testRunner.And("extract \'id\' from JSON body into \'newProcessFile\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 51
+ testRunner.And("execute HTTP GET request \'http://localhost/processfiles/$newProcessFile$/publish\'" +
+                    "", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 52
+ testRunner.And("poll HTTP POST JSON request \'http://localhost/processfiles/search\', until \'$.cont" +
+                    "ent[?(@.name == \'PublishProcessFile.bpmn\' && @.status == \'Edited\')].status\'=\'Edi" +
+                    "ted\'", ((string)(null)), table6, "And ");
+#line 54
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 56
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

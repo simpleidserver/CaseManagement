@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Acceptance.Tests.Middlewares;
 using CaseManagement.BPMN.Builders;
 using CaseManagement.BPMN.Domains;
+using CaseManagement.BPMN.Infrastructure.Jobs;
 using CaseManagement.Common.Jobs.Persistence;
 using CaseManagement.HumanTask.AspNetCore;
 using CaseManagement.HumanTask.Builders;
@@ -41,14 +42,6 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                 .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
                 .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
                 .Build();
-            var processInstance = ProcessInstanceBuilder.New("processFile")
-                .AddStartEvent("1", "evt")
-                .AddUserTask("2", "userTask", (cb) =>
-                {
-                    cb.SetWsHumanTask("emptyTask");
-                })
-                .AddSequenceFlow("seq1", "sequence", "1", "2")
-                .Build();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
@@ -60,15 +53,14 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                     ScheduleJob.New<ProcessActivationTimerJob>(1 * 1000),
                     ScheduleJob.New<ProcessDeadLinesJob>(1 * 1000)
                 });
-            services.AddProcessJobServer(callbackServerOpts: o =>
+            services.AddProcessJobServer(callbackOpts: o =>
+            {
+                o.ApplicationAssembly = typeof(ProcessInstanceJob).Assembly;
+            }, callbackServerOpts: o =>
             {
                 o.WSHumanTaskAPI = "http://localhost";
             })
-            .AddProcessFiles(files)
-            .AddProcessInstances(new ConcurrentBag<ProcessInstanceAggregate>
-            {
-                processInstance
-            });
+            .AddProcessFiles(files);
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddSingleton<CaseManagement.Common.Factories.IHttpClientFactory>(httpClientFactory);
         }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, GetBpmnFile, SearchBpmnFiles } from '../actions/bpmn-files.actions';
+import { ActionTypes, GetBpmnFile, SearchBpmnFiles, UpdateBpmnFile } from '../actions/bpmn-files.actions';
 import { BpmnFilesService } from '../services/bpmnfiles.service';
 
 @Injectable()
@@ -35,6 +35,34 @@ export class BpmnFilesEffects {
                     .pipe(
                         map(bpmnFile => { return { type: ActionTypes.COMPLETE_GET_BPMNFILE, bpmnFile: bpmnFile }; }),
                         catchError(() => of({ type: ActionTypes.ERROR_GET_BPMNFILE }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    updateBpmnFile$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.UPDATE_BPMNFILE),
+            mergeMap((evt: UpdateBpmnFile) => {
+                return this.bpmnFilesService.update(evt.id, evt.name, evt.description, evt.payload)
+                    .pipe(
+                        map(() => { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description, payload: evt.payload }; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    publishBpmnFile$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.PUBLISH_BPMNFILE),
+            mergeMap((evt: UpdateBpmnFile) => {
+                return this.bpmnFilesService.publish(evt.id)
+                    .pipe(
+                        map(str => { return { type: ActionTypes.COMPLETE_PUBLISH_BPMNFILE, id: str}; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_PUBLISH_BPMNFILE }))
                     );
             }
             )

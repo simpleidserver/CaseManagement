@@ -56,7 +56,7 @@
                 </li>
             </ul>
         </div>
-        <div id="canvas" [style.display]="isEditorDisplayed ? 'block' : 'none'" fxFlexFill></div>
+        <div id="canvas" style="height: 500px"  [style.display]="isEditorDisplayed ? 'block' : 'none'"></div>
         <ngx-monaco-editor [style.display]="isEditorDisplayed ? 'none' : 'block'" class="txt-editor" [options]="editorOptions" [(ngModel)]="xml" (ngModelChange)="onXmlChange($event)"></ngx-monaco-editor>
     </div>
     <div id="properties" fxFlex="20%"></div>

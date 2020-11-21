@@ -86,14 +86,14 @@ namespace CaseManagement.BPMN.Acceptance.Tests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table2.AddRow(new string[] {
+            table7.AddRow(new string[] {
                         "processFileId",
                         "17ac18f07c031f808c55b8e9ff543161b90492947ac7449f682b67bd23e92053"});
 #line 5
- testRunner.When("execute HTTP POST JSON request \'http://localhost/processinstances\'", ((string)(null)), table2, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/processinstances\'", ((string)(null)), table7, "When ");
 #line 8
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 9
@@ -102,12 +102,12 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.When("execute HTTP GET request \'http://localhost/processinstances/$processInstanceId$/s" +
                     "tart\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
 #line 11
  testRunner.And("poll HTTP POST JSON request \'http://localhost/humantaskinstances/.search\', until " +
-                    "\'totalLength\'=\'1\'", ((string)(null)), table3, "And ");
+                    "\'totalLength\'=\'1\'", ((string)(null)), table8, "And ");
 #line 13
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 14
@@ -116,15 +116,15 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
                     "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table4.AddRow(new string[] {
+            table9.AddRow(new string[] {
                         "operationParameters",
                         "{}"});
 #line 16
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
-                    "tanceId$/complete\'", ((string)(null)), table4, "And ");
+                    "tanceId$/complete\'", ((string)(null)), table9, "And ");
 #line 19
  testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
                     "nces[0].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

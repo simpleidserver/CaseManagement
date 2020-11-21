@@ -1,6 +1,6 @@
 ﻿import * as fromActions from '../actions/bpmn-files.actions';
-import { SearchBpmnFilesResult } from '../models/search-bpmn-files-result.model';
 import { BpmnFile } from '../models/bpmn-file.model';
+import { SearchBpmnFilesResult } from '../models/search-bpmn-files-result.model';
 
 export interface BpmnFileLstState {
     isLoading: boolean;
@@ -41,6 +41,18 @@ export function bpmnFileReducer(state = initialBpmnFileState, action: fromAction
         case fromActions.ActionTypes.COMPLETE_GET_BPMNFILE:
             state.content = action.bpmnFile;
             return { ...state };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_BPMNFILE:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    name: action.name,
+                    description: action.description,
+                    payload: action.payload,
+                    version: (state.content.version + 1),
+                    updateDateTime: new Date()
+                }
+            };
         default:
             return state;
     }

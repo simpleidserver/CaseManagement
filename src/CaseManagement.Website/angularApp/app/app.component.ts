@@ -1,9 +1,11 @@
 ﻿import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
+import { SidenavService } from './shared/SidenavService';
+import { MatSidenav } from '@angular/material';
 
 @Component({
     selector: 'app-component',
@@ -42,8 +44,10 @@ export class AppComponent implements OnInit {
     casesExpanded: boolean = false;
     humanTasksExpanded: boolean = false;
     bpmnsExpanded: boolean = false;
+    @ViewChild('sidenav') public sidenav: MatSidenav;
 
-    constructor(private route: Router, private translate: TranslateService, private oauthService: OAuthService, private router: Router) {
+    constructor(private route: Router, private translate: TranslateService, private oauthService: OAuthService, private router: Router,
+        private sidenavService: SidenavService) {
         translate.setDefaultLang('fr');
         translate.use('fr');
         this.configureAuth();
@@ -127,6 +131,7 @@ export class AppComponent implements OnInit {
                 this.bpmnsExpanded = true;
             }
         });
+        this.sidenavService.setSidnav(this.sidenav);
     }
 
     private configureAuth() {

@@ -27,8 +27,9 @@ import { HumanTaskDefEffects } from './stores/humantaskdefs/effects/humantaskdef
 import { HumanTaskDefService } from './stores/humantaskdefs/services/humantaskdef.service';
 import { HumanTaskInstEffects } from './stores/humantaskinstances/effects/humantaskinst.effects';
 import { HumanTaskInstService } from './stores/humantaskinstances/services/humantaskinst.service';
-import { BpmnFilesEffects } from './stores/bpmnfiles/effects/case-files.effects';
+import { BpmnFilesEffects } from './stores/bpmnfiles/effects/bpmn-files.effects';
 import { BpmnFilesService } from './stores/bpmnfiles/services/bpmnfiles.service';
+import { SidenavService } from './shared/SidenavService';
 
 export function createTranslateLoader(http: HttpClient) {
     const url = process.env.BASE_URL + 'assets/i18n/';
@@ -63,6 +64,6 @@ export function createTranslateLoader(http: HttpClient) {
         AppComponent
     ],
     bootstrap: [AppComponent],
-    providers: [AuthGuard, CaseFilesService, CasePlanService, CasePlanInstanceService, HumanTaskDefService, HumanTaskInstService, BpmnFilesService ]
+    providers: [AuthGuard, CaseFilesService, CasePlanService, CasePlanInstanceService, HumanTaskDefService, HumanTaskInstService, BpmnFilesService, SidenavService ]
 })
 export class AppModule { }

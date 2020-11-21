@@ -3,12 +3,18 @@ import { SearchBpmnFilesResult } from '../models/search-bpmn-files-result.model'
 import { BpmnFile } from '../models/bpmn-file.model';
 
 export enum ActionTypes {
-    START_SEARCH_BPMNFILES = "[CaseFiles] START_SEARCH_BPMNFILES",
-    ERROR_SEARCH_BPMNFILES = "[CaseFiles] ERROR_SEARCH_BPMNFILES",
-    COMPLETE_SEARCH_BPMNFILES = "[CaseFiles] COMPLETE_SEARCH_BPMNFILES",
-    START_GET_BPMNFILE = "[CaseFiles] START_GET_BPMNFILE",
-    ERROR_GET_BPMNFILE = "[CaseFiles] ERROR_GET_BPMNFILE",
-    COMPLETE_GET_BPMNFILE = "[CaseFiles] COMPLETE_GET_BPMNFILE"
+    START_SEARCH_BPMNFILES = "[BpmnFiles] START_SEARCH_BPMNFILES",
+    ERROR_SEARCH_BPMNFILES = "[BpmnFiles] ERROR_SEARCH_BPMNFILES",
+    COMPLETE_SEARCH_BPMNFILES = "[BpmnFiles] COMPLETE_SEARCH_BPMNFILES",
+    START_GET_BPMNFILE = "[BpmnFiles] START_GET_BPMNFILE",
+    ERROR_GET_BPMNFILE = "[BpmnFiles] ERROR_GET_BPMNFILE",
+    COMPLETE_GET_BPMNFILE = "[BpmnFiles] COMPLETE_GET_BPMNFILE",
+    UPDATE_BPMNFILE = "[BpmnFiles] UPDATE_BPMNFILE",
+    COMPLETE_UPDATE_BPMNFILE = "[BpmnFiles] COMPLETE_UPDATE_BPMNFILE",
+    ERROR_UPDATE_BPMNFILE = "[BpmnFiles] ERROR_UPDATE_BPMNFILE",
+    PUBLISH_BPMNFILE = "[BpmnFiles] PUBLISH_BPMNFILE",
+    COMPLETE_PUBLISH_BPMNFILE = "[BpmnFiles] COMPLETE_PUBLISH_BPMNFILE",
+    ERROR_PUBLISH_BPMNFILE = "[BpmnFiles] ERROR_PUBLISH_BPMNFILE"
 }
 
 export class SearchBpmnFiles implements Action {
@@ -31,7 +37,31 @@ export class CompleteBpmnFile implements Action {
     constructor(public bpmnFile: BpmnFile) { }
 }
 
+export class PublishBpmnFile implements Action {
+    readonly type = ActionTypes.PUBLISH_BPMNFILE
+    constructor(public id: string) { }
+}
+
+export class CompletePublishBpmnFile implements Action {
+    readonly type = ActionTypes.COMPLETE_PUBLISH_BPMNFILE
+    constructor(public id: string) { }
+}
+
+export class UpdateBpmnFile implements Action {
+    readonly type = ActionTypes.UPDATE_BPMNFILE
+    constructor(public id: string, public name: string, public description: string, public payload: string) { }
+}
+
+export class CompleteUpdateBpmnFile implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_BPMNFILE
+    constructor(public id: string, public name: string, public description: string, public payload: string) { }
+}
+
 export type ActionsUnion = SearchBpmnFiles |
     CompleteBpmnFiles |
     GetBpmnFile |
-    CompleteBpmnFile;
+    CompleteBpmnFile |
+    PublishBpmnFile |
+    CompletePublishBpmnFile |
+    UpdateBpmnFile |
+    CompleteUpdateBpmnFile;
