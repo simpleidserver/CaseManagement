@@ -157,6 +157,11 @@
       "BPMNFILES": "BPMN files",
       "BPMNFILE": "BPMN file"
     },
+    "TABS": {
+      "INFORMATION": "Information",
+      "EDITOR": "Editor",
+      "XML": "Xml"
+    },
     "ACTIONS": {
       "VIEW_BPMNFILE_HISTORY": "View history",
       "EDIT_BPMNFILE": "Edit bpmn file"
@@ -176,7 +181,9 @@
       "ERROR_UPDATE_BPMNFILE": "An error occured while trying to update the BPMN file",
       "BPMNFILE_PUBLISHED": "BPMN file has been published",
       "ERROR_PUBLISH_BPMNFILE": "An error occured while trying to publish the BPMN file",
-      "ERROR_GET_BPMNFILE": "An error occured while trying to get the BPMN file"
+      "ERROR_GET_BPMNFILE": "An error occured while trying to get the BPMN file",
+      "BPMNFILE_PAYLOAD_UPDATED": "BPMN file payload has been updated",
+      "ERROR_UPDATE_BPMNFILE_PAYLOAD": "An error occured while trying to update the BPMN payload"
     }
   },
   "HUMANTASK": {

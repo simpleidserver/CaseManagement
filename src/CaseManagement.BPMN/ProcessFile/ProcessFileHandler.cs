@@ -10,7 +10,8 @@ namespace CaseManagement.BPMN.ProcessFile
     public class ProcessFileHandler : 
         IDomainEvtConsumerGeneric<ProcessFileAddedEvent>,
         IDomainEvtConsumerGeneric<ProcessFileUpdatedEvent>,
-        IDomainEvtConsumerGeneric<ProcessFilePublishedEvent>
+        IDomainEvtConsumerGeneric<ProcessFilePublishedEvent>,
+        IDomainEvtConsumerGeneric<ProcessFilePayloadUpdatedEvent>
     {
         private readonly IProcessFileCommandRepository _processFileCommandRepository;
         private readonly IProcessFileQueryRepository _processFileQueryRepository;
@@ -37,6 +38,14 @@ namespace CaseManagement.BPMN.ProcessFile
         }
 
         public async Task Handle(ProcessFilePublishedEvent message, CancellationToken token)
+        {
+            var processFile = await _processFileQueryRepository.Get(message.AggregateId, token);
+            processFile.Handle(message);
+            await _processFileCommandRepository.Update(processFile, token);
+            await _processFileCommandRepository.SaveChanges(token);
+        }
+
+        public async Task Handle(ProcessFilePayloadUpdatedEvent message, CancellationToken token)
         {
             var processFile = await _processFileQueryRepository.Get(message.AggregateId, token);
             processFile.Handle(message);

@@ -23,7 +23,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Evts
                 if ((nodeDef.ParallelMultiple && lst.All(_ => _ == true)) ||
                     (!nodeDef.ParallelMultiple && lst.Any(_ => _ == true)))
                 {
-                    var outcome = new List<BaseToken>();
+                    var outcome = new List<MessageToken>();
                     outcome.AddRange(executionContext.Pointer.Incoming);
                     return Task.FromResult(BPMNExecutionResult.Next(flowNodeIds, executionContext.Pointer.Incoming.ToList(), isEltInstanceCompleted: false, isNewExecutionPointerRequired: true));
                 }
@@ -31,7 +31,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Evts
                 return Task.FromResult(BPMNExecutionResult.Block());
             }
 
-            return Task.FromResult(BPMNExecutionResult.Next(flowNodeIds, new List<BaseToken> { MessageToken.EmptyMessage() }));
+            return Task.FromResult(BPMNExecutionResult.Next(flowNodeIds, new List<MessageToken>() { MessageToken.EmptyMessage() }));
         }
     }
 }

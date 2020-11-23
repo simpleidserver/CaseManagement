@@ -1,14 +1,15 @@
 ﻿using CaseManagement.BPMN.Common;
+using CaseManagement.Common.Expression;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CaseManagement.BPMN.Domains
 {
-    public class ConditionalExpressionContext
+    public class ConditionalExpressionContext : ExpressionExecutionContext
     {
-        private readonly ICollection<BaseToken> _incomingTokens;
+        private readonly ICollection<MessageToken> _incomingTokens;
 
-        public ConditionalExpressionContext(ICollection<BaseToken> incomingTokens)
+        public ConditionalExpressionContext(ICollection<MessageToken> incomingTokens)
         {
             _incomingTokens = incomingTokens;
         }
@@ -45,15 +46,9 @@ namespace CaseManagement.BPMN.Domains
             return GetIncomingMessage(_incomingTokens.First(), path);
         }
 
-        private string GetIncomingMessage(BaseToken incoming, string path)
+        private string GetIncomingMessage(MessageToken incoming, string path)
         {
-            var message = incoming as MessageToken;
-            if (message == null)
-            {
-                return null;
-            }
-
-            var result = message.MessageContent.SelectToken(path);
+            var result = incoming.MessageContent.SelectToken(path);
             if (result == null)
             {
                 return null;

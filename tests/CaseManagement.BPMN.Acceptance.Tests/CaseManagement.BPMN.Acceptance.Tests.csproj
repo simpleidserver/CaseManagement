@@ -41,6 +41,9 @@
     </SpecFlowFeatureFiles>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Bpmns\GetWeatherInformation.bpmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Bpmns\CreateUserAccount.bpmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

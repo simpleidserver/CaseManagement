@@ -14,7 +14,10 @@ export enum ActionTypes {
     ERROR_UPDATE_BPMNFILE = "[BpmnFiles] ERROR_UPDATE_BPMNFILE",
     PUBLISH_BPMNFILE = "[BpmnFiles] PUBLISH_BPMNFILE",
     COMPLETE_PUBLISH_BPMNFILE = "[BpmnFiles] COMPLETE_PUBLISH_BPMNFILE",
-    ERROR_PUBLISH_BPMNFILE = "[BpmnFiles] ERROR_PUBLISH_BPMNFILE"
+    ERROR_PUBLISH_BPMNFILE = "[BpmnFiles] ERROR_PUBLISH_BPMNFILE",
+    UPDATE_BPMNFILE_PAYLOAD = "[BpmnFiles] UPDATE_BPMNFILE_PAYLOAD",
+    COMPLETE_UPDATE_BPMNFILE_PAYLOAD = "[BpmnFiles] COMPLETE_UPDATE_BPMNFILE_PAYLOAD",
+    ERROR_UPDATE_BPMNFILE_PAYLOAD = "[BpmnFiles] ERROR_UPDATE_BPMNFILE_PAYLOAD"
 }
 
 export class SearchBpmnFiles implements Action {
@@ -49,12 +52,22 @@ export class CompletePublishBpmnFile implements Action {
 
 export class UpdateBpmnFile implements Action {
     readonly type = ActionTypes.UPDATE_BPMNFILE
-    constructor(public id: string, public name: string, public description: string, public payload: string) { }
+    constructor(public id: string, public name: string, public description: string) { }
 }
 
 export class CompleteUpdateBpmnFile implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_BPMNFILE
     constructor(public id: string, public name: string, public description: string, public payload: string) { }
+}
+
+export class UpdateBpmnFilePayload implements Action {
+    readonly type = ActionTypes.UPDATE_BPMNFILE_PAYLOAD
+    constructor(public id: string, public payload: string) { }
+}
+
+export class CompleteUpdateBpmnFilePayload implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_BPMNFILE_PAYLOAD
+    constructor(public id: string, public payload: string) { }
 }
 
 export type ActionsUnion = SearchBpmnFiles |
@@ -64,4 +77,6 @@ export type ActionsUnion = SearchBpmnFiles |
     PublishBpmnFile |
     CompletePublishBpmnFile |
     UpdateBpmnFile |
-    CompleteUpdateBpmnFile;
+    CompleteUpdateBpmnFile |
+    UpdateBpmnFilePayload |
+    CompleteUpdateBpmnFilePayload;

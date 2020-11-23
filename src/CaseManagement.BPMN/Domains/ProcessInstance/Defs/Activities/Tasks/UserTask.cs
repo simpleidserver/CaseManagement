@@ -1,4 +1,7 @@
-﻿namespace CaseManagement.BPMN.Domains
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace CaseManagement.BPMN.Domains
 {
     /// <summary>
     /// A user task is a typical "workflow" Task where a human performer performs the Task with the assistance of a software application.
@@ -13,16 +16,27 @@
         /// Valid values are "##unspecified", "##webservice".
         /// </summary>
         public string Implementation { get; set; }
+
+        #region WS-HumanTasks
+
         /// <summary>
         /// Name of the human task.
         /// </summary>
         public string HumanTaskName { get; set; }
+        /// <summary>
+        /// Map tokens with WS-HumanTask parameters.
+        /// </summary>
+        public Dictionary<string, string> InputParameters { get; set; }
+
+        #endregion
 
         public override object Clone()
         {
             var result = new UserTask
             {
-                Implementation = Implementation
+                Implementation = Implementation,
+                HumanTaskName = HumanTaskName,
+                InputParameters = InputParameters?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
             };
             FeedActivity(result);
             return result;

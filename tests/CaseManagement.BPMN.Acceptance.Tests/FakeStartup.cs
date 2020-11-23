@@ -1,6 +1,4 @@
 ﻿using CaseManagement.BPMN.Acceptance.Tests.Middlewares;
-using CaseManagement.BPMN.Builders;
-using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Infrastructure.Jobs;
 using CaseManagement.Common.Jobs.Persistence;
 using CaseManagement.HumanTask.AspNetCore;
@@ -13,7 +11,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -42,11 +39,21 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                 .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
                 .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
                 .Build();
+            var dressAppropriateForm = HumanTaskDefBuilder.New("dressAppropriateForm")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "thabart" })
+                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("degree", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("city", ParameterTypes.STRING, true)
+                .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
+                .Build();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
                 {
-                    emptyTask
+                    emptyTask,
+                    dressAppropriateForm
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {

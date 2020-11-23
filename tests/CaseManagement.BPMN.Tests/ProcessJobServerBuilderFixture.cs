@@ -9,6 +9,7 @@ using Moq;
 using Moq.Protected;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -142,8 +143,7 @@ namespace CaseManagement.BPMN.Tests
                 })
                 .AddServiceTask("2", "name", _ =>
                 {
-                    _.SetImplementation(BPMNConstants.ImplementationNames.CALLBACK);
-                    _.SetClassName(typeof(CreatePersonDelegate).FullName);
+                    _.SetCallback(typeof(GetWeatherInformationDelegate).FullName);
                 })
                 .AddSequenceFlow("seq1", "sequence", "1", "2")
                 .Build();
@@ -442,11 +442,20 @@ namespace CaseManagement.BPMN.Tests
             var humanTaskInstanceId = Guid.NewGuid().ToString();
             var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddStartEvent("1", "evt")
-                .AddUserTask("2", "userTask", (cb) =>
+                .AddServiceTask("2", "serviceTask", (cb) =>
                 {
-                    cb.SetWsHumanTask("humanTask");
+                    cb.SetCallback(typeof(GetWeatherInformationDelegate).FullName);
+                })
+                .AddUserTask("3", "userTask", (cb) =>
+                {
+                    cb.SetWsHumanTask("dressAppropriate", new Dictionary<string, string>
+                    {
+                        { "degree", "context.GetIncomingMessage(\"weatherInformation\", \"degree\")" },
+                        { "city", "context.GetIncomingMessage(\"weatherInformation\", \"city\")" }
+                    });
                 })
                 .AddSequenceFlow("seq1", "sequence", "1", "2")
+                .AddSequenceFlow("seq2", "sequence", "2", "3")
                 .Build();
             var jobServer = FakeCaseJobServer.New();
             try
@@ -468,9 +477,9 @@ namespace CaseManagement.BPMN.Tests
                         return false;
                     }
 
-                    return c.ElementInstances.Count() == 2;
+                    return c.ElementInstances.Count() == 3;
                 }, CancellationToken.None);
-                var ei = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
+                var ei = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "3");
                 await jobServer.EnqueueStateTransition(casePlanInstance.AggregateId, ei.Id, "COMPLETED", new JObject(), CancellationToken.None);
                 casePlanInstance = await jobServer.MonitorProcessInstance(processInstance.AggregateId, (c) =>
                 {

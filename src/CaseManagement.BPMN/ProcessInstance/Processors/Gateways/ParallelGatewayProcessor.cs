@@ -25,7 +25,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Gateways
             }
 
             var incoming = executionContext.Pointer.Incoming;
-            ICollection<BaseToken> outcome = new List<BaseToken>();
+            ICollection<MessageToken> outcome = new List<MessageToken>();
             if (elt.GatewayDirection == GatewayDirections.CONVERGING)
             {
                 if (incoming.Count() != incomingFlowNodeIds.Count())

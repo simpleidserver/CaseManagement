@@ -49,6 +49,7 @@ namespace CaseManagement.BPMN.Parser
                     tSequenceFlow sequenceFlow;
                     tExclusiveGateway exclusiveGateway;
                     tUserTask userTask;
+                    tServiceTask serviceTask;
                     if ((startEvt = item as tStartEvent) != null)
                     {
                         builder.AddStartEvent(startEvt.id, startEvt.name);
@@ -59,7 +60,17 @@ namespace CaseManagement.BPMN.Parser
                         {
                             if (userTask.implementation == BPMNConstants.UserTaskImplementations.WSHUMANTASK)
                             {
-                                cb.SetWsHumanTask(userTask.wsHumanTaskDefName);
+                                cb.SetWsHumanTask(userTask.wsHumanTaskDefName, userTask.parameters?.ToDictionary(_ => _.key, _ => _.value));
+                            }
+                        });
+                    }
+                    else if ((serviceTask = item as tServiceTask) != null)
+                    {
+                        builder.AddServiceTask(serviceTask.id, serviceTask.name, (cb) =>
+                        {
+                            if (serviceTask.implementation == BPMNConstants.ServiceTaskImplementations.CALLBACK)
+                            {
+                                cb.SetCallback(serviceTask.className);
                             }
                         });
                     }

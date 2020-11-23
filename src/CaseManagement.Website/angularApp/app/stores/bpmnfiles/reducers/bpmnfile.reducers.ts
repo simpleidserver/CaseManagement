@@ -48,8 +48,17 @@ export function bpmnFileReducer(state = initialBpmnFileState, action: fromAction
                     ...state.content,
                     name: action.name,
                     description: action.description,
-                    payload: action.payload,
                     version: (state.content.version + 1),
+                    updateDateTime: new Date()
+                }
+            };
+        case fromActions.ActionTypes.COMPLETE_UPDATE_BPMNFILE_PAYLOAD:
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    version: (state.content.version + 1),
+                    payload: action.payload,
                     updateDateTime: new Date()
                 }
             };

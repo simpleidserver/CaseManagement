@@ -9,7 +9,7 @@ namespace CaseManagement.BPMN.Domains
     {
         public ExecutionPointer()
         {
-            Incoming = new List<BaseToken>();
+            Incoming = new List<MessageToken>();
             IsActive = true;
         }
 
@@ -18,8 +18,8 @@ namespace CaseManagement.BPMN.Domains
         public string InstanceFlowNodeId { get; set; }
         public string FlowNodeId { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<BaseToken> Incoming { get; set; }
-        public ICollection<BaseToken> Outgoing { get; set; }
+        public ICollection<MessageToken> Incoming { get; set; }
+        public ICollection<MessageToken> Outgoing { get; set; }
 
         public object Clone()
         {
@@ -30,8 +30,8 @@ namespace CaseManagement.BPMN.Domains
                 FlowNodeId = FlowNodeId,
                 InstanceFlowNodeId = InstanceFlowNodeId,
                 IsActive = IsActive,
-                Incoming = Incoming.Select(_ => (BaseToken)_.Clone()).ToList(),
-                Outgoing = Incoming.Select(_ => (BaseToken)_.Clone()).ToList()
+                Incoming = Incoming.Select(_ => (MessageToken)_.Clone()).ToList(),
+                Outgoing = Incoming.Select(_ => (MessageToken)_.Clone()).ToList()
             };
         }
     }

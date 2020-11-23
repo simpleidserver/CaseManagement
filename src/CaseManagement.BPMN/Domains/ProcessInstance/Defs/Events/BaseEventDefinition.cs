@@ -10,7 +10,7 @@ namespace CaseManagement.BPMN.Domains
         public abstract object Clone();
         public abstract EvtDefTypes Type { get; }
 
-        public virtual bool IsSatisfied(ProcessInstanceAggregate processInstance, BaseToken token)
+        public virtual bool IsSatisfied(ProcessInstanceAggregate processInstance, MessageToken token)
         {
             return false;
         }

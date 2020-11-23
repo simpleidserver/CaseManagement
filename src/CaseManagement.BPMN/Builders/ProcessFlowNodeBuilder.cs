@@ -78,13 +78,9 @@ namespace CaseManagement.BPMN.Builders
             OperationRef = operationRef;
         }
 
-        public void SetImplementation(string implementation)
+        public void SetCallback(string className)
         {
-            Implementation = implementation;
-        }
-
-        public void SetClassName(string className)
-        {
+            Implementation = BPMNConstants.ServiceTaskImplementations.CALLBACK;
             ClassName = className;
         }
 
@@ -117,6 +113,7 @@ namespace CaseManagement.BPMN.Builders
     {
         private string _implementation;
         private string _humanTaskName;
+        private Dictionary<string, string> _inputParameters;
 
         public UserTaskBuilder(string id, string name) : base(id, name) { }
 
@@ -126,9 +123,10 @@ namespace CaseManagement.BPMN.Builders
             return this;
         }
 
-        public UserTaskBuilder SetWsHumanTask(string humanTaskName)
+        public UserTaskBuilder SetWsHumanTask(string humanTaskName, Dictionary<string, string> inputParameters = null)
         {
             _humanTaskName = humanTaskName;
+            _inputParameters = inputParameters;
             return SetImplementation(BPMNConstants.UserTaskImplementations.WSHUMANTASK);
         }
 
@@ -137,7 +135,8 @@ namespace CaseManagement.BPMN.Builders
             var result = new UserTask
             {
                 Implementation = _implementation,
-                HumanTaskName = _humanTaskName
+                HumanTaskName = _humanTaskName,
+                InputParameters = _inputParameters
             };
             FeedActivityNode(result);
             return result;

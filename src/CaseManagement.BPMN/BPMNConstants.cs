@@ -16,7 +16,7 @@
             public const string StateTransitions = "statetransitions";
         }
 
-        public static class ImplementationNames
+        public static class ServiceTaskImplementations
         {
             public const string CALLBACK = "##csharpcallback";
         }

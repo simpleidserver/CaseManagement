@@ -17,9 +17,9 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
             _serviceProvider = serviceProvider;
         }
 
-        public string Implementation { get => BPMNConstants.ImplementationNames.CALLBACK; }
+        public string Implementation { get => BPMNConstants.ServiceTaskImplementations.CALLBACK; }
 
-        public Task<ICollection<BaseToken>> Execute(BPMNExecutionContext context, ServiceTask serviceTask, CancellationToken cancellationToken)
+        public Task<ICollection<MessageToken>> Execute(BPMNExecutionContext context, ServiceTask serviceTask, CancellationToken cancellationToken)
         {
             var type = TypeResolver.ResolveType(serviceTask.ClassName);
             var handler = (IDelegateHandler)_serviceProvider.GetService(type);

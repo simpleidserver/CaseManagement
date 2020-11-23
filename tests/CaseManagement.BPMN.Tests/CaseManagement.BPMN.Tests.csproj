@@ -14,9 +14,4 @@
     <ProjectReference Include="..\..\src\CaseManagement.BPMN.Common\CaseManagement.BPMN.Common.csproj" />
     <ProjectReference Include="..\..\src\CaseManagement.BPMN\CaseManagement.BPMN.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="diagram.bpmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

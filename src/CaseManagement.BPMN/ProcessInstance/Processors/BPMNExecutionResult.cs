@@ -22,10 +22,10 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         public bool IsEltInstanceCompleted { get; set; }
         public bool IsNewExecutionPointerRequired { get; set; }
         public ICollection<string> NextFlowNodeIds { get; set; }
-        public ICollection<BaseToken> OutcomingTokens { get; set; }
-        public ICollection<BaseToken> Tokens => OutcomeValue as ICollection<BaseToken>;
+        public ICollection<MessageToken> OutcomingTokens { get; set; }
+        public ICollection<MessageToken> Tokens => OutcomeValue as ICollection<MessageToken>;
 
-        public static BPMNExecutionResult Next(ICollection<string> nextFlowNodeIds, ICollection<BaseToken> outcome = null, bool isEltInstanceCompleted = true, bool isNewExecutionPointerRequired = false)
+        public static BPMNExecutionResult Next(ICollection<string> nextFlowNodeIds, ICollection<MessageToken> outcome = null, bool isEltInstanceCompleted = true, bool isNewExecutionPointerRequired = false)
         {
             return new BPMNExecutionResult(isNext: true, nextFlowNodeIds: nextFlowNodeIds, outcome: outcome, isEltInstanceCompleted: isEltInstanceCompleted, isNewExecutionPointerRequired: isNewExecutionPointerRequired);
         }

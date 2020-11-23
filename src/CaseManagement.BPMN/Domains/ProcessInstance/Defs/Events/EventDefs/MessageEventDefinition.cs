@@ -16,15 +16,9 @@ namespace CaseManagement.BPMN.Domains
 
         public override EvtDefTypes Type => EvtDefTypes.MESSAGE;
 
-        public override bool IsSatisfied(ProcessInstanceAggregate processInstance, BaseToken token)
+        public override bool IsSatisfied(ProcessInstanceAggregate processInstance, MessageToken token)
         {
-            var message = token as MessageToken;
-            if (message == null)
-            {
-                return false;
-            }
-
-            return processInstance.IsMessageCorrect(message);
+            return processInstance.IsMessageCorrect(token);
         }
 
         public override object Clone()

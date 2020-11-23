@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, GetBpmnFile, SearchBpmnFiles, UpdateBpmnFile } from '../actions/bpmn-files.actions';
+import { ActionTypes, GetBpmnFile, SearchBpmnFiles, UpdateBpmnFile, UpdateBpmnFilePayload } from '../actions/bpmn-files.actions';
 import { BpmnFilesService } from '../services/bpmnfiles.service';
 
 @Injectable()
@@ -45,14 +45,28 @@ export class BpmnFilesEffects {
         .pipe(
             ofType(ActionTypes.UPDATE_BPMNFILE),
             mergeMap((evt: UpdateBpmnFile) => {
-                return this.bpmnFilesService.update(evt.id, evt.name, evt.description, evt.payload)
+                return this.bpmnFilesService.update(evt.id, evt.name, evt.description)
                     .pipe(
-                        map(() => { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description, payload: evt.payload }; }),
+                        map(() => { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description}; }),
                         catchError(() => of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }))
                     );
             }
             )
     );
+
+    @Effect()
+    updateBpmnFilePayload$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.UPDATE_BPMNFILE_PAYLOAD),
+            mergeMap((evt: UpdateBpmnFilePayload) => {
+                return this.bpmnFilesService.updatePayload(evt.id, evt.payload)
+                    .pipe(
+                        map(() => { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE_PAYLOAD, id: evt.id, payload: evt.payload }; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE_PAYLOAD }))
+                    );
+            }
+            )
+        );
 
     @Effect()
     publishBpmnFile$ = this.actions$

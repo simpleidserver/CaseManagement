@@ -17,7 +17,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
             _handlers = handlers;
         }
 
-        protected override async Task<ICollection<BaseToken>> Process(BPMNExecutionContext context, ServiceTask elt, CancellationToken cancellationToken)
+        protected override async Task<ICollection<MessageToken>> Process(BPMNExecutionContext context, ServiceTask elt, CancellationToken cancellationToken)
         {
             var handler = _handlers.First(_ => _.Implementation == elt.Implementation);
             var result = await handler.Execute(context, elt, cancellationToken);

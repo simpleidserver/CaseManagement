@@ -10,6 +10,6 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
     public interface IServiceTaskHandler
     {
         string Implementation { get; }
-        Task<ICollection<BaseToken>> Execute(BPMNExecutionContext context, ServiceTask serviceTask, CancellationToken cancellationToken);
+        Task<ICollection<MessageToken>> Execute(BPMNExecutionContext context, ServiceTask serviceTask, CancellationToken cancellationToken);
     }
 }

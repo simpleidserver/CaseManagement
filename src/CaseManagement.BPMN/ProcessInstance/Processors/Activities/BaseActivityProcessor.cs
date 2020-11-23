@@ -36,7 +36,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
                 executionContext.Instance.UpdateState(instance, ActivityStates.COMPLETING);
             }
 
-            var outcome = new List<BaseToken>();
+            var outcome = new List<MessageToken>();
             outcome.AddRange(executionContext.Pointer.Incoming);
             if (instance.ActivityState == ActivityStates.COMPLETING)
             {
@@ -55,6 +55,6 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
             return BPMNExecutionResult.Next(flowNodeIds, outcome);
         }
 
-        protected abstract Task<ICollection<BaseToken>> Process(BPMNExecutionContext context, T elt,  CancellationToken cancellationToken);
+        protected abstract Task<ICollection<MessageToken>> Process(BPMNExecutionContext context, T elt,  CancellationToken cancellationToken);
     }
 }

@@ -40,9 +40,16 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public void Update(string name, string description, string payload)
+        public void Update(string name, string description)
         {
-            var evt = new ProcessFileUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, name, description, payload, DateTime.UtcNow);
+            var evt = new ProcessFileUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, name, description, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        public void UpdatePayload(string payload)
+        {
+            var evt = new ProcessFilePayloadUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, payload, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -108,6 +115,15 @@ namespace CaseManagement.BPMN.Domains
 
         private void Handle(ProcessFileUpdatedEvent evt)
         {
+
+            Name = evt.Name;
+            Description = evt.Description;
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(ProcessFilePayloadUpdatedEvent evt)
+        {
             try
             {
                 BPMNParser.Parse(evt.Payload);
@@ -120,11 +136,8 @@ namespace CaseManagement.BPMN.Domains
                 });
             }
 
-            Name = evt.Name;
-            Description = evt.Description;
             Payload = evt.Payload;
             UpdateDateTime = evt.UpdateDateTime;
-            Version = evt.Version;
         }
 
         public static string BuildProcessDefinitionIdentifier(string fileId, int version)

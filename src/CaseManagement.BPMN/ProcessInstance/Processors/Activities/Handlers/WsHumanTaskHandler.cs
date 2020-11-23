@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
+using CaseManagement.Common.Expression;
 using CaseManagement.Common.Factories;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
@@ -28,7 +29,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
 
         public string Implementation => BPMNConstants.UserTaskImplementations.WSHUMANTASK;
 
-        public async Task<ICollection<BaseToken>> Execute(BPMNExecutionContext executionContext, UserTask userTask, CancellationToken token)
+        public async Task<ICollection<MessageToken>> Execute(BPMNExecutionContext executionContext, UserTask userTask, CancellationToken token)
         {
             var pointer = executionContext.Pointer;
             var instance = executionContext.Instance.GetInstance(pointer.InstanceFlowNodeId);
@@ -36,14 +37,30 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
             {
                 using (var httpClient = _httpClientFactory.Build())
                 {
+                    var operationParameters = new JObject
+                    {
+                        { "flowNodeInstanceId", executionContext.Instance.AggregateId },
+                        { "flowNodeElementInstanceId", pointer.InstanceFlowNodeId }
+                    };
+                    var ctx = new ConditionalExpressionContext(pointer.Incoming);
+                    if (userTask.InputParameters != null && userTask.InputParameters.Any())
+                    {
+                        foreach(var inputParameter in userTask.InputParameters)
+                        {
+                            if (string.IsNullOrWhiteSpace(inputParameter.Value))
+                            {
+                                continue;
+                            }
+
+                            var value = ExpressionParser.GetString(inputParameter.Value, ctx);
+                            operationParameters.Add(inputParameter.Key, value);
+                        }
+                    }
+
                     var obj = new JObject
                     {
                         { "humanTaskName", userTask.HumanTaskName },
-                        { "operationParameters", new JObject
-                        {
-                            { "flowNodeInstanceId", executionContext.Instance.AggregateId },
-                            { "flowNodeElementInstanceId", pointer.InstanceFlowNodeId }
-                        }}
+                        { "operationParameters", operationParameters }
                     };
                     var content = new StringContent(obj.ToString(), Encoding.UTF8, "application/json");
                     var request = new HttpRequestMessage
@@ -67,7 +84,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                 throw new FlowNodeInstanceBlockedException();
             }
 
-            return new List<BaseToken> { stateTransition };
+            return new List<MessageToken>();
         }
     }
 }

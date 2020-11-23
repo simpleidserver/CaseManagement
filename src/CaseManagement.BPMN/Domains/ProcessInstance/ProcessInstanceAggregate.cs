@@ -1,5 +1,6 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Helpers;
+using CaseManagement.BPMN.Infrastructure.Jobs.Notifications;
 using CaseManagement.BPMN.Parser;
 using CaseManagement.Common.Domains;
 using DynamicExpresso;
@@ -25,7 +26,7 @@ namespace CaseManagement.BPMN.Domains
             SequenceFlows = new ConcurrentBag<SequenceFlow>();
             Interfaces = new ConcurrentBag<BPMNInterface>();
             Messages = new ConcurrentBag<Message>();
-            StateTransitions = new ConcurrentBag<StateTransitionToken>();
+            StateTransitions = new ConcurrentBag<StateTransitionNotification>();
         }
 
         public string ProcessFileId { get; set; }
@@ -39,11 +40,11 @@ namespace CaseManagement.BPMN.Domains
         public ConcurrentBag<SequenceFlow> SequenceFlows { get; set; }
         public ConcurrentBag<FlowNodeInstance> ElementInstances { get; set; }
         public ConcurrentBag<ExecutionPath> ExecutionPathLst { get; set; }
-        public ConcurrentBag<StateTransitionToken> StateTransitions { get; set; }
+        public ConcurrentBag<StateTransitionNotification> StateTransitions { get; set; }
 
         #region Getters
 
-        public bool IsIncomingSatisfied(SequenceFlow incomingSequence, ICollection<BaseToken> incomingTokens)
+        public bool IsIncomingSatisfied(SequenceFlow incomingSequence, ICollection<MessageToken> incomingTokens)
         {
             if (!string.IsNullOrWhiteSpace(incomingSequence.ConditionExpression))
             {
@@ -164,7 +165,7 @@ namespace CaseManagement.BPMN.Domains
             }
         }
 
-        public ICollection<string> CompleteExecutionPointer(ExecutionPointer pointer, ICollection<string> nextFlowIds, ICollection<BaseToken> outcomeValues)
+        public ICollection<string> CompleteExecutionPointer(ExecutionPointer pointer, ICollection<string> nextFlowIds, ICollection<MessageToken> outcomeValues)
         {
             var evt = new ExecutionPointerCompletedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pointer.ExecutionPathId, pointer.Id, DateTime.UtcNow);
             Handle(evt);
@@ -211,9 +212,9 @@ namespace CaseManagement.BPMN.Domains
             DomainEvents.Add(evt);
         }
 
-        public void ConsumeStateTransition(StateTransitionToken stateTransitionToken)
+        public void ConsumeStateTransition(StateTransitionNotification stateTransition)
         {
-            var nodeInstance = GetInstance(stateTransitionToken.FlowNodeInstanceId);
+            var nodeInstance = GetInstance(stateTransition.FlowNodeInstanceId);
             if (nodeInstance == null)
             {
                 return;
@@ -222,7 +223,7 @@ namespace CaseManagement.BPMN.Domains
             var evt = new StateTransitionReceivedEvent(Guid.NewGuid().ToString(),
                 AggregateId,
                 Version + 1,
-                stateTransitionToken,
+                stateTransition,
                 DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
@@ -240,9 +241,9 @@ namespace CaseManagement.BPMN.Domains
 
         #region Helpers
 
-        private string TryAddExecutionPointer(string pathId, BaseFlowNode flowNode, ICollection<BaseToken> outcomeValues = null)
+        private string TryAddExecutionPointer(string pathId, BaseFlowNode flowNode, ICollection<MessageToken> outcomeValues = null)
         {
-            ICollection<BaseToken> incoming = new List<BaseToken>();
+            ICollection<MessageToken> incoming = new List<MessageToken>();
             if (outcomeValues != null)
             {
                 incoming = outcomeValues;
@@ -301,7 +302,7 @@ namespace CaseManagement.BPMN.Domains
 
                 if (nodeDef.EventDefinitions.Any(_ => _.IsSatisfied(this, messageToken)))
                 {
-                    var tokens = new List<BaseToken> { messageToken };
+                    var tokens = new List<MessageToken> { messageToken };
                     var evt = new IncomingTokenAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, executionPath.Id, pointer.Id, JsonConvert.SerializeObject(tokens), DateTime.UtcNow);
                     Handle(evt);
                     DomainEvents.Add(evt);
@@ -309,7 +310,7 @@ namespace CaseManagement.BPMN.Domains
             }
         }
 
-        private bool EvaluateConditionalExpression(ICollection<BaseToken> incomingTokens, string expression)
+        private bool EvaluateConditionalExpression(ICollection<MessageToken> incomingTokens, string expression)
         {
             var decodedExpressionBody = HttpUtility.HtmlDecode(expression);
             var context = new ConditionalExpressionContext(incomingTokens);
@@ -360,7 +361,7 @@ namespace CaseManagement.BPMN.Domains
                 ItemDefs = new ConcurrentBag<ItemDefinition>(ItemDefs.Select(_ => (ItemDefinition)_.Clone())),
                 Messages = new ConcurrentBag<Message>(Messages.Select(_ => (Message)_.Clone())),
                 Interfaces = new ConcurrentBag<BPMNInterface>(Interfaces.Select(_ => (BPMNInterface)_.Clone())),
-                StateTransitions = new ConcurrentBag<StateTransitionToken>(StateTransitions.Select(_ => (StateTransitionToken)_.Clone()))
+                StateTransitions = new ConcurrentBag<StateTransitionNotification>(StateTransitions.Select(_ => (StateTransitionNotification)_.Clone()))
             };
         }
 
@@ -427,7 +428,7 @@ namespace CaseManagement.BPMN.Domains
 
         private void Handle(ExecutionPointerAddedEvent evt)
         {
-            var tokens = BaseToken.DeserializeLst(evt.SerializedTokens);
+            var tokens = MessageToken.DeserializeLst(evt.SerializedTokens);
             var path = GetExecutionPath(evt.ExecutionPathId);
             path.Pointers.Add(new ExecutionPointer
             {
@@ -460,7 +461,7 @@ namespace CaseManagement.BPMN.Domains
         private void Handle(IncomingTokenAddedEvent evt)
         {
             var pointer = GetExecutionPointer(evt.ExecutionPathId, evt.ExecutionPointerId);
-            var tokens = BaseToken.DeserializeLst(evt.SerializedToken);
+            var tokens = MessageToken.DeserializeLst(evt.SerializedToken);
             foreach(var token in tokens)
             {
                 pointer.Incoming.Add(token);

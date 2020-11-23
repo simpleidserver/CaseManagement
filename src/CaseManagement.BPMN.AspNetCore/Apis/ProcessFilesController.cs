@@ -101,5 +101,27 @@ namespace CaseManagement.BPMN.AspNetCore.Apis
                 return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpPut("{id}/payload")]
+        public async Task<IActionResult> UpdatePayload(string id, [FromBody] UpdateProcessFilePayloadCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.Id = id;
+                await _mediator.Send(parameter, token);
+                return new OkResult();
+            }
+            catch (UnknownProcessFileException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

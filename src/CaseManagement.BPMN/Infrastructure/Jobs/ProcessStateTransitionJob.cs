@@ -53,12 +53,7 @@ namespace CaseManagement.BPMN.Infrastructure.Jobs
                     throw new InvalidOperationException($"process instance '{message.ProcessInstanceId}' doesn't exist");
                 }
 
-                processInstance.ConsumeStateTransition(new StateTransitionToken
-                {
-                    State = message.State,
-                    Content = message.Content,
-                    FlowNodeInstanceId = message.FlowNodeInstanceId
-                });
+                processInstance.ConsumeStateTransition(message);
                 await _commitAggregateHelper.Commit(processInstance, processInstance.GetStreamName(), cancellationToken);
                 await MessageBroker.QueueProcessInstance(processInstance.AggregateId, false, cancellationToken);
                 _logger.LogInformation($"Make transition '{message.State}' on the user task instance '{message.FlowNodeInstanceId}'");

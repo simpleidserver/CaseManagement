@@ -99,19 +99,20 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
  testRunner.And("extract \'content[0].id\' from JSON body into \'processInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10
- testRunner.When("execute HTTP GET request \'http://localhost/processinstances/$processInstanceId$/s" +
-                    "tart\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("execute HTTP GET request \'http://localhost/processinstances/$processInstanceId$/s" +
+                    "tart\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
 #line 11
  testRunner.And("poll HTTP POST JSON request \'http://localhost/humantaskinstances/.search\', until " +
-                    "\'totalLength\'=\'1\'", ((string)(null)), table8, "And ");
+                    "\'$.content[?(@.name == \'emptyTask\')].name\'=\'emptyTask\'", ((string)(null)), table8, "And ");
 #line 13
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 14
- testRunner.And("extract \'content[0].id\' from JSON body into \'humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("extract \'$.content[?(@.name == \'emptyTask\')].id\' from JSON body into \'humanTaskIn" +
+                    "stanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 15
  testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
                     "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -129,6 +130,66 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
                     "nces[0].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 20
+ testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
+                    "nces[1].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Launch GetWeatherInformation bpmn process")]
+        [Xunit.TraitAttribute("FeatureTitle", "ProcessInstances")]
+        [Xunit.TraitAttribute("Description", "Launch GetWeatherInformation bpmn process")]
+        public virtual void LaunchGetWeatherInformationBpmnProcess()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch GetWeatherInformation bpmn process", null, ((string[])(null)));
+#line 22
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table10.AddRow(new string[] {
+                        "processFileId",
+                        "5ff28e2e6e1175bf69ec33fc5253620bfad4b1340a1ecfb20ea771e3bc76bb0e"});
+#line 23
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/processinstances\'", ((string)(null)), table10, "When ");
+#line 26
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 27
+ testRunner.And("extract \'content[0].id\' from JSON body into \'processInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 28
+ testRunner.When("execute HTTP GET request \'http://localhost/processinstances/$processInstanceId$/s" +
+                    "tart\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 29
+ testRunner.And("poll HTTP POST JSON request \'http://localhost/humantaskinstances/.search\', until " +
+                    "\'$.content[?(@.name == \'dressAppropriateForm\')].name\'=\'dressAppropriateForm\'", ((string)(null)), table11, "And ");
+#line 31
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 32
+ testRunner.And("extract \'$.content[?(@.name == \'dressAppropriateForm\')].id\' from JSON body into \'" +
+                    "humanTaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 33
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table12.AddRow(new string[] {
+                        "operationParameters",
+                        "{}"});
+#line 34
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/complete\'", ((string)(null)), table12, "And ");
+#line 37
+ testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
+                    "nces[0].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 38
  testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
                     "nces[1].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
