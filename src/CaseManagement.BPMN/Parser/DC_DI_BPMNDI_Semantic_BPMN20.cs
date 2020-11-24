@@ -4745,20 +4745,6 @@ namespace CaseManagement.BPMN.Parser {
                 this.implementationField = value;
             }
         }
-
-        [XmlArray("parameters", Namespace = BPMNConstants.BPMNNamespace)]
-        [XmlArrayItem("parameter", Namespace = BPMNConstants.BPMNNamespace, Type = typeof(tParameter))]
-        public List<tParameter> parameters
-        {
-            get
-            {
-                return _parametersField;
-            }
-            set
-            {
-                _parametersField = value;
-            }
-        }
     }
     
     /// <remarks/>

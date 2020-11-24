@@ -3,6 +3,7 @@ using CaseManagement.BPMN.Domains;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace CaseManagement.BPMN.Parser
@@ -60,7 +61,21 @@ namespace CaseManagement.BPMN.Parser
                         {
                             if (userTask.implementation == BPMNConstants.UserTaskImplementations.WSHUMANTASK)
                             {
-                                cb.SetWsHumanTask(userTask.wsHumanTaskDefName, userTask.parameters?.ToDictionary(_ => _.key, _ => _.value));
+                                var parameters = userTask.extensionElements?.Any.FirstOrDefault(_ => _.Name == "cmg:parameters");
+                                List<tParameter> pars = new List<tParameter>();
+                                if (parameters != null)
+                                {
+                                    var xmlSerializer = new XmlSerializer(typeof(tParameter), "http://www.omg.org/spec/BPMN/20100524/MODEL");
+                                    foreach(XmlNode child in parameters.ChildNodes)
+                                    {
+                                        using (var txtReader = new StringReader(child.OuterXml))
+                                        {
+                                            pars.Add((tParameter)xmlSerializer.Deserialize(txtReader));
+                                        }
+                                    }
+                                }
+
+                                cb.SetWsHumanTask(userTask.wsHumanTaskDefName, pars.ToDictionary(_ => _.key, _ => _.value));
                             }
                         });
                     }

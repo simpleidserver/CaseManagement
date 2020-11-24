@@ -10,10 +10,12 @@
       <outgoing>Flow_0ofj7xp</outgoing>
     </serviceTask>
     <userTask id="Activity_0h0gw99" name="Dress appropriate" implementation="##WsHumanTask" cmg:wsHumanTaskDefName="dressAppropriateForm">
-      <cmg:parameters>
-        <cmg:parameter key="city" value="context.GetIncomingMessage(&quot;weatherInformation&quot;, &quot;city&quot;)" />
-        <cmg:parameter key="degree" value="context.GetIncomingMessage(&quot;weatherInformation&quot;, &quot;degree&quot;)" />
-      </cmg:parameters>
+      <extensionElements>
+        <cmg:parameters>
+          <cmg:parameter key="city" value="context.GetIncomingMessage(&quot;weatherInformation&quot;, &quot;city&quot;)" />
+          <cmg:parameter key="degree" value="context.GetIncomingMessage(&quot;weatherInformation&quot;, &quot;degree&quot;)" />
+        </cmg:parameters>
+      </extensionElements>
       <incoming>Flow_0ofj7xp</incoming>
     </userTask>
     <sequenceFlow id="Flow_0ofj7xp" sourceRef="Task_1hcentk" targetRef="Activity_0h0gw99" />
