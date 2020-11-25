@@ -25,7 +25,6 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
         {
             var result = await _dbContext.ProcessInstances.FirstOrDefaultAsync(_ => _.AggregateId == processInstance.AggregateId, token);
             var rec = processInstance.ToModel();
-            result.CommonId = processInstance.CommonId;
             result.ElementDefs = rec.ElementDefs;
             result.ElementInstances = rec.ElementInstances;
             result.ExecutionPathLst = rec.ExecutionPathLst;

@@ -1,7 +1,6 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Helpers;
 using CaseManagement.BPMN.Infrastructure.Jobs.Notifications;
-using CaseManagement.BPMN.Parser;
 using CaseManagement.Common.Domains;
 using DynamicExpresso;
 using Newtonsoft.Json;
@@ -9,8 +8,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Web;
 
 namespace CaseManagement.BPMN.Domains
@@ -29,6 +26,7 @@ namespace CaseManagement.BPMN.Domains
             StateTransitions = new ConcurrentBag<StateTransitionNotification>();
         }
 
+        public ProcessInstanceStatus Status { get; set; }
         public string ProcessFileId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
@@ -152,6 +150,13 @@ namespace CaseManagement.BPMN.Domains
         #endregion
 
         #region Operations
+
+        public void Start()
+        {
+            var evt = new ProcessInstanceStartedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, DateTime.UtcNow);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
 
         public void NewExecutionPath()
         {
@@ -355,6 +360,8 @@ namespace CaseManagement.BPMN.Domains
                 Version = Version,
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
+                Status = Status,
+                SequenceFlows = new ConcurrentBag<SequenceFlow>(SequenceFlows.Select(_ => (SequenceFlow)_.Clone())),
                 ElementDefs = new ConcurrentBag<BaseFlowNode>(ElementDefs.Select(_ => (BaseFlowNode)_.Clone())),
                 ElementInstances =new ConcurrentBag<FlowNodeInstance>(ElementInstances.Select(_ => (FlowNodeInstance)_.Clone())),
                 ExecutionPathLst = new ConcurrentBag<ExecutionPath>(ExecutionPathLst.Select(_ => (ExecutionPath)_.Clone())),
@@ -377,6 +384,13 @@ namespace CaseManagement.BPMN.Domains
             Handle(evt);
         }
 
+        private void Handle(ProcessInstanceStartedEvent evt)
+        {
+            Status = ProcessInstanceStatus.STARTED;
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
         private void Handle(MetadataUpdatedEvent evt)
         {
             var instance = GetInstance(evt.FlowNodeInstanceId);
@@ -396,6 +410,7 @@ namespace CaseManagement.BPMN.Domains
             Version = evt.Version;
             ProcessFileId = evt.ProcessFileId;
             CreateDateTime = evt.CreateDateTime;
+            Status = ProcessInstanceStatus.CREATED;
             Interfaces = new ConcurrentBag<BPMNInterface>(evt.Interfaces);
             Messages = new ConcurrentBag<Message>(evt.Messages);
             ItemDefs = new ConcurrentBag<ItemDefinition>(evt.ItemDefs);

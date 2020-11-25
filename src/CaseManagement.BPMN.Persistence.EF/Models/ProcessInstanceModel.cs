@@ -7,9 +7,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Models
     {
         public string AggregateId { get; set; }
         public int Version { get; set; }
-        public string InstanceId { get; set; }
-        public string ProcessId { get; set; }
-        public string CommonId { get; set; }
+        public int Status { get; set; }
         public string ProcessFileId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }

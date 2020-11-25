@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromBpmnFileActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
+import * as fromBpmnInstanceActions from '@app/stores/bpmninstances/actions/bpmn-instances.actions';
 import { ScannedActionsSubject, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -88,6 +89,34 @@ export class ViewBpmnFileComponent implements OnInit {
                     duration: 2000
                 });
             });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnInstanceActions.ActionTypes.COMPLETE_CREATE_BPMN_INSTANCE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.BPMN_INSTANCE_CREATED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnInstanceActions.ActionTypes.ERROR_CREATE_BPMNINSTANCE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.ERROR_CREATE_BPMN_INSTANCE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnInstanceActions.ActionTypes.COMPLETE_START_BPMNINSTANCE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.BPMN_INSTANCE_STARTED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnInstanceActions.ActionTypes.ERROR_START_BPMNINSTANCE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.ERROR_START_BPMN_INSTANCE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
         this.id = this.route.snapshot.params['id'];
         this.refresh();
     }
@@ -99,6 +128,11 @@ export class ViewBpmnFileComponent implements OnInit {
 
     refresh() {
         const request = new fromBpmnFileActions.GetBpmnFile(this.id);
+        this.store.dispatch(request);
+    }
+
+    createInstance() {
+        const request = new fromBpmnInstanceActions.CreateBpmnInstance(this.id);
         this.store.dispatch(request);
     }
 }

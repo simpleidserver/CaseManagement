@@ -9,6 +9,9 @@
                     <button mat-raised-button color="primary" [routerLink]="['/bpmns/bpmnfiles/' + id + '/history']">
                         <mat-icon>history</mat-icon> {{ 'BPMN.ACTIONS.VIEW_BPMNFILE_HISTORY' | translate}}
                     </button>
+                    <button mat-raised-button color="primary" (click)="createInstance()">
+                        <mat-icon>launch</mat-icon> {{ 'BPMN.ACTIONS.CREATEINSTANCE' | translate }}
+                    </button>
                     <button mat-raised-button color="primary" (click)="publish()">
                         {{ 'SHARED.PUBLISH' | translate  }}
                     </button>
@@ -39,6 +42,13 @@
            #rla3="routerLinkActive"
            [active]="rla3.isActive">
             {{ 'BPMN.TABS.XML' | translate }}
+        </a>
+        <a mat-tab-link
+           [routerLink]="['/bpmns/bpmnfiles/' + id + '/instances']"
+           routerLinkActive
+           #rla4="routerLinkActive"
+           [active]="rla4.isActive">
+            {{ 'BPMN.TABS.INSTANCES' | translate }}
         </a>
     </nav>
     <div class="mleft-10 mright-10 mt-10">

@@ -54,6 +54,13 @@ namespace CaseManagement.BPMN.AspNetCore.Apis
             }
         }
 
+        [HttpPost("search")]
+        public async Task<IActionResult> Search([FromBody] SearchProcessInstancesQuery searchProcessInstancesQuery, CancellationToken token)
+        {
+            var result = await _mediator.Send(searchProcessInstancesQuery, token);
+            return new OkObjectResult(result);
+        }
+
         [HttpGet("{id}/start")]
         public async Task<IActionResult> Start(string id, CancellationToken cancellationToken)
         {

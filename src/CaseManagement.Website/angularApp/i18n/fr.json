@@ -157,10 +157,16 @@
       "BPMNFILES": "BPMN files",
       "BPMNFILE": "BPMN file"
     },
+    "INSTANCE": {
+      "ID": "Identifier",
+      "STATUS": "Status",
+      "CREATE_DATETIME": "Create datetime",
+      "UPDATE_DATETIME": "Update datetime"
+    },
     "PROPERTIES": {
       "GENERALINFO": "General information",
-      "SERVICETASKINFO": "Servicetask information",
-      "USERTASKINFO": "Usertask information"
+      "SERVICETASKINFO": "Service task information",
+      "USERTASKINFO": "User task information"
     },
     "SCHEMA": {
       "ID": "Identifier",
@@ -176,11 +182,14 @@
     "TABS": {
       "INFORMATION": "Information",
       "EDITOR": "Editor",
-      "XML": "Xml"
+      "XML": "Xml",
+      "INSTANCES": "Instances"
     },
     "ACTIONS": {
       "VIEW_BPMNFILE_HISTORY": "View history",
-      "EDIT_BPMNFILE": "Edit bpmn file"
+      "EDIT_BPMNFILE": "Edit bpmn file",
+      "CREATEINSTANCE": "Create instance",
+      "START": "Start"
     },
     "INFORMATION": {
       "ID": "Identifier",
@@ -198,7 +207,11 @@
       "ERROR_PUBLISH_BPMNFILE": "An error occured while trying to publish the BPMN file",
       "ERROR_GET_BPMNFILE": "An error occured while trying to get the BPMN file",
       "BPMNFILE_PAYLOAD_UPDATED": "BPMN file payload has been updated",
-      "ERROR_UPDATE_BPMNFILE_PAYLOAD": "An error occured while trying to update the BPMN payload"
+      "ERROR_UPDATE_BPMNFILE_PAYLOAD": "An error occured while trying to update the BPMN payload",
+      "BPMN_INSTANCE_CREATED": "BPMN instance has been created",
+      "ERROR_CREATE_BPMN_INSTANCE": "An error occured while trying to create a BPMN instance",
+      "BPMN_INSTANCE_STARTED": "BPMN instance has been started",
+      "ERROR_START_BPMN_INSTANCE": "An error occured while trying to start the BPMN instance"
     }
   },
   "HUMANTASK": {

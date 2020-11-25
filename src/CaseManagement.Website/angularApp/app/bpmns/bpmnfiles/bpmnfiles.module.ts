@@ -8,9 +8,10 @@ import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { BpmnFilesRoutes } from './bpmnfiles.routes';
 import { ListBpmnFilesComponent } from './list/list.component';
-import { ViewBpmnFileComponent } from './view/view.component';
 import { ViewBpmnFileInformationComponent } from './view/information/information.component';
+import { ListBpmnInstancesComponent } from './view/instances/instances.component';
 import { ViewBpmnFileUIEditorComponent } from './view/uieditor/uieditor.component';
+import { ViewBpmnFileComponent } from './view/view.component';
 import { ViewBpmnFileXMLEditorComponent } from './view/xmleditor/xmleditor.component';
 
 @NgModule({
@@ -25,7 +26,7 @@ import { ViewBpmnFileXMLEditorComponent } from './view/xmleditor/xmleditor.compo
         SharedModule
     ],
     entryComponents: [ ],
-    declarations: [ListBpmnFilesComponent, ViewBpmnFileComponent, ViewBpmnFileInformationComponent, ViewBpmnFileXMLEditorComponent, ViewBpmnFileUIEditorComponent],
+    declarations: [ListBpmnFilesComponent, ViewBpmnFileComponent, ViewBpmnFileInformationComponent, ViewBpmnFileXMLEditorComponent, ViewBpmnFileUIEditorComponent, ListBpmnInstancesComponent],
     exports: [ ListBpmnFilesComponent  ]
 })
 

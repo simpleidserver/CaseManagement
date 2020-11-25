@@ -4,6 +4,7 @@ import * as fromCasePlanInstance from './caseplaninstances/reducers/caseplaninst
 import * as fromCasePlan from './caseplans/reducers/caseplan.reducers';
 import * as fromHumanTask from './humantaskdefs/reducers/humantaskdef.reducers';
 import * as fromBpmnFiles from './bpmnfiles/reducers/bpmnfile.reducers';
+import * as fromBpmnInstances from './bpmninstances/reducers/bpmninstance.reducers';
 
 export interface AppState {
     casePlan: fromCasePlan.CasePlanState;
@@ -18,6 +19,7 @@ export interface AppState {
     humanTasks: fromHumanTask.SearchHumanTaskDefState;
     bpmnFiles: fromBpmnFiles.BpmnFileLstState;
     bpmnFile: fromBpmnFiles.BpmnFileState;
+    bpmnInstances: fromBpmnInstances.BpmnInstanceLstState
 }
 
 export const selectCasePlan = (state: AppState) => state.casePlan;
@@ -32,6 +34,7 @@ export const selectHumanTask = (state: AppState) => state.humanTask;
 export const selectHumanTasks = (state: AppState) => state.humanTasks;
 export const selectBpmnFiles = (state: AppState) => state.bpmnFiles;
 export const selectBpmnFile = (state: AppState) => state.bpmnFile;
+export const selectBpmnInstances = (state: AppState) => state.bpmnInstances;
 
 export const selectCasePlanResult = createSelector(
     selectCasePlan,
@@ -163,7 +166,18 @@ export const selectBpmnFileResult = createSelector(
 
         return state.content;
     }
-); 
+);
+
+export const selectBpmnInstancesResult = createSelector(
+    selectBpmnInstances,
+    (state: fromBpmnInstances.BpmnInstanceLstState) => {
+        if (!state || state.content == null) {
+            return null;
+        }
+
+        return state.content;
+    }
+);
 
 export const appReducer = {
     casePlan: fromCasePlan.casePlanReducer,
@@ -177,5 +191,6 @@ export const appReducer = {
     humanTask: fromHumanTask.humanTaskDefReducer,
     humanTasks: fromHumanTask.humanTaskDefsReducer,
     bpmnFiles: fromBpmnFiles.bpmnFileLstReducer,
-    bpmnFile: fromBpmnFiles.bpmnFileReducer
+    bpmnFile: fromBpmnFiles.bpmnFileReducer,
+    bpmnInstances: fromBpmnInstances.bpmnInstanceLstReducer
 };

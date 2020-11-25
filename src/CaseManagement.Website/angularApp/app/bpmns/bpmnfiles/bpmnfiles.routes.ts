@@ -4,6 +4,7 @@ import { ViewBpmnFileInformationComponent } from './view/information/information
 import { ViewBpmnFileUIEditorComponent } from './view/uieditor/uieditor.component';
 import { ViewBpmnFileXMLEditorComponent } from './view/xmleditor/xmleditor.component';
 import { ViewBpmnFileComponent } from './view/view.component';
+import { ListBpmnInstancesComponent } from './view/instances/instances.component';
 
 const routes: Routes = [
     { path: '', component: ListBpmnFilesComponent },
@@ -12,7 +13,8 @@ const routes: Routes = [
             { path: '', redirectTo: 'info', pathMatch: 'full' },
             { path: 'info', component: ViewBpmnFileInformationComponent },
             { path: 'editor', component: ViewBpmnFileUIEditorComponent },
-            { path: 'xml', component: ViewBpmnFileXMLEditorComponent }
+            { path: 'xml', component: ViewBpmnFileXMLEditorComponent },
+            { path: 'instances', component: ListBpmnInstancesComponent }
         ]
     }
 ];

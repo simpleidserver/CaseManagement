@@ -15,7 +15,8 @@ namespace CaseManagement.BPMN.ProcessInstance
         IDomainEvtConsumerGeneric<ExecutionPointerCompletedEvent>,
         IDomainEvtConsumerGeneric<FlowNodeInstanceAddedEvent>,
         IDomainEvtConsumerGeneric<IncomingTokenAddedEvent>,
-        IDomainEvtConsumerGeneric<FlowNodeInstanceCompletedEvent>
+        IDomainEvtConsumerGeneric<FlowNodeInstanceCompletedEvent>,
+        IDomainEvtConsumerGeneric<ProcessInstanceStartedEvent>
     {
         private readonly IProcessInstanceCommandRepository _processInstanceCommandRepository;
         private readonly IProcessInstanceQueryRepository _processInstanceQueryRepository;
@@ -93,6 +94,14 @@ namespace CaseManagement.BPMN.ProcessInstance
         }
 
         public async Task Handle(FlowNodeInstanceCompletedEvent message, CancellationToken token)
+        {
+            var record = await _processInstanceQueryRepository.Get(message.AggregateId, token);
+            record.Handle(message);
+            await _processInstanceCommandRepository.Update(record, token);
+            await _processInstanceCommandRepository.SaveChanges(token);
+        }
+
+        public async Task Handle(ProcessInstanceStartedEvent message, CancellationToken token)
         {
             var record = await _processInstanceQueryRepository.Get(message.AggregateId, token);
             record.Handle(message);

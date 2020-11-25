@@ -1,5 +1,6 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Domains;
+using CaseManagement.BPMN.Infrastructure.Jobs.Notifications;
 using CaseManagement.BPMN.Persistence.EF.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,15 +18,13 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             return new ProcessInstanceAggregate
             {
                 AggregateId = processInstance.AggregateId,
-                CommonId = processInstance.CommonId,
                 CreateDateTime = processInstance.CreateDateTime,
-                InstanceId = processInstance.InstanceId,
                 Version = processInstance.Version,
                 UpdateDateTime = processInstance.UpdateDateTime,
-                ProcessId = processInstance.ProcessId,
+                Status = (ProcessInstanceStatus)processInstance.Status,
                 ElementInstances = new ConcurrentBag<FlowNodeInstance>(processInstance.ElementInstances.Select(_ => _.ToDomain()).ToList()),
                 Interfaces = new ConcurrentBag<BPMNInterface>(processInstance.Interfaces.Select(_ => _.ToDomain()).ToList()),
-                StateTransitions = new ConcurrentBag<StateTransitionToken>(processInstance.StateTransitions.Select(_ => _.ToDomain()).ToList()),
+                StateTransitions = new ConcurrentBag<StateTransitionNotification>(processInstance.StateTransitions.Select(_ => _.ToDomain()).ToList()),
                 ExecutionPathLst = new ConcurrentBag<ExecutionPath>(processInstance.ExecutionPathLst.Select(_ => _.ToDomain()).ToList()),
                 ElementDefs = new ConcurrentBag<BaseFlowNode>(processInstance.ElementDefs.Select(_ => _.ToDomain()).ToList()),
                 ItemDefs = new ConcurrentBag<ItemDefinition>(processInstance.ItemDefs.Select(_ => _.ToDomain()).ToList()),
@@ -80,13 +79,12 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             };
         }
 
-        public static StateTransitionToken ToDomain(this StateTransitionTokenModel stateTransition)
+        public static StateTransitionNotification ToDomain(this StateTransitionTokenModel stateTransition)
         {
-            return new StateTransitionToken
+            return new StateTransitionNotification(stateTransition.Id.ToString())
             {
                 Content = stateTransition.SerializedContent == null ? null : JObject.Parse(stateTransition.SerializedContent),
                 FlowNodeInstanceId = stateTransition.FlowNodeInstanceId,
-                Name = stateTransition.Name,
                 State = stateTransition.State
             };
         }
@@ -114,7 +112,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             };
         }
 
-        public static BaseToken ToDomain(this MessageTokenModel messageToken)
+        public static MessageToken ToDomain(this MessageTokenModel messageToken)
         {
             return new MessageToken
             {
@@ -172,12 +170,10 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             return new ProcessInstanceModel
             {
                 AggregateId = processInstance.AggregateId,
-                CommonId = processInstance.CommonId,
                 CreateDateTime = processInstance.CreateDateTime,
-                InstanceId = processInstance.InstanceId,
                 Version = processInstance.Version,
+                Status = (int)processInstance.Status,
                 UpdateDateTime = processInstance.UpdateDateTime,
-                ProcessId = processInstance.ProcessId,
                 ElementInstances = processInstance.ElementInstances.Select(_ => _.ToModel()).ToList(),
                 Interfaces = processInstance.Interfaces.Select(_ => _.ToModel()).ToList(),
                 StateTransitions = processInstance.StateTransitions.Select(_ => _.ToModel()).ToList(),
@@ -233,13 +229,12 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             };
         }
 
-        public static StateTransitionTokenModel ToModel(this StateTransitionToken stateTransition)
+        public static StateTransitionTokenModel ToModel(this StateTransitionNotification stateTransition)
         {
             return new StateTransitionTokenModel
             {
                 SerializedContent = stateTransition.Content == null ? null : stateTransition.Content.ToString(),
                 FlowNodeInstanceId = stateTransition.FlowNodeInstanceId,
-                Name = stateTransition.Name,
                 State = stateTransition.State
             };
         }
@@ -266,7 +261,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             };
         }
 
-        public static MessageTokenModel ToModel(this BaseToken messageToken, MessageTokenDirections direction)
+        public static MessageTokenModel ToModel(this MessageToken messageToken, MessageTokenDirections direction)
         {
             var msg = messageToken as MessageToken;
             return new MessageTokenModel

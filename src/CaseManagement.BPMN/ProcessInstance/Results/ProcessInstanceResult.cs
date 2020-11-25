@@ -8,6 +8,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
     public class ProcessInstanceResult
     {
         public string Id { get; set; }
+        public string Status { get; set; }
         public string ProcessFileId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
@@ -18,6 +19,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
             return new ProcessInstanceResult
             {
                 Id = processInstance.AggregateId,
+                Status = Enum.GetName(typeof(ProcessInstanceStatus), processInstance.Status),
                 ProcessFileId = processInstance.ProcessFileId,
                 CreateDateTime = processInstance.CreateDateTime,
                 UpdateDateTime = processInstance.UpdateDateTime,
