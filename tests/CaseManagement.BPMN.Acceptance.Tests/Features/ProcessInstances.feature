@@ -16,8 +16,8 @@ Scenario: Launch CreateUserAccount bpmn process
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
 	| Key                 | Value |
 	| operationParameters | {}    |
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'elementInstances[0].state'='Complete'
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'elementInstances[1].state'='Complete'
+	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[0].flowNodeInstance.state'='Complete'
+	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[1].flowNodeInstance.state'='Complete'
 
 Scenario: Launch GetWeatherInformation bpmn process
 	When execute HTTP POST JSON request 'http://localhost/processinstances'
@@ -34,5 +34,5 @@ Scenario: Launch GetWeatherInformation bpmn process
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
 	| Key                 | Value |
 	| operationParameters | {}    |
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'elementInstances[0].state'='Complete'
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'elementInstances[1].state'='Complete'
+	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[0].flowNodeInstance.state'='Complete'
+	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[1].flowNodeInstance.state'='Complete'

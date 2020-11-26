@@ -45,6 +45,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
             foreach(var processInstance in processInstances)
             {
                 var pi = ProcessInstanceAggregate.New(request.ProcessFileId,
+                    processFile.Name,
                     processInstance.ElementDefs.ToList(),
                     processInstance.Interfaces.ToList(),
                     processInstance.Messages.ToList(),

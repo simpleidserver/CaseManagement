@@ -157,7 +157,7 @@ namespace CaseManagement.BPMN.Builders
                 interfaces.Add(interfaceBuilder.Build());
             }
 
-            var result = ProcessInstanceAggregate.New(ProcessFileId, elts, interfaces, Messages, ItemDefs, SequenceFlows);
+            var result = ProcessInstanceAggregate.New(ProcessFileId, "", elts, interfaces, Messages, ItemDefs, SequenceFlows);
             return result;
         }
     }

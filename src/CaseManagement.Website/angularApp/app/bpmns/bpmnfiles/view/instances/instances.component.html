@@ -3,7 +3,7 @@
         <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "BPMN.INSTANCE.STATUS" | translate }}</th>
             <td mat-cell *matCellDef="let bpmn">
-                {{ bpmn.status }}
+                <a href="#" [routerLink]="['/bpmns/bpmninstances/' + bpmn.id]">{{ bpmn.status }}</a>
             </td>
         </ng-container>
         <ng-container matColumnDef="create_datetime">
@@ -14,10 +14,14 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "BPMN.INSTANCE.UPDATE_DATETIME" | translate }}</th>
             <td mat-cell *matCellDef="let bpmn">{{bpmn.updateDateTime | date:'medium'}} </td>
         </ng-container>
+        <ng-container matColumnDef="nbExecutionPath">
+            <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.NBEXECUTIONPATH" | translate }}</th>
+            <td mat-cell *matCellDef="let bpmn">{{ bpmn.executionPaths.length }} </td>
+        </ng-container>
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
             <td mat-cell *matCellDef="let bpmn">
-                <a href="#" *ngIf="bpmn.status === 'CREATED'" (click)="start($event, bpmn)">{{ 'BPMN.ACTIONS.START' | translate }}</a>
+                <a href="#" (click)="start($event, bpmn)">{{ 'BPMN.ACTIONS.START' | translate }}</a>
             </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

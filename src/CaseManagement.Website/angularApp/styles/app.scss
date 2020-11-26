@@ -119,3 +119,30 @@ ul.list li:hover .actions {
 .ml-10 {
     margin-left: 10px !important;
 }
+
+.circle {
+    border-radius: 15px !important;
+}
+
+a.is-active {
+    font-weight: bold;
+}
+
+.error-overlay {
+    opacity: 0.4;
+    cursor: pointer !important;
+    border-radius: 10px;
+}
+
+.complete-overlay {
+    opacity: 0.4;
+    cursor: pointer !important;
+    border-radius: 10px;
+}
+
+.outgoing-tokens {
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+}

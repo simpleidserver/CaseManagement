@@ -10,6 +10,7 @@ namespace CaseManagement.BPMN.Domains
         public ExecutionPointer()
         {
             Incoming = new List<MessageToken>();
+            Outgoing = new List<MessageToken>();
             IsActive = true;
         }
 
@@ -31,7 +32,7 @@ namespace CaseManagement.BPMN.Domains
                 InstanceFlowNodeId = InstanceFlowNodeId,
                 IsActive = IsActive,
                 Incoming = Incoming.Select(_ => (MessageToken)_.Clone()).ToList(),
-                Outgoing = Incoming.Select(_ => (MessageToken)_.Clone()).ToList()
+                Outgoing = Outgoing.Select(_ => (MessageToken)_.Clone()).ToList()
             };
         }
     }

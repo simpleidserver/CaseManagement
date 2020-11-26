@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -50,6 +51,16 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
                 {
                     return BPMNExecutionResult.Block();
                 }
+                catch(Exception ex)
+                {
+                    executionContext.Instance.UpdateState(instance, ActivityStates.FAILING, ex.ToString());
+                    return BPMNExecutionResult.Block();
+                }
+            }
+
+            if (instance.ActivityState == ActivityStates.FAILING)
+            {
+                return BPMNExecutionResult.Block();
             }
 
             return BPMNExecutionResult.Next(flowNodeIds, outcome);

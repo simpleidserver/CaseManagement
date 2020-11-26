@@ -67,8 +67,6 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
     onSave() {
         const self = this;
         this.viewer.saveXML({}, function (e: any, x: any) {
-            console.log(e);
-            console.log(x);
             if (e) {
                 return;
             }

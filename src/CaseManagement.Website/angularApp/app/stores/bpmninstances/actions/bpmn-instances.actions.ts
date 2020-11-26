@@ -11,7 +11,20 @@ export enum ActionTypes {
     ERROR_START_BPMNINSTANCE = "[BpmnInstances] ERROR_START_BPMNINSTANCE",
     SEARCH_BPMNINSTANCES = "[BpmnInstances] SEARCH_BPMNINSTANCES",
     COMPLETE_SEARCH_BPMNINSTANCES = "[BpmnInstances] COMPLETE_SEARCH_BPMNINSTANCES",
-    ERROR_SEARCH_BPMNINSTANCES = "[BpmnInstances] ERROR_SEARCH_BPMNINSTANCES"
+    ERROR_SEARCH_BPMNINSTANCES = "[BpmnInstances] ERROR_SEARCH_BPMNINSTANCES",
+    GET_BPMNINSTANCE = "[BpmnInstances] GET_BPMNINSTANCE",
+    COMPLETE_GET_BPMNINSTANCE = "[BpmnInstances] COMPLETE_GET_BPMNINSTANCE",
+    ERROR_GET_BPMNINSTANCE = "[BpmnInstances] ERROR_GET_BPMNINSTANCE"
+}
+
+export class GetBpmnInstance implements Action {
+    readonly type = ActionTypes.GET_BPMNINSTANCE
+    constructor(public id: string) { }
+}
+
+export class CompleteGetBpmnInstance implements Action {
+    readonly type = ActionTypes.COMPLETE_GET_BPMNINSTANCE
+    constructor(public content: BpmnInstance) { }
 }
 
 export class CreateBpmnInstance implements Action {
@@ -44,7 +57,9 @@ export class CompleteSearchBpmnInstances implements Action {
     constructor(public content: SearchBpmnInstancesResult) { }
 }
 
-export type ActionsUnion = CreateBpmnInstance |
+export type ActionsUnion = GetBpmnInstance |
+    CompleteGetBpmnInstance |
+    CreateBpmnInstance |
     CompleteCreateBpmnInstance |
     StartBpmnInstance |
     CompleteStartBpmnInstance |

@@ -1,6 +1,6 @@
 ﻿export class BpmnInstance {
     constructor() {
-        this.elementInstances = [];
+        this.executionPaths = [];
     }
 
     id: string;
@@ -8,7 +8,36 @@
     processFileId: string;
     createDateTime: Date;
     updateDateTime: Date;
-    elementInstances: BpmnNodeInstance[];
+    executionPaths: BpmnExecutionPath[];
+}
+
+export class BpmnExecutionPath {
+    constructor() {
+        this.executionPointers = [];
+    }
+
+    id: string;
+    createDateTime: Date;
+    executionPointers: BpmnExecutionPointer[];
+}
+
+export class BpmnExecutionPointer {
+    constructor() {
+        this.incomingTokens = [];
+        this.outgoingTokens = [];
+    }
+
+    id: string;
+    isActive: boolean;
+    flowNodeId: string;
+    incomingTokens: BpmnMessageToken[];
+    outgoingTokens: BpmnMessageToken[];
+    flowNodeInstance: BpmnNodeInstance;
+}
+
+export class BpmnMessageToken {
+    name: string;
+    content: any;
 }
 
 export class BpmnNodeInstance {
@@ -27,4 +56,5 @@ export class BpmnNodeInstance {
 export class ActivityStateHistory {
     state: string;
     executionDateTime: Date;
+    message: string;
 }

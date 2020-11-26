@@ -19,6 +19,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             {
                 AggregateId = processInstance.AggregateId,
                 CreateDateTime = processInstance.CreateDateTime,
+                ProcessFileName = processInstance.ProcessFileName,
                 Version = processInstance.Version,
                 UpdateDateTime = processInstance.UpdateDateTime,
                 Status = (ProcessInstanceStatus)processInstance.Status,
@@ -52,7 +53,8 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             return new ActivityStateHistory
             {
                 ExecutionDateTime = activityStateHistory.ExecutionDateTime,
-                State = activityStateHistory.State
+                State = activityStateHistory.State,
+                Message = activityStateHistory.Message
             };
         }
 
@@ -171,6 +173,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             {
                 AggregateId = processInstance.AggregateId,
                 CreateDateTime = processInstance.CreateDateTime,
+                ProcessFileName = processInstance.ProcessFileName,
                 Version = processInstance.Version,
                 Status = (int)processInstance.Status,
                 UpdateDateTime = processInstance.UpdateDateTime,
@@ -204,7 +207,8 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             return new ActivityStateHistoryModel
             {
                 ExecutionDateTime = activityStateHistory.ExecutionDateTime,
-                State = activityStateHistory.State
+                State = activityStateHistory.State,
+                Message = activityStateHistory.Message
             };
         }
 

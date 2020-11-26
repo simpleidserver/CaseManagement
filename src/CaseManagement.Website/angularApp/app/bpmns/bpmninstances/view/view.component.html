@@ -1,0 +1,98 @@
+﻿<div fxLayout="row" class="breadcrumb">
+    <div fxFlex="80%" fxFlexOffset="10%">
+        <ul>
+            <li><div class="mat-h1"><a [routerLink]="['/bpmns/bpmninstances']">{{ "BPMN.TITLES.BPMNINSTANCES" | translate }}</a></div></li>
+            <li class="separator"><div class="mat-h1">\</div></li>
+            <li>
+                <div class="mat-h1">
+                    {{ 'BPMN.TITLES.BPMNINSTANCE' | translate }}
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div fxLayout="row">
+    <div fxFlex="20%">
+        <mat-card>
+            <mat-card-header>
+                {{ 'BPMN.INSTANCE.EXECUTIONPATHLST' | translate }}
+            </mat-card-header>
+            <mat-card-content>
+                <mat-list>
+                    <a href="#" [class.is-active]="execPath.id === currentExecPathId" (click)="displayExecutionPath($event, execPath)" mat-list-item *ngFor="let execPath of bpmnInstance.executionPaths; let i = index">
+                        <small>{{ 'BPMN.INSTANCE.EXECUTIONPATH' | translate : { index : (bpmnInstance.executionPaths.length - i), receptionDate : (execPath.createDateTime | date:'medium') } }}</small>
+                    </a>
+                </mat-list>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div fxFlex="80%">
+        <div id="canvas" style="height: 300px"></div>
+    </div>
+</div>
+<div *ngIf="selectedPointer">
+    <mat-tab-group>
+        <mat-tab label="{{ 'BPMN.INSTANCE.TOKENS.INCOMINGTOKENS' | translate }}">
+            <table mat-table class="full-width" [dataSource]="selectedPointer.incomingTokens">
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.TOKENS.NAME" | translate }}</th>
+                    <td mat-cell *matCellDef="let token">
+                        {{ token.name ? token.name : ("BPMN.INSTANCE.TOKENS.EMPTYTOKEN" | translate) }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="content">
+                    <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.TOKENS.CONTENT" | translate }}</th>
+                    <td mat-cell *matCellDef="let token">
+                        {{ token.content | json }}
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedTokenColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedTokenColumns;"></tr>
+            </table>
+        </mat-tab>
+        <mat-tab label="{{ 'BPMN.INSTANCE.TOKENS.OUTGOINGTOKENS' | translate }}">
+            <table mat-table class="full-width" [dataSource]="selectedPointer.outgoingTokens">
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.TOKENS.NAME" | translate }}</th>
+                    <td mat-cell *matCellDef="let token">
+                        {{ token.name ? token.name : ("BPMN.INSTANCE.TOKENS.EMPTYTOKEN" | translate) }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="content">
+                    <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.TOKENS.CONTENT" | translate }}</th>
+                    <td mat-cell *matCellDef="let token">
+                        {{ token.content | json }}
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedTokenColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedTokenColumns;"></tr>
+            </table>
+        </mat-tab>
+        <mat-tab label="{{ 'BPMN.INSTANCE.ACTIVITYSTATE.TITLE' | translate }}">
+            <table mat-table class="full-width" [dataSource]="selectedPointer.flowNodeInstance.activityStates">
+                <ng-container matColumnDef="state">
+                    <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.ACTIVITYSTATE.STATE" | translate }}</th>
+                    <td mat-cell *matCellDef="let actState">
+                        {{ actState.state }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="content">
+                    <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.ACTIVITYSTATE.EXECUTIONDATE" | translate }}</th>
+                    <td mat-cell *matCellDef="let actState">
+                        {{ actState.executionDateTime | date:'medium' }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="message">
+                    <th mat-header-cell *matHeaderCellDef>{{ "BPMN.INSTANCE.ACTIVITYSTATE.MESSAGE" | translate }}</th>
+                    <td mat-cell *matCellDef="let actState">
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <textarea matInput maxlength="400">{{ actState.message }}</textarea>
+                        </mat-form-field>                       
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedStateColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedStateColumns;"></tr>
+            </table>
+        </mat-tab>
+    </mat-tab-group>
+</div>

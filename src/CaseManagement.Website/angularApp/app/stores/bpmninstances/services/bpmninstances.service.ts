@@ -31,6 +31,15 @@ export class BpmnInstancesService {
         return this.http.post<SearchBpmnInstancesResult>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
+    get(id: string): Observable<BpmnInstance> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.BPMN_API_URL + "/processinstances/" + id;
+        return this.http.get<BpmnInstance>(targetUrl, { headers: headers });
+    }
+
     create(processFileId: string): Observable<BpmnInstance> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');

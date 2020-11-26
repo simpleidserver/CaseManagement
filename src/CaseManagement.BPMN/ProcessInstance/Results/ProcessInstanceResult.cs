@@ -1,4 +1,6 @@
-﻿using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Common;
+using CaseManagement.BPMN.Domains;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +12,78 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
         public string Id { get; set; }
         public string Status { get; set; }
         public string ProcessFileId { get; set; }
+        public string ProcessFileName { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
-        public ICollection<FlowNodeInstanceResult> ElementInstances { get; set; }
+        public ICollection<ExecutionPathResult> ExecutionPaths { get; set; }
 
         public static ProcessInstanceResult ToDto(ProcessInstanceAggregate processInstance)
-        {
+        {            
             return new ProcessInstanceResult
             {
                 Id = processInstance.AggregateId,
                 Status = Enum.GetName(typeof(ProcessInstanceStatus), processInstance.Status),
                 ProcessFileId = processInstance.ProcessFileId,
+                ProcessFileName = processInstance.ProcessFileName,
                 CreateDateTime = processInstance.CreateDateTime,
                 UpdateDateTime = processInstance.UpdateDateTime,
-                ElementInstances = processInstance.ElementInstances.Select(_ => FlowNodeInstanceResult.ToDto(_)).ToList()
+                ExecutionPaths = processInstance.ExecutionPathLst.Select(_ => ExecutionPathResult.ToDto(_, processInstance.ElementInstances.ToList())).ToList()
             };
+        }
+
+        public class ExecutionPathResult
+        {
+            public string Id { get; set; }
+            public DateTime CreateDateTime { get; set; }
+            public ICollection<ExecutionPointerResult> ExecutionPointers { get; set; }
+
+            public static ExecutionPathResult ToDto(ExecutionPath execPath, ICollection<FlowNodeInstance> flowNodesInstances)
+            {
+                return new ExecutionPathResult
+                {
+                    Id = execPath.Id,
+                    CreateDateTime = execPath.CreateDateTime,
+                    ExecutionPointers = execPath.Pointers.Select(_ => ExecutionPointerResult.ToDto(_, flowNodesInstances)).ToList()
+                };
+            }
+        }
+
+        public class ExecutionPointerResult
+        {
+            public string Id { get; set; }
+            public bool IsActive { get; set; }
+            public string FlowNodeId { get; set; }
+            public ICollection<MessageTokenResult> IncomingTokens { get; set; }
+            public ICollection<MessageTokenResult> OutgoingTokens { get; set; }
+            public FlowNodeInstanceResult FlowNodeInstance { get; set; }
+
+            public static ExecutionPointerResult ToDto(ExecutionPointer executionPointer, ICollection<FlowNodeInstance> flowNodesInstances)
+            {
+                return new ExecutionPointerResult
+                {
+                    Id = executionPointer.Id,
+                    IsActive = executionPointer.IsActive,
+                    FlowNodeId = executionPointer.FlowNodeId,
+                    FlowNodeInstance = FlowNodeInstanceResult.ToDto(flowNodesInstances.First(_ => _.Id == executionPointer.InstanceFlowNodeId)),
+                    IncomingTokens = executionPointer.Incoming.Select(_ => MessageTokenResult.ToDto(_)).ToList(),
+                    OutgoingTokens = executionPointer.Outgoing.Select(_ => MessageTokenResult.ToDto(_)).ToList()
+                };
+            }
+        }
+
+        public class MessageTokenResult
+        {
+            public string Name { get; set; }
+            public JObject Content { get; set; }
+
+            public static MessageTokenResult ToDto(MessageToken messageToken)
+            {
+                return new MessageTokenResult
+                {
+                    Name = messageToken.Name,
+                    Content = messageToken.MessageContent
+                };
+            }
         }
 
         public class FlowNodeInstanceResult
@@ -54,13 +113,15 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
         {
             public string State { get; set; }
             public DateTime ExecutionDateTime { get; set; }
+            public string Message { get; set; }
 
             public static ActivityStateHistoryResult ToDto(ActivityStateHistory activityStateHistory)
             {
                 return new ActivityStateHistoryResult
                 {
                     ExecutionDateTime = activityStateHistory.ExecutionDateTime,
-                    State = Enum.GetName(typeof(ActivityStates), activityStateHistory.State)
+                    State = Enum.GetName(typeof(ActivityStates), activityStateHistory.State),
+                    Message = activityStateHistory.Message
                 };
             }
         }

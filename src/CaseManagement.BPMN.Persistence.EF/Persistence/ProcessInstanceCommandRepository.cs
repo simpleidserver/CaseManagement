@@ -28,7 +28,6 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
             result.ElementDefs = rec.ElementDefs;
             result.ElementInstances = rec.ElementInstances;
             result.ExecutionPathLst = rec.ExecutionPathLst;
-            result.InstanceId = rec.InstanceId;
             result.Interfaces = rec.Interfaces;
             result.ItemDefs = rec.ItemDefs;
             result.Messages = rec.Messages;

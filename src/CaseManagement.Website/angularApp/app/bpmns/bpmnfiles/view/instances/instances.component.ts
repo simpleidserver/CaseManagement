@@ -14,7 +14,7 @@ import { merge } from 'rxjs';
     styleUrls: ['./instances.component.scss']
 })
 export class ListBpmnInstancesComponent implements OnInit, OnDestroy {
-    displayedColumns: string[] = ['status', 'create_datetime', 'update_datetime', 'actions'];
+    displayedColumns: string[] = ['status', 'create_datetime', 'update_datetime', 'nbExecutionPath', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     length: number;

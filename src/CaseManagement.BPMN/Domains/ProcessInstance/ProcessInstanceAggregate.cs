@@ -28,6 +28,7 @@ namespace CaseManagement.BPMN.Domains
 
         public ProcessInstanceStatus Status { get; set; }
         public string ProcessFileId { get; set; }
+        public string ProcessFileName { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public ICollection<StartEvent> StartEvts => ElementDefs.Where(_ => _ is StartEvent).Cast<StartEvent>().ToList();
@@ -69,7 +70,7 @@ namespace CaseManagement.BPMN.Domains
 
         public FlowNodeInstance GetActiveInstance(string elementId)
         {
-            return ElementInstances.FirstOrDefault(_ => _.FlowNodeId == elementId && _.State == FlowNodeStates.Active);
+            return ElementInstances.FirstOrDefault(_ => _.Id == elementId && _.State == FlowNodeStates.Active);
         }
 
         public ExecutionPath GetExecutionPath(string executionPathId)
@@ -172,7 +173,7 @@ namespace CaseManagement.BPMN.Domains
 
         public ICollection<string> CompleteExecutionPointer(ExecutionPointer pointer, ICollection<string> nextFlowIds, ICollection<MessageToken> outcomeValues)
         {
-            var evt = new ExecutionPointerCompletedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pointer.ExecutionPathId, pointer.Id, DateTime.UtcNow);
+            var evt = new ExecutionPointerCompletedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pointer.ExecutionPathId, pointer.Id, outcomeValues, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
             var result = new List<string>();
@@ -196,9 +197,9 @@ namespace CaseManagement.BPMN.Domains
             DomainEvents.Add(evt);
         }
 
-        public void UpdateState(FlowNodeInstance instance, ActivityStates state)
+        public void UpdateState(FlowNodeInstance instance, ActivityStates state, string message = null)
         {
-            var evt = new ActivityStateUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, instance.Id, state, DateTime.UtcNow);
+            var evt = new ActivityStateUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, instance.Id, state, message, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -255,7 +256,7 @@ namespace CaseManagement.BPMN.Domains
             }
 
             var instanceId = string.Empty;
-            if (!TryAddInstance(flowNode, out instanceId))
+            if (!TryAddInstance(flowNode, pathId, out instanceId))
             {
                 var pointer = GetActiveExecutionPointer(pathId, instanceId);
                 if (pointer != null)
@@ -274,18 +275,23 @@ namespace CaseManagement.BPMN.Domains
             return id;
         }
 
-        private bool TryAddInstance(BaseFlowNode node, out string instanceId)
+        private bool TryAddInstance(BaseFlowNode node, string pathId, out string instanceId)
         {
-            return TryAddInstance(node.Id, out instanceId);
+            return TryAddInstance(node.Id, pathId, out instanceId);
         }
 
-        private bool TryAddInstance(string elementId, out string instanceId)
+        private bool TryAddInstance(string elementId, string pathId, out string instanceId)
         {
-            var instance = GetActiveInstance(elementId);
-            if (instance != null)
+            var path = GetExecutionPath(pathId);
+            var pointer = path.Pointers.FirstOrDefault(_ => _.FlowNodeId == elementId);
+            if (pointer != null)
             {
-                instanceId = instance.Id;
-                return false;
+                var instance = GetActiveInstance(pointer.InstanceFlowNodeId);
+                if (instance != null)
+                {
+                    instanceId = instance.Id;
+                    return false;
+                }
             }
 
             instanceId = Guid.NewGuid().ToString();
@@ -337,10 +343,10 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public static ProcessInstanceAggregate New(string processFileId, ICollection<BaseFlowNode> elements, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs, ICollection<SequenceFlow> sequenceFlows)
+        public static ProcessInstanceAggregate New(string processFileId, string processFileName, ICollection<BaseFlowNode> elements, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs, ICollection<SequenceFlow> sequenceFlows)
         {
             var result = new ProcessInstanceAggregate();
-            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFileId, interfaces, messages, itemDefs, sequenceFlows, DateTime.UtcNow);
+            var evt = new ProcessInstanceCreatedEvent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), 0, processFileId, processFileName, interfaces, messages, itemDefs, sequenceFlows, DateTime.UtcNow);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             foreach (var elt in elements)
@@ -357,6 +363,7 @@ namespace CaseManagement.BPMN.Domains
             {
                 AggregateId = AggregateId,
                 ProcessFileId = ProcessFileId,
+                ProcessFileName = ProcessFileName,
                 Version = Version,
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
@@ -409,6 +416,7 @@ namespace CaseManagement.BPMN.Domains
             AggregateId = evt.AggregateId;
             Version = evt.Version;
             ProcessFileId = evt.ProcessFileId;
+            ProcessFileName = evt.ProcessFileName;
             CreateDateTime = evt.CreateDateTime;
             Status = ProcessInstanceStatus.CREATED;
             Interfaces = new ConcurrentBag<BPMNInterface>(evt.Interfaces);
@@ -461,6 +469,7 @@ namespace CaseManagement.BPMN.Domains
         {
             var pointer = GetExecutionPointer(evt.ExecutionPathId, evt.ExecutionPointerId);
             pointer.IsActive = false;
+            pointer.Outgoing = evt.OutcomeValues;
             Version = evt.Version;
             UpdateDateTime = evt.CompletionDateTime;
         }
@@ -468,7 +477,7 @@ namespace CaseManagement.BPMN.Domains
         private void Handle(ActivityStateUpdatedEvent evt)
         {
             var instance = GetInstance(evt.FlowNodeInstanceId);
-            instance.UpdateState(evt.State, evt.UpdateDateTime);
+            instance.UpdateState(evt.State, evt.UpdateDateTime, evt.Message);
             Version = evt.Version;
             UpdateDateTime = evt.UpdateDateTime;
         }

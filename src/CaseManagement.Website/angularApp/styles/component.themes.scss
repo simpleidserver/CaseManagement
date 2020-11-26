@@ -67,6 +67,18 @@
     .mat-tab-label-active {
         opacity: 1;
     }
+
+    .error-overlay {
+        background-color: red;
+    }
+
+    .complete-overlay {
+        background-color: green;
+    }
+
+    .outgoing-tokens {
+        background-color: gray;
+    }
 }
 
 @mixin component-themes($theme) {

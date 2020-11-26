@@ -32,9 +32,9 @@ namespace CaseManagement.BPMN.Domains
             };
         }
 
-        public void UpdateState(ActivityStates state, DateTime updateDateTime)
+        public void UpdateState(ActivityStates state, DateTime updateDateTime, string message = null)
         {
-            ActivityStates.Add(new ActivityStateHistory(state, updateDateTime));
+            ActivityStates.Add(new ActivityStateHistory(state, updateDateTime, message));
             ActivityState = state;
         }
     }

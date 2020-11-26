@@ -67,6 +67,8 @@ export class ViewBpmnFileComponent implements OnInit {
                     duration: 2000
                 });
                 this.router.navigate(["/bpmns/bpmnfiles/" + e.id]);
+                this.id = e.id;
+                this.refresh();
             });
         this.actions$.pipe(
             filter((action: any) => action.type === fromBpmnFileActions.ActionTypes.ERROR_PUBLISH_BPMNFILE))

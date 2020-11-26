@@ -127,11 +127,11 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
                     "tanceId$/complete\'", ((string)(null)), table9, "And ");
 #line 19
- testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
-                    "nces[0].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'executionPat" +
+                    "hs[0].executionPointers[0].flowNodeInstance.state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 20
- testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
-                    "nces[1].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'executionPat" +
+                    "hs[0].executionPointers[1].flowNodeInstance.state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -187,11 +187,11 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
                     "tanceId$/complete\'", ((string)(null)), table12, "And ");
 #line 37
- testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
-                    "nces[0].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'executionPat" +
+                    "hs[0].executionPointers[0].flowNodeInstance.state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 38
- testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'elementInsta" +
-                    "nces[1].state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'executionPat" +
+                    "hs[0].executionPointers[1].flowNodeInstance.state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

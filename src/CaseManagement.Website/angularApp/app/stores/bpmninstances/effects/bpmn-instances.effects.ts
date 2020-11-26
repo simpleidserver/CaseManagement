@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, CreateBpmnInstance, StartBpmnInstance, SearchBpmnInstances } from '../actions/bpmn-instances.actions';
+import { ActionTypes, CreateBpmnInstance, StartBpmnInstance, SearchBpmnInstances, GetBpmnInstance } from '../actions/bpmn-instances.actions';
 import { BpmnInstancesService } from '../services/bpmninstances.service';
 
 @Injectable()
@@ -11,6 +11,20 @@ export class BpmnInstancesEffects {
         private actions$: Actions,
         private bpmnInstancesService: BpmnInstancesService
     ) { }
+
+    @Effect()
+    getBpmnInstance$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.GET_BPMNINSTANCE),
+            mergeMap((evt: GetBpmnInstance) => {
+                return this.bpmnInstancesService.get(evt.id)
+                    .pipe(
+                        map(content => { return { type: ActionTypes.COMPLETE_GET_BPMNINSTANCE, content: content }; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_GET_BPMNINSTANCE }))
+                    );
+            }
+            )
+        );
 
     @Effect()
     createBpmnInstance$ = this.actions$

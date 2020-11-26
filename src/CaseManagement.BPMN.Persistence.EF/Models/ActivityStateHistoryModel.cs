@@ -7,6 +7,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Models
     {
         public long Id { get; set; }
         public ActivityStates State { get; set; }
+        public string Message { get; set; }
         public DateTime ExecutionDateTime { get; set; }
     }
 }

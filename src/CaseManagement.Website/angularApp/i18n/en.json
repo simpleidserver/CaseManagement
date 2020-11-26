@@ -155,13 +155,31 @@
   "BPMN": {
     "TITLES": {
       "BPMNFILES": "BPMN files",
-      "BPMNFILE": "BPMN file"
+      "BPMNFILE": "BPMN file",
+      "BPMNINSTANCES": "BPMN instances",
+      "BPMNINSTANCE": "BPMN instance"
     },
     "INSTANCE": {
       "ID": "Identifier",
       "STATUS": "Status",
       "CREATE_DATETIME": "Create datetime",
-      "UPDATE_DATETIME": "Update datetime"
+      "UPDATE_DATETIME": "Update datetime",
+      "NBEXECUTIONPATH": "Number of execution path",
+      "EXECUTIONPATHLST": "List of execution path",
+      "EXECUTIONPATH": "Execution path {{index}}, received : {{receptionDate}}",
+      "ACTIVITYSTATE": {
+        "TITLE": "Activity states",
+        "STATE": "State",
+        "EXECUTIONDATE": "Execution date",
+        "MESSAGE": "Message"
+      }
+      "TOKENS": {
+        "INCOMINGTOKENS": "Incoming tokens",
+        "OUTGOINGTOKENS": "Outgoing tokens",
+        "NAME": "Name",
+        "CONTENT": "Content",
+        "EMPTYTOKEN": "Empty"
+      }
     }
     "PROPERTIES": {
       "GENERALINFO": "General information",

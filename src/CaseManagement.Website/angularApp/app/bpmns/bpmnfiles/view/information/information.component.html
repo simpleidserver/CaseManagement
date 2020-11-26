@@ -1,21 +1,21 @@
 ﻿<form [formGroup]="saveForm" (ngSubmit)="onSave(saveForm.value)" class="mt-10">
-    <mat-form-field class="full-width" appearance="outline" [floatLabel]="always">
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
         <mat-label>{{ 'BPMN.INFORMATION.ID' | translate }}</mat-label>
         <input matInput name="id" formControlName="id" />
     </mat-form-field>
-    <mat-form-field class="full-width" appearance="outline" [floatLabel]="always">
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
         <mat-label>{{ 'BPMN.INFORMATION.CREATE_DATETIME' | translate }}</mat-label>
         <input matInput name="createDateTime" formControlName="createDateTime" readonly />
     </mat-form-field>
-    <mat-form-field class="full-width" appearance="outline" [floatLabel]="always">
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
         <mat-label>{{ 'BPMN.INFORMATION.UPDATE_DATETIME' | translate }}</mat-label>
         <input matInput name="updateDateTime" formControlName="updateDateTime" readonly />
     </mat-form-field>
-    <mat-form-field class="full-width" appearance="outline" [floatLabel]="always">
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
         <mat-label>{{ 'BPMN.INFORMATION.FILE_NAME' | translate }}</mat-label>
         <input matInput name="name" formControlName="name" />
     </mat-form-field>
-    <mat-form-field class="full-width" appearance="outline" [floatLabel]="always">
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
         <mat-label>{{ 'BPMN.INFORMATION.DESCRIPTION' | translate }}</mat-label>
         <textarea matInput name="description" formControlName="description"></textarea>
     </mat-form-field>
