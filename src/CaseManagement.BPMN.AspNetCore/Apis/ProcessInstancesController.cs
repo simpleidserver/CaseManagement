@@ -2,9 +2,11 @@
 using CaseManagement.BPMN.ProcessInstance.Commands;
 using CaseManagement.BPMN.ProcessInstance.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -62,11 +64,13 @@ namespace CaseManagement.BPMN.AspNetCore.Apis
         }
 
         [HttpGet("{id}/start")]
+        [Authorize("Authenticated")]
         public async Task<IActionResult> Start(string id, CancellationToken cancellationToken)
         {
             try
             {
-                var cmd = new StartProcessInstanceCommand { ProcessInstanceId = id };
+                var nameIdentifier = User.GetClaims().GetUserNameIdentifier();
+                var cmd = new StartProcessInstanceCommand { ProcessInstanceId = id, NameIdentifier = ""};
                 await _mediator.Send(cmd, cancellationToken);
                 return new NoContentResult();
             }

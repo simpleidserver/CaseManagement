@@ -10,7 +10,7 @@
 </mat-form-field>
 <!-- Operation parameter -->
 <h5>{{ 'SHARED.INPUT_PARAMETERS' | translate }}</h5>
-<mat-form-field class="full-width" *ngFor="let param of humanTaskDef.inputOperationParameters">
+<mat-form-field class="full-width" *ngFor="let param of inputOperationParameters">
     <mat-label>{{ param.name }}</mat-label>
     <input [(ngModel)]="createHumanTaskInstance.operationParameters[param.name]" matInput />
 </mat-form-field>

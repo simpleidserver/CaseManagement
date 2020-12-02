@@ -55,15 +55,15 @@ namespace CaseManagement.BPMN.Host
                     }
                 };
             });
-            services.AddAuthorization(policy =>
-            {
-
-            });
+            services.AddAuthorization(_ => _.AddDefaultBPMNAuthorizationPolicy());
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
             services.AddHostedService<BPMNJobServerHostedService>();
-            services.AddProcessJobServer().AddProcessFiles(files);
+            services.AddProcessJobServer(callbackServerOpts: opts =>
+            {
+                opts.WSHumanTaskAPI = "http://localhost:60006";
+            }).AddProcessFiles(files);
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {

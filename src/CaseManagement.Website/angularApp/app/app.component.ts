@@ -136,6 +136,7 @@ export class AppComponent implements OnInit {
 
     private configureAuth() {
         this.oauthService.configure(authConfig);
+        this.oauthService.setStorage(localStorage);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         let self = this;
         this.oauthService.loadDiscoveryDocumentAndTryLogin({

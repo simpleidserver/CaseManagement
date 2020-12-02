@@ -40,6 +40,18 @@ namespace CaseManagement.HumanTask.Authorization
 
         public Task<ICollection<UserRoles>> GetRoles(ICollection<PeopleAssignmentInstance> peopleAssignments, IEnumerable<KeyValuePair<string, string>> claims, CancellationToken token)
         {
+            if (IsAdmin(claims))
+            {
+                return Task.FromResult((ICollection<UserRoles>)new List<UserRoles>
+                { 
+                    UserRoles.BUSINESSADMINISTRATOR,
+                    UserRoles.EXCLUDEDOWNER,
+                    UserRoles.POTENTIALOWNER,
+                    UserRoles.TASKINITIATOR,
+                    UserRoles.TASKSTAKEHODLER
+                });
+            }
+
             ICollection<UserRoles> result = new List<UserRoles>();
             var cb = new Action<ICollection<PeopleAssignmentInstance>, UserRoles, ICollection<UserRoles>>(async (pas, ur, r) =>
             {
@@ -101,5 +113,10 @@ namespace CaseManagement.HumanTask.Authorization
         }
 
         #endregion
+
+        private static bool IsAdmin(IEnumerable<KeyValuePair<string, string>> claims)
+        {
+            return claims.Any(_ => _.Key == "scope" && _.Value == HumanTaskConstants.ScopeNames.CreateHumanTaskInstance);
+        }
     }
 }

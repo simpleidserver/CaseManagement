@@ -59,7 +59,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             var assignment = EnrichAssignment(humanTaskDef, request);
             var priority = EnrichPriority(humanTaskDef, request);
             var assignmentInstance = _parameterParser.ParsePeopleAssignments(assignment, parameters);
-            if (!request.IsCreatedByTaskParent)
+            if (!request.IgnorePermissions)
             {
                 var roles = await _authorizationHelper.GetRoles(assignmentInstance, request.Claims, cancellationToken);
                 if (!roles.Any(r => r == UserRoles.TASKINITIATOR))
@@ -70,7 +70,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             }
 
             _logger.LogInformation($"Create human task '{request.HumanTaskName}'");
-            var userPrincipal = request.Claims.GetUserNameIdentifier();
+            var userPrincipal = request.NameIdentifier;
             var id = Guid.NewGuid().ToString();
             var deadLines = _deadlineParser.Evaluate(humanTaskDef.DeadLines, parameters);
             var presentationElements = _parameterParser.ParsePresentationElements(humanTaskDef.PresentationElements, humanTaskDef.PresentationParameters, operationParameters);

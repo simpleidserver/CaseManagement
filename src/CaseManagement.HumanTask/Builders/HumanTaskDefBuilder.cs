@@ -12,7 +12,8 @@ namespace CaseManagement.HumanTask.Builders
         {
             _humanTaskDef = new HumanTaskDefinitionAggregate
             {
-                Name = name
+                Name = name,
+                AggregateId = Guid.NewGuid().ToString()
             };
         }
 

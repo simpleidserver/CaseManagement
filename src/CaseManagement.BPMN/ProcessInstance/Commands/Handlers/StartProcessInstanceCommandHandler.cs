@@ -39,7 +39,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
                 throw new UnknownFlowInstanceException(string.Format(Global.UnknownProcessInstance, request.ProcessInstanceId));
             }
 
-            processInstance.Start();
+            processInstance.Start(request.NameIdentifier);
             await _commitAggregateHelper.Commit(processInstance, processInstance.GetStreamName(), cancellationToken);
             await _messageBroker.QueueProcessInstance(request.ProcessInstanceId, true, cancellationToken);
             return true;

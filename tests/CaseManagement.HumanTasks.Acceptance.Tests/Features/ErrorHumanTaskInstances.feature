@@ -2,7 +2,7 @@
 	Check errors returned by /humantaskinstances
 	
 Scenario: Check error is returned when trying to create task with bad TaskName
-	When execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	When execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key           | Value       |
 	| humanTaskName | invalidname |
 	And extract JSON from body
@@ -15,7 +15,7 @@ Scenario: Check error is returned when trying to create task and parameters are 
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                       |
 	| humanTaskName       | addClient                   |
 	| operationParameters | { "isGoldenClient": "bad" } |
@@ -30,7 +30,7 @@ Scenario: Check error is returned when trying to create task and authenticated u
 	When authenticate
 	| Key                                                                  | Value   |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | badUser |
-    And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+    And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| Key                 | Value                                                  |
 	| humanTaskName       | addClient                                              |
@@ -92,7 +92,7 @@ Scenario: Check error is returned when trying to nominate and user is not author
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key           | Value            |
 	| humanTaskName | noPotentialOwner |
 	And extract JSON from body
@@ -126,7 +126,7 @@ Scenario: Check error is returned when trying to claim an unauthorized human tas
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key           | Value                   |
 	| humanTaskName | multiplePotentialOwners |
 	And extract JSON from body
@@ -145,7 +145,7 @@ Scenario: Check error is returned when trying to claim a human task instance wit
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| humanTaskName       | addClient                                              |
 	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
@@ -193,7 +193,7 @@ Scenario: Check error is returned when trying to start a human task instance wit
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
 	And add '10' seconds into 'activationDeferralTime'
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                    | Value                    |
 	| humanTaskName          | multiplePotentialOwners  |
 	| activationDeferralTime | $activationDeferralTime$ |
@@ -232,7 +232,7 @@ Scenario: Check error is returned when trying to complete a human task instance 
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-    And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+    And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| Key                 | Value                                                  |
 	| humanTaskName       | addClient                                              |

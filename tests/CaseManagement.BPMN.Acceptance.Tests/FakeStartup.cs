@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Acceptance.Tests.Middlewares;
 using CaseManagement.BPMN.Infrastructure.Jobs;
 using CaseManagement.Common.Jobs.Persistence;
+using CaseManagement.HumanTask;
 using CaseManagement.HumanTask.AspNetCore;
 using CaseManagement.HumanTask.Builders;
 using CaseManagement.HumanTask.Domains;
@@ -9,11 +10,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace CaseManagement.BPMN.Acceptance.Tests
 {
@@ -26,9 +29,10 @@ namespace CaseManagement.BPMN.Acceptance.Tests
             var httpClientFactory = sp.GetRequiredService<CaseManagement.Common.Factories.IHttpClientFactory>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCustomAuthentication(opts => { });
-            services.AddAuthorization(policy =>
+            services.AddAuthorization(_ =>
             {
-                policy.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
+                _.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
+                _.AddPolicy(HumanTaskConstants.ScopeNames.CreateHumanTaskInstance, p => p.RequireAssertion(__ => true));
             });
             services.AddMvc();
             services.AddLogging();
@@ -66,6 +70,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests
             }, callbackServerOpts: o =>
             {
                 o.WSHumanTaskAPI = "http://localhost";
+                o.OAuthTokenEndpoint = "http://localhost/token";
             })
             .AddProcessFiles(files);
             services.AddHostedService<HumanTaskJobServerHostedService>();
@@ -75,6 +80,15 @@ namespace CaseManagement.BPMN.Acceptance.Tests
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseCulture();
+            app.Map("/token", b =>
+            {
+                b.Use(async (context, next) =>
+                {
+                    context.Response.ContentType = new System.Net.Http.Headers
+                        .MediaTypeHeaderValue("application/json").ToString();
+                    await context.Response.WriteAsync("{ \"id\": \"id.\" }", Encoding.UTF8);
+                });
+            });
             app.UseAuthentication();
             app.UseMvc();
         }

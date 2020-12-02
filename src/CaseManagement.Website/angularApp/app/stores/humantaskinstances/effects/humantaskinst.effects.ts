@@ -25,4 +25,18 @@ export class HumanTaskInstEffects {
             }
             )
     );
+
+    @Effect()
+    createMeHumanTaskInstance = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.CREATE_ME_HUMANTASKINSTANCE),
+            mergeMap((evt: fromHumanTask.CreateMeHumanTaskInstanceOperation) => {
+                return this.humanTaskInstService.createMe(evt.cmd)
+                    .pipe(
+                        map(id => { return { type: fromHumanTask.ActionTypes.COMPLETE_ME_CREATE_HUMANTASKINSTANCE, content: id }; }),
+                        catchError((e) => of({ type: fromHumanTask.ActionTypes.ERROR_ME_CREATE_HUMANTASKINSTANCE, error: e }))
+                    );
+            }
+            )
+        );
 }

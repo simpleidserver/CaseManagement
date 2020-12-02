@@ -105,7 +105,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "operationParameters",
                         "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
 #line 8
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table149, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table149, "And ");
 #line 12
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 13
@@ -180,7 +180,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "activationDeferralTime",
                         "$activationDeferralTime$"});
 #line 34
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table152, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table152, "And ");
 #line 39
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 40
@@ -254,7 +254,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "humanTaskName",
                         "noPotentialOwner"});
 #line 63
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table155, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table155, "And ");
 #line 66
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 67
@@ -350,7 +350,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "operationParameters",
                         "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
 #line 96
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table160, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table160, "And ");
 #line 100
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 101
@@ -399,7 +399,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "humanTaskName",
                         "multiplePotentialOwners"});
 #line 113
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table163, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table163, "And ");
 #line 116
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 117
@@ -485,7 +485,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "humanTaskName",
                         "multiplePotentialOwners"});
 #line 144
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table167, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table167, "And ");
 #line 147
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 148
@@ -578,7 +578,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "operationParameters",
                         "{ \"firstName\": \"firstname\", \"isGoldenClient\": \"true\" }"});
 #line 175
-    testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table171, "And ");
+    testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table171, "And ");
 #line 180
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 181
@@ -689,7 +689,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "operationParameters",
                         "{ \"firstName\": \"FirstName\" }"});
 #line 215
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table176, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table176, "And ");
 #line 219
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 220
@@ -753,7 +753,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "operationParameters",
                         "{ \"firstName\": \"FirstName\" }"});
 #line 237
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table180, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table180, "And ");
 #line 241
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 242
@@ -817,7 +817,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "operationParameters",
                         "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
 #line 258
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table184, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table184, "And ");
 #line 262
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 263
@@ -876,7 +876,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "operationParameters",
                         "{ \"isGoldenClient\": \"true\", \"firstName\": \"FirstName\" }"});
 #line 278
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table187, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table187, "And ");
 #line 282
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 283
@@ -1006,7 +1006,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "humanTaskName",
                         "searchHumanTask"});
 #line 323
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances\'", ((string)(null)), table194, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/me\'", ((string)(null)), table194, "And ");
 #line hidden
             TechTalk.SpecFlow.Table table195 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",

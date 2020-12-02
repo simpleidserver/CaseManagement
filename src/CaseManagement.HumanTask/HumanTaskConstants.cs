@@ -8,5 +8,10 @@
             public const string HumanTaskInstances = "humantaskinstances";
             public const string NotificationInstances = "notificationinstances";
         }
+
+        public static class ScopeNames
+        {
+            public const string CreateHumanTaskInstance = "create_humantaskinstance";
+        }
     }
 }

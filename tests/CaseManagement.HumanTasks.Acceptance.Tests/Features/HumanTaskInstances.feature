@@ -5,7 +5,7 @@ Scenario: Create human task instance
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| humanTaskName       | addClient                                              |
 	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
@@ -31,7 +31,7 @@ Scenario: Create deferred human task instance (activated after 5 seconds)
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
 	And add '5' seconds into 'activationDeferralTime'
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                    | Value                                                  |
 	| humanTaskName          | addClient                                              |
 	| operationParameters    | { "isGoldenClient": "true", "firstName": "FirstName" } |
@@ -60,7 +60,7 @@ Scenario: Nominate a human task
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key           | Value            |
 	| humanTaskName | noPotentialOwner |
 	And extract JSON from body
@@ -93,7 +93,7 @@ Scenario: Get humantask instance description
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| humanTaskName       | addClient                                              |
 	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
@@ -110,7 +110,7 @@ Scenario: Claim a human task instance
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key           | Value                   |
 	| humanTaskName | multiplePotentialOwners |
 	And extract JSON from body
@@ -141,7 +141,7 @@ Scenario: Start a human task instance
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key           | Value                   |
 	| humanTaskName | multiplePotentialOwners |
 	And extract JSON from body
@@ -172,7 +172,7 @@ Scenario: Complete a human task instance
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-    And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+    And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| Key                 | Value                                                  |
 	| humanTaskName       | addClient                                              |
@@ -212,7 +212,7 @@ Scenario: Check a notification is created by StartDeadLine
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                        |
 	| humanTaskName       | startDeadLine                |
 	| operationParameters | { "firstName": "FirstName" } |
@@ -234,7 +234,7 @@ Scenario: Check a notification is created by CompletionDeadLine
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                        |
 	| humanTaskName       | completionDeadLine           |
 	| operationParameters | { "firstName": "FirstName" } |
@@ -255,7 +255,7 @@ Scenario: Execute a composite task
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| humanTaskName       | compositeTask                                          |
 	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
@@ -275,7 +275,7 @@ Scenario: Check the result of an automatic completion behavior
 	When authenticate
 	| Key                                                                  | Value         |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | taskInitiator |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key                 | Value                                                  |
 	| humanTaskName       | compositeTaskWithAutomaticCompletionBehavior           |
 	| operationParameters | { "isGoldenClient": "true", "firstName": "FirstName" } |
@@ -320,7 +320,7 @@ Scenario: Search human task instances
 	And authenticate
 	| Key                                                                  | Value |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | user1 |
-	And execute HTTP POST JSON request 'http://localhost/humantaskinstances'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/me'
 	| Key           | Value           |
 	| humanTaskName | searchHumanTask |
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/.search'

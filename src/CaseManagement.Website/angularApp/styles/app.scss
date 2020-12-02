@@ -140,9 +140,27 @@ a.is-active {
     border-radius: 10px;
 }
 
+.selected-overlay {
+    border: 2px solid red;
+    width: 98px;
+    height: 78px;
+    border-radius: 10px;
+}
+
+.selected-circle {
+    border-radius: 30px !important;
+    width: 34px !important;
+    height: 34px !important;
+}
+
 .outgoing-tokens {
     text-align: center;
     width: 20px;
     height: 20px;
     border-radius: 10px;
+}
+
+.table-h400 {
+    height: 400px;
+    overflow: auto !important;
 }

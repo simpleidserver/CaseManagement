@@ -10,9 +10,10 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
         public CreateHumanTaskInstanceCommand()
         {
             OperationParameters = new Dictionary<string, string>();
-            IsCreatedByTaskParent = false;
+            IgnorePermissions = false;
         }
 
+        public string NameIdentifier { get; set; }
         public string HumanTaskName { get; set; }
         public IEnumerable<KeyValuePair<string, string>> Claims { get; set; }
         public int? Priority { get; set; }
@@ -20,6 +21,6 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
         public DateTime? ExpirationTime { get; set; }
         public ICollection<AssignPeople> PeopleAssignments { get; set; }
         public Dictionary<string, string> OperationParameters { get; set; }
-        public bool IsCreatedByTaskParent { get; set; }
+        public bool IgnorePermissions { get; set; }
     }
 }

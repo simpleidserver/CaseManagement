@@ -11,6 +11,7 @@ import { Parameter } from '@app/stores/common/parameter.model';
 export class CreateHumanTaskInstanceComponent {
     private _humanTaskDef: HumanTaskDef;
     private _createHumanTaskInstance: CreateHumanTaskInstance;
+    inputOperationParameters: Parameter[] = [];
     @Input()
     get humanTaskDef() {
         return this._humanTaskDef;
@@ -21,6 +22,7 @@ export class CreateHumanTaskInstanceComponent {
         }
 
         this._humanTaskDef = v;
+        this.inputOperationParameters = HumanTaskDef.getInputOperationParameters(v);
         this.refreshOperationParameter();
     }
     @Input()

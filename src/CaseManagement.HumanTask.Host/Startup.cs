@@ -1,6 +1,8 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using CaseManagement.HumanTask.AspNetCore;
+using CaseManagement.HumanTask.Builders;
+using CaseManagement.HumanTask.Domains;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +33,21 @@ namespace CaseManagement.HumanTask.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var dressAppropriateForm = HumanTaskDefBuilder.New("dressAppropriateForm")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "businessanalyst" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
+                .AddPresentationParameter("degree", ParameterTypes.STRING, "context.GetInput(\"degree\")")
+                .AddPresentationParameter("city", ParameterTypes.STRING, "context.GetInput(\"city\")")
+                .AddName("fr", "Température à $city$")
+                .AddName("en", "Temperature in $city$")
+                .AddSubject("fr", "Il fait $degree$", "text/html")
+                .AddSubject("en", "Degree : $degree$", "text/html")
+                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("degree", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("city", ParameterTypes.STRING, true)
+                .AddCallbackOperation("http://localhost:60007/processinstances/{id}/statetransitions")
+                .Build();
             services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
@@ -53,17 +70,33 @@ namespace CaseManagement.HumanTask.Host
                         "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
-            });
-            services.AddAuthorization(policy =>
+            })
+            .AddJwtBearer("OAuthScheme", options =>
             {
-                policy.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = ExtractKey("oauth_puk.txt"),
+                    ValidAudiences = new List<string>
+                    {
+                        "bpmnClient"
+                    },
+                    ValidIssuers = new List<string>
+                    {
+                        "http://localhost:60001"
+                    }
+                };
             });
+            services.AddAuthorization(_ => _.AddDefaultHumanTaskAuthorizationPolicy());
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
-            services.AddHumanTaskServer();
+            services.AddHumanTaskServer()
+                .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
+                {
+                    dressAppropriateForm
+                });
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {

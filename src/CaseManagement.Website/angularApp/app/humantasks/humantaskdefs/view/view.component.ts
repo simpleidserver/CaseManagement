@@ -43,14 +43,14 @@ export class ViewHumanTaskDef implements OnInit {
                 this.isErrorOccured = true;
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskInstActions.ActionTypes.COMPLETE_CREATE_HUMANTASKINSTANCE))
+            filter((action: any) => action.type === fromHumanTaskInstActions.ActionTypes.COMPLETE_ME_CREATE_HUMANTASKINSTANCE))
             .subscribe(() => {
                 this.snackBar.open(this.translateService.instant(this.baseTranslationKey + '.HUMANTASKINSTANCE_CREATED'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskInstActions.ActionTypes.ERROR_CREATE_HUMANTASKINSTANCE))
+            filter((action: any) => action.type === fromHumanTaskInstActions.ActionTypes.ERROR_ME_CREATE_HUMANTASKINSTANCE))
             .subscribe((e: any) => {
                 var msg = [];
                 for (var k in e.error.error.errors) {
@@ -93,7 +93,7 @@ export class ViewHumanTaskDef implements OnInit {
             }
 
 
-            this.store.dispatch(new fromHumanTaskInstActions.CreateHumanTaskInstanceOperation(cmd));
+            this.store.dispatch(new fromHumanTaskInstActions.CreateMeHumanTaskInstanceOperation(cmd));
         });
 
     }

@@ -28,6 +28,7 @@ namespace CaseManagement.BPMN.Domains
 
         public ProcessInstanceStatus Status { get; set; }
         public string ProcessFileId { get; set; }
+        public string NameIdentifier { get; set; }
         public string ProcessFileName { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
@@ -152,9 +153,9 @@ namespace CaseManagement.BPMN.Domains
 
         #region Operations
 
-        public void Start()
+        public void Start(string nameIdentifier)
         {
-            var evt = new ProcessInstanceStartedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, DateTime.UtcNow);
+            var evt = new ProcessInstanceStartedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, nameIdentifier, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -394,6 +395,7 @@ namespace CaseManagement.BPMN.Domains
         private void Handle(ProcessInstanceStartedEvent evt)
         {
             Status = ProcessInstanceStatus.STARTED;
+            NameIdentifier = evt.NameIdentifier;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

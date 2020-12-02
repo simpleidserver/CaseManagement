@@ -7,7 +7,6 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { BpmnInstancesRoutes } from './bpmninstances.routes';
-import { ViewBpmnInstanceComponent } from './view/view.component';
 import { ListBpmnInstancesComponent } from './list/list.component';
 
 @NgModule({
@@ -22,7 +21,7 @@ import { ListBpmnInstancesComponent } from './list/list.component';
         SharedModule
     ],
     entryComponents: [ ],
-    declarations: [ListBpmnInstancesComponent, ViewBpmnInstanceComponent]
+    declarations: [ListBpmnInstancesComponent]
 })
 
 export class BpmnInstancesModule { }

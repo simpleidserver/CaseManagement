@@ -19,4 +19,15 @@ export class HumanTaskInstService {
             return _.id;
         }));
     }
+
+    createMe(cmd: CreateHumanTaskInstance): Observable<string> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantaskinstances/me";
+        return this.http.post<string>(targetUrl, JSON.stringify(cmd), { headers: headers }).pipe(map((_: any) => {
+            return _.id;
+        }));
+    }
 }

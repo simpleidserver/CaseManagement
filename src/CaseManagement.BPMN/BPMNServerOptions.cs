@@ -48,9 +48,15 @@
 "    </bpmndi:BPMNPlane>" +
 "  </bpmndi:BPMNDiagram>" +
 "</definitions>";
+            OAuthTokenEndpoint = "http://localhost:60001/token";
+            ClientId = "bpmnClient";
+            ClientSecret = "bpmnClientSecret";
         }
 
         public string WSHumanTaskAPI { get; set; }
         public string DefaultBPMNFile { get; set; }
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
+        public string OAuthTokenEndpoint { get; set; }
     }
 }

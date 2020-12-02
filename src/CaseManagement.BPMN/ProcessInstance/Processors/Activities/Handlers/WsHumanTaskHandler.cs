@@ -3,8 +3,10 @@ using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
 using CaseManagement.Common.Expression;
 using CaseManagement.Common.Factories;
+using IdentityModel.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -40,7 +42,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     var operationParameters = new JObject
                     {
                         { "flowNodeInstanceId", executionContext.Instance.AggregateId },
-                        { "flowNodeElementInstanceId", pointer.InstanceFlowNodeId }
+                        { "flowNodeElementInstanceId", pointer.InstanceFlowNodeId },
+                        { "nameIdentifier", executionContext.Instance.NameIdentifier }
                     };
                     var ctx = new ConditionalExpressionContext(pointer.Incoming);
                     if (userTask.InputParameters != null && userTask.InputParameters.Any())
@@ -57,6 +60,18 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                         }
                     }
 
+                    var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+                    {
+                        Address = _options.OAuthTokenEndpoint,
+                        ClientId = _options.ClientId,
+                        ClientSecret = _options.ClientSecret,
+                        Scope = "create_humantaskinstance"
+                    }, token);
+                    if (tokenResponse.IsError)
+                    {
+                        throw new BPMNProcessorException(tokenResponse.Error);
+                    }
+
                     var obj = new JObject
                     {
                         { "humanTaskName", userTask.HumanTaskName },
@@ -67,8 +82,9 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     {
                         Method = HttpMethod.Post,
                         Content = content,
-                        RequestUri = new System.Uri($"{_options.WSHumanTaskAPI}/humantaskinstances")
+                        RequestUri = new Uri($"{_options.WSHumanTaskAPI}/humantaskinstances")
                     };
+                    request.Headers.Add("Authorization", $"Bearer {tokenResponse.AccessToken}");
                     var httpResult = await httpClient.SendAsync(request, token);
                     var str = await httpResult.Content.ReadAsStringAsync();
                     var o = JObject.Parse(str);

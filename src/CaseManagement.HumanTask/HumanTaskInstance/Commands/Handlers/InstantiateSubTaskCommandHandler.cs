@@ -68,7 +68,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 Claims = request.Claims,
                 HumanTaskName = request.SubTaskName,
                 OperationParameters = operationParameters,
-                IsCreatedByTaskParent = true
+                IgnorePermissions = true
             }, cancellationToken);
             var hi = await _humanTaskInstanceQueryRepository.Get(result, cancellationToken);
             hi.SetParent(humanTaskInstance.HumanTaskDefName, humanTaskInstance.AggregateId);

@@ -27,34 +27,20 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
         #region Actions
 
         [HttpPost]
-        [Authorize("Authenticated")]
-        public async Task<IActionResult> Add([FromBody] CreateHumanTaskInstanceCommand parameter, CancellationToken token)
+        [Authorize(HumanTaskConstants.ScopeNames.CreateHumanTaskInstance)]
+        public Task<IActionResult> Add([FromBody] CreateHumanTaskInstanceCommand parameter, CancellationToken token)
         {
-            try
-            {
-                parameter.Claims = User.GetClaims();
-                var result = await _mediator.Send(parameter, token);
-                return new CreatedResult(string.Empty, new { id = result });
-            }
-            catch(UnknownHumanTaskDefException ex)
-            {
-                return this.ToError(new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>("bad_request", ex.Message)
-                }, HttpStatusCode.BadRequest, Request);
-            }
-            catch(NotAuthorizedException ex)
-            {
-                return this.ToError(new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>("bad_request", ex.Message)
-                }, HttpStatusCode.Unauthorized, Request);
-            }
-            catch(BadOperationExceptions ex)
-            {
-                var valErrors = ex.ValidationErrors.Select(_ => new KeyValuePair<string, string>("bad_request", _)).ToList();
-                return this.ToError(valErrors, HttpStatusCode.BadRequest, Request);
-            }
+            parameter.IgnorePermissions = true;
+            return SharedAdd(parameter, token);
+        }
+
+        [HttpPost("me")]
+        [Authorize("Authenticated")]
+        public Task<IActionResult> AddMe([FromBody] CreateHumanTaskInstanceCommand parameter, CancellationToken token)
+        {
+            parameter.Claims = User.GetClaims();
+            parameter.NameIdentifier = parameter.Claims.GetUserNameIdentifier();
+            return SharedAdd(parameter, token);
         }
 
         [HttpPost("{id}/nominate")]
@@ -197,6 +183,14 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPost("start")]
+        [Authorize("Authenticated")]
+        public async Task<IActionResult> Start([FromBody] StartHumanTaskInstanceCommand parameter, CancellationToken token)
+        {
+            await _mediator.Send(parameter, token);
+            return new NoContentResult();
+        }
+
         #endregion
 
         #region Getters
@@ -307,12 +301,37 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
 
         #endregion
 
-        [HttpPost("start")]
-        [Authorize("Authenticated")]
-        public async Task<IActionResult> Start([FromBody] StartHumanTaskInstanceCommand parameter, CancellationToken token)
+        #region Common
+
+        private async Task<IActionResult> SharedAdd(CreateHumanTaskInstanceCommand parameter, CancellationToken token)
         {
-            await _mediator.Send(parameter, token);
-            return new NoContentResult();
+            try
+            {
+                parameter.Claims = User.GetClaims();
+                var result = await _mediator.Send(parameter, token);
+                return new CreatedResult(string.Empty, new { id = result });
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (NotAuthorizedException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.Unauthorized, Request);
+            }
+            catch (BadOperationExceptions ex)
+            {
+                var valErrors = ex.ValidationErrors.Select(_ => new KeyValuePair<string, string>("bad_request", _)).ToList();
+                return this.ToError(valErrors, HttpStatusCode.BadRequest, Request);
+            }
         }
+
+        #endregion
     }
 }
