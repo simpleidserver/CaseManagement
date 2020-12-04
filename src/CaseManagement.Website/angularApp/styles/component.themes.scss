@@ -76,8 +76,20 @@
         background-color: green;
     }
 
+    .diamond.complete-overlay {
+        border-bottom-color: green;
+    }
+
+    .complete-overlay.diamond:after {
+        border-top-color: green;
+    }
+
     .outgoing-tokens {
         background-color: gray;
+    }
+
+    .selected-diamond {
+        border: 2px solid red;
     }
 }
 

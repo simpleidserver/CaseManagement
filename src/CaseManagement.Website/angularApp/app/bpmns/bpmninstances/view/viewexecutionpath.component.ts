@@ -45,6 +45,13 @@ export class ViewExecutionPathComponent implements OnInit {
             this.bpmnInstance = e;
             this.refresh();
         });
+        this.route.params.subscribe(() => {
+            if (!this.bpmnInstance) {
+                return;
+            }
+
+            this.refresh();
+        });
     }
 
     refresh() {
@@ -64,6 +71,8 @@ export class ViewExecutionPathComponent implements OnInit {
                 }
 
                 self.displayExecutionPath(null, filtered[0]);
+                const canvas = self.viewer.get('canvas');
+                canvas.zoom('fit-viewport');
             }
         });
     }
@@ -84,7 +93,8 @@ export class ViewExecutionPathComponent implements OnInit {
             let completeOverlayHtml = "<div class='{0}' data-id='" + execPointer.id+"' style='width:" + eltReg.width + "px;height:" + eltReg.height + "px;'></div>";
             let selectedOverlayHtml : any = "<div class='{0}'></div>";
             let outgoingTokens = "<div class='outgoing-tokens'>" + execPointer.outgoingTokens.length + "</div>"
-            var isCircle = eltReg.type === "bpmn:StartEvent" ? true : false;
+            const isCircle = eltReg.type === "bpmn:StartEvent" ? true : false;
+            const isDiamond = eltReg.type === "bpmn:ExclusiveGateway" ? true : false;
             var errorOverlayCl = "error-overlay";
             var completeOverlayCl = "complete-overlay";
             var selectedOverlayCl = "selected-overlay";
@@ -92,6 +102,12 @@ export class ViewExecutionPathComponent implements OnInit {
                 errorOverlayCl = errorOverlayCl + " circle";
                 completeOverlayCl = completeOverlayCl + " circle";
                 selectedOverlayCl = selectedOverlayCl + " selected-circle";
+            }
+
+            if (isDiamond) {
+                errorOverlayCl = errorOverlayCl + " diamond";
+                completeOverlayCl = completeOverlayCl + " diamond";
+                selectedOverlayCl = selectedOverlayCl + " selected-diamond";
             }
 
             errorOverlayHtml = errorOverlayHtml.replace('{0}', errorOverlayCl);

@@ -18,15 +18,20 @@ let caseMgtBpmnModdle = require('@app/moddlextensions/casemanagement-bpmn');
 export class ViewBpmnFileUIEditorComponent implements OnInit {
     viewer: any;
     bpmnFile: BpmnFile = new BpmnFile();
+    buildingForm: boolean = true;
     selectedElt: any = null;
     parameters: { key: string, value: string }[] = [];
+    outgoingElts: string[] = [];
     isEltSelected: boolean = false;
     updatePropertiesForm: FormGroup = new FormGroup({
         id: new FormControl(''),
         name: new FormControl(''),
         implementation: new FormControl(''),
         className: new FormControl(''),
-        wsHumanTaskDefName: new FormControl('')
+        wsHumanTaskDefName: new FormControl(''),
+        default: new FormControl(''),
+        gatewayDirection: new FormControl(''),
+        sequenceFlowCondition: new FormControl('')
     });
     addParameterForm: FormGroup = new FormGroup({
         key: new FormControl(''),
@@ -54,6 +59,7 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
         evtBus.on('element.click', function (evt: any) {
             self.updateProperties(evt.element);
         });
+
         this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((e: BpmnFile) => {
             if (!e) {
                 return;
@@ -61,6 +67,32 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
 
             this.viewer.importXML(e.payload);
             this.bpmnFile = e;
+        });
+        this.updatePropertiesForm.valueChanges.subscribe(() => {
+            if (self.buildingForm) {
+                return;
+            }
+
+            self.saveProperties(this.updatePropertiesForm.value);
+        });
+        this.updatePropertiesForm.get('default').valueChanges.subscribe(() => {
+            const selectedPath = self.updatePropertiesForm.get('default').value;
+            if (!selectedPath || !self.selectedElt) {
+                return;
+            }
+
+            const elementRegistry = self.viewer.get('elementRegistry');
+            const connection = elementRegistry.get(selectedPath);
+            const modeling = self.viewer.get('modeling');
+            if (self.selectedElt.outgoing) {
+                modeling.setColor(self.selectedElt.outgoing, {
+                    stroke: 'black'
+                });
+            }
+
+            modeling.setColor([connection], {
+                stroke: 'orange'
+            });
         });
     }
 
@@ -78,6 +110,8 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
     }
 
     updateProperties(elt: any) {
+        this.buildingForm = true;
+        this.updatePropertiesForm.reset();
         this.selectedElt = elt;
         this.isEltSelected = true;
         const self = this;
@@ -100,6 +134,27 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
                 });
             }
         }
+
+        if (bo.$type === 'bpmn:ExclusiveGateway') {
+            if (bo.default) {
+                this.updatePropertiesForm.get('default').setValue(bo.default.id);
+            }
+
+            this.updatePropertiesForm.get('gatewayDirection').setValue(bo.gatewayDirection);
+            if (bo.outgoing) {
+                this.outgoingElts = bo.outgoing.map(function (o: any) {
+                    return o.id;
+                });
+            }
+        }
+
+        if (bo.$type === 'bpmn:SequenceFlow') {
+            if (bo.conditionExpression) {
+                this.updatePropertiesForm.get('sequenceFlowCondition').setValue(bo.conditionExpression.body);
+            }
+        }
+
+        this.buildingForm = false;
     }
 
     saveProperties(form: any) {
@@ -107,7 +162,9 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
             return;
         }
 
+        const moddle = this.viewer.get('moddle');
         const modeling = this.viewer.get('modeling');
+        const elementRegistry = this.viewer.get('elementRegistry');
         const obj : any = {
             id: form.id,
             name: form.name
@@ -123,7 +180,6 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
             obj['implementation'] = form.implementation;
             obj['cmg:wsHumanTaskDefName'] = form.wsHumanTaskDefName;
             const parameters = this.getExtension(bo, 'cmg:Parameters');
-            const moddle = this.viewer.get('moddle');
             parameters.parameter = [];
             this.parameters.forEach(function (p: any) {
                 let parameter = moddle.create('cmg:Parameter');
@@ -131,6 +187,21 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
                 parameter.value = p.value;
                 parameters.parameter.push(parameter);
             });
+        }
+
+        if (bo.$type === 'bpmn:ExclusiveGateway') {
+            if (form.default) {
+                obj['default'] = elementRegistry.get(form.default).businessObject;
+            }
+
+            obj['gatewayDirection'] = form.gatewayDirection;
+        }
+
+        if (bo.$type === 'bpmn:SequenceFlow') {
+            var newCondition = moddle.create('bpmn:FormalExpression', {
+                body: form.sequenceFlowCondition
+            });
+            obj['conditionExpression'] = newCondition;
         }
 
         modeling.updateProperties(this.selectedElt, obj);

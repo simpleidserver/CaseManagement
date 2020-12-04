@@ -108,7 +108,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                     var jObj = new JObject
                     {
                         { "flowNodeElementInstanceId", humanTaskInstance.InputParameters["flowNodeElementInstanceId"] },
-                        { "state", "COMPLETED" }
+                        { "state", "COMPLETED" },
+                        { "content", parameters.ToJObj() }
                     };
                     using (var httpClient = _httpClientFactory.Build())
                     {

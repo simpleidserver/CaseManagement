@@ -172,7 +172,7 @@
         "STATE": "State",
         "EXECUTIONDATE": "Execution date",
         "MESSAGE": "Message"
-      }
+      },
       "TOKENS": {
         "INCOMINGTOKENS": "Incoming tokens",
         "OUTGOINGTOKENS": "Outgoing tokens",
@@ -180,11 +180,13 @@
         "CONTENT": "Content",
         "EMPTYTOKEN": "Empty"
       }
-    }
+    },
     "PROPERTIES": {
       "GENERALINFO": "General information",
       "SERVICETASKINFO": "Service task information",
-      "USERTASKINFO": "User task information"
+      "USERTASKINFO": "User task information",
+      "EXCLUSIVEGATEWAYINFO": "Exclusive gateway information",
+      "SEQUENCEFLOWINFO": "Sequence flow information"
     },
     "SCHEMA": {
       "ID": "Identifier",
@@ -195,7 +197,15 @@
       "PARAMETERKEY": "Key",
       "PARAMETERVALUE": "Value",
       "WSHUMANTASK": "WS-HumanTask",
-      "WSHUMANTASKNAME": "Name of the human task"
+      "WSHUMANTASKNAME": "Name of the human task",
+      "DEFAULT": "Default",
+      "DIRECTION": "Direction",
+      "UNSPECIFIED": "Unspecified",
+      "CONVERGING": "Converging",
+      "DIVERGING": "Diverging",
+      "MIXED": "Mixed",
+      "GATEWAYDIRECTION": "Direction",
+      "CONDITION": "Condition"
     },
     "TABS": {
       "INFORMATION": "Information",

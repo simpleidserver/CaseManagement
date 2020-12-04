@@ -87,6 +87,36 @@ namespace CaseManagement.HumanTask.Builders
 
         #endregion
 
+        #region Rendering elements
+
+        public HumanTaskDefBuilder AddTxt(string id, Action<RenderingElementBuilder> callback)
+        {
+            var renderingElement = new RenderingElement
+            {
+                Id = id,
+                ValueType = "string"
+            };
+            var builder = new RenderingElementBuilder(renderingElement);
+            callback(builder);
+            _humanTaskDef.RenderingElements.Add(renderingElement);
+            return this;
+        }
+
+        public HumanTaskDefBuilder AddSelect(string id, Action<SelectOptionRenderingElementBuilder> callback)
+        {
+            var renderingElement = new RenderingElement
+            {
+                Id = id,
+                ValueType = "select"
+            };
+            var builder = new SelectOptionRenderingElementBuilder(renderingElement);
+            callback(builder);
+            _humanTaskDef.RenderingElements.Add(renderingElement);
+            return this;
+        }
+
+        #endregion
+
         #region Presentation element
 
         public HumanTaskDefBuilder AddName(string language, string value)

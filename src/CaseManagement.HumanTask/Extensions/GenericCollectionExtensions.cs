@@ -1,6 +1,7 @@
 ﻿using CaseManagement.HumanTask.Common;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.HumanTaskInstance.Commands;
+using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Security.Claims;
 
@@ -8,6 +9,16 @@ namespace System.Collections.Generic
 {
     public static class GenericCollectionExtensions
     {
+        public static JObject ToJObj(this Dictionary<string, string> dic)
+        {
+            var result = new JObject();
+            foreach(var kvp in dic)
+            {
+                result.Add(kvp.Key, kvp.Value);
+            }
+
+            return result;
+        }
         public static bool IsEmpty(this KeyValuePair<string, string> kvp)
         {
             if (kvp.Equals(default(KeyValuePair<string, string>)) || string.IsNullOrWhiteSpace(kvp.Value))

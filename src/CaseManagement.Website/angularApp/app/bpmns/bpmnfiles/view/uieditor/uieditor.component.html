@@ -5,7 +5,7 @@
     </div>
     <div fxFlex="20%">
         <div *ngIf="selectedElt">
-            <form [formGroup]="updatePropertiesForm" (ngSubmit)="saveProperties(updatePropertiesForm.value)">
+            <form [formGroup]="updatePropertiesForm">
                 <mat-accordion>
                     <!-- General information -->
                     <mat-expansion-panel>
@@ -78,8 +78,43 @@
                             </mat-list-item>
                         </mat-list>
                     </mat-expansion-panel>
+                    <!-- Exclusive gateway -->
+                    <mat-expansion-panel *ngIf="selectedElt.type === 'bpmn:ExclusiveGateway'">
+                        <mat-expansion-panel-header>
+                            {{ 'BPMN.PROPERTIES.EXCLUSIVEGATEWAYINFO' | translate }}
+                        </mat-expansion-panel-header>
+                        <!-- Gateway direction -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'BPMN.SCHEMA.GATEWAYDIRECTION' | translate }}</mat-label>
+                            <mat-select formControlName="gatewayDirection">
+                                <mat-option value="Unspecified">{{ 'BPMN.SCHEMA.UNSPECIFIED' | translate }}</mat-option>
+                                <mat-option value="Converging">{{ 'BPMN.SCHEMA.CONVERGING' | translate }}</mat-option>
+                                <mat-option value="Diverging">{{ 'BPMN.SCHEMA.DIVERGING' | translate }}</mat-option>
+                                <mat-option value="Mixed">{{ 'BPMN.SCHEMA.MIXED' | translate }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <!-- Default -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'BPMN.SCHEMA.DEFAULT' | translate }}</mat-label>
+                            <mat-select formControlName="default">
+                                <mat-option [value]="id" *ngFor="let id of outgoingElts">
+                                    {{ id }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-expansion-panel>
+                    <!-- Sequence flow -->
+                    <mat-expansion-panel *ngIf="selectedElt.type === 'bpmn:SequenceFlow'">
+                        <mat-expansion-panel-header>
+                            {{ 'BPMN.PROPERTIES.SEQUENCEFLOWINFO' | translate }}
+                        </mat-expansion-panel-header>
+                        <!-- Condition -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'BPMN.SCHEMA.CONDITION' | translate }}</mat-label>
+                            <input matInput name="sequenceFlowCondition" formControlName="sequenceFlowCondition" />
+                        </mat-form-field>
+                    </mat-expansion-panel>
                 </mat-accordion>
-                <button mat-raised-button color="primary">{{ 'SHARED.SAVE' | translate }}</button>
             </form>
         </div>
     </div>

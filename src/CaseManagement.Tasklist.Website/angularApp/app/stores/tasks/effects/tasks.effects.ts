@@ -78,7 +78,7 @@ export class TasksEffects {
                 let descriptionCall = this.tasksService.getDescription(evt.humanTaskInstanceId);
                 let searchTaskHistoryCall = this.tasksService.searchTaskHistory(evt.humanTaskInstanceId, 0, 200, evt.order, evt.direction);
                 return forkJoin([renderingCall, detailsCall, descriptionCall, searchTaskHistoryCall]).pipe(
-                    map((results) => { return { type: ActionTypes.COMPLETE_GET_TASK, rendering: results[0], task: results[1], description: results[2], searchTaskHistory: results[3] }; }),
+                    map((results) => { return { type: ActionTypes.COMPLETE_GET_TASK, renderingElts: results[0], task: results[1], description: results[2], searchTaskHistory: results[3] }; }),
                     catchError(() => of({ type: ActionTypes.ERROR_GET_TASK }))
                 )
             }

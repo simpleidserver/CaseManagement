@@ -14,6 +14,18 @@ namespace CaseManagement.BPMN.Domains
             _incomingTokens = incomingTokens;
         }
 
+        public int GetIntIncomingMessage(string name, string path)
+        {
+            var result = GetIncomingMessage(name, path);
+            int r;
+            if (string.IsNullOrWhiteSpace(result) || !int.TryParse(result, out r))
+            {
+                return default(int);
+            }
+
+            return r;
+        }
+
         public string GetIncomingMessage(int incomingIndex, string path)
         {
             if (incomingIndex >= _incomingTokens.Count())

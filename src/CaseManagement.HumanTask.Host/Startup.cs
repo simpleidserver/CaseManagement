@@ -48,6 +48,17 @@ namespace CaseManagement.HumanTask.Host
                 .AddInputOperationParameter("city", ParameterTypes.STRING, true)
                 .AddCallbackOperation("http://localhost:60007/processinstances/{id}/statetransitions")
                 .Build();
+            var takeTemperatureForm = HumanTaskDefBuilder.New("temperatureForm")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "businessanalyst" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
+                .AddName("fr", "Saisir la température")
+                .AddName("en", "Enter degree")
+                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
+                .AddTxt("degree", cb => cb.AddLabel("fr", "Température"))
+                .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
+                .AddCallbackOperation("http://localhost:60007/processinstances/{id}/statetransitions")
+                .Build();
             services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
@@ -95,7 +106,8 @@ namespace CaseManagement.HumanTask.Host
             services.AddHumanTaskServer()
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
                 {
-                    dressAppropriateForm
+                    dressAppropriateForm,
+                    takeTemperatureForm
                 });
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>

@@ -196,6 +196,68 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Launch GetAppropriateDress bpmn process")]
+        [Xunit.TraitAttribute("FeatureTitle", "ProcessInstances")]
+        [Xunit.TraitAttribute("Description", "Launch GetAppropriateDress bpmn process")]
+        public virtual void LaunchGetAppropriateDressBpmnProcess()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch GetAppropriateDress bpmn process", null, ((string[])(null)));
+#line 40
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table13.AddRow(new string[] {
+                        "processFileId",
+                        "db7c8302dfca4222832aaa98320d228ae2eed2d63b16ed25a5e761a2f781b719"});
+#line 41
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/processinstances\'", ((string)(null)), table13, "When ");
+#line 44
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 45
+ testRunner.And("extract \'content[0].id\' from JSON body into \'processInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 46
+ testRunner.When("execute HTTP GET request \'http://localhost/processinstances/$processInstanceId$/s" +
+                    "tart\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 47
+ testRunner.And("poll HTTP POST JSON request \'http://localhost/humantaskinstances/.search\', until " +
+                    "\'$.content[?(@.name == \'temperatureForm\')].name\'=\'temperatureForm\'", ((string)(null)), table14, "And ");
+#line 49
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 50
+ testRunner.And("extract \'$.content[?(@.name == \'temperatureForm\')].id\' from JSON body into \'human" +
+                    "TaskInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 51
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table15.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"degree\" : \"30\" }"});
+#line 52
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/complete\'", ((string)(null)), table15, "And ");
+#line 55
+ testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'executionPat" +
+                    "hs[0].executionPointers[?(@.flowNodeId == \'Activity_1b13yqe\')].flowNodeInstance." +
+                    "state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 56
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 58
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

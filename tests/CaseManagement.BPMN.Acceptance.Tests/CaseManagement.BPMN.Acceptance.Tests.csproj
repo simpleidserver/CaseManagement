@@ -19,11 +19,6 @@
     <ProjectReference Include="..\..\src\CaseManagement.HumanTask.AspNetCore\CaseManagement.HumanTask.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Features\ProcessFiles.feature.cs">
-      <DependentUpon>ProcessFiles.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <SpecFlowFeatureFiles Update="Features\ProcessFiles.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
@@ -34,6 +29,9 @@
     </SpecFlowFeatureFiles>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Bpmns\GetAppropriateDress.bpmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Bpmns\GetWeatherInformation.bpmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

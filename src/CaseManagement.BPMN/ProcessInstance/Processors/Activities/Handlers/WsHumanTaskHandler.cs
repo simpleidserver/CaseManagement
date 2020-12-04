@@ -100,7 +100,17 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                 throw new FlowNodeInstanceBlockedException();
             }
 
-            return new List<MessageToken>();
+            var result = new List<MessageToken>();
+            if (stateTransition.Content == null)
+            {
+                result.Add(MessageToken.EmptyMessage());
+            }
+            else
+            {
+                result.Add(MessageToken.NewMessage(userTask.Id, stateTransition.Content));
+            }
+
+            return result;
         }
     }
 }

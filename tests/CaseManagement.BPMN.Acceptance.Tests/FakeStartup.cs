@@ -52,12 +52,22 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                 .AddInputOperationParameter("city", ParameterTypes.STRING, true)
                 .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
                 .Build();
+            var takeTemperatureForm = HumanTaskDefBuilder.New("temperatureForm")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "thabart" })
+                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
+                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
+                .AddTxt("degree", cb => cb.AddLabel("fr", "Température"))
+                .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
+                .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
+                .Build();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
                 {
                     emptyTask,
-                    dressAppropriateForm
+                    dressAppropriateForm,
+                    takeTemperatureForm
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {

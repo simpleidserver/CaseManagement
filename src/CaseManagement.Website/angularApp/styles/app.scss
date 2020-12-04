@@ -124,6 +124,26 @@ ul.list li:hover .actions {
     border-radius: 15px !important;
 }
 
+.diamond {
+    width: 0 !important;
+    height: 0 !important;
+    border: 26px solid transparent;
+    position: relative;
+    top: -26px;
+    border-radius: 0px !important;
+    background-color: transparent !important;
+}
+
+.diamond:after {
+    content: '';
+    position: absolute;
+    top: 26px;
+    width: 0;
+    height: 0;
+    border: 25px solid transparent;
+    left: -26px;
+}
+
 a.is-active {
     font-weight: bold;
 }
@@ -151,6 +171,16 @@ a.is-active {
     border-radius: 30px !important;
     width: 34px !important;
     height: 34px !important;
+}
+
+.selected-diamond {
+    position: relative;
+    top: 6px;
+    left: 6px;
+    border-radius: 0px !important;
+    width: 36px;
+    height: 36px;
+    transform: rotate(45deg);
 }
 
 .outgoing-tokens {

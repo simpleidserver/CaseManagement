@@ -9,6 +9,7 @@ namespace CaseManagement.HumanTask.Domains
         public RenderingElement()
         {
             Labels = new List<Translation>();
+            Values = new List<OptionValue>();
         }
 
         /// <summary>
