@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Add flow node instance")]
+    [Serializable]
     public class FlowNodeInstanceAddedEvent : DomainEvent
     {
         public FlowNodeInstanceAddedEvent(string id, string aggregateId, int version, string flowNodeInstanceId, string flowNodeId, DateTime createDateTime) : base(id, aggregateId, version)

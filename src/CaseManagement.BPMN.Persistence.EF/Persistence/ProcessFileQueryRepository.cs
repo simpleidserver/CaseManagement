@@ -38,12 +38,6 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
         public async Task<FindResponse<ProcessFileAggregate>> Find(FindProcessFilesParameter parameter, CancellationToken token)
         {
             IQueryable<ProcessFileModel> result = _dbContext.ProcessFiles.AsQueryable();
-            if (parameter.TakeLatest)
-            {
-                result = result.OrderByDescending(r => r.Version);
-                result = result.GroupBy(r => r.FileId).Select(r => r.First());
-            }
-
             if (MAPPING_PROCESSFILE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_PROCESSFILE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
@@ -51,12 +45,18 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
 
             int totalLength = await result.CountAsync(token);
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
+            var content = await result.ToListAsync(token);
+            if (parameter.TakeLatest)
+            {
+                content = content.OrderByDescending(r => r.Version).GroupBy(r => r.FileId).Select(r => r.First()).ToList();
+            }
+
             return new FindResponse<ProcessFileAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = (await result.ToListAsync(token)).Select(_ => _.ToDomain()).ToList()
+                Content = content.Select(_ => _.ToDomain()).ToList()
             };
         }
     }

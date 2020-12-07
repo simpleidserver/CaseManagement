@@ -19,7 +19,7 @@ namespace CaseManagement.BPMN.Host.Delegates
             {
                 { "city", "Bruxelles" },
                 { "degree", degree }
-            }));
+            }.ToString()));
             return Task.FromResult(result);
         }
     }

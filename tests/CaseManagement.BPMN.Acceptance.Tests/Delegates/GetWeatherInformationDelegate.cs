@@ -15,7 +15,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests.Delegates
             {
                 { "city", "Bruxelles" },
                 { "degree", "31" }
-            }));
+            }.ToString()));
             return Task.FromResult(result);
         }
     }

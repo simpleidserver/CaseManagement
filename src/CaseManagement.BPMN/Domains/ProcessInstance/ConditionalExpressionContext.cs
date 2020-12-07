@@ -60,7 +60,7 @@ namespace CaseManagement.BPMN.Domains
 
         private string GetIncomingMessage(MessageToken incoming, string path)
         {
-            var result = incoming.MessageContent.SelectToken(path);
+            var result = incoming.JObjMessageContent.SelectToken(path);
             if (result == null)
             {
                 return null;

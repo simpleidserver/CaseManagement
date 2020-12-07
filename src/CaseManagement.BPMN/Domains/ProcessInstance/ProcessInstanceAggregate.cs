@@ -509,7 +509,7 @@ namespace CaseManagement.BPMN.Domains
 
         public static string GetStreamName(string id)
         {
-            return $"planinstance-{id}";
+            return $"inst{id}";
         }
     }
 }

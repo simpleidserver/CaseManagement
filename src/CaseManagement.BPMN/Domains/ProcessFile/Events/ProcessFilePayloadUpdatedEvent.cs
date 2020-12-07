@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Update payload")]
+    [Serializable]
     public class ProcessFilePayloadUpdatedEvent : DomainEvent
     {
         public ProcessFilePayloadUpdatedEvent(string id, string aggregateId, int version, string payload, DateTime updateDateTime) : base(id, aggregateId, version)

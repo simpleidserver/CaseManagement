@@ -18,7 +18,7 @@ namespace CaseManagement.Common.Bus
             }, token);
         }
 
-        public static Task QueueMessage(this IMessageBroker messageBroker, string processInstanceId, string messageName, object content, CancellationToken token)
+        public static Task QueueMessage(this IMessageBroker messageBroker, string processInstanceId, string messageName, string content, CancellationToken token)
         {
             return messageBroker.Queue(BPMNConstants.QueueNames.Messages, new MessageNotification(Guid.NewGuid().ToString())
             {
@@ -32,7 +32,7 @@ namespace CaseManagement.Common.Bus
         {
             return messageBroker.Queue(BPMNConstants.QueueNames.StateTransitions, new StateTransitionNotification(Guid.NewGuid().ToString())
             {
-                Content = jObj,
+                Content = jObj?.ToString(),
                 State = state,
                 ProcessInstanceId = processInstanceId,
                 FlowNodeInstanceId = flowNodeInstanceId

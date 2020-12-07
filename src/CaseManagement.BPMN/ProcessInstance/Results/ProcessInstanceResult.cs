@@ -81,7 +81,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
                 return new MessageTokenResult
                 {
                     Name = messageToken.Name,
-                    Content = messageToken.MessageContent
+                    Content = messageToken.JObjMessageContent
                 };
             }
         }

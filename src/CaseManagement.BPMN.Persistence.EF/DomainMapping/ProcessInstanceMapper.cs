@@ -21,6 +21,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
                 CreateDateTime = processInstance.CreateDateTime,
                 ProcessFileName = processInstance.ProcessFileName,
                 Version = processInstance.Version,
+                NameIdentifier = processInstance.NameIdentifier,
                 UpdateDateTime = processInstance.UpdateDateTime,
                 Status = (ProcessInstanceStatus)processInstance.Status,
                 ElementInstances = new ConcurrentBag<FlowNodeInstance>(processInstance.ElementInstances.Select(_ => _.ToDomain()).ToList()),
@@ -85,7 +86,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
         {
             return new StateTransitionNotification(stateTransition.Id.ToString())
             {
-                Content = stateTransition.SerializedContent == null ? null : JObject.Parse(stateTransition.SerializedContent),
+                Content = stateTransition.SerializedContent,
                 FlowNodeInstanceId = stateTransition.FlowNodeInstanceId,
                 State = stateTransition.State
             };
@@ -105,7 +106,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
         {
             return new ExecutionPointer
             {
-                Id = executionPointer.Id.ToString(),
+                Id = executionPointer.Id,
                 FlowNodeId = executionPointer.FlowNodeId,
                 IsActive = executionPointer.IsActive,
                 InstanceFlowNodeId = executionPointer.InstanceFlowNodeId,
@@ -118,7 +119,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
         {
             return new MessageToken
             {
-                MessageContent = messageToken.SerializedContent == null ? null : JObject.Parse(messageToken.SerializedContent),
+                MessageContent = messageToken.SerializedContent,
                 Name = messageToken.Name
             };
         }
@@ -247,6 +248,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
         {
             return new ExecutionPathModel
             {
+                Id = executionPath.Id,
                 CreateDateTime = executionPath.CreateDateTime,
                 Pointers = executionPath.Pointers.Select(_ => _.ToModel()).ToList()
             };
@@ -258,6 +260,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
             tokens.AddRange(executionPointer.Outgoing.Select(_ => _.ToModel(MessageTokenDirections.OUTGOING)).ToList());
             return new ExecutionPointerModel
             {
+                Id = executionPointer.Id,
                 FlowNodeId = executionPointer.FlowNodeId,
                 IsActive = executionPointer.IsActive,
                 InstanceFlowNodeId = executionPointer.InstanceFlowNodeId,

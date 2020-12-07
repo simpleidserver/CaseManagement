@@ -48,7 +48,7 @@ namespace CaseManagement.BPMN.Infrastructure.Jobs
                 processInstance.ConsumeMessage(new MessageToken
                 {
                     Name = notification.MessageName,
-                    MessageContent = notification == null ? null : notification.Content as JObject
+                    MessageContent = notification.Content
                 });
                 await _commitAggregateHelper.Commit(processInstance, processInstance.GetStreamName(), cancellationToken);
                 await MessageBroker.QueueProcessInstance(processInstance.AggregateId, false, cancellationToken);

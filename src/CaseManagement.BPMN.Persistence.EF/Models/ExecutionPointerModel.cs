@@ -5,7 +5,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Models
 {
     public class ExecutionPointerModel
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string ExecutionPathId { get; set; }
         public string InstanceFlowNodeId { get; set; }
         public string FlowNodeId { get; set; }

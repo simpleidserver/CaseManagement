@@ -98,7 +98,7 @@ namespace CaseManagement.BPMN.Domains
 
         public static string GetStreamName(string id)
         {
-            return $"processfile-{id}";
+            return $"file{id}";
         }
 
         private void Handle(ProcessFileAddedEvent evt)

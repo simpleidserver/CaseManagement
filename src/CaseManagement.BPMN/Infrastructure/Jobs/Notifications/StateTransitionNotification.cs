@@ -12,7 +12,16 @@ namespace CaseManagement.BPMN.Infrastructure.Jobs.Notifications
         public string ProcessInstanceId { get; set; }
         public string FlowNodeInstanceId { get; set; }
         public string State { get; set; }
-        public JObject Content { get; set; }
+        public string Content { get; set; }
+
+        [field: NonSerialized]
+        public JObject JObjContent
+        {
+            get
+            {
+                return JObject.Parse(Content);
+            }
+        }
 
         public object Clone()
         {

@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Create execution path")]
+    [Serializable]
     public class ExecutionPathCreatedEvent : DomainEvent
     {
         public ExecutionPathCreatedEvent(string id, string aggregateId, int version, string executionPathId, DateTime createDateTime) : base(id, aggregateId, version)

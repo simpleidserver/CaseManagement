@@ -29,8 +29,11 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<DateTime>("ExecutionDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("FlowNodeInstanceModelId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("FlowNodeInstanceModelId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
@@ -68,7 +71,6 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
             modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPathModel", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDateTime")
@@ -86,10 +88,8 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
             modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPointerModel", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ExecutionPathId")
                         .HasColumnType("nvarchar(max)");
@@ -115,10 +115,8 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
             modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.FlowNodeInstanceModel", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("ActivityState")
                         .HasColumnType("int");
@@ -227,8 +225,8 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<int>("Direction")
                         .HasColumnType("int");
 
-                    b.Property<long?>("ExecutionPointerModelId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ExecutionPointerModelId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -311,20 +309,20 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<string>("AggregateId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CommonId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreateDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InstanceId")
+                    b.Property<string>("NameIdentifier")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProcessFileId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProcessId")
+                    b.Property<string>("ProcessFileName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDateTime")
                         .HasColumnType("datetime2");
@@ -345,6 +343,9 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ConditionExpression")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EltId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -374,9 +375,6 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("FlowNodeInstanceId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProcessInstanceModelAggregateId")

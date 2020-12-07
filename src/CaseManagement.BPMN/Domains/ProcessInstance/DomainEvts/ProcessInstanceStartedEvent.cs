@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Start process instance")]
+    [Serializable]
     public class ProcessInstanceStartedEvent : DomainEvent
     {
         public ProcessInstanceStartedEvent(string id, string aggregateId, int version, string nameIdentifier, DateTime updateDateTime) : base(id, aggregateId, version)

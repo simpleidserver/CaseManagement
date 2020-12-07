@@ -9,7 +9,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Configuration
         public void Configure(EntityTypeBuilder<ExecutionPointerModel> builder)
         {
             builder.HasKey(_ => _.Id);
-            builder.Property(_ => _.Id).ValueGeneratedOnAdd();
+            builder.Property(_ => _.Id).ValueGeneratedNever();
             builder.Ignore(_ => _.Incoming);
             builder.Ignore(_ => _.Outgoing);
             builder.HasMany(_ => _.Tokens).WithOne().OnDelete(DeleteBehavior.Cascade);

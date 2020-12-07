@@ -1,5 +1,8 @@
-﻿namespace CaseManagement.Common.Domains
+﻿using System;
+
+namespace CaseManagement.Common.Domains
 {
+    [Serializable]
     public class DomainEvent
     {
         public DomainEvent(string id, string aggregateId, int version)

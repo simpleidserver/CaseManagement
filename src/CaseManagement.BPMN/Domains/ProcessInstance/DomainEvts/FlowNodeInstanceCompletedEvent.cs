@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Flow node instance is complete")]
+    [Serializable]
     public class FlowNodeInstanceCompletedEvent : DomainEvent
     {
         public FlowNodeInstanceCompletedEvent(string id, string aggregateId, int version, string flowNodeInstanceId, DateTime executionDateTime) : base(id, aggregateId, version)

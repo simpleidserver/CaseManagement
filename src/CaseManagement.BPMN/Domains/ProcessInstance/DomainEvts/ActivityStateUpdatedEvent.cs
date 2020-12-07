@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Update activity state")]
+    [Serializable]
     public class ActivityStateUpdatedEvent : DomainEvent
     {
         public ActivityStateUpdatedEvent(string id, string aggregateId, int version, string flowNodeInstanceId, ActivityStates state, string message, DateTime updateDateTime) : base(id, aggregateId, version)

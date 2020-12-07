@@ -6,6 +6,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Add state transition")]
+    [Serializable]
     public class StateTransitionReceivedEvent : DomainEvent
     {
         public StateTransitionReceivedEvent(string id, string aggregateId, int version, StateTransitionNotification stateTransitionToken, DateTime updateDateTime) : base(id, aggregateId, version)

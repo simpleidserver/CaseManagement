@@ -6,6 +6,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Create process instance")]
+    [Serializable]
     public class ProcessInstanceCreatedEvent : DomainEvent
     {
         public ProcessInstanceCreatedEvent(string id, string aggregateId, int version, string processFileId, string processFileName, ICollection<BPMNInterface> interfaces, ICollection<Message> messages, ICollection<ItemDefinition> itemDefs, ICollection<SequenceFlow> sequenceFlows, DateTime createDateTime) : base(id, aggregateId, version)

@@ -5,10 +5,20 @@ using System.Collections.Generic;
 
 namespace CaseManagement.BPMN.Common
 {
+    [Serializable]
     public class MessageToken : ICloneable
     {
         public string Name { get; set; }
-        public JObject MessageContent { get; set; }
+        public string MessageContent { get; set; }
+
+        [field: NonSerialized]
+        public JObject JObjMessageContent
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(MessageContent) ? new JObject() : JObject.Parse(MessageContent);
+            }
+        }
 
         private static MessageToken Deserialize(string json)
         {
@@ -42,7 +52,7 @@ namespace CaseManagement.BPMN.Common
             return new MessageToken();
         }
 
-        public static MessageToken NewMessage(string name, JObject content)
+        public static MessageToken NewMessage(string name, string content)
         {
             return new MessageToken
             {

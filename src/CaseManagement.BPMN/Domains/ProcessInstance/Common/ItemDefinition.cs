@@ -2,6 +2,7 @@
 
 namespace CaseManagement.BPMN.Domains
 {
+    [Serializable]
     public class ItemDefinition : BaseElement, ICloneable
     {
         public ItemDefinition()

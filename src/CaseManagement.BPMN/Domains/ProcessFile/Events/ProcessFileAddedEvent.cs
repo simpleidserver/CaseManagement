@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Add process definition")]
+    [Serializable]
     public class ProcessFileAddedEvent : DomainEvent
     {
         public ProcessFileAddedEvent(string id, string aggregateId, int version, string fileId, string name, string description, DateTime createDateTime, string payload) : base(id, aggregateId, version)

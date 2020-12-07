@@ -2,6 +2,7 @@
 
 namespace CaseManagement.BPMN.Domains
 {
+    [Serializable]
     public class SequenceFlow : BaseFlowElement, ICloneable
     {
         public string SourceRef { get; set; }

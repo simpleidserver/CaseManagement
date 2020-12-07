@@ -32,10 +32,10 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                 {
                     AggregateId = table.Column<string>(nullable: false),
                     Version = table.Column<int>(nullable: false),
-                    InstanceId = table.Column<string>(nullable: true),
-                    ProcessId = table.Column<string>(nullable: true),
-                    CommonId = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
                     ProcessFileId = table.Column<string>(nullable: true),
+                    NameIdentifier = table.Column<string>(nullable: true),
+                    ProcessFileName = table.Column<string>(nullable: true),
                     CreateDateTime = table.Column<DateTime>(nullable: false),
                     UpdateDateTime = table.Column<DateTime>(nullable: false)
                 },
@@ -88,8 +88,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                 name: "FlowNodeInstanceModel",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(nullable: false),
                     FlowNodeId = table.Column<string>(nullable: true),
                     State = table.Column<int>(nullable: false),
                     ActivityState = table.Column<int>(nullable: true),
@@ -178,6 +177,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    EltId = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     SourceRef = table.Column<string>(nullable: true),
                     TargetRef = table.Column<string>(nullable: true),
@@ -201,7 +201,6 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
                     State = table.Column<string>(nullable: true),
                     FlowNodeInstanceId = table.Column<string>(nullable: true),
                     SerializedContent = table.Column<string>(nullable: true),
@@ -245,8 +244,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                 name: "ExecutionPointerModel",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(nullable: false),
                     ExecutionPathId = table.Column<string>(nullable: true),
                     InstanceFlowNodeId = table.Column<string>(nullable: true),
                     FlowNodeId = table.Column<string>(nullable: true),
@@ -271,8 +269,9 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     State = table.Column<int>(nullable: false),
+                    Message = table.Column<string>(nullable: true),
                     ExecutionDateTime = table.Column<DateTime>(nullable: false),
-                    FlowNodeInstanceModelId = table.Column<long>(nullable: true)
+                    FlowNodeInstanceModelId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -294,7 +293,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     Direction = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     SerializedContent = table.Column<string>(nullable: true),
-                    ExecutionPointerModelId = table.Column<long>(nullable: true)
+                    ExecutionPointerModelId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

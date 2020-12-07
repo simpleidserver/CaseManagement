@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace CaseManagement.BPMN.Domains
 {
+    [Serializable]
     public class BPMNInterface : BaseElement, ICloneable
     {
         public BPMNInterface()

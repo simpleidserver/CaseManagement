@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Add execution pointer")]
+    [Serializable]
     public class ExecutionPointerAddedEvent : DomainEvent
     {
         public ExecutionPointerAddedEvent(string id, string aggregateId, int version, string executionPointerId, string executionPathId, string flowNodeInstanceId, string flowNodeId, string serializedTokens, DateTime createDateTime) : base(id, aggregateId, version)

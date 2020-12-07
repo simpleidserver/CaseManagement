@@ -12,6 +12,6 @@ namespace CaseManagement.BPMN.Infrastructure.Jobs.Notifications
 
         public string MessageName { get; set; }
         public string ProcessInstanceId { get; set; }
-        public object Content { get; set; }
+        public string Content { get; set; }
     }
 }

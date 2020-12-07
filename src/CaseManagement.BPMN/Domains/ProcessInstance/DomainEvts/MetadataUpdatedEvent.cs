@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Update metadata '{Key}'='{Value}'")]
+    [Serializable]
     public class MetadataUpdatedEvent : DomainEvent
     {
         public MetadataUpdatedEvent(string id, string aggregateId, int version, string flowNodeInstanceId, string key, string value, DateTime updateDateTime) : base(id, aggregateId, version)

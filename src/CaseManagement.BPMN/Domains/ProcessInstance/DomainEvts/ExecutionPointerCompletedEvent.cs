@@ -7,6 +7,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Complete execution pointer")]
+    [Serializable]
     public class ExecutionPointerCompletedEvent : DomainEvent
     {
         public ExecutionPointerCompletedEvent(string id, string aggregateId, int version, string executionPathId, string executionPointerId, ICollection<MessageToken> outcomeValues, DateTime completionDateTime) : base(id, aggregateId, version)

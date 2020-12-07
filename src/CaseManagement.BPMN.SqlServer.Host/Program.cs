@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace CaseManagement.BPMN.SqlServer.Host
 {
@@ -14,6 +15,11 @@ namespace CaseManagement.BPMN.SqlServer.Host
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddJsonFile("appsettings.json");
+                    config.AddEnvironmentVariables(prefix: "ASPNETCORE_");
+                })
                 .UseStartup<Startup>();
     }
 }

@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace CaseManagement.BPMN.Domains
 {
     [DebuggerDisplay("Add incoming token")]
+    [Serializable]
     public class IncomingTokenAddedEvent : DomainEvent
     {
         public IncomingTokenAddedEvent(string id, string aggregateId, int version, string executionPathId, string executionPointerId, string serializedToken, DateTime creationDateTime) : base(id, aggregateId, version)

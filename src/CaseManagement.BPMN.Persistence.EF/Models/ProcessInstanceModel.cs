@@ -9,6 +9,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Models
         public int Version { get; set; }
         public int Status { get; set; }
         public string ProcessFileId { get; set; }
+        public string NameIdentifier { get; set; }
         public string ProcessFileName { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }

@@ -82,7 +82,7 @@ namespace CaseManagement.BPMN.Host
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CaseManagement API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BPMN API V1");
             });
             app.UseAuthentication();
             app.UseCors("AllowAll");

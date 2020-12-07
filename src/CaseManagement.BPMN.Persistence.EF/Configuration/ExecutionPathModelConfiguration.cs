@@ -9,7 +9,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Configuration
         public void Configure(EntityTypeBuilder<ExecutionPathModel> builder)
         {
             builder.HasKey(_ => _.Id);
-            builder.Property(_ => _.Id).ValueGeneratedOnAdd();
+            builder.Property(_ => _.Id).ValueGeneratedNever();
             builder.HasMany(_ => _.Pointers).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
