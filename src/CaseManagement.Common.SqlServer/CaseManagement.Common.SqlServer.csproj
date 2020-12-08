@@ -2,9 +2,17 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>Distributed lock implemented for SQL server.</Description>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CaseManagement.Common\CaseManagement.Common.csproj" />

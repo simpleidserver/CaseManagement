@@ -2,8 +2,14 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>BPMN common classes.</Description>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
 </Project>

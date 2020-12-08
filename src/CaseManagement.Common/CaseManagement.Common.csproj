@@ -3,7 +3,14 @@
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>Common classes used by the CaseManagement project.</Description>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
@@ -13,6 +20,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0" />
     <PackageReference Include="Cronos" Version="0.7.0" />
     <PackageReference Include="DynamicExpresso.Core" Version="2.3.1" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Reference Include="System.Web" />

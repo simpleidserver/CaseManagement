@@ -2,12 +2,20 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>BPMN V2.0.2 implementation.</Description>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="DynamicExpresso.Core" Version="2.3.1" />
     <PackageReference Include="IdentityModel" Version="4.5.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Reference Include="System.Web" />

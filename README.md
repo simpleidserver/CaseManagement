@@ -1,17 +1,7 @@
 # CaseManagement
 
-CaseManagement is an open source framework enabling any DOTNETCORE to host a CMMN engine.
-It supports most of the concepts introduced by the Case Management Model And Notation (CMMN) standard version 1.1 for examples :
-
-1) Human task : Task that is performed by a Case worker.
-
-2) Automatic task : Can be used in the Case to call a Business process.
-
-3) Sentry :  combination of an "event and/or condition".
-
-4) Milestone : represents an achievable target.
-
-5) Case file : represent a piece of information of any nature, ranging from unstructured to structured and from simple to complex, which information can be defined based on any information modeling language.
+CaseManagement is an open source framework enabling any DOTNETCORE applications to host a CMMN / WS-HumanTask or BPMN engine.
+It supports most of the concepts introduced by CMMN1.1, BPMN2.0.2 and WS-HumanTask.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/q2ra83o0rcla41oc?svg=true)](https://ci.appveyor.com/project/simpleidserver/casemanagement)
 [![MyGet (dev)](https://img.shields.io/myget/advance-ict/v/CaseManagement.CMMN.svg)](http://myget.org/gallery/advance-ict)

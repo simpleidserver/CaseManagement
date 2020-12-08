@@ -65,6 +65,10 @@ Project maintainers who do not follow or enforce the Code of Conduct in good
 faith may face temporary or permanent repercussions as determined by other
 members of the project's leadership.
 
+## Contributing code and content
+
+You will need to sign a contributor license agreement (CLA) before submitting your pull request. The first time you submit a PR, a bot will take you through that process.
+
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,

@@ -2,11 +2,16 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\CaseFiles.feature.cs" />
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\ErrorHumanTaskDef - Copier.feature.cs" />
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\ErrorHumanTaskInstances - Copier.feature.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />

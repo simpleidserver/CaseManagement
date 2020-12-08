@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\CaseInstances - Copier.feature.cs" />
@@ -55,6 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />

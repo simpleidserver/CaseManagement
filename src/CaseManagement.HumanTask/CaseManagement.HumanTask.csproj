@@ -3,11 +3,16 @@
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>WS-HumanTask v1.1 implementation.</Description>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DynamicExpresso.Core" Version="2.3.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CaseManagement.Common\CaseManagement.Common.csproj" />
@@ -32,5 +37,8 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Reference Include="System.Web" />
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
   </ItemGroup>
 </Project>

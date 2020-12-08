@@ -3,15 +3,23 @@
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Description>Use entity framework in the CaseManagement project.</Description>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CaseManagement.CMMN\CaseManagement.CMMN.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DomainMapping\" />
     <Folder Include="Persistence\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\key.snk" Link="key.snk" />
   </ItemGroup>
 </Project>
