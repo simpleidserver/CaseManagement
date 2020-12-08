@@ -7,10 +7,8 @@
   "CASE_FILES": "Case files",
   "CASE_PLANS": "Case plans",
   "CASE_INSTANCES": "Case instances",
-  "SEARCH": "Search",
   "ADD_CASE_FILE": "Add case file",
   "UPLOAD_CASE_FILES": "Upload case files",
-  "FILE_NAME": "Name",
   "CREATE_DATETIME": "Creation time",
   "UPDATE_DATETIME": "Update time",
   "ENTER_CASE_FILE_NAME": "Enter name",
@@ -51,9 +49,6 @@
   "VALUE": "Value",
   "TRANSITION": "Transition",
   "UNDO": "Undo",
-  "ERROR_ADD_CASE_FILE": "An error occured while trying to create the case file",
-  "CASES_FILE_ADDED": "The case file has been added",
-  "VERSION": "Version",
   "STATUS": "Status",
   "CASE_FILE_HISTORIES": "Case file history",
   "PUBLISH_CASE_FILE": "The case file is published",
@@ -114,8 +109,12 @@
   "EDIT_BPMN_FILE": "Edit BPMN file",
   "VIEW_BPMN_FILE_HISTORY": "View history of the BPMN file",
   "SHARED": {
-    "NAME": "Name",
     "ID": "Identifier",
+    "NAME": "Name",
+    "VERSION": "Version",
+    "DESCRIPTION": "Description",
+    "FILE_NAME": "File name",
+    "STATUS": "Status",
     "INPUT_PARAMETERS": "Input parameters",
     "ACTIVATION_DEFERRAL_TIME": "Activation deferral time",
     "EXPIRATION_TIME": "Expiration time",
@@ -150,7 +149,40 @@
     "SAVE": "Save",
     "PUBLISH": "Publish",
     "EDITOR": "Editor",
-    "XML": "Xml"
+    "XML": "Xml",
+    "SEARCH": "Search"
+  },
+  "CMMN": {
+    "CMMNFILEVERSION": "File version {{version}}, published {{receptionDate}}",
+    "TITLES": {
+      "FILES": "CMMN files",
+      "FILE": "CMMN file"
+    },
+    "PROPERTIES": {
+      "GENERALINFO": "General information"
+    },
+    "TABS": {
+      "INFORMATION": "Information",
+      "EDITOR": "Editor",
+      "XML": "Xml",
+      "CASEPLANS": "Case plans"
+    },
+    "ACTIONS": {
+      "ADD_CMMN_FILE": "Add CMMN file"
+    },
+    "MESSAGES": {
+      "ERROR_ADD_CASE_FILE": "An error occured while trying to create the case file",
+      "CASES_FILE_ADDED": "The case file has been added",
+      "CMMN_FILE_PAYLOAD_SAVED": "Case file payload has been saved",
+      "COMPLETE_PUBLISH_CMMNFILE": "Case file has been published",
+      "ERROR_PUBLISH_CMMNFILE": "An error occured while trying to publish the CMMN file",
+      "ERROR_UPDATE_CMMNFILE": "An error occured while trying to update the CMMN file",
+      "CMMN_FILE_SAVED": "Case file has been updated"
+    },
+    "SCHEMA": {
+      "ID": "Identifier",
+      "NAME": "Name"
+    }
   },
   "BPMN": {
     "TITLES": {
@@ -160,10 +192,6 @@
       "BPMNINSTANCE": "BPMN instance"
     },
     "INSTANCE": {
-      "ID": "Identifier",
-      "STATUS": "Status",
-      "CREATE_DATETIME": "Create datetime",
-      "UPDATE_DATETIME": "Update datetime",
       "NBEXECUTIONPATH": "Number of execution path",
       "EXECUTIONPATHLST": "List of execution path",
       "EXECUTIONPATH": "Execution path {{index}}, received : {{receptionDate}}",
@@ -223,7 +251,6 @@
       "ID": "Identifier",
       "CREATE_DATETIME": "Create datetime",
       "UPDATE_DATETIME": "Update datetime",
-      "FILE_NAME": "File name",
       "DESCRIPTION": "File description",
       "VERSION": "Version",
       "STATUS": "Status"

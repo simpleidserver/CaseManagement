@@ -27,7 +27,8 @@ namespace CaseManagement.CMMN.CaseFile.Queries.Handlers
                 CaseFileId = request.CaseFileId,
                 Owner = request.Owner,
                 StartIndex = request.StartIndex,
-                TakeLatest = request.TakeLatest
+                TakeLatest = request.TakeLatest,
+                Text = request.Text
             }, cancellationToken);
             return new SearchResult<CaseFileResult>
             {

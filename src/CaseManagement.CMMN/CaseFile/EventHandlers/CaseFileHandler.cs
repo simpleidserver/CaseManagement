@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CaseFile.EventHandlers
 {
-    public class CaseFileHandler : IDomainEvtConsumerGeneric<CaseFileAddedEvent>, IDomainEvtConsumerGeneric<CaseFileUpdatedEvent>, IDomainEvtConsumerGeneric<CaseFilePublishedEvent>
+    public class CaseFileHandler : IDomainEvtConsumerGeneric<CaseFileAddedEvent>,
+        IDomainEvtConsumerGeneric<CaseFileUpdatedEvent>, 
+        IDomainEvtConsumerGeneric<CaseFilePublishedEvent>,
+        IDomainEvtConsumerGeneric<CaseFilePayloadUpdatedEvent>
     {
         private readonly ICaseFileCommandRepository _caseFileCommandRepository;
         private readonly ICaseFileQueryRepository _caseFileQueryRepository;
@@ -42,6 +45,14 @@ namespace CaseManagement.CMMN.CaseFile.EventHandlers
             caseFile.Handle(@event);
             await _caseFileCommandRepository.Update(caseFile, cancellationToken);
             await _caseFileCommandRepository.SaveChanges(cancellationToken);
+        }
+
+        public async Task Handle(CaseFilePayloadUpdatedEvent @event, CancellationToken token)
+        {
+            var caseFile = await _caseFileQueryRepository.Get(@event.AggregateId, token);
+            caseFile.Handle(@event);
+            await _caseFileCommandRepository.Update(caseFile, token);
+            await _caseFileCommandRepository.SaveChanges(token);
         }
     }
 }

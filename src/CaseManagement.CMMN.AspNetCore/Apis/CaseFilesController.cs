@@ -64,6 +64,26 @@ namespace CaseManagement.CMMN.AspNetCore.Apis
             }
         }
 
+        [HttpPut("{id}/payload")]
+        [Authorize("update_casefile")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateCaseFilePayloadCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.Id = id;
+                await _mediator.Send(parameter, token);
+                return new OkResult();
+            }
+            catch (UnknownCaseFileException)
+            {
+                return new NotFoundResult();
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
         [HttpGet("{id}/publish")]
         [Authorize("publish_casefile")]
         public async Task<IActionResult> Publish(string id, CancellationToken token)

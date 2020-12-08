@@ -20,9 +20,16 @@ namespace CaseManagement.CMMN.Domains
         public string Owner { get; set; }
         public CaseFileStatus Status { get; set; }
 
-        public void Update(string name, string description, string payload)
+        public void Update(string name, string description)
         {
-            var evt = new CaseFileUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, DateTime.UtcNow, name, description, payload);
+            var evt = new CaseFileUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, DateTime.UtcNow, name, description);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
+
+        public void UpdatePayload(string payload)
+        {
+            var evt = new CaseFilePayloadUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, DateTime.UtcNow, payload);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -117,7 +124,14 @@ namespace CaseManagement.CMMN.Domains
                 });
             }
 
-            if (string.IsNullOrWhiteSpace(caseFileUpdatedEvent.Payload))
+            Name = caseFileUpdatedEvent.Name;
+            Description = caseFileUpdatedEvent.Description;
+            UpdateDateTime = caseFileUpdatedEvent.UpdateDatetime;
+        }
+
+        private void Handle(CaseFilePayloadUpdatedEvent caseFilePayloadUpdatedEvent)
+        {
+            if (string.IsNullOrWhiteSpace(caseFilePayloadUpdatedEvent.Payload))
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
@@ -127,7 +141,7 @@ namespace CaseManagement.CMMN.Domains
 
             try
             {
-                CMMNParser.ParseWSDL(caseFileUpdatedEvent.Payload);
+                CMMNParser.ParseWSDL(caseFilePayloadUpdatedEvent.Payload);
             }
             catch
             {
@@ -137,10 +151,8 @@ namespace CaseManagement.CMMN.Domains
                 });
             }
 
-            UpdateDateTime = caseFileUpdatedEvent.UpdateDatetime;
-            Name = caseFileUpdatedEvent.Name;
-            Description = caseFileUpdatedEvent.Description;
-            Payload = caseFileUpdatedEvent.Payload;
+            Payload = caseFilePayloadUpdatedEvent.Payload;
+            UpdateDateTime = caseFilePayloadUpdatedEvent.UpdateDatetime;
         }
 
         private void Handle(CaseFilePublishedEvent caseFilePublishedEvent)

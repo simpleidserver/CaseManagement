@@ -1,0 +1,30 @@
+﻿<button mat-raised-button *ngIf="cmmnFile.status === 'Edited'" color="primary" (click)="onSave()">{{ 'SHARED.SAVE' | translate }}</button>
+<div fxLayout="row">
+    <div fxFlex="80%">
+        <div id="canvas" style="height: 500px"></div>
+    </div>
+    <div fxFlex="20%">
+        <div *ngIf="selectedElt">
+            <form [formGroup]="updatePropertiesForm">
+                <mat-accordion>
+                    <!-- General information -->
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            {{ 'CMMN.PROPERTIES.GENERALINFO' | translate }}
+                        </mat-expansion-panel-header>
+                        <!-- Id -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'CMMN.SCHEMA.ID' | translate }}</mat-label>
+                            <input matInput name="id" formControlName="id" />
+                        </mat-form-field>
+                        <!-- Name -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'CMMN.SCHEMA.NAME' | translate }}</mat-label>
+                            <input matInput name="name" formControlName="name" />
+                        </mat-form-field>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </form>
+        </div>
+    </div>
+</div>

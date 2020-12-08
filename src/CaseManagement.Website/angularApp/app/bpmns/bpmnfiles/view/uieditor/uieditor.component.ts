@@ -179,7 +179,13 @@ export class ViewBpmnFileUIEditorComponent implements OnInit {
         if (bo.$type === 'bpmn:UserTask') {
             obj['implementation'] = form.implementation;
             obj['cmg:wsHumanTaskDefName'] = form.wsHumanTaskDefName;
-            const parameters = this.getExtension(bo, 'cmg:Parameters');
+            let extensionElements = bo.extensionElements || moddle.create('bpmn:ExtensionElements');
+            let parameters = this.getExtension(bo, 'cmg:Parameters');
+            if (!parameters) {
+                parameters = moddle.create('cmg:Parameters');
+                extensionElements.get('values').push(parameters);
+            }
+
             parameters.parameter = [];
             this.parameters.forEach(function (p: any) {
                 let parameter = moddle.create('cmg:Parameter');

@@ -119,7 +119,7 @@ export class AppComponent implements OnInit {
                 return;
             }
 
-            if (url.startsWith('/cases')) {
+            if (url.startsWith('/cmmns')) {
                 this.casesExpanded = true;
             }
 
