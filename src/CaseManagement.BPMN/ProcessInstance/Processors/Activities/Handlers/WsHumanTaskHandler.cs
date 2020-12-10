@@ -41,8 +41,6 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                 {
                     var operationParameters = new JObject
                     {
-                        { "flowNodeInstanceId", executionContext.Instance.AggregateId },
-                        { "flowNodeElementInstanceId", pointer.InstanceFlowNodeId },
                         { "nameIdentifier", executionContext.Instance.NameIdentifier }
                     };
                     var ctx = new ConditionalExpressionContext(pointer.Incoming);
@@ -60,6 +58,10 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                         }
                     }
 
+                    var jArr = new JArray();
+                    var link = _options.CallbackUrl.Replace("{id}", executionContext.Instance.AggregateId);
+                    link = link.Replace("{eltId}", pointer.InstanceFlowNodeId);
+                    jArr.Add(link);
                     var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
                     {
                         Address = _options.OAuthTokenEndpoint,
@@ -75,7 +77,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     var obj = new JObject
                     {
                         { "humanTaskName", userTask.HumanTaskName },
-                        { "operationParameters", operationParameters }
+                        { "operationParameters", operationParameters },
+                        { "callbackUrls",  jArr }
                     };
                     var content = new StringContent(obj.ToString(), Encoding.UTF8, "application/json");
                     var request = new HttpRequestMessage

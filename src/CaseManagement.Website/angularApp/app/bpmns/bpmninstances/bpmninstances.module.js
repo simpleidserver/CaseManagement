@@ -12,15 +12,12 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { CaseFilesRoutes } from './casefiles.routes';
-import { HistoryCaseFileComponent } from './history/history.component';
-import { AddCaseFileDialog } from './list/add-case-file-dialog';
-import { ListCaseFilesComponent } from './list/list.component';
-import { ViewCaseFilesComponent } from './view/view.component';
-var CaseFilesModule = (function () {
-    function CaseFilesModule() {
+import { BpmnInstancesRoutes } from './bpmninstances.routes';
+import { ListBpmnInstancesComponent } from './list/list.component';
+var BpmnInstancesModule = (function () {
+    function BpmnInstancesModule() {
     }
-    CaseFilesModule = __decorate([
+    BpmnInstancesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
@@ -28,16 +25,15 @@ var CaseFilesModule = (function () {
                 MonacoEditorModule.forRoot(),
                 FormsModule,
                 HttpClientModule,
-                CaseFilesRoutes,
+                BpmnInstancesRoutes,
                 MaterialModule,
                 SharedModule
             ],
-            entryComponents: [AddCaseFileDialog],
-            declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent, HistoryCaseFileComponent],
-            exports: [ListCaseFilesComponent, ViewCaseFilesComponent]
+            entryComponents: [],
+            declarations: [ListBpmnInstancesComponent]
         })
-    ], CaseFilesModule);
-    return CaseFilesModule;
+    ], BpmnInstancesModule);
+    return BpmnInstancesModule;
 }());
-export { CaseFilesModule };
-//# sourceMappingURL=casefiles.module.js.map
+export { BpmnInstancesModule };
+//# sourceMappingURL=bpmninstances.module.js.map

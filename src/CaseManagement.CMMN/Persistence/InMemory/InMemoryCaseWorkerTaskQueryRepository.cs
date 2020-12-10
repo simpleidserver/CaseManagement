@@ -38,14 +38,6 @@ namespace CaseManagement.CMMN.Persistence.InMemory
         public Task<FindResponse<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
         {
             IEnumerable<CaseWorkerTaskAggregate> result = _caseWorkerTaskLst.ToList();
-            if (parameter.Claims != null && parameter.Claims.Any())
-            {
-                result = result.Where(_ =>
-                {
-                    return _.Roles.Any(__ => __.Claims.Any(c => parameter.Claims.Any(pc => pc.Key == c.Key && pc.Value == c.Value)));
-                });
-            }
-
             if (MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.AsQueryable().InvokeOrderBy(MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order).ToList();

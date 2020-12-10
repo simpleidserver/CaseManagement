@@ -26,14 +26,12 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
         {
             using (var lck = await _caseManagementDbContext.Lock())
             {
-                var record = await _caseManagementDbContext.CaseWorkers.Include(_ => _.Roles)
-                    .FirstOrDefaultAsync(_ => _.Id == caseWorkerTask.AggregateId, token);
+                var record = await _caseManagementDbContext.CaseWorkers.FirstOrDefaultAsync(_ => _.Id == caseWorkerTask.AggregateId, token);
                 if (record == null)
                 {
                     return;
                 }
 
-                _caseManagementDbContext.Roles.RemoveRange(record.Roles);
                 _caseManagementDbContext.CaseWorkers.Remove(record);
             }
         }

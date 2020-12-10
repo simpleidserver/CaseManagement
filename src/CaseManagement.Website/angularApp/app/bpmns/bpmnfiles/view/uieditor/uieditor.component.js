@@ -8,39 +8,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
 import * as fromAppState from '@app/stores/appstate';
-import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
-import { ScannedActionsSubject, select, Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
-import { CaseFile } from '../../../stores/casefiles/models/case-file.model';
-var CmmnViewer = require('cmmn-js/lib/Modeler'), propertiesPanelModule = require('casemanagement-js-properties-panel'), propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'), caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement'), cmmnModdle = require('casemanagement-cmmn-moddle/resources/cmmn');
-var ViewCaseFilesComponent = (function () {
-    function ViewCaseFilesComponent(store, route, formBuilder, snackBar, translateService, actions$, router) {
+import * as fromBpmnFileActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
+import { BpmnFile } from '@app/stores/bpmnfiles/models/bpmn-file.model';
+import { select, Store } from '@ngrx/store';
+var BpmnViewer = require('bpmn-js/lib/Modeler'), propertiesPanelModule = require('bpmn-js-properties-panel'), propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/bpmn');
+var caseMgtBpmnModdle = require('@app/moddlextensions/casemanagement-bpmn');
+var ViewBpmnFileUIEditorComponent = (function () {
+    function ViewBpmnFileUIEditorComponent(store) {
         this.store = store;
-        this.route = route;
-        this.formBuilder = formBuilder;
-        this.snackBar = snackBar;
-        this.translateService = translateService;
-        this.actions$ = actions$;
-        this.router = router;
-        this.isEditorDisplayed = true;
-        this.editorOptions = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
-        this.caseFile = new CaseFile();
-        this.saveForm = this.formBuilder.group({
-            id: new FormControl({ value: '', disabled: true }),
-            name: new FormControl({ value: '' }),
-            createDateTime: new FormControl({ value: '', disabled: true }),
-            updateDateTime: new FormControl({ value: '', disabled: true }),
-            description: new FormControl({ value: '' })
+        this.bpmnFile = new BpmnFile();
+        this.buildingForm = true;
+        this.selectedElt = null;
+        this.parameters = [];
+        this.outgoingElts = [];
+        this.isEltSelected = false;
+        this.updatePropertiesForm = new FormGroup({
+            id: new FormControl(''),
+            name: new FormControl(''),
+            implementation: new FormControl(''),
+            className: new FormControl(''),
+            wsHumanTaskDefName: new FormControl(''),
+            default: new FormControl(''),
+            gatewayDirection: new FormControl(''),
+            sequenceFlowCondition: new FormControl('')
+        });
+        this.addParameterForm = new FormGroup({
+            key: new FormControl(''),
+            value: new FormControl('')
         });
     }
-    ViewCaseFilesComponent.prototype.ngOnInit = function () {
+    ViewBpmnFileUIEditorComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.viewer = new CmmnViewer({
+        var self = this;
+        this.viewer = new BpmnViewer.default({
             additionalModules: [
                 propertiesPanelModule,
                 propertiesProviderModule
@@ -49,130 +51,182 @@ var ViewCaseFilesComponent = (function () {
             keyboard: {
                 bindTo: window
             },
-            propertiesPanel: {
-                parent: '#properties'
-            },
             moddleExtensions: {
-                case: caseModdle,
-                cmmn: cmmnModdle
+                cmg: caseMgtBpmnModdle
             }
         });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_UPDATE_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('CASE_FILE_SAVED'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
+        var evtBus = this.viewer.get('eventBus');
+        evtBus.on('element.click', function (evt) {
+            self.updateProperties(evt.element);
         });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_UPDATE_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('ERROR_SAVE_CASE_FILE'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
-        });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_PUBLISH_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('PUBLISH_CASE_FILE'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
-        });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_PUBLISH_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('ERROR_PUBLISH_CASE_FILE'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
-            _this.router.navigate(["/cases/casefiles/" + _this.caseFile.id]);
-        });
-        this.store.pipe(select(fromAppState.selectCaseFileResult)).subscribe(function (e) {
+        this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
-            _this.saveForm.controls['id'].setValue(e.id);
-            _this.saveForm.controls['name'].setValue(e.name);
-            _this.saveForm.controls['createDateTime'].setValue(e.createDateTime);
-            _this.saveForm.controls['updateDateTime'].setValue(e.updateDateTime);
-            _this.saveForm.controls['description'].setValue(e.description);
-            _this.xml = e.payload;
             _this.viewer.importXML(e.payload);
-            _this.caseFile = e;
+            _this.bpmnFile = e;
         });
-        this.refresh();
-    };
-    ViewCaseFilesComponent.prototype.navigate = function (isEditorDisplayed) {
-        var self = this;
-        this.isEditorDisplayed = isEditorDisplayed;
-        if (!this.isEditorDisplayed) {
-            this.viewer.saveXML({}, function (e, x) {
-                if (e) {
-                    return;
-                }
-                self.xml = self.formatXML(x);
+        this.updatePropertiesForm.valueChanges.subscribe(function () {
+            if (self.buildingForm) {
+                return;
+            }
+            self.saveProperties(_this.updatePropertiesForm.value);
+        });
+        this.updatePropertiesForm.get('default').valueChanges.subscribe(function () {
+            var selectedPath = self.updatePropertiesForm.get('default').value;
+            if (!selectedPath || !self.selectedElt) {
+                return;
+            }
+            var elementRegistry = self.viewer.get('elementRegistry');
+            var connection = elementRegistry.get(selectedPath);
+            var modeling = self.viewer.get('modeling');
+            if (self.selectedElt.outgoing) {
+                modeling.setColor(self.selectedElt.outgoing, {
+                    stroke: 'black'
+                });
+            }
+            modeling.setColor([connection], {
+                stroke: 'orange'
             });
-        }
-        return false;
+        });
     };
-    ViewCaseFilesComponent.prototype.onXmlChange = function (evt) {
-        this.viewer.importXML(evt);
-    };
-    ViewCaseFilesComponent.prototype.onSave = function (form) {
+    ViewBpmnFileUIEditorComponent.prototype.onSave = function () {
         var self = this;
         this.viewer.saveXML({}, function (e, x) {
             if (e) {
                 return;
             }
-            var id = self.saveForm.get('id').value;
-            var act = new fromCaseFileActions.UpdateCaseFile(id, form.name, form.description, x);
+            var id = self.bpmnFile.id;
+            var act = new fromBpmnFileActions.UpdateBpmnFilePayload(id, x);
             self.store.dispatch(act);
         });
     };
-    ViewCaseFilesComponent.prototype.onPublish = function (e) {
-        e.preventDefault();
-        var id = this.route.snapshot.params['id'];
-        var act = new fromCaseFileActions.PublishCaseFile(id);
-        this.store.dispatch(act);
+    ViewBpmnFileUIEditorComponent.prototype.updateProperties = function (elt) {
+        this.buildingForm = true;
+        this.updatePropertiesForm.reset();
+        this.selectedElt = elt;
+        this.isEltSelected = true;
+        var self = this;
+        var bo = elt.businessObject;
+        this.updatePropertiesForm.get('id').setValue(bo.id);
+        this.updatePropertiesForm.get('name').setValue(bo.name);
+        if (bo.$type === 'bpmn:ServiceTask') {
+            this.updatePropertiesForm.get('implementation').setValue(bo.implementation);
+            this.updatePropertiesForm.get('className').setValue(bo.get('cmg:className'));
+        }
+        if (bo.$type === 'bpmn:UserTask') {
+            this.updatePropertiesForm.get('implementation').setValue(bo.implementation);
+            this.updatePropertiesForm.get('wsHumanTaskDefName').setValue(bo.get('cmg:wsHumanTaskDefName'));
+            var parameters = this.getExtension(bo, 'cmg:Parameters');
+            self.parameters = [];
+            if (parameters && parameters.parameter) {
+                parameters.parameter.forEach(function (p) {
+                    self.parameters.push({ key: p.key, value: p.value });
+                });
+            }
+        }
+        if (bo.$type === 'bpmn:ExclusiveGateway') {
+            if (bo.default) {
+                this.updatePropertiesForm.get('default').setValue(bo.default.id);
+            }
+            this.updatePropertiesForm.get('gatewayDirection').setValue(bo.gatewayDirection);
+            if (bo.outgoing) {
+                this.outgoingElts = bo.outgoing.map(function (o) {
+                    return o.id;
+                });
+            }
+        }
+        if (bo.$type === 'bpmn:SequenceFlow') {
+            if (bo.conditionExpression) {
+                this.updatePropertiesForm.get('sequenceFlowCondition').setValue(bo.conditionExpression.body);
+            }
+        }
+        this.buildingForm = false;
     };
-    ViewCaseFilesComponent.prototype.refresh = function () {
-        var id = this.route.snapshot.params['id'];
-        var request = new fromCaseFileActions.GetCaseFile(id);
-        this.store.dispatch(request);
+    ViewBpmnFileUIEditorComponent.prototype.saveProperties = function (form) {
+        if (!this.selectedElt) {
+            return;
+        }
+        var moddle = this.viewer.get('moddle');
+        var modeling = this.viewer.get('modeling');
+        var elementRegistry = this.viewer.get('elementRegistry');
+        var obj = {
+            id: form.id,
+            name: form.name
+        };
+        var bo = this.selectedElt.businessObject;
+        if (bo.$type === 'bpmn:ServiceTask') {
+            obj['cmg:className'] = form.className;
+            obj['implementation'] = form.implementation;
+        }
+        if (bo.$type === 'bpmn:UserTask') {
+            obj['implementation'] = form.implementation;
+            obj['cmg:wsHumanTaskDefName'] = form.wsHumanTaskDefName;
+            var extensionElements = bo.extensionElements || moddle.create('bpmn:ExtensionElements');
+            var parameters_1 = this.getExtension(bo, 'cmg:Parameters');
+            if (!parameters_1) {
+                parameters_1 = moddle.create('cmg:Parameters');
+                extensionElements.get('values').push(parameters_1);
+            }
+            parameters_1.parameter = [];
+            this.parameters.forEach(function (p) {
+                var parameter = moddle.create('cmg:Parameter');
+                parameter.key = p.key;
+                parameter.value = p.value;
+                parameters_1.parameter.push(parameter);
+            });
+        }
+        if (bo.$type === 'bpmn:ExclusiveGateway') {
+            if (form.default) {
+                obj['default'] = elementRegistry.get(form.default).businessObject;
+            }
+            obj['gatewayDirection'] = form.gatewayDirection;
+        }
+        if (bo.$type === 'bpmn:SequenceFlow') {
+            var newCondition = moddle.create('bpmn:FormalExpression', {
+                body: form.sequenceFlowCondition
+            });
+            obj['conditionExpression'] = newCondition;
+        }
+        modeling.updateProperties(this.selectedElt, obj);
     };
-    ViewCaseFilesComponent.prototype.formatXML = function (xml) {
-        var PADDING = ' '.repeat(2);
-        var reg = /(>)(<)(\/*)/g;
-        var pad = 0;
-        xml = xml.replace(reg, '$1\r\n$2$3');
-        return xml.split('\r\n').map(function (node) {
-            var indent = 0;
-            if (node.match(/.+<\/\w[^>]*>$/)) {
-                indent = 0;
-            }
-            else if (node.match(/^<\/\w/) && pad > 0) {
-                pad -= 1;
-            }
-            else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
-                indent = 1;
-            }
-            else {
-                indent = 0;
-            }
-            pad += indent;
-            return PADDING.repeat(pad - indent) + node;
-        }).join('\r\n');
+    ViewBpmnFileUIEditorComponent.prototype.getExtension = function (elt, type) {
+        if (!elt.extensionElements) {
+            return null;
+        }
+        return elt.extensionElements.values.filter(function (e) {
+            return e.$type === type;
+        })[0];
     };
-    ViewCaseFilesComponent = __decorate([
+    ViewBpmnFileUIEditorComponent.prototype.removeParameter = function (elt) {
+        if (!this.selectedElt) {
+            return;
+        }
+        var bo = this.selectedElt.businessObject;
+        if (bo.$type === 'bpmn:UserTask') {
+            var index = this.parameters.indexOf(elt);
+            this.parameters.splice(index, 1);
+        }
+    };
+    ViewBpmnFileUIEditorComponent.prototype.addParameter = function (form) {
+        if (!this.selectedElt) {
+            return;
+        }
+        var bo = this.selectedElt.businessObject;
+        if (bo.$type === 'bpmn:UserTask') {
+            this.parameters.push(form);
+            this.addParameterForm.reset();
+        }
+    };
+    ViewBpmnFileUIEditorComponent = __decorate([
         Component({
-            selector: 'view-case-file',
-            templateUrl: './view.component.html',
-            styleUrls: ['./view.component.scss']
+            selector: 'view-bpmn-uieditor-file',
+            templateUrl: './uieditor.component.html',
+            styleUrls: ['./uieditor.component.scss']
         }),
-        __metadata("design:paramtypes", [Store,
-            ActivatedRoute,
-            FormBuilder,
-            MatSnackBar,
-            TranslateService,
-            ScannedActionsSubject,
-            Router])
-    ], ViewCaseFilesComponent);
-    return ViewCaseFilesComponent;
+        __metadata("design:paramtypes", [Store])
+    ], ViewBpmnFileUIEditorComponent);
+    return ViewBpmnFileUIEditorComponent;
 }());
-export { ViewCaseFilesComponent };
-//# sourceMappingURL=view.component.js.map
+export { ViewBpmnFileUIEditorComponent };
+//# sourceMappingURL=uieditor.component.js.map

@@ -31,6 +31,7 @@ namespace CaseManagement.CMMN.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
             services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
@@ -53,7 +54,23 @@ namespace CaseManagement.CMMN.Host
                         "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
-            });
+            })
+            .AddJwtBearer("OAuthScheme", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = ExtractKey("oauth_puk.txt"),
+                    ValidAudiences = new List<string>
+                    {
+                        "humanTaskClient"
+                    },
+                    ValidIssuers = new List<string>
+                    {
+                        "http://localhost:60001",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/oauth"
+                    }
+                };
+            }); ;
             services.AddAuthorization(policy =>
             {
                 // Case file
@@ -73,7 +90,31 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("resume_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("terminate_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("activate_caseplaninstance", p => p.RequireAuthenticatedUser());
-                policy.AddPolicy("complete_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("complete_caseplaninstance", p => 
+                {
+                    p.AddAuthenticationSchemes("OAuthScheme");
+                    p.RequireAssertion(_ =>
+                    {
+                        if (_.User == null || _.User.Claims == null  || !_.User.Claims.Any())
+                        {
+                            return false;
+                        }
+
+                        var cl = _.User.Claims.FirstOrDefault(_ => _.Type == "scope" && _.Value == "complete_humantask");
+                        if (cl != null)
+                        {
+                            return true;
+                        }
+
+                        cl = _.User.Claims.FirstOrDefault(_ => _.Type == "sub");
+                        if (cl != null)
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    });
+                });
                 // Case plan
                 policy.AddPolicy("get_caseplan", p => p.RequireAuthenticatedUser());
                 // Case worker task
@@ -84,7 +125,11 @@ namespace CaseManagement.CMMN.Host
                 .AllowAnyHeader()));
             services.AddHostedService<CMMNJobServerHostedService>();
             services.AddCaseApi();
-            services.AddCaseJobServer();
+            services.AddCaseJobServer(callback: opt =>
+            {
+                opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
+                opt.WSHumanTaskAPI = "http://localhost:60006";
+            }).AddDefinitions(files);
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {

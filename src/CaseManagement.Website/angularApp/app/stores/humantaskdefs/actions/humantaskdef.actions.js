@@ -229,17 +229,17 @@ var CompleteDeleteOutputParameterOperation = (function () {
 }());
 export { CompleteDeleteOutputParameterOperation };
 var UpdateRenderingOperation = (function () {
-    function UpdateRenderingOperation(id, rendering) {
+    function UpdateRenderingOperation(id, renderingElements) {
         this.id = id;
-        this.rendering = rendering;
+        this.renderingElements = renderingElements;
         this.type = ActionTypes.UPDATE_RENDERING_PARAMETER;
     }
     return UpdateRenderingOperation;
 }());
 export { UpdateRenderingOperation };
 var CompleteUpdateRenderingOperation = (function () {
-    function CompleteUpdateRenderingOperation(rendering) {
-        this.rendering = rendering;
+    function CompleteUpdateRenderingOperation(renderingElements) {
+        this.renderingElements = renderingElements;
         this.type = ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER;
     }
     return CompleteUpdateRenderingOperation;
@@ -354,17 +354,17 @@ var CompleteAddEscalationCompletionDeadlineOperation = (function () {
 }());
 export { CompleteAddEscalationCompletionDeadlineOperation };
 var UpdatePeopleAssignmentOperation = (function () {
-    function UpdatePeopleAssignmentOperation(id, assignment) {
+    function UpdatePeopleAssignmentOperation(id, peopleAssignments) {
         this.id = id;
-        this.assignment = assignment;
+        this.peopleAssignments = peopleAssignments;
         this.type = ActionTypes.UPDATE_PEOPLE_ASSIGNMENT;
     }
     return UpdatePeopleAssignmentOperation;
 }());
 export { UpdatePeopleAssignmentOperation };
 var CompletePeopleAssignmentOperation = (function () {
-    function CompletePeopleAssignmentOperation(assignment) {
-        this.assignment = assignment;
+    function CompletePeopleAssignmentOperation(peopleAssignments) {
+        this.peopleAssignments = peopleAssignments;
         this.type = ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT;
     }
     return CompletePeopleAssignmentOperation;
@@ -482,17 +482,19 @@ var CompleteSearchHumanTaskDefOperation = (function () {
 }());
 export { CompleteSearchHumanTaskDefOperation };
 var UpdatePresentationElementOperation = (function () {
-    function UpdatePresentationElementOperation(id, presentationElement) {
+    function UpdatePresentationElementOperation(id, presentationElements, presentationParameters) {
         this.id = id;
-        this.presentationElement = presentationElement;
+        this.presentationElements = presentationElements;
+        this.presentationParameters = presentationParameters;
         this.type = ActionTypes.UPDATE_PRESENTATIONELEMENT;
     }
     return UpdatePresentationElementOperation;
 }());
 export { UpdatePresentationElementOperation };
 var CompleteUpdatePresentationElementOperation = (function () {
-    function CompleteUpdatePresentationElementOperation(presentationElement) {
-        this.presentationElement = presentationElement;
+    function CompleteUpdatePresentationElementOperation(presentationElements, presentationParameters) {
+        this.presentationElements = presentationElements;
+        this.presentationParameters = presentationParameters;
         this.type = ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT;
     }
     return CompleteUpdatePresentationElementOperation;

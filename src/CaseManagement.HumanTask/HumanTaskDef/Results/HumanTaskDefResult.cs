@@ -42,8 +42,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 PresentationElements = humanTaskDef.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
                 RenderingElements = humanTaskDef.RenderingElements.Select(_ => RenderingElementResult.ToDto(_)).ToList(),
                 DeadLines = humanTaskDef.DeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList(),
-                PresentationParameters = humanTaskDef.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList(),
-                CallbackOperations = humanTaskDef.CallbackOperations.Select(_ => CallbackOperationResult.ToDto(_)).ToList()
+                PresentationParameters = humanTaskDef.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList()
             };
         }
 

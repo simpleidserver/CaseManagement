@@ -19,7 +19,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Configuration
             builder.HasMany(_ => _.PeopleAssignments).WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(_ => _.PresentationElements).WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(_ => _.PresentationParameters).WithOne().OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany(_ => _.CallbackOperations).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

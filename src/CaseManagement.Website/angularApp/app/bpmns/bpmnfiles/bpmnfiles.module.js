@@ -12,15 +12,17 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { CaseFilesRoutes } from './casefiles.routes';
-import { HistoryCaseFileComponent } from './history/history.component';
-import { AddCaseFileDialog } from './list/add-case-file-dialog';
-import { ListCaseFilesComponent } from './list/list.component';
-import { ViewCaseFilesComponent } from './view/view.component';
-var CaseFilesModule = (function () {
-    function CaseFilesModule() {
+import { BpmnFilesRoutes } from './bpmnfiles.routes';
+import { ListBpmnFilesComponent } from './list/list.component';
+import { ViewBpmnFileInformationComponent } from './view/information/information.component';
+import { ListBpmnInstancesComponent } from './view/instances/instances.component';
+import { ViewBpmnFileUIEditorComponent } from './view/uieditor/uieditor.component';
+import { ViewBpmnFileComponent } from './view/view.component';
+import { ViewBpmnFileXMLEditorComponent } from './view/xmleditor/xmleditor.component';
+var BpmnFilesModule = (function () {
+    function BpmnFilesModule() {
     }
-    CaseFilesModule = __decorate([
+    BpmnFilesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
@@ -28,16 +30,16 @@ var CaseFilesModule = (function () {
                 MonacoEditorModule.forRoot(),
                 FormsModule,
                 HttpClientModule,
-                CaseFilesRoutes,
+                BpmnFilesRoutes,
                 MaterialModule,
                 SharedModule
             ],
-            entryComponents: [AddCaseFileDialog],
-            declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent, HistoryCaseFileComponent],
-            exports: [ListCaseFilesComponent, ViewCaseFilesComponent]
+            entryComponents: [],
+            declarations: [ListBpmnFilesComponent, ViewBpmnFileComponent, ViewBpmnFileInformationComponent, ViewBpmnFileXMLEditorComponent, ViewBpmnFileUIEditorComponent, ListBpmnInstancesComponent],
+            exports: [ListBpmnFilesComponent]
         })
-    ], CaseFilesModule);
-    return CaseFilesModule;
+    ], BpmnFilesModule);
+    return BpmnFilesModule;
 }());
-export { CaseFilesModule };
-//# sourceMappingURL=casefiles.module.js.map
+export { BpmnFilesModule };
+//# sourceMappingURL=bpmnfiles.module.js.map

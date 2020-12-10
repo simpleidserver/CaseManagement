@@ -14,7 +14,8 @@ export class ViewCmmnFileInformationComponent implements OnInit {
     saveForm: FormGroup;
     cmmnFile: CmmnFile = new CmmnFile();
 
-    constructor(private store: Store<fromAppState.AppState>,
+    constructor(
+        private store: Store<fromAppState.AppState>,
         private formBuilder: FormBuilder) {
         this.saveForm = this.formBuilder.group({
             id: new FormControl({ value: '', disabled: true }),

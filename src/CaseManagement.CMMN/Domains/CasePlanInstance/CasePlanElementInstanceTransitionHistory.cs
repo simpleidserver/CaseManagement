@@ -7,13 +7,15 @@ namespace CaseManagement.CMMN.Domains
     {
         public DateTime ExecutionDateTime { get; set; }
         public CMMNTransitions Transition { get; set; }
+        public string Message { get; set; }
 
         public object Clone()
         {
             return new CasePlanElementInstanceTransitionHistory
             {
                 ExecutionDateTime = ExecutionDateTime,
-                Transition = Transition
+                Transition = Transition,
+                Message = Message
             };
         }
     }

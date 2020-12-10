@@ -10,16 +10,37 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import * as fromActions from '../actions/tasks.actions';
-export var initiaTaskLstState = {
+export var initialTaskLstState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
+export var initialTaskState = {
+    renderingElts: null,
+    description: null,
+    task: null,
+    searchTaskHistory: null,
+    isLoading: true,
+    isErrorLoadOccured: false
+};
 export function taskLstReducer(state, action) {
-    if (state === void 0) { state = initiaTaskLstState; }
+    if (state === void 0) { state = initialTaskLstState; }
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_SEARCH_TASKS:
             state.content = action.content;
+            return __assign({}, state);
+        default:
+            return state;
+    }
+}
+export function taskReducer(state, action) {
+    if (state === void 0) { state = initialTaskState; }
+    switch (action.type) {
+        case fromActions.ActionTypes.COMPLETE_GET_TASK:
+            state.renderingElts = action.renderingElts;
+            state.task = action.task;
+            state.description = action.description;
+            state.searchTaskHistory = action.searchTaskHistory;
             return __assign({}, state);
         default:
             return state;

@@ -30,6 +30,10 @@ namespace CaseManagement.CMMN
             "    </cmmndi:CMMNDiagram>\n" +
             "  </cmmndi:CMMNDI>\n" +
             "</cmmn:definitions>";
+            OAuthTokenEndpoint = "http://localhost:60001/token";
+            ClientId = "cmmnClient";
+            ClientSecret = "cmmnClientSecret";
+            CallbackUrl = "http://localhost/processinstances/{id}/complete/{eltId}";
         }
 
         public Dictionary<string, string> Metadata { get; set; }
@@ -42,5 +46,10 @@ namespace CaseManagement.CMMN
         /// Default CMMN schema used when adding a default case file.
         /// </summary>
         public string DefaultCMMNSchema { get; set; }
+        public string WSHumanTaskAPI { get; set; }
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
+        public string OAuthTokenEndpoint { get; set; }
+        public string CallbackUrl { get; set; }
     }
 }

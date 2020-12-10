@@ -65,8 +65,8 @@ var HumanTaskDefEffects = (function () {
         }));
         this.updateRenderingAction = this.actions$
             .pipe(ofType(fromHumanTask.ActionTypes.UPDATE_RENDERING_PARAMETER), mergeMap(function (evt) {
-            return _this.humanTaskDefService.updateRendering(evt.id, evt.rendering)
-                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER, rendering: evt.rendering }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_RENDERING_PARAMETER }); }));
+            return _this.humanTaskDefService.updateRendering(evt.id, evt.renderingElements)
+                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER, renderingElements: evt.renderingElements }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_RENDERING_PARAMETER }); }));
         }));
         this.deleteStartDealineAction = this.actions$
             .pipe(ofType(fromHumanTask.ActionTypes.DELETE_START_DEADLINE), mergeMap(function (evt) {
@@ -100,8 +100,8 @@ var HumanTaskDefEffects = (function () {
         }));
         this.updatePeopleAssignment = this.actions$
             .pipe(ofType(fromHumanTask.ActionTypes.UPDATE_PEOPLE_ASSIGNMENT), mergeMap(function (evt) {
-            return _this.humanTaskDefService.updatePeopleAssignment(evt.id, evt.assignment)
-                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT, assignment: evt.assignment }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PEOPLE_ASSIGNMENT }); }));
+            return _this.humanTaskDefService.updatePeopleAssignment(evt.id, evt.peopleAssignments)
+                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT, peopleAssignments: evt.peopleAssignments }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PEOPLE_ASSIGNMENT }); }));
         }));
         this.updateStartEscalation = this.actions$
             .pipe(ofType(fromHumanTask.ActionTypes.UPDATE_START_ESCALATION), mergeMap(function (evt) {
@@ -135,8 +135,8 @@ var HumanTaskDefEffects = (function () {
         }));
         this.updatePresentationElement = this.actions$
             .pipe(ofType(fromHumanTask.ActionTypes.UPDATE_PRESENTATIONELEMENT), mergeMap(function (evt) {
-            return _this.humanTaskDefService.updatePresentationElement(evt.id, evt.presentationElement)
-                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElement: evt.presentationElement }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PRESENTATIONELEMENT }); }));
+            return _this.humanTaskDefService.updatePresentationElement(evt.id, evt.presentationElements, evt.presentationParameters)
+                .pipe(map(function () { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElements: evt.presentationElements, presentationParameters: evt.presentationParameters }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PRESENTATIONELEMENT }); }));
         }));
     }
     __decorate([

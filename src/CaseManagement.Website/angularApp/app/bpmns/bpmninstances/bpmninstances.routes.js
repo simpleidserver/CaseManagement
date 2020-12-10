@@ -1,11 +1,8 @@
 import { RouterModule } from '@angular/router';
-import { ListCaseFilesComponent } from './list/list.component';
-import { ViewCaseFilesComponent } from './view/view.component';
-import { HistoryCaseFileComponent } from './history/history.component';
+import { ListBpmnInstancesComponent } from './list/list.component';
 var routes = [
-    { path: '', component: ListCaseFilesComponent },
-    { path: ':id', component: ViewCaseFilesComponent },
-    { path: ':id/history', component: HistoryCaseFileComponent }
+    { path: '', component: ListBpmnInstancesComponent },
+    { path: ':id', loadChildren: './view/view.module#ViewBpmnInstanceModule' }
 ];
-export var CaseFilesRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=casefiles.routes.js.map
+export var BpmnInstancesRoutes = RouterModule.forChild(routes);
+//# sourceMappingURL=bpmninstances.routes.js.map

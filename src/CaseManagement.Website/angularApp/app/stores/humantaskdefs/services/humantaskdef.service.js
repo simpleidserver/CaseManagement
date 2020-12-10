@@ -94,13 +94,13 @@ var HumanTaskDefService = (function () {
         var targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/output/" + name;
         return this.http.delete(targetUrl, { headers: headers });
     };
-    HumanTaskDefService.prototype.updateRendering = function (id, rendering) {
+    HumanTaskDefService.prototype.updateRendering = function (id, renderingElements) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/rendering";
-        var request = { rendering: rendering };
+        var request = { renderingElements: renderingElements };
         return this.http.put(targetUrl, JSON.stringify(request), { headers: headers });
     };
     HumanTaskDefService.prototype.deleteStartDeadline = function (id, deadLineId) {
@@ -159,12 +159,12 @@ var HumanTaskDefService = (function () {
             return _.id;
         }));
     };
-    HumanTaskDefService.prototype.updatePeopleAssignment = function (id, assignment) {
+    HumanTaskDefService.prototype.updatePeopleAssignment = function (id, peopleAssignments) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var request = { peopleAssignment: assignment };
+        var request = { peopleAssignments: peopleAssignments };
         var targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/assignment";
         return this.http.put(targetUrl, JSON.stringify(request), { headers: headers });
     };
@@ -225,13 +225,13 @@ var HumanTaskDefService = (function () {
         }
         return this.http.post(targetUrl, JSON.stringify(request), { headers: headers });
     };
-    HumanTaskDefService.prototype.updatePresentationElement = function (id, presentationElement) {
+    HumanTaskDefService.prototype.updatePresentationElement = function (id, presentationElements, presentationParameters) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationelts";
-        var request = { presentationElement: presentationElement };
+        var request = { presentationElements: presentationElements, presentationParameters: presentationParameters };
         return this.http.put(targetUrl, JSON.stringify(request), { headers: headers });
     };
     HumanTaskDefService = __decorate([

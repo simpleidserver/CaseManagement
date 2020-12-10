@@ -8,83 +8,95 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort } from '@angular/material';
-import * as fromAppState from '@app/stores/appstate';
-import { select, Store } from '@ngrx/store';
-import { merge } from 'rxjs';
-import { SearchTasks } from '../../stores/tasks/actions/tasks.actions';
-import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormControl } from '@angular/forms';
-var ListTasksComponent = (function () {
-    function ListTasksComponent(store, translate, formBuilder) {
+import { MatSnackBar, MatSort, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
+import * as fromTaskActions from '@app/stores/tasks/actions/tasks.actions';
+import { Task } from '@app/stores/tasks/models/task.model';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
+var ViewTaskComponent = (function () {
+    function ViewTaskComponent(store, route, translate, snackBar, actions$, formBuilder) {
         this.store = store;
+        this.route = route;
         this.translate = translate;
+        this.snackBar = snackBar;
+        this.actions$ = actions$;
         this.formBuilder = formBuilder;
-        this.displayedColumns = ['priority', 'presentationName', 'presentationSubject', 'actualOwner', 'status', 'createdTime'];
-        this.baseTranslationKey = "TASKS.LIST";
-        this.tasks$ = [];
-        this.searchTasksForm = this.formBuilder.group({
-            actualOwner: new FormControl(''),
-            status: new FormControl('')
-        });
+        this.baseTranslationKey = "TASKS.VIEW";
+        this.displayedColumns = ["eventTime", "userPrincipal", "eventType", "startOwner", "endOwner"];
+        this.renderingElts = [];
+        this.task = new Task();
     }
-    ListTasksComponent.prototype.ngOnInit = function () {
+    ViewTaskComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromAppState.selectTaskLstResult)).subscribe(function (l) {
-            if (!l || !l.content) {
+        this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.COMPLETE_SUBMIT_TASK; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.TASK_COMPLETED'), _this.translate.instant('undo'), {
+                duration: 2000
+            });
+            _this.refresh();
+        });
+        this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.ERROR_SUBMIT_TASK; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.ERROR_SUBMIT_TASK'), _this.translate.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.store.pipe(select(fromAppState.selectTask)).subscribe(function (r) {
+            if (!r) {
                 return;
             }
-            _this.tasks$ = l.content;
-            _this.length = l.totalLength;
-        });
-        this.translate.onLangChange.subscribe(function () {
-            _this.refresh();
+            if (r.task) {
+                _this.task = r.task;
+            }
+            var grp = {};
+            if (r.renderingElts) {
+                _this.renderingElts = r.renderingElts;
+                if (r.renderingElts && r.renderingElts.length > 0) {
+                    r.renderingElts.forEach(function (oe) {
+                        grp[oe.id] = new FormControl('');
+                    });
+                }
+            }
+            if (r.searchTaskHistory) {
+                _this.histories$ = new MatTableDataSource(r.searchTaskHistory.content);
+                _this.histories$.sort = _this.sort;
+            }
+            _this.submitForm = _this.formBuilder.group(grp);
         });
         this.refresh();
     };
-    ListTasksComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
+    ViewTaskComponent.prototype.refresh = function () {
+        var id = this.route.snapshot.params['id'];
+        var req = new fromTaskActions.RenderingTask(id, "eventTime", "desc");
+        this.store.dispatch(req);
     };
-    ListTasksComponent.prototype.refresh = function () {
-        var startIndex = 0;
-        var count = 5;
-        if (this.paginator.pageIndex && this.paginator.pageSize) {
-            startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-        }
-        if (this.paginator.pageSize) {
-            count = this.paginator.pageSize;
-        }
-        var active = "create_datetime";
-        var direction = "desc";
-        if (this.sort.active) {
-            active = this.sort.active;
-        }
-        if (this.sort.direction) {
-            direction = this.sort.direction;
-        }
-        var request = new SearchTasks(active, direction, count, startIndex);
-        this.store.dispatch(request);
+    ViewTaskComponent.prototype.onSubmit = function (e) {
+        var id = this.route.snapshot.params['id'];
+        var req = new fromTaskActions.SubmitTask(id, e);
+        this.store.dispatch(req);
     };
-    __decorate([
-        ViewChild(MatPaginator),
-        __metadata("design:type", MatPaginator)
-    ], ListTasksComponent.prototype, "paginator", void 0);
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], ListTasksComponent.prototype, "sort", void 0);
-    ListTasksComponent = __decorate([
+    ], ViewTaskComponent.prototype, "sort", void 0);
+    ViewTaskComponent = __decorate([
         Component({
-            selector: 'list-tasks-component',
-            templateUrl: './list.component.html',
-            styleUrls: ['./list.component.scss']
+            selector: 'view-task-component',
+            templateUrl: './view.component.html',
+            styleUrls: ['./view.component.scss']
         }),
         __metadata("design:paramtypes", [Store,
+            ActivatedRoute,
             TranslateService,
+            MatSnackBar,
+            ScannedActionsSubject,
             FormBuilder])
-    ], ListTasksComponent);
-    return ListTasksComponent;
+    ], ViewTaskComponent);
+    return ViewTaskComponent;
 }());
-export { ListTasksComponent };
-//# sourceMappingURL=list.component.js.map
+export { ViewTaskComponent };
+//# sourceMappingURL=view.component.js.map

@@ -8,19 +8,21 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MaterialModule } from '@app/shared/material.module';
+import { SharedModule } from '@app/shared/shared.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
-import { MaterialModule } from '../../shared/material.module';
-import { SharedModule } from '../../shared/shared.module';
-import { CaseFilesRoutes } from './casefiles.routes';
-import { HistoryCaseFileComponent } from './history/history.component';
-import { AddCaseFileDialog } from './list/add-case-file-dialog';
-import { ListCaseFilesComponent } from './list/list.component';
-import { ViewCaseFilesComponent } from './view/view.component';
-var CaseFilesModule = (function () {
-    function CaseFilesModule() {
+import { ActivityStatesComponent } from './activitystates/activitystates.component';
+import { ViewBpmnInstanceComponent } from './view.component';
+import { ViewBpmnInstanceRoutes } from './view.routes';
+import { ViewExecutionPathComponent } from './viewexecutionpath.component';
+import { ViewExecutionPointerComponent } from './viewpointer.component';
+import { IncomingTokensComponent } from './incomingtokens/incomingtokens.component';
+import { OutgoingTokensComponent } from './outgoingtokens/outgoingtokens.component';
+var ViewBpmnInstanceModule = (function () {
+    function ViewBpmnInstanceModule() {
     }
-    CaseFilesModule = __decorate([
+    ViewBpmnInstanceModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
@@ -28,16 +30,15 @@ var CaseFilesModule = (function () {
                 MonacoEditorModule.forRoot(),
                 FormsModule,
                 HttpClientModule,
-                CaseFilesRoutes,
+                ViewBpmnInstanceRoutes,
                 MaterialModule,
                 SharedModule
             ],
-            entryComponents: [AddCaseFileDialog],
-            declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent, HistoryCaseFileComponent],
-            exports: [ListCaseFilesComponent, ViewCaseFilesComponent]
+            entryComponents: [],
+            declarations: [ActivityStatesComponent, ViewBpmnInstanceComponent, ViewExecutionPathComponent, ViewExecutionPointerComponent, IncomingTokensComponent, OutgoingTokensComponent]
         })
-    ], CaseFilesModule);
-    return CaseFilesModule;
+    ], ViewBpmnInstanceModule);
+    return ViewBpmnInstanceModule;
 }());
-export { CaseFilesModule };
-//# sourceMappingURL=casefiles.module.js.map
+export { ViewBpmnInstanceModule };
+//# sourceMappingURL=view.module.js.map

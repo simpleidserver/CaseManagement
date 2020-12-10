@@ -1,122 +1,134 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["START_SEARCH_CASEFILES"] = "[CaseFiles] START_SEARCH_CASEFILES";
-    ActionTypes["ERROR_SEARCH_CASEFILES"] = "[CaseFiles] ERROR_SEARCH_CASEFILES";
-    ActionTypes["COMPLETE_SEARCH_CASEFILES"] = "[CaseFiles] COMPLETE_SEARCH_CASEFILES";
-    ActionTypes["START_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] START_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["ERROR_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] ERROR_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["COMPLETE_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] COMPLETE_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["START_GET_CASEFILE"] = "[CaseFiles] START_GET_CASEFILE";
-    ActionTypes["ERROR_GET_CASEFILE"] = "[CaseFiles] ERROR_GET_CASEFILE";
-    ActionTypes["COMPLETE_GET_CASEFILE"] = "[CaseFiles] COMPLETE_GET_CASEFILE";
-    ActionTypes["ADD_CASEFILE"] = "[CaseFiles] ADD_CASEFILE";
-    ActionTypes["ERROR_ADD_CASEFILE"] = "[CaseFiles] ERROR_ADD_CASEFILE";
-    ActionTypes["COMPLETE_ADD_CASEFILE"] = "[CaseFiles] COMPLETE_ADD_CASEFILE";
-    ActionTypes["PUBLISH_CASEFILE"] = "[CaseFiles] PUBLISH_CASEFILE";
-    ActionTypes["ERROR_PUBLISH_CASEFILE"] = "[CaseFiles] ERROR_PUBLISH_CASEFILE";
-    ActionTypes["COMPLETE_PUBLISH_CASEFILE"] = "[CaseFiles] COMPLETE_PUBLISH_CASEFILE";
-    ActionTypes["UPDATE_CASEFILE"] = "[CaseFiles] UPDATE_CASEFILE";
-    ActionTypes["ERROR_UPDATE_CASEFILE"] = "[CaseFiles] ERROR_UPDATE_CASEFILE";
-    ActionTypes["COMPLETE_UPDATE_CASEFILE"] = "[CaseFiles] COMPLETE_UPDATE_CASEFILE";
+    ActionTypes["START_SEARCH_CMMNFILES"] = "[CmmnFiles] START_SEARCH_CMMNFILES";
+    ActionTypes["ERROR_SEARCH_CMMNFILES"] = "[CmmnFiles] ERROR_SEARCH_CMMNFILES";
+    ActionTypes["COMPLETE_SEARCH_CMMNFILES"] = "[CmmnFiles] COMPLETE_SEARCH_CASEFILES";
+    ActionTypes["START_SEARCH_CASEFILES_HISTORY"] = "[CmmnFiles] START_SEARCH_CASEFILES_HISTORY";
+    ActionTypes["ERROR_SEARCH_CASEFILES_HISTORY"] = "[CmmnFiles] ERROR_SEARCH_CASEFILES_HISTORY";
+    ActionTypes["COMPLETE_SEARCH_CASEFILES_HISTORY"] = "[CmmnFiles] COMPLETE_SEARCH_CASEFILES_HISTORY";
+    ActionTypes["START_GET_CMMNFILE"] = "[CmmnFiles] START_GET_CMMNFILE";
+    ActionTypes["ERROR_GET_CMMNFILE"] = "[CmmnFiles] ERROR_GET_CMMNFILE";
+    ActionTypes["COMPLETE_GET_CMMNFILE"] = "[CmmnFiles] COMPLETE_GET_CMMNFILE";
+    ActionTypes["ADD_CMMNFILE"] = "[CmmnFiles] ADD_CMMNFILE";
+    ActionTypes["ERROR_ADD_CMMNFILE"] = "[CmmnFiles] ERROR_ADD_CMMNFILE";
+    ActionTypes["COMPLETE_ADD_CMMNFILE"] = "[CmmnFiles] COMPLETE_ADD_CMMNFILE";
+    ActionTypes["PUBLISH_CMMNFILE"] = "[CmmnFiles] PUBLISH_CMMNFILE";
+    ActionTypes["ERROR_PUBLISH_CMMNFILE"] = "[CmmnFiles] ERROR_PUBLISH_CMMNFILE";
+    ActionTypes["COMPLETE_PUBLISH_CMMNFILE"] = "[CmmnFiles] COMPLETE_PUBLISH_CMMNFILE";
+    ActionTypes["UPDATE_CMMNFILE"] = "[CmmnFiles] UPDATE_CMMNFILE";
+    ActionTypes["ERROR_UPDATE_CMMNFILE"] = "[CmmnFiles] ERROR_UPDATE_CMMNFILE";
+    ActionTypes["COMPLETE_UPDATE_CMMNFILE"] = "[CmmnFiles] COMPLETE_UPDATE_CMMNFILE";
+    ActionTypes["UPDATE_CMMNFILE_PAYLOAD"] = "[CmmnFiles] UPDATE_CMMNFILE_PAYLOAD";
+    ActionTypes["COMPLETE_UPDATE_CMMNFILE_PAYLOAD"] = "[CmmnFiles] COMPLETE_UPDATE_CMMNFILE_PAYLOAD";
+    ActionTypes["ERROR_UPDATE_CMMNFILE_PAYLOAD"] = "[CmmnFiles] ERROR_UPDATE_CMMNFILE_PAYLOAD";
 })(ActionTypes || (ActionTypes = {}));
-var SearchCaseFiles = (function () {
-    function SearchCaseFiles(order, direction, count, startIndex, text) {
+var SearchCmmnFiles = (function () {
+    function SearchCmmnFiles(order, direction, count, startIndex, text, caseFileId, takeLatest) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
         this.text = text;
-        this.type = ActionTypes.START_SEARCH_CASEFILES;
-    }
-    return SearchCaseFiles;
-}());
-export { SearchCaseFiles };
-var CompleteSearchCaseFiles = (function () {
-    function CompleteSearchCaseFiles(content) {
-        this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_CASEFILES;
-    }
-    return CompleteSearchCaseFiles;
-}());
-export { CompleteSearchCaseFiles };
-var SearchCaseFilesHistory = (function () {
-    function SearchCaseFilesHistory(caseFileId, order, direction, count, startIndex) {
         this.caseFileId = caseFileId;
-        this.order = order;
-        this.direction = direction;
-        this.count = count;
-        this.startIndex = startIndex;
-        this.type = ActionTypes.START_SEARCH_CASEFILES_HISTORY;
+        this.takeLatest = takeLatest;
+        this.type = ActionTypes.START_SEARCH_CMMNFILES;
     }
-    return SearchCaseFilesHistory;
+    return SearchCmmnFiles;
 }());
-export { SearchCaseFilesHistory };
-var CompleteSearchCaseFilesHistory = (function () {
-    function CompleteSearchCaseFilesHistory(content) {
+export { SearchCmmnFiles };
+var CompleteSearchCmmnFiles = (function () {
+    function CompleteSearchCmmnFiles(content) {
         this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_CASEFILES_HISTORY;
+        this.type = ActionTypes.COMPLETE_SEARCH_CMMNFILES;
     }
-    return CompleteSearchCaseFilesHistory;
+    return CompleteSearchCmmnFiles;
 }());
-export { CompleteSearchCaseFilesHistory };
-var GetCaseFile = (function () {
-    function GetCaseFile(id) {
+export { CompleteSearchCmmnFiles };
+var GetCmmnFile = (function () {
+    function GetCmmnFile(id) {
         this.id = id;
-        this.type = ActionTypes.START_GET_CASEFILE;
+        this.type = ActionTypes.START_GET_CMMNFILE;
     }
-    return GetCaseFile;
+    return GetCmmnFile;
 }());
-export { GetCaseFile };
-var CompleteGetCaseFile = (function () {
-    function CompleteGetCaseFile(content) {
+export { GetCmmnFile };
+var CompleteGetCmmnFile = (function () {
+    function CompleteGetCmmnFile(content) {
         this.content = content;
-        this.type = ActionTypes.COMPLETE_GET_CASEFILE;
+        this.type = ActionTypes.COMPLETE_GET_CMMNFILE;
     }
-    return CompleteGetCaseFile;
+    return CompleteGetCmmnFile;
 }());
-export { CompleteGetCaseFile };
-var AddCaseFile = (function () {
-    function AddCaseFile(name, description) {
+export { CompleteGetCmmnFile };
+var AddCmmnFile = (function () {
+    function AddCmmnFile(name, description) {
         this.name = name;
         this.description = description;
-        this.type = ActionTypes.ADD_CASEFILE;
+        this.type = ActionTypes.ADD_CMMNFILE;
     }
-    return AddCaseFile;
+    return AddCmmnFile;
 }());
-export { AddCaseFile };
-var CompleteAddCaseFile = (function () {
-    function CompleteAddCaseFile(id) {
+export { AddCmmnFile };
+var CompleteAddCmmnFile = (function () {
+    function CompleteAddCmmnFile(id) {
         this.id = id;
-        this.type = ActionTypes.COMPLETE_ADD_CASEFILE;
+        this.type = ActionTypes.COMPLETE_ADD_CMMNFILE;
     }
-    return CompleteAddCaseFile;
+    return CompleteAddCmmnFile;
 }());
-export { CompleteAddCaseFile };
-var PublishCaseFile = (function () {
-    function PublishCaseFile(id) {
+export { CompleteAddCmmnFile };
+var PublishCmmnFile = (function () {
+    function PublishCmmnFile(id) {
         this.id = id;
-        this.type = ActionTypes.PUBLISH_CASEFILE;
+        this.type = ActionTypes.PUBLISH_CMMNFILE;
     }
-    return PublishCaseFile;
+    return PublishCmmnFile;
 }());
-export { PublishCaseFile };
-var CompletePublishCaseFile = (function () {
-    function CompletePublishCaseFile(id) {
+export { PublishCmmnFile };
+var CompletePublishCmmnFile = (function () {
+    function CompletePublishCmmnFile(id) {
         this.id = id;
-        this.type = ActionTypes.COMPLETE_PUBLISH_CASEFILE;
+        this.type = ActionTypes.COMPLETE_PUBLISH_CMMNFILE;
     }
-    return CompletePublishCaseFile;
+    return CompletePublishCmmnFile;
 }());
-export { CompletePublishCaseFile };
-var UpdateCaseFile = (function () {
-    function UpdateCaseFile(id, name, description, payload) {
+export { CompletePublishCmmnFile };
+var UpdateCmmnFile = (function () {
+    function UpdateCmmnFile(id, name, description) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.type = ActionTypes.UPDATE_CMMNFILE;
+    }
+    return UpdateCmmnFile;
+}());
+export { UpdateCmmnFile };
+var CompleteUpdateCmmnFile = (function () {
+    function CompleteUpdateCmmnFile(id, name, description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.type = ActionTypes.COMPLETE_UPDATE_CMMNFILE;
+    }
+    return CompleteUpdateCmmnFile;
+}());
+export { CompleteUpdateCmmnFile };
+var UpdateCmmnFilePayload = (function () {
+    function UpdateCmmnFilePayload(id, payload) {
+        this.id = id;
         this.payload = payload;
-        this.type = ActionTypes.UPDATE_CASEFILE;
+        this.type = ActionTypes.UPDATE_CMMNFILE_PAYLOAD;
     }
-    return UpdateCaseFile;
+    return UpdateCmmnFilePayload;
 }());
-export { UpdateCaseFile };
-//# sourceMappingURL=case-files.actions.js.map
+export { UpdateCmmnFilePayload };
+var CompleteUpdateCmmnFilePayload = (function () {
+    function CompleteUpdateCmmnFilePayload(id, payload) {
+        this.id = id;
+        this.payload = payload;
+        this.type = ActionTypes.COMPLETE_UPDATE_CMMNFILE_PAYLOAD;
+    }
+    return CompleteUpdateCmmnFilePayload;
+}());
+export { CompleteUpdateCmmnFilePayload };
+//# sourceMappingURL=cmmn-files.actions.js.map

@@ -36,7 +36,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands.Handlers
                 Id = _.RoleId,
                 Claims = _.Claims.ToList()
             }).ToList();
-            var casePlanInstance = CasePlanInstanceAggregate.New(Guid.NewGuid().ToString(), workflowDefinition, permissions, request.Parameters);
+            var casePlanInstance = CasePlanInstanceAggregate.New(Guid.NewGuid().ToString(), workflowDefinition, request.NameIdentifier, permissions, request.Parameters);
             await _commitAggregateHelper.Commit(casePlanInstance, casePlanInstance.GetStreamName(), cancellationToken);
             return CasePlanInstanceResult.ToDto(casePlanInstance);
         }

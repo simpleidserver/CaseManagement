@@ -10,12 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
-var CasePlanService = (function () {
-    function CasePlanService(http, oauthService) {
+var CmmnPlanService = (function () {
+    function CmmnPlanService(http, oauthService) {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CasePlanService.prototype.search = function (startIndex, count, order, direction, text, caseFileId) {
+    CmmnPlanService.prototype.search = function (startIndex, count, order, direction, caseFileId) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
@@ -27,40 +27,23 @@ var CasePlanService = (function () {
         if (direction) {
             request["order"] = direction;
         }
-        if (text) {
-            request["text"] = text;
-        }
         if (caseFileId) {
             request["caseFileId"] = caseFileId;
         }
         return this.http.post(targetUrl, request, { headers: headers });
     };
-    CasePlanService.prototype.searchHistory = function (casePlanId, startIndex, count, order, direction) {
-        var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plans/search";
-        var request = { startIndex: startIndex, count: count, casePlanId: casePlanId, takeLatest: false };
-        if (order) {
-            request["orderBy"] = order;
-        }
-        if (direction) {
-            request["order"] = direction;
-        }
-        return this.http.post(targetUrl, request, { headers: headers });
-    };
-    CasePlanService.prototype.get = function (id) {
+    CmmnPlanService.prototype.get = function (id) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plans/" + id;
         return this.http.get(targetUrl, { headers: headers });
     };
-    CasePlanService = __decorate([
+    CmmnPlanService = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [HttpClient, OAuthService])
-    ], CasePlanService);
-    return CasePlanService;
+    ], CmmnPlanService);
+    return CmmnPlanService;
 }());
-export { CasePlanService };
-//# sourceMappingURL=caseplan.service.js.map
+export { CmmnPlanService };
+//# sourceMappingURL=cmmn-plan.service.js.map

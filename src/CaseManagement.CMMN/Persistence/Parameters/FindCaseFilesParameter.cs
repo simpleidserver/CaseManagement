@@ -13,7 +13,6 @@ namespace CaseManagement.CMMN.Persistence.Parameters
             StartIndex = 0;
         }
 
-        public string Owner { get; set; }
         public string Text { get; set; }
         public bool TakeLatest { get; set; }
         public string CaseFileId { get; set; }

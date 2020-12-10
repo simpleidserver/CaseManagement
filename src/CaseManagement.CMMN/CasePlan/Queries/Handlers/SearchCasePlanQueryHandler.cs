@@ -21,7 +21,6 @@ namespace CaseManagement.CMMN.CasePlan.Queries.Handlers
         {
             var result = await _casePlanQueryRepository.Find(new Persistence.Parameters.FindCasePlansParameter
             {
-                CaseOwner = request.Owner,
                 Count = request.Count,
                 OrderBy = request.OrderBy,
                 Order = request.Order,

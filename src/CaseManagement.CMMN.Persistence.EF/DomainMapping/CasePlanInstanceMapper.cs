@@ -18,8 +18,9 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
             {
                 AggregateId = record.Id,
                 Version = record.Version,
+                CaseFileId = record.CaseFileId,
                 CasePlanId = record.CasePlanId,
-                CaseOwner = record.CaseOwner?.RoleId,
+                NameIdentifier = record.NameIdentifier,
                 Name = record.Name,
                 State = record.CaseState == null ? (CaseStates?)null : (CaseStates)record.CaseState,
                 ExecutionContext = string.IsNullOrWhiteSpace(record.ExecutionContext) ? null : JsonConvert.DeserializeObject<CasePlanInstanceExecutionContext>(record.ExecutionContext),
@@ -102,11 +103,13 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
             {
                 Id = record.AggregateId,
                 Version = record.Version,
+                CaseFileId = record.CaseFileId,
                 CasePlanId = record.CasePlanId,
                 Name = record.Name,
+                NameIdentifier = record.NameIdentifier,
                 CaseState = record.State == null ? null : (int?)record.State,
                 ExecutionContext = record.ExecutionContext == null ? null : JsonConvert.SerializeObject(record.ExecutionContext),
-                Roles = record.Roles.Select(_ => ToModel(_, record.AggregateId, record.CaseOwner)).ToList(),
+                Roles = record.Roles.Select(_ => ToModel(_, record.AggregateId)).ToList(),
                 Files = record.Files.Select(_ => ToModel(_, record.AggregateId)).ToList(),
                 WorkerTasks = record.WorkerTasks.Select(_ => ToModel(_, record.AggregateId)).ToList(),
                 Children =  record.Children == null ? new List<CasePlanElementInstanceModel>() : record.Children.Select(_ => _.ToModel(record.AggregateId)).ToList(),
@@ -152,12 +155,12 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
             };
         }
 
-        public static RoleModel ToModel(this CasePlanInstanceRole role, string casePlanInstanceId, string caseOwner)
+        public static RoleModel ToModel(this CasePlanInstanceRole role, string casePlanInstanceId)
         {
             return new RoleModel
             {
                 RoleId = role.Id,
-                IsCaseOwner = role.Name == caseOwner,
+                IsCaseOwner = false,
                 RoleName = role.Name,
                 Claims = role.Claims.Select(_ => new RoleClaimModel
                 {

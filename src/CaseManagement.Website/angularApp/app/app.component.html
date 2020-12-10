@@ -36,7 +36,9 @@
                     </span>
                 </a>
                 <div *ngIf="casesExpanded">
-                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cmmns']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CMMN.TITLES.FILES" | translate }}</a>
+                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cmmns/cmmnfiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CMMN.TITLES.FILES" | translate }}</a>
+                    <a mat-list-item [routerLink]="['/cmmns/cmmnplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CMMN.TITLES.PLANS" | translate }}</a>
+                    <a mat-list-item [routerLink]="['/cmmns/cmmninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CMMN.TITLES.PLANINSTANCES" | translate }}</a>
                 </div>
                 <a mat-list-item (click)="toggleBpmnFiles()">
                     <mat-icon>timeline</mat-icon> {{ "BPMNS" | translate }}
@@ -47,6 +49,7 @@
                 </a>
                 <div *ngIf="bpmnsExpanded">
                     <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/bpmns/bpmnfiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "BPMN_FILES" | translate }}</a>
+                    <a mat-list-item [routerLink]="['/bpmns/bpmninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "BPMN.TITLES.BPMNINSTANCES" | translate }}</a>
                 </div>
                 <a mat-list-item (click)="toggleHumanTasks()">
                     <mat-icon>format_align_justify</mat-icon> {{ "HUMAN_TASKS" | translate }}

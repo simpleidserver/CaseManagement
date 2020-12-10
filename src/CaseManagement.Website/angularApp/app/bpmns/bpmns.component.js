@@ -5,18 +5,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Component, ViewEncapsulation } from '@angular/core';
-var CasesComponent = (function () {
-    function CasesComponent() {
+var BpmnsComponent = (function () {
+    function BpmnsComponent() {
     }
-    CasesComponent = __decorate([
+    BpmnsComponent = __decorate([
         Component({
-            selector: 'cases-component',
-            templateUrl: './cases.component.html',
-            styleUrls: ['./cases.component.scss'],
+            selector: 'bpmns-component',
+            templateUrl: './bpmns.component.html',
+            styleUrls: ['./bpmns.component.scss'],
             encapsulation: ViewEncapsulation.None
         })
-    ], CasesComponent);
-    return CasesComponent;
+    ], BpmnsComponent);
+    return BpmnsComponent;
 }());
-export { CasesComponent };
-//# sourceMappingURL=cases.component.js.map
+export { BpmnsComponent };
+//# sourceMappingURL=bpmns.component.js.map

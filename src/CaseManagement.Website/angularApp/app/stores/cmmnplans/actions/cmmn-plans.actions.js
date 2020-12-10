@@ -1,67 +1,46 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["START_SEARCH"] = "[CasePlan] START_SEARCH";
-    ActionTypes["COMPLETE_SEARCH"] = "[CasePlan] COMPLETE_SEARCH";
-    ActionTypes["START_GET"] = "[CasePlan] START_GET";
-    ActionTypes["COMPLETE_GET"] = "[CasePlan] COMPLETE_GET";
-    ActionTypes["START_SEARCH_HISTORY"] = "[CasePlan] START_SEARCH_HISTORY";
-    ActionTypes["COMPLETE_SEARCH_HISTORY"] = "[CasePlan] COMPLETE_SEARCH_HISTORY";
+    ActionTypes["SEARCH_CMMN_PLANS"] = "[CmmnPlans] SEARCH_CMMN_PLANS";
+    ActionTypes["COMPLETE_SEARCH_CMMN_PLANS"] = "[CmmnPlans] COMPLETE_SEARCH_CMMN_PLANS";
+    ActionTypes["ERROR_SEARCH_CMMN_PLANS"] = "[CmmnPlans] ERROR_SEARCH_CMMN_PLANS";
+    ActionTypes["GET_CMMN_PLAN"] = "[CmmnPlans] START_GET";
+    ActionTypes["COMPLETE_GET_CMMN_PLAN"] = "[CmmnPlans] COMPLETE_GET_CMMN_PLAN";
+    ActionTypes["ERROR_GET_CMMN_PLAN"] = "[CmmnPlans] ERROR_GET_CMMN_PLAN";
 })(ActionTypes || (ActionTypes = {}));
-var StartSearch = (function () {
-    function StartSearch(order, direction, count, startIndex, text, caseFileId) {
+var SearchCmmnPlans = (function () {
+    function SearchCmmnPlans(order, direction, count, startIndex, caseFileId) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
-        this.text = text;
         this.caseFileId = caseFileId;
-        this.type = ActionTypes.START_SEARCH;
+        this.type = ActionTypes.SEARCH_CMMN_PLANS;
     }
-    return StartSearch;
+    return SearchCmmnPlans;
 }());
-export { StartSearch };
-var CompleteSearch = (function () {
-    function CompleteSearch(content) {
+export { SearchCmmnPlans };
+var CompleteSearchCmmnPlans = (function () {
+    function CompleteSearchCmmnPlans(content) {
         this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH;
+        this.type = ActionTypes.COMPLETE_SEARCH_CMMN_PLANS;
     }
-    return CompleteSearch;
+    return CompleteSearchCmmnPlans;
 }());
-export { CompleteSearch };
-var StartGet = (function () {
-    function StartGet(id) {
+export { CompleteSearchCmmnPlans };
+var GetCmmnPlan = (function () {
+    function GetCmmnPlan(id) {
         this.id = id;
-        this.type = ActionTypes.START_GET;
+        this.type = ActionTypes.GET_CMMN_PLAN;
     }
-    return StartGet;
+    return GetCmmnPlan;
 }());
-export { StartGet };
+export { GetCmmnPlan };
 var CompleteGet = (function () {
     function CompleteGet(content) {
         this.content = content;
-        this.type = ActionTypes.COMPLETE_GET;
+        this.type = ActionTypes.COMPLETE_GET_CMMN_PLAN;
     }
     return CompleteGet;
 }());
 export { CompleteGet };
-var StartSearchHistory = (function () {
-    function StartSearchHistory(id, order, direction, count, startIndex) {
-        this.id = id;
-        this.order = order;
-        this.direction = direction;
-        this.count = count;
-        this.startIndex = startIndex;
-        this.type = ActionTypes.START_SEARCH_HISTORY;
-    }
-    return StartSearchHistory;
-}());
-export { StartSearchHistory };
-var CompleteSearchHistory = (function () {
-    function CompleteSearchHistory(content) {
-        this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_HISTORY;
-    }
-    return CompleteSearchHistory;
-}());
-export { CompleteSearchHistory };
-//# sourceMappingURL=caseplan.actions.js.map
+//# sourceMappingURL=cmmn-plans.actions.js.map

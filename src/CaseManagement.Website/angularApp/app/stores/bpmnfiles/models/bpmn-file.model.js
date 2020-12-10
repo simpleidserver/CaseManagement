@@ -1,7 +1,7 @@
-var CaseFile = (function () {
-    function CaseFile() {
+var BpmnFile = (function () {
+    function BpmnFile() {
     }
-    return CaseFile;
+    return BpmnFile;
 }());
-export { CaseFile };
-//# sourceMappingURL=case-file.model.js.map
+export { BpmnFile };
+//# sourceMappingURL=bpmn-file.model.js.map

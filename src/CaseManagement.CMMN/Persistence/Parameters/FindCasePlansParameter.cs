@@ -6,7 +6,6 @@ namespace CaseManagement.CMMN.Persistence.Parameters
     {
         public string CaseFileId { get; set; }
         public string Text { get; set; }
-        public string CaseOwner { get; set; }
         public string CasePlanId { get; set; }
         public bool TakeLatest { get; set; }
     }

@@ -1,7 +1,7 @@
-var CasePlan = (function () {
-    function CasePlan() {
+var CmmnPlan = (function () {
+    function CmmnPlan() {
     }
-    return CasePlan;
+    return CmmnPlan;
 }());
-export { CasePlan };
-//# sourceMappingURL=caseplan.model.js.map
+export { CmmnPlan };
+//# sourceMappingURL=cmmn-plan.model.js.map

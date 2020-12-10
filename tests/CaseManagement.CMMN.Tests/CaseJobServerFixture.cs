@@ -1,9 +1,13 @@
 ﻿using CaseManagement.CMMN.Builders;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence;
+using CaseManagement.Common.Factories;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Moq.Protected;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -65,6 +69,7 @@ namespace CaseManagement.CMMN.Tests
         [Fact]
         public async Task When_Execute_Human_Task()
         {
+            var humanTaskInstanceId = Guid.NewGuid().ToString();
             var instance = CasePlanInstanceBuilder.New("1", "firstCase")
                 .AddHumanTask("2", "humanTask", null, (_) =>
                 {
@@ -74,6 +79,13 @@ namespace CaseManagement.CMMN.Tests
             var jobServer = FakeCaseJobServer.New();
             try
             {
+                jobServer.HttpMessageHandler.Protected()
+                    .As<IHttpMessageHandler>()
+                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new HttpResponseMessage
+                    {
+                        Content = new StringContent("{ 'id' : '{" + humanTaskInstanceId + "}' }")
+                    });
                 await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
                 jobServer.Start();
                 await jobServer.EnqueueCasePlanInstance("1", CancellationToken.None);
@@ -407,12 +419,20 @@ namespace CaseManagement.CMMN.Tests
         [Fact]
         public async Task When_Terminate_CasePlanElementInstance()
         {
+            var humanTaskInstanceId = Guid.NewGuid().ToString();
             var instance = CasePlanInstanceBuilder.New("1", "firstCase")
                 .AddHumanTask("2", "humanTask", null, (_) => { })
                 .Build();
             var jobServer = FakeCaseJobServer.New();
             try
             {
+                jobServer.HttpMessageHandler.Protected()
+                    .As<IHttpMessageHandler>()
+                    .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new HttpResponseMessage
+                    {
+                        Content = new StringContent("{ 'id' : '{" + humanTaskInstanceId + "}' }")
+                    });
                 await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
                 jobServer.Start();
                 await jobServer.EnqueueCasePlanInstance("1", CancellationToken.None);
@@ -508,15 +528,23 @@ namespace CaseManagement.CMMN.Tests
             private IServiceProvider _serviceProvider;
             private ICaseJobServer _caseJobServer;
             private ICasePlanInstanceQueryRepository _casePlanInstanceQueryRepository;
+            private FakeHttpClientFactory _factory;
 
-            private FakeCaseJobServer() 
+            private FakeCaseJobServer()
             {
+                _factory = new FakeHttpClientFactory();
                 var serviceCollection = new ServiceCollection();
-                serviceCollection.AddCaseJobServer();
+                serviceCollection.AddCaseJobServer(callback: opt =>
+                {
+                    opt.WSHumanTaskAPI = "http://localhost";
+                });
+                serviceCollection.AddSingleton<IHttpClientFactory>(_factory);
                 _serviceProvider = serviceCollection.BuildServiceProvider();
                 _caseJobServer = _serviceProvider.GetRequiredService<ICaseJobServer>();
                 _casePlanInstanceQueryRepository = _serviceProvider.GetRequiredService<ICasePlanInstanceQueryRepository>();
             }
+
+            public Mock<HttpMessageHandler> HttpMessageHandler => _factory.MockHttpHandler;
 
             public static FakeCaseJobServer New()
             {
@@ -561,6 +589,26 @@ namespace CaseManagement.CMMN.Tests
                     }
                 }
             }
+
+            private class FakeHttpClientFactory : IHttpClientFactory
+            {
+                public FakeHttpClientFactory()
+                {
+                    MockHttpHandler = new Mock<HttpMessageHandler>();
+                }
+
+                public HttpClient Build()
+                {
+                    return new HttpClient(MockHttpHandler.Object);
+                }
+
+                public Mock<HttpMessageHandler> MockHttpHandler { get; private set; }
+            }
         }
+    }
+
+    public interface IHttpMessageHandler
+    {
+        Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);
     }
 }

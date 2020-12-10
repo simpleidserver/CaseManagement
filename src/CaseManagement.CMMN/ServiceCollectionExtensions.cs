@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN;
 using CaseManagement.CMMN.CasePlanInstance.Processors;
 using CaseManagement.CMMN.CasePlanInstance.Processors.FileItem;
+using CaseManagement.CMMN.CasePlanInstance.Processors.Handlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using CaseManagement.CMMN.Persistence;
@@ -9,6 +10,7 @@ using CaseManagement.Common;
 using CaseManagement.Common.Bus;
 using CaseManagement.Common.Domains;
 using CaseManagement.Common.EvtStore;
+using CaseManagement.Common.Factories;
 using CaseManagement.Common.Jobs;
 using CaseManagement.Common.Lock;
 using CaseManagement.Common.Processors;
@@ -74,6 +76,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var files = new ConcurrentBag<CaseFileAggregate>();
             var caseWorkerTasks = new ConcurrentBag<CaseWorkerTaskAggregate>();
             var wireup = Wireup.Init().UsingInMemoryPersistence().Build();
+            services.TryAddTransient<IHttpClientFactory, HttpClientFactory>();
             services.TryAddSingleton<IStoreEvents>(wireup);
             services.TryAddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
             services.TryAddSingleton<IEventStoreRepository, InMemoryEventStoreRepository>();
@@ -102,6 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.RegisterAllAssignableType(typeof(IDomainEvtConsumerGeneric<>), typeof(ICaseJobServer).Assembly);
             services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(ICaseJobServer).Assembly);
             services.RegisterAllAssignableType(typeof(ICaseFileItemStore), typeof(ICaseJobServer).Assembly);
+            services.RegisterAllAssignableType(typeof(IHumanTaskHandler), typeof(IHumanTaskHandler).Assembly);
             return services;
         }
 

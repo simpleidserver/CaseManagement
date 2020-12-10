@@ -1,7 +1,5 @@
 ﻿using CaseManagement.Common.Domains;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,16 +7,10 @@ namespace CaseManagement.CMMN.Domains
 {
     public class CaseWorkerTaskAggregate : BaseAggregate
     {
-        public CaseWorkerTaskAggregate()
-        {
-            Roles = new List<CaseWorkerTaskRole>();
-        }
-
         public string CasePlanInstanceId { get; set; }
         public string CasePlanInstanceElementId { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
-        public ICollection<CaseWorkerTaskRole> Roles { get; set; }
         
 
         public override object Clone()
@@ -30,8 +22,7 @@ namespace CaseManagement.CMMN.Domains
                 CreateDateTime = CreateDateTime,
                 Version = Version,
                 CasePlanInstanceElementId = CasePlanInstanceElementId,
-                UpdateDateTime = UpdateDateTime,
-                Roles = Roles.Select(_ => (CaseWorkerTaskRole)_.Clone()).ToList()
+                UpdateDateTime = UpdateDateTime
             };
         }
 
@@ -43,14 +34,6 @@ namespace CaseManagement.CMMN.Domains
                 CasePlanInstanceElementId = evt.CasePlanInstanceElementId,
                 CreateDateTime = DateTime.UtcNow,
                 UpdateDateTime = DateTime.UtcNow,
-                Roles = evt.CaseOwnerRole == null ? new List<CaseWorkerTaskRole>() : new List<CaseWorkerTaskRole>
-                {
-                    new CaseWorkerTaskRole
-                    {
-                        Claims = evt.CaseOwnerRole.Claims,
-                        RoleId = evt.CaseOwnerRole.Id
-                    }
-                },
                 Version = 0,
                 AggregateId = BuildCaseWorkerTaskIdentifier(evt.AggregateId, evt.CasePlanInstanceElementId)
             };

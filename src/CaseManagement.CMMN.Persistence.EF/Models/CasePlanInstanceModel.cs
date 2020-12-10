@@ -8,7 +8,9 @@ namespace CaseManagement.CMMN.Persistence.EF.Models
     {
         public string Id { get; set; }
         public int Version { get; set; }
+        public string CaseFileId { get; set; }
         public string CasePlanId { get; set; }
+        public string NameIdentifier { get; set; }
         public string Name { get; set; }
         public int? CaseState { get; set; }
         public string ExecutionContext { get; set; }

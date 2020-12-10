@@ -30,7 +30,7 @@ namespace CaseManagement.CMMN.CaseFile.Command.Handlers
                 payload = payload.Replace("{id}", $"CasePlanModel_{Guid.NewGuid()}");
             }
 
-            var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, addCaseFileCommand.Owner, payload);
+            var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, payload);
             var streamName = CaseFileAggregate.GetStreamName(caseFile.AggregateId);
             await _commitAggregateHelper.Commit(caseFile, streamName, token);
             return new CreateCaseFileResult

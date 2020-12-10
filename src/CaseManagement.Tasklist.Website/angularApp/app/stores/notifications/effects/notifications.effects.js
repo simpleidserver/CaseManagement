@@ -11,29 +11,29 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes } from '../actions/tasks.actions';
-import { TasksService } from '../services/tasks.service';
-var TasksEffects = (function () {
-    function TasksEffects(actions$, tasksService) {
+import { ActionTypes } from '../actions/notifications.actions';
+import { NotificationsService } from '../services/notifications.service';
+var NotificationsEffects = (function () {
+    function NotificationsEffects(actions$, notificationsService) {
         var _this = this;
         this.actions$ = actions$;
-        this.tasksService = tasksService;
-        this.searchCaseFiles$ = this.actions$
-            .pipe(ofType(ActionTypes.SEARCH_TASKS), mergeMap(function (evt) {
-            return _this.tasksService.search(evt.startIndex, evt.count, evt.order, evt.direction)
-                .pipe(map(function (tasks) { return { type: ActionTypes.COMPLETE_SEARCH_TASKS, content: tasks }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_TASKS }); }));
+        this.notificationsService = notificationsService;
+        this.searchNotifications$ = this.actions$
+            .pipe(ofType(ActionTypes.SEARCH_NOTIFICATIONS), mergeMap(function (evt) {
+            return _this.notificationsService.search(evt.startIndex, evt.count, evt.order, evt.direction)
+                .pipe(map(function (tasks) { return { type: ActionTypes.COMPLETE_SEARCH_NOTIFICATIONS, content: tasks }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_NOTIFICATIONS }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], TasksEffects.prototype, "searchCaseFiles$", void 0);
-    TasksEffects = __decorate([
+    ], NotificationsEffects.prototype, "searchNotifications$", void 0);
+    NotificationsEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            TasksService])
-    ], TasksEffects);
-    return TasksEffects;
+            NotificationsService])
+    ], NotificationsEffects);
+    return NotificationsEffects;
 }());
-export { TasksEffects };
-//# sourceMappingURL=tasks.effects.js.map
+export { NotificationsEffects };
+//# sourceMappingURL=notifications.effects.js.map

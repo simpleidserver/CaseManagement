@@ -29,7 +29,9 @@ namespace CaseManagement.CMMN.Builders
         {
             var stepBuilder = new HumanTaskInstanceBuilder(CasePlanInstanceId, id, name)
             {
-                PerformerRef = performerRef
+                PerformerRef = performerRef,
+                Implementation = CMMNConstants.UserTaskImplementations.WSHUMANTASK,
+                InputParameters = new Dictionary<string, string>()
             };
             if (callback != null)
             {

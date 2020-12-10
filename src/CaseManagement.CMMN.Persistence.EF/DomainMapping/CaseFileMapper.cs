@@ -19,7 +19,6 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
                 CreateDateTime = caseFile.CreateDateTime,
                 UpdateDateTime = caseFile.UpdateDateTime,
                 Payload = caseFile.SerializedContent,
-                Owner = caseFile.Owner,
                 Status = (CaseFileStatus)caseFile.Status
             };
         }
@@ -40,7 +39,6 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
                 CreateDateTime = caseFile.CreateDateTime,
                 UpdateDateTime = caseFile.UpdateDateTime,
                 SerializedContent = caseFile.Payload,
-                Owner = caseFile.Owner,
                 Status = (int)caseFile.Status
             };
         }

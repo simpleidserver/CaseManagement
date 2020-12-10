@@ -86,14 +86,14 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table17.AddRow(new string[] {
+            table19.AddRow(new string[] {
                         "casePlanId",
                         "1"});
 #line 5
- testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table17, "When ");
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table19, "When ");
 #line 8
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10

@@ -1,16 +1,8 @@
-var HumanTaskDefinitionDeadLine = (function () {
-    function HumanTaskDefinitionDeadLine() {
+var Deadline = (function () {
+    function Deadline() {
         this.escalations = [];
     }
-    return HumanTaskDefinitionDeadLine;
+    return Deadline;
 }());
-export { HumanTaskDefinitionDeadLine };
-var HumanTaskDefinitionDeadLines = (function () {
-    function HumanTaskDefinitionDeadLines() {
-        this.startDeadLines = [];
-        this.completionDeadLines = [];
-    }
-    return HumanTaskDefinitionDeadLines;
-}());
-export { HumanTaskDefinitionDeadLines };
-//# sourceMappingURL=humantaskdef-deadlines.js.map
+export { Deadline };
+//# sourceMappingURL=deadline.js.map

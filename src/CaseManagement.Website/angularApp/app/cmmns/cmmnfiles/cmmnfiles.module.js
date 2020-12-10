@@ -12,15 +12,18 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { CaseFilesRoutes } from './casefiles.routes';
-import { HistoryCaseFileComponent } from './history/history.component';
-import { AddCaseFileDialog } from './list/add-case-file-dialog';
-import { ListCaseFilesComponent } from './list/list.component';
-import { ViewCaseFilesComponent } from './view/view.component';
-var CaseFilesModule = (function () {
-    function CaseFilesModule() {
+import { CmmnFilesRoutes } from './cmmnfiles.routes';
+import { AddCmmnFileDialog } from './list/add-cmmn-file-dialog';
+import { ListCmmnFilesComponent } from './list/list.component';
+import { ViewCmmnFileComponent } from './view/view.component';
+import { ViewCmmnFileInformationComponent } from './view/information/information.component';
+import { ViewCmmnFileXmlEditorComponent } from './view/xmleditor/xmleditor.component';
+import { ViewCmmnFileUIEditorComponent } from './view/uieditor/uieditor.component';
+import { ListCmmnPlansComponent } from './view/plans/plans.component';
+var CmmnFilesModule = (function () {
+    function CmmnFilesModule() {
     }
-    CaseFilesModule = __decorate([
+    CmmnFilesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
@@ -28,16 +31,24 @@ var CaseFilesModule = (function () {
                 MonacoEditorModule.forRoot(),
                 FormsModule,
                 HttpClientModule,
-                CaseFilesRoutes,
+                CmmnFilesRoutes,
                 MaterialModule,
                 SharedModule
             ],
-            entryComponents: [AddCaseFileDialog],
-            declarations: [ListCaseFilesComponent, AddCaseFileDialog, ViewCaseFilesComponent, HistoryCaseFileComponent],
-            exports: [ListCaseFilesComponent, ViewCaseFilesComponent]
+            entryComponents: [AddCmmnFileDialog],
+            declarations: [
+                ListCmmnFilesComponent,
+                ViewCmmnFileUIEditorComponent,
+                AddCmmnFileDialog,
+                ViewCmmnFileComponent,
+                ViewCmmnFileInformationComponent,
+                ViewCmmnFileXmlEditorComponent,
+                ListCmmnPlansComponent
+            ],
+            exports: []
         })
-    ], CaseFilesModule);
-    return CaseFilesModule;
+    ], CmmnFilesModule);
+    return CmmnFilesModule;
 }());
-export { CaseFilesModule };
-//# sourceMappingURL=casefiles.module.js.map
+export { CmmnFilesModule };
+//# sourceMappingURL=cmmnfiles.module.js.map

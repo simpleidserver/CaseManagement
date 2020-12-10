@@ -58,5 +58,6 @@
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string OAuthTokenEndpoint { get; set; }
+        public string CallbackUrl { get; set; }
     }
 }

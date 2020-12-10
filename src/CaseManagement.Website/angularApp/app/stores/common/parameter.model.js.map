@@ -1,1 +1,1 @@
-{"version":3,"file":"operation.model.js","sourceRoot":"","sources":["operation.model.ts"],"names":[],"mappings":"AAAA;IACI;QACI,IAAI,CAAC,eAAe,GAAG,EAAE,CAAC;QAC1B,IAAI,CAAC,gBAAgB,GAAG,EAAE,CAAC;IAC/B,CAAC;IAIL,gBAAC;AAAD,CAAC,AARD,IAQC;;AAED;IAAA;IAIA,CAAC;IAAD,gBAAC;AAAD,CAAC,AAJD,IAIC"}
+{"version":3,"file":"parameter.model.js","sourceRoot":"","sources":["parameter.model.ts"],"names":[],"mappings":"AAAA;IAAA;IAKA,CAAC;IAAD,gBAAC;AAAD,CAAC,AALD,IAKC"}

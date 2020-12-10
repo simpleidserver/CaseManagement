@@ -9,8 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, ViewEncapsulation } from '@angular/core';
 import * as fromAppState from '@app/stores/appstate';
+import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { select, Store, ScannedActionsSubject } from '@ngrx/store';
-import { PresentationElement } from '@app/stores/common/presentationelement.model';
 import { filter } from 'rxjs/operators';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,8 +22,11 @@ var ViewPresentationParametersComponent = (function () {
         this.actions$ = actions$;
         this.translateService = translateService;
         this.snackBar = snackBar;
-        this.presentationElt = new PresentationElement();
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW.PRESENTATION_PARAMETERS";
+        this.names = [];
+        this.subjects = [];
+        this.descriptions = [];
+        this.presentationParameters = [];
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT; }))
             .subscribe(function () {
             _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.PRESENTATIONPARAMETERS_UPDATED'), _this.translateService.instant('undo'), {
@@ -44,11 +47,16 @@ var ViewPresentationParametersComponent = (function () {
                 return;
             }
             _this.humanTaskDef = e;
-            _this.presentationElt = e.presentationElementResult;
+            _this.names = HumanTaskDef.getNames(e);
+            _this.subjects = HumanTaskDef.getSubjects(e);
+            _this.descriptions = HumanTaskDef.getDescriptions(e);
+            _this.presentationParameters = e.presentationParameters;
         });
     };
     ViewPresentationParametersComponent.prototype.update = function () {
-        var request = new fromHumanTaskDefActions.UpdatePresentationElementOperation(this.humanTaskDef.id, this.presentationElt);
+        var presentationElts = [];
+        presentationElts = presentationElts.concat(this.names, this.subjects, this.descriptions);
+        var request = new fromHumanTaskDefActions.UpdatePresentationElementOperation(this.humanTaskDef.id, presentationElts, this.presentationParameters);
         this.store.dispatch(request);
     };
     ViewPresentationParametersComponent = __decorate([

@@ -25,6 +25,8 @@ var ViewHumanTaskDefInfoComponent = (function () {
         this.actions$ = actions$;
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW.TASK";
         this.humanTaskDef = new HumanTaskDef();
+        this.inputOperationParameters = [];
+        this.outputOperationParameters = [];
         this.infoForm = this.formBuilder.group({
             id: new FormControl({ value: '', disabled: true }),
             name: new FormControl('', [
@@ -103,6 +105,8 @@ var ViewHumanTaskDefInfoComponent = (function () {
             _this.infoForm.get('name').setValue(e.name);
             _this.infoForm.get('priority').setValue(e.priority);
             _this.humanTaskDef = e;
+            _this.inputOperationParameters = HumanTaskDef.getInputOperationParameters(_this.humanTaskDef);
+            _this.outputOperationParameters = HumanTaskDef.getOutputOperationParameters(_this.humanTaskDef);
         });
     };
     ViewHumanTaskDefInfoComponent.prototype.updateInfo = function (form) {

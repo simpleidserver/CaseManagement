@@ -11,32 +11,33 @@ import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { ListTasksComponent } from './list/list.component';
-import { HomeRoutes } from './tasks.routes';
-var TasksModule = (function () {
-    function TasksModule() {
+import { ListNotificationsComponent } from './list/list.component';
+import { NotificationsRoutes } from './notifications.routes';
+var NotificationsModule = (function () {
+    function NotificationsModule() {
     }
-    TasksModule = __decorate([
+    NotificationsModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
                 NgxChartsModule,
                 FormsModule,
                 HttpClientModule,
-                HomeRoutes,
+                NotificationsRoutes,
                 MaterialModule,
                 SharedModule
             ],
+            entryComponents: [],
             declarations: [
-                ListTasksComponent
+                ListNotificationsComponent
             ],
             exports: [
-                ListTasksComponent
+                ListNotificationsComponent
             ],
             providers: []
         })
-    ], TasksModule);
-    return TasksModule;
+    ], NotificationsModule);
+    return NotificationsModule;
 }());
-export { TasksModule };
-//# sourceMappingURL=tasks.module.js.map
+export { NotificationsModule };
+//# sourceMappingURL=notifications.module.js.map

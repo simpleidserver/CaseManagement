@@ -86,7 +86,11 @@ namespace CaseManagement.CMMN.SqlServer.Host
                 .AllowAnyHeader()));
             services.AddHostedService<CMMNJobServerHostedService>();
             services.AddCaseApi();
-            services.AddCaseJobServer();
+            services.AddCaseJobServer(callback: opt =>
+            {
+                opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
+                opt.WSHumanTaskAPI = "http://localhost:60006";
+            });
             services.AddCaseManagementEFStore(opts =>
             {
                 opts.UseSqlServer(connectionString);

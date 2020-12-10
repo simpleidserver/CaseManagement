@@ -5,6 +5,6 @@ export class CmmnPlan {
     caseFile: string;
     createDateTime: Date;
     version: number;
-    owner: string;
+    nbInstances: number;
     casePlanId: string;
 }

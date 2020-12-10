@@ -1,7 +1,7 @@
 import { RouterModule } from '@angular/router';
-import { ListTasksComponent } from './list/list.component';
+import { ListNotificationsComponent } from './list/list.component';
 var routes = [
-    { path: '', component: ListTasksComponent }
+    { path: '', component: ListNotificationsComponent }
 ];
-export var HomeRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=tasks.routes.js.map
+export var NotificationsRoutes = RouterModule.forChild(routes);
+//# sourceMappingURL=notifications.routes.js.map

@@ -10,27 +10,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
-var AddCaseFileDialog = (function () {
-    function AddCaseFileDialog(dialogRef, formBuilder) {
+var AddCmmnFileDialog = (function () {
+    function AddCmmnFileDialog(dialogRef, formBuilder) {
         this.dialogRef = dialogRef;
         this.formBuilder = formBuilder;
-        this.addCaseFileForm = this.formBuilder.group({
+        this.addCmmnFileForm = this.formBuilder.group({
             name: '',
             description: ''
         });
     }
-    AddCaseFileDialog.prototype.onSubmit = function () {
-        this.dialogRef.close(this.addCaseFileForm.value);
+    AddCmmnFileDialog.prototype.onSubmit = function () {
+        this.dialogRef.close(this.addCmmnFileForm.value);
     };
-    AddCaseFileDialog = __decorate([
+    AddCmmnFileDialog = __decorate([
         Component({
-            selector: 'add-case-file-dialog',
-            templateUrl: 'add-case-file-dialog.html',
+            selector: 'add-cmmn-file-dialog',
+            templateUrl: 'add-cmmn-file-dialog.html',
         }),
         __metadata("design:paramtypes", [MatDialogRef,
             FormBuilder])
-    ], AddCaseFileDialog);
-    return AddCaseFileDialog;
+    ], AddCmmnFileDialog);
+    return AddCmmnFileDialog;
 }());
-export { AddCaseFileDialog };
-//# sourceMappingURL=add-case-file-dialog.js.map
+export { AddCmmnFileDialog };
+//# sourceMappingURL=add-cmmn-file-dialog.js.map

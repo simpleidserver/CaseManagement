@@ -49,15 +49,21 @@ Scenario: Launch caseWithOneHumanTask and check his status is completed
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'casePlanId'
 	And execute HTTP POST JSON request 'http://localhost/case-plan-instances'
-	| Key        | Value        |
-	| casePlanId | $casePlanId$ |
+	| Key        | Value                   |
+	| casePlanId | $casePlanId$            |
+	| parameters | { "city": "Bruxelles" } |
 	And extract JSON from body
 	And extract 'id' from JSON body into 'casePlanInstanceId'
 	And execute HTTP GET request 'http://localhost/case-plan-instances/$casePlanInstanceId$/launch'
 	And poll 'http://localhost/case-plan-instances/$casePlanInstanceId$', until 'state'='Active'
+	And poll HTTP POST JSON request 'http://localhost/humantaskinstances/.search', until '$.content[?(@.name == 'emptyTask')].name'='emptyTask'
+	| Key | Value |
 	And extract JSON from body
-	And extract 'children[1].id' from JSON body into 'humanTaskId'
-	And execute HTTP GET request 'http://localhost/case-plan-instances/$casePlanInstanceId$/complete/$humanTaskId$'
+	And extract '$.content[?(@.name == 'emptyTask')].id' from JSON body into 'humanTaskInstanceId'
+	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
+	| Key                 | Value |
+	| operationParameters | {}    |
 	And poll 'http://localhost/case-plan-instances/$casePlanInstanceId$', until 'state'='Completed'
 	And extract JSON from body
 	

@@ -1,122 +1,83 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["START_SEARCH_CASEFILES"] = "[CaseFiles] START_SEARCH_CASEFILES";
-    ActionTypes["ERROR_SEARCH_CASEFILES"] = "[CaseFiles] ERROR_SEARCH_CASEFILES";
-    ActionTypes["COMPLETE_SEARCH_CASEFILES"] = "[CaseFiles] COMPLETE_SEARCH_CASEFILES";
-    ActionTypes["START_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] START_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["ERROR_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] ERROR_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["COMPLETE_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] COMPLETE_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["START_GET_CASEFILE"] = "[CaseFiles] START_GET_CASEFILE";
-    ActionTypes["ERROR_GET_CASEFILE"] = "[CaseFiles] ERROR_GET_CASEFILE";
-    ActionTypes["COMPLETE_GET_CASEFILE"] = "[CaseFiles] COMPLETE_GET_CASEFILE";
-    ActionTypes["ADD_CASEFILE"] = "[CaseFiles] ADD_CASEFILE";
-    ActionTypes["ERROR_ADD_CASEFILE"] = "[CaseFiles] ERROR_ADD_CASEFILE";
-    ActionTypes["COMPLETE_ADD_CASEFILE"] = "[CaseFiles] COMPLETE_ADD_CASEFILE";
-    ActionTypes["PUBLISH_CASEFILE"] = "[CaseFiles] PUBLISH_CASEFILE";
-    ActionTypes["ERROR_PUBLISH_CASEFILE"] = "[CaseFiles] ERROR_PUBLISH_CASEFILE";
-    ActionTypes["COMPLETE_PUBLISH_CASEFILE"] = "[CaseFiles] COMPLETE_PUBLISH_CASEFILE";
-    ActionTypes["UPDATE_CASEFILE"] = "[CaseFiles] UPDATE_CASEFILE";
-    ActionTypes["ERROR_UPDATE_CASEFILE"] = "[CaseFiles] ERROR_UPDATE_CASEFILE";
-    ActionTypes["COMPLETE_UPDATE_CASEFILE"] = "[CaseFiles] COMPLETE_UPDATE_CASEFILE";
+    ActionTypes["CREATE_BPMNINSTANCE"] = "[BpmnInstances] CREATE_BPMNINSTANCE";
+    ActionTypes["COMPLETE_CREATE_BPMN_INSTANCE"] = "[BpmnInstances] COMPLETE_CREATE_BPMN_INSTANCE";
+    ActionTypes["ERROR_CREATE_BPMNINSTANCE"] = "[BpmnInstances] ERROR_CREATE_BPMNINSTANCE";
+    ActionTypes["START_BPMNINSTANCE"] = "[BpmnInstances] START_BPMNINSTANCE";
+    ActionTypes["COMPLETE_START_BPMNINSTANCE"] = "[BpmnInstances] COMPLETE_START_BPMNINSTANCE";
+    ActionTypes["ERROR_START_BPMNINSTANCE"] = "[BpmnInstances] ERROR_START_BPMNINSTANCE";
+    ActionTypes["SEARCH_BPMNINSTANCES"] = "[BpmnInstances] SEARCH_BPMNINSTANCES";
+    ActionTypes["COMPLETE_SEARCH_BPMNINSTANCES"] = "[BpmnInstances] COMPLETE_SEARCH_BPMNINSTANCES";
+    ActionTypes["ERROR_SEARCH_BPMNINSTANCES"] = "[BpmnInstances] ERROR_SEARCH_BPMNINSTANCES";
+    ActionTypes["GET_BPMNINSTANCE"] = "[BpmnInstances] GET_BPMNINSTANCE";
+    ActionTypes["COMPLETE_GET_BPMNINSTANCE"] = "[BpmnInstances] COMPLETE_GET_BPMNINSTANCE";
+    ActionTypes["ERROR_GET_BPMNINSTANCE"] = "[BpmnInstances] ERROR_GET_BPMNINSTANCE";
 })(ActionTypes || (ActionTypes = {}));
-var SearchCaseFiles = (function () {
-    function SearchCaseFiles(order, direction, count, startIndex, text) {
+var GetBpmnInstance = (function () {
+    function GetBpmnInstance(id) {
+        this.id = id;
+        this.type = ActionTypes.GET_BPMNINSTANCE;
+    }
+    return GetBpmnInstance;
+}());
+export { GetBpmnInstance };
+var CompleteGetBpmnInstance = (function () {
+    function CompleteGetBpmnInstance(content) {
+        this.content = content;
+        this.type = ActionTypes.COMPLETE_GET_BPMNINSTANCE;
+    }
+    return CompleteGetBpmnInstance;
+}());
+export { CompleteGetBpmnInstance };
+var CreateBpmnInstance = (function () {
+    function CreateBpmnInstance(processFileId) {
+        this.processFileId = processFileId;
+        this.type = ActionTypes.CREATE_BPMNINSTANCE;
+    }
+    return CreateBpmnInstance;
+}());
+export { CreateBpmnInstance };
+var CompleteCreateBpmnInstance = (function () {
+    function CompleteCreateBpmnInstance(content) {
+        this.content = content;
+        this.type = ActionTypes.COMPLETE_CREATE_BPMN_INSTANCE;
+    }
+    return CompleteCreateBpmnInstance;
+}());
+export { CompleteCreateBpmnInstance };
+var StartBpmnInstance = (function () {
+    function StartBpmnInstance(id) {
+        this.id = id;
+        this.type = ActionTypes.START_BPMNINSTANCE;
+    }
+    return StartBpmnInstance;
+}());
+export { StartBpmnInstance };
+var CompleteStartBpmnInstance = (function () {
+    function CompleteStartBpmnInstance() {
+        this.type = ActionTypes.COMPLETE_START_BPMNINSTANCE;
+    }
+    return CompleteStartBpmnInstance;
+}());
+export { CompleteStartBpmnInstance };
+var SearchBpmnInstances = (function () {
+    function SearchBpmnInstances(order, direction, count, startIndex, processFileId) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
-        this.text = text;
-        this.type = ActionTypes.START_SEARCH_CASEFILES;
+        this.processFileId = processFileId;
+        this.type = ActionTypes.SEARCH_BPMNINSTANCES;
     }
-    return SearchCaseFiles;
+    return SearchBpmnInstances;
 }());
-export { SearchCaseFiles };
-var CompleteSearchCaseFiles = (function () {
-    function CompleteSearchCaseFiles(content) {
+export { SearchBpmnInstances };
+var CompleteSearchBpmnInstances = (function () {
+    function CompleteSearchBpmnInstances(content) {
         this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_CASEFILES;
+        this.type = ActionTypes.COMPLETE_SEARCH_BPMNINSTANCES;
     }
-    return CompleteSearchCaseFiles;
+    return CompleteSearchBpmnInstances;
 }());
-export { CompleteSearchCaseFiles };
-var SearchCaseFilesHistory = (function () {
-    function SearchCaseFilesHistory(caseFileId, order, direction, count, startIndex) {
-        this.caseFileId = caseFileId;
-        this.order = order;
-        this.direction = direction;
-        this.count = count;
-        this.startIndex = startIndex;
-        this.type = ActionTypes.START_SEARCH_CASEFILES_HISTORY;
-    }
-    return SearchCaseFilesHistory;
-}());
-export { SearchCaseFilesHistory };
-var CompleteSearchCaseFilesHistory = (function () {
-    function CompleteSearchCaseFilesHistory(content) {
-        this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_CASEFILES_HISTORY;
-    }
-    return CompleteSearchCaseFilesHistory;
-}());
-export { CompleteSearchCaseFilesHistory };
-var GetCaseFile = (function () {
-    function GetCaseFile(id) {
-        this.id = id;
-        this.type = ActionTypes.START_GET_CASEFILE;
-    }
-    return GetCaseFile;
-}());
-export { GetCaseFile };
-var CompleteGetCaseFile = (function () {
-    function CompleteGetCaseFile(content) {
-        this.content = content;
-        this.type = ActionTypes.COMPLETE_GET_CASEFILE;
-    }
-    return CompleteGetCaseFile;
-}());
-export { CompleteGetCaseFile };
-var AddCaseFile = (function () {
-    function AddCaseFile(name, description) {
-        this.name = name;
-        this.description = description;
-        this.type = ActionTypes.ADD_CASEFILE;
-    }
-    return AddCaseFile;
-}());
-export { AddCaseFile };
-var CompleteAddCaseFile = (function () {
-    function CompleteAddCaseFile(id) {
-        this.id = id;
-        this.type = ActionTypes.COMPLETE_ADD_CASEFILE;
-    }
-    return CompleteAddCaseFile;
-}());
-export { CompleteAddCaseFile };
-var PublishCaseFile = (function () {
-    function PublishCaseFile(id) {
-        this.id = id;
-        this.type = ActionTypes.PUBLISH_CASEFILE;
-    }
-    return PublishCaseFile;
-}());
-export { PublishCaseFile };
-var CompletePublishCaseFile = (function () {
-    function CompletePublishCaseFile(id) {
-        this.id = id;
-        this.type = ActionTypes.COMPLETE_PUBLISH_CASEFILE;
-    }
-    return CompletePublishCaseFile;
-}());
-export { CompletePublishCaseFile };
-var UpdateCaseFile = (function () {
-    function UpdateCaseFile(id, name, description, payload) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.payload = payload;
-        this.type = ActionTypes.UPDATE_CASEFILE;
-    }
-    return UpdateCaseFile;
-}());
-export { UpdateCaseFile };
-//# sourceMappingURL=case-files.actions.js.map
+export { CompleteSearchBpmnInstances };
+//# sourceMappingURL=bpmn-instances.actions.js.map

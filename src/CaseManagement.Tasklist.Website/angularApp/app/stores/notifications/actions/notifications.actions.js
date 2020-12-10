@@ -1,26 +1,26 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["SEARCH_TASKS"] = "[Tasks] SEARCH_TASKS";
-    ActionTypes["ERROR_SEARCH_TASKS"] = "[Tasks] ERROR_SEARCH_TASKS";
-    ActionTypes["COMPLETE_SEARCH_TASKS"] = "[Tasks] COMPLETE_SEARCH_TASKS";
+    ActionTypes["SEARCH_NOTIFICATIONS"] = "[Notifications] SEARCH_NOTIFICATIONS";
+    ActionTypes["ERROR_SEARCH_NOTIFICATIONS"] = "[Notifications] ERROR_SEARCH_NOTIFICATIONS";
+    ActionTypes["COMPLETE_SEARCH_NOTIFICATIONS"] = "[Notifications] COMPLETE_SEARCH_NOTIFICATIONS";
 })(ActionTypes || (ActionTypes = {}));
-var SearchTasks = (function () {
-    function SearchTasks(order, direction, count, startIndex) {
+var SearchNotifications = (function () {
+    function SearchNotifications(order, direction, count, startIndex) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
-        this.type = ActionTypes.SEARCH_TASKS;
+        this.type = ActionTypes.SEARCH_NOTIFICATIONS;
     }
-    return SearchTasks;
+    return SearchNotifications;
 }());
-export { SearchTasks };
-var CompleteSearchTasks = (function () {
-    function CompleteSearchTasks(content) {
+export { SearchNotifications };
+var CompleteSearchNotifications = (function () {
+    function CompleteSearchNotifications(content) {
         this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_TASKS;
+        this.type = ActionTypes.COMPLETE_SEARCH_NOTIFICATIONS;
     }
-    return CompleteSearchTasks;
+    return CompleteSearchNotifications;
 }());
-export { CompleteSearchTasks };
-//# sourceMappingURL=tasks.actions.js.map
+export { CompleteSearchNotifications };
+//# sourceMappingURL=notifications.actions.js.map

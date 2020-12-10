@@ -7,38 +7,37 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
-var AddEscalationDialog = (function () {
-    function AddEscalationDialog(dialogRef, formBuilder) {
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
+import { CreateHumanTaskInstance } from '@app/stores/humantaskinstances/parameters/create-humantaskinstance.model';
+var CreateHumanTaskInstanceDialog = (function () {
+    function CreateHumanTaskInstanceDialog(dialogRef, data) {
         this.dialogRef = dialogRef;
-        this.formBuilder = formBuilder;
-        this.baseTranslationKey = "HUMANTASK.DEF.VIEW.DEADLINES";
-        this.addEscalationForm = this.formBuilder.group({
-            condition: new FormControl('', [
-                Validators.required
-            ])
-        });
+        this.data = data;
+        this.baseTranslationKey = "HUMANTASK.DEF.VIEW.CREATE_HUMANTASKINSTANCE";
+        this.createHumanTaskInstance = new CreateHumanTaskInstance();
+        this.createHumanTaskInstance.humanTaskName = this.data.name;
     }
-    AddEscalationDialog.prototype.onAddEscalation = function (form) {
-        if (!this.addEscalationForm.valid) {
-            return;
-        }
-        this.dialogRef.close(form);
+    CreateHumanTaskInstanceDialog.prototype.update = function () {
+        this.dialogRef.close(this.createHumanTaskInstance);
     };
-    AddEscalationDialog.prototype.close = function () {
+    CreateHumanTaskInstanceDialog.prototype.close = function () {
         this.dialogRef.close();
     };
-    AddEscalationDialog = __decorate([
+    CreateHumanTaskInstanceDialog = __decorate([
         Component({
-            selector: 'add-escalation-dialog',
-            templateUrl: 'add-escalation-dialog.component.html',
+            selector: 'create-humantask-instance-dialog',
+            templateUrl: 'create-humantaskinstance-dialog.component.html',
         }),
+        __param(1, Inject(MAT_DIALOG_DATA)),
         __metadata("design:paramtypes", [MatDialogRef,
-            FormBuilder])
-    ], AddEscalationDialog);
-    return AddEscalationDialog;
+            HumanTaskDef])
+    ], CreateHumanTaskInstanceDialog);
+    return CreateHumanTaskInstanceDialog;
 }());
-export { AddEscalationDialog };
-//# sourceMappingURL=add-escalation-dialog.component.js.map
+export { CreateHumanTaskInstanceDialog };
+//# sourceMappingURL=create-humantaskinstance-dialog.component.js.map

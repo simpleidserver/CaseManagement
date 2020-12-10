@@ -1,7 +1,7 @@
-var SearchCaseFilesResult = (function () {
-    function SearchCaseFilesResult() {
+var SearchCmmnFilesResult = (function () {
+    function SearchCmmnFilesResult() {
     }
-    return SearchCaseFilesResult;
+    return SearchCmmnFilesResult;
 }());
-export { SearchCaseFilesResult };
-//# sourceMappingURL=search-case-files-result.model.js.map
+export { SearchCmmnFilesResult };
+//# sourceMappingURL=search-cmmn-files-result.model.js.map

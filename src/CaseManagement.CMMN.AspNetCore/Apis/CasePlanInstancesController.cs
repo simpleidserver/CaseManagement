@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,6 +55,8 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
         {
             try
             {
+                var nameIdentifier = User.GetClaims().GetUserNameIdentifier();
+                createCaseInstance.NameIdentifier = nameIdentifier;
                 var result = await _mediator.Send(createCaseInstance, token);
                 return new OkObjectResult(result);
             }
@@ -286,13 +289,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/complete/{elt}")]
+        [HttpPost("{id}/complete/{elt}")]
         [Authorize("complete_caseplaninstance")]
-        public async Task<IActionResult> Complete(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Complete(string id, string elt, [FromBody] CompleteCommand command, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new CompleteCommand(id, elt), token);
+                command.CaseInstanceId = id;
+                command.CaseInstanceElementId = elt;
+                await _mediator.Send(command, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)

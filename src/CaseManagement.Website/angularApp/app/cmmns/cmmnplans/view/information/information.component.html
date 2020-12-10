@@ -1,0 +1,21 @@
+﻿<form [formGroup]="saveForm" (ngSubmit)="onSave(saveForm.value)" class="mt-10">
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+        <mat-label>{{ 'SHARED.ID' | translate }}</mat-label>
+        <input matInput name="id" formControlName="id" />
+    </mat-form-field>
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+        <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+        <input matInput name="name" formControlName="name" readonly />
+    </mat-form-field>
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+        <mat-label>{{ 'SHARED.CREATE_DATETIME' | translate }}</mat-label>
+        <input matInput name="createDateTime" formControlName="createDateTime" readonly />
+    </mat-form-field>
+    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+        <mat-label>{{ 'SHARED.DESCRIPTION' | translate }}</mat-label>
+        <textarea matInput name="description" formControlName="description"></textarea>
+    </mat-form-field>
+    <div>
+        <button mat-raised-button color="primary">{{ 'SHARED.SAVE' | translate }}</button>
+    </div>
+</form>

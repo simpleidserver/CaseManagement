@@ -7,15 +7,21 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlan.EventHandlers
 {
-    public class CasePlanEventHandler : IDomainEvtConsumerGeneric<CaseFilePublishedEvent>
+    public class CasePlanEventHandler : IDomainEvtConsumerGeneric<CaseFilePublishedEvent>,
+        IDomainEvtConsumerGeneric<CasePlanInstanceCreatedEvent>
     {
         private readonly ICaseFileQueryRepository _caseFileQueryRepository;
         private readonly ICasePlanCommandRepository _casePlanCommandRepository;
+        private readonly ICasePlanQueryRepository _casePlanQueryRepository;
 
-        public CasePlanEventHandler(ICaseFileQueryRepository caseFileQueryRepository, ICasePlanCommandRepository casePlanCommandRepository)
+        public CasePlanEventHandler(
+            ICaseFileQueryRepository caseFileQueryRepository, 
+            ICasePlanCommandRepository casePlanCommandRepository,
+            ICasePlanQueryRepository casePlanQueryRepository)
         {
             _caseFileQueryRepository = caseFileQueryRepository;
             _casePlanCommandRepository = casePlanCommandRepository;
+            _casePlanQueryRepository = casePlanQueryRepository;
         }
 
         public async Task Handle(CaseFilePublishedEvent @event, CancellationToken cancellationToken)
@@ -28,6 +34,14 @@ namespace CaseManagement.CMMN.CasePlan.EventHandlers
             }
 
             await _casePlanCommandRepository.SaveChanges(cancellationToken);
+        }
+
+        public async Task Handle(CasePlanInstanceCreatedEvent message, CancellationToken token)
+        {
+            var casePlan = await _casePlanQueryRepository.Get(message.CasePlanId, token);
+            casePlan.IncrementInstance();
+            await _casePlanCommandRepository.Update(casePlan, token);
+            await _casePlanCommandRepository.SaveChanges(token);
         }
     }
 }

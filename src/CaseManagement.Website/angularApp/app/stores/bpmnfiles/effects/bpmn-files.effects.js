@@ -11,74 +11,65 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes } from '../actions/case-files.actions';
-import { CaseFilesService } from '../services/casefiles.service';
-var CaseFilesEffects = (function () {
-    function CaseFilesEffects(actions$, caseFilesService) {
+import { ActionTypes } from '../actions/bpmn-files.actions';
+import { BpmnFilesService } from '../services/bpmnfiles.service';
+var BpmnFilesEffects = (function () {
+    function BpmnFilesEffects(actions$, bpmnFilesService) {
         var _this = this;
         this.actions$ = actions$;
-        this.caseFilesService = caseFilesService;
-        this.searchCaseFiles$ = this.actions$
-            .pipe(ofType(ActionTypes.START_SEARCH_CASEFILES), mergeMap(function (evt) {
-            return _this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, null, true)
-                .pipe(map(function (casefiles) { return { type: ActionTypes.COMPLETE_SEARCH_CASEFILES, content: casefiles }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_CASEFILES }); }));
+        this.bpmnFilesService = bpmnFilesService;
+        this.searchBpmnFiles$ = this.actions$
+            .pipe(ofType(ActionTypes.START_SEARCH_BPMNFILES), mergeMap(function (evt) {
+            return _this.bpmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, true)
+                .pipe(map(function (bpmnFiles) { return { type: ActionTypes.COMPLETE_SEARCH_BPMNFILES, content: bpmnFiles }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_BPMNFILES }); }));
         }));
-        this.searchCaseFileHistories$ = this.actions$
-            .pipe(ofType(ActionTypes.START_SEARCH_CASEFILES_HISTORY), mergeMap(function (evt) {
-            return _this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, null, evt.caseFileId, false)
-                .pipe(map(function (casefiles) { return { type: ActionTypes.COMPLETE_SEARCH_CASEFILES_HISTORY, content: casefiles }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_CASEFILES_HISTORY }); }));
+        this.getBpmnFile$ = this.actions$
+            .pipe(ofType(ActionTypes.START_GET_BPMNFILE), mergeMap(function (evt) {
+            return _this.bpmnFilesService.get(evt.id)
+                .pipe(map(function (bpmnFile) { return { type: ActionTypes.COMPLETE_GET_BPMNFILE, bpmnFile: bpmnFile }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_BPMNFILE }); }));
         }));
-        this.getCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.START_GET_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.get(evt.id)
-                .pipe(map(function (casefile) { return { type: ActionTypes.COMPLETE_GET_CASEFILE, content: casefile }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_CASEFILE }); }));
+        this.updateBpmnFile$ = this.actions$
+            .pipe(ofType(ActionTypes.UPDATE_BPMNFILE), mergeMap(function (evt) {
+            return _this.bpmnFilesService.update(evt.id, evt.name, evt.description)
+                .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }); }));
         }));
-        this.addCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.ADD_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.add(evt.name, evt.description)
-                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_ADD_CASEFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_ADD_CASEFILE }); }));
+        this.updateBpmnFilePayload$ = this.actions$
+            .pipe(ofType(ActionTypes.UPDATE_BPMNFILE_PAYLOAD), mergeMap(function (evt) {
+            return _this.bpmnFilesService.updatePayload(evt.id, evt.payload)
+                .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE_PAYLOAD, id: evt.id, payload: evt.payload }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE_PAYLOAD }); }));
         }));
-        this.publishCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.PUBLISH_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.publish(evt.id)
-                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_PUBLISH_CASEFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_PUBLISH_CASEFILE }); }));
-        }));
-        this.updateCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.UPDATE_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.update(evt.id, evt.name, evt.description, evt.payload)
-                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_UPDATE_CASEFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_CASEFILE }); }));
+        this.publishBpmnFile$ = this.actions$
+            .pipe(ofType(ActionTypes.PUBLISH_BPMNFILE), mergeMap(function (evt) {
+            return _this.bpmnFilesService.publish(evt.id)
+                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_PUBLISH_BPMNFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_PUBLISH_BPMNFILE }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "searchCaseFiles$", void 0);
+    ], BpmnFilesEffects.prototype, "searchBpmnFiles$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "searchCaseFileHistories$", void 0);
+    ], BpmnFilesEffects.prototype, "getBpmnFile$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "getCaseFile$", void 0);
+    ], BpmnFilesEffects.prototype, "updateBpmnFile$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "addCaseFile$", void 0);
+    ], BpmnFilesEffects.prototype, "updateBpmnFilePayload$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "publishCaseFile$", void 0);
-    __decorate([
-        Effect(),
-        __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "updateCaseFile$", void 0);
-    CaseFilesEffects = __decorate([
+    ], BpmnFilesEffects.prototype, "publishBpmnFile$", void 0);
+    BpmnFilesEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            CaseFilesService])
-    ], CaseFilesEffects);
-    return CaseFilesEffects;
+            BpmnFilesService])
+    ], BpmnFilesEffects);
+    return BpmnFilesEffects;
 }());
-export { CaseFilesEffects };
-//# sourceMappingURL=case-files.effects.js.map
+export { BpmnFilesEffects };
+//# sourceMappingURL=bpmn-files.effects.js.map

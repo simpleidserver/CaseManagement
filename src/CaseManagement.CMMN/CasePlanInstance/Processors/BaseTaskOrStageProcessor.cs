@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using CaseManagement.Common.Processors;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,7 +43,16 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
             if (elt.State == TaskStageStates.Active)
             {
-                await ProtectedProcess(executionContext, elt, cancellationToken);
+                try
+                {
+                    await ProtectedProcess(executionContext, elt, cancellationToken);
+                }
+                catch(Exception ex)
+                {
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Fault, ex.ToString());
+                    return;
+                }
+
                 if (terminate.IsCaptured)
                 {
                     executionContext.Instance.MakeTransition(elt, CMMNTransitions.Terminate);

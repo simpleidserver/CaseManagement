@@ -11,12 +11,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { map } from 'rxjs/operators';
-var CaseFilesService = (function () {
-    function CaseFilesService(http, oauthService) {
+var CmmnFilesService = (function () {
+    function CmmnFilesService(http, oauthService) {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CaseFilesService.prototype.search = function (startIndex, count, order, direction, text, caseFileId, takeLatest) {
+    CmmnFilesService.prototype.search = function (startIndex, count, order, direction, text, caseFileId, takeLatest) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -37,14 +37,14 @@ var CaseFilesService = (function () {
         }
         return this.http.post(targetUrl, JSON.stringify(request), { headers: headers });
     };
-    CaseFilesService.prototype.get = function (id) {
+    CmmnFilesService.prototype.get = function (id) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-files/" + id;
         return this.http.get(targetUrl, { headers: headers });
     };
-    CaseFilesService.prototype.add = function (name, description) {
+    CmmnFilesService.prototype.add = function (name, description) {
         var request = JSON.stringify({ name: name, description: description });
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
@@ -55,8 +55,8 @@ var CaseFilesService = (function () {
             return res['id'];
         }));
     };
-    CaseFilesService.prototype.update = function (id, name, description, payload) {
-        var request = JSON.stringify({ name: name, description: description, payload: payload });
+    CmmnFilesService.prototype.update = function (id, name, description) {
+        var request = JSON.stringify({ name: name, description: description });
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -64,7 +64,16 @@ var CaseFilesService = (function () {
         var targetUrl = process.env.API_URL + "/case-files/" + id;
         return this.http.put(targetUrl, request, { headers: headers });
     };
-    CaseFilesService.prototype.publish = function (id) {
+    CmmnFilesService.prototype.updatePayload = function (id, payload) {
+        var request = JSON.stringify({ payload: payload });
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-files/" + id + "/payload";
+        return this.http.put(targetUrl, request, { headers: headers });
+    };
+    CmmnFilesService.prototype.publish = function (id) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
@@ -73,11 +82,11 @@ var CaseFilesService = (function () {
             return res['id'];
         }));
     };
-    CaseFilesService = __decorate([
+    CmmnFilesService = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [HttpClient, OAuthService])
-    ], CaseFilesService);
-    return CaseFilesService;
+    ], CmmnFilesService);
+    return CmmnFilesService;
 }());
-export { CaseFilesService };
-//# sourceMappingURL=casefiles.service.js.map
+export { CmmnFilesService };
+//# sourceMappingURL=cmmnfiles.service.js.map

@@ -49,6 +49,66 @@ namespace CaseManagement.OAuth
                     "client_credentials"
                 },
                 PreferredTokenProfile = "Bearer"
+            },
+            new OAuthClient
+            {
+                ClientId = "cmmnClient",
+                Secrets = new List<ClientSecret>
+                {
+                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("cmmnClientSecret"))
+                },
+                ClientNames = new []
+                {
+                    new OAuthTranslation("cmmnClient_client_name", "CMMN Client", "fr")
+                },
+                TokenEndPointAuthMethod = "client_secret_post",
+                UpdateDateTime = DateTime.UtcNow,
+                CreateDateTime = DateTime.UtcNow,
+                TokenExpirationTimeInSeconds = 60 * 30,
+                RefreshTokenExpirationTimeInSeconds = 60 * 30,
+                TokenSignedResponseAlg = "RS256",
+                AllowedScopes = new List<OAuthScope>
+                {
+                    new OAuthScope
+                    {
+                        Name = "create_humantaskinstance"
+                    }
+                },
+                GrantTypes = new List<string>
+                {
+                    "client_credentials"
+                },
+                PreferredTokenProfile = "Bearer"
+            },
+            new OAuthClient
+            {
+                ClientId = "humanTaskClient",
+                Secrets = new List<ClientSecret>
+                {
+                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("humanTaskClientSecret"))
+                },
+                ClientNames = new []
+                {
+                    new OAuthTranslation("humanTaskClient_client_name", "HumanTask Client", "fr")
+                },
+                TokenEndPointAuthMethod = "client_secret_post",
+                UpdateDateTime = DateTime.UtcNow,
+                CreateDateTime = DateTime.UtcNow,
+                TokenExpirationTimeInSeconds = 60 * 30,
+                RefreshTokenExpirationTimeInSeconds = 60 * 30,
+                TokenSignedResponseAlg = "RS256",
+                AllowedScopes = new List<OAuthScope>
+                {
+                    new OAuthScope
+                    {
+                        Name = "complete_humantask"
+                    }
+                },
+                GrantTypes = new List<string>
+                {
+                    "client_credentials"
+                },
+                PreferredTokenProfile = "Bearer"
             }
         };
     }

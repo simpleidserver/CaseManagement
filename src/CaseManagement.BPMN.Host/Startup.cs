@@ -63,6 +63,7 @@ namespace CaseManagement.BPMN.Host
             services.AddProcessJobServer(callbackServerOpts: opts =>
             {
                 opts.WSHumanTaskAPI = "http://localhost:60006";
+                opts.CallbackUrl = "http://localhost:60007/processinstances/{id}/complete/{eltId}";
             }).AddProcessFiles(files);
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>

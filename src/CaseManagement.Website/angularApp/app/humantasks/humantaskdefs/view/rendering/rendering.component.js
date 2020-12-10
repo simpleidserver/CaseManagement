@@ -12,9 +12,9 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
-import { OptionValue, OutputRenderingElement, Rendering, Translation } from '@app/stores/common/rendering.model';
+import { OptionValue, RenderingElement, Translation } from '@app/stores/common/rendering.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { select, Store, ScannedActionsSubject } from '@ngrx/store';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 var Language = (function () {
@@ -41,7 +41,7 @@ var ViewHumanTaskDefRenderingComponent = (function () {
         this.translateService = translateService;
         this.actions$ = actions$;
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW.RENDERING";
-        this.rendering = new Rendering();
+        this.renderingElements = [];
         this.addLabelForm = this.formBuilder.group({
             language: new FormControl('', [
                 Validators.required
@@ -89,17 +89,17 @@ var ViewHumanTaskDefRenderingComponent = (function () {
                 return;
             }
             _this.id = e.id;
-            _this.rendering = e.rendering;
+            _this.renderingElements = e.renderingElements;
         });
     };
     ViewHumanTaskDefRenderingComponent.prototype.drop = function (event) {
-        moveItemInArray(this.rendering.output, event.previousIndex, event.currentIndex);
+        moveItemInArray(this.renderingElements, event.previousIndex, event.currentIndex);
     };
     ViewHumanTaskDefRenderingComponent.prototype.updateLabel = function (translation) {
         if (!this.selectedField) {
             return;
         }
-        var filteredLabels = this.selectedField.label.filter(function (l) {
+        var filteredLabels = this.selectedField.labels.filter(function (l) {
             return l.language === translation.language;
         });
         if (filteredLabels.length === 1) {
@@ -108,14 +108,14 @@ var ViewHumanTaskDefRenderingComponent = (function () {
             });
             return;
         }
-        this.selectedField.label.push(translation);
+        this.selectedField.labels.push(translation);
         this.addLabelForm.reset();
     };
     ViewHumanTaskDefRenderingComponent.prototype.addValue = function (form) {
-        if (!this.selectedField || this.selectedField.value.type !== 'select') {
+        if (!this.selectedField || this.selectedField.valueType !== 'select') {
             return;
         }
-        var filteredValue = this.selectedField.value.values.filter(function (f) {
+        var filteredValue = this.selectedField.values.filter(function (f) {
             return f.value === form.value && f.displayNames.filter(function (d) {
                 return d.language === form.language;
             }).length > 0;
@@ -129,17 +129,17 @@ var ViewHumanTaskDefRenderingComponent = (function () {
         var optValue = new OptionValue();
         optValue.value = form.value;
         optValue.displayNames.push(new Translation(form.language, form.translation));
-        this.selectedField.value.values.push(optValue);
+        this.selectedField.values.push(optValue);
         this.addValueForm.reset();
     };
     ViewHumanTaskDefRenderingComponent.prototype.addField = function (fieldType) {
-        var renderingElt = new OutputRenderingElement();
-        renderingElt.value.type = fieldType.fieldType;
-        this.rendering.output.push(renderingElt);
+        var renderingElt = new RenderingElement();
+        renderingElt.valueType = fieldType.fieldType;
+        this.renderingElements.push(renderingElt);
     };
     ViewHumanTaskDefRenderingComponent.prototype.removeField = function (elt) {
-        var index = this.rendering.output.indexOf(elt);
-        this.rendering.output.splice(index, 1);
+        var index = this.renderingElements.indexOf(elt);
+        this.renderingElements.splice(index, 1);
         this.selectedField = null;
     };
     ViewHumanTaskDefRenderingComponent.prototype.displaySettings = function (elt) {
@@ -149,15 +149,15 @@ var ViewHumanTaskDefRenderingComponent = (function () {
         if (!this.selectedField) {
             return;
         }
-        var index = this.selectedField.value.values.indexOf(val);
-        this.selectedField.value.values.splice(index, 1);
+        var index = this.selectedField.values.indexOf(val);
+        this.selectedField.values.splice(index, 1);
     };
     ViewHumanTaskDefRenderingComponent.prototype.deleteLabel = function (lbl) {
         if (!this.selectedField) {
             return;
         }
-        var index = this.selectedField.label.indexOf(lbl);
-        this.selectedField.label.splice(index, 1);
+        var index = this.selectedField.labels.indexOf(lbl);
+        this.selectedField.labels.splice(index, 1);
     };
     ViewHumanTaskDefRenderingComponent.prototype.joinDisplayNames = function (val) {
         var map = new Map();
@@ -178,7 +178,7 @@ var ViewHumanTaskDefRenderingComponent = (function () {
         return val.value + "(" + arr.join(',') + ")";
     };
     ViewHumanTaskDefRenderingComponent.prototype.update = function () {
-        var request = new fromHumanTaskDefActions.UpdateRenderingOperation(this.id, this.rendering);
+        var request = new fromHumanTaskDefActions.UpdateRenderingOperation(this.id, this.renderingElements);
         this.store.dispatch(request);
     };
     ViewHumanTaskDefRenderingComponent = __decorate([

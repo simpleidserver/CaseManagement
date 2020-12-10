@@ -16,7 +16,6 @@ namespace CaseManagement.CMMN.Persistence.EF.Models
         public DateTime UpdateDateTime { get; set; }
         public virtual CasePlanInstanceModel CasePlanInstance { get; set; }
         public virtual CasePlanModel CasePlan { get; set; }
-        public virtual CaseWorkerTaskModel CaseWorkerTask { get; set; }
         public virtual ICollection<RoleClaimModel> Claims { get; set; }
     }
 }

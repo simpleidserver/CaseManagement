@@ -2,10 +2,12 @@
 using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
+using CaseManagement.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace CaseManagement.CMMN
 {
@@ -18,15 +20,17 @@ namespace CaseManagement.CMMN
             _services = services;
         }
 
-        public ServerBuilder AddDefinitions(List<string> pathLst, string caseOwner = null)
+        public ServerBuilder AddDefinitions(List<string> pathLst)
         {
+            var builder = _services.BuildServiceProvider();
+            var commitAggregateHelper = (ICommitAggregateHelper)builder.GetService(typeof(ICommitAggregateHelper));
             var caseFiles = new ConcurrentBag<CaseFileAggregate>();
             var caseDefinitions = new ConcurrentBag<CasePlanAggregate>();
             foreach(var path in pathLst)
             {
                 var cmmnTxt = File.ReadAllText(path);
                 var name = Path.GetFileName(path);
-                var caseFile = CaseFileAggregate.New(name, name, 0, caseOwner, cmmnTxt);
+                var caseFile = CaseFileAggregate.New(name, name, 0, cmmnTxt);
                 var tDefinitions = CMMNParser.ParseWSDL(cmmnTxt);
                 var caseDefinition = CMMNParser.ExtractCasePlans(tDefinitions, caseFile);
                 foreach(var cd in caseDefinition)
@@ -35,6 +39,10 @@ namespace CaseManagement.CMMN
                 }
 
                 caseFiles.Add(caseFile);
+                var newCaseFile = caseFile.Publish();
+                caseFiles.Add(newCaseFile);
+                commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.AggregateId), CancellationToken.None).Wait();
+                commitAggregateHelper.Commit(newCaseFile, CaseFileAggregate.GetStreamName(newCaseFile.AggregateId), CancellationToken.None).Wait();
             }
 
             _services.TryUpdateSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(caseFiles));

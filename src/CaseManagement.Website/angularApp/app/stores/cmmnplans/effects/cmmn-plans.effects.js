@@ -11,47 +11,38 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import * as fromCasePlan from '../actions/caseplan.actions';
-import { CasePlanService } from '../services/caseplan.service';
-var CasePlanEffects = (function () {
-    function CasePlanEffects(actions$, casePlanService) {
+import * as fromCasePlan from '../actions/cmmn-plans.actions';
+import { CmmnPlanService } from '../services/cmmn-plan.service';
+var CmmnPlanEffects = (function () {
+    function CmmnPlanEffects(actions$, cmmnPlanService) {
         var _this = this;
         this.actions$ = actions$;
-        this.casePlanService = casePlanService;
-        this.searchCasePlans$ = this.actions$
-            .pipe(ofType(fromCasePlan.ActionTypes.START_SEARCH), mergeMap(function (evt) {
-            return _this.casePlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.caseFileId)
-                .pipe(map(function (casePlans) { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH, content: casePlans }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_SEARCH }); }));
+        this.cmmnPlanService = cmmnPlanService;
+        this.searchCmmnPlans$ = this.actions$
+            .pipe(ofType(fromCasePlan.ActionTypes.SEARCH_CMMN_PLANS), mergeMap(function (evt) {
+            return _this.cmmnPlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.caseFileId)
+                .pipe(map(function (cmmnPlans) { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH_CMMN_PLANS, content: cmmnPlans }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.ERROR_SEARCH_CMMN_PLANS }); }));
         }));
-        this.getCasePlan$ = this.actions$
-            .pipe(ofType(fromCasePlan.ActionTypes.START_GET), mergeMap(function (evt) {
-            return _this.casePlanService.get(evt.id)
-                .pipe(map(function (casefiles) { return { type: fromCasePlan.ActionTypes.COMPLETE_GET, content: casefiles }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_GET }); }));
-        }));
-        this.searchCasePlanHistory = this.actions$
-            .pipe(ofType(fromCasePlan.ActionTypes.START_SEARCH_HISTORY), mergeMap(function (evt) {
-            return _this.casePlanService.searchHistory(evt.id, evt.startIndex, evt.count, evt.order, evt.direction)
-                .pipe(map(function (caseInstances) { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH_HISTORY, content: caseInstances }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.COMPLETE_SEARCH_HISTORY }); }));
+        this.getCmmnPlan$ = this.actions$
+            .pipe(ofType(fromCasePlan.ActionTypes.GET_CMMN_PLAN), mergeMap(function (evt) {
+            return _this.cmmnPlanService.get(evt.id)
+                .pipe(map(function (cmmnPlan) { return { type: fromCasePlan.ActionTypes.COMPLETE_GET_CMMN_PLAN, content: cmmnPlan }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.ERROR_GET_CMMN_PLAN }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "searchCasePlans$", void 0);
+    ], CmmnPlanEffects.prototype, "searchCmmnPlans$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "getCasePlan$", void 0);
-    __decorate([
-        Effect(),
-        __metadata("design:type", Object)
-    ], CasePlanEffects.prototype, "searchCasePlanHistory", void 0);
-    CasePlanEffects = __decorate([
+    ], CmmnPlanEffects.prototype, "getCmmnPlan$", void 0);
+    CmmnPlanEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            CasePlanService])
-    ], CasePlanEffects);
-    return CasePlanEffects;
+            CmmnPlanService])
+    ], CmmnPlanEffects);
+    return CmmnPlanEffects;
 }());
-export { CasePlanEffects };
-//# sourceMappingURL=caseplan.effects.js.map
+export { CmmnPlanEffects };
+//# sourceMappingURL=cmmn-plans.effects.js.map

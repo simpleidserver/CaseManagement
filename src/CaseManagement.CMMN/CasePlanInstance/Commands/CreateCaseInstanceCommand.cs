@@ -12,6 +12,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands
         }
 
         public string CasePlanId { get; set; }
+        public string NameIdentifier { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public ICollection<UpdatePermissionsRoleCommand> Permissions { get; set; }
     }

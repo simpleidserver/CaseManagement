@@ -8,21 +8,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
+import { SidenavService } from './shared/SidenavService';
+import { MatSidenav } from '@angular/material';
 var AppComponent = (function () {
-    function AppComponent(route, translate, oauthService, router) {
+    function AppComponent(route, translate, oauthService, router, sidenavService) {
         this.route = route;
         this.translate = translate;
         this.oauthService = oauthService;
         this.router = router;
+        this.sidenavService = sidenavService;
         this.isConnected = false;
         this.url = process.env.BASE_URL + "assets/images/logo.svg";
         this.casesExpanded = false;
         this.humanTasksExpanded = false;
+        this.bpmnsExpanded = false;
         translate.setDefaultLang('fr');
         translate.use('fr');
         this.configureAuth();
@@ -55,6 +59,9 @@ var AppComponent = (function () {
     AppComponent.prototype.toggleHumanTasks = function () {
         this.humanTasksExpanded = !this.humanTasksExpanded;
     };
+    AppComponent.prototype.toggleBpmnFiles = function () {
+        this.bpmnsExpanded = !this.bpmnsExpanded;
+    };
     AppComponent.prototype.init = function () {
         var claims = this.oauthService.getIdentityClaims();
         if (!claims) {
@@ -82,16 +89,21 @@ var AppComponent = (function () {
             if (!url || _this.humanTasksExpanded || _this.casesExpanded) {
                 return;
             }
-            if (url.startsWith('/cases')) {
+            if (url.startsWith('/cmmns')) {
                 _this.casesExpanded = true;
             }
             if (url.startsWith('/humantasks')) {
                 _this.humanTasksExpanded = true;
             }
+            if (url.startsWith('/bpmns')) {
+                _this.bpmnsExpanded = true;
+            }
         });
+        this.sidenavService.setSidnav(this.sidenav);
     };
     AppComponent.prototype.configureAuth = function () {
         this.oauthService.configure(authConfig);
+        this.oauthService.setStorage(localStorage);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         var self = this;
         this.oauthService.loadDiscoveryDocumentAndTryLogin({
@@ -104,6 +116,10 @@ var AppComponent = (function () {
             }
         }, 3000);
     };
+    __decorate([
+        ViewChild('sidenav'),
+        __metadata("design:type", MatSidenav)
+    ], AppComponent.prototype, "sidenav", void 0);
     AppComponent = __decorate([
         Component({
             selector: 'app-component',
@@ -115,7 +131,11 @@ var AppComponent = (function () {
                 '../../node_modules/cmmn-js/dist/assets/diagram-js.css',
                 '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn.css',
                 '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn-codes.css',
-                '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn-embedded.css'
+                '../../node_modules/cmmn-js/dist/assets/cmmn-font/css/cmmn-embedded.css',
+                '../../node_modules/bpmn-js/dist/assets/diagram-js.css',
+                '../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn.css',
+                '../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css',
+                '../../node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
             ],
             encapsulation: ViewEncapsulation.None,
             animations: [
@@ -126,7 +146,8 @@ var AppComponent = (function () {
                 ])
             ]
         }),
-        __metadata("design:paramtypes", [Router, TranslateService, OAuthService, Router])
+        __metadata("design:paramtypes", [Router, TranslateService, OAuthService, Router,
+            SidenavService])
     ], AppComponent);
     return AppComponent;
 }());

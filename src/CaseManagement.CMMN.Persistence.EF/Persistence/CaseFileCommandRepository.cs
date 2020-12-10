@@ -49,7 +49,6 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
                 record.Description = caseFile.Description;
                 record.UpdateDateTime = caseFile.UpdateDateTime;
                 record.SerializedContent = caseFile.Payload;
-                record.Owner = caseFile.Owner;
                 record.Status = (int)caseFile.Status;
                 record.Version = caseFile.Version;
             }

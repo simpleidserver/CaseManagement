@@ -42,11 +42,6 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 result = result.GroupBy(r => r.FileId).Select(r => r.First());
             }
 
-            if (!string.IsNullOrWhiteSpace(parameter.Owner))
-            {
-                result = result.Where(r => r.Owner == parameter.Owner);
-            }
-
             if (!string.IsNullOrWhiteSpace(parameter.Text))
             {
                 result = result.Where(r => r.Name.IndexOf(parameter.Text, StringComparison.InvariantCultureIgnoreCase) >= 0);

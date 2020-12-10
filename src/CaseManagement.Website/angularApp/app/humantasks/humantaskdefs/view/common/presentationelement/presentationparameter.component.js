@@ -89,25 +89,32 @@ var PresentationParameterComponent = (function () {
         if (!this.addNameForm.valid) {
             return;
         }
+        txt.usage = 'NAME';
         this.names.push(txt);
+        this.addNameForm.get('value').setValue('');
     };
     PresentationParameterComponent.prototype.addSubject = function (sub) {
         if (!this.addSubjectForm.valid) {
             return;
         }
+        sub.usage = 'SUBJECT';
         this.subjects.push(sub);
+        this.addSubjectForm.get('value').setValue('');
     };
     PresentationParameterComponent.prototype.addDescription = function (desc) {
         if (!this.addDescriptionForm.valid) {
             return;
         }
+        desc.usage = 'DESCRIPTION';
         this.descriptions.push(desc);
+        this.addDescriptionForm.get('value').setValue('');
     };
     PresentationParameterComponent.prototype.addPresentationParameter = function (pp) {
         if (!this.addPresentationForm.valid) {
             return;
         }
         this.presentationParameters.push(pp);
+        this.addPresentationForm.reset();
     };
     PresentationParameterComponent.prototype.deleteName = function (txt) {
         var index = this.names.indexOf(txt);

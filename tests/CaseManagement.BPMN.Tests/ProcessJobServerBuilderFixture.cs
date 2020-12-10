@@ -515,6 +515,7 @@ namespace CaseManagement.BPMN.Tests
                 serviceCollection.AddProcessJobServer(callbackServerOpts: o =>
                 {
                     o.WSHumanTaskAPI = "http://localhost";
+                    o.CallbackUrl = "http://localhost/{id}/{eltId}";
                 });
                 serviceCollection.AddSingleton<IHttpClientFactory>(_factory);
                 _serviceProvider = serviceCollection.BuildServiceProvider();

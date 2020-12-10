@@ -18,8 +18,8 @@ namespace CaseManagement.CMMN.Domains
         public string CasePlanId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string CaseOwner { get; set; }
         public string CaseFileId { get; set; }
+        public int NbInstances { get; set; }
         public DateTime CreateDateTime { get; set; }
         public ICollection<CasePlanRole> Roles { get; set; }
         public ICollection<CasePlanFileItem> Files { get; set; }
@@ -36,13 +36,18 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CasePlanAggregate New(string casePlanId, string name, string description, string caseOwner, string caseFileId, int caseFileVersion, string xmlContent, ICollection<CasePlanRole> roles, ICollection<CasePlanFileItem> files)
+        public static CasePlanAggregate New(string casePlanId, string name, string description, string caseFileId, int caseFileVersion, string xmlContent, ICollection<CasePlanRole> roles, ICollection<CasePlanFileItem> files)
         {
             var result = new CasePlanAggregate();
-            var evt = new CasePlanAddedEvent(Guid.NewGuid().ToString(), BuildCasePlanIdentifier(casePlanId, caseFileVersion), caseFileVersion, casePlanId, name, description, caseOwner, caseFileId, DateTime.UtcNow, xmlContent, roles, files);
+            var evt = new CasePlanAddedEvent(Guid.NewGuid().ToString(), BuildCasePlanIdentifier(casePlanId, caseFileVersion), caseFileVersion, casePlanId, name, description, caseFileId, DateTime.UtcNow, xmlContent, roles, files);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
+        }
+
+        public void IncrementInstance()
+        {
+            NbInstances++;
         }
 
         public override void Handle(dynamic obj)
@@ -57,7 +62,6 @@ namespace CaseManagement.CMMN.Domains
             CasePlanId = evt.CasePlanId;
             Name = evt.Name;
             Description = evt.Description;
-            CaseOwner = evt.CaseOwner;
             CaseFileId = evt.CaseFileId;
             CreateDateTime = evt.CreateDateTime;
             XmlContent = evt.XmlContent;
@@ -73,7 +77,7 @@ namespace CaseManagement.CMMN.Domains
                 CasePlanId = CasePlanId,
                 Name = Name,
                 Description = Description,
-                CaseOwner = CaseOwner,
+                NbInstances = NbInstances,
                 CaseFileId = CaseFileId,
                 XmlContent = XmlContent,
                 Roles = Roles.Select(_ => (CasePlanRole)_.Clone()).ToList(),

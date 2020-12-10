@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cmg="https://github.com/simpleidserver/CaseManagement" id="Definitions_0m2br72" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
+<cmmn:case id="Case_0t7z7vp">
+  <cmmn:casePlanModel id="CasePlanModel_3394a428-486a-43f5-b491-7b31e417e0db" name="Claim case">
+    <cmmn:planItem id="PlanItem_0zl4ucq" name="Receive claim" definitionRef="Stage_1elok9z" />
+    <cmmn:stage id="Stage_1elok9z" name="Receive claim">
+      <cmmn:planItem id="PlanItem_1dphpiz" name="Capture claim details" definitionRef="HumanTask_1oeedji" />
+      <cmmn:humanTask id="HumanTask_1oeedji" cmg:formId="captureClaimDetails" cmg:implementation="##WsHumanTask">
+        <cmmn:extensionElements>
+          <cmg:parameters />
+        </cmmn:extensionElements>
+      </cmmn:humanTask>
+    </cmmn:stage>
+  </cmmn:casePlanModel>
+</cmmn:case>
+<cmmndi:CMMNDI>
+  <cmmndi:CMMNDiagram id="CMMNDiagram_1">
+    <cmmndi:Size width="500" height="500" />
+    <cmmndi:CMMNShape id="DI_CasePlanModel_3394a428-486a-43f5-b491-7b31e417e0db" cmmnElementRef="CasePlanModel_3394a428-486a-43f5-b491-7b31e417e0db">
+      <dc:Bounds x="155" y="99" width="537" height="209" />
+      <cmmndi:CMMNLabel />
+    </cmmndi:CMMNShape>
+    <cmmndi:CMMNShape id="PlanItem_1qbrgp3_di" cmmnElementRef="PlanItem_1dphpiz">
+      <dc:Bounds x="200" y="166" width="100" height="80" />
+      <cmmndi:CMMNLabel />
+    </cmmndi:CMMNShape>
+    <cmmndi:CMMNShape id="PlanItem_0zl4ucq_di" cmmnElementRef="PlanItem_0zl4ucq">
+      <dc:Bounds x="175" y="136" width="317" height="144" />
+      <cmmndi:CMMNLabel />
+    </cmmndi:CMMNShape>
+  </cmmndi:CMMNDiagram>
+</cmmndi:CMMNDI>
+</cmmn:definitions>

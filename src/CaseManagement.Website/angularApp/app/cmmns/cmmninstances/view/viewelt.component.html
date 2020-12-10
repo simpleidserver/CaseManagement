@@ -1,0 +1,12 @@
+﻿<mat-drawer-container class="cmmninstance" fxFlexFill>
+    <mat-drawer mode="side" opened>
+        <mat-list>
+            <a href="#" [class.is-active]="child.id === id" (click)="navigate($event, child)" mat-list-item *ngFor="let child of children; let i = index">
+                <small>{{ 'CMMN.INSTANCE.ELTOCCURRENCE' | translate : { name : child.name , occurrence : child.nbOccurrence } }}</small>
+            </a>
+        </mat-list>
+    </mat-drawer>
+    <mat-drawer-content>
+        <router-outlet></router-outlet>
+    </mat-drawer-content>
+</mat-drawer-container>

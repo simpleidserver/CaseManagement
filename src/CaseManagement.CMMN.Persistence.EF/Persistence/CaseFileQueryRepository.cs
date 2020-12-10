@@ -44,11 +44,6 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             using (var lck = await _caseManagementDbContext.Lock())
             {
                 IQueryable<CaseFileModel> result = _caseManagementDbContext.CaseFiles;
-                if (!string.IsNullOrWhiteSpace(parameter.Owner))
-                {
-                    result = result.Where(r => r.Owner == parameter.Owner);
-                }
-
                 if (!string.IsNullOrWhiteSpace(parameter.Text))
                 {
                     result = result.Where(r => r.Name.IndexOf(parameter.Text, StringComparison.InvariantCultureIgnoreCase) >= 0);

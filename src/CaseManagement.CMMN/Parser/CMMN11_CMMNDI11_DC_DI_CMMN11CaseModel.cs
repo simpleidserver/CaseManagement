@@ -3658,7 +3658,8 @@ public partial class tHumanTask : tTask
 
     private tPlanningTable planningTableField;
     private string performerRefField;
-    private string caseFormRefField;
+    private string formIdField;
+    private string implementationField;
 
     /// <remarks/>
     public tPlanningTable planningTable
@@ -3687,16 +3688,67 @@ public partial class tHumanTask : tTask
         }
     }
 
-    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "formKey", Namespace = "https://github.com/simpleidserver/CaseManagement")]
-    public string caseFormRef
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "formId", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public string formId
     {
         get
         {
-            return this.caseFormRefField;
+            return this.formIdField;
         }
         set
         {
-            this.caseFormRefField = value;
+            this.formIdField = value;
+        }
+    }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "implementation", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public string implementation
+    {
+        get
+        {
+            return this.implementationField;
+        }
+        set
+        {
+            this.implementationField = value;
+        }
+    }
+}
+
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(Namespace = "https://github.com/simpleidserver/CaseManagement")]
+[System.Xml.Serialization.XmlRootAttribute("parameter", Namespace = "https://github.com/simpleidserver/CaseManagement", IsNullable = false)]
+public partial class tHumanTaskParameter
+{
+    private string _keyField;
+    private string _valueField;
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "key", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public string key
+    {
+        get
+        {
+            return _keyField;
+        }
+        set
+        {
+            _keyField = value;
+        }
+    }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "value", Namespace = "https://github.com/simpleidserver/CaseManagement")]
+    public string value
+    {
+        get
+        {
+            return _valueField;
+        }
+        set
+        {
+            _valueField = value;
         }
     }
 }

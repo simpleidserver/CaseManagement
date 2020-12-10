@@ -19,8 +19,19 @@ var HumanTaskInstService = (function () {
     HumanTaskInstService.prototype.create = function (cmd) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.HUMANTASK_API_URL + "/humantaskinstances";
+        return this.http.post(targetUrl, JSON.stringify(cmd), { headers: headers }).pipe(map(function (_) {
+            return _.id;
+        }));
+    };
+    HumanTaskInstService.prototype.createMe = function (cmd) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.HUMANTASK_API_URL + "/humantaskinstances/me";
         return this.http.post(targetUrl, JSON.stringify(cmd), { headers: headers }).pipe(map(function (_) {
             return _.id;
         }));

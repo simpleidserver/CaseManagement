@@ -183,11 +183,18 @@ a.is-active {
     transform: rotate(45deg);
 }
 
-.outgoing-tokens {
+.outgoing-tokens, .nbOccurrence {
     text-align: center;
     width: 20px;
     height: 20px;
     border-radius: 10px;
+}
+
+.state {
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    font-size: 8pt;
 }
 
 .table-h400 {

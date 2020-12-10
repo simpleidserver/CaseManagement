@@ -24,6 +24,7 @@ var OperationParameterComponent = (function () {
         this.translateService = translateService;
         this.snackBar = snackBar;
         this.formBuilder = formBuilder;
+        this.parameters = [];
         this.parameterAdded = new EventEmitter();
         this.parameterRemoved = new EventEmitter();
         this.parameterTypes = [];
@@ -39,14 +40,6 @@ var OperationParameterComponent = (function () {
             isRequired: ''
         });
     }
-    Object.defineProperty(OperationParameterComponent.prototype, "parameters", {
-        get: function () { return this._parameters; },
-        set: function (pa) {
-            this._parameters = JSON.parse(JSON.stringify(pa));
-        },
-        enumerable: false,
-        configurable: true
-    });
     OperationParameterComponent.prototype.addParameter = function (param) {
         if (!this.parameterForm.valid) {
             return;
@@ -63,20 +56,24 @@ var OperationParameterComponent = (function () {
         if (!param.isRequired) {
             param.isRequired = false;
         }
-        this._parameters.push(param);
+        param.usage = this.usage;
+        this.parameters.push(param);
         this.parameterForm.reset();
         this.parameterAdded.emit(param);
     };
     OperationParameterComponent.prototype.deleteParameter = function (param) {
-        var index = this._parameters.indexOf(param);
-        this._parameters.splice(index, 1);
+        var index = this.parameters.indexOf(param);
+        this.parameters.splice(index, 1);
         this.parameterRemoved.emit(param);
     };
     __decorate([
         Input(),
-        __metadata("design:type", Array),
-        __metadata("design:paramtypes", [Array])
-    ], OperationParameterComponent.prototype, "parameters", null);
+        __metadata("design:type", String)
+    ], OperationParameterComponent.prototype, "usage", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Array)
+    ], OperationParameterComponent.prototype, "parameters", void 0);
     __decorate([
         Output(),
         __metadata("design:type", Object)

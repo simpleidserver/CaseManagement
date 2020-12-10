@@ -12,7 +12,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { HumanTaskDefinitionDeadLine } from '@app/stores/humantaskdefs/models/humantaskdef-deadlines';
+import { Deadline } from '@app/stores/humantaskdefs/models/deadline';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -225,20 +225,13 @@ var ViewHumanTaskDefDeadlinesComponent = (function () {
                 return;
             }
             _this.humanTaskDef = e;
-            _this.startDeadlines.data = _this.humanTaskDef.deadLines.startDeadLines;
-            _this.completionDeadlines.data = _this.humanTaskDef.deadLines.completionDeadLines;
+            _this.startDeadlines.data = HumanTaskDef.getStartDeadlines(e);
+            _this.completionDeadlines.data = HumanTaskDef.getCompletionDeadlines(e);
             if (_this.currentDeadline) {
                 var id_1 = _this.currentDeadline.id;
-                if (_this.currentDeadlineType === 'start') {
-                    _this.currentDeadline = _this.humanTaskDef.deadLines.startDeadLines.filter(function (v) {
-                        return v.id === id_1;
-                    })[0];
-                }
-                else {
-                    _this.currentDeadline = _this.humanTaskDef.deadLines.completionDeadLines.filter(function (v) {
-                        return v.id === id_1;
-                    })[0];
-                }
+                _this.currentDeadline = _this.humanTaskDef.deadLines.filter(function (v) {
+                    return v.id === id_1;
+                })[0];
                 _this.escalations.data = _this.currentDeadline.escalations;
             }
         });
@@ -247,7 +240,7 @@ var ViewHumanTaskDefDeadlinesComponent = (function () {
         if (!this.addDeadlineForm.valid) {
             return;
         }
-        var deadline = new HumanTaskDefinitionDeadLine();
+        var deadline = new Deadline();
         deadline.name = form.name;
         if (form.validityType === 'duration') {
             deadline.for = form.validity;
@@ -256,10 +249,12 @@ var ViewHumanTaskDefDeadlinesComponent = (function () {
             deadline.until = form.validity;
         }
         if (form.deadlineType === 'start') {
+            deadline.usage = 'START';
             var request = new fromHumanTaskDefActions.AddStartDeadLine(this.humanTaskDef.id, deadline);
             this.store.dispatch(request);
         }
         else {
+            deadline.usage = 'COMPLETION';
             var request = new fromHumanTaskDefActions.AddCompletionDeadLine(this.humanTaskDef.id, deadline);
             this.store.dispatch(request);
         }
@@ -269,8 +264,9 @@ var ViewHumanTaskDefDeadlinesComponent = (function () {
         if (!this.updateDeadlineForm.valid || !this.currentDeadline) {
             return;
         }
-        var deadline = new HumanTaskDefinitionDeadLine();
+        var deadline = new Deadline();
         deadline.id = this.currentDeadline.id;
+        deadline.usage = this.currentDeadline.usage;
         deadline.name = form.name;
         if (form.validityType === 'duration') {
             deadline.for = form.validity;

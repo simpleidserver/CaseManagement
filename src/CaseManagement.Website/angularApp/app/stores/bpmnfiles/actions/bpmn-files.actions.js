@@ -1,122 +1,109 @@
 export var ActionTypes;
 (function (ActionTypes) {
-    ActionTypes["START_SEARCH_CASEFILES"] = "[CaseFiles] START_SEARCH_CASEFILES";
-    ActionTypes["ERROR_SEARCH_CASEFILES"] = "[CaseFiles] ERROR_SEARCH_CASEFILES";
-    ActionTypes["COMPLETE_SEARCH_CASEFILES"] = "[CaseFiles] COMPLETE_SEARCH_CASEFILES";
-    ActionTypes["START_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] START_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["ERROR_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] ERROR_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["COMPLETE_SEARCH_CASEFILES_HISTORY"] = "[CasesFiles] COMPLETE_SEARCH_CASEFILES_HISTORY";
-    ActionTypes["START_GET_CASEFILE"] = "[CaseFiles] START_GET_CASEFILE";
-    ActionTypes["ERROR_GET_CASEFILE"] = "[CaseFiles] ERROR_GET_CASEFILE";
-    ActionTypes["COMPLETE_GET_CASEFILE"] = "[CaseFiles] COMPLETE_GET_CASEFILE";
-    ActionTypes["ADD_CASEFILE"] = "[CaseFiles] ADD_CASEFILE";
-    ActionTypes["ERROR_ADD_CASEFILE"] = "[CaseFiles] ERROR_ADD_CASEFILE";
-    ActionTypes["COMPLETE_ADD_CASEFILE"] = "[CaseFiles] COMPLETE_ADD_CASEFILE";
-    ActionTypes["PUBLISH_CASEFILE"] = "[CaseFiles] PUBLISH_CASEFILE";
-    ActionTypes["ERROR_PUBLISH_CASEFILE"] = "[CaseFiles] ERROR_PUBLISH_CASEFILE";
-    ActionTypes["COMPLETE_PUBLISH_CASEFILE"] = "[CaseFiles] COMPLETE_PUBLISH_CASEFILE";
-    ActionTypes["UPDATE_CASEFILE"] = "[CaseFiles] UPDATE_CASEFILE";
-    ActionTypes["ERROR_UPDATE_CASEFILE"] = "[CaseFiles] ERROR_UPDATE_CASEFILE";
-    ActionTypes["COMPLETE_UPDATE_CASEFILE"] = "[CaseFiles] COMPLETE_UPDATE_CASEFILE";
+    ActionTypes["START_SEARCH_BPMNFILES"] = "[BpmnFiles] START_SEARCH_BPMNFILES";
+    ActionTypes["ERROR_SEARCH_BPMNFILES"] = "[BpmnFiles] ERROR_SEARCH_BPMNFILES";
+    ActionTypes["COMPLETE_SEARCH_BPMNFILES"] = "[BpmnFiles] COMPLETE_SEARCH_BPMNFILES";
+    ActionTypes["START_GET_BPMNFILE"] = "[BpmnFiles] START_GET_BPMNFILE";
+    ActionTypes["ERROR_GET_BPMNFILE"] = "[BpmnFiles] ERROR_GET_BPMNFILE";
+    ActionTypes["COMPLETE_GET_BPMNFILE"] = "[BpmnFiles] COMPLETE_GET_BPMNFILE";
+    ActionTypes["UPDATE_BPMNFILE"] = "[BpmnFiles] UPDATE_BPMNFILE";
+    ActionTypes["COMPLETE_UPDATE_BPMNFILE"] = "[BpmnFiles] COMPLETE_UPDATE_BPMNFILE";
+    ActionTypes["ERROR_UPDATE_BPMNFILE"] = "[BpmnFiles] ERROR_UPDATE_BPMNFILE";
+    ActionTypes["PUBLISH_BPMNFILE"] = "[BpmnFiles] PUBLISH_BPMNFILE";
+    ActionTypes["COMPLETE_PUBLISH_BPMNFILE"] = "[BpmnFiles] COMPLETE_PUBLISH_BPMNFILE";
+    ActionTypes["ERROR_PUBLISH_BPMNFILE"] = "[BpmnFiles] ERROR_PUBLISH_BPMNFILE";
+    ActionTypes["UPDATE_BPMNFILE_PAYLOAD"] = "[BpmnFiles] UPDATE_BPMNFILE_PAYLOAD";
+    ActionTypes["COMPLETE_UPDATE_BPMNFILE_PAYLOAD"] = "[BpmnFiles] COMPLETE_UPDATE_BPMNFILE_PAYLOAD";
+    ActionTypes["ERROR_UPDATE_BPMNFILE_PAYLOAD"] = "[BpmnFiles] ERROR_UPDATE_BPMNFILE_PAYLOAD";
 })(ActionTypes || (ActionTypes = {}));
-var SearchCaseFiles = (function () {
-    function SearchCaseFiles(order, direction, count, startIndex, text) {
+var SearchBpmnFiles = (function () {
+    function SearchBpmnFiles(order, direction, count, startIndex) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
-        this.text = text;
-        this.type = ActionTypes.START_SEARCH_CASEFILES;
+        this.type = ActionTypes.START_SEARCH_BPMNFILES;
     }
-    return SearchCaseFiles;
+    return SearchBpmnFiles;
 }());
-export { SearchCaseFiles };
-var CompleteSearchCaseFiles = (function () {
-    function CompleteSearchCaseFiles(content) {
+export { SearchBpmnFiles };
+var CompleteBpmnFiles = (function () {
+    function CompleteBpmnFiles(content) {
         this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_CASEFILES;
+        this.type = ActionTypes.COMPLETE_SEARCH_BPMNFILES;
     }
-    return CompleteSearchCaseFiles;
+    return CompleteBpmnFiles;
 }());
-export { CompleteSearchCaseFiles };
-var SearchCaseFilesHistory = (function () {
-    function SearchCaseFilesHistory(caseFileId, order, direction, count, startIndex) {
-        this.caseFileId = caseFileId;
-        this.order = order;
-        this.direction = direction;
-        this.count = count;
-        this.startIndex = startIndex;
-        this.type = ActionTypes.START_SEARCH_CASEFILES_HISTORY;
-    }
-    return SearchCaseFilesHistory;
-}());
-export { SearchCaseFilesHistory };
-var CompleteSearchCaseFilesHistory = (function () {
-    function CompleteSearchCaseFilesHistory(content) {
-        this.content = content;
-        this.type = ActionTypes.COMPLETE_SEARCH_CASEFILES_HISTORY;
-    }
-    return CompleteSearchCaseFilesHistory;
-}());
-export { CompleteSearchCaseFilesHistory };
-var GetCaseFile = (function () {
-    function GetCaseFile(id) {
+export { CompleteBpmnFiles };
+var GetBpmnFile = (function () {
+    function GetBpmnFile(id) {
         this.id = id;
-        this.type = ActionTypes.START_GET_CASEFILE;
+        this.type = ActionTypes.START_GET_BPMNFILE;
     }
-    return GetCaseFile;
+    return GetBpmnFile;
 }());
-export { GetCaseFile };
-var CompleteGetCaseFile = (function () {
-    function CompleteGetCaseFile(content) {
-        this.content = content;
-        this.type = ActionTypes.COMPLETE_GET_CASEFILE;
+export { GetBpmnFile };
+var CompleteBpmnFile = (function () {
+    function CompleteBpmnFile(bpmnFile) {
+        this.bpmnFile = bpmnFile;
+        this.type = ActionTypes.COMPLETE_GET_BPMNFILE;
     }
-    return CompleteGetCaseFile;
+    return CompleteBpmnFile;
 }());
-export { CompleteGetCaseFile };
-var AddCaseFile = (function () {
-    function AddCaseFile(name, description) {
+export { CompleteBpmnFile };
+var PublishBpmnFile = (function () {
+    function PublishBpmnFile(id) {
+        this.id = id;
+        this.type = ActionTypes.PUBLISH_BPMNFILE;
+    }
+    return PublishBpmnFile;
+}());
+export { PublishBpmnFile };
+var CompletePublishBpmnFile = (function () {
+    function CompletePublishBpmnFile(id) {
+        this.id = id;
+        this.type = ActionTypes.COMPLETE_PUBLISH_BPMNFILE;
+    }
+    return CompletePublishBpmnFile;
+}());
+export { CompletePublishBpmnFile };
+var UpdateBpmnFile = (function () {
+    function UpdateBpmnFile(id, name, description) {
+        this.id = id;
         this.name = name;
         this.description = description;
-        this.type = ActionTypes.ADD_CASEFILE;
+        this.type = ActionTypes.UPDATE_BPMNFILE;
     }
-    return AddCaseFile;
+    return UpdateBpmnFile;
 }());
-export { AddCaseFile };
-var CompleteAddCaseFile = (function () {
-    function CompleteAddCaseFile(id) {
-        this.id = id;
-        this.type = ActionTypes.COMPLETE_ADD_CASEFILE;
-    }
-    return CompleteAddCaseFile;
-}());
-export { CompleteAddCaseFile };
-var PublishCaseFile = (function () {
-    function PublishCaseFile(id) {
-        this.id = id;
-        this.type = ActionTypes.PUBLISH_CASEFILE;
-    }
-    return PublishCaseFile;
-}());
-export { PublishCaseFile };
-var CompletePublishCaseFile = (function () {
-    function CompletePublishCaseFile(id) {
-        this.id = id;
-        this.type = ActionTypes.COMPLETE_PUBLISH_CASEFILE;
-    }
-    return CompletePublishCaseFile;
-}());
-export { CompletePublishCaseFile };
-var UpdateCaseFile = (function () {
-    function UpdateCaseFile(id, name, description, payload) {
+export { UpdateBpmnFile };
+var CompleteUpdateBpmnFile = (function () {
+    function CompleteUpdateBpmnFile(id, name, description, payload) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.payload = payload;
-        this.type = ActionTypes.UPDATE_CASEFILE;
+        this.type = ActionTypes.COMPLETE_UPDATE_BPMNFILE;
     }
-    return UpdateCaseFile;
+    return CompleteUpdateBpmnFile;
 }());
-export { UpdateCaseFile };
-//# sourceMappingURL=case-files.actions.js.map
+export { CompleteUpdateBpmnFile };
+var UpdateBpmnFilePayload = (function () {
+    function UpdateBpmnFilePayload(id, payload) {
+        this.id = id;
+        this.payload = payload;
+        this.type = ActionTypes.UPDATE_BPMNFILE_PAYLOAD;
+    }
+    return UpdateBpmnFilePayload;
+}());
+export { UpdateBpmnFilePayload };
+var CompleteUpdateBpmnFilePayload = (function () {
+    function CompleteUpdateBpmnFilePayload(id, payload) {
+        this.id = id;
+        this.payload = payload;
+        this.type = ActionTypes.COMPLETE_UPDATE_BPMNFILE_PAYLOAD;
+    }
+    return CompleteUpdateBpmnFilePayload;
+}());
+export { CompleteUpdateBpmnFilePayload };
+//# sourceMappingURL=bpmn-files.actions.js.map

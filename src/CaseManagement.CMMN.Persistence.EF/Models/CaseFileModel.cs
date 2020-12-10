@@ -12,7 +12,6 @@ namespace CaseManagement.CMMN.Persistence.EF.Models
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public string SerializedContent { get; set; }
-        public string Owner { get; set; }
         public int Status { get; set; }
     }
 }

@@ -9,7 +9,6 @@ namespace CaseManagement.CMMN.Persistence.EF.EntityConfigurations
         public void Configure(EntityTypeBuilder<CaseWorkerTaskModel> builder)
         {
             builder.HasKey(_ => _.Id);
-            builder.HasMany(_ => _.Roles).WithOne(_ => _.CaseWorkerTask).HasForeignKey(_ => _.CaseWorkerTaskId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

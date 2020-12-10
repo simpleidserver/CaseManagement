@@ -6,7 +6,10 @@ import { CmmnFile } from '@app/stores/cmmnfiles/models/cmmn-file.model';
 let CmmnViewer = require('cmmn-js/lib/Modeler'),
     propertiesPanelModule = require('cmmn-js-properties-panel'),
     propertiesProviderModule = require('cmmn-js-properties-panel/lib/provider/cmmn');
+
 import * as fromCmmnFileActions from '@app/stores/cmmnfiles/actions/cmmn-files.actions';
+
+let caseMgtCmmnModdle = require('@app/moddlextensions/casemanagement-cmmn');
 
 @Component({
     selector: 'view-cmmn-uieditor-file',
@@ -18,9 +21,16 @@ export class ViewCmmnFileUIEditorComponent implements OnInit {
     selectedElt: any = null;
     isEltSelected: boolean = false;
     xml: string;
+    parameters: { key: string, value: string }[] = [];
     updatePropertiesForm: FormGroup = new FormGroup({
         id: new FormControl(''),
-        name: new FormControl('')
+        name: new FormControl(''),
+        implementation: new FormControl(''),
+        formId: new FormControl('')
+    });
+    addParameterForm: FormGroup = new FormGroup({
+        key: new FormControl(''),
+        value: new FormControl('')
     });
     editorOptions: any = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
     viewer: any;
@@ -40,7 +50,9 @@ export class ViewCmmnFileUIEditorComponent implements OnInit {
             keyboard: {
                 bindTo: window
             },
-            moddleExtensions: { }
+            moddleExtensions: {
+                cmg: caseMgtCmmnModdle
+            }
         });
         const evtBus = this.viewer.get('eventBus');
         evtBus.on('element.click', function (evt: any) {
@@ -85,12 +97,22 @@ export class ViewCmmnFileUIEditorComponent implements OnInit {
             return;
         }
 
+        const self = this;
         var defRef = elt.businessObject.definitionRef;
         this.updatePropertiesForm.get('id').setValue(defRef.id);
         this.updatePropertiesForm.get('name').setValue(elt.businessObject.name);
-        // if (defRef.$type === 'cmmn:HumanTask') {
-        // 
-        // }
+        if (defRef.$type === 'cmmn:HumanTask') {
+            const parameters = this.getExtension(defRef, 'cmg:Parameters');
+            this.updatePropertiesForm.get('implementation').setValue(defRef.get('cmg:implementation'));
+            this.updatePropertiesForm.get('formId').setValue(defRef.get('cmg:formId'));
+            self.parameters = [];
+            if (parameters && parameters.parameter) {
+                parameters.parameter.forEach(function (p: any) {
+                    self.parameters.push({ key: p.key, value: p.value });
+                });
+            }
+        }
+
         this.buildingForm = false;
     }
 
@@ -99,13 +121,73 @@ export class ViewCmmnFileUIEditorComponent implements OnInit {
             return;
         }
 
+        const moddle = this.viewer.get('moddle');
         const modeling = this.viewer.get('modeling');
         const obj: any = {
             id: form.id
         };
-        modeling.updateProperties(this.selectedElt.businessObject.definitionRef, obj);
+        const defRef = this.selectedElt.businessObject.definitionRef;
+        if (defRef.$type === 'cmmn:HumanTask') {
+            obj['cmg:implementation'] = form.implementation;
+            obj['cmg:formId'] = form.formId;
+            console.log(this.selectedElt);
+            let extensionElements = defRef.extensionElements || moddle.create('cmmn:ExtensionElements');
+            let parameters = this.getExtension(defRef, 'cmg:Parameters');
+            if (!parameters) {
+                parameters = moddle.create('cmg:Parameters');
+                extensionElements.get('values').push(parameters);
+            }
+
+            parameters.parameter = [];
+            this.parameters.forEach(function (p: any) {
+                let parameter = moddle.create('cmg:Parameter');
+                parameter.key = p.key;
+                parameter.value = p.value;
+                parameters.parameter.push(parameter);
+            });
+
+            obj['cmmn:extensionElements'] = extensionElements;
+        }
+
+        modeling.updateProperties(defRef, obj);
         modeling.updateProperties(this.selectedElt, {
             name: form.name
         });
+    }
+
+    getExtension(elt: any, type: string) {
+        if (!elt.extensionElements) {
+            return null;
+        }
+
+        return elt.extensionElements.values.filter(function (e: any) {
+            return e.$type === type;
+        })[0];
+    }
+
+    removeParameter(elt: any) {
+        if (!this.selectedElt) {
+            return;
+        }
+
+        const defRef = this.selectedElt.businessObject.definitionRef;
+        if (defRef.$type === 'cmmn:HumanTask') {
+            const index = this.parameters.indexOf(elt);
+            this.parameters.splice(index, 1);
+            this.saveProperties(this.updatePropertiesForm.value);
+        }
+    }
+
+    addParameter(form: any) {
+        if (!this.selectedElt) {
+            return;
+        }
+
+        const defRef = this.selectedElt.businessObject.definitionRef;
+        if (defRef.$type === 'cmmn:HumanTask') {
+            this.parameters.push(form);
+            this.addParameterForm.reset();
+            this.saveProperties(this.updatePropertiesForm.value);
+        }
     }
 }

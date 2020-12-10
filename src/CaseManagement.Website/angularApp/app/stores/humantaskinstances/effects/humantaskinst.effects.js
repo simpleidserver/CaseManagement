@@ -21,13 +21,22 @@ var HumanTaskInstEffects = (function () {
         this.createHumanTaskInstance = this.actions$
             .pipe(ofType(fromHumanTask.ActionTypes.CREATE_HUMANTASKINSTANCE), mergeMap(function (evt) {
             return _this.humanTaskInstService.create(evt.cmd)
-                .pipe(map(function (id) { return { type: fromHumanTask.ActionTypes.COMPLETE_CREATE_HUMANTASKINSTANCE, content: id }; }), catchError(function () { return of({ type: fromHumanTask.ActionTypes.ERROR_CREATE_HUMANTASKINSTANCE }); }));
+                .pipe(map(function (id) { return { type: fromHumanTask.ActionTypes.COMPLETE_CREATE_HUMANTASKINSTANCE, content: id }; }), catchError(function (e) { return of({ type: fromHumanTask.ActionTypes.ERROR_CREATE_HUMANTASKINSTANCE, error: e }); }));
+        }));
+        this.createMeHumanTaskInstance = this.actions$
+            .pipe(ofType(fromHumanTask.ActionTypes.CREATE_ME_HUMANTASKINSTANCE), mergeMap(function (evt) {
+            return _this.humanTaskInstService.createMe(evt.cmd)
+                .pipe(map(function (id) { return { type: fromHumanTask.ActionTypes.COMPLETE_ME_CREATE_HUMANTASKINSTANCE, content: id }; }), catchError(function (e) { return of({ type: fromHumanTask.ActionTypes.ERROR_ME_CREATE_HUMANTASKINSTANCE, error: e }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
     ], HumanTaskInstEffects.prototype, "createHumanTaskInstance", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], HumanTaskInstEffects.prototype, "createMeHumanTaskInstance", void 0);
     HumanTaskInstEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,

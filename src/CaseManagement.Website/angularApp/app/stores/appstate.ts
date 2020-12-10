@@ -1,9 +1,9 @@
 ﻿import { createSelector } from '@ngrx/store';
 import * as fromBpmnFiles from './bpmnfiles/reducers/bpmnfile.reducers';
 import * as fromBpmnInstances from './bpmninstances/reducers/bpmninstance.reducers';
-import * as fromCasePlanInstance from './caseplaninstances/reducers/caseplaninstance.reducers';
 import * as fromCmmnPlan from './cmmnplans/reducers/cmmnplan.reducers';
 import * as fromCmmnFile from './cmmnfiles/reducers/cmmnfile.reducers';
+import * as fromCmmnPlanInstance from './cmmninstances/reducers/cmmn-planinstance.reducers';
 import * as fromHumanTask from './humantaskdefs/reducers/humantaskdef.reducers';
 
 export interface AppState {
@@ -11,8 +11,8 @@ export interface AppState {
     cmmnPlanLst: fromCmmnPlan.SearchCmmnPlanState;
     cmmnFile: fromCmmnFile.CmmnFileState;
     cmmnFileLst: fromCmmnFile.CmmnFileLstState;
-    casePlanInstance: fromCasePlanInstance.CasePlanInstanceState;
-    casePlanInstanceLst: fromCasePlanInstance.CasePlanInstanceLstState;
+    cmmnPlanInstance: fromCmmnPlanInstance.CmmnPlanInstanceState;
+    cmmnPlanInstanceLst: fromCmmnPlanInstance.CmmnPlanInstanceLstState;
     humanTask: fromHumanTask.HumanTaskDefState;
     humanTasks: fromHumanTask.SearchHumanTaskDefState;
     bpmnFiles: fromBpmnFiles.BpmnFileLstState;
@@ -25,8 +25,8 @@ export const selectCmmnPlan = (state: AppState) => state.cmmnPlan;
 export const selectCmmnPlanLst = (state: AppState) => state.cmmnPlanLst;
 export const selectCmmnFile = (state: AppState) => state.cmmnFile;
 export const selectCmmnFileLst = (state: AppState) => state.cmmnFileLst;
-export const selectCasePlanInstance = (state: AppState) => state.casePlanInstance;
-export const selectCasePlanInstanceLst = (state: AppState) => state.casePlanInstanceLst;
+export const selectCmmnPlanInstance = (state: AppState) => state.cmmnPlanInstance;
+export const selectCmmnPlanInstanceLst = (state: AppState) => state.cmmnPlanInstanceLst;
 export const selectHumanTask = (state: AppState) => state.humanTask;
 export const selectHumanTasks = (state: AppState) => state.humanTasks;
 export const selectBpmnFiles = (state: AppState) => state.bpmnFiles;
@@ -78,20 +78,20 @@ export const selectCmmnFileLstResult = createSelector(
     }
 );
 
-export const selectCasePlanInstanceResult = createSelector(
-    selectCasePlanInstance,
-    (state: fromCasePlanInstance.CasePlanInstanceState) => {
+export const selectCmmnPlanInstanceResult = createSelector(
+    selectCmmnPlanInstance,
+    (state: fromCmmnPlanInstance.CmmnPlanInstanceState) => {
         if (!state || state.content == null) {
             return null;
         }
 
         return state.content;
     }
-);
+); 
 
-export const selectCasePlanInstanceLstResult = createSelector(
-    selectCasePlanInstanceLst,
-    (state: fromCasePlanInstance.CasePlanInstanceLstState) => {
+export const selectCmmnPlanInstanceLstResult = createSelector(
+    selectCmmnPlanInstanceLst,
+    (state: fromCmmnPlanInstance.CmmnPlanInstanceLstState) => {
         if (!state || state.content == null) {
             return null;
         }
@@ -171,8 +171,8 @@ export const appReducer = {
     cmmnPlanLst: fromCmmnPlan.cmmnPlanLstReducer,
     cmmnFile: fromCmmnFile.cmmnFileReducer,
     cmmnFileLst: fromCmmnFile.cmmnFileLstReducer,
-    casePlanInstance: fromCasePlanInstance.casePlanInstanceReducer,
-    casePlanInstanceLst: fromCasePlanInstance.casePlanInstanceLstReducer,
+    cmmnPlanInstance: fromCmmnPlanInstance.cmmnPlanInstanceReducer,
+    cmmnPlanInstanceLst: fromCmmnPlanInstance.cmmnPlanInstanceLstReducer,
     humanTask: fromHumanTask.humanTaskDefReducer,
     humanTasks: fromHumanTask.humanTaskDefsReducer,
     bpmnFiles: fromBpmnFiles.bpmnFileLstReducer,

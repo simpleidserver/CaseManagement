@@ -11,7 +11,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
-import { HumanTaskDefAssignment } from '@app/stores/humantaskdefs/models/humantaskdef-assignment.model';
+import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -22,8 +22,13 @@ var ViewTaskPeopleAssignmentComponent = (function () {
         this.snackBar = snackBar;
         this.actions$ = actions$;
         this.translateService = translateService;
-        this.peopleAssignment = new HumanTaskDefAssignment();
         this.id = '';
+        this.potentialOwners = [];
+        this.excludedOwners = [];
+        this.taskInitiators = [];
+        this.taskStakeHolders = [];
+        this.businessAdministrators = [];
+        this.recipients = [];
         this.baseTranslationKey = "HUMANTASK.DEF.VIEW.PEOPLEASSIGNMENT";
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT; }))
             .subscribe(function () {
@@ -45,29 +50,18 @@ var ViewTaskPeopleAssignmentComponent = (function () {
                 return;
             }
             _this.id = e.id;
-            _this.peopleAssignment = e.peopleAssignment;
+            _this.potentialOwners = HumanTaskDef.getPotentialOwners(e);
+            _this.excludedOwners = HumanTaskDef.getExcludedOwners(e);
+            _this.taskInitiators = HumanTaskDef.getTaskInitiators(e);
+            _this.taskStakeHolders = HumanTaskDef.getTaskStakeHolders(e);
+            _this.businessAdministrators = HumanTaskDef.getBusinessAdministrators(e);
+            _this.recipients = HumanTaskDef.getRecipients(e);
         });
     };
-    ViewTaskPeopleAssignmentComponent.prototype.updatePotentialOwner = function (evt) {
-        this.peopleAssignment.potentialOwner = evt;
-    };
-    ViewTaskPeopleAssignmentComponent.prototype.updateExcludedOwner = function (evt) {
-        this.peopleAssignment.excludedOwner = evt;
-    };
-    ViewTaskPeopleAssignmentComponent.prototype.updateTaskInitiator = function (evt) {
-        this.peopleAssignment.taskInitiator = evt;
-    };
-    ViewTaskPeopleAssignmentComponent.prototype.updateTaskStakeHolder = function (evt) {
-        this.peopleAssignment.taskStakeHolder = evt;
-    };
-    ViewTaskPeopleAssignmentComponent.prototype.updateBusinessAdministrator = function (evt) {
-        this.peopleAssignment.businessAdministrator = evt;
-    };
-    ViewTaskPeopleAssignmentComponent.prototype.updateRecipient = function (evt) {
-        this.peopleAssignment.recipient = evt;
-    };
     ViewTaskPeopleAssignmentComponent.prototype.update = function () {
-        var request = new fromHumanTaskDefActions.UpdatePeopleAssignmentOperation(this.id, this.peopleAssignment);
+        var peopleAssignments = [];
+        peopleAssignments = peopleAssignments.concat(this.potentialOwners, this.excludedOwners, this.taskInitiators, this.businessAdministrators, this.recipients);
+        var request = new fromHumanTaskDefActions.UpdatePeopleAssignmentOperation(this.id, peopleAssignments);
         this.store.dispatch(request);
     };
     ViewTaskPeopleAssignmentComponent = __decorate([

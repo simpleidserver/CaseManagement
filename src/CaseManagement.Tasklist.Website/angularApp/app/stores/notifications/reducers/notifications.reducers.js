@@ -9,20 +9,20 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import * as fromActions from '../actions/tasks.actions';
-export var initiaTaskLstState = {
+import * as fromActions from '../actions/notifications.actions';
+export var initialNotificationLstState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export function taskLstReducer(state, action) {
-    if (state === void 0) { state = initiaTaskLstState; }
+export function notificationLstReducer(state, action) {
+    if (state === void 0) { state = initialNotificationLstState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH_TASKS:
+        case fromActions.ActionTypes.COMPLETE_SEARCH_NOTIFICATIONS:
             state.content = action.content;
             return __assign({}, state);
         default:
             return state;
     }
 }
-//# sourceMappingURL=tasks.reducers.js.map
+//# sourceMappingURL=notifications.reducers.js.map

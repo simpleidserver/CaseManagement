@@ -49,7 +49,7 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
                 record.Version = workflowInstance.Version;
                 record.Name = workflowInstance.Name;
                 record.ExecutionContext = workflowInstance.ExecutionContext == null ? null : JsonConvert.SerializeObject(workflowInstance.ExecutionContext);
-                record.Roles = workflowInstance.Roles.Select(_ => _.ToModel(workflowInstance.AggregateId, workflowInstance.CaseOwner)).ToList();
+                record.Roles = workflowInstance.Roles.Select(_ => _.ToModel(workflowInstance.AggregateId)).ToList();
                 record.Files = workflowInstance.Files.Select(_ => _.ToModel(workflowInstance.AggregateId)).ToList();
                 record.WorkerTasks = workflowInstance.WorkerTasks.Select(_ => _.ToModel(workflowInstance.AggregateId)).ToList();
                 record.Children = workflowInstance.Children == null ? new List<CasePlanElementInstanceModel>() : workflowInstance.Children.Select(_ => _.ToModel(workflowInstance.AggregateId)).ToList();

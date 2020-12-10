@@ -20,6 +20,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
         public ICollection<AssignPeople> PeopleAssignments { get; set; }
+        public ICollection<string> CallbackUrls { get; set; }
         public Dictionary<string, string> OperationParameters { get; set; }
         public bool IgnorePermissions { get; set; }
     }

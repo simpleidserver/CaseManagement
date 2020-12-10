@@ -13,7 +13,6 @@ namespace CaseManagement.CMMN.CaseFile.Results
         public DateTime UpdateDateTime { get; set; }
         public int Version { get; set; }
         public string FileId { get; set; }
-        public string Owner { get; set; }
         public string Status { get; set; }
 
         public static CaseFileResult ToDto(CaseFileAggregate caseFile)
@@ -25,7 +24,6 @@ namespace CaseManagement.CMMN.CaseFile.Results
                 Id = caseFile.AggregateId,
                 Name = caseFile.Name,
                 FileId = caseFile.FileId,
-                Owner = caseFile.Owner,
                 Payload = caseFile.Payload,
                 Status = Enum.GetName(typeof(CaseFileStatus), caseFile.Status),
                 UpdateDateTime = caseFile.UpdateDateTime,

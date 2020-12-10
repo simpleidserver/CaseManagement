@@ -10,8 +10,8 @@ namespace CaseManagement.CMMN.Persistence.EF.Models
         public string CasePlanId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string CaseOwner { get; set; }
         public string CaseFileId { get; set; }
+        public int NbInstances { get; set; }
         public DateTime CreateDateTime { get; set; }
         public string SerializedContent { get; set; }
         public virtual ICollection<RoleModel> Roles { get; set; }

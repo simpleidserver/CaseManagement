@@ -9,50 +9,35 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import * as fromActions from '../actions/case-files.actions';
-export var initialCaseFileState = {
+import * as fromActions from '../actions/bpmn-instances.actions';
+export var initialBpmnInstancesLstState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export var initialCaseFileLstState = {
+export var initialBpmnInstanceState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export var initialCaseFileHistoryLstState = {
-    content: null,
-    isLoading: true,
-    isErrorLoadOccured: false
-};
-export function caseFileReducer(state, action) {
-    if (state === void 0) { state = initialCaseFileState; }
+export function bpmnInstanceLstReducer(state, action) {
+    if (state === void 0) { state = initialBpmnInstancesLstState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_GET_CASEFILE:
+        case fromActions.ActionTypes.COMPLETE_SEARCH_BPMNINSTANCES:
             state.content = action.content;
             return __assign({}, state);
         default:
             return state;
     }
 }
-export function caseFileLstReducer(state, action) {
-    if (state === void 0) { state = initialCaseFileLstState; }
+export function bpmnInstanceReducer(state, action) {
+    if (state === void 0) { state = initialBpmnInstanceState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH_CASEFILES:
+        case fromActions.ActionTypes.COMPLETE_GET_BPMNINSTANCE:
             state.content = action.content;
             return __assign({}, state);
         default:
             return state;
     }
 }
-export function caseFileHistoryLstReducer(state, action) {
-    if (state === void 0) { state = initialCaseFileHistoryLstState; }
-    switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH_CASEFILES_HISTORY:
-            state.content = action.content;
-            return __assign({}, state);
-        default:
-            return state;
-    }
-}
-//# sourceMappingURL=casefile.reducers.js.map
+//# sourceMappingURL=bpmninstance.reducers.js.map

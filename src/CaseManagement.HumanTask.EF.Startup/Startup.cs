@@ -55,7 +55,24 @@ namespace CaseManagement.HumanTask.EF.Startup
                         "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
-            });
+            })
+            .AddJwtBearer("OAuthScheme", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = ExtractKey("oauth_puk.txt"),
+                    ValidAudiences = new List<string>
+                    {
+                        "bpmnClient",
+                        "cmmnClient"
+                    },
+                    ValidIssuers = new List<string>
+                    {
+                        "http://localhost:60001",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/oauth"
+                    }
+                };
+            }); ;
             services.AddAuthorization(policy =>
             {
                 policy.AddPolicy("Authenticated", p => p.RequireAssertion(_ => true));

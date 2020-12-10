@@ -11,14 +11,20 @@ using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Persistence.InMemory;
 using MediatR;
+using System;
 using System.Collections.Concurrent;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static ServerBuilder AddHumanTasksApi(this IServiceCollection services)
+        public static ServerBuilder AddHumanTasksApi(this IServiceCollection services, Action<HumanTaskServerOptions> callbackOpts = null)
         {
+            if (callbackOpts != null)
+            {
+                services.Configure(callbackOpts);
+            }
+
             services.AddCommon()
                 .AddHumanTaskApiApplication();
             return new ServerBuilder(services);

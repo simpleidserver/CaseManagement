@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_188bgad" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.20.0">
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmg="https://github.com/simpleidserver/CaseManagement" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_188bgad" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.20.0">
   <cmmn:case id="Case_0uadwpy">
     <cmmn:casePlanModel id="CaseWithOneHumanTask" name="CaseWithOneHumanTask">
       <cmmn:planItem id="PlanItem_1vdrgm8" definitionRef="HumanTask_08rplh1" />
-      <cmmn:humanTask id="HumanTask_08rplh1" name="HumanTask" />
+      <cmmn:humanTask id="HumanTask_08rplh1" name="HumanTask" cmg:formId="emptyTask" cmg:implementation="##WsHumanTask">
+        <cmmn:extensionElements>
+          <cmg:parameters>
+            <cmg:parameter key="city" value="context.GetStrVariable(&quot;city&quot;)" />
+          </cmg:parameters>
+        </cmmn:extensionElements>
+      </cmmn:humanTask>
     </cmmn:casePlanModel>
   </cmmn:case>
   <cmmndi:CMMNDI>

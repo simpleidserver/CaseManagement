@@ -12,14 +12,14 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatPaginator, MatSnackBar, MatSort } from '@angular/material';
 import { Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
-import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
+import * as fromCmmnFileActions from '@app/stores/cmmnfiles/actions/cmmn-files.actions';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { AddCaseFileDialog } from './add-case-file-dialog';
-var ListCaseFilesComponent = (function () {
-    function ListCaseFilesComponent(store, formBuilder, dialog, actions$, translateService, snackBar, route) {
+import { AddCmmnFileDialog } from './add-cmmn-file-dialog';
+var ListCmmnFilesComponent = (function () {
+    function ListCmmnFilesComponent(store, formBuilder, dialog, actions$, translateService, snackBar, route) {
         this.store = store;
         this.formBuilder = formBuilder;
         this.dialog = dialog;
@@ -27,57 +27,57 @@ var ListCaseFilesComponent = (function () {
         this.translateService = translateService;
         this.snackBar = snackBar;
         this.route = route;
-        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
-        this.caseFiles$ = [];
+        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime'];
+        this.cmmnFiles$ = [];
         this.searchForm = this.formBuilder.group({
             text: ''
         });
     }
-    ListCaseFilesComponent.prototype.ngOnInit = function () {
+    ListCmmnFilesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_ADD_CASEFILE; }))
+        this.actions$.pipe(filter(function (action) { return action.type === fromCmmnFileActions.ActionTypes.COMPLETE_ADD_CMMNFILE; }))
             .subscribe(function (evt) {
-            _this.snackBar.open(_this.translateService.instant('CASES_FILE_ADDED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('CMMN.MESSAGES.CASES_FILE_ADDED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
-            _this.route.navigate(["/cases/casefiles/" + evt.id]);
+            _this.route.navigate(["/cmmns/cmmnfiles/" + evt.id]);
         });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_ADD_CASEFILE; }))
+        this.actions$.pipe(filter(function (action) { return action.type === fromCmmnFileActions.ActionTypes.ERROR_ADD_CMMNFILE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('ERROR_ADD_CASE_FILE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('CMMN.MESSAGES.ERROR_ADD_CASE_FILE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
-        this.store.pipe(select(fromAppState.selectCaseFileLstResult)).subscribe(function (searchCaseFilesResult) {
-            if (!searchCaseFilesResult) {
+        this.store.pipe(select(fromAppState.selectCmmnFileLstResult)).subscribe(function (searchCmmnFilesResult) {
+            if (!searchCmmnFilesResult) {
                 return;
             }
-            _this.caseFiles$ = searchCaseFilesResult.content;
-            _this.length = searchCaseFilesResult.totalLength;
+            _this.cmmnFiles$ = searchCmmnFilesResult.content;
+            _this.length = searchCmmnFilesResult.totalLength;
         });
         this.refresh();
     };
-    ListCaseFilesComponent.prototype.onSubmit = function () {
+    ListCmmnFilesComponent.prototype.onSubmit = function () {
         this.refresh();
     };
-    ListCaseFilesComponent.prototype.ngAfterViewInit = function () {
+    ListCmmnFilesComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
     };
-    ListCaseFilesComponent.prototype.addCaseFile = function () {
+    ListCmmnFilesComponent.prototype.addCaseFile = function () {
         var _this = this;
-        var dialogRef = this.dialog.open(AddCaseFileDialog, {
+        var dialogRef = this.dialog.open(AddCmmnFileDialog, {
             width: '800px'
         });
         dialogRef.afterClosed().subscribe(function (e) {
             if (!e) {
                 return;
             }
-            var request = new fromCaseFileActions.AddCaseFile(e.name, e.description);
+            var request = new fromCmmnFileActions.AddCmmnFile(e.name, e.description);
             _this.store.dispatch(request);
         });
     };
-    ListCaseFilesComponent.prototype.refresh = function () {
+    ListCmmnFilesComponent.prototype.refresh = function () {
         var startIndex = 0;
         var count = 5;
         if (this.paginator.pageIndex && this.paginator.pageSize) {
@@ -94,20 +94,20 @@ var ListCaseFilesComponent = (function () {
         if (this.sort.direction) {
             direction = this.sort.direction;
         }
-        var request = new fromCaseFileActions.SearchCaseFiles(active, direction, count, startIndex, this.searchForm.get('text').value);
+        var request = new fromCmmnFileActions.SearchCmmnFiles(active, direction, count, startIndex, this.searchForm.get('text').value, null, true);
         this.store.dispatch(request);
     };
     __decorate([
         ViewChild(MatPaginator),
         __metadata("design:type", MatPaginator)
-    ], ListCaseFilesComponent.prototype, "paginator", void 0);
+    ], ListCmmnFilesComponent.prototype, "paginator", void 0);
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], ListCaseFilesComponent.prototype, "sort", void 0);
-    ListCaseFilesComponent = __decorate([
+    ], ListCmmnFilesComponent.prototype, "sort", void 0);
+    ListCmmnFilesComponent = __decorate([
         Component({
-            selector: 'list-case-files',
+            selector: 'list-cmmn-files',
             templateUrl: './list.component.html',
             styleUrls: ['./list.component.scss']
         }),
@@ -118,8 +118,8 @@ var ListCaseFilesComponent = (function () {
             TranslateService,
             MatSnackBar,
             Router])
-    ], ListCaseFilesComponent);
-    return ListCaseFilesComponent;
+    ], ListCmmnFilesComponent);
+    return ListCmmnFilesComponent;
 }());
-export { ListCaseFilesComponent };
+export { ListCmmnFilesComponent };
 //# sourceMappingURL=list.component.js.map

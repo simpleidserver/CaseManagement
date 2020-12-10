@@ -1,0 +1,19 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <div fxLayout="row" class="breadcrumb">
+        <div fxFlex="80%" fxFlexOffset="10%">
+            <ul>
+                <li><div class="mat-h1"><a [routerLink]="['/cmmns/cmmnfiles']">{{ "CMMN.TITLES.PLANINSTANCES" | translate }}</a></div></li>
+                <li class="separator"><div class="mat-h1">\</div></li>
+                <li>
+                    <div class="mat-h1">
+                        {{ 'CMMN.TITLES.PLANINSTANCE' | translate }}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="canvas" style="height: 300px;"></div>
+    <div fxFlex fxFlexFill>
+        <router-outlet></router-outlet>
+    </div>
+</div>

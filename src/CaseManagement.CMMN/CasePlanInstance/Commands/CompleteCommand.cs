@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Newtonsoft.Json.Linq;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
@@ -12,5 +13,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands
 
         public string CaseInstanceId { get; set; }
         public string CaseInstanceElementId { get; set; }
+        public JObject Content { get; set; }
     }
 }

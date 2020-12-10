@@ -25,10 +25,8 @@
   "CANCEL": "Cancel",
   "ENTER_CASE_PLAN_NAME": "Enter name",
   "NAME": "Name",
-  "LAUNCH_INSTANCE": "Launch instance",
   "CASE_FORM_INSTANCES": "Form instances",
   "CASE_WORKER_TASKS": "Tasks",
-  "STATE": "State",
   "SELECT_REFRESH_TIME_MS": "Select refresh time",
   "100_MS": "100 ms",
   "1000_MS": "1 second",
@@ -112,17 +110,22 @@
     "ID": "Identifier",
     "NAME": "Name",
     "VERSION": "Version",
+    "STATE": "State",
     "DESCRIPTION": "Description",
     "FILE_NAME": "File name",
+    "MESSAGE": "Message",
     "STATUS": "Status",
+    "NBINSTANCES": "Number of instances",
     "INPUT_PARAMETERS": "Input parameters",
     "ACTIVATION_DEFERRAL_TIME": "Activation deferral time",
     "EXPIRATION_TIME": "Expiration time",
     "CREATE_DATETIME": "Create datetime",
     "UPDATE_DATETIME": "Update datetime",
+    "EXECUTION_DATETIME": "Execution datetime",
     "VALUE": "Value",
     "PRIORITY": "Priority",
     "UPDATE": "Update",
+    "LAUNCH": "Launch",
     "ADD": "Add",
     "CLOSE": "Close",
     "SELECT_PARAMETER_TYPE": "Select parameter type",
@@ -153,19 +156,25 @@
     "SEARCH": "Search"
   },
   "CMMN": {
-    "CMMNFILEVERSION": "File version {{version}}, published {{receptionDate}}",
+    "CMMNFILEVERSION": "File version {{version}}, date {{receptionDate}}",
     "TITLES": {
       "FILES": "CMMN files",
-      "FILE": "CMMN file"
+      "FILE": "CMMN file",
+      "PLANS": "CMMN plans",
+      "PLAN": "CMMN plan",
+      "PLANINSTANCES": "CMMN plan instances",
+      "PLANINSTANCE": "CMMN plan instance"
     },
     "PROPERTIES": {
-      "GENERALINFO": "General information"
+      "GENERALINFO": "General information",
+      "USERTASKINFO": "User task information"
     },
     "TABS": {
       "INFORMATION": "Information",
       "EDITOR": "Editor",
       "XML": "Xml",
-      "CASEPLANS": "Case plans"
+      "CASEPLANS": "Case plans",
+      "INSTANCES": "Instances"
     },
     "ACTIONS": {
       "ADD_CMMN_FILE": "Add CMMN file"
@@ -177,11 +186,23 @@
       "COMPLETE_PUBLISH_CMMNFILE": "Case file has been published",
       "ERROR_PUBLISH_CMMNFILE": "An error occured while trying to publish the CMMN file",
       "ERROR_UPDATE_CMMNFILE": "An error occured while trying to update the CMMN file",
-      "CMMN_FILE_SAVED": "Case file has been updated"
+      "CMMN_FILE_SAVED": "Case file has been updated",
+      "PLAN_INSTANCE_LAUNCHED": "Plan instance has bee launched",
+      "ERROR_GET_CMMN_PLAN": "An error occured while trying to get the CMMN plan",
+      "ERROR_GET_CMMN_PLAN_INSTANCE": "An error occured while trying to get the CMMN plan instance"
     },
     "SCHEMA": {
       "ID": "Identifier",
-      "NAME": "Name"
+      "NAME": "Name",
+      "WSHUMANTASKNAME": "Human task name",
+      "IMPLEMENTATION": "Implementation",
+      "PARAMETERKEY": "Key",
+      "PARAMETERVALUE": "Value",
+      "WSHUMANTASK": "WS-Human task"
+    },
+    "INSTANCE": {
+      "ELTOCCURRENCE": "Element {{name}}, Occurrence {{occurrence}}",
+      "TRANSITION": "Transition"
     }
   },
   "BPMN": {
@@ -197,7 +218,6 @@
       "EXECUTIONPATH": "Execution path {{index}}, received : {{receptionDate}}",
       "ACTIVITYSTATE": {
         "TITLE": "Activity states",
-        "STATE": "State",
         "EXECUTIONDATE": "Execution date",
         "MESSAGE": "Message"
       },

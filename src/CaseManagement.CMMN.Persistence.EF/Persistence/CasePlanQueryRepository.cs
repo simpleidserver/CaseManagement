@@ -50,11 +50,6 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
                     result = result.Where(r => r.Name.IndexOf(parameter.Text, StringComparison.InvariantCultureIgnoreCase) >= 0);
                 }
 
-                if (!string.IsNullOrWhiteSpace(parameter.CaseOwner))
-                {
-                    result = result.Where(r => r.CaseOwner == parameter.CaseOwner);
-                }
-
                 if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
                 {
                     result = result.Where(r => r.CasePlanId == parameter.CasePlanId);

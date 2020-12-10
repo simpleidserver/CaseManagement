@@ -8,13 +8,12 @@ namespace CaseManagement.CMMN.Domains
     [Serializable]
     public class CaseFileAddedEvent : DomainEvent
     {
-        public CaseFileAddedEvent(string id, string aggregateId, int version, string fileId, string name, string description, DateTime createDateTime, string owner, string payload) : base(id, aggregateId, version)
+        public CaseFileAddedEvent(string id, string aggregateId, int version, string fileId, string name, string description, DateTime createDateTime, string payload) : base(id, aggregateId, version)
         {
             FileId = fileId;
             Name = name;
             Description = description;
             CreateDateTime = createDateTime;
-            Owner = owner;
             Payload = payload;
         }
 
@@ -22,7 +21,6 @@ namespace CaseManagement.CMMN.Domains
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public string Owner { get; set; }
         public string Payload { get; set; }
     }
 }

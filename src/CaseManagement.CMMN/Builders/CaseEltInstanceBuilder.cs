@@ -115,6 +115,8 @@ namespace CaseManagement.CMMN.Builders
         public HumanTaskInstanceBuilder(string casePlanInstanceId, string id, string name) : base(casePlanInstanceId, id, name) { }
 
         public string PerformerRef { get; set; }
+        public string Implementation { get; set; }
+        public Dictionary<string, string> InputParameters { get; set; }
 
         protected override BaseCaseEltInstance InternalBuild()
         {
@@ -122,7 +124,9 @@ namespace CaseManagement.CMMN.Builders
             {
                 PerformerRef = PerformerRef,
                 ManualActivationRule = ManualActivationRule,
-                RepetitionRule = RepetitionRule
+                RepetitionRule = RepetitionRule,
+                Implemention = Implementation,
+                InputParameters = InputParameters
             };
             SeedCasePlanItem(result);
             return result;

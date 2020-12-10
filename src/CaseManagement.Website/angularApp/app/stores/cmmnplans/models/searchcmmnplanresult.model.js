@@ -1,7 +1,7 @@
-var SearchCasePlanResult = (function () {
-    function SearchCasePlanResult() {
+var SearchCmmnPlanResult = (function () {
+    function SearchCmmnPlanResult() {
     }
-    return SearchCasePlanResult;
+    return SearchCmmnPlanResult;
 }());
-export { SearchCasePlanResult };
-//# sourceMappingURL=searchcaseplanresult.model.js.map
+export { SearchCmmnPlanResult };
+//# sourceMappingURL=searchcmmnplanresult.model.js.map

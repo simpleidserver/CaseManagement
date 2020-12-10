@@ -22,8 +22,7 @@ var PeopleAssignmentComponent = (function () {
     function PeopleAssignmentComponent(formBuilder) {
         var _this = this;
         this.formBuilder = formBuilder;
-        this._peopleAssignment = new PeopleAssignment();
-        this.values = [];
+        this.usage = '';
         this.peopleAssignmentForm = this.formBuilder.group({
             type: new FormControl('', [
                 Validators.required
@@ -33,68 +32,53 @@ var PeopleAssignmentComponent = (function () {
             ]),
         });
         this.peopleAssignmentForm.get('type').valueChanges.subscribe(function () {
-            _this.values = [];
+            if (!_this._peopleAssignments) {
+                return;
+            }
+            _this._peopleAssignments.splice(0, _this._peopleAssignments.length);
         });
     }
-    Object.defineProperty(PeopleAssignmentComponent.prototype, "peopleAssignment", {
-        get: function () { return this._peopleAssignment; },
-        set: function (pa) {
-            this._peopleAssignment = pa;
-            this.peopleAssignmentForm.get('type').setValue(pa.type);
-            switch (pa.type) {
-                case 'GROUPNAMES':
-                    this.values = pa.groupNames;
-                    break;
-                case 'USERIDENTIFIERS':
-                    this.values = pa.userIdentifiers;
-                    break;
-                case 'EXPRESSION':
-                    this.values = [pa.expression];
-                    break;
-                case 'LOGICALPEOPLEGROUP':
-                    this.values = [pa.logicalPeopleGroup];
-                    break;
+    Object.defineProperty(PeopleAssignmentComponent.prototype, "peopleAssignments", {
+        get: function () {
+            return this._peopleAssignments;
+        },
+        set: function (v) {
+            if (!v) {
+                return;
             }
+            if (v.length > 0) {
+                this.peopleAssignmentForm.get('type').setValue(v[0].type);
+            }
+            this._peopleAssignments = v;
         },
         enumerable: false,
         configurable: true
     });
     PeopleAssignmentComponent.prototype.deleteValue = function (val) {
-        var index = this.values.indexOf(val);
-        this.values.splice(index, 1);
-        this.update();
+        var index = this._peopleAssignments.indexOf(val);
+        this._peopleAssignments.splice(index, 1);
     };
     PeopleAssignmentComponent.prototype.addPeopleAssignment = function (form) {
         if (!this.peopleAssignmentForm.valid) {
             return;
         }
-        this.peopleAssignmentForm.get('value').setValue('');
-        this.values.push(form.value);
-        this.update();
-    };
-    PeopleAssignmentComponent.prototype.update = function () {
+        var pa = new PeopleAssignment();
         var type = this.peopleAssignmentForm.get('type').value;
-        this._peopleAssignment.type = type;
-        switch (type) {
-            case 'GROUPNAMES':
-                this._peopleAssignment.groupNames = this.values;
-                break;
-            case 'USERIDENTIFIERS':
-                this._peopleAssignment.userIdentifiers = this.values;
-                break;
-            case 'EXPRESSION':
-                this._peopleAssignment.expression = this.values[0];
-                break;
-            case 'LOGICALPEOPLEGROUP':
-                this._peopleAssignment.logicalPeopleGroup = this.values[0];
-                break;
-        }
+        pa.value = form.value;
+        pa.type = type;
+        pa.usage = this.usage;
+        this._peopleAssignments.push(pa);
+        this.peopleAssignmentForm.get('value').setValue('');
     };
     __decorate([
         Input(),
-        __metadata("design:type", PeopleAssignment),
-        __metadata("design:paramtypes", [PeopleAssignment])
-    ], PeopleAssignmentComponent.prototype, "peopleAssignment", null);
+        __metadata("design:type", String)
+    ], PeopleAssignmentComponent.prototype, "usage", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Array),
+        __metadata("design:paramtypes", [Array])
+    ], PeopleAssignmentComponent.prototype, "peopleAssignments", null);
     PeopleAssignmentComponent = __decorate([
         Component({
             selector: 'peopleassignment-component',

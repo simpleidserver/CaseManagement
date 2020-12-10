@@ -6,8 +6,10 @@ using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
+using IdentityModel.Client;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         private readonly IParameterParser _parameterParser;
         private readonly IMediator _mediator;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HumanTaskServerOptions _options;
         private readonly ILogger<CompleteHumanTaskInstanceCommandHandler> _logger;
 
         public CompleteHumanTaskInstanceCommandHandler(
@@ -34,6 +37,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             IParameterParser parameteParser,
             IMediator mediator,
             IHttpClientFactory httpClientFactory,
+            IOptions<HumanTaskServerOptions> options,
             ILogger<CompleteHumanTaskInstanceCommandHandler> logger)
         {
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
@@ -41,6 +45,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             _parameterParser = parameteParser;
             _mediator = mediator;
             _httpClientFactory = httpClientFactory;
+            _options = options.Value;
             _logger = logger;
         }
 
@@ -100,28 +105,29 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 }
             }
 
-            if (humanTaskInstance.InputParameters.ContainsKey("flowNodeInstanceId") 
-                && humanTaskInstance.InputParameters.ContainsKey("flowNodeElementInstanceId"))
+            foreach(var cb in humanTaskInstance.CallbackOperations)
             {
-                foreach (var cb in humanTaskInstance.CallbackOperations)
+                var jObj = new JObject
                 {
-                    var jObj = new JObject
+                    { "content", parameters.ToJObj() }
+                };
+                using (var httpClient = _httpClientFactory.Build())
+                {
+                    var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
                     {
-                        { "flowNodeElementInstanceId", humanTaskInstance.InputParameters["flowNodeElementInstanceId"] },
-                        { "state", "COMPLETED" },
-                        { "content", parameters.ToJObj() }
+                        Address = _options.OAuthTokenEndpoint,
+                        ClientId = _options.ClientId,
+                        ClientSecret = _options.ClientSecret,
+                        Scope = _options.Scope
+                    }, cancellationToken);
+                    var req = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri(cb.Url),
+                        Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
                     };
-                    using (var httpClient = _httpClientFactory.Build())
-                    {
-                        var u = cb.Url.Replace("{id}", humanTaskInstance.InputParameters["flowNodeInstanceId"]); 
-                        var req = new HttpRequestMessage
-                        {
-                            Method = HttpMethod.Post,
-                            RequestUri = new Uri(u),
-                            Content = new StringContent(jObj.ToString(), Encoding.UTF8 , "application/json")
-                        };
-                        await httpClient.SendAsync(req, cancellationToken);
-                    }
+                    req.Headers.Add("Authorization", $"Bearer {tokenResponse.AccessToken}");
+                    await httpClient.SendAsync(req, cancellationToken);
                 }
             }
 

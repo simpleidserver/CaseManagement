@@ -36,14 +36,7 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
         {
             using (var lck = await _caseManagementDbContext.Lock())
             {
-                IQueryable<CaseWorkerTaskModel> result = _caseManagementDbContext.CaseWorkers.Include(_ => _.Roles);
-                if (parameter.Claims != null && parameter.Claims.Any())
-                {
-                    var roles = await GetRoles(parameter.Claims, token);
-                    var roleIds = roles.Where(_ => _.RoleId != null).Select(_ => _.RoleId.Value);
-                    result = result.Where(_ => _.Roles.Any(r => roleIds.Contains(r.Id)));
-                }
-
+                IQueryable<CaseWorkerTaskModel> result = _caseManagementDbContext.CaseWorkers;
                 if (MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
                 {
                     result = result.InvokeOrderBy(MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

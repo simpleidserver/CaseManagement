@@ -11,17 +11,17 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { map } from 'rxjs/operators';
-var CaseFilesService = (function () {
-    function CaseFilesService(http, oauthService) {
+var BpmnFilesService = (function () {
+    function BpmnFilesService(http, oauthService) {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CaseFilesService.prototype.search = function (startIndex, count, order, direction, text, caseFileId, takeLatest) {
+    BpmnFilesService.prototype.search = function (startIndex, count, order, direction, takeLatest) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/search";
+        var targetUrl = process.env.BPMN_API_URL + "/processfiles/search";
         var request = { startIndex: startIndex, count: count, takeLatest: takeLatest };
         if (order) {
             request["orderBy"] = order;
@@ -29,55 +29,45 @@ var CaseFilesService = (function () {
         if (direction) {
             request["order"] = direction;
         }
-        if (text) {
-            request["text"] = text;
-        }
-        if (caseFileId) {
-            request["caseFileId"] = caseFileId;
-        }
         return this.http.post(targetUrl, JSON.stringify(request), { headers: headers });
     };
-    CaseFilesService.prototype.get = function (id) {
+    BpmnFilesService.prototype.get = function (id) {
         var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + id;
+        var targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id;
         return this.http.get(targetUrl, { headers: headers });
     };
-    CaseFilesService.prototype.add = function (name, description) {
-        var request = JSON.stringify({ name: name, description: description });
+    BpmnFilesService.prototype.update = function (id, name, description) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files";
-        return this.http.post(targetUrl, request, { headers: headers }).pipe(map(function (res) {
-            return res['id'];
-        }));
+        var targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id;
+        var request = { name: name, description: description };
+        return this.http.put(targetUrl, JSON.stringify(request), { headers: headers });
     };
-    CaseFilesService.prototype.update = function (id, name, description, payload) {
-        var request = JSON.stringify({ name: name, description: description, payload: payload });
+    BpmnFilesService.prototype.updatePayload = function (id, payload) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + id;
-        return this.http.put(targetUrl, request, { headers: headers });
+        var targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id + "/payload";
+        var request = { payload: payload };
+        return this.http.put(targetUrl, JSON.stringify(request), { headers: headers });
     };
-    CaseFilesService.prototype.publish = function (id) {
+    BpmnFilesService.prototype.publish = function (id) {
         var headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-files/" + id + "/publish";
+        var targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id + "/publish";
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
             return res['id'];
         }));
     };
-    CaseFilesService = __decorate([
+    BpmnFilesService = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [HttpClient, OAuthService])
-    ], CaseFilesService);
-    return CaseFilesService;
+    ], BpmnFilesService);
+    return BpmnFilesService;
 }());
-export { CaseFilesService };
-//# sourceMappingURL=casefiles.service.js.map
+export { BpmnFilesService };
+//# sourceMappingURL=bpmnfiles.service.js.map

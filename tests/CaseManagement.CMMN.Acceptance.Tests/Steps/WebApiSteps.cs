@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -18,6 +19,21 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
     [Binding]
     public class WebApiSteps
     {
+        private class FakeHttpClientFactory : CaseManagement.Common.Factories.IHttpClientFactory
+        {
+            private readonly Func<HttpClient> _callback;
+
+            public FakeHttpClientFactory(Func<HttpClient> callback)
+            {
+                _callback = callback;
+            }
+
+            public HttpClient Build()
+            {
+                return _callback();
+            }
+        }
+
         private const int MS = 400;
         private readonly ScenarioContext _scenarioContext;
         private static object _obj = new object();
@@ -43,6 +59,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
                     _factory = new CustomWebApplicationFactory<FakeStartup>(c =>
                     {
                         c.AddSingleton(_scenarioContextProvider);
+                        c.AddSingleton<CaseManagement.Common.Factories.IHttpClientFactory>(new FakeHttpClientFactory(() => _factory.CreateClient()));
                     });
                     _client = _factory.CreateClient();
                 }
@@ -80,6 +97,58 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
                 RequestUri = new Uri(url)
             };
             var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
+
+        [When("poll HTTP POST JSON request '(.*)', until '(.*)'='(.*)'")]
+        public async Task WhenPollHTTPPostJSONRequest(string url, string key, string value, Table table)
+        {
+            var jObj = new JObject();
+            var dic = new Dictionary<string, string>();
+            foreach (var record in table.Rows)
+            {
+                var k = record["Key"];
+                var v = Parse(record["Value"]);
+                if (k == "Accept-Language")
+                {
+                    dic.Add(k, v);
+                }
+                else
+                {
+                    try
+                    {
+                        jObj.Add(k, JToken.Parse(v));
+                    }
+                    catch
+                    {
+                        jObj.Add(k, value.ToString());
+                    }
+                }
+            }
+
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(Parse(url)),
+                Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
+            };
+            foreach (var kvp in dic)
+            {
+                httpRequestMessage.Headers.Add(kvp.Key, kvp.Value);
+            }
+
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            var json = await httpResponseMessage.Content.ReadAsStringAsync();
+            jObj = JsonConvert.DeserializeObject<JObject>(json);
+            var token = jObj.SelectToken(key);
+            if (token == null || token.ToString() != value)
+            {
+                Thread.Sleep(MS);
+                await WhenPollHTTPPostJSONRequest(url, key, value, table);
+                return;
+            }
+
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
 

@@ -100,5 +100,25 @@ namespace CaseManagement.BPMN.AspNetCore.Apis
                 }, HttpStatusCode.NotFound, Request);
             }
         }
+
+        [HttpPost("{id}/complete/{eltId}")]
+        public async Task<IActionResult> Complete(string id, string eltId, [FromBody] MakeStateTransitionCommand stateTransitionCommand, CancellationToken token)
+        {
+            try
+            {
+                stateTransitionCommand.FlowNodeInstanceId = id;
+                stateTransitionCommand.FlowNodeElementInstanceId = eltId;
+                stateTransitionCommand.State = "COMPLETED";
+                await _mediator.Send(stateTransitionCommand, token);
+                return new OkResult();
+            }
+            catch (UnknownFlowInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
     }
 }

@@ -39,27 +39,18 @@ namespace CaseManagement.BPMN.Acceptance.Tests
             var emptyTask = HumanTaskDefBuilder.New("emptyTask")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "thabart" })
-                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
-                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
-                .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
                 .Build();
             var dressAppropriateForm = HumanTaskDefBuilder.New("dressAppropriateForm")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "thabart" })
-                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
-                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
                 .AddInputOperationParameter("degree", ParameterTypes.STRING, true)
                 .AddInputOperationParameter("city", ParameterTypes.STRING, true)
-                .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
                 .Build();
             var takeTemperatureForm = HumanTaskDefBuilder.New("temperatureForm")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "thabart" })
-                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
-                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
                 .AddTxt("degree", cb => cb.AddLabel("fr", "Température"))
                 .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
-                .AddCallbackOperation("http://localhost/processinstances/{id}/statetransitions")
                 .Build();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
@@ -81,6 +72,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests
             {
                 o.WSHumanTaskAPI = "http://localhost";
                 o.OAuthTokenEndpoint = "http://localhost/token";
+                o.CallbackUrl = "http://localhost/processinstances/{id}/complete/{eltId}";
             })
             .AddProcessFiles(files);
             services.AddHostedService<HumanTaskJobServerHostedService>();

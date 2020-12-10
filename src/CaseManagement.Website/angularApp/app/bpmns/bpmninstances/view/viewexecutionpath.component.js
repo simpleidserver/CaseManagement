@@ -8,171 +8,162 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
-import * as fromCaseFileActions from '@app/stores/casefiles/actions/case-files.actions';
-import { ScannedActionsSubject, select, Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
-import { CaseFile } from '../../../stores/casefiles/models/case-file.model';
-var CmmnViewer = require('cmmn-js/lib/Modeler'), propertiesPanelModule = require('casemanagement-js-properties-panel'), propertiesProviderModule = require('casemanagement-js-properties-panel/lib/provider/casemanagement'), caseModdle = require('casemanagement-cmmn-moddle/resources/casemanagement'), cmmnModdle = require('casemanagement-cmmn-moddle/resources/cmmn');
-var ViewCaseFilesComponent = (function () {
-    function ViewCaseFilesComponent(store, route, formBuilder, snackBar, translateService, actions$, router) {
+import { select, Store } from '@ngrx/store';
+var BpmnViewer = require('bpmn-js/lib/Viewer');
+var ViewExecutionPathComponent = (function () {
+    function ViewExecutionPathComponent(store, route, router) {
         this.store = store;
         this.route = route;
-        this.formBuilder = formBuilder;
-        this.snackBar = snackBar;
-        this.translateService = translateService;
-        this.actions$ = actions$;
         this.router = router;
-        this.isEditorDisplayed = true;
-        this.editorOptions = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
-        this.caseFile = new CaseFile();
-        this.saveForm = this.formBuilder.group({
-            id: new FormControl({ value: '', disabled: true }),
-            name: new FormControl({ value: '' }),
-            createDateTime: new FormControl({ value: '', disabled: true }),
-            updateDateTime: new FormControl({ value: '', disabled: true }),
-            description: new FormControl({ value: '' })
-        });
+        this.bpmnFile = null;
     }
-    ViewCaseFilesComponent.prototype.ngOnInit = function () {
+    ViewExecutionPathComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.viewer = new CmmnViewer({
-            additionalModules: [
-                propertiesPanelModule,
-                propertiesProviderModule
-            ],
+        this.viewer = new BpmnViewer.default({
             container: "#canvas",
             keyboard: {
                 bindTo: window
-            },
-            propertiesPanel: {
-                parent: '#properties'
-            },
-            moddleExtensions: {
-                case: caseModdle,
-                cmmn: cmmnModdle
             }
         });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_UPDATE_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('CASE_FILE_SAVED'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
+        this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (e) {
+            if (!e || !e.payload) {
+                return;
+            }
+            _this.bpmnFile = e;
+            _this.refresh();
         });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_UPDATE_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('ERROR_SAVE_CASE_FILE'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
-        });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.COMPLETE_PUBLISH_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('PUBLISH_CASE_FILE'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
-        });
-        this.actions$.pipe(filter(function (action) { return action.type === fromCaseFileActions.ActionTypes.ERROR_PUBLISH_CASEFILE; }))
-            .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('ERROR_PUBLISH_CASE_FILE'), _this.translateService.instant('undo'), {
-                duration: 2000
-            });
-            _this.router.navigate(["/cases/casefiles/" + _this.caseFile.id]);
-        });
-        this.store.pipe(select(fromAppState.selectCaseFileResult)).subscribe(function (e) {
+        this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
-            _this.saveForm.controls['id'].setValue(e.id);
-            _this.saveForm.controls['name'].setValue(e.name);
-            _this.saveForm.controls['createDateTime'].setValue(e.createDateTime);
-            _this.saveForm.controls['updateDateTime'].setValue(e.updateDateTime);
-            _this.saveForm.controls['description'].setValue(e.description);
-            _this.xml = e.payload;
-            _this.viewer.importXML(e.payload);
-            _this.caseFile = e;
+            _this.bpmnInstance = e;
+            _this.refresh();
         });
-        this.refresh();
-    };
-    ViewCaseFilesComponent.prototype.navigate = function (isEditorDisplayed) {
-        var self = this;
-        this.isEditorDisplayed = isEditorDisplayed;
-        if (!this.isEditorDisplayed) {
-            this.viewer.saveXML({}, function (e, x) {
-                if (e) {
-                    return;
-                }
-                self.xml = self.formatXML(x);
-            });
-        }
-        return false;
-    };
-    ViewCaseFilesComponent.prototype.onXmlChange = function (evt) {
-        this.viewer.importXML(evt);
-    };
-    ViewCaseFilesComponent.prototype.onSave = function (form) {
-        var self = this;
-        this.viewer.saveXML({}, function (e, x) {
-            if (e) {
+        this.route.params.subscribe(function () {
+            if (!_this.bpmnInstance) {
                 return;
             }
-            var id = self.saveForm.get('id').value;
-            var act = new fromCaseFileActions.UpdateCaseFile(id, form.name, form.description, x);
-            self.store.dispatch(act);
+            _this.refresh();
         });
     };
-    ViewCaseFilesComponent.prototype.onPublish = function (e) {
-        e.preventDefault();
-        var id = this.route.snapshot.params['id'];
-        var act = new fromCaseFileActions.PublishCaseFile(id);
-        this.store.dispatch(act);
+    ViewExecutionPathComponent.prototype.refresh = function () {
+        var self = this;
+        if (!self.bpmnFile || !this.bpmnInstance) {
+            return;
+        }
+        var pathid = this.route.snapshot.params['pathid'];
+        this.viewer.importXML(self.bpmnFile.payload).then(function () {
+            if (self.bpmnInstance.executionPaths && self.bpmnInstance.executionPaths.length > 0) {
+                var filtered = self.bpmnInstance.executionPaths.filter(function (v) {
+                    return v.id == pathid;
+                });
+                if (filtered.length !== 1) {
+                    return;
+                }
+                self.displayExecutionPath(null, filtered[0]);
+                var canvas = self.viewer.get('canvas');
+                canvas.zoom('fit-viewport');
+            }
+        });
     };
-    ViewCaseFilesComponent.prototype.refresh = function () {
-        var id = this.route.snapshot.params['id'];
-        var request = new fromCaseFileActions.GetCaseFile(id);
-        this.store.dispatch(request);
+    ViewExecutionPathComponent.prototype.displayExecutionPath = function (evt, execPath) {
+        if (evt) {
+            evt.preventDefault();
+        }
+        var self = this;
+        var overlays = self.viewer.get('overlays');
+        var elementRegistry = self.viewer.get('elementRegistry');
+        execPath.executionPointers.forEach(function (execPointer) {
+            var elt = execPointer.flowNodeInstance;
+            var eltReg = elementRegistry.get(elt.flowNodeId);
+            overlays.remove({ element: elt.flowNodeId });
+            var errorOverlayHtml = "<div class='{0}' data-id='" + execPointer.id + "' style='width:" + eltReg.width + "px;height:" + eltReg.height + "px;'></div>";
+            var completeOverlayHtml = "<div class='{0}' data-id='" + execPointer.id + "' style='width:" + eltReg.width + "px;height:" + eltReg.height + "px;'></div>";
+            var selectedOverlayHtml = "<div class='{0}'></div>";
+            var outgoingTokens = "<div class='outgoing-tokens'>" + execPointer.outgoingTokens.length + "</div>";
+            var isCircle = eltReg.type === "bpmn:StartEvent" ? true : false;
+            var isDiamond = eltReg.type === "bpmn:ExclusiveGateway" ? true : false;
+            var errorOverlayCl = "error-overlay";
+            var completeOverlayCl = "complete-overlay";
+            var selectedOverlayCl = "selected-overlay";
+            if (isCircle) {
+                errorOverlayCl = errorOverlayCl + " circle";
+                completeOverlayCl = completeOverlayCl + " circle";
+                selectedOverlayCl = selectedOverlayCl + " selected-circle";
+            }
+            if (isDiamond) {
+                errorOverlayCl = errorOverlayCl + " diamond";
+                completeOverlayCl = completeOverlayCl + " diamond";
+                selectedOverlayCl = selectedOverlayCl + " selected-diamond";
+            }
+            errorOverlayHtml = errorOverlayHtml.replace('{0}', errorOverlayCl);
+            completeOverlayHtml = completeOverlayHtml.replace('{0}', completeOverlayCl);
+            selectedOverlayHtml = selectedOverlayHtml.replace('{0}', selectedOverlayCl);
+            errorOverlayHtml = $(errorOverlayHtml);
+            completeOverlayHtml = $(completeOverlayHtml);
+            selectedOverlayHtml = $(selectedOverlayHtml);
+            selectedOverlayHtml.hide();
+            if (elt.activityState && elt.activityState === 'FAILING') {
+                overlays.add(elt.flowNodeId, {
+                    position: {
+                        top: 0,
+                        left: 0,
+                    },
+                    html: errorOverlayHtml
+                });
+            }
+            else if (elt.state === 'Complete') {
+                overlays.add(elt.flowNodeId, {
+                    position: {
+                        top: 0,
+                        left: 0,
+                    },
+                    html: completeOverlayHtml
+                });
+            }
+            overlays.add(elt.flowNodeId, {
+                position: {
+                    top: -1,
+                    left: -1,
+                },
+                html: selectedOverlayHtml
+            });
+            overlays.add(elt.flowNodeId, {
+                position: {
+                    bottom: 10,
+                    right: 10
+                },
+                html: outgoingTokens
+            });
+            var id = self.route.parent.parent.snapshot.params['id'];
+            var pathid = self.route.snapshot.params['pathid'];
+            $(completeOverlayHtml).click(function () {
+                var eltid = $(this).data('id');
+                $(".selected-overlay").hide();
+                self.router.navigate(['/bpmns/bpmninstances/' + id + '/' + pathid + '/' + eltid]);
+                selectedOverlayHtml.show();
+            });
+            $(errorOverlayHtml).click(function () {
+                var eltid = $(this).data('id');
+                $(".selected-overlay").hide();
+                self.router.navigate(['/bpmns/bpmninstances/' + id + '/' + pathid + '/' + eltid]);
+                selectedOverlayHtml.show();
+            });
+        });
     };
-    ViewCaseFilesComponent.prototype.formatXML = function (xml) {
-        var PADDING = ' '.repeat(2);
-        var reg = /(>)(<)(\/*)/g;
-        var pad = 0;
-        xml = xml.replace(reg, '$1\r\n$2$3');
-        return xml.split('\r\n').map(function (node) {
-            var indent = 0;
-            if (node.match(/.+<\/\w[^>]*>$/)) {
-                indent = 0;
-            }
-            else if (node.match(/^<\/\w/) && pad > 0) {
-                pad -= 1;
-            }
-            else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
-                indent = 1;
-            }
-            else {
-                indent = 0;
-            }
-            pad += indent;
-            return PADDING.repeat(pad - indent) + node;
-        }).join('\r\n');
-    };
-    ViewCaseFilesComponent = __decorate([
+    ViewExecutionPathComponent = __decorate([
         Component({
-            selector: 'view-case-file',
-            templateUrl: './view.component.html',
-            styleUrls: ['./view.component.scss']
+            selector: 'view-execution-path',
+            templateUrl: './viewexecutionpath.component.html',
+            styleUrls: ['./viewexecutionpath.component.scss']
         }),
         __metadata("design:paramtypes", [Store,
             ActivatedRoute,
-            FormBuilder,
-            MatSnackBar,
-            TranslateService,
-            ScannedActionsSubject,
             Router])
-    ], ViewCaseFilesComponent);
-    return ViewCaseFilesComponent;
+    ], ViewExecutionPathComponent);
+    return ViewExecutionPathComponent;
 }());
-export { ViewCaseFilesComponent };
-//# sourceMappingURL=view.component.js.map
+export { ViewExecutionPathComponent };
+//# sourceMappingURL=viewexecutionpath.component.js.map

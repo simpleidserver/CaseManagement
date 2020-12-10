@@ -8,6 +8,7 @@ namespace CaseManagement.CMMN.Domains
         #region Properties
 
         public string CasePlanElementInstanceId { get; set; }
+        public string ExternalId { get; set; }
         public DateTime CreateDateTime { get; set; }
 
         #endregion

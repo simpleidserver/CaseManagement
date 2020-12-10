@@ -8,6 +8,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
     public class CasePlanInstanceResult
     {
         public string Id { get; set; }
+        public string CaseFileId { get; set; }
         public string CasePlanId { get; set; }
         public string Name { get; set; }
         public string State { get; set; }
@@ -53,6 +54,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
         public class CasePlanItemInstanceResult
         {
             public string Id { get; set; }
+            public string EltId { get; set; }
+            public int NbOccurrence { get; set; }
             public string Name { get; set; }
             public string Type { get; set; }
             public string State { get; set; }
@@ -77,6 +80,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                 {
                     Id = casePlanItemInstance.Id,
                     Name = casePlanItemInstance.Name,
+                    NbOccurrence = casePlanItemInstance.NbOccurrence,
+                    EltId = casePlanItemInstance.EltId,
                     State = stateStr,
                     Type = Enum.GetName(typeof(CasePlanElementInstanceTypes), casePlanItemInstance.Type).ToUpperInvariant(),
                     TransitionHistories = casePlanItemInstance.TransitionHistories.Select(_ => TransitionHistoryResult.ToDto(_)).ToList()
@@ -88,11 +93,14 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
         {
             public string Transition { get; set; }
             public DateTime ExecutionDateTime { get; set; }
+            public string Message { get; set; }
+
             public static TransitionHistoryResult ToDto(CasePlanElementInstanceTransitionHistory history)
             {
                 return new TransitionHistoryResult
                 {
                     ExecutionDateTime = history.ExecutionDateTime,
+                    Message = history.Message,
                     Transition = Enum.GetName(typeof(CMMNTransitions), history.Transition)
                 };
             }
@@ -103,6 +111,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             return new CasePlanInstanceResult
             {
                 Id = casePlanInstance.AggregateId,
+                CaseFileId = casePlanInstance.CaseFileId,
                 CasePlanId = casePlanInstance.CasePlanId,
                 Name = casePlanInstance.Name,
                 State = casePlanInstance.State == null ? string.Empty : Enum.GetName(typeof(CaseStates), casePlanInstance.State),

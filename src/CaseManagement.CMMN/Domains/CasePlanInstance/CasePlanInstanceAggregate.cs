@@ -24,8 +24,9 @@ namespace CaseManagement.CMMN.Domains
 
         #region Properties
 
+        public string CaseFileId { get; set; }
         public string CasePlanId { get; set; }
-        public string CaseOwner { get; set; }
+        public string NameIdentifier { get; set; }
         public string Name { get; set; }
         public CaseStates? State { get; set; }
         public CasePlanInstanceExecutionContext ExecutionContext { get; set; }
@@ -36,7 +37,6 @@ namespace CaseManagement.CMMN.Domains
         public ICollection<CaseFileItemInstance> FileItems => Children.Where(c => c is CaseFileItemInstance).Cast<CaseFileItemInstance>().ToList();
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
-        public CasePlanInstanceRole CaseOwnerRole => string.IsNullOrWhiteSpace(CaseOwner) ? null : Roles.First(_ => _.Id == CaseOwner);
         public ConcurrentBag<BaseCaseEltInstance> Children { get; set; }
 
         #endregion
@@ -159,9 +159,9 @@ namespace CaseManagement.CMMN.Domains
             }
         }
 
-        public void MakeTransition(BaseCaseEltInstance element, CMMNTransitions transition, bool isEvtPropagate = true)
+        public void MakeTransition(BaseCaseEltInstance element, CMMNTransitions transition, string message = null, bool isEvtPropagate = true)
         {
-            var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, element.Id, transition, DateTime.UtcNow);
+            var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, element.Id, transition, message, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
             var caseWorkerTask = WorkerTasks.FirstOrDefault(_ => _.CasePlanElementInstanceId == element.Id);
@@ -187,7 +187,7 @@ namespace CaseManagement.CMMN.Domains
             DomainEvents.Add(evt);
         }
 
-        public bool TryAddWorkerTask(string casePlanInstanceElementId)
+        public bool TryAddWorkerTask(string casePlanInstanceElementId, string externalId)
         {
             var workerTask = WorkerTasks.FirstOrDefault(_ => _.CasePlanElementInstanceId == casePlanInstanceElementId);
             if (workerTask != null)
@@ -195,10 +195,15 @@ namespace CaseManagement.CMMN.Domains
                 return false;
             }
 
-            var evt = new CaseInstanceWorkerTaskAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, casePlanInstanceElementId, DateTime.UtcNow, CaseOwnerRole);
+            var evt = new CaseInstanceWorkerTaskAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, casePlanInstanceElementId, externalId, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
             return true;
+        }
+
+        public bool WorkerTaskExists(string casePlanInstanceElementId)
+        {
+            return WorkerTasks.Any(_ => _.CasePlanElementInstanceId == casePlanInstanceElementId);
         }
 
         public bool TryAddCaseFileItem(string casePlanInstanceElementId, string type, string externalValue)
@@ -244,7 +249,7 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan, ICollection<CasePlanInstanceRole> permissions, Dictionary<string, string> parameters)
+        public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan, string nameIdentifier, ICollection<CasePlanInstanceRole> permissions, Dictionary<string, string> parameters)
         {
             var result = new CasePlanInstanceAggregate();
             var roles = caseplan.Roles.Select(_ => new CasePlanInstanceRole
@@ -261,7 +266,7 @@ namespace CaseManagement.CMMN.Domains
             }).ToList();
             var stage = CMMNParser.ExtractStage(caseplan.XmlContent, id);
             var json = stage.ToJson();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, caseplan.CaseOwner, roles, permissions, json, DateTime.UtcNow, caseplan.AggregateId, caseplan.Name, parameters, files);
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, nameIdentifier, roles, permissions, json, DateTime.UtcNow, caseplan.CaseFileId, caseplan.AggregateId, caseplan.Name, parameters, files);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -270,7 +275,7 @@ namespace CaseManagement.CMMN.Domains
         public static CasePlanInstanceAggregate New(string id, StageElementInstance stage, ICollection<CaseFileItemInstance> caseFiles)
         {
             var result = new CasePlanInstanceAggregate();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), new List<CasePlanInstanceRole>(), stage.ToJson(), DateTime.UtcNow, null, string.Empty, new Dictionary<string, string>(), caseFiles);
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), new List<CasePlanInstanceRole>(), stage.ToJson(), DateTime.UtcNow, null, null, string.Empty, new Dictionary<string, string>(), caseFiles);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -281,13 +286,14 @@ namespace CaseManagement.CMMN.Domains
             var result = new CasePlanInstanceAggregate
             {
                 CasePlanId = CasePlanId,
+                CaseFileId = CaseFileId,
                 AggregateId = AggregateId,
                 CreateDateTime = CreateDateTime,
                 Version = Version,
                 Name = Name,
                 State = State,
                 UpdateDateTime = UpdateDateTime,
-                CaseOwner = CaseOwner,
+                NameIdentifier = NameIdentifier,
                 Files = new ConcurrentBag<CasePlanInstanceFileItem>(Files.Select(_ => (CasePlanInstanceFileItem)_.Clone()).ToList()),
                 Roles = Roles.Select(_ => (CasePlanInstanceRole)_.Clone()).ToList(),
                 WorkerTasks = new ConcurrentBag<CasePlanInstanceWorkerTask>(WorkerTasks.Select(_ => (CasePlanInstanceWorkerTask)_.Clone()).ToArray()),
@@ -318,7 +324,7 @@ namespace CaseManagement.CMMN.Domains
         private void Handle(CaseElementTransitionRaisedEvent evt)
         {
             var child = GetChild(evt.ElementId);
-            child.MakeTransition(evt.Transition, DateTime.UtcNow);
+            child.MakeTransition(evt.Transition, evt.Message, DateTime.UtcNow);
         }
 
         private void Handle(CasePlanInstanceCreatedEvent evt)
@@ -331,17 +337,6 @@ namespace CaseManagement.CMMN.Domains
                 {
                     new KeyValuePair<string, string>( "validation",  $"unknown roles '{string.Join(",", unknownRoles.Select(_ => _.Id))}'")
                 });
-            }
-
-            if (!string.IsNullOrWhiteSpace(evt.CaseOwner))
-            {
-                if (Roles.FirstOrDefault(_ => _.Id == evt.CaseOwner) == null)
-                {
-                    throw new AggregateValidationException(new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>( "validation",  $"unknown case owner role '{evt.CaseOwner}'")
-                    });
-                }
             }
 
             foreach(var permission in evt.Permissions)
@@ -367,8 +362,10 @@ namespace CaseManagement.CMMN.Domains
             CreateDateTime = evt.CreateDateTime;
             UpdateDateTime = evt.CreateDateTime;
             Version = evt.Version;
+            CaseFileId = evt.CaseFileId;
             CasePlanId = evt.CasePlanId;
-            CaseOwner = evt.CaseOwner;
+            Name = evt.CasePlanName;
+            NameIdentifier = evt.NameIdentifier;
             if (evt.Parameters != null)
             {
                 foreach (var kvp in evt.Parameters)
@@ -512,7 +509,8 @@ namespace CaseManagement.CMMN.Domains
             WorkerTasks.Add(new CasePlanInstanceWorkerTask
             {
                 CasePlanElementInstanceId = evt.CasePlanInstanceElementId,
-                CreateDateTime = evt.CreateDateTime
+                CreateDateTime = evt.CreateDateTime,
+                ExternalId = evt.ExternalId
             });
             UpdateDateTime = evt.CreateDateTime;
             Version = evt.Version;

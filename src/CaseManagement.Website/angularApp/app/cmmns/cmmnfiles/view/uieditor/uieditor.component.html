@@ -23,6 +23,43 @@
                             <input matInput name="name" formControlName="name" />
                         </mat-form-field>
                     </mat-expansion-panel>
+                    <!-- User task information -->
+                    <mat-expansion-panel *ngIf="selectedElt && selectedElt.businessObject && selectedElt.businessObject.definitionRef && selectedElt.businessObject.definitionRef.$type === 'cmmn:HumanTask'">
+                        <mat-expansion-panel-header>
+                            {{ 'CMMN.PROPERTIES.USERTASKINFO' | translate }}
+                        </mat-expansion-panel-header>
+                        <!-- WS-HumanTaskDef name -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'CMMN.SCHEMA.WSHUMANTASKNAME' | translate }}</mat-label>
+                            <input matInput name="formId" formControlName="formId" />
+                        </mat-form-field>
+                        <!-- Type -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'CMMN.SCHEMA.IMPLEMENTATION' | translate }}</mat-label>
+                            <mat-select formControlName="implementation">
+                                <mat-option value="##WsHumanTask">{{ 'CMMN.SCHEMA.WSHUMANTASK' | translate }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <form [formGroup]="addParameterForm" (ngSubmit)="addParameter(addParameterForm.value)">
+                            <!-- Key -->
+                            <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                <mat-label>{{ 'CMMN.SCHEMA.PARAMETERKEY' | translate }}</mat-label>
+                                <input matInput name="key" formControlName="key" />
+                            </mat-form-field>
+                            <!-- Value -->
+                            <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                <mat-label>{{ 'CMMN.SCHEMA.PARAMETERVALUE' | translate }}</mat-label>
+                                <input matInput name="value" formControlName="value" />
+                            </mat-form-field>
+                            <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+                        </form>
+                        <mat-list>
+                            <mat-list-item *ngFor="let parameter of parameters" matTooltip="{{ parameter.key }} = {{ parameter.value }}">
+                                <button mat-icon-button (click)="removeParameter(parameter)"><mat-icon>remove</mat-icon></button>
+                                {{ parameter.key }}
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-expansion-panel>
                 </mat-accordion>
             </form>
         </div>

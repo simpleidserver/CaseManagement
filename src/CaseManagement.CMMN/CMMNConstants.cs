@@ -61,5 +61,11 @@
         {
             public const string FAKE_CMIS_DIRECTORY = "https://github.com/simpleidserver/CaseManagement/fakecmis/folder";
         }
+
+        public static class UserTaskImplementations
+        {
+            public const string WEBSERVICE = "##WebService";
+            public const string WSHUMANTASK = "##WsHumanTask";
+        }
     }
 }

@@ -25,7 +25,6 @@ namespace CaseManagement.CMMN.CaseFile.Queries.Handlers
                 Order = request.Order,
                 OrderBy = request.OrderBy,
                 CaseFileId = request.CaseFileId,
-                Owner = request.Owner,
                 StartIndex = request.StartIndex,
                 TakeLatest = request.TakeLatest,
                 Text = request.Text

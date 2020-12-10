@@ -9,50 +9,35 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import * as fromActions from '../actions/caseplan.actions';
-export var initialCasePlanState = {
+import * as fromActions from '../actions/cmmn-plans.actions';
+export var initialCmmnPlanState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export var initialSearchCasePlanState = {
+export var initialSearchCmmnPlanState = {
     content: null,
     isLoading: true,
     isErrorLoadOccured: false
 };
-export var initialSearchCasePlanHistoryState = {
-    content: null,
-    isLoading: true,
-    isErrorLoadOccured: false
-};
-export function casePlanReducer(state, action) {
-    if (state === void 0) { state = initialCasePlanState; }
+export function cmmnPlanReducer(state, action) {
+    if (state === void 0) { state = initialCmmnPlanState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_GET:
+        case fromActions.ActionTypes.COMPLETE_GET_CMMN_PLAN:
             state.content = action.content;
             return __assign({}, state);
         default:
             return state;
     }
 }
-export function casePlanLstReducer(state, action) {
-    if (state === void 0) { state = initialSearchCasePlanState; }
+export function cmmnPlanLstReducer(state, action) {
+    if (state === void 0) { state = initialSearchCmmnPlanState; }
     switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH:
+        case fromActions.ActionTypes.COMPLETE_SEARCH_CMMN_PLANS:
             state.content = action.content;
             return __assign({}, state);
         default:
             return state;
     }
 }
-export function casePlanHistoryLstReducer(state, action) {
-    if (state === void 0) { state = initialSearchCasePlanHistoryState; }
-    switch (action.type) {
-        case fromActions.ActionTypes.COMPLETE_SEARCH_HISTORY:
-            state.content = action.content;
-            return __assign({}, state);
-        default:
-            return state;
-    }
-}
-//# sourceMappingURL=caseplan.reducers.js.map
+//# sourceMappingURL=cmmnplan.reducers.js.map

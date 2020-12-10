@@ -8,25 +8,25 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { CasesRoutes } from './cases.routes';
-import { CasesComponent } from './cases.component';
-var CasesModule = (function () {
-    function CasesModule() {
+import { CmmnsRoutes } from './cmmns.routes';
+import { CmmnsComponent } from './cmmns.component';
+var CmmnsModule = (function () {
+    function CmmnsModule() {
     }
-    CasesModule = __decorate([
+    CmmnsModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
                 SharedModule,
                 MaterialModule,
-                CasesRoutes
+                CmmnsRoutes
             ],
             entryComponents: [],
-            declarations: [CasesComponent],
+            declarations: [CmmnsComponent],
             providers: []
         })
-    ], CasesModule);
-    return CasesModule;
+    ], CmmnsModule);
+    return CmmnsModule;
 }());
-export { CasesModule };
-//# sourceMappingURL=cases.module.js.map
+export { CmmnsModule };
+//# sourceMappingURL=cmmns.module.js.map

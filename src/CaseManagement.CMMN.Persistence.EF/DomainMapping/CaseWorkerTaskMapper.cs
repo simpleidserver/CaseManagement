@@ -19,17 +19,7 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
                 CasePlanInstanceId = record.CasePlanInstanceId,
                 CasePlanInstanceElementId = record.CasePlanInstanceElementId,
                 CreateDateTime = record.CreateDateTime,
-                UpdateDateTime = record.UpdateDateTime,
-                Roles = record.Roles.Select(_ => ToCaseWorkerTaskRoleDomain(_)).ToList()
-            };
-        }
-
-        public static CaseWorkerTaskRole ToCaseWorkerTaskRoleDomain(this RoleModel role)
-        {
-            return new CaseWorkerTaskRole
-            {
-                RoleId = role.RoleId,
-                Claims = role.Claims.Select(_ => new KeyValuePair<string, string>(_.ClaimName, _.ClaimValue))
+                UpdateDateTime = record.UpdateDateTime
             };
         }
 
@@ -46,23 +36,7 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
                 CasePlanInstanceId = record.CasePlanInstanceId,
                 CasePlanInstanceElementId = record.CasePlanInstanceElementId,
                 CreateDateTime = record.CreateDateTime,
-                UpdateDateTime = record.UpdateDateTime,
-                Roles = record.Roles.Select(_ => ToModel(_)).ToList()
-            };
-        }
-
-        public static RoleModel ToModel(this CaseWorkerTaskRole role)
-        {
-            return new RoleModel
-            {
-                RoleId = role.RoleId,
-                Claims = role.Claims.Select(_ => new RoleClaimModel
-                {
-                    ClaimName = _.Key,
-                    ClaimValue = _.Value
-                }).ToList(),
-                CreateDateTime = DateTime.UtcNow,
-                UpdateDateTime = DateTime.UtcNow
+                UpdateDateTime = record.UpdateDateTime
             };
         }
 

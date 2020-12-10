@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace CaseManagement.CMMN.Parser
@@ -36,7 +37,7 @@ namespace CaseManagement.CMMN.Parser
         public static StageElementInstance ExtractStage(string xmlContent, string casePlanInstanceId)
         {
             var tStage = DeserializeStage(xmlContent);
-            var result = BuildStage(tStage, casePlanInstanceId);
+            var result = BuildStage(tStage.id, tStage, casePlanInstanceId);
             return result;
         }
 
@@ -71,16 +72,17 @@ namespace CaseManagement.CMMN.Parser
                 }
             }
 
-            return CasePlanAggregate.New(planModel.id, planModel.name, planModel.name, caseFile.Owner, caseFile.AggregateId, caseFile.Version, Serialize(planModel), roles, files);
+            return CasePlanAggregate.New(planModel.id, planModel.name, planModel.name, caseFile.AggregateId, caseFile.Version, Serialize(planModel), roles, files);
         }
 
-        private static StageElementInstance BuildStage(tStage stage, string casePlanInstanceId)
+        private static StageElementInstance BuildStage(string id, tStage stage, string casePlanInstanceId)
         {
             var planItems = BuildPlanItems(stage, casePlanInstanceId);
             var result = new StageElementInstance 
             { 
                 Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, stage.id, 0),
-                Name = stage.name 
+                Name = stage.name,
+                EltId = id
             };
             foreach (var planItem in planItems)
             {
@@ -171,13 +173,32 @@ namespace CaseManagement.CMMN.Parser
             if (planItemDef is tHumanTask)
             {
                 var humanTask = planItemDef as tHumanTask;
+                List<tHumanTaskParameter> pars = new List<tHumanTaskParameter>();
+                if (humanTask.implementation == CMMNConstants.UserTaskImplementations.WSHUMANTASK)
+                {
+                    var parameters = humanTask.extensionElements?.Any.FirstOrDefault(_ => _.Name == "cmg:parameters");
+                    if (parameters != null)
+                    {
+                        var xmlSerializer = new XmlSerializer(typeof(tHumanTaskParameter), "https://github.com/simpleidserver/CaseManagement");
+                        foreach (XmlNode child in parameters.ChildNodes)
+                        {
+                            using (var txtReader = new StringReader(child.OuterXml))
+                            {
+                                pars.Add((tHumanTaskParameter)xmlSerializer.Deserialize(txtReader));
+                            }
+                        }
+                    }
+                }
+
                 return new HumanTaskElementInstance 
                 { 
                     Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
                     EltId = id,
                     NbOccurrence = 0,
                     Name = name, 
-                    FormId = humanTask.caseFormRef, 
+                    FormId = humanTask.formId,
+                    Implemention = humanTask.implementation,
+                    InputParameters = pars.ToDictionary(kvp => kvp.key, kvp => kvp.value),
                     PerformerRef = humanTask.performerRef 
                 };
             }
@@ -224,7 +245,7 @@ namespace CaseManagement.CMMN.Parser
 
             if (planItemDef is tStage)
             {
-                return BuildStage(planItemDef as tStage, casePlanInstanceId);
+                return BuildStage(id, planItemDef as tStage, casePlanInstanceId);
             }
 
             return null;

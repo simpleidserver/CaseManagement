@@ -42,22 +42,40 @@ namespace CaseManagement.HumanTask.Host
                 .AddName("en", "Temperature in $city$")
                 .AddSubject("fr", "Il fait $degree$", "text/html")
                 .AddSubject("en", "Degree : $degree$", "text/html")
-                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
-                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
                 .AddInputOperationParameter("degree", ParameterTypes.STRING, true)
                 .AddInputOperationParameter("city", ParameterTypes.STRING, true)
-                .AddCallbackOperation("http://localhost:60007/processinstances/{id}/statetransitions")
+                .Build();
+            var captureClaimDetails = HumanTaskDefBuilder.New("captureClaimDetails")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "businessanalyst" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
+                .AddName("fr", "Capturer les détails de la réclamation")
+                .AddName("en", "Capture claim details")
+                .AddTxt("firstName", cb =>
+                {
+                    cb.AddLabel("fr", "Prénom");
+                    cb.AddLabel("en", "Firstname");
+                })
+                .AddTxt("lastName", cb =>
+                {
+                    cb.AddLabel("fr", "Nom");
+                    cb.AddLabel("en", "Lastname");
+                })
+                .AddTxt("claim", cb =>
+                {
+                    cb.AddLabel("fr", "Motif de la réclamation");
+                    cb.AddLabel("en", "Claim");
+                })
+                .AddOutputOperationParameter("firstName", ParameterTypes.STRING, true)
+                .AddOutputOperationParameter("lastName", ParameterTypes.STRING, true)
+                .AddOutputOperationParameter("claim", ParameterTypes.STRING, true)
                 .Build();
             var takeTemperatureForm = HumanTaskDefBuilder.New("temperatureForm")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "businessanalyst" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
                 .AddName("fr", "Saisir la température")
                 .AddName("en", "Enter degree")
-                .AddInputOperationParameter("flowNodeInstanceId", ParameterTypes.STRING, true)
-                .AddInputOperationParameter("flowNodeElementInstanceId", ParameterTypes.STRING, true)
                 .AddTxt("degree", cb => cb.AddLabel("fr", "Température"))
                 .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
-                .AddCallbackOperation("http://localhost:60007/processinstances/{id}/statetransitions")
                 .Build();
             services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
@@ -89,11 +107,13 @@ namespace CaseManagement.HumanTask.Host
                     IssuerSigningKey = ExtractKey("oauth_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "bpmnClient"
+                        "bpmnClient",
+                        "cmmnClient"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60001"
+                        "http://localhost:60001",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/oauth"
                     }
                 };
             });
@@ -106,6 +126,7 @@ namespace CaseManagement.HumanTask.Host
             services.AddHumanTaskServer()
                 .AddHumanTaskDefs(new List<HumanTaskDefinitionAggregate>
                 {
+                    captureClaimDetails,
                     dressAppropriateForm,
                     takeTemperatureForm
                 });

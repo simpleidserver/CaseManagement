@@ -11,74 +11,74 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes } from '../actions/case-files.actions';
-import { CaseFilesService } from '../services/casefiles.service';
-var CaseFilesEffects = (function () {
-    function CaseFilesEffects(actions$, caseFilesService) {
+import { ActionTypes } from '../actions/cmmn-files.actions';
+import { CmmnFilesService } from '../services/cmmnfiles.service';
+var CmmnFilesEffects = (function () {
+    function CmmnFilesEffects(actions$, cmmnFilesService) {
         var _this = this;
         this.actions$ = actions$;
-        this.caseFilesService = caseFilesService;
-        this.searchCaseFiles$ = this.actions$
-            .pipe(ofType(ActionTypes.START_SEARCH_CASEFILES), mergeMap(function (evt) {
-            return _this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, null, true)
-                .pipe(map(function (casefiles) { return { type: ActionTypes.COMPLETE_SEARCH_CASEFILES, content: casefiles }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_CASEFILES }); }));
+        this.cmmnFilesService = cmmnFilesService;
+        this.searchCmmnFiles$ = this.actions$
+            .pipe(ofType(ActionTypes.START_SEARCH_CMMNFILES), mergeMap(function (evt) {
+            return _this.cmmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.caseFileId, evt.takeLatest)
+                .pipe(map(function (cmmnfiles) { return { type: ActionTypes.COMPLETE_SEARCH_CMMNFILES, content: cmmnfiles }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_CMMNFILES }); }));
         }));
-        this.searchCaseFileHistories$ = this.actions$
-            .pipe(ofType(ActionTypes.START_SEARCH_CASEFILES_HISTORY), mergeMap(function (evt) {
-            return _this.caseFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, null, evt.caseFileId, false)
-                .pipe(map(function (casefiles) { return { type: ActionTypes.COMPLETE_SEARCH_CASEFILES_HISTORY, content: casefiles }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_CASEFILES_HISTORY }); }));
+        this.getCmmnFile$ = this.actions$
+            .pipe(ofType(ActionTypes.START_GET_CMMNFILE), mergeMap(function (evt) {
+            return _this.cmmnFilesService.get(evt.id)
+                .pipe(map(function (cmmnfile) { return { type: ActionTypes.COMPLETE_GET_CMMNFILE, content: cmmnfile }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_CMMNFILE }); }));
         }));
-        this.getCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.START_GET_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.get(evt.id)
-                .pipe(map(function (casefile) { return { type: ActionTypes.COMPLETE_GET_CASEFILE, content: casefile }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_CASEFILE }); }));
+        this.addCmmnFile$ = this.actions$
+            .pipe(ofType(ActionTypes.ADD_CMMNFILE), mergeMap(function (evt) {
+            return _this.cmmnFilesService.add(evt.name, evt.description)
+                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_ADD_CMMNFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_ADD_CMMNFILE }); }));
         }));
-        this.addCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.ADD_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.add(evt.name, evt.description)
-                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_ADD_CASEFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_ADD_CASEFILE }); }));
+        this.publishCmmnFile$ = this.actions$
+            .pipe(ofType(ActionTypes.PUBLISH_CMMNFILE), mergeMap(function (evt) {
+            return _this.cmmnFilesService.publish(evt.id)
+                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_PUBLISH_CMMNFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_PUBLISH_CMMNFILE }); }));
         }));
-        this.publishCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.PUBLISH_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.publish(evt.id)
-                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_PUBLISH_CASEFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_PUBLISH_CASEFILE }); }));
+        this.updateCmmnFile$ = this.actions$
+            .pipe(ofType(ActionTypes.UPDATE_CMMNFILE), mergeMap(function (evt) {
+            return _this.cmmnFilesService.update(evt.id, evt.name, evt.description)
+                .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_CMMNFILE, id: evt.id, name: evt.name, description: evt.description }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_CMMNFILE }); }));
         }));
-        this.updateCaseFile$ = this.actions$
-            .pipe(ofType(ActionTypes.UPDATE_CASEFILE), mergeMap(function (evt) {
-            return _this.caseFilesService.update(evt.id, evt.name, evt.description, evt.payload)
-                .pipe(map(function (str) { return { type: ActionTypes.COMPLETE_UPDATE_CASEFILE, id: str }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_CASEFILE }); }));
+        this.updateCmmnFilePayload$ = this.actions$
+            .pipe(ofType(ActionTypes.UPDATE_CMMNFILE_PAYLOAD), mergeMap(function (evt) {
+            return _this.cmmnFilesService.updatePayload(evt.id, evt.payload)
+                .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_CMMNFILE_PAYLOAD, payload: evt.payload }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_CMMNFILE_PAYLOAD }); }));
         }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "searchCaseFiles$", void 0);
+    ], CmmnFilesEffects.prototype, "searchCmmnFiles$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "searchCaseFileHistories$", void 0);
+    ], CmmnFilesEffects.prototype, "getCmmnFile$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "getCaseFile$", void 0);
+    ], CmmnFilesEffects.prototype, "addCmmnFile$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "addCaseFile$", void 0);
+    ], CmmnFilesEffects.prototype, "publishCmmnFile$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "publishCaseFile$", void 0);
+    ], CmmnFilesEffects.prototype, "updateCmmnFile$", void 0);
     __decorate([
         Effect(),
         __metadata("design:type", Object)
-    ], CaseFilesEffects.prototype, "updateCaseFile$", void 0);
-    CaseFilesEffects = __decorate([
+    ], CmmnFilesEffects.prototype, "updateCmmnFilePayload$", void 0);
+    CmmnFilesEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            CaseFilesService])
-    ], CaseFilesEffects);
-    return CaseFilesEffects;
+            CmmnFilesService])
+    ], CmmnFilesEffects);
+    return CmmnFilesEffects;
 }());
-export { CaseFilesEffects };
-//# sourceMappingURL=case-files.effects.js.map
+export { CmmnFilesEffects };
+//# sourceMappingURL=cmmn-files.effects.js.map

@@ -84,12 +84,24 @@
         border-top-color: green;
     }
 
-    .outgoing-tokens {
+    .outgoing-tokens, .nbOccurrence {
         background-color: gray;
     }
 
     .selected-diamond {
         border: 2px solid red;
+    }
+
+    .state.Active {
+        background-color: orange;
+    }
+
+    .state.Completed {
+        background-color: green;
+    }
+
+    .state.Failed {
+        background-color: red;
     }
 }
 

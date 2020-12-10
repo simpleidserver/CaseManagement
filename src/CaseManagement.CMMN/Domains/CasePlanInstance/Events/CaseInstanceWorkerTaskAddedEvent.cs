@@ -8,15 +8,15 @@ namespace CaseManagement.CMMN.Domains
     [DebuggerDisplay("add worker task")]
     public class CaseInstanceWorkerTaskAddedEvent : DomainEvent
     {
-        public CaseInstanceWorkerTaskAddedEvent(string id, string aggregateId, int version, string casePlanInstanceElementId, DateTime createDateTime, CasePlanInstanceRole caseOwnerRole) : base(id, aggregateId, version)
+        public CaseInstanceWorkerTaskAddedEvent(string id, string aggregateId, int version, string casePlanInstanceElementId, string externalId, DateTime createDateTime) : base(id, aggregateId, version)
         {
             CasePlanInstanceElementId = casePlanInstanceElementId;
+            ExternalId = externalId;
             CreateDateTime = createDateTime;
-            CaseOwnerRole = caseOwnerRole;
         }
 
         public string CasePlanInstanceElementId { get; set; }
+        public string ExternalId { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public CasePlanInstanceRole CaseOwnerRole { get; set; }
     }
 }

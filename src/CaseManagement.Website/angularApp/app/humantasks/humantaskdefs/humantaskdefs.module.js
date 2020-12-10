@@ -14,6 +14,8 @@ import { HumanTaskDefsRoutes } from './humantaskdefs.routes';
 import { ViewHumanTaskDef } from './view/view.component';
 import { AddHumanTaskDefDialog } from './list/add-humantaskdef-dialog.component';
 import { ListHumanTaskDef } from './list/list.component';
+import { CreateHumanTaskInstanceDialog } from './view/create-humantaskinstance-dialog.component';
+import { CreateHumanTaskInstanceComponent } from './view/common/createhumantaskinstance/createhumantaskinstance.component';
 var HumanTaskDefsModule = (function () {
     function HumanTaskDefsModule() {
     }
@@ -27,11 +29,13 @@ var HumanTaskDefsModule = (function () {
                 MaterialModule,
                 SharedModule
             ],
-            entryComponents: [AddHumanTaskDefDialog],
+            entryComponents: [AddHumanTaskDefDialog, CreateHumanTaskInstanceDialog],
             declarations: [
                 ViewHumanTaskDef,
                 ListHumanTaskDef,
-                AddHumanTaskDefDialog
+                AddHumanTaskDefDialog,
+                CreateHumanTaskInstanceDialog,
+                CreateHumanTaskInstanceComponent
             ],
             exports: []
         })

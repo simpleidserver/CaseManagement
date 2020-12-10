@@ -17,7 +17,6 @@ namespace CaseManagement.CMMN.Domains
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public string Payload { get; set; }
-        public string Owner { get; set; }
         public CaseFileStatus Status { get; set; }
 
         public void Update(string name, string description)
@@ -39,7 +38,7 @@ namespace CaseManagement.CMMN.Domains
             var evt = new CaseFilePublishedEvent(Guid.NewGuid().ToString(), AggregateId, Version);
             Handle(evt);
             DomainEvents.Add(evt);
-            var next = New(Name, Description, Version + 1, Owner, Payload, FileId);
+            var next = New(Name, Description, Version + 1, Payload, FileId);
             return next;
         }
 
@@ -54,7 +53,7 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CaseFileAggregate New(string name, string description, int version, string owner, string payload = null, string fileId = null)
+        public static CaseFileAggregate New(string name, string description, int version, string payload = null, string fileId = null)
         {
             var result = new CaseFileAggregate();
             lock (result.DomainEvents)
@@ -64,7 +63,7 @@ namespace CaseManagement.CMMN.Domains
                     fileId = Guid.NewGuid().ToString();
                 }
 
-                var evt = new CaseFileAddedEvent(Guid.NewGuid().ToString(), BuildCaseFileIdentifier(fileId, version), version, fileId, name, description, DateTime.UtcNow, owner, payload);
+                var evt = new CaseFileAddedEvent(Guid.NewGuid().ToString(), BuildCaseFileIdentifier(fileId, version), version, fileId, name, description, DateTime.UtcNow, payload);
                 result.Handle(evt);
                 result.DomainEvents.Add(evt);
             }
@@ -100,7 +99,6 @@ namespace CaseManagement.CMMN.Domains
             Name = caseFileAddedEvent.Name;
             Description = caseFileAddedEvent.Description;
             CreateDateTime = caseFileAddedEvent.CreateDateTime;
-            Owner = caseFileAddedEvent.Owner;
             Payload = caseFileAddedEvent.Payload;
             Version = caseFileAddedEvent.Version;
             Status = CaseFileStatus.Edited;
@@ -170,7 +168,6 @@ namespace CaseManagement.CMMN.Domains
                 Description = Description,
                 CreateDateTime = CreateDateTime,
                 Payload = Payload,
-                Owner = Owner,
                 UpdateDateTime = UpdateDateTime,
                 Status = Status,
                 Version = Version

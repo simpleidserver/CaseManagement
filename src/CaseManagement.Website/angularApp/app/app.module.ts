@@ -22,10 +22,10 @@ import { BpmnFilesEffects } from './stores/bpmnfiles/effects/bpmn-files.effects'
 import { BpmnFilesService } from './stores/bpmnfiles/services/bpmnfiles.service';
 import { BpmnInstancesEffects } from './stores/bpmninstances/effects/bpmn-instances.effects';
 import { BpmnInstancesService } from './stores/bpmninstances/services/bpmninstances.service';
-import { CasePlanInstanceEffects } from './stores/caseplaninstances/effects/caseplaninstance.effects';
-import { CasePlanInstanceService } from './stores/caseplaninstances/services/caseplaninstance.service';
 import { CmmnFilesEffects } from './stores/cmmnfiles/effects/cmmn-files.effects';
 import { CmmnFilesService } from './stores/cmmnfiles/services/cmmnfiles.service';
+import { CmmnPlanInstanceEffects } from './stores/cmmninstances/effects/cmmn-planinstance.effects';
+import { CmmnPlanInstanceService } from './stores/cmmninstances/services/cmmn-planinstance.service';
 import { CmmnPlanEffects } from './stores/cmmnplans/effects/cmmn-plans.effects';
 import { CmmnPlanService } from './stores/cmmnplans/services/cmmn-plan.service';
 import { HumanTaskDefEffects } from './stores/humantaskdefs/effects/humantaskdef.effects';
@@ -49,7 +49,7 @@ export function createTranslateLoader(http: HttpClient) {
         BrowserAnimationsModule,
         HttpClientModule,
         OAuthModule.forRoot(),
-        EffectsModule.forRoot([BpmnInstancesEffects, CmmnFilesEffects, CasePlanInstanceEffects, CmmnPlanEffects, HumanTaskDefEffects, HumanTaskInstEffects, BpmnFilesEffects]),
+        EffectsModule.forRoot([BpmnInstancesEffects, CmmnFilesEffects, CmmnPlanInstanceEffects, CmmnPlanEffects, HumanTaskDefEffects, HumanTaskInstEffects, BpmnFilesEffects]),
         StoreModule.forRoot(appReducer),
         StoreDevtoolsModule.instrument({
             maxAge: 10
@@ -66,6 +66,6 @@ export function createTranslateLoader(http: HttpClient) {
         AppComponent
     ],
     bootstrap: [AppComponent],
-    providers: [AuthGuard, CmmnFilesService, CmmnPlanService, CasePlanInstanceService, HumanTaskDefService, HumanTaskInstService, BpmnFilesService, SidenavService, BpmnInstancesService ]
+    providers: [AuthGuard, CmmnFilesService, CmmnPlanService, CmmnPlanInstanceService, HumanTaskDefService, HumanTaskInstService, BpmnFilesService, SidenavService, BpmnInstancesService ]
 })
 export class AppModule { }
