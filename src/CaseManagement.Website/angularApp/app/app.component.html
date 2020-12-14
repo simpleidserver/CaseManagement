@@ -1,70 +1,41 @@
-﻿<ng-container>
-    <mat-toolbar class="header-toolbar">
-        <a class="no-style" [routerLink]="['/home']">
-            <img src={{url}} />
-        </a>
-        <button mat-icon-button (click)="sidenav.toggle()">
+﻿<mat-drawer-container fxFlexFill>
+    <mat-drawer #drawer class="drawer" mode="side">
+        <mat-list>
+            <mat-list-item>CaseManagement <button (click)="drawer.close()" mat-icon-button><mat-icon>close</mat-icon></button></mat-list-item>
+            <a [routerLink]="['/bpmns']" mat-list-item href="#">{{ "MENU.PROCESSES" | translate }}</a>
+            <a [routerLink]="['/cmmns']" mat-list-item href="#">{{ "MENU.CASES" | translate }}</a>
+        </mat-list>
+    </mat-drawer>
+    <mat-toolbar class="app-header">
+        <button mat-icon-button (click)="drawer.toggle()" fxShow="true" fxHide.gt-sm>
             <mat-icon>menu</mat-icon>
         </button>
+        <a class="no-style" [routerLink]="['/home']">
+            <b style="color: rgb(123,31,162);">Case</b><span style="color: rgb(206,147,216);">Management</span>
+        </a>
+        <div fxShow="true" fxHide.lt-md="true">
+            <a [routerLink]="['/bpmns']" mat-button href="#">{{ "MENU.PROCESSES" | translate }}</a>
+            <a [routerLink]="['/cmmns']" mat-button href="#">{{ "MENU.CASES" | translate }}</a>
+        </div>
         <span class="navigation-spacer"></span>
-        <div *ngIf="isConnected">
-            <button mat-button [matMenuTriggerFor]="welcomeMenu">
-                {{ "WELCOME" | translate:{name:name} }}
-            </button>
+        <div fxShow="true" fxHide.lt-md="true">
+            <a href="#" *ngIf="isConnected" mat-button [matMenuTriggerFor]="welcomeMenu" [innerHtml]="'MENU.WELCOME' | translate:{name:name}"></a>
             <mat-menu #welcomeMenu="matMenu">
-                <button mat-menu-item (click)="disconnect()">{{ "DISCONNECT" | translate }}</button>
+                <a href="#" mat-menu-item (click)="disconnect($event)">{{ "MENU.DISCONNECT" | translate }}</a>
+            </mat-menu>
+            <a href="#" *ngIf="!isConnected" (click)="login($event)" mat-button>{{ "MENU.AUTHENTICATE" | translate }}</a>
+            <a href="#" *ngIf="!isConnected" (click)="chooseSession($event)" mat-button>{{ "MENU.CHOOSE_SESSION" | translate }}</a>
+            <a mat-button [matMenuTriggerFor]="languages">{{ "MENU.LANGUAGES" | translate }}</a>
+            <mat-menu #languages="matMenu">
+                <a href="#" mat-menu-item (click)="chooseLanguage($event, 'fr')">{{ "LANGUAGES.FRENCH" | translate }}</a>
+                <a href="#" mat-menu-item (click)="chooseLanguage($event, 'en')">{{ "LANGUAGES.ENGLISH" | translate }}</a>
             </mat-menu>
         </div>
-        <div *ngIf="!isConnected">
-            <button mat-raised-button color="primary" (click)="login()">{{ "AUTHENTICATE" | translate }}</button>
-            <button mat-raised-button color="primary" (click)="chooseSession()">{{ "CHOOSE_SESSION" | translate }}</button>
-        </div>
-        <button mat-button [matMenuTriggerFor]="languages">{{ "LANGUAGES" | translate }}</button>
-        <mat-menu #languages="matMenu">
-            <button mat-menu-item (click)="chooseLanguage('fr')">{{ "FRENCH" | translate }}</button>
-            <button mat-menu-item (click)="chooseLanguage('en')">{{ "ENGLISH" | translate }}</button>
-        </mat-menu>
     </mat-toolbar>
-    <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav class="sidenav" #sidenav mode="side" opened [fixedInViewport]="false" [fixedTopGap]="0" [fixedBottomGap]="0">
-            <mat-nav-list *ngIf="isConnected">
-                <a mat-list-item (click)="toggleCases()">
-                    <mat-icon>folder</mat-icon> {{ "CASES" | translate }}
-                    <span fxFlex>
-                        <span fxFlex></span>
-                        <mat-icon [@indicatorRotate]="casesExpanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
-                    </span>
-                </a>
-                <div *ngIf="casesExpanded">
-                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/cmmns/cmmnfiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CMMN.TITLES.FILES" | translate }}</a>
-                    <a mat-list-item [routerLink]="['/cmmns/cmmnplans']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CMMN.TITLES.PLANS" | translate }}</a>
-                    <a mat-list-item [routerLink]="['/cmmns/cmmninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "CMMN.TITLES.PLANINSTANCES" | translate }}</a>
-                </div>
-                <a mat-list-item (click)="toggleBpmnFiles()">
-                    <mat-icon>timeline</mat-icon> {{ "BPMNS" | translate }}
-                    <span fxFlex>
-                        <span fxFlex></span>
-                        <mat-icon [@indicatorRotate]="bpmnsExpanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
-                    </span>
-                </a>
-                <div *ngIf="bpmnsExpanded">
-                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/bpmns/bpmnfiles']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "BPMN_FILES" | translate }}</a>
-                    <a mat-list-item [routerLink]="['/bpmns/bpmninstances']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "BPMN.TITLES.BPMNINSTANCES" | translate }}</a>
-                </div>
-                <a mat-list-item (click)="toggleHumanTasks()">
-                    <mat-icon>format_align_justify</mat-icon> {{ "HUMAN_TASKS" | translate }}
-                    <span fxFlex>
-                        <span fxFlex></span>
-                        <mat-icon [@indicatorRotate]="humanTasksExpanded ? 'expanded': 'collapsed'">expand_more</mat-icon>
-                    </span>
-                </a>
-                <div *ngIf="humanTasksExpanded">
-                    <a mat-list-item *ngIf="roles === 'businessanalyst'" [routerLink]="['/humantasks/humantaskdefs']" [routerLinkActive]="['is-active']"><mat-icon></mat-icon>{{ "HUMAN_TASK_DEFS" | translate }}</a>
-                </div>
-            </mat-nav-list>
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <router-outlet></router-outlet>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
-</ng-container>
+    <div class="app-content">
+        <router-outlet></router-outlet>
+    </div>
+    <div class="app-footer">
+        @Copyright SimpleIdServer
+    </div>
+</mat-drawer-container>

@@ -4,6 +4,7 @@ export class BpmnFile {
     fileId: string;
     name: string;
     description: string;
+    nbInstances: number;
     createDateTime: Date;
     updateDateTime: Date;
     payload: string;

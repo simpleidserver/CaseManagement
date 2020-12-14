@@ -14,5 +14,6 @@ namespace CaseManagement.BPMN.Persistence.Parameters
         }
 
         public bool TakeLatest { get; set; }
+        public string FileId { get; set; }
     }
 }

@@ -6,5 +6,4 @@
     styleUrls: ['./bpmns.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class BpmnsComponent {
-}
+export class BpmnsComponent { }

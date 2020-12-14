@@ -2,10 +2,15 @@ html, body {
 	height: 100%;
 }
 
+body {
+    position: relative;
+}
+
 body, h1 {
 	margin: 0;
 }
 
+/* Common library */
 a.no-style {
 	text-decoration: none;
 	color: inherit;
@@ -15,109 +20,109 @@ a.no-style {
 	width: 100%;
 }
 
+.m-10 {
+    margin: 10px !important;
+}
+
 .mleft-10 {
-	margin-left : 10px;
+	margin-left : 10px !important;
 }
 
 .mright-10 {
-	margin-right: 10px;
+	margin-right: 10px !important;
+}
+
+.mtop-10 {
+    margin-top: 10px !important;
 }
 
 .clickable {
 	cursor: pointer;	
 }
 
-ul.list {
-    padding: 0;
-    list-style-type: none;
-}
-
-ul.list li {
-    .actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-        display: none;
-    }
-
-    p.period, p.description, h4, h5 {
-        margin: 0;
-    }
-
-    p {
-        margin: 0;
-    }
-}
-
-ul.list li {
-    margin-top: 5px;
-    border-bottom: 1px solid;
-    position: relative;
-}
-
-ul.list li:hover .actions {
-    display: block;
-}
-
-.profile {
-    .actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-}
-
-.profile .avatar-container img {
-    width: 100px;
-    height: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-}
-
 .overflow-hidden {
     overflow: hidden;
 }
 
-.center-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.navigation-spacer {
+    flex: 1 1 auto;
 }
 
-.breadcrumb {
-    padding: 20px 0px 20px 0px;
+/* Breadcrumb */
+@media (max-width: 960px) {
+    .breadcrumb {
+        display: none;
+    }
 }
 
-.breadcrumb ul {
+ul.breadcrumb {
     margin: 0;
     padding: 0;
     list-style: none;
+    padding: 5px;
 }
 
-.breadcrumb ul .separator {
-    padding-right: .75rem;
-    padding-left: .75rem;
-}
-
-.breadcrumb ul li {
+ul.breadcrumb li {
     display: inline-block;
 }
 
-.avatar-container img {
-    width: 100px;
-    height: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+ul.breadcrumb li:not(:first-child) {
+    padding-left: .5rem;
 }
 
-.mt-10 {
-    margin-top: 10px !important;
+ul.breadcrumb li:not(:last-child):after {
+    content: "/";
+    margin-left: 1rem;
 }
 
-.ml-10 {
-    margin-left: 10px !important;
+/* Content */
+.drawer {
+    position: fixed;
+    height: 100vh;
+    min-width: 25%;
+}
+
+.app-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+.app-content {
+    position: absolute;
+    top: 64px;
+    right: 0;
+    left: 0;
+    bottom: 30px;
+}
+
+.app-footer {
+    position: fixed;
+    border-top: 1px solid #ccc;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+}
+
+@media (max-width: 960px) {
+    .content {
+        overflow: auto;
+    }
+}
+
+@media(min-width: 960px) {
+    .content > div {
+        overflow: auto;
+    }
+}
+
+.content {
+    position: absolute;
+    top: 30px;
+    right: 10px;
+    left: 10px;
+    bottom: 0px;
 }
 
 .circle {

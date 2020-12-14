@@ -17,6 +17,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
                 Payload = processFile.Payload,
                 Status = processFile.Status,
                 UpdateDateTime = processFile.UpdateDateTime,
+                NbInstances = processFile.NbInstances,
                 Version = processFile.Version
             };
         }
@@ -31,6 +32,7 @@ namespace CaseManagement.BPMN.Persistence.EF.DomainMapping
                 AggregateId = processFile.Id,
                 Name = processFile.Name,
                 Payload = processFile.Payload,
+                NbInstances = processFile.NbInstances,
                 Status = processFile.Status,
                 UpdateDateTime = processFile.UpdateDateTime,
                 Version = processFile.Version

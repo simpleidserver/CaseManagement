@@ -35,6 +35,11 @@ namespace CaseManagement.BPMN.Persistence.InMemory
         public Task<FindResponse<ProcessFileAggregate>> Find(FindProcessFilesParameter parameter, CancellationToken token)
         {
             IQueryable<ProcessFileAggregate> result = _processFiles.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(parameter.FileId))
+            {
+                result = result.Where(_ => _.FileId == parameter.FileId);
+            }
+
             if (parameter.TakeLatest)
             {
                 result = result.OrderByDescending(r => r.Version);

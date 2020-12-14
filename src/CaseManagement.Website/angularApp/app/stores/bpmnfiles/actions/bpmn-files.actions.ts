@@ -22,7 +22,7 @@ export enum ActionTypes {
 
 export class SearchBpmnFiles implements Action {
     readonly type = ActionTypes.START_SEARCH_BPMNFILES
-    constructor(public order: string, public direction: string, public count: number, public startIndex: number) { }
+    constructor(public order: string, public direction: string, public count: number, public startIndex: number, public takeLatest: boolean, public fileId: string) { }
 }
 
 export class CompleteBpmnFiles implements Action {
@@ -52,7 +52,7 @@ export class CompletePublishBpmnFile implements Action {
 
 export class UpdateBpmnFile implements Action {
     readonly type = ActionTypes.UPDATE_BPMNFILE
-    constructor(public id: string, public name: string, public description: string) { }
+    constructor(public id: string, public name: string, public description: string, public payload: string) { }
 }
 
 export class CompleteUpdateBpmnFile implements Action {

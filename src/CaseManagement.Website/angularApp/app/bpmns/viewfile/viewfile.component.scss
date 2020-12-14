@@ -1,0 +1,19 @@
+#canvas {
+    position: relative;
+}
+
+#canvas > .actions {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 3;
+}
+
+.canvas-container, #canvas {
+    height: 350px;
+}
+
+::ng-deep .mat-expansion-panel-body {
+    max-height: 200px;
+    overflow-y: auto;
+}

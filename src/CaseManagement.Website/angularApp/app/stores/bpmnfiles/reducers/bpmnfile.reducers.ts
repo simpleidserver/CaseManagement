@@ -48,7 +48,7 @@ export function bpmnFileReducer(state = initialBpmnFileState, action: fromAction
                     ...state.content,
                     name: action.name,
                     description: action.description,
-                    version: (state.content.version + 1),
+                    payload: action.payload,
                     updateDateTime: new Date()
                 }
             };
@@ -57,7 +57,6 @@ export function bpmnFileReducer(state = initialBpmnFileState, action: fromAction
                 ...state,
                 content: {
                     ...state.content,
-                    version: (state.content.version + 1),
                     payload: action.payload,
                     updateDateTime: new Date()
                 }

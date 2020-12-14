@@ -15,6 +15,7 @@ namespace CaseManagement.BPMN.Domains
         public string FileId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int NbInstances { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public string Payload { get; set; }
@@ -40,23 +41,28 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
+        public void UpgradeInstance()
+        {
+            NbInstances++;
+        }
+
         public void Update(string name, string description)
         {
-            var evt = new ProcessFileUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, name, description, DateTime.UtcNow);
+            var evt = new ProcessFileUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, name, description, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
 
         public void UpdatePayload(string payload)
         {
-            var evt = new ProcessFilePayloadUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, payload, DateTime.UtcNow);
+            var evt = new ProcessFilePayloadUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, payload, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
 
         public ProcessFileAggregate Publish()
         {
-            var evt = new ProcessFilePublishedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, DateTime.UtcNow);
+            var evt = new ProcessFilePublishedEvent(Guid.NewGuid().ToString(), AggregateId, Version, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
             var next = New(FileId, Name, Description, Version + 1, Payload);
@@ -68,6 +74,7 @@ namespace CaseManagement.BPMN.Domains
             return new ProcessFileAggregate
             {
                 FileId = FileId,
+                NbInstances = NbInstances,
                 AggregateId = AggregateId,
                 CreateDateTime = CreateDateTime,
                 Description = Description,

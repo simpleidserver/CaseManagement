@@ -17,7 +17,7 @@ export class BpmnFilesEffects {
         .pipe(
             ofType(ActionTypes.START_SEARCH_BPMNFILES),
             mergeMap((evt: SearchBpmnFiles) => {
-                return this.bpmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, true)
+                return this.bpmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.takeLatest, evt.fileId)
                     .pipe(
                         map(bpmnFiles => { return { type: ActionTypes.COMPLETE_SEARCH_BPMNFILES, content: bpmnFiles }; }),
                         catchError(() => of({ type: ActionTypes.ERROR_SEARCH_BPMNFILES }))
@@ -47,12 +47,18 @@ export class BpmnFilesEffects {
             mergeMap((evt: UpdateBpmnFile) => {
                 return this.bpmnFilesService.update(evt.id, evt.name, evt.description)
                     .pipe(
-                        map(() => { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description}; }),
+                        mergeMap(() => {
+                            return this.bpmnFilesService.updatePayload(evt.id, evt.payload)
+                                .pipe(
+                                    map(() => { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description, payload: evt.payload }; }),
+                                    catchError(() => of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }))
+                                )
+                        }),
                         catchError(() => of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }))
                     );
             }
             )
-    );
+        );
 
     @Effect()
     updateBpmnFilePayload$ = this.actions$

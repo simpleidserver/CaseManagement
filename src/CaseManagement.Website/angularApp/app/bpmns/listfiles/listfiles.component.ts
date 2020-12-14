@@ -3,17 +3,17 @@ import { MatPaginator, MatSort } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromBpmnFileActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
 import { BpmnFile } from '@app/stores/bpmnfiles/models/bpmn-file.model';
+import { SearchBpmnFilesResult } from '@app/stores/bpmnfiles/models/search-bpmn-files-result.model';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-import { SearchBpmnFilesResult } from '@app/stores/bpmnfiles/models/search-bpmn-files-result.model';
 
 @Component({
-    selector: 'list-case-files',
-    templateUrl: './list.component.html',
-    styleUrls: ['./list.component.scss']
+    selector: 'list-bpmn-files',
+    templateUrl: './listfiles.component.html',
+    styleUrls: ['./listfiles.component.scss']
 })
 export class ListBpmnFilesComponent implements OnInit {
-    displayedColumns: string[] = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
+    displayedColumns: string[] = [ 'name', 'nbInstances', 'version', 'status', 'create_datetime', 'update_datetime' ];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     length: number;
@@ -63,7 +63,7 @@ export class ListBpmnFilesComponent implements OnInit {
             direction = this.sort.direction;
         }
 
-        const request = new fromBpmnFileActions.SearchBpmnFiles(active, direction, count, startIndex);
+        const request = new fromBpmnFileActions.SearchBpmnFiles(active, direction, count, startIndex, true, null);
         this.store.dispatch(request);
     }
 }

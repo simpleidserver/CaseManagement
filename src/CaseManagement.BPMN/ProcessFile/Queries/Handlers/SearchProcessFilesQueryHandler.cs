@@ -25,7 +25,8 @@ namespace CaseManagement.BPMN.ProcessFile.Queries.Handlers
                 Order = request.Order,
                 OrderBy = request.OrderBy,
                 StartIndex = request.StartIndex,
-                TakeLatest = request.TakeLatest
+                TakeLatest = request.TakeLatest,
+                FileId = request.FileId
             }, cancellationToken);
             return new SearchResult<ProcessFileResult>
             {

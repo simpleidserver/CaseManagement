@@ -10,6 +10,7 @@ namespace CaseManagement.BPMN.ProcessFile.Results
         public string FileId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int NbInstances { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public string Payload { get; set; }
@@ -24,6 +25,7 @@ namespace CaseManagement.BPMN.ProcessFile.Results
                 CreateDateTime = processFile.CreateDateTime,
                 Description = processFile.Description,
                 FileId = processFile.FileId,
+                NbInstances = processFile.NbInstances,
                 Name = processFile.Name,
                 Payload = processFile.Payload,
                 Status = Enum.GetName(typeof(ProcessFileStatus), processFile.Status),

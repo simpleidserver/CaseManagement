@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
     isConnected: boolean = false;
     name: string;
     roles: any;
-    url: string = process.env.BASE_URL + "assets/images/logo.svg";
+    url: string = process.env.BASE_URL + "assets/images/logo.png";
     casesExpanded: boolean = false;
     humanTasksExpanded: boolean = false;
     bpmnsExpanded: boolean = false;
@@ -53,11 +53,13 @@ export class AppComponent implements OnInit {
         this.configureAuth();
     }
 
-    chooseLanguage(lng: string) {
+    chooseLanguage(evt: any, lng: string) {
+        evt.preventDefault();
         this.translate.use(lng);
     }
 
-    login() {
+    login(evt: any) {
+        evt.preventDefault();
         this.oauthService.customQueryParams = {
             'prompt': 'login'
         };
@@ -65,7 +67,8 @@ export class AppComponent implements OnInit {
         return false;
     }
 
-    chooseSession() {
+    chooseSession(evt: any) {
+        evt.preventDefault();
         this.oauthService.customQueryParams = {
             'prompt': 'select_account'
         };
@@ -73,7 +76,8 @@ export class AppComponent implements OnInit {
         return false;
     }
 
-    disconnect() {
+    disconnect(evt: any) {
+        evt.preventDefault();
         this.oauthService.logOut();
         this.router.navigate(['/home']);
         return false;

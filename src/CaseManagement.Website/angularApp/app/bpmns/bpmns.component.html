@@ -1,1 +1,26 @@
-﻿<router-outlet></router-outlet>
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li>{{ 'BREADCRUMB.PROCESSES' | translate }}</li>
+    </ul>
+    <mat-card fxFlex class="m-10">
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'BPMN.FILES' | translate }}
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <list-bpmn-files></list-bpmn-files>
+        </mat-card-content>
+    </mat-card>
+    <mat-card fxFlex class="m-10">
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'BPMN.INSTANCES' | translate }}
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+        </mat-card-content>
+    </mat-card>
+</div>

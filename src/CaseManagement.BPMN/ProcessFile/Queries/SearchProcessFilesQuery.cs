@@ -8,5 +8,6 @@ namespace CaseManagement.BPMN.ProcessFile.Queries
     public class SearchProcessFilesQuery : BaseSearchParameter, IRequest<SearchResult<ProcessFileResult>>
     {
         public bool TakeLatest { get; set; }
+        public string FileId { get; set; }
     }
 }

@@ -1,0 +1,209 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/bpmns']">{{ 'BREADCRUMB.PROCESSES' | translate }}</a></li>
+        <li>{{ bpmnFile.name }}</li>
+    </ul>
+    <div fxLayout="row" class="content" fxLayout.lt-md="column" fxLayoutGap="10px">
+        <div fxFlex="30%">
+            <div fxFlex="row" fxLayoutGap="10px">
+                <div fxFlex="30%">
+                    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+                        <mat-label>{{ 'SHARED.VERSION' | translate }}</mat-label>
+                        <mat-select [formControl]="versionFormControl" (selectionChange)="updateFileVersion()">
+                            <mat-option *ngFor="let b of bpmnFiles" [value]="b.version">
+                                {{ 'SHARED.FILE_VERSION' | translate : { version: b.version } }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                        <mat-label>{{ 'SHARED.CREATE_DATETIME' | translate }}</mat-label>
+                        <input matInput [value]="bpmnFile.createDateTime | date:'medium'" disabled />
+                    </mat-form-field>
+                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                        <mat-label>{{ 'SHARED.UPDATE_DATETIME' | translate }}</mat-label>
+                        <input matInput [value]="bpmnFile.updateDateTime | date:'medium'" disabled />
+                    </mat-form-field>
+                </div>
+                <div fxFlex="70%">
+                    <form [formGroup]="saveForm" (ngSubmit)="onSave(saveForm.value)">
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                            <input matInput name="name" formControlName="name" />
+                        </mat-form-field>
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'SHARED.DESCRIPTION' | translate }}</mat-label>
+                            <textarea matInput name="description" formControlName="description"></textarea>
+                        </mat-form-field>
+                        <button mat-raised-button color="primary" class="mright-10">{{ 'SHARED.SAVE' | translate }}</button>
+                        <button mat-raised-button (click)="onPublish($event)" *ngIf="bpmnFile.status === 'Edited'">{{ 'SHARED.PUBLISH' | translate }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div fxFlex="70%">
+            <div fxLayout="row" class="canvas-container">
+                <div fxFlex="80%">
+                    <div id="canvas">
+                        <div class="actions">
+                            <button [matTooltip]="'BPMN.CREATE_INSTANCE' | translate" mat-icon-button (click)="createInstance()">
+                                <mat-icon>launch</mat-icon>
+                            </button>
+                            <button [matTooltip]="'BPMN.VIEW_XML' | translate" mat-icon-button (click)="viewXML()">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div fxFlex="20%">
+                    <div *ngIf="selectedElt">
+                        <form [formGroup]="updatePropertiesForm">
+                            <mat-accordion>
+                                <!-- General information -->
+                                <mat-expansion-panel>
+                                    <mat-expansion-panel-header>
+                                        {{ 'BPMN.GENERALINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <!-- Id -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.ID' | translate }}</mat-label>
+                                        <input matInput name="id" formControlName="id" />
+                                    </mat-form-field>
+                                    <!-- Name -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                                        <input matInput name="name" formControlName="name" />
+                                    </mat-form-field>
+                                </mat-expansion-panel>
+                                <!-- Service task information -->
+                                <mat-expansion-panel *ngIf="selectedElt.type === 'bpmn:ServiceTask'">
+                                    <mat-expansion-panel-header>
+                                        {{ 'BPMN.SERVICETASKINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <!-- Type -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.IMPLEMENTATION' | translate }}</mat-label>
+                                        <mat-select formControlName="implementation">
+                                            <mat-option value="##csharpcallback">{{ 'BPMN.SERVICEIMPLEMENTATION.CSHARPCALLBACK' | translate }}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <!-- Classname -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.CLASS_NAME' | translate }}</mat-label>
+                                        <input matInput name="className" formControlName="className" />
+                                    </mat-form-field>
+                                </mat-expansion-panel>
+                                <!-- User task information -->
+                                <mat-expansion-panel *ngIf="selectedElt.type === 'bpmn:UserTask'">
+                                    <mat-expansion-panel-header>
+                                        {{ 'BPMN.USERTASKINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <!-- WS-HumanTaskDef name -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                                        <input matInput name="wsHumanTaskDefName" formControlName="wsHumanTaskDefName" />
+                                    </mat-form-field>
+                                    <!-- Type -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.IMPLEMENTATION' | translate }}</mat-label>
+                                        <mat-select formControlName="implementation">
+                                            <mat-option value="##WsHumanTask">{{ 'BPMN.SERVICEIMPLEMENTATION.WSHUMANTASK' | translate }}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <form [formGroup]="addParameterForm" (ngSubmit)="addParameter(addParameterForm.value)">
+                                        <!-- Key -->
+                                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                            <mat-label>{{ 'SHARED.KEY' | translate }}</mat-label>
+                                            <input matInput name="key" formControlName="key" />
+                                        </mat-form-field>
+                                        <!-- Value -->
+                                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                            <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+                                            <input matInput name="value" formControlName="value" />
+                                        </mat-form-field>
+                                        <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+                                    </form>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let parameter of parameters" matTooltip="{{ parameter.key }} = {{ parameter.value }}">
+                                            <button mat-icon-button (click)="removeParameter(parameter)"><mat-icon>remove</mat-icon></button>
+                                            {{ parameter.key }}
+                                        </mat-list-item>
+                                    </mat-list>
+                                </mat-expansion-panel>
+                                <!-- Exclusive gateway -->
+                                <mat-expansion-panel *ngIf="selectedElt.type === 'bpmn:ExclusiveGateway'">
+                                    <mat-expansion-panel-header>
+                                        {{ 'BPMN.EXCLUSIVEGATEWAYINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <!-- Gateway direction -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'BPMN.GATEWAYDIRECTION.TITLE' | translate }}</mat-label>
+                                        <mat-select formControlName="gatewayDirection">
+                                            <mat-option value="Unspecified">{{ 'BPMN.GATEWAYDIRECTION.UNSPECIFIED' | translate }}</mat-option>
+                                            <mat-option value="Converging">{{ 'BPMN.GATEWAYDIRECTION.CONVERGING' | translate }}</mat-option>
+                                            <mat-option value="Diverging">{{ 'BPMN.GATEWAYDIRECTION.DIVERGING' | translate }}</mat-option>
+                                            <mat-option value="Mixed">{{ 'BPMN.GATEWAYDIRECTION.MIXED' | translate }}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <!-- Default -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'BPMN.DEFAULT' | translate }}</mat-label>
+                                        <mat-select formControlName="default">
+                                            <mat-option [value]="id" *ngFor="let id of outgoingElts">
+                                                {{ id }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </mat-expansion-panel>
+                                <!-- Sequence flow -->
+                                <mat-expansion-panel *ngIf="selectedElt.type === 'bpmn:SequenceFlow'">
+                                    <mat-expansion-panel-header>
+                                        {{ 'BPMN.SEQUENCEFLOWINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <!-- Condition -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'BPMN.CONDITION' | translate }}</mat-label>
+                                        <input matInput name="sequenceFlowCondition" formControlName="sequenceFlowCondition" />
+                                    </mat-form-field>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <mat-tab-group (selectedIndexChange)="updateDataSource($event)">
+                <mat-tab label="{{ 'SHARED.INSTANCES' | translate }}">
+                    <table mat-table class="full-width" [dataSource]="bpmnInstances$" matSortActive="create_datetime" matSortDirection="desc" matSort>
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.STATUS" | translate }}</th>
+                            <td mat-cell *matCellDef="let bpmn">
+                                <a href="#" [routerLink]="['/bpmns/bpmninstances/' + bpmn.id]">{{ bpmn.status }}</a>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="create_datetime">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.CREATE_DATETIME" | translate }}</th>
+                            <td mat-cell *matCellDef="let bpmn">{{bpmn.createDateTime | date:'medium'}} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="update_datetime">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.UPDATE_DATETIME" | translate }}</th>
+                            <td mat-cell *matCellDef="let bpmn">{{bpmn.updateDateTime | date:'medium'}} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="nbExecutionPath">
+                            <th mat-header-cell *matHeaderCellDef>{{ "BPMN.NBEXECUTIONPATH" | translate }}</th>
+                            <td mat-cell *matCellDef="let bpmn">{{ bpmn.executionPaths.length }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                            <td mat-cell *matCellDef="let bpmn">
+                                <a href="#" (click)="start($event, bpmn)">{{ 'SHARED.START' | translate }}</a>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                    <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 export class BpmnFilesService {
     constructor(private http: HttpClient, private oauthService: OAuthService) { }
 
-    search(startIndex: number, count: number, order: string, direction: string, takeLatest: boolean): Observable<SearchBpmnFilesResult> {
+    search(startIndex: number, count: number, order: string, direction: string, takeLatest: boolean, fileId: string): Observable<SearchBpmnFilesResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -23,6 +23,10 @@ export class BpmnFilesService {
 
         if (direction) {
             request["order"] = direction;
+        }
+
+        if (fileId) {
+            request["fileId"] = fileId;
         }
 
         return this.http.post<SearchBpmnFilesResult>(targetUrl, JSON.stringify(request), { headers: headers });
