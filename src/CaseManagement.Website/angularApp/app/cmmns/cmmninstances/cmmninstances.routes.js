@@ -1,15 +1,17 @@
 import { RouterModule } from '@angular/router';
-import { ViewCmmnPlanComponent } from './view/view.component';
-import { ViewCmmnPlanInformationComponent } from './view/information/information.component';
-import { ViewCmmnPlanInstancesComponent } from './view/instances/instances.component';
+import { ViewCmmnPlanInstanceComponent } from './view/view.component';
+import { ViewCasePlanEltInstanceComponent } from './view/viewelt.component';
+import { ViewTransitionHistoriesComponent } from './view/viewtransitionhistories.component';
 var routes = [
     {
-        path: ':id', component: ViewCmmnPlanComponent, children: [
-            { path: '', redirectTo: 'info', pathMatch: 'full' },
-            { path: 'info', component: ViewCmmnPlanInformationComponent },
-            { path: 'instances', component: ViewCmmnPlanInstancesComponent }
+        path: ':id', component: ViewCmmnPlanInstanceComponent, children: [
+            {
+                path: ':eltid', component: ViewCasePlanEltInstanceComponent, children: [
+                    { path: ':instid/history', component: ViewTransitionHistoriesComponent },
+                ]
+            }
         ]
     }
 ];
 export var CmmnPlansRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=cmmnplans.routes.js.map
+//# sourceMappingURL=cmmninstances.routes.js.map

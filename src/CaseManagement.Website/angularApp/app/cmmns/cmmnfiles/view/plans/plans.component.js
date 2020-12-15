@@ -34,6 +34,7 @@ var ListCmmnPlansComponent = (function () {
             _this.snackBar.open(_this.translateService.instant('CMMN.MESSAGES.PLAN_INSTANCE_LAUNCHED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
+            _this.refresh();
         });
         this.store.pipe(select(fromAppState.selectCmmnPlanLstResult)).subscribe(function (searchCmmnPlanResult) {
             if (!searchCmmnPlanResult) {

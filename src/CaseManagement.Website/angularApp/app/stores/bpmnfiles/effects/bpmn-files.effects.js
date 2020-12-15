@@ -20,7 +20,7 @@ var BpmnFilesEffects = (function () {
         this.bpmnFilesService = bpmnFilesService;
         this.searchBpmnFiles$ = this.actions$
             .pipe(ofType(ActionTypes.START_SEARCH_BPMNFILES), mergeMap(function (evt) {
-            return _this.bpmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, true)
+            return _this.bpmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.takeLatest, evt.fileId)
                 .pipe(map(function (bpmnFiles) { return { type: ActionTypes.COMPLETE_SEARCH_BPMNFILES, content: bpmnFiles }; }), catchError(function () { return of({ type: ActionTypes.ERROR_SEARCH_BPMNFILES }); }));
         }));
         this.getBpmnFile$ = this.actions$
@@ -31,7 +31,10 @@ var BpmnFilesEffects = (function () {
         this.updateBpmnFile$ = this.actions$
             .pipe(ofType(ActionTypes.UPDATE_BPMNFILE), mergeMap(function (evt) {
             return _this.bpmnFilesService.update(evt.id, evt.name, evt.description)
-                .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }); }));
+                .pipe(mergeMap(function () {
+                return _this.bpmnFilesService.updatePayload(evt.id, evt.payload)
+                    .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_BPMNFILE, id: evt.id, name: evt.name, description: evt.description, payload: evt.payload }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }); }));
+            }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_BPMNFILE }); }));
         }));
         this.updateBpmnFilePayload$ = this.actions$
             .pipe(ofType(ActionTypes.UPDATE_BPMNFILE_PAYLOAD), mergeMap(function (evt) {

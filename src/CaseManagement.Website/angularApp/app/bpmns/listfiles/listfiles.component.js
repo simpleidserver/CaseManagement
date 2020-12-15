@@ -16,7 +16,7 @@ import { merge } from 'rxjs';
 var ListBpmnFilesComponent = (function () {
     function ListBpmnFilesComponent(store) {
         this.store = store;
-        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime', 'actions'];
+        this.displayedColumns = ['name', 'nbInstances', 'version', 'status', 'create_datetime', 'update_datetime'];
         this.bpmnFiles$ = [];
     }
     ListBpmnFilesComponent.prototype.ngOnInit = function () {
@@ -54,7 +54,7 @@ var ListBpmnFilesComponent = (function () {
         if (this.sort.direction) {
             direction = this.sort.direction;
         }
-        var request = new fromBpmnFileActions.SearchBpmnFiles(active, direction, count, startIndex);
+        var request = new fromBpmnFileActions.SearchBpmnFiles(active, direction, count, startIndex, true, null);
         this.store.dispatch(request);
     };
     __decorate([
@@ -67,13 +67,13 @@ var ListBpmnFilesComponent = (function () {
     ], ListBpmnFilesComponent.prototype, "sort", void 0);
     ListBpmnFilesComponent = __decorate([
         Component({
-            selector: 'list-case-files',
-            templateUrl: './list.component.html',
-            styleUrls: ['./list.component.scss']
+            selector: 'list-bpmn-files',
+            templateUrl: './listfiles.component.html',
+            styleUrls: ['./listfiles.component.scss']
         }),
         __metadata("design:paramtypes", [Store])
     ], ListBpmnFilesComponent);
     return ListBpmnFilesComponent;
 }());
 export { ListBpmnFilesComponent };
-//# sourceMappingURL=list.component.js.map
+//# sourceMappingURL=listfiles.component.js.map

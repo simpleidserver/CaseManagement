@@ -37,9 +37,9 @@ export function bpmnFileReducer(state, action) {
             state.content = action.bpmnFile;
             return __assign({}, state);
         case fromActions.ActionTypes.COMPLETE_UPDATE_BPMNFILE:
-            return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { name: action.name, description: action.description, version: (state.content.version + 1), updateDateTime: new Date() }) });
+            return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { name: action.name, description: action.description, payload: action.payload, updateDateTime: new Date() }) });
         case fromActions.ActionTypes.COMPLETE_UPDATE_BPMNFILE_PAYLOAD:
-            return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { version: (state.content.version + 1), payload: action.payload, updateDateTime: new Date() }) });
+            return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { payload: action.payload, updateDateTime: new Date() }) });
         default:
             return state;
     }

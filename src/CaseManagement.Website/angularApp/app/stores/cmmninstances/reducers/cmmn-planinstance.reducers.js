@@ -20,6 +20,16 @@ export var initialCmmnPlanInstanceLstState = {
     isLoading: true,
     isErrorLoadOccured: false
 };
+export function cmmnPlanInstanceReducer(state, action) {
+    if (state === void 0) { state = initialCmmnPlanInstanceState; }
+    switch (action.type) {
+        case fromActions.ActionTypes.COMPLETE_GET_CMMN_PLANINSTANCE:
+            state.content = action.content;
+            return __assign({}, state);
+        default:
+            return state;
+    }
+}
 export function cmmnPlanInstanceLstReducer(state, action) {
     if (state === void 0) { state = initialCmmnPlanInstanceLstState; }
     switch (action.type) {

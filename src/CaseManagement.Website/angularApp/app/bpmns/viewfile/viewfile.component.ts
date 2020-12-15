@@ -144,6 +144,20 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
             });
         });
         this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnInstanceActions.ActionTypes.COMPLETE_START_BPMNINSTANCE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.INSTANCE_STARTED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromBpmnInstanceActions.ActionTypes.ERROR_START_BPMNINSTANCE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.ERROR_START_INSTANCE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
             filter((action: any) => action.type === fromBpmnInstanceActions.ActionTypes.COMPLETE_CREATE_BPMN_INSTANCE))
             .subscribe(() => {
                 this.snackBar.open(this.translateService.instant('BPMN.MESSAGES.INSTANCE_CREATED'), this.translateService.instant('undo'), {
@@ -204,6 +218,12 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         const request = new fromBpmnFileActions.GetBpmnFile(id);
         this.store.dispatch(request);
         this.refreshBpmnInstances();
+    }
+
+    start(evt: any, bpmn: BpmnInstance) {
+        evt.preventDefault();
+        const request = new fromBpmnInstanceActions.StartBpmnInstance(bpmn.id);
+        this.store.dispatch(request);
     }
 
     refreshBpmnInstances() {

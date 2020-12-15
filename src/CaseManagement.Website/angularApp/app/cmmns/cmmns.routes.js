@@ -2,7 +2,8 @@ import { RouterModule } from '@angular/router';
 var routes = [
     { path: '', redirectTo: 'cmmnfiles', pathMatch: 'full' },
     { path: 'cmmnfiles', loadChildren: './cmmnfiles/cmmnfiles.module#CmmnFilesModule' },
-    { path: 'cmmnplans', loadChildren: './cmmnplans/cmmnplans.module#CmmnPlansModule' }
+    { path: 'cmmnplans', loadChildren: './cmmnplans/cmmnplans.module#CmmnPlansModule' },
+    { path: 'cmmninstances', loadChildren: './cmmninstances/cmmninstances.module#CmmnInstancesModule' }
 ];
 export var CmmnsRoutes = RouterModule.forChild(routes);
 //# sourceMappingURL=cmmns.routes.js.map

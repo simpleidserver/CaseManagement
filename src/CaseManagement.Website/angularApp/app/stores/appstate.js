@@ -9,6 +9,7 @@ export var selectCmmnPlan = function (state) { return state.cmmnPlan; };
 export var selectCmmnPlanLst = function (state) { return state.cmmnPlanLst; };
 export var selectCmmnFile = function (state) { return state.cmmnFile; };
 export var selectCmmnFileLst = function (state) { return state.cmmnFileLst; };
+export var selectCmmnPlanInstance = function (state) { return state.cmmnPlanInstance; };
 export var selectCmmnPlanInstanceLst = function (state) { return state.cmmnPlanInstanceLst; };
 export var selectHumanTask = function (state) { return state.humanTask; };
 export var selectHumanTasks = function (state) { return state.humanTasks; };
@@ -35,6 +36,12 @@ export var selectCmmnFileResult = createSelector(selectCmmnFile, function (state
     return state.content;
 });
 export var selectCmmnFileLstResult = createSelector(selectCmmnFileLst, function (state) {
+    if (!state || state.content == null) {
+        return null;
+    }
+    return state.content;
+});
+export var selectCmmnPlanInstanceResult = createSelector(selectCmmnPlanInstance, function (state) {
     if (!state || state.content == null) {
         return null;
     }
@@ -87,6 +94,7 @@ export var appReducer = {
     cmmnPlanLst: fromCmmnPlan.cmmnPlanLstReducer,
     cmmnFile: fromCmmnFile.cmmnFileReducer,
     cmmnFileLst: fromCmmnFile.cmmnFileLstReducer,
+    cmmnPlanInstance: fromCmmnPlanInstance.cmmnPlanInstanceReducer,
     cmmnPlanInstanceLst: fromCmmnPlanInstance.cmmnPlanInstanceLstReducer,
     humanTask: fromHumanTask.humanTaskDefReducer,
     humanTasks: fromHumanTask.humanTaskDefsReducer,

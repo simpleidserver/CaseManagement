@@ -14,6 +14,7 @@ import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { CmmnPlansRoutes } from './cmmnplans.routes';
 import { ViewCmmnPlanInformationComponent } from './view/information/information.component';
+import { ViewCmmnPlanInstancesComponent } from './view/instances/instances.component';
 import { ViewCmmnPlanComponent } from './view/view.component';
 var CmmnPlansModule = (function () {
     function CmmnPlansModule() {
@@ -33,7 +34,8 @@ var CmmnPlansModule = (function () {
             entryComponents: [],
             declarations: [
                 ViewCmmnPlanComponent,
-                ViewCmmnPlanInformationComponent
+                ViewCmmnPlanInformationComponent,
+                ViewCmmnPlanInstancesComponent
             ],
             exports: []
         })

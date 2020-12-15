@@ -12,13 +12,14 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
-import { CmmnPlansRoutes } from './cmmnplans.routes';
-import { ViewCmmnPlanInformationComponent } from './view/information/information.component';
-import { ViewCmmnPlanComponent } from './view/view.component';
-var CmmnPlansModule = (function () {
-    function CmmnPlansModule() {
+import { CmmnPlansRoutes } from './cmmninstances.routes';
+import { ViewCmmnPlanInstanceComponent } from './view/view.component';
+import { ViewCasePlanEltInstanceComponent } from './view/viewelt.component';
+import { ViewTransitionHistoriesComponent } from './view/viewtransitionhistories.component';
+var CmmnInstancesModule = (function () {
+    function CmmnInstancesModule() {
     }
-    CmmnPlansModule = __decorate([
+    CmmnInstancesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
@@ -32,13 +33,14 @@ var CmmnPlansModule = (function () {
             ],
             entryComponents: [],
             declarations: [
-                ViewCmmnPlanComponent,
-                ViewCmmnPlanInformationComponent
+                ViewCmmnPlanInstanceComponent,
+                ViewCasePlanEltInstanceComponent,
+                ViewTransitionHistoriesComponent
             ],
             exports: []
         })
-    ], CmmnPlansModule);
-    return CmmnPlansModule;
+    ], CmmnInstancesModule);
+    return CmmnInstancesModule;
 }());
-export { CmmnPlansModule };
-//# sourceMappingURL=cmmnplans.module.js.map
+export { CmmnInstancesModule };
+//# sourceMappingURL=cmmninstances.module.js.map

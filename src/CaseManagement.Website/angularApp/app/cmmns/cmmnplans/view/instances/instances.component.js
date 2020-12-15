@@ -10,16 +10,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
+import * as fromAppState from '@app/stores/appstate';
 import * as fromCmmnPlanInstancesActions from '@app/stores/cmmninstances/actions/cmmn-instances.actions';
+import { select, Store } from '@ngrx/store';
+import { merge } from 'rxjs';
 var ViewCmmnPlanInstancesComponent = (function () {
     function ViewCmmnPlanInstancesComponent(route, store) {
         this.route = route;
         this.store = store;
-        this.displayedColumns = ['name', 'version', 'create_datetime', 'update_datetime', 'nb_instances', 'actions'];
+        this.displayedColumns = ['name', 'state', 'create_datetime', 'update_datetime'];
         this.cmmnPlanInstances$ = [];
     }
     ViewCmmnPlanInstancesComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.store.pipe(select(fromAppState.selectCmmnPlanInstanceLstResult)).subscribe(function (searchCasePlanInstanceResult) {
+            if (!searchCasePlanInstanceResult) {
+                return;
+            }
+            _this.cmmnPlanInstances$ = searchCasePlanInstanceResult.content;
+            _this.length = searchCasePlanInstanceResult.totalLength;
+        });
         this.refresh();
+    };
+    ViewCmmnPlanInstancesComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
     };
     ViewCmmnPlanInstancesComponent.prototype.refresh = function () {
         var startIndex = 0;
@@ -42,7 +57,6 @@ var ViewCmmnPlanInstancesComponent = (function () {
         var request = new fromCmmnPlanInstancesActions.SearchCmmnPlanInstance(active, direction, count, startIndex, id);
         this.store.dispatch(request);
     };
-    var _a;
     __decorate([
         ViewChild(MatPaginator),
         __metadata("design:type", MatPaginator)
@@ -57,7 +71,8 @@ var ViewCmmnPlanInstancesComponent = (function () {
             templateUrl: './instances.component.html',
             styleUrls: ['./instances.component.scss']
         }),
-        __metadata("design:paramtypes", [ActivatedRoute, typeof (_a = typeof Store !== "undefined" && Store) === "function" ? _a : Object])
+        __metadata("design:paramtypes", [ActivatedRoute,
+            Store])
     ], ViewCmmnPlanInstancesComponent);
     return ViewCmmnPlanInstancesComponent;
 }());

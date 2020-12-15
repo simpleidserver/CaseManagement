@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { ListBpmnFilesComponent } from './listfiles/listfiles.component';
 import { BpmnsComponent } from './bpmns.component';
 import { BpmnsRoutes } from './bpmns.routes';
-import { ViewBpmnFileComponent } from './viewfile/viewfile.component';
+import { ListBpmnFilesComponent } from './listfiles/listfiles.component';
 import { ViewXmlDialog } from './viewfile/view-xml-dialog';
-import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { ViewBpmnFileComponent } from './viewfile/viewfile.component';
+import { ViewBpmnInstanceComponent } from './viewinstance/view.component';
+import { ViewMessageDialog } from './viewinstance/view-message-dialog';
 
 @NgModule({
     imports: [
@@ -17,12 +19,14 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
         BpmnsRoutes,
         MonacoEditorModule.forRoot()
     ],
-    entryComponents: [ ViewXmlDialog ],
+    entryComponents: [ViewXmlDialog, ViewMessageDialog ],
     declarations: [
         BpmnsComponent,
         ListBpmnFilesComponent,
         ViewBpmnFileComponent,
-        ViewXmlDialog
+        ViewXmlDialog,
+        ViewMessageDialog,
+        ViewBpmnInstanceComponent
     ],
     providers: [ ]
 })

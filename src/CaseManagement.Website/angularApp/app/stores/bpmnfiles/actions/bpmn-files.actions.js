@@ -17,11 +17,13 @@ export var ActionTypes;
     ActionTypes["ERROR_UPDATE_BPMNFILE_PAYLOAD"] = "[BpmnFiles] ERROR_UPDATE_BPMNFILE_PAYLOAD";
 })(ActionTypes || (ActionTypes = {}));
 var SearchBpmnFiles = (function () {
-    function SearchBpmnFiles(order, direction, count, startIndex) {
+    function SearchBpmnFiles(order, direction, count, startIndex, takeLatest, fileId) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
+        this.takeLatest = takeLatest;
+        this.fileId = fileId;
         this.type = ActionTypes.START_SEARCH_BPMNFILES;
     }
     return SearchBpmnFiles;
@@ -68,10 +70,11 @@ var CompletePublishBpmnFile = (function () {
 }());
 export { CompletePublishBpmnFile };
 var UpdateBpmnFile = (function () {
-    function UpdateBpmnFile(id, name, description) {
+    function UpdateBpmnFile(id, name, description, payload) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.payload = payload;
         this.type = ActionTypes.UPDATE_BPMNFILE;
     }
     return UpdateBpmnFile;

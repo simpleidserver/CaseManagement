@@ -7,30 +7,53 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
-var AddCmmnFileDialog = (function () {
-    function AddCmmnFileDialog(dialogRef, formBuilder) {
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+var ViewXmlDialog = (function () {
+    function ViewXmlDialog(dialogRef, data) {
         this.dialogRef = dialogRef;
-        this.formBuilder = formBuilder;
-        this.addCmmnFileForm = this.formBuilder.group({
-            name: '',
-            description: ''
-        });
+        this.data = data;
+        this.editorOptions = { theme: 'vs-dark', language: 'xml', automaticLayout: true };
+        this.xml = this.formatXML(data.xml);
     }
-    AddCmmnFileDialog.prototype.onSubmit = function () {
-        this.dialogRef.close(this.addCmmnFileForm.value);
+    ViewXmlDialog.prototype.update = function () {
+        this.dialogRef.close({ xml: this.xml });
     };
-    AddCmmnFileDialog = __decorate([
+    ViewXmlDialog.prototype.formatXML = function (xml) {
+        var PADDING = ' '.repeat(2);
+        var reg = /(>)(<)(\/*)/g;
+        var pad = 0;
+        xml = xml.replace(reg, '$1\r\n$2$3');
+        return xml.split('\r\n').map(function (node) {
+            var indent = 0;
+            if (node.match(/.+<\/\w[^>]*>$/)) {
+                indent = 0;
+            }
+            else if (node.match(/^<\/\w/) && pad > 0) {
+                pad -= 1;
+            }
+            else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+                indent = 1;
+            }
+            else {
+                indent = 0;
+            }
+            pad += indent;
+            return PADDING.repeat(pad - indent) + node;
+        }).join('\r\n');
+    };
+    ViewXmlDialog = __decorate([
         Component({
-            selector: 'add-cmmn-file-dialog',
-            templateUrl: 'add-cmmn-file-dialog.html',
+            selector: 'view-xml-dialog',
+            templateUrl: 'view-xml-dialog.html',
         }),
-        __metadata("design:paramtypes", [MatDialogRef,
-            FormBuilder])
-    ], AddCmmnFileDialog);
-    return AddCmmnFileDialog;
+        __param(1, Inject(MAT_DIALOG_DATA)),
+        __metadata("design:paramtypes", [MatDialogRef, Object])
+    ], ViewXmlDialog);
+    return ViewXmlDialog;
 }());
-export { AddCmmnFileDialog };
-//# sourceMappingURL=add-cmmn-file-dialog.js.map
+export { ViewXmlDialog };
+//# sourceMappingURL=view-xml-dialog.js.map

@@ -27,7 +27,7 @@ var ViewCmmnPlanComponent = (function () {
     }
     ViewCmmnPlanComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.actions$.pipe(filter(function (action) { return action.type === fromCmmnPlanActions.ActionTypes.COMPLETE_GET_CMMN_PLAN; }))
+        this.actions$.pipe(filter(function (action) { return action.type === fromCmmnPlanActions.ActionTypes.ERROR_GET_CMMN_PLAN; }))
             .subscribe(function () {
             _this.snackBar.open(_this.translateService.instant('CMMN.MESSAGES.ERROR_GET_CMMN_PLAN'), _this.translateService.instant('undo'), {
                 duration: 2000

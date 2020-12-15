@@ -15,17 +15,21 @@
   "BREADCRUMB": {
     "DASHBOARD": "Dashboard",
     "PROCESSES": "Processes",
-    "CASES": "Cases"
+    "CASES": "Cases",
+    "PROCESSINSTANCE": "Process instance '{{date}}'"
   },
   "BPMN": {
     "FILES": "Process definitions",
     "INSTANCES": "Process instances",
     "GENERALINFO": "Information",
+    "VIEW_MESSAGE": "View message",
     "SERVICETASKINFO": "Service task",
     "USERTASKINFO": "User task",
     "EXCLUSIVEGATEWAYINFO": "Exclusive gateway",
     "SEQUENCEFLOWINFO": "Sequence flow",
     "NBEXECUTIONPATH": "Number of execution path",
+    "EXECUTIONPATH": "Execution path",
+    "EXECUTIONPATH_INFO": "Execution path '{{index}}', created '{{receptionDate}}'",
     "CREATE_INSTANCE": "Create instance",
     "DEFAULT": "Default",
     "VIEW_XML": "View xml",
@@ -45,7 +49,10 @@
       "FILE_PUBLISHED": "File is published",
       "ERROR_PUBLISH_FILE": "An error occured while trying to publish the file",
       "INSTANCE_CREATED": "Instance is created",
-      "ERROR_CREATE_INSTANCE": "An error occured while trying to create the instance"
+      "ERROR_CREATE_INSTANCE": "An error occured while trying to create the instance",
+      "ERROR_GET_BPMNINSTANCE": "An error occured while trying to get the BPMN instance",
+      "INSTANCE_STARTED": "Instance is started",
+      "ERROR_START_INSTANCE": "An error occured while trying to start the instance"
     }
   },
   "SHARED": {
@@ -71,6 +78,12 @@
     "EXPIRATION_TIME": "Expiration time",
     "CREATE_DATETIME": "Create datetime",
     "UPDATE_DATETIME": "Update datetime",
-    "START": "Start"
+    "EXECUTION_DATETIME": "Execution datetime",
+    "START": "Start",
+    "STATES": "States",
+    "INCOMING_TOKENS": "Incoming tokens",
+    "OUTGOING_TOKENS": "Outgoing tokens",
+    "EMPTY": "Empty",
+    "CONTENT": "Content"
   }
 }

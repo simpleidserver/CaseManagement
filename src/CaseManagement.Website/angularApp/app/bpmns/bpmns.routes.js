@@ -1,9 +1,12 @@
 import { RouterModule } from '@angular/router';
 import { BpmnsComponent } from './bpmns.component';
+import { ViewBpmnFileComponent } from './viewfile/viewfile.component';
+import { ViewBpmnInstanceComponent } from './viewinstance/view.component';
 var routes = [
-    { path: '', redirectTo: 'bpmnfiles', pathMatch: 'full' },
-    { path: 'bpmnfiles', component: BpmnsComponent, loadChildren: './bpmnfiles/bpmnfiles.module#BpmnFilesModule' },
-    { path: 'bpmninstances', component: BpmnsComponent, loadChildren: './bpmninstances/bpmninstances.module#BpmnInstancesModule' }
+    { path: '', component: BpmnsComponent },
+    { path: ':id', component: ViewBpmnFileComponent },
+    { path: ':id/:instanceid', component: ViewBpmnInstanceComponent },
+    { path: ':id/:instanceid/:pathid', component: ViewBpmnInstanceComponent }
 ];
 export var BpmnsRoutes = RouterModule.forChild(routes);
 //# sourceMappingURL=bpmns.routes.js.map

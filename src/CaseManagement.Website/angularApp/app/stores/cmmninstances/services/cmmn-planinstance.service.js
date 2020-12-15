@@ -20,7 +20,7 @@ var CmmnPlanInstanceService = (function () {
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        var targetUrl = process.env.API_URL + "/case-plan-instances";
+        var targetUrl = process.env.API_URL + "/case-plan-instances/search";
         var request = { startIndex: startIndex, count: count, casePlanId: casePlanId };
         if (order) {
             request["orderBy"] = order;
@@ -44,6 +44,13 @@ var CmmnPlanInstanceService = (function () {
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/launch";
+        return this.http.get(targetUrl, { headers: headers });
+    };
+    CmmnPlanInstanceService.prototype.get = function (casePlanInstanceId) {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId;
         return this.http.get(targetUrl, { headers: headers });
     };
     CmmnPlanInstanceService = __decorate([

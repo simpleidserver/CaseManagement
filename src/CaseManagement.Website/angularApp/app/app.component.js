@@ -23,7 +23,7 @@ var AppComponent = (function () {
         this.router = router;
         this.sidenavService = sidenavService;
         this.isConnected = false;
-        this.url = process.env.BASE_URL + "assets/images/logo.svg";
+        this.url = process.env.BASE_URL + "assets/images/logo.png";
         this.casesExpanded = false;
         this.humanTasksExpanded = false;
         this.bpmnsExpanded = false;
@@ -31,24 +31,28 @@ var AppComponent = (function () {
         translate.use('fr');
         this.configureAuth();
     }
-    AppComponent.prototype.chooseLanguage = function (lng) {
+    AppComponent.prototype.chooseLanguage = function (evt, lng) {
+        evt.preventDefault();
         this.translate.use(lng);
     };
-    AppComponent.prototype.login = function () {
+    AppComponent.prototype.login = function (evt) {
+        evt.preventDefault();
         this.oauthService.customQueryParams = {
             'prompt': 'login'
         };
         this.oauthService.initImplicitFlow();
         return false;
     };
-    AppComponent.prototype.chooseSession = function () {
+    AppComponent.prototype.chooseSession = function (evt) {
+        evt.preventDefault();
         this.oauthService.customQueryParams = {
             'prompt': 'select_account'
         };
         this.oauthService.initImplicitFlow();
         return false;
     };
-    AppComponent.prototype.disconnect = function () {
+    AppComponent.prototype.disconnect = function (evt) {
+        evt.preventDefault();
         this.oauthService.logOut();
         this.router.navigate(['/home']);
         return false;

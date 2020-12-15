@@ -1,0 +1,91 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/bpmns']">{{ 'BREADCRUMB.PROCESSES' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/bpmns/' + bpmnFile.id]">{{ bpmnFile.name }}</a></li>
+        <li>{{ 'BREADCRUMB.PROCESSINSTANCE' | translate : { date : (bpmnInstance.createDateTime | date:'medium') } }}</li>
+    </ul>
+    <div fxLayout="row" class="content" fxLayout.lt-md="column" fxLayoutGap="10px">
+        <div fxFlex="30%">
+            <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+                <mat-label>{{ 'BPMN.EXECUTIONPATH' | translate }}</mat-label>
+                <mat-select [formControl]="executionPathFormControl" (selectionChange)="updateExecutionPath()">
+                    <mat-option *ngFor="let execPath of executionPaths; let i = index;" [value]="execPath.id">
+                        {{ 'BPMN.EXECUTIONPATH_INFO' | translate : { index : (executionPaths.length - i), receptionDate : (execPath.createDateTime | date:'medium') } }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxFlex="70%">
+            <div id="canvas" style="height: 300px;"></div>
+            <mat-tab-group>
+                <mat-tab label="{{ 'SHARED.INCOMING_TOKENS' | translate }}">
+                    <table #incomingTokensSort mat-table class="full-width" [dataSource]="incomingTokens$" matSort>
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>{{ "SHARED.NAME" | translate }}</th>
+                            <td mat-cell *matCellDef="let token">
+                                {{ token.name }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="content">
+                            <th mat-header-cell *matHeaderCellDef>{{ "SHARED.CONTENT" | translate }}</th>
+                            <td mat-cell *matCellDef="let token">
+                                <button *ngIf="token.content" mat-icon-button (click)="viewMessage(token.content)">
+                                    <mat-icon>search</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="incomingTokensDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: incomingTokensDisplayedColumns;"></tr>
+                    </table>
+                </mat-tab>
+                <mat-tab label="{{ 'SHARED.OUTGOING_TOKENS' | translate }}">
+                    <table  #outgoingTokensSort="matSort" mat-table class="full-width" [dataSource]="outgoingTokens$" matSort>
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>{{ "SHARED.NAME" | translate }}</th>
+                            <td mat-cell *matCellDef="let token">
+                                {{ token.name }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="content">
+                            <th mat-header-cell *matHeaderCellDef>{{ "SHARED.CONTENT" | translate }}</th>
+                            <td mat-cell *matCellDef="let token">
+                                <button *ngIf="token.content" mat-icon-button (click)="viewMessage(token.content)">
+                                    <mat-icon>search</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="outgoingTokensDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: outgoingTokensDisplayedColumns;"></tr>
+                    </table>
+                </mat-tab>
+                <mat-tab label="{{ 'SHARED.STATES' | translate }}">
+                    <mat-table #activityStatesSort="matSort" class="full-width" [dataSource]="activityStates$" matSortActive="executionDateTime" matSortDirection="desc" matSort>
+                        <ng-container matColumnDef="state">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.STATE" | translate }}</mat-header-cell>
+                            <mat-cell *matCellDef="let actState">
+                                {{ actState.state }}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="executionDateTime">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.EXECUTION_DATETIME" | translate }}</mat-header-cell>
+                            <mat-cell *matCellDef="let actState">
+                                {{ actState.executionDateTime | date:'medium' }}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="message">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+                            <mat-cell *matCellDef="let actState">
+                                <button *ngIf="actState.message" mat-icon-button (click)="viewMessage(actState.message)">
+                                    <mat-icon>search</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="activityStatesDisplayedColumns; sticky: true"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: activityStatesDisplayedColumns;"></mat-row>
+                    </mat-table>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

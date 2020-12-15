@@ -16,7 +16,7 @@ var BpmnFilesService = (function () {
         this.http = http;
         this.oauthService = oauthService;
     }
-    BpmnFilesService.prototype.search = function (startIndex, count, order, direction, takeLatest) {
+    BpmnFilesService.prototype.search = function (startIndex, count, order, direction, takeLatest, fileId) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
@@ -28,6 +28,9 @@ var BpmnFilesService = (function () {
         }
         if (direction) {
             request["order"] = direction;
+        }
+        if (fileId) {
+            request["fileId"] = fileId;
         }
         return this.http.post(targetUrl, JSON.stringify(request), { headers: headers });
     };

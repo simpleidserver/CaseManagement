@@ -6,10 +6,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { BpmnsComponent } from './bpmns.component';
 import { BpmnsRoutes } from './bpmns.routes';
+import { ListBpmnFilesComponent } from './listfiles/listfiles.component';
+import { ViewXmlDialog } from './viewfile/view-xml-dialog';
+import { ViewBpmnFileComponent } from './viewfile/viewfile.component';
+import { ViewBpmnInstanceComponent } from './viewinstance/view.component';
 var BpmnsModule = (function () {
     function BpmnsModule() {
     }
@@ -19,10 +24,17 @@ var BpmnsModule = (function () {
                 CommonModule,
                 SharedModule,
                 MaterialModule,
-                BpmnsRoutes
+                BpmnsRoutes,
+                MonacoEditorModule.forRoot()
             ],
-            entryComponents: [],
-            declarations: [BpmnsComponent],
+            entryComponents: [ViewXmlDialog],
+            declarations: [
+                BpmnsComponent,
+                ListBpmnFilesComponent,
+                ViewBpmnFileComponent,
+                ViewXmlDialog,
+                ViewBpmnInstanceComponent
+            ],
             providers: []
         })
     ], BpmnsModule);

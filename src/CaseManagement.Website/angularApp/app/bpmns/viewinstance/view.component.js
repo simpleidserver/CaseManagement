@@ -7,19 +7,40 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MatSnackBar, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
-import { select, Store } from '@ngrx/store';
+import * as fromBpmnFilesActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
+import { BpmnFile } from '@app/stores/bpmnfiles/models/bpmn-file.model';
+import * as fromBpmnInstanceActions from '@app/stores/bpmninstances/actions/bpmn-instances.actions';
+import { BpmnInstance, ActivityStateHistory, BpmnMessageToken } from '@app/stores/bpmninstances/models/bpmn-instance.model';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
 var BpmnViewer = require('bpmn-js/lib/Viewer');
-var ViewExecutionPathComponent = (function () {
-    function ViewExecutionPathComponent(store, route, router) {
+var ViewBpmnInstanceComponent = (function () {
+    function ViewBpmnInstanceComponent(store, translateService, route, snackBar, actions$, router, dialog) {
         this.store = store;
+        this.translateService = translateService;
         this.route = route;
+        this.snackBar = snackBar;
+        this.actions$ = actions$;
         this.router = router;
-        this.bpmnFile = null;
+        this.dialog = dialog;
+        this.activityStatesDisplayedColumns = ['state', 'executionDateTime', 'message'];
+        this.incomingTokensDisplayedColumns = ['name', 'content'];
+        this.outgoingTokensDisplayedColumns = ['name', 'content'];
+        this.activityStates$ = new MatTableDataSource();
+        this.incomingTokens$ = new MatTableDataSource();
+        this.outgoingTokens$ = new MatTableDataSource();
+        this.bpmnInstance = new BpmnInstance();
+        this.bpmnFile = new BpmnFile();
+        this.executionPaths = [];
+        this.executionPathFormControl = new FormControl();
     }
-    ViewExecutionPathComponent.prototype.ngOnInit = function () {
+    ViewBpmnInstanceComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.viewer = new BpmnViewer.default({
             container: "#canvas",
@@ -27,48 +48,70 @@ var ViewExecutionPathComponent = (function () {
                 bindTo: window
             }
         });
+        this.activityStates$.data = [new ActivityStateHistory(), new ActivityStateHistory()];
+        this.incomingTokens$.data = [new BpmnMessageToken(), new BpmnMessageToken()];
+        this.outgoingTokens$.data = [new BpmnMessageToken(), new BpmnMessageToken()];
+        this.actions$.pipe(filter(function (action) { return action.type === fromBpmnInstanceActions.ActionTypes.ERROR_GET_BPMNINSTANCE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('BPMN..MESSAGES.ERROR_GET_BPMNINSTANCE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
         this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (e) {
             if (!e || !e.payload) {
                 return;
             }
             _this.bpmnFile = e;
-            _this.refresh();
+            _this.refreshCanvas();
         });
         this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
+            e.executionPaths.sort(function (a, b) {
+                return new Date(b.createDateTime).getTime() - new Date(a.createDateTime).getTime();
+            });
+            _this.executionPaths = e.executionPaths;
             _this.bpmnInstance = e;
-            _this.refresh();
         });
-        this.route.params.subscribe(function () {
-            if (!_this.bpmnInstance) {
-                return;
-            }
-            _this.refresh();
-        });
-    };
-    ViewExecutionPathComponent.prototype.refresh = function () {
-        var self = this;
-        if (!self.bpmnFile || !this.bpmnInstance) {
-            return;
+        this.fileId = this.route.snapshot.params['id'];
+        this.instanceId = this.route.snapshot.params['instanceid'];
+        this.execPathId = this.route.snapshot.params['pathid'];
+        if (this.execPathId) {
+            this.executionPathFormControl.setValue(this.execPathId);
         }
-        var pathid = this.route.snapshot.params['pathid'];
+        this.refresh();
+    };
+    ViewBpmnInstanceComponent.prototype.ngAfterViewInit = function () {
+        this.activityStates$.sort = this.activityStatesSort;
+    };
+    ViewBpmnInstanceComponent.prototype.updateExecutionPath = function () {
+        this.execPathId = this.executionPathFormControl.value;
+        this.router.navigate(['/bpmns/' + this.fileId + '/' + this.instanceId + '/' + this.execPathId]);
+    };
+    ViewBpmnInstanceComponent.prototype.refreshCanvas = function () {
+        var self = this;
         this.viewer.importXML(self.bpmnFile.payload).then(function () {
             if (self.bpmnInstance.executionPaths && self.bpmnInstance.executionPaths.length > 0) {
                 var filtered = self.bpmnInstance.executionPaths.filter(function (v) {
-                    return v.id == pathid;
+                    return v.id === self.execPathId;
                 });
+                var canvas = self.viewer.get('canvas');
+                canvas.zoom('fit-viewport');
                 if (filtered.length !== 1) {
                     return;
                 }
                 self.displayExecutionPath(null, filtered[0]);
-                var canvas = self.viewer.get('canvas');
-                canvas.zoom('fit-viewport');
             }
         });
     };
-    ViewExecutionPathComponent.prototype.displayExecutionPath = function (evt, execPath) {
+    ViewBpmnInstanceComponent.prototype.refresh = function () {
+        this.store.dispatch(new fromBpmnInstanceActions.GetBpmnInstance(this.instanceId));
+        this.store.dispatch(new fromBpmnFilesActions.GetBpmnFile(this.fileId));
+    };
+    ViewBpmnInstanceComponent.prototype.viewMessage = function (ActivityStateHistory) {
+    };
+    ViewBpmnInstanceComponent.prototype.displayExecutionPath = function (evt, execPath) {
         if (evt) {
             evt.preventDefault();
         }
@@ -137,33 +180,62 @@ var ViewExecutionPathComponent = (function () {
                 },
                 html: outgoingTokens
             });
-            var id = self.route.parent.parent.snapshot.params['id'];
-            var pathid = self.route.snapshot.params['pathid'];
             $(completeOverlayHtml).click(function () {
                 var eltid = $(this).data('id');
                 $(".selected-overlay").hide();
-                self.router.navigate(['/bpmns/bpmninstances/' + id + '/' + pathid + '/' + eltid]);
                 selectedOverlayHtml.show();
+                self.displayElt(eltid);
             });
             $(errorOverlayHtml).click(function () {
                 var eltid = $(this).data('id');
                 $(".selected-overlay").hide();
-                self.router.navigate(['/bpmns/bpmninstances/' + id + '/' + pathid + '/' + eltid]);
                 selectedOverlayHtml.show();
+                self.displayElt(eltid);
             });
         });
     };
-    ViewExecutionPathComponent = __decorate([
+    ViewBpmnInstanceComponent.prototype.displayElt = function (eltid) {
+        var self = this;
+        var filteredPath = self.executionPaths.filter(function (execPath) {
+            return execPath.id = self.execPathId;
+        });
+        if (filteredPath.length != 1) {
+            return;
+        }
+        var execPointer = filteredPath[0].executionPointers.filter(function (p) {
+            return p.id === eltid;
+        })[0];
+        this.activityStates$.data = execPointer.flowNodeInstance.activityStates;
+        this.incomingTokens$.data = execPointer.incomingTokens;
+        this.outgoingTokens$.data = execPointer.outgoingTokens;
+    };
+    __decorate([
+        ViewChild('activityStatesSort'),
+        __metadata("design:type", MatSort)
+    ], ViewBpmnInstanceComponent.prototype, "activityStatesSort", void 0);
+    __decorate([
+        ViewChild('incomingTokensSort'),
+        __metadata("design:type", MatSort)
+    ], ViewBpmnInstanceComponent.prototype, "incomingTokensSort", void 0);
+    __decorate([
+        ViewChild('outgoingTokensSort'),
+        __metadata("design:type", MatSort)
+    ], ViewBpmnInstanceComponent.prototype, "outgoingTokensSort", void 0);
+    ViewBpmnInstanceComponent = __decorate([
         Component({
-            selector: 'view-execution-path',
-            templateUrl: './viewexecutionpath.component.html',
-            styleUrls: ['./viewexecutionpath.component.scss']
+            selector: 'view-bpmn-instance',
+            templateUrl: './view.component.html',
+            styleUrls: ['./view.component.scss']
         }),
         __metadata("design:paramtypes", [Store,
+            TranslateService,
             ActivatedRoute,
-            Router])
-    ], ViewExecutionPathComponent);
-    return ViewExecutionPathComponent;
+            MatSnackBar,
+            ScannedActionsSubject,
+            Router,
+            MatDialog])
+    ], ViewBpmnInstanceComponent);
+    return ViewBpmnInstanceComponent;
 }());
-export { ViewExecutionPathComponent };
-//# sourceMappingURL=viewexecutionpath.component.js.map
+export { ViewBpmnInstanceComponent };
+//# sourceMappingURL=view.component.js.map

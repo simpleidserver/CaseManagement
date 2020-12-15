@@ -12,64 +12,56 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import { select, Store } from '@ngrx/store';
-var ActivityStatesComponent = (function () {
-    function ActivityStatesComponent(store, route) {
+var ViewTransitionHistoriesComponent = (function () {
+    function ViewTransitionHistoriesComponent(store, route) {
         this.store = store;
         this.route = route;
-        this.displayedColumns = ['state', 'executionDateTime', 'message'];
-        this.activityStates$ = new MatTableDataSource();
-        this.bpmnInstance = null;
+        this.displayedColumns = ['transition', 'executionDateTime', 'message'];
+        this.transitionHistories$ = new MatTableDataSource();
+        this.cmmnInstance = null;
     }
-    ActivityStatesComponent.prototype.ngOnInit = function () {
+    ViewTransitionHistoriesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe(function (e) {
+        this.store.pipe(select(fromAppState.selectCmmnPlanInstanceResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
-            _this.bpmnInstance = e;
-        });
-        this.route.parent.parent.params.subscribe(function () {
+            _this.cmmnInstance = e;
             _this.refresh();
         });
-        this.route.parent.params.subscribe(function () {
+        this.route.params.subscribe(function () {
             _this.refresh();
         });
     };
-    ActivityStatesComponent.prototype.ngAfterViewInit = function () {
-        this.activityStates$.sort = this.sort;
+    ViewTransitionHistoriesComponent.prototype.ngAfterViewInit = function () {
+        this.transitionHistories$.sort = this.sort;
     };
-    ActivityStatesComponent.prototype.refresh = function () {
-        if (!this.bpmnInstance) {
+    ViewTransitionHistoriesComponent.prototype.refresh = function () {
+        if (!this.cmmnInstance) {
             return;
         }
-        var pathid = this.route.parent.parent.snapshot.params['pathid'];
-        var eltid = this.route.parent.snapshot.params['eltid'];
-        var filteredExecutionPath = this.bpmnInstance.executionPaths.filter(function (ep) {
-            return ep.id === pathid;
+        var id = this.route.snapshot.params['instid'];
+        var filteredExecutionPath = this.cmmnInstance.children.filter(function (ep) {
+            return ep.id === id;
         });
         if (filteredExecutionPath.length === 1) {
-            var filteredElt = filteredExecutionPath[0].executionPointers.filter(function (ep) {
-                return ep.id === eltid;
-            });
-            if (filteredElt.length === 1) {
-                this.activityStates$.data = filteredElt[0].flowNodeInstance.activityStates;
-            }
+            this.transitionHistories$.data = filteredExecutionPath[0].transitionHistories;
         }
     };
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], ActivityStatesComponent.prototype, "sort", void 0);
-    ActivityStatesComponent = __decorate([
+    ], ViewTransitionHistoriesComponent.prototype, "sort", void 0);
+    ViewTransitionHistoriesComponent = __decorate([
         Component({
-            selector: 'list-activity-state',
-            templateUrl: './activitystates.component.html',
-            styleUrls: ['./activitystates.component.scss']
+            selector: 'view-transition-histories',
+            templateUrl: './viewtransitionhistories.component.html',
+            styleUrls: ['./viewtransitionhistories.component.scss']
         }),
         __metadata("design:paramtypes", [Store,
             ActivatedRoute])
-    ], ActivityStatesComponent);
-    return ActivityStatesComponent;
+    ], ViewTransitionHistoriesComponent);
+    return ViewTransitionHistoriesComponent;
 }());
-export { ActivityStatesComponent };
-//# sourceMappingURL=activitystates.component.js.map
+export { ViewTransitionHistoriesComponent };
+//# sourceMappingURL=viewtransitionhistories.component.js.map

@@ -105,24 +105,18 @@ ul.breadcrumb li:not(:last-child):after {
     height: 30px;
 }
 
-@media (max-width: 960px) {
-    .content {
-        overflow: auto;
-    }
-}
-
 @media(min-width: 960px) {
     .content > div {
         overflow: auto;
     }
-}
 
-.content {
-    position: absolute;
-    top: 30px;
-    right: 10px;
-    left: 10px;
-    bottom: 0px;
+    .content {
+        position: absolute;
+        top: 30px;
+        right: 10px;
+        left: 10px;
+        bottom: 0px;
+    }
 }
 
 .circle {

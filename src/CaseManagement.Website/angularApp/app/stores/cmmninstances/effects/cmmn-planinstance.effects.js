@@ -31,11 +31,24 @@ var CmmnPlanInstanceEffects = (function () {
             return _this.cmmnPlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId)
                 .pipe(map(function (cmmnPlanInstances) { return { type: fromCmmnPlanInstance.ActionTypes.COMPLETE_SEARCH_CMMN_PLANINSTANCE, content: cmmnPlanInstances }; }), catchError(function () { return of({ type: fromCmmnPlanInstance.ActionTypes.ERROR_SEARCH_CMMN_PLANINSTANCE }); }));
         }));
+        this.getCasePlanInstance = this.actions$
+            .pipe(ofType(fromCmmnPlanInstance.ActionTypes.GET_CMMN_PLANINSTANCE), mergeMap(function (evt) {
+            return _this.cmmnPlanInstanceService.get(evt.cmmnPlanInstanceId)
+                .pipe(map(function (cmmnPlanInstance) { return { type: fromCmmnPlanInstance.ActionTypes.COMPLETE_GET_CMMN_PLANINSTANCE, content: cmmnPlanInstance }; }), catchError(function () { return of({ type: fromCmmnPlanInstance.ActionTypes.ERROR_GET_CMMN_PLANINSTANCE }); }));
+        }));
     }
     __decorate([
         Effect(),
         __metadata("design:type", Object)
     ], CmmnPlanInstanceEffects.prototype, "launchCasePlanInstance", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], CmmnPlanInstanceEffects.prototype, "searchCasePlanInstances", void 0);
+    __decorate([
+        Effect(),
+        __metadata("design:type", Object)
+    ], CmmnPlanInstanceEffects.prototype, "getCasePlanInstance", void 0);
     CmmnPlanInstanceEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,

@@ -177,7 +177,7 @@
                         <ng-container matColumnDef="status">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.STATUS" | translate }}</th>
                             <td mat-cell *matCellDef="let bpmn">
-                                <a href="#" [routerLink]="['/bpmns/bpmninstances/' + bpmn.id]">{{ bpmn.status }}</a>
+                                <a href="#" [routerLink]="['/bpmns/' + bpmnFile.id + '/' + bpmn.id]">{{ bpmn.status }}</a>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="create_datetime">
