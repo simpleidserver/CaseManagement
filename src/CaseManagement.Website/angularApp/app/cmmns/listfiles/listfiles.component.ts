@@ -1,42 +1,42 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
-import * as fromBpmnFileActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
-import { BpmnFile } from '@app/stores/bpmnfiles/models/bpmn-file.model';
-import { SearchBpmnFilesResult } from '@app/stores/bpmnfiles/models/search-bpmn-files-result.model';
+import * as fromCmmnFileActions from '@app/stores/cmmnfiles/actions/cmmn-files.actions';
+import { CmmnFile } from '@app/stores/cmmnfiles/models/cmmn-file.model';
+import { SearchCmmnFilesResult } from '@app/stores/cmmnfiles/models/search-cmmn-files-result.model';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
 
 @Component({
-    selector: 'list-bpmn-files',
+    selector: 'list-cmmn-files',
     templateUrl: './listfiles.component.html',
     styleUrls: ['./listfiles.component.scss']
 })
-export class ListBpmnFilesComponent implements OnInit, OnDestroy {
-    bpmnFilesListener: any;
-    displayedColumns: string[] = [ 'name', 'nbInstances', 'version', 'status', 'create_datetime', 'update_datetime' ];
+export class ListCmmnFilesComponent implements OnInit, OnDestroy {
+    cmmnFilesListener: any;
+    displayedColumns: string[] = [ 'name', 'version', 'status', 'create_datetime', 'update_datetime' ];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     length: number;
-    bpmnFiles$: BpmnFile[] = [];
+    cmmnFiles$: CmmnFile[] = [];
 
     constructor(private store: Store<fromAppState.AppState>) {
     }
 
     ngOnInit() {
-        this.bpmnFilesListener = this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe((searchBpmnFilesResult: SearchBpmnFilesResult) => {
-            if (!searchBpmnFilesResult) {
+        this.cmmnFilesListener = this.store.pipe(select(fromAppState.selectCmmnFileLstResult)).subscribe((searchCmmnFilesResult: SearchCmmnFilesResult) => {
+            if (!searchCmmnFilesResult) {
                 return;
             }
 
-            this.bpmnFiles$ = searchBpmnFilesResult.content;
-            this.length = searchBpmnFilesResult.totalLength;
+            this.cmmnFiles$ = searchCmmnFilesResult.content;
+            this.length = searchCmmnFilesResult.totalLength;
         });
         this.refresh();
     }
 
     ngOnDestroy(): void {
-        this.bpmnFilesListener.unsubscribe();
+        this.cmmnFilesListener.unsubscribe();
     }
 
     onSubmit() {
@@ -68,7 +68,7 @@ export class ListBpmnFilesComponent implements OnInit, OnDestroy {
             direction = this.sort.direction;
         }
 
-        const request = new fromBpmnFileActions.SearchBpmnFiles(active, direction, count, startIndex, true, null);
+        const request = new fromCmmnFileActions.SearchCmmnFiles(active, direction, count, startIndex, null, null, true);
         this.store.dispatch(request);
     }
 }

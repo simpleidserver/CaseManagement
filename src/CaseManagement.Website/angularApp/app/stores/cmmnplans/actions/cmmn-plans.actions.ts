@@ -13,7 +13,7 @@ export enum ActionTypes {
 
 export class SearchCmmnPlans implements Action {
     readonly type = ActionTypes.SEARCH_CMMN_PLANS
-    constructor(public order: string, public direction: string, public count: number, public startIndex: number, public caseFileId: string) { }
+    constructor(public order: string, public direction: string, public count: number, public startIndex: number, public caseFileId: string, public takeLatest: boolean) { }
 }
 
 export class CompleteSearchCmmnPlans implements Action {

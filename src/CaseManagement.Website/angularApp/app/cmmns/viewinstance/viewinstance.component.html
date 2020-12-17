@@ -1,0 +1,45 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/cmmns']">{{ 'BREADCRUMB.CASES' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/cmmns/' + cmmnFileId]">{{ cmmnFile.name}}</a></li>
+        <li>{{ cmmnPlanInstance.name }}</li>
+    </ul>
+    <div id="canvas" style="height: 300px;"></div>
+    <mat-tab-group>
+        <mat-tab label="{{ 'SHARED.INSTANCES' | translate }}">
+            <table #instancesSort="matSort" mat-table class="full-width" [dataSource]="instances$" matSort>
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>{{ "SHARED.NAME" | translate }}</th>
+                    <td mat-cell *matCellDef="let cmmn">{{ cmmn.name }} </td>
+                </ng-container>
+                <ng-container matColumnDef="executionDateTime">
+                    <th mat-header-cell *matHeaderCellDef  mat-sort-header>{{ "SHARED.EXECUTION_DATETIME" | translate }}</th>
+                    <td mat-cell *matCellDef="let cmmn">{{ cmmn.executionDateTime | date:'medium' }} </td>
+                </ng-container>
+                <ng-container matColumnDef="state">
+                    <th mat-header-cell *matHeaderCellDef>{{ "SHARED.STATE" | translate }}</th>
+                    <td mat-cell *matCellDef="let cmmn">{{ cmmn.state }} </td>
+                </ng-container>
+                <ng-container matColumnDef="transition">
+                    <th mat-header-cell *matHeaderCellDef>{{ "SHARED.TRANSITION" | translate }}</th>
+                    <td mat-cell *matCellDef="let cmmn">{{ cmmn.transition }} </td>
+                </ng-container>
+                <ng-container matColumnDef="nbOccurrence">
+                    <th mat-header-cell *matHeaderCellDef>{{ "SHARED.NB_OCCURRENCE" | translate }}</th>
+                    <td mat-cell *matCellDef="let cmmn">{{ cmmn.nbOccurrence }} </td>
+                </ng-container>
+                <ng-container matColumnDef="message">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let cmmn">
+                        <button *ngIf="cmmn.message" mat-icon-button (click)="viewMessage(cmmn.message)">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-tab>
+    </mat-tab-group>
+</div>

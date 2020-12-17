@@ -17,7 +17,7 @@ export class CmmnPlanEffects {
         .pipe(
             ofType(fromCasePlan.ActionTypes.SEARCH_CMMN_PLANS),
             mergeMap((evt: fromCasePlan.SearchCmmnPlans) => {
-                return this.cmmnPlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.caseFileId)
+                return this.cmmnPlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.caseFileId, evt.takeLatest)
                     .pipe(
                         map(cmmnPlans => { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH_CMMN_PLANS, content: cmmnPlans }; }),
                         catchError(() => of({ type: fromCasePlan.ActionTypes.ERROR_SEARCH_CMMN_PLANS }))

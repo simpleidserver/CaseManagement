@@ -9,13 +9,13 @@ import { SearchCasePlanInstanceResult } from '../models/searchcmmnplaninstancere
 export class CmmnPlanInstanceService {
     constructor(private http: HttpClient, private oauthService: OAuthService) { }
 
-    search(startIndex: number, count: number, order: string, direction: string, casePlanId: string): Observable<SearchCasePlanInstanceResult> {
+    search(startIndex: number, count: number, order: string, direction: string, casePlanId: string, caseFileId: string): Observable<SearchCasePlanInstanceResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.API_URL + "/case-plan-instances/search";
-        const request: any = { startIndex: startIndex, count: count, casePlanId: casePlanId };
+        const request: any = { startIndex: startIndex, count: count, casePlanId: casePlanId, caseFileId: caseFileId };
         if (order) {
             request["orderBy"] = order;
         }

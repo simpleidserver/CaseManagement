@@ -68,12 +68,12 @@ export class CompletePublishCmmnFile implements Action {
 
 export class UpdateCmmnFile implements Action {
     readonly type = ActionTypes.UPDATE_CMMNFILE
-    constructor(public id: string, public name : string, public description : string) { }
+    constructor(public id: string, public name : string, public description : string, public xml: string) { }
 }
 
 export class CompleteUpdateCmmnFile implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_CMMNFILE
-    constructor(public id: string, public name: string, public description: string) { }
+    constructor(public id: string, public name: string, public description: string, public xml : string) { }
 }
 
 export class UpdateCmmnFilePayload implements Action {

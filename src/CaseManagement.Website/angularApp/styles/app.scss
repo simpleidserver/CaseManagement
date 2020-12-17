@@ -119,6 +119,12 @@ ul.breadcrumb li:not(:last-child):after {
     }
 }
 
+/* Editor */
+
+.launch-stage {
+    cursor: pointer;
+}
+
 .circle {
     border-radius: 15px !important;
 }

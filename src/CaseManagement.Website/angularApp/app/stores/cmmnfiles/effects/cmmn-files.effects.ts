@@ -75,12 +75,18 @@ export class CmmnFilesEffects {
             mergeMap((evt: UpdateCmmnFile) => {
                 return this.cmmnFilesService.update(evt.id, evt.name, evt.description)
                     .pipe(
-                        map(() => { return { type: ActionTypes.COMPLETE_UPDATE_CMMNFILE, id: evt.id, name: evt.name, description: evt.description  }; }),
+                        mergeMap(() => {
+                            return this.cmmnFilesService.updatePayload(evt.id, evt.xml)
+                                .pipe(
+                                    map(() => { return { type: ActionTypes.COMPLETE_UPDATE_CMMNFILE, id: evt.id, name: evt.name, description: evt.description, payload: evt.xml }; }),
+                                    catchError(() => of({ type: ActionTypes.ERROR_UPDATE_CMMNFILE }))
+                                )
+                        }),
                         catchError(() => of({ type: ActionTypes.ERROR_UPDATE_CMMNFILE }))
                     );
             }
             )
-        );
+    );
 
     @Effect()
     updateCmmnFilePayload$ = this.actions$

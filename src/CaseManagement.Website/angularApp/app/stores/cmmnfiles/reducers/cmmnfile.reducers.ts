@@ -38,6 +38,7 @@ export function cmmnFileReducer(state = initialCmmnFileState, action: fromAction
                     ...state.content,
                     name: action.name,
                     description: action.description,
+                    payload: action.xml,
                     version: (state.content.version + 1),
                     updateDateTime: new Date()
                 }

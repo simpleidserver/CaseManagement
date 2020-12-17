@@ -23,6 +23,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Queries.Handlers
             var result = await _casePlanInstanceQueryRepository.Find(new FindCasePlanInstancesParameter
             {
                 CasePlanId = request.CasePlanId,
+                CaseFileId = request.CaseFileId,
                 Count = request.Count,
                 Order = request.Order,
                 OrderBy = request.OrderBy,

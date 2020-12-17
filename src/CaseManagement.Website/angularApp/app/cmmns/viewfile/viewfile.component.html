@@ -1,0 +1,146 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/cmmns']">{{ 'BREADCRUMB.CASES' | translate }}</a></li>
+        <li>{{ cmmnFile.name }}</li>
+    </ul>
+    <div fxLayout="row" class="content" fxLayout.lt-md="column" fxLayoutGap="10px">
+        <div fxFlex="30%">
+            <div fxFlex="row" fxLayoutGap="10px">
+                <div fxFlex="30%">
+                    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+                        <mat-label>{{ 'SHARED.VERSION' | translate }}</mat-label>
+                        <mat-select [formControl]="versionFormControl" (selectionChange)="updateFileVersion()">
+                            <mat-option *ngFor="let b of cmmnFiles$" [value]="b.id">
+                                {{ 'SHARED.FILE_VERSION' | translate : { version: b.version } }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                        <mat-label>{{ 'SHARED.CREATE_DATETIME' | translate }}</mat-label>
+                        <input matInput [value]="cmmnFile.createDateTime | date:'medium'" disabled />
+                    </mat-form-field>
+                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                        <mat-label>{{ 'SHARED.UPDATE_DATETIME' | translate }}</mat-label>
+                        <input matInput [value]="cmmnFile.updateDateTime | date:'medium'" disabled />
+                    </mat-form-field>
+                </div>
+                <div fxFlex="70%">
+                    <form [formGroup]="saveForm" (ngSubmit)="onSave(saveForm.value)" class="mt-10">
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                            <input matInput name="name" formControlName="name" />
+                        </mat-form-field>
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'SHARED.DESCRIPTION' | translate }}</mat-label>
+                            <textarea matInput name="description" formControlName="description"></textarea>
+                        </mat-form-field>
+                        <button mat-raised-button color="primary" class="mright-10">{{ 'SHARED.SAVE' | translate }}</button>
+                        <button mat-raised-button (click)="onPublish($event)" *ngIf="cmmnFile.status === 'Edited'">{{ 'SHARED.PUBLISH' | translate }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div fxFlex="70%">
+            <div fxLayout="row" class="canvas-container">
+                <div fxFlex="80%">
+                    <div id="canvas">
+                        <div class="actions">
+                            <button [matTooltip]="'CMMN.VIEW_XML' | translate" mat-icon-button (click)="viewXML()">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div fxFlex="20%">
+                    <div *ngIf="selectedElt">
+                        <form [formGroup]="updatePropertiesForm">
+                            <mat-accordion>
+                                <!-- General information -->
+                                <mat-expansion-panel>
+                                    <mat-expansion-panel-header>
+                                        {{ 'BPMN.GENERALINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <!-- Id -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.ID' | translate }}</mat-label>
+                                        <input matInput name="id" formControlName="id" />
+                                    </mat-form-field>
+                                    <!-- Name -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                                        <input matInput name="name" formControlName="name" />
+                                    </mat-form-field>
+                                </mat-expansion-panel>
+                                <!-- User task information -->
+                                <mat-expansion-panel *ngIf="selectedElt && selectedElt.businessObject && selectedElt.businessObject.definitionRef && selectedElt.businessObject.definitionRef.$type === 'cmmn:HumanTask'">
+                                    <mat-expansion-panel-header>
+                                        {{ 'CMMN.USERTASKINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <!-- WS-HumanTaskDef name -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                                        <input matInput name="formId" formControlName="formId" />
+                                    </mat-form-field>
+                                    <!-- Type -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.IMPLEMENTATION' | translate }}</mat-label>
+                                        <mat-select formControlName="implementation">
+                                            <mat-option value="##WsHumanTask">{{ 'SHARED.WSHUMANTASK' | translate }}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <form [formGroup]="addParameterForm" (ngSubmit)="addParameter(addParameterForm.value)">
+                                        <!-- Key -->
+                                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                            <mat-label>{{ 'SHARED.KEY' | translate }}</mat-label>
+                                            <input matInput name="key" formControlName="key" />
+                                        </mat-form-field>
+                                        <!-- Value -->
+                                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                            <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+                                            <input matInput name="value" formControlName="value" />
+                                        </mat-form-field>
+                                        <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+                                    </form>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let parameter of parameters" matTooltip="{{ parameter.key }} = {{ parameter.value }}">
+                                            <button mat-icon-button (click)="removeParameter(parameter)"><mat-icon>remove</mat-icon></button>
+                                            {{ parameter.key }}
+                                        </mat-list-item>
+                                    </mat-list>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <mat-tab-group>
+                <mat-tab label="{{ 'SHARED.INSTANCES' | translate }}">
+                    <table mat-table class="full-width" [dataSource]="cmmnPlanInstances$" matSortActive="create_datetime" matSortDirection="desc" matSort>
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.STATE" | translate }}</th>
+                            <td mat-cell *matCellDef="let cmmn">
+                                <a href="#" [routerLink]="['/cmmns/' + cmmn.caseFileId+ '/' + cmmn.id]">{{ cmmn.state }}</a>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.NAME" | translate }}</th>
+                            <td mat-cell *matCellDef="let cmmn">{{ cmmn.name }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="create_datetime">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.CREATE_DATETIME" | translate }}</th>
+                            <td mat-cell *matCellDef="let cmmn">{{ cmmn.createDateTime | date:'medium'}} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="update_datetime">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.UPDATE_DATETIME" | translate }}</th>
+                            <td mat-cell *matCellDef="let cmmn">{{ cmmn.updateDateTime | date:'medium'}} </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                    <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

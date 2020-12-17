@@ -8,5 +8,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Queries
     public class SearchCasePlanInstanceQuery : BaseSearchParameter, IRequest<SearchResult<CasePlanInstanceResult>>
     {
         public string CasePlanId { get; set; }
+        public string CaseFileId { get; set; }
     }
 }

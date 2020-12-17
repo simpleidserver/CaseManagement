@@ -9,12 +9,12 @@ import { SearchCmmnPlanResult } from '../models/searchcmmnplanresult.model';
 export class CmmnPlanService {
     constructor(private http: HttpClient, private oauthService: OAuthService) { }
 
-    search(startIndex: number, count: number, order: string, direction: string, caseFileId: string): Observable<SearchCmmnPlanResult> {
+    search(startIndex: number, count: number, order: string, direction: string, caseFileId: string, takeLatest: boolean): Observable<SearchCmmnPlanResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         let targetUrl = process.env.API_URL + "/case-plans/search";
-        const request: any = { startIndex: startIndex, count: count, takeLatest: true };
+        const request: any = { startIndex: startIndex, count: count, takeLatest: takeLatest };
         if (order) {
             request["orderBy"] = order;
         }

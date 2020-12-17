@@ -21,7 +21,7 @@ export class LaunchCmmnPlanInstance implements Action {
 
 export class SearchCmmnPlanInstance implements Action {
     readonly type = ActionTypes.SEARCH_CMMN_PLANINSTANCE;
-    constructor(public order: string, public direction: string, public count: number, public startIndex: number, public casePlanId: string) { }
+    constructor(public order: string, public direction: string, public count: number, public startIndex: number, public casePlanId: string, public caseFileId: string) { }
 }
 
 export class CompleteSearchCmmnPlanInstances implements Action {

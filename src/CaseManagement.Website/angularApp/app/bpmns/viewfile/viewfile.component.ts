@@ -26,6 +26,8 @@ let caseMgtBpmnModdle = require('@app/moddlextensions/casemanagement-bpmn');
     styleUrls: ['./viewfile.component.scss']
 })
 export class ViewBpmnFileComponent implements OnInit, OnDestroy {
+    bpmnInstancesListener: any;
+    bpmnFileListener: any;
     displayedColumns: string[] = ['status', 'create_datetime', 'update_datetime', 'nbExecutionPath', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -97,7 +99,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
             this.bpmnInstances$ = searchBpmnInstancesResult.content;
             this.length = searchBpmnInstancesResult.totalLength;
         });
-        this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe((res: SearchBpmnFilesResult) => {
+        this.bpmnInstancesListener = this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe((res: SearchBpmnFilesResult) => {
             if (!res) {
                 return;
             }
@@ -105,7 +107,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
             this.bpmnFiles = res.content;
             this.versionFormControl.setValue(this.bpmnFile.version);
         });
-        this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((bpmnFile: BpmnFile) => {
+        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((bpmnFile: BpmnFile) => {
             if (!bpmnFile) {
                 return;
             }
@@ -207,6 +209,8 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.paramsSub.unsubscribe();
+        this.bpmnInstancesListener.unsubscribe();
+        this.bpmnFileListener.unsubscribe();
     }
 
     ngAfterViewInit() {

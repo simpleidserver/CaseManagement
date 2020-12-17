@@ -33,6 +33,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
                 result = result.Where(_ => _.CasePlanId == parameter.CasePlanId);
             }
 
+            if (!string.IsNullOrWhiteSpace(parameter.CaseFileId))
+            {
+                result = result.Where(_ => _.CaseFileId == parameter.CaseFileId);
+            }
+
             if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

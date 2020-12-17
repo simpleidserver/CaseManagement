@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatSnackBar, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
@@ -21,7 +21,9 @@ declare var $: any;
     templateUrl: './view.component.html',
     styleUrls: ['./view.component.scss']
 })
-export class ViewBpmnInstanceComponent implements OnInit {
+export class ViewBpmnInstanceComponent implements OnInit, OnDestroy {
+    bpmnFileListener: any;
+    bpmnInstanceListener: any;
     activityStatesDisplayedColumns: string[] = ['state', 'executionDateTime', 'message'];
     incomingTokensDisplayedColumns: string[] = ['name', 'content'];
     outgoingTokensDisplayedColumns: string[] = ['name', 'content'];
@@ -66,7 +68,7 @@ export class ViewBpmnInstanceComponent implements OnInit {
                     duration: 2000
                 });
             });
-        this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((e: BpmnFile) => {
+        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((e: BpmnFile) => {
             if (!e || !e.payload) {
                 return;
             }
@@ -75,7 +77,7 @@ export class ViewBpmnInstanceComponent implements OnInit {
             this.refreshCanvas();
 
         });
-        this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe((e: BpmnInstance) => {
+        this.bpmnInstanceListener = this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe((e: BpmnInstance) => {
             if (!e) {
                 return;
             }
@@ -94,6 +96,11 @@ export class ViewBpmnInstanceComponent implements OnInit {
         }
 
         this.refresh();
+    }
+
+    ngOnDestroy(): void {
+        this.bpmnFileListener.unsubscribe();
+        this.bpmnInstanceListener.unsubscribe();
     }
 
     ngAfterViewInit() {

@@ -1,0 +1,35 @@
+﻿<div class="mat-elevation-z8 overflow-hidden">
+    <table mat-table class="full-width" [dataSource]="cmmnFiles$" matSortActive="create_datetime" matSortDirection="desc" matSort>
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.NAME" | translate }}</th>
+            <td mat-cell *matCellDef="let cmmn">
+                <a [routerLink]="['/cmmns/' + cmmn.id]">
+                    {{ cmmn.name }}
+                </a>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="version">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.VERSION" | translate }}</th>
+            <td mat-cell *matCellDef="let cmmn">{{ cmmn.version }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>{{ "SHARED.STATUS" | translate }}</th>
+            <td mat-cell *matCellDef="let cmmn">
+                <mat-chip-list>
+                    <mat-chip>{{ cmmn.status }}</mat-chip>
+                </mat-chip-list>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="create_datetime">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.CREATE_DATETIME" | translate }}</th>
+            <td mat-cell *matCellDef="let cmmn">{{cmmn.createDateTime | date:'medium'}} </td>
+        </ng-container>
+        <ng-container matColumnDef="update_datetime">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.UPDATE_DATETIME" | translate }}</th>
+            <td mat-cell *matCellDef="let cmmn">{{cmmn.updateDateTime | date:'medium'}} </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>

@@ -38,7 +38,7 @@ export class CmmnPlanInstanceEffects {
         .pipe(
             ofType(fromCmmnPlanInstance.ActionTypes.SEARCH_CMMN_PLANINSTANCE),
             mergeMap((evt: fromCmmnPlanInstance.SearchCmmnPlanInstance) => {
-                return this.cmmnPlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId)
+                return this.cmmnPlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId, evt.caseFileId)
                     .pipe(
                         map(cmmnPlanInstances => { return { type: fromCmmnPlanInstance.ActionTypes.COMPLETE_SEARCH_CMMN_PLANINSTANCE, content: cmmnPlanInstances }; }),
                         catchError(() => of({ type: fromCmmnPlanInstance.ActionTypes.ERROR_SEARCH_CMMN_PLANINSTANCE }))

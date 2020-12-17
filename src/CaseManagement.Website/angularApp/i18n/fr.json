@@ -55,6 +55,24 @@
       "ERROR_START_INSTANCE": "An error occured while trying to start the instance"
     }
   },
+  "CMMN": {
+    "FILES": "Case definitions",
+    "INSTANCES": "Case instances",
+    "CREATE_INSTANCE": "Create instance",
+    "VIEW_XML": "View xml",
+    "USERTASKINFO": "User task",
+    "VIEW_MESSAGE": "View message",
+    "MESSAGES": {
+      "CMMNFILE_UPDATED": "File is updated",
+      "ERROR_UPDATE_CMMNFILE": "An error occured while trying to update the CMMN file",
+      "CMMNFILE_PUBLISHED": "File is published",
+      "ERROR_PUBLISH_CMMNFILE": "An error occured while trying to publish the CMMN file",
+      "CMMNPLANINSTANCE_LAUNCHED": "Plan instance is launched",
+      "ERROR_LAUNCH_CMMNPLANINSTANCE": "An error occured while trying to launch the CMMN plan instance",
+      "ERROR_GET_CMMNPLANINSTANCE": "An error occured while trying to get the CMMN plan instance",
+      "ERROR_GET_CMMNFILE": "An error occured while trying to get the CMMN file"
+    }
+  },
   "SHARED": {
     "ID": "Identifier",
     "NAME": "Name",
@@ -71,6 +89,7 @@
     "WSHUMANTASK": "WS-HumanTask",
     "ADD": "Add",
     "PUBLISH": "Publish",
+    "TRANSITION": "Transition",
     "CLASS_NAME": "Class name",
     "CANCEL": "Cancel",
     "UPDATE": "Update",
@@ -84,6 +103,7 @@
     "INCOMING_TOKENS": "Incoming tokens",
     "OUTGOING_TOKENS": "Outgoing tokens",
     "EMPTY": "Empty",
-    "CONTENT": "Content"
+    "CONTENT": "Content",
+    "NB_OCCURRENCE": "Nb occurrence"
   }
 }

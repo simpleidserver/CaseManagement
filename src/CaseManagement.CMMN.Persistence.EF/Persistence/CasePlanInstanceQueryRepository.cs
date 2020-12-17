@@ -42,6 +42,11 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
                     result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
                 }
 
+                if (!string.IsNullOrWhiteSpace(parameter.CaseFileId))
+                {
+                    result = result.Where(r => r.CaseFileId == parameter.CaseFileId);
+                }
+
                 if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
                 {
                     result = result.InvokeOrderBy(MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);

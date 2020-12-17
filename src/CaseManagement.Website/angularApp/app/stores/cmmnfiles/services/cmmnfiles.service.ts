@@ -82,7 +82,7 @@ export class CmmnFilesService {
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         let targetUrl = process.env.API_URL + "/case-files/" + id + "/publish";
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
-            return res['id'];
+            return res;
         }));
     }
 }
