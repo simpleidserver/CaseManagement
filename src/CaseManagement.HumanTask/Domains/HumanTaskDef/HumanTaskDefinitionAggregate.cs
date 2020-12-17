@@ -24,6 +24,7 @@ namespace CaseManagement.HumanTask.Domains
             PresentationParameters = new List<PresentationParameter>();
         }
 
+        public int NbInstances { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         /// <summary>
@@ -98,6 +99,7 @@ namespace CaseManagement.HumanTask.Domains
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
                 Name = Name,
+                NbInstances = NbInstances,
                 AggregateId = AggregateId,
                 Version = Version,
                 ActualOwnerRequired = ActualOwnerRequired,
@@ -197,6 +199,11 @@ namespace CaseManagement.HumanTask.Domains
             var evt = new HumanTaskDefCompletionDeadLineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadLine, DateTime.UtcNow);
             Handle(evt);
             return id;
+        }
+
+        public void IncrementInstance()
+        {
+            NbInstances++;
         }
 
         public void DeleteCompletionDeadLine(string deadLineId)

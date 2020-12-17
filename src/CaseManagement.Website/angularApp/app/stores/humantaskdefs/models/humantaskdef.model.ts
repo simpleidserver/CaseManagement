@@ -16,6 +16,7 @@ export class HumanTaskDef {
     id: string;
     version: number;
     name: string;
+    nbInstances: number;
     updateDateTime: Date;
     createDateTime: Date;
     actualOwnerRequired: boolean;

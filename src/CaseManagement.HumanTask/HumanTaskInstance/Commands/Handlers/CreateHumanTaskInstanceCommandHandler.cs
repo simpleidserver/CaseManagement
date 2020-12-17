@@ -17,6 +17,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
     public class CreateHumanTaskInstanceCommandHandler : IRequestHandler<CreateHumanTaskInstanceCommand, string>
     {
         private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
+        private readonly IHumanTaskDefCommandRepository _humanTaskDefCommandRepository;
         private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
         private readonly IAuthorizationHelper _authorizationHelper;
         private readonly IParameterParser _parameterParser;
@@ -26,12 +27,14 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         public CreateHumanTaskInstanceCommandHandler(
             IHumanTaskDefQueryRepository humanTaskDefQueryRepository,
             IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
+            IHumanTaskDefCommandRepository humanTaskDefCommandRepository,
             IAuthorizationHelper authorizationHelper,
             IParameterParser parameterParser,
             IDeadlineParser deadLineParser,
             ILogger<CreateHumanTaskInstanceCommandHandler> logger)
         {
             _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
+            _humanTaskDefCommandRepository = humanTaskDefCommandRepository;
             _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
             _authorizationHelper = authorizationHelper;
             _parameterParser = parameterParser;
@@ -103,6 +106,8 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 }).ToList());
             await _humanTaskInstanceCommandRepository.Add(humanTaskInstance, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
+            humanTaskDef.IncrementInstance();
+            await _humanTaskDefCommandRepository.Update(humanTaskDef, cancellationToken);
             return humanTaskInstance.AggregateId;
         }
 

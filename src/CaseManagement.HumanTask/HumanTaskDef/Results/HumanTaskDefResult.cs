@@ -10,6 +10,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         public string Id { get; set; }
         public int Version { get; set; }
         public string Name { get; set; }
+        public int NbInstances { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public DateTime CreateDateTime { get; set; }
         public bool ActualOwnerRequired { get; set; }
@@ -33,6 +34,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 UpdateDateTime = humanTaskDef.UpdateDateTime,
                 CreateDateTime = humanTaskDef.CreateDateTime,
                 Name = humanTaskDef.Name,
+                NbInstances = humanTaskDef.NbInstances,
                 Priority = humanTaskDef.Priority,
                 Version = humanTaskDef.Version,
                 SearchBy = humanTaskDef.SearchBy,

@@ -4,6 +4,7 @@
             <mat-list-item>CaseManagement <button (click)="drawer.close()" mat-icon-button><mat-icon>close</mat-icon></button></mat-list-item>
             <a [routerLink]="['/bpmns']" mat-list-item href="#">{{ "MENU.PROCESSES" | translate }}</a>
             <a [routerLink]="['/cmmns']" mat-list-item href="#">{{ "MENU.CASES" | translate }}</a>
+            <a [routerLink]="['/humantasks']" mat-list-item href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
         </mat-list>
     </mat-drawer>
     <mat-toolbar class="app-header">
@@ -16,6 +17,7 @@
         <div fxShow="true" fxHide.lt-md="true">
             <a [routerLink]="['/bpmns']" mat-button href="#">{{ "MENU.PROCESSES" | translate }}</a>
             <a [routerLink]="['/cmmns']" mat-button href="#">{{ "MENU.CASES" | translate }}</a>
+            <a [routerLink]="['/humantasks']" mat-button href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
         </div>
         <span class="navigation-spacer"></span>
         <div fxShow="true" fxHide.lt-md="true">

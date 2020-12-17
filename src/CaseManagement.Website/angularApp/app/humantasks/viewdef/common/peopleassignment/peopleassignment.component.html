@@ -1,0 +1,30 @@
+﻿<form [formGroup]="peopleAssignmentForm" (ngSubmit)="addPeopleAssignment(peopleAssignmentForm.value)">
+    <!-- Select type of assignment -->
+    <mat-form-field class="full-width">
+        <mat-label>{{ 'HUMANTASK.SELECT_ASSIGNMENT_TYPE' | translate }}</mat-label>
+        <mat-select formControlName="type" required>
+            <mat-option value="LOGICALPEOPLEGROUP">{{ 'HUMANTASK.LOGICALGROUP' | translate }}</mat-option>
+            <mat-option value="GROUPNAMES">{{ 'HUMANTASK.GROUPNAMES' | translate }}</mat-option>
+            <mat-option value="USERIDENTIFIERS">{{ 'HUMANTASK.USERIDENTIFIERS' | translate }}</mat-option>
+            <mat-option value="EXPRESSION">{{ 'HUMANTASK.EXPRESSION' | translate }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="peopleAssignmentForm.get('type').hasError('required')">
+            {{ 'SHARED.IS_REQUIRED' | translate }}
+        </mat-error>
+    </mat-form-field>
+    <!-- Add one or more values -->
+    <mat-form-field class="full-width">
+        <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+        <input matInput type="text" formControlName="value"  required />
+        <mat-error *ngIf="peopleAssignmentForm.get('value').hasError('required')">
+            {{ 'SHARED.IS_REQUIRED' | translate }}
+        </mat-error>
+    </mat-form-field>
+    <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+</form>
+<mat-list>
+    <mat-list-item *ngFor="let peopleAssignment of peopleAssignments">
+        <button (click)="deleteValue(peopleAssignment)" mat-icon-button><mat-icon>delete</mat-icon></button>
+        {{ peopleAssignment.value }}
+    </mat-list-item>
+</mat-list>

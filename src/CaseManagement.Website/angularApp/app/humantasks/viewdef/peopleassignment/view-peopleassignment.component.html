@@ -1,0 +1,63 @@
+﻿<button mat-raised-button color="primary" (click)="update()">{{ "SHARED.UPDATE" | translate }}</button>
+<mat-accordion>
+    <!-- Potential owner -->
+    <mat-expansion-panel [expanded]="true" hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{ 'HUMANTASK.POTENTIAL_OWNER' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{'HUMANTASK.POTENTIAL_OWNER_INFO' | translate }}">info</mat-icon>
+        </mat-expansion-panel-header>
+        <peopleassignment-component usage="POTENTIALOWNER" [peopleAssignments]="potentialOwners"></peopleassignment-component>
+    </mat-expansion-panel>
+    <!-- Excluded owner -->
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{ 'HUMANTASK.EXCLUDED_OWNER' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'HUMANTASK.EXCLUDED_OWNER_INFO' | translate }}">info</mat-icon>
+        </mat-expansion-panel-header>
+        <peopleassignment-component usage="EXCLUDEDOWNER" [peopleAssignments]="excludedOwners"></peopleassignment-component>
+    </mat-expansion-panel>
+    <!-- Task initiator -->
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{ 'HUMANTASK.TASK_INITIATOR' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'HUMANTASK.TASK_INITIATOR_INFO' | translate }}">info</mat-icon>
+        </mat-expansion-panel-header>
+        <peopleassignment-component usage="TASKINITIATOR" [peopleAssignments]="taskInitiators"></peopleassignment-component>
+    </mat-expansion-panel>
+    <!-- Task initiator -->
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{ 'HUMANTASK.TASK_STAKEHOLDER' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'HUMANTASK.TASK_STAKEHOLDER_INFO' | translate }}">info</mat-icon>
+        </mat-expansion-panel-header>
+        <peopleassignment-component usage="TASKSTAKEHOLDER" [peopleAssignments]="taskStakeHolders"></peopleassignment-component>
+    </mat-expansion-panel>
+    <!-- Business administrator -->
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{ 'HUMANTASK.BUSINESS_ADMINISTRATOR' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'HUMANTASK.BUSINESS_ADMINISTRATOR_INFO' | translate }}">info</mat-icon>
+        </mat-expansion-panel-header>
+        <peopleassignment-component usage="BUSINESSADMINISTRATOR" [peopleAssignments]="businessAdministrators"></peopleassignment-component>
+    </mat-expansion-panel>
+    <!-- Recipient -->
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{ 'HUMANTASK.RECIPIENT' | translate }}
+            </mat-panel-title>
+            <mat-icon matTooltip="{{ 'HUMANTASK.RECIPIENT_INFO' | translate }}">info</mat-icon>
+        </mat-expansion-panel-header>
+        <peopleassignment-component usage="RECIPIENT" [peopleAssignments]="recipients"></peopleassignment-component>
+    </mat-expansion-panel>
+</mat-accordion>

@@ -6,5 +6,4 @@
     styleUrls: ['./humantasks.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class HumanTasksComponent {
-}
+export class HumanTasksComponent { }

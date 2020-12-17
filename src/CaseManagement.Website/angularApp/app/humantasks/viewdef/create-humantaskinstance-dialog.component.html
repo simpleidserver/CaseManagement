@@ -1,0 +1,8 @@
+﻿<h1 mat-dialog-title>{{ 'HUMANTASK.CREATE_INSTANCE' | translate }}</h1>
+<div mat-dialog-content>
+    <createhumantaskinstance-component [humanTaskDef]="data" [createHumanTaskInstance]="createHumanTaskInstance"></createhumantaskinstance-component>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="update()">{{ 'SHARED.ADD' | translate }}</button>
+    <button mat-button (click)="close()">{{ 'SHARED.CLOSE' | translate }}</button>
+</div>

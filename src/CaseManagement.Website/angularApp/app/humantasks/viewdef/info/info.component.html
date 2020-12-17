@@ -1,0 +1,57 @@
+﻿<div class="mleft-10 mright-10">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
+        <!-- Update global information -->
+        <div fxFlex="50%">
+            <h2>
+                {{ 'HUMANTASK.INFO' | translate }}
+            </h2>
+            <form [formGroup]="infoForm" (ngSubmit)="updateInfo(infoForm.value)">
+                <mat-form-field class="full-width">
+                    <mat-label>{{ "SHARED.ID" | translate }}</mat-label>
+                    <input matInput type="text" formControlName="id" required />
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>{{ "SHARED.NAME" | translate }}</mat-label>
+                    <input matInput type="text" formControlName="name" required />
+                    <mat-error *ngIf="infoForm.get('name').hasError('required')">
+                        {{ 'SHARED.IS_REQUIRED' | translate }}
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>{{ "SHARED.PRIORITY" | translate }}</mat-label>
+                    <input matInput type="number" formControlName="priority" />
+                </mat-form-field>
+                <button mat-raised-button color="primary">{{ "SHARED.UPDATE" | translate }}</button>
+            </form>
+        </div>
+        <!-- Update operation parameters -->
+        <div fxFlex="50%">
+            <h2>
+                {{ "HUMANTASK.UPDATE_OPERATION" | translate }}
+                <mat-icon matTooltip="{{ 'HUMANTASK.UPDATE_OPERATION_INFO' | translate }}">info</mat-icon>
+            </h2>
+            <mat-accordion>
+                <!-- Manage input parameters -->
+                <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                        {{ "HUMANTASK.ADD_INPUT_PARAMETER" | translate }}
+                    </mat-expansion-panel-header>
+                    <operationparameter-component (parameterAdded)="addInputParameter($event)"
+                                                  (parameterRemoved)="deleteInputParameter($event)"
+                                                  usage="INPUT"
+                                                  [parameters]="inputOperationParameters"></operationparameter-component>
+                </mat-expansion-panel>
+                <!-- Manage output parameters -->
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        {{ "HUMANTASK.ADD_OUTPUT_PARAMETER" | translate }}
+                    </mat-expansion-panel-header>
+                    <operationparameter-component (parameterAdded)="addOutputParameter($event)"
+                                                  (parameterRemoved)="deleteOutputParameter($event)"
+                                                  usage="OUTPUT"
+                                                  [parameters]="outputOperationParameters"></operationparameter-component>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+</div>
