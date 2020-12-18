@@ -20,7 +20,7 @@ task ci -depends clean, release, local, pack, publish
 task publish {
 	exec { dotnet publish $source_dir\CaseManagement.CMMN.Host\CaseManagement.CMMN.Host.csproj -c $config -o $result_dir\services\CaseManagementApi }
 	exec { dotnet publish $source_dir\CaseManagement.BPMN.Host\CaseManagement.BPMN.Host.csproj -c $config -o $result_dir\services\BpmnApi }
-	exec { dotnet publish $source_dir\CCaseManagement.HumanTask.Host\CaseManagement.HumanTask.Host.csproj -c $config -o $result_dir\services\HumanTaskApi }
+	exec { dotnet publish $source_dir\CaseManagement.HumanTask.Host\CaseManagement.HumanTask.Host.csproj -c $config -o $result_dir\services\HumanTaskApi }
 	exec { npm install $source_dir\CaseManagement.Website --prefix $source_dir\CaseManagement.Website }
 	exec { npm run build-azure --prefix $source_dir\CaseManagement.Website }
 	exec { dotnet publish $source_dir\CaseManagement.Website -c $config -o $result_dir\services\CaseManagementWebsite }
@@ -56,7 +56,6 @@ task pack -depends compile {
 	exec { dotnet pack $source_dir\CaseManagement.BPMN\CaseManagement.BPMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.BPMN.AspNetCore\CaseManagement.BPMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.BPMN.Common\CaseManagement.BPMN.Common.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.BPMN.Persistence.EF\CaseManagement.BPMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.BPMN.Persistence.EF\CaseManagement.BPMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN\CaseManagement.CMMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }

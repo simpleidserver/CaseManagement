@@ -13,6 +13,7 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                 {
                     AggregateId = table.Column<string>(nullable: false),
                     Version = table.Column<int>(nullable: false),
+                    NbInstances = table.Column<int>(nullable: false),
                     CreateDateTime = table.Column<DateTime>(nullable: false),
                     UpdateDateTime = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
@@ -77,6 +78,26 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DomainEvent",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    AggregateId = table.Column<string>(nullable: true),
+                    Version = table.Column<int>(nullable: false),
+                    HumanTaskDefinitionAggregateAggregateId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DomainEvent", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DomainEvent_HumanTaskDefinitions_HumanTaskDefinitionAggregateAggregateId",
+                        column: x => x.HumanTaskDefinitionAggregateAggregateId,
+                        principalTable: "HumanTaskDefinitions",
+                        principalColumn: "AggregateId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HumanTaskDefinitionDeadLine",
                 columns: table => new
                 {
@@ -116,6 +137,25 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                         principalTable: "HumanTaskDefinitions",
                         principalColumn: "AggregateId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CallbackOperation",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Url = table.Column<string>(nullable: true),
+                    HumanTaskInstanceAggregateAggregateId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CallbackOperation", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CallbackOperation_HumanTaskInstanceAggregate_HumanTaskInstanceAggregateAggregateId",
+                        column: x => x.HumanTaskInstanceAggregateAggregateId,
+                        principalTable: "HumanTaskInstanceAggregate",
+                        principalColumn: "AggregateId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -242,33 +282,6 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DomainEvent",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    AggregateId = table.Column<string>(nullable: true),
-                    Version = table.Column<int>(nullable: false),
-                    HumanTaskDefinitionAggregateAggregateId = table.Column<string>(nullable: true),
-                    NotificationInstanceAggregateAggregateId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DomainEvent", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DomainEvent_HumanTaskDefinitions_HumanTaskDefinitionAggregateAggregateId",
-                        column: x => x.HumanTaskDefinitionAggregateAggregateId,
-                        principalTable: "HumanTaskDefinitions",
-                        principalColumn: "AggregateId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DomainEvent_NotificationInstanceAggregate_NotificationInstanceAggregateAggregateId",
-                        column: x => x.NotificationInstanceAggregateAggregateId,
-                        principalTable: "NotificationInstanceAggregate",
-                        principalColumn: "AggregateId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PeopleAssignmentInstance",
                 columns: table => new
                 {
@@ -308,10 +321,7 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                     Value = table.Column<string>(nullable: true),
                     ContentType = table.Column<string>(nullable: true),
                     HumanTaskInstanceAggregateAggregateId = table.Column<string>(nullable: true),
-                    NotificationInstanceAggregateAggregateId = table.Column<string>(nullable: true),
-                    NotificationInstanceAggregateAggregateId1 = table.Column<string>(nullable: true),
-                    NotificationInstanceAggregateAggregateId2 = table.Column<string>(nullable: true),
-                    NotificationInstanceAggregateAggregateId3 = table.Column<string>(nullable: true)
+                    NotificationInstanceAggregateAggregateId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -327,25 +337,7 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                         column: x => x.NotificationInstanceAggregateAggregateId,
                         principalTable: "NotificationInstanceAggregate",
                         principalColumn: "AggregateId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PresentationElementInstance_NotificationInstanceAggregate_NotificationInstanceAggregateAggregateId1",
-                        column: x => x.NotificationInstanceAggregateAggregateId1,
-                        principalTable: "NotificationInstanceAggregate",
-                        principalColumn: "AggregateId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PresentationElementInstance_NotificationInstanceAggregate_NotificationInstanceAggregateAggregateId2",
-                        column: x => x.NotificationInstanceAggregateAggregateId2,
-                        principalTable: "NotificationInstanceAggregate",
-                        principalColumn: "AggregateId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PresentationElementInstance_NotificationInstanceAggregate_NotificationInstanceAggregateAggregateId3",
-                        column: x => x.NotificationInstanceAggregateAggregateId3,
-                        principalTable: "NotificationInstanceAggregate",
-                        principalColumn: "AggregateId",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -626,6 +618,11 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CallbackOperation_HumanTaskInstanceAggregateAggregateId",
+                table: "CallbackOperation",
+                column: "HumanTaskInstanceAggregateAggregateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Completion_HumanTaskDefinitionAggregateAggregateId",
                 table: "Completion",
                 column: "HumanTaskDefinitionAggregateAggregateId");
@@ -644,11 +641,6 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                 name: "IX_DomainEvent_HumanTaskDefinitionAggregateAggregateId",
                 table: "DomainEvent",
                 column: "HumanTaskDefinitionAggregateAggregateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DomainEvent_NotificationInstanceAggregateAggregateId",
-                table: "DomainEvent",
-                column: "NotificationInstanceAggregateAggregateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Escalation_HumanTaskDefinitionDeadLineId",
@@ -753,21 +745,6 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
                 column: "NotificationInstanceAggregateAggregateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PresentationElementInstance_NotificationInstanceAggregateAggregateId1",
-                table: "PresentationElementInstance",
-                column: "NotificationInstanceAggregateAggregateId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PresentationElementInstance_NotificationInstanceAggregateAggregateId2",
-                table: "PresentationElementInstance",
-                column: "NotificationInstanceAggregateAggregateId2");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PresentationElementInstance_NotificationInstanceAggregateAggregateId3",
-                table: "PresentationElementInstance",
-                column: "NotificationInstanceAggregateAggregateId3");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PresentationParameter_HumanTaskDefinitionAggregateAggregateId",
                 table: "PresentationParameter",
                 column: "HumanTaskDefinitionAggregateAggregateId");
@@ -815,6 +792,9 @@ namespace CaseManagement.HumanTask.EF.Startup.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CallbackOperation");
+
             migrationBuilder.DropTable(
                 name: "Copy");
 

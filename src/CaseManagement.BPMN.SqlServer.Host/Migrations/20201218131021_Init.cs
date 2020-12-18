@@ -14,6 +14,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     Id = table.Column<string>(nullable: false),
                     Version = table.Column<int>(nullable: false),
                     FileId = table.Column<string>(nullable: true),
+                    NbInstances = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     CreateDateTime = table.Column<DateTime>(nullable: false),

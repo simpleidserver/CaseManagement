@@ -287,6 +287,9 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NbInstances")
+                        .HasColumnType("int");
+
                     b.Property<string>("Payload")
                         .HasColumnType("nvarchar(max)");
 

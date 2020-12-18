@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 {
     [DbContext(typeof(BPMNDbContext))]
-    [Migration("20201206185830_Init")]
+    [Migration("20201218131021_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -288,6 +288,9 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NbInstances")
+                        .HasColumnType("int");
 
                     b.Property<string>("Payload")
                         .HasColumnType("nvarchar(max)");
