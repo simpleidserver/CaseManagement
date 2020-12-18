@@ -6,6 +6,12 @@
     <AssemblyOriginatorKeyFile>C:\Projects\CaseManagement\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Migrations\**" />
+    <Content Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.0" />
@@ -16,9 +22,6 @@
     <ProjectReference Include="..\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj" />
     <ProjectReference Include="..\CaseManagement.CMMN.Persistence.EF\CaseManagement.CMMN.Persistence.EF.csproj" />
     <ProjectReference Include="..\CaseManagement.Common.SqlServer\CaseManagement.Common.SqlServer.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\key.snk" Link="key.snk" />

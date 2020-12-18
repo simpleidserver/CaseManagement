@@ -149,13 +149,15 @@ module.exports = {
             'HUMANTASK_API_URL': JSON.stringify(HUMANTASK_API_URL),
             'OPENID_URL': JSON.stringify(OPENID_URL),
             'REDIRECT_URL': JSON.stringify(REDIRECT_URL),
+            'BPMN_API_URL': JSON.stringify(BPMN_API_URL),
             'process.env': {
                 'ENV': JSON.stringify(ENV),
                 'API_URL': JSON.stringify(API_URL),
                 'HUMANTASK_API_URL': JSON.stringify(HUMANTASK_API_URL),
-                'OPENID_URL': JSON.stringify(OPENID_URL),
                 'BASE_URL': JSON.stringify(BASE_URL),
+                'OPENID_URL': JSON.stringify(OPENID_URL),
                 'REDIRECT_URL': JSON.stringify(REDIRECT_URL),
+                'BPMN_API_URL': JSON.stringify(BPMN_API_URL),
             }
         })
     ]

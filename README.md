@@ -48,7 +48,7 @@ Business analyst credentials :
 
 ### Tasklist website
 
-Tasklist live demo : [http://simpleidserver.northeurope.cloudapp.azure.com/casemanagement](http://simpleidserver.northeurope.cloudapp.azure.com/tasklist).
+Tasklist live demo : [http://simpleidserver.northeurope.cloudapp.azure.com/tasklist](http://simpleidserver.northeurope.cloudapp.azure.com/tasklist).
 
 Business analyst credentials :
 
