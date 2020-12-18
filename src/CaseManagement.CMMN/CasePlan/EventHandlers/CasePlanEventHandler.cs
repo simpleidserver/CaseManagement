@@ -39,6 +39,11 @@ namespace CaseManagement.CMMN.CasePlan.EventHandlers
         public async Task Handle(CasePlanInstanceCreatedEvent message, CancellationToken token)
         {
             var casePlan = await _casePlanQueryRepository.Get(message.CasePlanId, token);
+            if (casePlan == null)
+            {
+                return;
+            }
+
             casePlan.IncrementInstance();
             await _casePlanCommandRepository.Update(casePlan, token);
             await _casePlanCommandRepository.SaveChanges(token);
