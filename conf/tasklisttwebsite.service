@@ -1,0 +1,13 @@
+[Unit]
+Description=TaskList website
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/TaskListWebsite/CaseManagement.Tasklist.Website.dll --pathBase=/tasklist --server.urls="http://*:5003"
+KillMode=process
+TimeoutStopSec=5s
+Restart=always
+WorkingDirectory=/home/ftpuser/src/build/results/services/TaskListWebsite
+
+[Install]
+WantedBy=multi-user.target

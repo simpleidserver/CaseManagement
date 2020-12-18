@@ -1,0 +1,13 @@
+[Unit]
+Description=WS-HumanTask API
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/HumanTaskApi/CaseManagement.HumanTask.Host.dll --pathBase=/humantaskapi --server.urls="http://*:60006"
+KillMode=process
+TimeoutStopSec=5s
+Restart=always
+WorkingDirectory=/home/ftpuser/src/build/results/services/HumanTaskApi
+
+[Install]
+WantedBy=multi-user.target

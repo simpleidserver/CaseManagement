@@ -1,6 +1,6 @@
 # CaseManagement
 
-<img width="100px" src="https://github.com/simpleidserver/CaseManagement/tree/release/1.0.3/logos/logo.png" />
+<img width="100px" src="https://raw.githubusercontent.com/simpleidserver/CaseManagement/release/1.0.3/logos/logo.png" />
 
 CaseManagement is an open source framework enabling any DOTNETCORE applications to host a CMMN / WS-HumanTask or BPMN engine.
 It supports most of the concepts introduced by CMMN1.1, BPMN2.0.2 and WS-HumanTask.

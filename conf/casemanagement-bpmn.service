@@ -1,0 +1,13 @@
+[Unit]
+Description=BPMN API
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dotnet /home/ftpuser/src/build/results/services/BpmnApi/CaseManagement.BPMN.Host.dll --pathBase=/bpmnapi --server.urls="http://*:60007"
+KillMode=process
+TimeoutStopSec=5s
+Restart=always
+WorkingDirectory=/home/ftpuser/src/build/results/services/BpmnApi
+
+[Install]
+WantedBy=multi-user.target

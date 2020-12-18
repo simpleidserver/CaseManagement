@@ -33,10 +33,79 @@ server {
 		proxy_read_timeout 90;
 		proxy_buffer_size 128k;
 		proxy_buffers 32 256k;
-	}
+	}		
 		
+	location /tasklist {
+		proxy_pass http://localhost:5003;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection keep-alive;
+		proxy_set_header Host $host;
+		proxy_pass_header Set-Cookie;
+		proxy_pass_request_headers on;
+		proxy_cache_bypass $http_upgrade;
+		proxy_cookie_domain localhost $host;
+		proxy_set_header X-Scheme https;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header X-URL-SCHEME https;
+		client_max_body_size 1M;
+		client_body_buffer_size 4096k;
+		proxy_connect_timeout 90;
+		proxy_send_timeout 90;
+		proxy_read_timeout 90;
+		proxy_buffer_size 128k;
+		proxy_buffers 32 256k;
+	}
+	
 	location /casemanagementapi {				
 		proxy_pass http://localhost:60005;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection keep-alive;
+		proxy_set_header Host $host;
+		proxy_pass_header Set-Cookie;
+		proxy_pass_request_headers on;
+		proxy_cache_bypass $http_upgrade;
+		proxy_cookie_domain localhost $host;
+		proxy_set_header X-Scheme https;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header X-URL-SCHEME https;
+		client_max_body_size 1M;
+		client_body_buffer_size 4096k;
+		proxy_connect_timeout 90;
+		proxy_send_timeout 90;
+		proxy_read_timeout 90;
+		proxy_buffer_size 128k;
+		proxy_buffers 32 256k;
+	}
+		
+	location /humantaskapi {				
+		proxy_pass http://localhost:60006;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection keep-alive;
+		proxy_set_header Host $host;
+		proxy_pass_header Set-Cookie;
+		proxy_pass_request_headers on;
+		proxy_cache_bypass $http_upgrade;
+		proxy_cookie_domain localhost $host;
+		proxy_set_header X-Scheme https;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header X-URL-SCHEME https;
+		client_max_body_size 1M;
+		client_body_buffer_size 4096k;
+		proxy_connect_timeout 90;
+		proxy_send_timeout 90;
+		proxy_read_timeout 90;
+		proxy_buffer_size 128k;
+		proxy_buffers 32 256k;
+	}
+		
+	location /bpmnapi {				
+		proxy_pass http://localhost:60007;
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection keep-alive;
 		proxy_set_header Host $host;

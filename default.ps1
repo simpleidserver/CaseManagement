@@ -19,9 +19,14 @@ task ci -depends clean, release, local, pack, publish
 
 task publish {
 	exec { dotnet publish $source_dir\CaseManagement.CMMN.Host\CaseManagement.CMMN.Host.csproj -c $config -o $result_dir\services\CaseManagementApi }
+	exec { dotnet publish $source_dir\CaseManagement.BPMN.Host\CaseManagement.BPMN.Host.csproj -c $config -o $result_dir\services\BpmnApi }
+	exec { dotnet publish $source_dir\CCaseManagement.HumanTask.Host\CaseManagement.HumanTask.Host.csproj -c $config -o $result_dir\services\HumanTaskApi }
 	exec { npm install $source_dir\CaseManagement.Website --prefix $source_dir\CaseManagement.Website }
 	exec { npm run build-azure --prefix $source_dir\CaseManagement.Website }
 	exec { dotnet publish $source_dir\CaseManagement.Website -c $config -o $result_dir\services\CaseManagementWebsite }
+	exec { npm install $source_dir\CaseManagement.Tasklist.Website --prefix $source_dir\CaseManagement.Tasklist.Website }
+	exec { npm run build-azure --prefix $source_dir\CaseManagement.Tasklist.Website }
+	exec { dotnet publish $source_dir\CaseManagement.Tasklist.Website -c $config -o $result_dir\services\TaskListWebsite }
 }
 
 task clean {
@@ -48,14 +53,31 @@ task compile -depends clean {
 }
  
 task pack -depends compile {
+	exec { dotnet pack $source_dir\CaseManagement.BPMN\CaseManagement.BPMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.BPMN.AspNetCore\CaseManagement.BPMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.BPMN.Common\CaseManagement.BPMN.Common.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.BPMN.Persistence.EF\CaseManagement.BPMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.BPMN.Persistence.EF\CaseManagement.BPMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN\CaseManagement.CMMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.CMMN.Persistence.EF\CaseManagement.CMMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.CMMN.SqlServer\CaseManagement.CMMN.SqlServer.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.CMMN.Persistence.EF\CaseManagement.CMMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.Common\CaseManagement.Common.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.Common.SqlServer\CaseManagement.Common.SqlServer.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.HumanTask\CaseManagement.HumanTask.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.HumanTask.AspNetCore\CaseManagement.HumanTask.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
+	exec { dotnet pack $source_dir\CaseManagement.HumanTask.Persistence.EF\CaseManagement.HumanTask.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
 }
 
 task test {
-    Push-Location -Path $base_dir\tests\CaseManagement.CMMN.Tests
+    Push-Location -Path $base_dir\tests\CaseManagement.BPMN.Acceptance.Tests
+
+    try {
+        exec { & dotnet test -c $config -v n --no-build --no-restore }
+    } finally {
+        Pop-Location
+    }
+	
+    Push-Location -Path $base_dir\tests\CaseManagement.BPMN.Tests
 
     try {
         exec { & dotnet test -c $config -v n --no-build --no-restore }
@@ -64,6 +86,22 @@ task test {
     }
 
     Push-Location -Path $base_dir\tests\CaseManagement.CMMN.Acceptance.Tests
+
+    try {
+        exec { & dotnet test -c $config -v n --no-build --no-restore }
+    } finally {
+        Pop-Location
+    }
+	
+    Push-Location -Path $base_dir\tests\CaseManagement.CMMN.Tests
+
+    try {
+        exec { & dotnet test -c $config -v n --no-build --no-restore }
+    } finally {
+        Pop-Location
+    }
+	
+    Push-Location -Path $base_dir\tests\CaseManagement.HumanTasks.Acceptance.Tests
 
     try {
         exec { & dotnet test -c $config -v n --no-build --no-restore }

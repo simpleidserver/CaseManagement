@@ -1,5 +1,5 @@
 [Unit]
-Description=Case Management API
+Description=CMMN API
 After=network.target
 
 [Service]
