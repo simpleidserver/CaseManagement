@@ -1,12 +1,12 @@
-﻿<h1 mat-dialog-title>{{ baseTranslationKey + ".TITLE" | translate }}</h1>
+﻿<h1 mat-dialog-title>{{ 'TASKS.NOMINATE' | translate }}</h1>
 <div mat-dialog-content>
     <form [formGroup]="nominateParameterForm" (ngSubmit)="addPeopleAssignment(nominateParameterForm.value)">
         <!-- Select type of assignment -->
         <mat-form-field class="full-width" appearance="outline">
-            <mat-label>{{ baseTranslationKey + '.SELECT_ASSIGNMENT_TYPE' | translate }}</mat-label>
+            <mat-label>{{ 'TASKS.SELECT_ASSIGNMENT_TYPE' | translate }}</mat-label>
             <mat-select formControlName="type" required>
-                <mat-option value="GROUPNAMES">{{ baseTranslationKey + '.GROUPNAMES' | translate }}</mat-option>
-                <mat-option value="USERIDENTIFIERS">{{ baseTranslationKey + '.USERIDENTIFIERS' | translate }}</mat-option>
+                <mat-option value="GROUPNAMES">{{ 'TASKS.ASSIGNMENT_TYPES.GROUPNAMES' | translate }}</mat-option>
+                <mat-option value="USERIDENTIFIERS">{{ 'TASKS.ASSIGNMENT_TYPES.USERIDENTIFIERS' | translate }}</mat-option>
             </mat-select>
             <mat-error *ngIf="nominateParameterForm.get('type').hasError('required')">
                 {{ 'SHARED.IS_REQUIRED' | translate }}
@@ -14,7 +14,7 @@
         </mat-form-field>
         <!-- Add one or more values -->
         <mat-form-field class="full-width" appearance="outline">
-            <mat-label>{{ baseTranslationKey + '.VALUE' | translate }}</mat-label>
+            <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
             <input matInput type="text" formControlName="value" required />
             <mat-error *ngIf="nominateParameterForm.get('value').hasError('required')">
                 {{ 'SHARED.IS_REQUIRED' | translate }}

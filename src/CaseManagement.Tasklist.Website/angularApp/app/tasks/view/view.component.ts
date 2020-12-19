@@ -18,7 +18,6 @@ import { filter } from 'rxjs/operators';
     styleUrls: ['./view.component.scss']
 })
 export class ViewTaskComponent implements OnInit {
-    baseTranslationKey: string = "TASKS.VIEW";
     @ViewChild(MatSort) sort: MatSort;
     displayedColumns: string[] = ["eventTime", "userPrincipal", "eventType", "startOwner", "endOwner"];
     renderingElts: RenderingElement[] = [];
@@ -38,7 +37,7 @@ export class ViewTaskComponent implements OnInit {
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_SUBMIT_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_COMPLETED'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.TASK_COMPLETED'), this.translate.instant('undo'), {
                     duration: 2000
                 });
                 this.refresh();
@@ -46,7 +45,7 @@ export class ViewTaskComponent implements OnInit {
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_SUBMIT_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_SUBMIT_TASK'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.ERROR_SUBMIT_TASK'), this.translate.instant('undo'), {
                     duration: 2000
                 });
             });

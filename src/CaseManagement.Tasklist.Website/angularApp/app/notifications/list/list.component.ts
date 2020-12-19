@@ -18,7 +18,6 @@ export class ListNotificationsComponent implements OnInit {
     displayedColumns: string[] = ['priority', 'presentationName', 'presentationSubject', 'status', 'createdTime'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    baseTranslationKey: string = "NOTIFICATIONS.LIST";
     length: number;
     notifications$: Notification[] = [];
 

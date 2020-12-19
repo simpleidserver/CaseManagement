@@ -2,9 +2,11 @@
     <mat-drawer #drawer class="drawer" mode="side">
         <mat-list>
             <mat-list-item>CaseManagement <button (click)="drawer.close()" mat-icon-button><mat-icon>close</mat-icon></button></mat-list-item>
-            <a [routerLink]="['/bpmns']" mat-list-item href="#">{{ "MENU.PROCESSES" | translate }}</a>
-            <a [routerLink]="['/cmmns']" mat-list-item href="#">{{ "MENU.CASES" | translate }}</a>
-            <a [routerLink]="['/humantasks']" mat-list-item href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/bpmns']" mat-list-item href="#">{{ "MENU.PROCESSES" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/cmmns']" mat-list-item href="#">{{ "MENU.CASES" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/humantasks']" mat-list-item href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
+            <a href="#" *ngIf="!isConnected" (click)="login($event)" mat-button>{{ "MENU.AUTHENTICATE" | translate }}</a>
+            <a href="#" *ngIf="!isConnected" (click)="chooseSession($event)" mat-button>{{ "MENU.CHOOSE_SESSION" | translate }}</a>
         </mat-list>
     </mat-drawer>
     <mat-toolbar class="app-header">
@@ -15,9 +17,9 @@
             <b style="color: rgb(123,31,162);">Case</b><span style="color: rgb(206,147,216);">Management</span>
         </a>
         <div fxShow="true" fxHide.lt-md="true">
-            <a [routerLink]="['/bpmns']" mat-button href="#">{{ "MENU.PROCESSES" | translate }}</a>
-            <a [routerLink]="['/cmmns']" mat-button href="#">{{ "MENU.CASES" | translate }}</a>
-            <a [routerLink]="['/humantasks']" mat-button href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/bpmns']" mat-button href="#">{{ "MENU.PROCESSES" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/cmmns']" mat-button href="#">{{ "MENU.CASES" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/humantasks']" mat-button href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
         </div>
         <span class="navigation-spacer"></span>
         <div fxShow="true" fxHide.lt-md="true">

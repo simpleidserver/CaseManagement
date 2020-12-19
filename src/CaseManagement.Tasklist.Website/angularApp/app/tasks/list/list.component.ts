@@ -10,8 +10,8 @@ import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { SearchTasks } from '../../stores/tasks/actions/tasks.actions';
-import { NominateParameter } from '../../stores/tasks/parameters/nominate-parameter';
+import { SearchTasks } from '@app/stores/tasks/actions/tasks.actions';
+import { NominateParameter } from '@app/stores/tasks/parameters/nominate-parameter';
 import { NominateTaskDialogComponent } from './nominate-task-dialog.component';
 
 @Component({
@@ -23,7 +23,6 @@ export class ListTasksComponent implements OnInit {
     displayedColumns: string[] = ['priority', 'presentationName', 'presentationSubject', 'actualOwner', 'status', 'createdTime', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    baseTranslationKey: string = "TASKS.LIST";
     searchTasksForm: FormGroup;
     length: number;
     tasks$: Task[] = [];
@@ -46,7 +45,7 @@ export class ListTasksComponent implements OnInit {
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_START_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_STARTED'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.TASK_STARTED'), this.translate.instant('undo'), {
                     duration: 2000
                 });
                 this.refresh();
@@ -54,14 +53,14 @@ export class ListTasksComponent implements OnInit {
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_START_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_START_TASK'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.ERROR_START_TASK'), this.translate.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_NOMINATE_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_NOMINATED'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.TASK_NOMINATED'), this.translate.instant('undo'), {
                     duration: 2000
                 });
                 this.refresh();
@@ -69,14 +68,14 @@ export class ListTasksComponent implements OnInit {
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_NOMINATE_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_NOMINATE_TASK'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.ERROR_NOMINATE_TASK'), this.translate.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.COMPLETE_CLAIM_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.TASK_CLAIMED'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.TASK_CLAIMED'), this.translate.instant('undo'), {
                     duration: 2000
                 });
                 this.refresh();
@@ -84,7 +83,7 @@ export class ListTasksComponent implements OnInit {
         this.actions$.pipe(
             filter((action: any) => action.type === fromTaskActions.ActionTypes.ERROR_CLAIM_TASK))
             .subscribe(() => {
-                this.snackBar.open(this.translate.instant(this.baseTranslationKey + '.ERROR_CLAIM_TASK'), this.translate.instant('undo'), {
+                this.snackBar.open(this.translate.instant('TASKS.MESSAGES.ERROR_CLAIM_TASK'), this.translate.instant('undo'), {
                     duration: 2000
                 });
             });

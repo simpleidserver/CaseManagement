@@ -16,7 +16,7 @@
         color: mat-color($warn);
     }
 
-    .breadcrumb {
+    .breadcrumb, .app-footer {
         background-color: mat-color($primary, 300);
         color: white;
     }

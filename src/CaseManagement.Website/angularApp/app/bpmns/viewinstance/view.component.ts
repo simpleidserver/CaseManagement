@@ -90,10 +90,13 @@ export class ViewBpmnInstanceComponent implements OnInit, OnDestroy {
         });
         this.fileId = this.route.snapshot.params['id'];
         this.instanceId = this.route.snapshot.params['instanceid'];
-        this.execPathId = this.route.snapshot.params['pathid'];
-        if (this.execPathId) {
-            this.executionPathFormControl.setValue(this.execPathId);
-        }
+        this.route.params.subscribe(() => {
+            this.execPathId = this.route.snapshot.params['pathid'];
+            if (this.execPathId) {
+                this.executionPathFormControl.setValue(this.execPathId);
+                this.refresh();
+            }
+        });
 
         this.refresh();
     }
@@ -238,7 +241,7 @@ export class ViewBpmnInstanceComponent implements OnInit, OnDestroy {
     private displayElt(eltid: string) {
         const self = this;
         const filteredPath = self.executionPaths.filter((execPath: BpmnExecutionPath) => {
-            return execPath.id = self.execPathId;
+            return execPath.id === self.execPathId;
         });
         if (filteredPath.length != 1) {
             return;

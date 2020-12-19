@@ -6,6 +6,7 @@ body, h1 {
 	margin: 0;
 }
 
+/* Common library */
 a.no-style {
 	text-decoration: none;
 	color: inherit;
@@ -13,6 +14,10 @@ a.no-style {
 
 .full-width {
 	width: 100%;
+}
+
+.m-10 {
+	margin: 10px
 }
 
 .mleft-10 {
@@ -27,95 +32,73 @@ a.no-style {
 	cursor: pointer;	
 }
 
-ul.list {
-    padding: 0;
-    list-style-type: none;
+/* Breadcrumb */
+@media (max-width: 960px) {
+	.breadcrumb {
+		display: none;
+	}
 }
 
-ul.list li {
-    .actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-        display: none;
-    }
-
-    p.period, p.description, h4, h5 {
-        margin: 0;
-    }
-
-    p {
-        margin: 0;
-    }
+ul.breadcrumb {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	padding: 5px;
 }
 
-ul.list li {
-    margin-top: 5px;
-    border-bottom: 1px solid;
-    position: relative;
+ul.breadcrumb li {
+	display: inline-block;
 }
 
-ul.list li:hover .actions {
-    display: block;
+ul.breadcrumb li:not(:first-child) {
+	padding-left: .5rem;
 }
 
-.profile {
-    .actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
+ul.breadcrumb li:not(:last-child):after {
+	content: "/";
+	margin-left: 1rem;
 }
 
-.profile .avatar-container img {
-    width: 100px;
-    height: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+/* Content */
+.drawer {
+	position: fixed;
+	height: 100vh;
+	min-width: 25%;
 }
 
-.overflow-hidden {
-    overflow: hidden;
+.app-header {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 2;
 }
 
-.center-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.app-content {
+	position: absolute;
+	top: 64px;
+	right: 0;
+	left: 0;
+	bottom: 30px;
 }
 
-.breadcrumb {
-    padding: 20px 0px 20px 0px;
+.app-footer {
+	position: fixed;
+	border-top: 1px solid #ccc;
+	bottom: 0;
+	width: 100%;
+	height: 30px;
 }
 
-.breadcrumb ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
+@media(min-width: 960px) {
+	.content > div {
+		overflow: auto;
+	}
 
-.breadcrumb ul .separator {
-    padding-right: .75rem;
-    padding-left: .75rem;
-}
-
-.breadcrumb ul li {
-    display: inline-block;
-}
-
-.avatar-container img {
-    width: 100px;
-    height: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-}
-
-.mt-10 {
-    margin-top: 10px !important;
-}
-
-.ml-10 {
-    margin-left: 10px !important;
+	.content {
+		position: absolute;
+		top: 30px;
+		right: 10px;
+		left: 10px;
+		bottom: 0px;
+	}
 }

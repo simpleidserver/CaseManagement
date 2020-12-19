@@ -1,92 +1,79 @@
 {
-  "WELCOME": "Welcome {{name}}",
-  "CHOOSE_SESSION": "Choose session",
-  "DISCONNECT": "Disconnect",
-  "AUTHENTICATE": "Authenticate",
-  "LANGUAGES": "Languages",
-  "FRENCH": "French",
-  "ENGLISH": "English",
   "MENU": {
+    "TASKS": "Tasks",
+    "NOTIFICATIONS": "Notifications",
+    "AUTHENTICATE": "Authenticate",
+    "CHOOSE_SESSION": "Choose session",
+    "LANGUAGES": "Languages",
+    "WELCOME": "Welcome <b>{{name}}</b>",
+    "DISCONNECT": "Disconnect"
+  },
+  "LANGUAGES": {
+    "FRENCH": "French",
+    "ENGLISH": "English"
+  },
+  "BREADCRUMB": {
+    "DASHBOARD": "Dashboard",
     "TASKS": "Tasks",
     "NOTIFICATIONS": "Notifications"
   },
-  "SHARED": {
-    "SEARCH": "Search",
-    "IS_REQUIRED": "Is required",
-    "ADD": "Add",
-    "UPDATE": "Update",
-    "CANCEL": "Cancel",
-    "SUBMIT": "Submit"
-  },
-  "NOMINATE": {
-    "TITLE": "Nominate",
-    "SELECT_ASSIGNMENT_TYPE": "Select type of assignment",
-    "GROUPNAMES": "Group names",
-    "USERIDENTIFIERS": "User identifiers",
-    "ADD": "Add",
-    "VALUE": "Value"
-  },
   "TASKS": {
-    "VIEW": {
-      "TITLE": "Task",
-      "NAME": "Name",
-      "HISTORY": "History",
-      "SUBJECT": "Subject",
-      "PRIORITY": "Priority",
-      "EVENT_TIME": "Reception datetime",
-      "USER_PRINCIPAL": "Owner",
-      "EVENT_TYPE": "Event type",
-      "START_OWNER": "Start owner",
-      "END_OWNER": "End owner",
-      "TASK_COMPLETED": "Task has been completed",
-      "ERROR_COMPLETE_TASK": "An error occured while trying to complete the task"
+    "NOMINATE": "Nominate",
+    "OWNER": "Owner",
+    "HISTORY": "History",
+    "START_OWNER": "Start Owner",
+    "END_OWNER": "End Owner",
+    "ACTIONS": {
+      "START": "Start",
+      "CLAIM": "Claim",
+      "NOMINATE": "Nominate",
+      "COMPLETE": "Complete"
     },
-    "LIST": {
-      "TASK_CLAIMED": "Task has been claimed",
-      "ERROR_CLAIM_TASK": "An error occured while trying to claim the task",
-      "TITLE": "Tasks",
-      "TASK_STARTED": "Task has been started",
-      "ERROR_START_TASK": "An error occured while trying to start the task",
-      "TASK_NOMINATED": "Task has been nominated",
+    "SELECT_ASSIGNMENT_TYPE": "Select type of assignment",
+    "STATUS": {
+      "CREATED": "Created",
+      "INPROGRESS": "In Progress",
+      "READY": "Ready",
+      "RESERVED": "Reserved",
+      "COMPLETED": "Completed"
+    },
+    "ASSIGNMENT_TYPES": {
+      "GROUP_NAMES": "Groups",
+      "USERIDENTIFIERS": "User identifiers"
+    },
+    "MESSAGES": {
+      "TASK_COMPLETED": "Task is completed",
+      "TASK_STARTED": "Task is started",
+      "TASK_NOMINATED": "Task is nominated",
+      "TASK_CLAIMED": "Task is claimed",
       "ERROR_NOMINATE_TASK": "An error occured while trying to nominate the task",
-      "ACTIONS": "Actions",
-      "ID": "Id",
-      "PRIORITY": "Priority",
-      "NAME": "Name",
-      "SUBJECT": "Subject",
-      "OWNER": "Owner",
-      "CREATED_DATETIME": "Created datetime",
-      "STATUS": "Status",
-      "STATUSENUM": {
-        "CREATED": "Created",
-        "READY": "Ready",
-        "RESERVED": "Reserved",
-        "INPROGRESS": "In progress",
-        "COMPLETED": "Completed"
-      },
-      "ACTIONSENUM": {
-        "START": "Start",
-        "CLAIM": "Claim",
-        "NOMINATE": "Nominate",
-        "COMPLETE": "Complete"
-      }
+      "ERROR_START_TASK": "An error occured while trying to start the task",
+      "ERROR_SUBMIT_TASK": "An error occured while trying to submit the task"
     }
   },
   "NOTIFICATIONS": {
-    "LIST": {
-      "TITLE": "Notifications",
-      "NAME": "Name",
-      "SUBJECT": "Subject",
-      "CREATED_DATETIME": "Created datetime",
-      "PRIORITY": "Priority",
-      "STATUS": "Status",
-      "STATUSENUM": {
-        "CREATED": "Created",
-        "READY": "Ready",
-        "RESERVED": "Reserved",
-        "INPROGRESS": "In progress",
-        "COMPLETED": "Completed"
-      }
+    "STATUS": {
+      "CREATED": "Created",
+      "READY": "Ready",
+      "RESERVED": "Reserved",
+      "INPROGRESS": "In progress",
+      "COMPLETED": "Completed"
     }
+  },
+  "SHARED": {
+    "ADD": "Add",
+    "SEARCH": "Search",
+    "PRIORITY": "Priority",
+    "NAME": "Name",
+    "TYPE": "Type",
+    "SUBJECT": "Subject",
+    "VALUE": "Value",
+    "UPDATE": "Update",
+    "STATUS": "Status",
+    "IS_REQUIRED": "Is required",
+    "USER": "User",
+    "SUBMIT": "Submit",
+    "CREATED_DATETIME": "Creation Datetime",
+    "RECEIVED_DATETIME": "Received Datetime"
   }
 }

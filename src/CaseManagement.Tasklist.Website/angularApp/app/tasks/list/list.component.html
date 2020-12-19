@@ -1,80 +1,77 @@
-﻿<div fxLayout="row" class="breadcrumb">
-    <div fxFlex="80%" fxFlexOffset="10%">
-        <div class="mat-h1">{{ baseTranslationKey + ".TITLE" | translate }}</div>
-    </div>
-</div>
-<div fxLayout="row">
-    <div fxFlex="80%" fxFlexOffset="10%">
-        <mat-card>
-            <mat-card-content>
-                <form [formGroup]="searchTasksForm" (ngSubmit)="onSearchTasks()">
-                    <mat-form-field class="full-width" appearance="outline">
-                        <mat-label>{{ baseTranslationKey + ".OWNER" | translate }}</mat-label>
-                        <input matInput formControlName="actualOwner" />
-                    </mat-form-field>
-                    <mat-form-field class="full-width" appearance="outline">
-                        <mat-label>{{ baseTranslationKey + ".STATUS" | translate }}</mat-label>
-                        <mat-select formControlName="status" multiple>
-                            <mat-option value="CREATED">{{ baseTranslationKey + '.STATUSENUM.CREATED' | translate }}</mat-option>
-                            <mat-option value="READY">{{ baseTranslationKey + '.STATUSENUM.READY' | translate }}</mat-option>
-                            <mat-option value="RESERVED">{{ baseTranslationKey + '.STATUSENUM.RESERVED' | translate }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <button mat-raised-button color="primary">{{ 'SHARED.SEARCH' | translate }}</button>
-                </form>
-                <table mat-table class="full-width" matSortActive="createdTime" matSortDirection="desc" [dataSource]="tasks$" matSort>
-                    <!-- Priority -->
-                    <ng-container matColumnDef="priority">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ baseTranslationKey + ".PRIORITY" | translate }}</th>
-                        <td mat-cell *matCellDef="let task">{{task.priority}}</td>
-                    </ng-container>
-                    <!-- Presentation name -->
-                    <ng-container matColumnDef="presentationName">
-                        <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".NAME" | translate }}</th>
-                        <td mat-cell *matCellDef="let task">{{task.presentationName}}</td>
-                    </ng-container>
-                    <!-- Presentation subject -->
-                    <ng-container matColumnDef="presentationSubject">
-                        <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".SUBJECT" | translate }}</th>
-                        <td mat-cell *matCellDef="let task">{{task.presentationSubject}}</td>
-                    </ng-container>
-                    <!-- Owner -->
-                    <ng-container matColumnDef="actualOwner">
-                        <th mat-header-cell *matHeaderCellDef>
-                            {{ baseTranslationKey + ".OWNER" | translate }}
-                        </th>
-                        <td mat-cell *matCellDef="let task">{{task.actualOwner}}</td>
-                    </ng-container>
-                    <!-- Status -->
-                    <ng-container matColumnDef="status">
-                        <th mat-header-cell *matHeaderCellDef>{{ baseTranslationKey + ".STATUS" | translate }}</th>
-                        <td mat-cell *matCellDef="let task">
-                            <mat-chip-list>
-                                <mat-chip>
-                                    {{ baseTranslationKey + '.STATUSENUM.' + task.status | translate }}
-                                </mat-chip>
-                            </mat-chip-list>
-                        </td>
-                    </ng-container>
-                    <!-- Created datetime -->
-                    <ng-container matColumnDef="createdTime">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ baseTranslationKey + ".CREATED_DATETIME" | translate }}</th>
-                        <td mat-cell *matCellDef="let task">{{task.createdTime | date:'medium'}}</td>
-                    </ng-container>
-                    <!-- Actions -->
-                    <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef></th>
-                        <td mat-cell *matCellDef="let task">
-                            <div *ngIf="task.possibleActions.length > 0">
-                                <button (click)="executeAction(task.possibleActions[0], task)" mat-button>{{ baseTranslationKey + ".ACTIONSENUM." + task.possibleActions[0] | translate }}</button>
-                            </div>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                </table>
-                <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-            </mat-card-content>
-        </mat-card>
-    </div>
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li>{{ 'BREADCRUMB.TASKS' | translate }}</li>
+    </ul>
+    <mat-card class="m-10">
+        <mat-card-content>
+            <form [formGroup]="searchTasksForm" (ngSubmit)="onSearchTasks()">
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>{{ "TASKS.OWNER" | translate }}</mat-label>
+                    <input matInput formControlName="actualOwner" />
+                </mat-form-field>
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>{{ "SHARED.STATUS" | translate }}</mat-label>
+                    <mat-select formControlName="status" multiple>
+                        <mat-option value="CREATED">{{ 'TASKS.STATUS.CREATED' | translate }}</mat-option>
+                        <mat-option value="READY">{{ 'TASKS.STATUS.READY' | translate }}</mat-option>
+                        <mat-option value="RESERVED">{{ 'TASKS.STATUS.RESERVED' | translate }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-raised-button color="primary">{{ 'SHARED.SEARCH' | translate }}</button>
+            </form>
+            <table mat-table class="full-width" matSortActive="createdTime" matSortDirection="desc" [dataSource]="tasks$" matSort>
+                <!-- Priority -->
+                <ng-container matColumnDef="priority">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.PRIORITY" | translate }}</th>
+                    <td mat-cell *matCellDef="let task">{{task.priority}}</td>
+                </ng-container>
+                <!-- Presentation name -->
+                <ng-container matColumnDef="presentationName">
+                    <th mat-header-cell *matHeaderCellDef>{{ "SHARED.NAME" | translate }}</th>
+                    <td mat-cell *matCellDef="let task">{{task.presentationName}}</td>
+                </ng-container>
+                <!-- Presentation subject -->
+                <ng-container matColumnDef="presentationSubject">
+                    <th mat-header-cell *matHeaderCellDef>{{ "SHARED.SUBJECT" | translate }}</th>
+                    <td mat-cell *matCellDef="let task">{{task.presentationSubject}}</td>
+                </ng-container>
+                <!-- Owner -->
+                <ng-container matColumnDef="actualOwner">
+                    <th mat-header-cell *matHeaderCellDef>
+                        {{ "TASKS.OWNER" | translate }}
+                    </th>
+                    <td mat-cell *matCellDef="let task">{{task.actualOwner}}</td>
+                </ng-container>
+                <!-- Status -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>{{ "SHARED.STATUS" | translate }}</th>
+                    <td mat-cell *matCellDef="let task">
+                        <mat-chip-list>
+                            <mat-chip>
+                                {{ 'TASKS.STATUS.' + task.status | translate }}
+                            </mat-chip>
+                        </mat-chip-list>
+                    </td>
+                </ng-container>
+                <!-- Created datetime -->
+                <ng-container matColumnDef="createdTime">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.CREATED_DATETIME" | translate }}</th>
+                    <td mat-cell *matCellDef="let task">{{task.createdTime | date:'medium'}}</td>
+                </ng-container>
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let task">
+                        <div *ngIf="task.possibleActions.length > 0">
+                            <button (click)="executeAction(task.possibleActions[0], task)" mat-button>{{ "TASKS.ACTIONS." + task.possibleActions[0] | translate }}</button>
+                        </div>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <mat-paginator [length]="length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </mat-card-content>
+    </mat-card>
 </div>

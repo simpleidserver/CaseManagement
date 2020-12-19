@@ -9,7 +9,6 @@ import { MatDialogRef } from '@angular/material';
 })
 export class NominateTaskDialogComponent {
     nominateParameterForm: FormGroup;
-    baseTranslationKey: string = "NOMINATE";
     values: string[] = [];
     nominateParameter: NominateParameter;
 
