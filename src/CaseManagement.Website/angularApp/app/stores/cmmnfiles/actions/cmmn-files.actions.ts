@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { CmmnFile } from '../models/cmmn-file.model';
 import { SearchCmmnFilesResult } from '../models/search-cmmn-files-result.model';
+import { HumanTaskDef } from '../../humantaskdefs/models/humantaskdef.model';
 
 export enum ActionTypes {
     START_SEARCH_CMMNFILES = "[CmmnFiles] START_SEARCH_CMMNFILES",
@@ -43,7 +44,7 @@ export class GetCmmnFile implements Action {
 
 export class CompleteGetCmmnFile implements Action {
     readonly type = ActionTypes.COMPLETE_GET_CMMNFILE;
-    constructor(public content: CmmnFile) { }
+    constructor(public humanTaskDefs: HumanTaskDef[], public content: CmmnFile) { }
 }
 
 export class AddCmmnFile implements Action {

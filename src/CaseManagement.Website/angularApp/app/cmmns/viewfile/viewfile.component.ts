@@ -16,6 +16,9 @@ import { CmmnPlan } from '@app/stores/cmmnplans/models/cmmn-plan.model';
 import { SearchCmmnPlanResult } from '@app/stores/cmmnplans/models/searchcmmnplanresult.model';
 import { SearchCasePlanInstanceResult } from '@app/stores/cmmninstances/models/searchcmmnplaninstanceresult.model';
 import { CmmnPlanInstanceResult } from '@app/stores/cmmninstances/models/cmmn-planinstance.model';
+import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
+import { CmmnFileState } from '@app/stores/cmmnfiles/reducers/cmmnfile.reducers';
+import { Parameter } from '@app/stores/common/parameter.model';
 let CmmnViewer = require('cmmn-js/lib/Modeler'),
     propertiesPanelModule = require('cmmn-js-properties-panel'),
     propertiesProviderModule = require('cmmn-js-properties-panel/lib/provider/cmmn');
@@ -38,6 +41,8 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
     buildingForm: boolean = true;
     selectedElt: any = null;
     isEltSelected: boolean = false;
+    inputParameters: Parameter[] = [];
+    humanTaskDefs: HumanTaskDef[] = [];
     parameters: { key: string, value: string }[] = [];
     viewer: any;
     paramsSub: any;
@@ -158,16 +163,17 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
             this.displayCanvas();
             this.cmmnFiles$ = e.content;
         });
-        this.cmmnFileListener = this.store.pipe(select(fromAppState.selectCmmnFileResult)).subscribe((cmmnFile: CmmnFile) => {
-            if (!cmmnFile) {
+        this.cmmnFileListener = this.store.pipe(select(fromAppState.selectCmmnFileResult)).subscribe((cmmnFile: CmmnFileState) => {
+            if (!cmmnFile || !cmmnFile.content) {
                 return;
             }
 
-            this.cmmnFile = cmmnFile;
+            this.cmmnFile = cmmnFile.content;
+            this.humanTaskDefs = cmmnFile.humanTaskDefs;
             this.displayCanvas();
-            this.saveForm.controls['name'].setValue(cmmnFile.name);
-            this.saveForm.controls['description'].setValue(cmmnFile.description);
-            const request = new fromCmmnFileActions.SearchCmmnFiles("create_datetime", "desc", 10000, 0, null, cmmnFile.fileId, false);
+            this.saveForm.controls['name'].setValue(cmmnFile.content.name);
+            this.saveForm.controls['description'].setValue(cmmnFile.content.description);
+            const request = new fromCmmnFileActions.SearchCmmnFiles("create_datetime", "desc", 10000, 0, null, cmmnFile.content.fileId, false);
             this.store.dispatch(request);
         });
         this.store.pipe(select(fromAppState.selectCmmnPlanLstResult)).subscribe((searchResult: SearchCmmnPlanResult) => {
@@ -326,7 +332,6 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
         if (defRef.$type === 'cmmn:HumanTask') {
             obj['cmg:implementation'] = form.implementation;
             obj['cmg:formId'] = form.formId;
-            console.log(this.selectedElt);
             let extensionElements = defRef.extensionElements || moddle.create('cmmn:ExtensionElements');
             let parameters = this.getExtension(defRef, 'cmg:Parameters');
             if (!parameters) {
@@ -367,6 +372,7 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
             const parameters = this.getExtension(defRef, 'cmg:Parameters');
             this.updatePropertiesForm.get('implementation').setValue(defRef.get('cmg:implementation'));
             this.updatePropertiesForm.get('formId').setValue(defRef.get('cmg:formId'));
+            this.selectHumanTask(defRef.get('cmg:formId'));
             self.parameters = [];
             if (parameters && parameters.parameter) {
                 parameters.parameter.forEach(function (p: any) {
@@ -412,5 +418,22 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
             this.addParameterForm.reset();
             this.saveProperties(this.updatePropertiesForm.value);
         }
+    }
+
+    onHumanTaskChanged(evt: any) {
+        const value: string = evt.value;
+        this.selectHumanTask(value);
+    }
+
+    private selectHumanTask(name: string) {
+        const filteredHumanTaskDefs = this.humanTaskDefs.filter(function (ht: HumanTaskDef) {
+            return ht.name === name;
+        })
+        if (filteredHumanTaskDefs.length !== 1) {
+            this.inputParameters = [];
+            return;
+        }
+
+        this.inputParameters = HumanTaskDef.getInputOperationParameters(filteredHumanTaskDefs[0]);
     }
 }

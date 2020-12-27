@@ -45,6 +45,13 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             return new OkObjectResult(result);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll(CancellationToken token)
+        {
+            var result = await _mediator.Send(new GetAllHumanTaskDefQuery(), token);
+            return new OkObjectResult(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id, CancellationToken token)
         {

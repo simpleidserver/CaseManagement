@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { ViewMessageDialog } from './view-message-dialog';
+import { BpmnFileState } from '@app/stores/bpmnfiles/reducers/bpmnfile.reducers';
 
 let BpmnViewer = require('bpmn-js/lib/Viewer');
 
@@ -68,12 +69,12 @@ export class ViewBpmnInstanceComponent implements OnInit, OnDestroy {
                     duration: 2000
                 });
             });
-        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((e: BpmnFile) => {
-            if (!e || !e.payload) {
+        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((e: BpmnFileState) => {
+            if (!e || !e.content || !e.content.payload) {
                 return;
             }
 
-            this.bpmnFile = e;
+            this.bpmnFile = e.content;
             this.refreshCanvas();
 
         });

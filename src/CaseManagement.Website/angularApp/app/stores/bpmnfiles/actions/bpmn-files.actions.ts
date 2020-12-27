@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { SearchBpmnFilesResult } from '../models/search-bpmn-files-result.model';
 import { BpmnFile } from '../models/bpmn-file.model';
+import { HumanTaskDef } from '../../humantaskdefs/models/humantaskdef.model';
 
 export enum ActionTypes {
     START_SEARCH_BPMNFILES = "[BpmnFiles] START_SEARCH_BPMNFILES",
@@ -37,7 +38,7 @@ export class GetBpmnFile implements Action {
 
 export class CompleteBpmnFile implements Action {
     readonly type = ActionTypes.COMPLETE_GET_BPMNFILE
-    constructor(public bpmnFile: BpmnFile) { }
+    constructor(public bpmnFile: BpmnFile, public humanTaskDefs: HumanTaskDef[]) { }
 }
 
 export class PublishBpmnFile implements Action {

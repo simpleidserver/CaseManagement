@@ -56,5 +56,10 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
                 Content = result.ToList()
             });
         }
+
+        public Task<ICollection<HumanTaskDefinitionAggregate>> GetAll(CancellationToken token)
+        {
+            return Task.FromResult((ICollection<HumanTaskDefinitionAggregate>)_humanTaskDefs.ToList());
+        }
     }
 }

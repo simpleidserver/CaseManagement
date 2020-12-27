@@ -1,6 +1,7 @@
 ﻿import * as fromActions from '../actions/bpmn-files.actions';
 import { BpmnFile } from '../models/bpmn-file.model';
 import { SearchBpmnFilesResult } from '../models/search-bpmn-files-result.model';
+import { HumanTaskDef } from '../../humantaskdefs/models/humantaskdef.model';
 
 export interface BpmnFileLstState {
     isLoading: boolean;
@@ -12,6 +13,7 @@ export interface BpmnFileState {
     isLoading: boolean;
     isErrorLoadOccured: boolean;
     content: BpmnFile;
+    humanTaskDefs: HumanTaskDef[];
 }
 
 export const initialBpmnFileLstState: BpmnFileLstState = {
@@ -22,6 +24,7 @@ export const initialBpmnFileLstState: BpmnFileLstState = {
 
 export const initialBpmnFileState: BpmnFileState = {
     content: null,
+    humanTaskDefs: [],
     isLoading: true,
     isErrorLoadOccured: false
 };
@@ -40,6 +43,7 @@ export function bpmnFileReducer(state = initialBpmnFileState, action: fromAction
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_GET_BPMNFILE:
             state.content = action.bpmnFile;
+            state.humanTaskDefs = action.humanTaskDefs;
             return { ...state };
         case fromActions.ActionTypes.COMPLETE_UPDATE_BPMNFILE:
             return {

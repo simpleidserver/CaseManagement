@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ActionTypes, GetBpmnFile, SearchBpmnFiles, UpdateBpmnFile, UpdateBpmnFilePayload } from '../actions/bpmn-files.actions';
 import { BpmnFilesService } from '../services/bpmnfiles.service';
+import { HumanTaskDefService } from '@app/stores/humantaskdefs/services/humantaskdef.service';
 
 @Injectable()
 export class BpmnFilesEffects {
     constructor(
         private actions$: Actions,
-        private bpmnFilesService: BpmnFilesService
+        private bpmnFilesService: BpmnFilesService,
+        private humanTaskService: HumanTaskDefService
     ) { }
 
     @Effect()
@@ -31,13 +33,13 @@ export class BpmnFilesEffects {
         .pipe(
             ofType(ActionTypes.START_GET_BPMNFILE),
             mergeMap((evt: GetBpmnFile) => {
-                return this.bpmnFilesService.get(evt.id)
-                    .pipe(
-                        map(bpmnFile => { return { type: ActionTypes.COMPLETE_GET_BPMNFILE, bpmnFile: bpmnFile }; }),
-                        catchError(() => of({ type: ActionTypes.ERROR_GET_BPMNFILE }))
-                    );
-            }
-            )
+                const getHumanTasksCall = this.humanTaskService.getAll();
+                const getBpmnFileCall = this.bpmnFilesService.get(evt.id);
+                return forkJoin([getHumanTasksCall, getBpmnFileCall]).pipe(
+                    map((results: any[]) => { return { type: ActionTypes.COMPLETE_GET_BPMNFILE, humanTaskDefs: results[0], bpmnFile: results[1] }; }),
+                    catchError(() => of({ type: ActionTypes.ERROR_GET_BPMNFILE }))
+                );
+            })
     );
 
     @Effect()

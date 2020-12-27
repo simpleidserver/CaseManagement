@@ -63,7 +63,7 @@ export const selectCmmnFileResult = createSelector(
             return null;
         }
 
-        return state.content;
+        return state;
     }
 );
 
@@ -151,7 +151,7 @@ export const selectBpmnFileResult = createSelector(
             return null;
         }
 
-        return state.content;
+        return state;
     }
 );
 

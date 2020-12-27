@@ -10,6 +10,7 @@ import { MatSnackBar, MatDialog, MatTableDataSource, MatSort } from '@angular/ma
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { ViewMessageDialog } from './view-message-dialog';
+import { CmmnFileState } from '../../stores/cmmnfiles/reducers/cmmnfile.reducers';
 
 let CmmnViewer = require('cmmn-js/lib/Viewer');
 
@@ -76,13 +77,13 @@ export class ViewCmmnInstanceComponent implements OnInit, OnDestroy {
                     duration: 2000
                 });
             });
-        this.cmmnFileListener = this.store.pipe(select(fromAppState.selectCmmnFileResult)).subscribe((e: CmmnFile) => {
-            if (!e) {
+        this.cmmnFileListener = this.store.pipe(select(fromAppState.selectCmmnFileResult)).subscribe((e: CmmnFileState) => {
+            if (!e || !e.content) {
                 return;
             }
 
-            this.cmmnFile = e;
-            this.viewer.importXML(e.payload, function () {
+            this.cmmnFile = e.content;
+            this.viewer.importXML(e.content.payload, function () {
                 self.displayExecution();
                 const canvas = self.viewer.get('canvas');
                 canvas.zoom('fit-viewport');

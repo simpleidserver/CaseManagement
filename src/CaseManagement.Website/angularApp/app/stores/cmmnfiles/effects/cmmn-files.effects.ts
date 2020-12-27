@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ActionTypes, GetCmmnFile, SearchCmmnFiles, AddCmmnFile, PublishCmmnFile, UpdateCmmnFile, UpdateCmmnFilePayload } from '../actions/cmmn-files.actions';
 import { CmmnFilesService } from '../services/cmmnfiles.service';
+import { HumanTaskDefService } from '@app/stores/humantaskdefs/services/humantaskdef.service';
+import { of, forkJoin } from 'rxjs';
 
 @Injectable()
 export class CmmnFilesEffects {
     constructor(
         private actions$: Actions,
-        private cmmnFilesService: CmmnFilesService
+        private cmmnFilesService: CmmnFilesService,
+        private humanTaskDefService: HumanTaskDefService
     ) { }
 
     @Effect()
@@ -31,11 +33,12 @@ export class CmmnFilesEffects {
         .pipe(
             ofType(ActionTypes.START_GET_CMMNFILE),
             mergeMap((evt: GetCmmnFile) => {
-                return this.cmmnFilesService.get(evt.id)
-                    .pipe(
-                        map(cmmnfile => { return { type: ActionTypes.COMPLETE_GET_CMMNFILE, content: cmmnfile }; }),
-                        catchError(() => of({ type: ActionTypes.ERROR_GET_CMMNFILE }))
-                    );
+                const getCmmnFileCall = this.cmmnFilesService.get(evt.id);
+                const getHumanTaskDefsCall = this.humanTaskDefService.getAll();
+                return forkJoin([getCmmnFileCall, getHumanTaskDefsCall]).pipe(
+                    map((results: any[]) => { return { type: ActionTypes.COMPLETE_GET_CMMNFILE, humanTaskDefs: results[1], content: results[0] }; }),
+                    catchError(() => of({ type: ActionTypes.ERROR_GET_CMMNFILE }))
+                );
             }
             )
     );

@@ -98,11 +98,6 @@
                                     <mat-expansion-panel-header>
                                         {{ 'BPMN.USERTASKINFO' | translate }}
                                     </mat-expansion-panel-header>
-                                    <!-- WS-HumanTaskDef name -->
-                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
-                                        <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
-                                        <input matInput name="wsHumanTaskDefName" formControlName="wsHumanTaskDefName" />
-                                    </mat-form-field>
                                     <!-- Type -->
                                     <mat-form-field class="full-width" appearance="outline" floatLabel="always">
                                         <mat-label>{{ 'SHARED.IMPLEMENTATION' | translate }}</mat-label>
@@ -110,25 +105,39 @@
                                             <mat-option value="##WsHumanTask">{{ 'BPMN.SERVICEIMPLEMENTATION.WSHUMANTASK' | translate }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <form [formGroup]="addParameterForm" (ngSubmit)="addParameter(addParameterForm.value)">
-                                        <!-- Key -->
-                                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
-                                            <mat-label>{{ 'SHARED.KEY' | translate }}</mat-label>
-                                            <input matInput name="key" formControlName="key" />
-                                        </mat-form-field>
-                                        <!-- Value -->
-                                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
-                                            <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
-                                            <input matInput name="value" formControlName="value" />
-                                        </mat-form-field>
-                                        <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
-                                    </form>
-                                    <mat-list>
-                                        <mat-list-item *ngFor="let parameter of parameters" matTooltip="{{ parameter.key }} = {{ parameter.value }}">
-                                            <button mat-icon-button (click)="removeParameter(parameter)"><mat-icon>remove</mat-icon></button>
-                                            {{ parameter.key }}
-                                        </mat-list-item>
-                                    </mat-list>
+                                    <!-- WS-HumanTaskDef name -->
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                                        <mat-select formControlName="wsHumanTaskDefName" (selectionChange)="onHumanTaskChanged($event)">
+                                            <mat-option [value]="humanTask.name" *ngFor="let humanTask of humanTaskDefs">
+                                                {{ humanTask.name }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <!-- List of input parameters -->
+                                    <div *ngIf="inputParameters.length > 0">
+                                        <form [formGroup]="addParameterForm" (ngSubmit)="addParameter(addParameterForm.value)">
+                                            <!-- Key -->
+                                            <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                                <mat-label>{{ 'SHARED.KEY' | translate }}</mat-label>
+                                                <mat-select formControlName="key">
+                                                    <mat-option [value]="inputParameter.name" *ngFor="let inputParameter of inputParameters">{{ inputParameter.name }}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!-- Value -->
+                                            <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                                <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+                                                <input matInput name="value" formControlName="value" />
+                                            </mat-form-field>
+                                            <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+                                        </form>
+                                        <mat-list>
+                                            <mat-list-item *ngFor="let parameter of parameters" matTooltip="{{ parameter.key }} = {{ parameter.value }}">
+                                                <button mat-icon-button (click)="removeParameter(parameter)"><mat-icon>remove</mat-icon></button>
+                                                {{ parameter.key }}
+                                            </mat-list-item>
+                                        </mat-list>
+                                    </div>
                                 </mat-expansion-panel>
                                 <!-- Exclusive gateway -->
                                 <mat-expansion-panel *ngIf="selectedElt.type === 'bpmn:ExclusiveGateway'">

@@ -1,11 +1,13 @@
 ﻿import * as fromActions from '../actions/cmmn-files.actions';
 import { CmmnFile } from "../models/cmmn-file.model";
 import { SearchCmmnFilesResult } from "../models/search-cmmn-files-result.model";
+import { HumanTaskDef } from '../../humantaskdefs/models/humantaskdef.model';
 
 export interface CmmnFileState {
     isLoading: boolean;
     isErrorLoadOccured: boolean;
     content: CmmnFile;
+    humanTaskDefs: HumanTaskDef[];
 }
 
 export interface CmmnFileLstState {
@@ -16,6 +18,7 @@ export interface CmmnFileLstState {
 
 export const initialCmmnFileState: CmmnFileState = {
     content: null,
+    humanTaskDefs: [],
     isLoading: true,
     isErrorLoadOccured: false
 };
@@ -30,6 +33,7 @@ export function cmmnFileReducer(state = initialCmmnFileState, action: fromAction
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_GET_CMMNFILE:
             state.content = action.content;
+            state.humanTaskDefs = action.humanTaskDefs;
             return { ...state };
         case fromActions.ActionTypes.COMPLETE_UPDATE_CMMNFILE:
             return {

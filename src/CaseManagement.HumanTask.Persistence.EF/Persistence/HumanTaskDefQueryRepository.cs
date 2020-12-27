@@ -92,5 +92,11 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 Content = content
             };
         }
+
+        public async Task<ICollection<HumanTaskDefinitionAggregate>> GetAll(CancellationToken token)
+        {
+            var result = await _humanTaskDBContext.HumanTaskDefinitions.ToListAsync(token);
+            return result;
+        }
     }
 }

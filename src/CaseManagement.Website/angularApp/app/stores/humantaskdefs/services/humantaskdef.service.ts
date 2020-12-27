@@ -25,6 +25,14 @@ export class HumanTaskDefService {
         return this.http.get<HumanTaskDef>(targetUrl, { headers: headers });
     }
 
+    getAll() : Observable<HumanTaskDef[]> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + '/humantasksdefs';
+        return this.http.get<HumanTaskDef[]>(targetUrl, { headers: headers });
+    }
+
     update(humanTaskDef: HumanTaskDef): Observable<HumanTaskDef> {
         return of(humanTaskDef);
     }

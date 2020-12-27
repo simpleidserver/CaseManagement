@@ -43,7 +43,8 @@
       "MIXED": "Mixed"
     },
     "SERVICEIMPLEMENTATION": {
-      "CSHARPCALLBACK": "C# callback"
+      "CSHARPCALLBACK": "C# callback",
+      "WSHUMANTASK": "WS-HumanTask"
     },
     "MESSAGES": {
       "FILE_SAVED": "File is saved",

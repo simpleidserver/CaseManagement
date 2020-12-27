@@ -14,6 +14,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ViewXmlDialog } from './view-xml-dialog';
+import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
+import { Parameter } from '@app/stores/common/parameter.model';
+import { BpmnFileState } from '@app/stores/bpmnfiles/reducers/bpmnfile.reducers';
 let BpmnViewer = require('bpmn-js/lib/Modeler'),
     propertiesPanelModule = require('bpmn-js-properties-panel'),
     propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/bpmn');
@@ -42,6 +45,8 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
     bpmnFile: BpmnFile = new BpmnFile();
     bpmnFiles: BpmnFile[] = [];
     bpmnInstances$: BpmnInstance[] = [];
+    inputParameters: Parameter[] = [];
+    humanTaskDefs: HumanTaskDef[] = [];
     versionFormControl: FormControl = new FormControl('');
     saveForm: FormGroup = new FormGroup({
         name: new FormControl({ value: '' }),
@@ -107,16 +112,17 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
             this.bpmnFiles = res.content;
             this.versionFormControl.setValue(this.bpmnFile.version);
         });
-        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((bpmnFile: BpmnFile) => {
-            if (!bpmnFile) {
+        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe((bpmnFileState: BpmnFileState) => {
+            if (!bpmnFileState || !bpmnFileState.content) {
                 return;
             }
 
-            this.bpmnFile = bpmnFile;
-            this.saveForm.controls['name'].setValue(bpmnFile.name);
-            this.saveForm.controls['description'].setValue(bpmnFile.description);
-            this.viewer.importXML(bpmnFile.payload);
-            const request = new fromBpmnFileActions.SearchBpmnFiles("create_datetime", "desc", 20000, 0, false, bpmnFile.fileId);
+            this.bpmnFile = bpmnFileState.content;
+            this.humanTaskDefs = bpmnFileState.humanTaskDefs;
+            this.saveForm.controls['name'].setValue(bpmnFileState.content.name);
+            this.saveForm.controls['description'].setValue(bpmnFileState.content.description);
+            this.viewer.importXML(bpmnFileState.content.payload);
+            const request = new fromBpmnFileActions.SearchBpmnFiles("create_datetime", "desc", 20000, 0, false, bpmnFileState.content.fileId);
             this.store.dispatch(request);
         });
         this.updatePropertiesForm.valueChanges.subscribe(() => {
@@ -286,6 +292,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         if (bo.$type === 'bpmn:UserTask') {
             const index = this.parameters.indexOf(elt);
             this.parameters.splice(index, 1);
+            this.saveProperties(this.updatePropertiesForm.value);
         }
     }
 
@@ -298,6 +305,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         if (bo.$type === 'bpmn:UserTask') {
             this.parameters.push(form);
             this.addParameterForm.reset();
+            this.saveProperties(this.updatePropertiesForm.value);
         }
     }
 
@@ -333,6 +341,23 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         });
     }
 
+    onHumanTaskChanged(evt: any) {
+        const value: string = evt.value;
+        this.selectHumanTask(value);
+    }
+
+    private selectHumanTask(name: string) {
+        const filteredHumanTaskDefs = this.humanTaskDefs.filter(function (ht: HumanTaskDef) {
+            return ht.name === name;
+        })
+        if (filteredHumanTaskDefs.length !== 1) {
+            this.inputParameters = [];
+            return;
+        }
+
+        this.inputParameters = HumanTaskDef.getInputOperationParameters(filteredHumanTaskDefs[0]);
+    }
+
     private updateProperties(elt: any) {
         this.buildingForm = true;
         this.updatePropertiesForm.reset();
@@ -350,6 +375,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         if (bo.$type === 'bpmn:UserTask') {
             this.updatePropertiesForm.get('implementation').setValue(bo.implementation);
             this.updatePropertiesForm.get('wsHumanTaskDefName').setValue(bo.get('cmg:wsHumanTaskDefName'));
+            this.selectHumanTask(bo.get('cmg:wsHumanTaskDefName'));
             const parameters = this.getExtension(bo, 'cmg:Parameters');
             self.parameters = [];
             if (parameters && parameters.parameter) {
