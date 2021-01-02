@@ -35,6 +35,11 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
     cmmnPlanInstanceLstListener: any;
     cmmnFileLstListener: any;
     cmmnFileListener: any;
+    mappingTypesToEvents: { types: string[], evts: string[] }[] = [
+        { types: ['cmmn:HumanTask'], evts: ['create', 'start', 'enable', 'reenable', 'disable', 'manualStart', 'reactivate', 'fault', 'suspend', 'parentSuspend', 'parentResume', 'resume', 'complete', 'terminate', 'exit'] },
+        { types: ['cmmn:UserEventListener'], evts: ['create', 'resume', 'suspend', 'terminate', 'occur', 'parentTerminate'] }
+    ];
+    standardEvts: string[] = [];
     displayedColumns: string[] = ['status', 'name', 'create_datetime', 'update_datetime'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -55,7 +60,8 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
         id: new FormControl(''),
         name: new FormControl(''),
         implementation: new FormControl(''),
-        formId: new FormControl('')
+        formId: new FormControl(''),
+        standardEvent: new FormControl('')
     });
     addParameterForm: FormGroup = new FormGroup({
         key: new FormControl(''),
@@ -285,9 +291,9 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
 
     refresh() {
         this.id = this.route.snapshot.params['id'];
-        let request = new fromCmmnFileActions.GetCmmnFile(this.id);
+        const request = new fromCmmnFileActions.GetCmmnFile(this.id);
         this.store.dispatch(request);
-        let searchPlans = new fromCmmnPlanActions.SearchCmmnPlans("create_datetime", "desc", 2000, 0, this.id, false);
+        const searchPlans = new fromCmmnPlanActions.SearchCmmnPlans("create_datetime", "desc", 2000, 0, this.id, false);
         this.store.dispatch(searchPlans);
         this.refreshCmmnInstances();
     }
@@ -319,7 +325,7 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
     }
 
     saveProperties(form: any) {
-        if (!this.selectedElt || !this.selectedElt.businessObject || !this.selectedElt.businessObject.definitionRef) {
+        if (!this.selectedElt || !this.selectedElt.businessObject) {
             return;
         }
 
@@ -328,29 +334,39 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
         const obj: any = {
             id: form.id
         };
-        const defRef = this.selectedElt.businessObject.definitionRef;
-        if (defRef.$type === 'cmmn:HumanTask') {
-            obj['cmg:implementation'] = form.implementation;
-            obj['cmg:formId'] = form.formId;
-            let extensionElements = defRef.extensionElements || moddle.create('cmmn:ExtensionElements');
-            let parameters = this.getExtension(defRef, 'cmg:Parameters');
-            if (!parameters) {
-                parameters = moddle.create('cmg:Parameters');
-                extensionElements.get('values').push(parameters);
+        if (this.selectedElt.businessObject.definitionRef) {
+            const defRef = this.selectedElt.businessObject.definitionRef;
+            if (defRef.$type === 'cmmn:HumanTask') {
+                obj['cmg:implementation'] = form.implementation;
+                obj['cmg:formId'] = form.formId;
+                const extensionElements = defRef.extensionElements || moddle.create('cmmn:ExtensionElements');
+                let parameters = this.getExtension(defRef, 'cmg:Parameters');
+                if (!parameters) {
+                    parameters = moddle.create('cmg:Parameters');
+                    extensionElements.get('values').push(parameters);
+                }
+
+                parameters.parameter = [];
+                this.parameters.forEach(function (p: any) {
+                    const parameter = moddle.create('cmg:Parameter');
+                    parameter.key = p.key;
+                    parameter.value = p.value;
+                    parameters.parameter.push(parameter);
+                });
+
+                obj['cmmn:extensionElements'] = extensionElements;
             }
 
-            parameters.parameter = [];
-            this.parameters.forEach(function (p: any) {
-                let parameter = moddle.create('cmg:Parameter');
-                parameter.key = p.key;
-                parameter.value = p.value;
-                parameters.parameter.push(parameter);
-            });
-
-            obj['cmmn:extensionElements'] = extensionElements;
+            modeling.updateProperties(defRef, obj);
         }
 
-        modeling.updateProperties(defRef, obj);
+        if (this.selectedElt.type === 'cmmndi:CMMNEdge' && this.selectedElt.businessObject.cmmnElementRef) {
+            const cmmnEltRef = this.selectedElt.businessObject.cmmnElementRef;
+            const standardEvt = this.updatePropertiesForm.get('standardEvent').value;
+            obj['standardEvent'] = standardEvt;
+            modeling.updateProperties(cmmnEltRef, obj);
+        }
+
         modeling.updateProperties(this.selectedElt, {
             name: form.name
         });
@@ -360,24 +376,39 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
         this.buildingForm = true;
         this.selectedElt = elt;
         this.isEltSelected = true;
-        if (!elt || !elt.businessObject || !elt.businessObject.definitionRef) {
+        if (!elt || !elt.businessObject) {
             return;
         }
 
         const self = this;
-        var defRef = elt.businessObject.definitionRef;
-        this.updatePropertiesForm.get('id').setValue(defRef.id);
-        this.updatePropertiesForm.get('name').setValue(elt.businessObject.name);
-        if (defRef.$type === 'cmmn:HumanTask') {
-            const parameters = this.getExtension(defRef, 'cmg:Parameters');
-            this.updatePropertiesForm.get('implementation').setValue(defRef.get('cmg:implementation'));
-            this.updatePropertiesForm.get('formId').setValue(defRef.get('cmg:formId'));
-            this.selectHumanTask(defRef.get('cmg:formId'));
-            self.parameters = [];
-            if (parameters && parameters.parameter) {
-                parameters.parameter.forEach(function (p: any) {
-                    self.parameters.push({ key: p.key, value: p.value });
-                });
+        if (elt.businessObject.definitionRef) {
+            const defRef = elt.businessObject.definitionRef;
+            this.updatePropertiesForm.get('id').setValue(defRef.id);
+            this.updatePropertiesForm.get('name').setValue(elt.businessObject.name);
+            if (defRef.$type === 'cmmn:HumanTask') {
+                const parameters = this.getExtension(defRef, 'cmg:Parameters');
+                this.updatePropertiesForm.get('implementation').setValue(defRef.get('cmg:implementation'));
+                this.updatePropertiesForm.get('formId').setValue(defRef.get('cmg:formId'));
+                this.selectHumanTask(defRef.get('cmg:formId'));
+                self.parameters = [];
+                if (parameters && parameters.parameter) {
+                    parameters.parameter.forEach(function (p: any) {
+                        self.parameters.push({ key: p.key, value: p.value });
+                    });
+                }
+            }
+        }
+
+        if (elt.type === 'cmmndi:CMMNEdge' && elt.businessObject.cmmnElementRef) {
+            const cmmnEltRef = elt.businessObject.cmmnElementRef;
+            this.updatePropertiesForm.get('id').setValue(cmmnEltRef.id);
+            this.updatePropertiesForm.get('name').setValue(cmmnEltRef.name);
+            this.updatePropertiesForm.get('standardEvent').setValue(cmmnEltRef.standardEvent);
+            const filtered = this.mappingTypesToEvents.filter(function (v: any) {
+                return v.types.includes(cmmnEltRef.sourceRef.definitionRef.$type);
+            });
+            if (filtered.length === 1) {
+                this.standardEvts = filtered[0].evts;
             }
         }
 

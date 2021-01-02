@@ -72,6 +72,19 @@
                                         <input matInput name="name" formControlName="name" />
                                     </mat-form-field>
                                 </mat-expansion-panel>
+                                <!-- Connector -->
+                                <mat-expansion-panel *ngIf="selectedElt && selectedElt.type === 'cmmndi:CMMNEdge'">
+                                    <mat-expansion-panel-header>
+                                        {{ 'CMMN.CONNECTORINFO' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-select formControlName="standardEvent">
+                                            <mat-option [value]="standardEvt" *ngFor="let standardEvt of standardEvts">
+                                                {{ standardEvt }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </mat-expansion-panel>
                                 <!-- User task information -->
                                 <mat-expansion-panel *ngIf="selectedElt && selectedElt.businessObject && selectedElt.businessObject.definitionRef && selectedElt.businessObject.definitionRef.$type === 'cmmn:HumanTask'">
                                     <mat-expansion-panel-header>
