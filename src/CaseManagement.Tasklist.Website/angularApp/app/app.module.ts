@@ -21,6 +21,8 @@ import { NotificationsEffects } from './stores/notifications/effects/notificatio
 import { TasksEffects } from './stores/tasks/effects/tasks.effects';
 import { TasksService } from './stores/tasks/services/tasks.service';
 import { NotificationsService } from './stores/notifications/services/notifications.service';
+import { CasesService } from './stores/cases/services/cases.service';
+import { CasesEffects } from './stores/cases/effects/cases.effects';
 
 export function createTranslateLoader(http: HttpClient) {
     const url = process.env.BASE_URL + 'assets/i18n/';
@@ -38,7 +40,7 @@ export function createTranslateLoader(http: HttpClient) {
         BrowserAnimationsModule,
         HttpClientModule,
         OAuthModule.forRoot(),
-        EffectsModule.forRoot([TasksEffects, NotificationsEffects]),
+        EffectsModule.forRoot([TasksEffects, NotificationsEffects, CasesEffects]),
         StoreModule.forRoot(appReducer),
         StoreDevtoolsModule.instrument({
             maxAge: 10
@@ -55,6 +57,6 @@ export function createTranslateLoader(http: HttpClient) {
         AppComponent
     ],
     bootstrap: [AppComponent],
-    providers: [AuthGuard, TasksService, NotificationsService]
+    providers: [AuthGuard, TasksService, NotificationsService, CasesService]
 })
 export class AppModule { }

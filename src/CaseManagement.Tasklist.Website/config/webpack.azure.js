@@ -10,6 +10,7 @@ const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 
 const ENV = process.env.ENV = process.env.NODE_ENV = 'azure';
 const API_URL = process.env.API_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/humantaskapi";
+const CM_API_URL = process.env.CM_API_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementapi";
 const OPENID_URL = process.env.OPENID_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/openid";
 const REDIRECT_URL = process.env.REDIRECT_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/tasklist";
 const BASE_URL = process.env.BASE_URL || '/tasklist/';
@@ -146,12 +147,14 @@ module.exports = {
             'API_URL': JSON.stringify(API_URL),
             'OPENID_URL': JSON.stringify(OPENID_URL),
             'REDIRECT_URL': JSON.stringify(REDIRECT_URL),
+            'CM_API_URL': JSON.stringify(CM_API_URL),
             'process.env': {
                 'ENV': JSON.stringify(ENV),
                 'API_URL': JSON.stringify(API_URL),
                 'OPENID_URL': JSON.stringify(OPENID_URL),
                 'BASE_URL': JSON.stringify(BASE_URL),
                 'REDIRECT_URL': JSON.stringify(REDIRECT_URL),
+                'CM_API_URL': JSON.stringify(CM_API_URL)
             }
         })
     ]

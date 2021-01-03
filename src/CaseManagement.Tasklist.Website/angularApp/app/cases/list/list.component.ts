@@ -1,41 +1,42 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
-import { Notification } from '@app/stores/notifications/models/notification.model';
-import { SearchNotificationResult } from '@app/stores/notifications/models/search-notification.model';
+import { SearchCases } from '@app/stores/cases/actions/cases.actions';
+import { CaseInstance } from '@app/stores/cases/models/caseinstance.model';
+import { SearchCaseInstanceResult } from '@app/stores/cases/models/search-caseinstance.model';
 import { select, Store } from '@ngrx/store';
-import { merge } from 'rxjs';
-import { SearchNotifications } from '@app/stores/notifications/actions/notifications.actions';
 import { TranslateService } from '@ngx-translate/core';
+import { merge } from 'rxjs';
 
 @Component({
-    selector: 'list-notifications-component',
+    selector: 'list-cases-component',
     templateUrl: './list.component.html',
     styleUrls: ['./list.component.scss']
 })
-export class ListNotificationsComponent implements OnInit {
-    displayedColumns: string[] = ['priority', 'presentationName', 'presentationSubject', 'status', 'createdTime'];
+export class ListCasesComponent implements OnInit {
+    displayedColumns: string[] = [ 'name', 'state', 'createDateTime' ];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     length: number;
-    notifications$: Notification[] = [];
+    caseInstances$: CaseInstance[] = [];
 
-    constructor(private store: Store<fromAppState.AppState>,
-        private activatedRoute: ActivatedRoute,
+    constructor(
+        private store: Store<fromAppState.AppState>,
         private router: Router,
-        private translate: TranslateService,
-        public dialog: MatDialog) {
+        private activatedRoute: ActivatedRoute,
+        private translate: TranslateService) {
+
     }
 
-    ngOnInit() {
-        this.notifications$ = [ new Notification(), new Notification(), new Notification() ];
-        this.store.pipe(select(fromAppState.selectNotificationLstResult)).subscribe((l: SearchNotificationResult) => {
+    ngOnInit(): void {
+        this.caseInstances$ = [ new CaseInstance(), new CaseInstance(), new CaseInstance() ];
+        this.store.pipe(select(fromAppState.selectCaseLstResult)).subscribe((l: SearchCaseInstanceResult) => {
             if (!l || !l.content || l.content.length === 0) {
                 return;
             }
 
-            this.notifications$ = l.content;
+            this.caseInstances$ = l.content;
             this.length = l.totalLength;
         });
         this.activatedRoute.queryParamMap.subscribe((p: any) => {
@@ -56,23 +57,6 @@ export class ListNotificationsComponent implements OnInit {
         });
     }
 
-    onSearchTasks() {
-        this.refreshUrl();
-    }
-
-    refreshUrl() {
-        const queryParams: any = {
-            pageIndex: this.paginator.pageIndex,
-            pageSize: this.paginator.pageSize,
-            active: this.sort.active,
-            direction: this.sort.direction
-        };
-        this.router.navigate(['.'], {
-            relativeTo: this.activatedRoute,
-            queryParams: queryParams
-        });
-    }
-
     refresh() {
         let startIndex: number = 0;
         let count: number = 5;
@@ -86,8 +70,21 @@ export class ListNotificationsComponent implements OnInit {
 
         let active = this.getOrder();
         let direction = this.getDirection();
-        let request = new SearchNotifications(active, direction, count, startIndex);
+        let request = new SearchCases(active, direction, count, startIndex);
         this.store.dispatch(request);
+    }
+
+    refreshUrl() {
+        const queryParams: any = {
+            pageIndex: this.paginator.pageIndex,
+            pageSize: this.paginator.pageSize,
+            active: this.sort.active,
+            direction: this.sort.direction
+        };
+        this.router.navigate(['.'], {
+            relativeTo: this.activatedRoute,
+            queryParams: queryParams
+        });
     }
 
     private getOrder() {

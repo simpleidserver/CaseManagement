@@ -4,6 +4,7 @@
             <mat-list-item>TaskList <button (click)="drawer.close()" mat-icon-button><mat-icon>close</mat-icon></button></mat-list-item>
             <a *ngIf="isConnected" [routerLink]="['/tasks']" mat-list-item href="#">{{ "MENU.TASKS" | translate }}</a>
             <a *ngIf="isConnected" [routerLink]="['/notifications']" mat-list-item href="#">{{ "MENU.NOTIFICATIONS" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/cases']" mat-list-item href="#">{{ "MENU.CASES" | translate }}</a>
             <a href="#" *ngIf="!isConnected" (click)="login($event)" mat-button>{{ "MENU.AUTHENTICATE" | translate }}</a>
             <a href="#" *ngIf="!isConnected" (click)="chooseSession($event)" mat-button>{{ "MENU.CHOOSE_SESSION" | translate }}</a>
         </mat-list>
@@ -18,6 +19,7 @@
         <div fxShow="true" fxHide.lt-md="true">
             <a *ngIf="isConnected" [routerLink]="['/tasks']" mat-button href="#">{{ "MENU.TASKS" | translate }}</a>
             <a *ngIf="isConnected" [routerLink]="['/notifications']" mat-button href="#">{{ "MENU.NOTIFICATIONS" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/cases']" mat-button href="#">{{ 'MENU.CASES' | translate }}</a>
         </div>
         <span class="navigation-spacer"></span>
         <div fxShow="true" fxHide.lt-md="true">

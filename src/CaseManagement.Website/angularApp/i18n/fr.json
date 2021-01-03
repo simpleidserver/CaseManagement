@@ -64,6 +64,8 @@
     "CREATE_INSTANCE": "Create instance",
     "VIEW_XML": "View xml",
     "USERTASKINFO": "User task",
+    "REPETITIONRULE": "Repetition rule",
+    "MANUALACTIVATIONRULE": "Manual activation rule",
     "CONNECTORINFO": "Connector",
     "VIEW_MESSAGE": "View message",
     "MESSAGES": {

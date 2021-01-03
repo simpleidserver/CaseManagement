@@ -61,7 +61,9 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
         name: new FormControl(''),
         implementation: new FormControl(''),
         formId: new FormControl(''),
-        standardEvent: new FormControl('')
+        standardEvent: new FormControl(''),
+        repetitionRuleCondition: new FormControl(''),
+        manualActivationRuleCondition: new FormControl('')
     });
     addParameterForm: FormGroup = new FormGroup({
         key: new FormControl(''),
@@ -334,6 +336,35 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
         const obj: any = {
             id: form.id
         };
+        if (this.selectedElt.businessObject && this.selectedElt.businessObject.$type === 'cmmn:PlanItem') {
+            const manualActivationRuleCondition = this.updatePropertiesForm.get('manualActivationRuleCondition').value;
+            const repetitionRuleCondition = this.updatePropertiesForm.get('repetitionRuleCondition').value;
+            const itemControl = this.selectedElt.businessObject.itemControl;
+            const boObj : any = {};
+            if (itemControl.manualActivationRule) {
+                if (manualActivationRuleCondition) {
+                    const expression = itemControl.manualActivationRule.condition || moddle.create('cmmn:Expression');
+                    expression.body = manualActivationRuleCondition;
+                    itemControl.manualActivationRule.condition = expression;
+                } else {
+                    itemControl.manualActivationRule.condition = null;
+                }
+            }
+
+            if (itemControl.repetitionRule) {
+                if (repetitionRuleCondition) {
+                    const expression = itemControl.repetitionRule.condition || moddle.create('cmmn:Expression');
+                    expression.body = repetitionRuleCondition;
+                    itemControl.repetitionRule.condition = expression;
+                } else {
+                    itemControl.repetitionRule.condition = null;
+                }
+            }
+
+            boObj['itemControl'] = itemControl;
+            modeling.updateProperties(this.selectedElt.businessObject, boObj);
+        }
+
         if (this.selectedElt.businessObject.definitionRef) {
             const defRef = this.selectedElt.businessObject.definitionRef;
             if (defRef.$type === 'cmmn:HumanTask') {
@@ -374,6 +405,7 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
 
     updateProperties(elt: any) {
         this.buildingForm = true;
+        this.updatePropertiesForm.reset();
         this.selectedElt = elt;
         this.isEltSelected = true;
         if (!elt || !elt.businessObject) {
@@ -381,6 +413,18 @@ export class ViewCmmnFileComponent implements OnInit, OnDestroy {
         }
 
         const self = this;
+        if (elt.businessObject && elt.businessObject.$type === 'cmmn:PlanItem') {
+            if (elt.businessObject.itemControl) {
+                if (elt.businessObject.itemControl.manualActivationRule && elt.businessObject.itemControl.manualActivationRule.condition) {
+                    this.updatePropertiesForm.get('manualActivationRuleCondition').setValue(elt.businessObject.itemControl.manualActivationRule.condition.body);
+                }
+
+                if (elt.businessObject.itemControl.repetitionRule && elt.businessObject.itemControl.repetitionRule.condition) {
+                    this.updatePropertiesForm.get('repetitionRuleCondition').setValue(elt.businessObject.itemControl.repetitionRule.condition.body);
+                }
+            }
+        }
+
         if (elt.businessObject.definitionRef) {
             const defRef = elt.businessObject.definitionRef;
             this.updatePropertiesForm.get('id').setValue(defRef.id);

@@ -4,6 +4,7 @@
     "NOTIFICATIONS": "Notifications",
     "AUTHENTICATE": "Authenticate",
     "CHOOSE_SESSION": "Choose session",
+    "CASES": "Cases",
     "LANGUAGES": "Languages",
     "WELCOME": "Welcome <b>{{name}}</b>",
     "DISCONNECT": "Disconnect"
@@ -15,7 +16,8 @@
   "BREADCRUMB": {
     "DASHBOARD": "Dashboard",
     "TASKS": "Tasks",
-    "NOTIFICATIONS": "Notifications"
+    "NOTIFICATIONS": "Notifications",
+    "CASES": "Cases"
   },
   "TASKS": {
     "NOMINATE": "Nominate",
@@ -60,6 +62,18 @@
       "COMPLETED": "Completed"
     }
   },
+  "CASES": {
+    "STATES": {
+      "Available": "Available",
+      "Enabled": "Enabled",
+      "Active": "Active",
+      "Disabled": "Disabled",
+      "Failed": "Failed",
+      "Suspended": "Suspended",
+      "Completed": "Completed",
+      "Terminated": "Terminated"
+    }
+  },
   "SHARED": {
     "ADD": "Add",
     "SEARCH": "Search",
@@ -68,6 +82,7 @@
     "TYPE": "Type",
     "SUBJECT": "Subject",
     "VALUE": "Value",
+    "STATE": "State",
     "UPDATE": "Update",
     "STATUS": "Status",
     "IS_REQUIRED": "Is required",

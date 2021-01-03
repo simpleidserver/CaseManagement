@@ -80,7 +80,7 @@
     }
 
     .state.Active {
-        background-color: orange;
+        background-color: lightblue;
     }
 
     .state.Completed {
@@ -89,6 +89,10 @@
 
     .state.Failed {
         background-color: red;
+    }
+
+    .state.Enabled, .state.Available {
+        background-color: orange;
     }
 }
 

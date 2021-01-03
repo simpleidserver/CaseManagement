@@ -8,7 +8,7 @@
     <div id="canvas" style="height: 300px;"></div>
     <mat-tab-group>
         <mat-tab label="{{ 'SHARED.INSTANCES' | translate }}">
-            <table #instancesSort="matSort" mat-table class="full-width" [dataSource]="instances$" matSort>
+            <table #instancesSort="matSort" mat-table class="full-width" matSortActive="executionDateTime" matSortDirection="desc" [dataSource]="instances$" matSort>
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef>{{ "SHARED.NAME" | translate }}</th>
                     <td mat-cell *matCellDef="let cmmn">{{ cmmn.name }} </td>

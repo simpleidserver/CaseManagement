@@ -127,7 +127,9 @@ export class ViewCmmnInstanceComponent implements OnInit, OnDestroy {
         const self = this;
         const overlays = self.viewer.get('overlays');
         const elementRegistry = self.viewer.get('elementRegistry');
-        let grouped: any = this.cmmnPlanInstance.children.reduce((rv: any, x: CmmnPlanItemInstanceResult) => {
+        let grouped: any = this.cmmnPlanInstance.children.filter((x: CmmnPlanItemInstanceResult) => {
+            return x.state;
+        }).reduce((rv: any, x: CmmnPlanItemInstanceResult) => {
             rv[x.eltId] = rv[x.eltId] || [];
             rv[x.eltId].push(x);
             return rv;

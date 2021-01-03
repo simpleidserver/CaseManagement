@@ -85,6 +85,26 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </mat-expansion-panel>
+                                <!-- Manual activation rule -->
+                                <mat-expansion-panel *ngIf="selectedElt && selectedElt.businessObject.$type === 'cmmn:PlanItem' && selectedElt.businessObject.itemControl && selectedElt.businessObject.itemControl.manualActivationRule">
+                                    <mat-expansion-panel-header>
+                                        {{ 'CMMN.MANUALACTIVATIONRULE' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.CONDITION' | translate }}</mat-label>
+                                        <input matInput name="manualActivationRuleCondition" formControlName="manualActivationRuleCondition" />
+                                    </mat-form-field>
+                                </mat-expansion-panel>
+                                <!-- Repetition rule -->
+                                <mat-expansion-panel *ngIf="selectedElt && selectedElt.businessObject.$type === 'cmmn:PlanItem'  && selectedElt.businessObject.itemControl && selectedElt.businessObject.itemControl.repetitionRule">
+                                    <mat-expansion-panel-header>
+                                        {{ 'CMMN.REPETITIONRULE' | translate }}
+                                    </mat-expansion-panel-header>
+                                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                                        <mat-label>{{ 'SHARED.CONDITION' | translate }}</mat-label>
+                                        <input matInput name="repetitionRuleCondition" formControlName="repetitionRuleCondition" />
+                                    </mat-form-field>
+                                </mat-expansion-panel>
                                 <!-- User task information -->
                                 <mat-expansion-panel *ngIf="selectedElt && selectedElt.businessObject && selectedElt.businessObject.definitionRef && selectedElt.businessObject.definitionRef.$type === 'cmmn:HumanTask'">
                                     <mat-expansion-panel-header>
