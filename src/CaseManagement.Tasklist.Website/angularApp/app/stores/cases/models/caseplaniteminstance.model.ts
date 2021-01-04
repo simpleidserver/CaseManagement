@@ -10,6 +10,7 @@ export class CasePlanItemInstance {
     nbOccurrence: number;
     name: string;
     type: string;
+    parentEltId: string;
     state: string;
     transitionHistories: TransitionHistory[];
 }

@@ -1,0 +1,91 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/cases']">{{ 'BREADCRUMB.CASES' | translate }}</a></li>
+        <li>{{ caseInstance.name }}</li>
+    </ul>
+    <div class="m-10" fxLayout="column" fxLayoutGap="10px">
+        <!-- Header -->
+        <mat-card>
+            <mat-card-content fxLayout="row" fxLayout.lt-md="column" class="full-width">
+                <h3 fxFlex="80%">{{ caseInstance.name }}</h3>
+                <table fxFlex="20%">
+                    <tbody>
+                        <tr>
+                            <td><mat-icon>calendar_today</mat-icon></td>
+                            <td>{{ caseInstance.createDateTime | date:'medium' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </mat-card-content>
+        </mat-card>
+        <!-- Actions & Documents -->
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
+            <!-- Actions -->
+            <mat-card fxFlex="70%">
+                <mat-card-content>
+                    <div fxLayout="row">
+                        <div fxFlex="40%">
+                            <mat-accordion>
+                                <!-- Active human tasks -->
+                                <mat-expansion-panel [expanded]="true">
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>{{ 'CASES.ACTIVEHUMANTASKS' | translate }}</mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let act of activeHumanTasks">
+                                            {{ act.name }}
+                                        </mat-list-item>
+                                    </mat-list>
+                                </mat-expansion-panel>
+                                <!-- Enabling -->
+                                <mat-expansion-panel>
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>{{ 'CASES.ENABLINGTASKS' | translate }}</mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let act of enabledTasks">
+                                            <button (click)="enableTask(act)" mat-icon-button [matTooltip]="'CASES.ENABLE' | translate">
+                                                <mat-icon>play_arrow</mat-icon>
+                                            </button>
+                                            <button (click)="disableTask(act)" mat-icon-button [matTooltip]="'CASES.DISABLE' | translate">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                            {{ act.name }}
+                                        </mat-list-item>
+                                    </mat-list>
+                                </mat-expansion-panel>
+                                <!-- Disabling -->
+                                <mat-expansion-panel>
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>{{ 'CASES.DISABLINGTASKS' | translate }}</mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let act of disabledTasks">
+                                            {{ act.name }}
+                                        </mat-list-item>
+                                    </mat-list>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </div>
+                        <div fxFlex="60%">
+
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <!-- Documents -->
+            <mat-card fxFlex="30%">
+                <mat-card-header>
+                    <mat-card-title>{{ 'CASES.DOCUMENTS' | translate }}</mat-card-title>
+                </mat-card-header>
+            </mat-card>
+        </div>
+        <!-- Complex history -->
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>{{ 'CASES.HISTORYACTIONS' | translate }}</mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </div>
+</div>

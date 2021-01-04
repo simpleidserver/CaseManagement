@@ -1,6 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using CaseManagement.Common.Processors;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,19 +13,19 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         protected override async Task Handle(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
         {
-            var isNewElt = elt.LatestTransition == CMMNTransitions.Create;
             if (!executionContext.Instance.IsEntryCriteriaSatisfied(elt))
             {
                 return;
             }
 
-            await Process(executionContext, elt, cancellationToken);
-            if (isNewElt && executionContext.Instance.IsRepetitionRuleSatisfied(elt))
+            var createNewOccurrence = await Process(executionContext, elt, cancellationToken);
+            if (createNewOccurrence && executionContext.Instance.IsRepetitionRuleSatisfied(elt))
             {
-                executionContext.Instance.TryCreateInstance(elt);
+                var result = executionContext.Instance.TryCreateInstance(elt) as T;
+                await Handle(executionContext, result, cancellationToken);
             }
         }
 
-        protected abstract Task Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task<bool> Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
     }
 }

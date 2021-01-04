@@ -17,20 +17,23 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _processorFactory = processorFactory;
         }
 
-        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
+        protected override async Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
         {
             var executionBranch = ExecutionBranch.Build(stageElt.Children);
             await ExecuteBranch(executionContext, executionBranch, cancellationToken);
             if (stageElt.Children.All(_ => IsElementCompleted(_)))
             {
                 executionContext.Instance.MakeTransition(stageElt, CMMNTransitions.Complete);
-                return;
+                return true;
             }
 
             if (executionContext.Instance.IsExitCriteriaSatisfied(stageElt))
             {
                 executionContext.Instance.MakeTransition(stageElt, CMMNTransitions.Terminate);
+                return true;
             }
+
+            return false;
         }
 
         private async Task ExecuteBranch(CMMNExecutionContext executionContext, BaseExecutionBranch<BaseCasePlanItemInstance> branch, CancellationToken cancellationToken)

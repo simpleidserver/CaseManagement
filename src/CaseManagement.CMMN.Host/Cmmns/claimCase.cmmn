@@ -40,12 +40,12 @@
         <cmmn:planItem id="PlanItem_1dphpiz" name="Capture claim details" definitionRef="HumanTask_1oeedji" />
         <cmmn:sentry id="Sentry_0e1zurk">
           <cmmn:planItemOnPart id="PlanItemOnPart_1preadf" sourceRef="PlanItem_04q2jwn">
-            <cmmn:standardEvent>start</cmmn:standardEvent>
+            <cmmn:standardEvent>manualStart</cmmn:standardEvent>
           </cmmn:planItemOnPart>
         </cmmn:sentry>
         <cmmn:sentry id="Sentry_0bz27li">
           <cmmn:planItemOnPart id="PlanItemOnPart_0ky2brq" sourceRef="PlanItem_126vzmb">
-            <cmmn:standardEvent>start</cmmn:standardEvent>
+            <cmmn:standardEvent>manualStart</cmmn:standardEvent>
           </cmmn:planItemOnPart>
         </cmmn:sentry>
         <cmmn:humanTask id="HumanTask_1oeedji" cmg:formId="captureClaimDetails" cmg:implementation="##WsHumanTask">
@@ -53,7 +53,7 @@
             <cmg:parameters />
           </cmmn:extensionElements>
         </cmmn:humanTask>
-        <cmmn:humanTask id="HumanTask_1ewr6eu" name="Need 3rd party report" cmg:implementation="##WsHumanTask">
+        <cmmn:humanTask id="HumanTask_1ewr6eu" name="Need 3rd party report">
           <cmmn:extensionElements>
             <cmg:parameters />
           </cmmn:extensionElements>
@@ -69,7 +69,7 @@
           </cmmn:extensionElements>
         </cmmn:humanTask>
       </cmmn:stage>
-      <cmmn:humanTask id="HumanTask_1g95uki" name="Update claimant contact details">
+      <cmmn:humanTask id="HumanTask_1g95uki" name="Update claimant contact details" cmg:implementation="##WsHumanTask" cmg:formId="updateClaimantContactDetailsForm">
         <cmmn:extensionElements>
           <cmg:parameters />
         </cmmn:extensionElements>

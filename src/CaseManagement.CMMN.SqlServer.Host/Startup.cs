@@ -76,6 +76,7 @@ namespace CaseManagement.CMMN.SqlServer.Host
                 policy.AddPolicy("terminate_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("activate_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("complete_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("disable_caseplaninstance", p => p.RequireAuthenticatedUser());
                 // Case plan
                 policy.AddPolicy("get_caseplan", p => p.RequireAuthenticatedUser());
                 // Case worker task

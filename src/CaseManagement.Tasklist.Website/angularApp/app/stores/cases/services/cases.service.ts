@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable } from 'rxjs';
 import { SearchCaseInstanceResult } from '../models/search-caseinstance.model';
+import { CaseInstance } from '../models/caseinstance.model';
 
 @Injectable()
 export class CasesService {
@@ -29,5 +30,38 @@ export class CasesService {
         }
 
         return this.http.post<SearchCaseInstanceResult>(targetUrl, JSON.stringify(request), { headers: headers });
+    }
+
+    get(id: string): Observable<CaseInstance> {
+        let headers = new HttpHeaders();
+        const defaultLang = this.translate.currentLang;
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Accept-Language', defaultLang);
+        const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id;
+        return this.http.get<CaseInstance>(targetUrl, { headers: headers });
+    }
+
+    activate(id: string, elt: string): Observable<any> {
+        let headers = new HttpHeaders();
+        const defaultLang = this.translate.currentLang;
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Accept-Language', defaultLang);
+        const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id + "/activate/" + elt;
+        return this.http.get(targetUrl, { headers: headers });
+    }
+
+    disable(id: string, elt: string): Observable<any> {
+        let headers = new HttpHeaders();
+        const defaultLang = this.translate.currentLang;
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Accept-Language', defaultLang);
+        const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id + "/disable/" + elt;
+        return this.http.get(targetUrl, { headers: headers });
     }
 }

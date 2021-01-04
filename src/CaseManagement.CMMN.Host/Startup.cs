@@ -90,6 +90,7 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("resume_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("terminate_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("activate_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("disable_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("complete_caseplaninstance", p => 
                 {
                     p.AddAuthenticationSchemes("OAuthScheme");

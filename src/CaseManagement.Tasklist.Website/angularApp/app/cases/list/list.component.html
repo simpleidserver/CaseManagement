@@ -9,7 +9,11 @@
                 <!-- Name -->
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "SHARED.NAME" | translate }}</th>
-                    <td mat-cell *matCellDef="let caseInstance">{{caseInstance.name}}</td>
+                    <td mat-cell *matCellDef="let caseInstance">
+                        <a [routerLink]="['/cases/' + caseInstance.id]">
+                            {{ caseInstance.name }}
+                        </a>
+                    </td>
                 </ng-container>
                 <!-- Status -->
                 <ng-container matColumnDef="state">

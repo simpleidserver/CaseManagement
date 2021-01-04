@@ -63,6 +63,13 @@
     }
   },
   "CASES": {
+    "ACTIVEHUMANTASKS": "Human tasks",
+    "ENABLINGTASKS": "Enabling tasks",
+    "DISABLINGTASKS": "Disabling tasks",
+    "DOCUMENTS": "Documents",
+    "HISTORYACTIONS": "History of actions",
+    "DISABLE": "Disable",
+    "ENABLE": "Enable",
     "STATES": {
       "Available": "Available",
       "Enabled": "Enabled",
@@ -72,6 +79,13 @@
       "Suspended": "Suspended",
       "Completed": "Completed",
       "Terminated": "Terminated"
+    },
+    "MESSAGES": {
+      "ERROR_GET_CASE": "An error occured while trying to get the case",
+      "ACTIVATED": "Task is activated",
+      "ERROR_ACTIVATE": "An error occured while trying to activate the task",
+      "DISABLED": "Task is disabled",
+      "ERROR_DISABLE": "An error occured while trying to disable the task"
     }
   },
   "SHARED": {

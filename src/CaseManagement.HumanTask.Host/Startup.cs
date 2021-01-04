@@ -77,6 +77,16 @@ namespace CaseManagement.HumanTask.Host
                 .AddTxt("degree", cb => cb.AddLabel("fr", "Température"))
                 .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
                 .Build();
+            var updateClaimantContactDetailsForm = HumanTaskDefBuilder.New("updateClaimantContactDetailsForm")
+                .SetTaskInitiatorUserIdentifiers(new List<string> { "businessanalyst" })
+                .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
+                .AddName("fr", "Mettre à jour les informations de contact du 'Claimant'")
+                .AddName("en", "Update claimant contact details")
+                .AddTxt("firstName", cb => cb.AddLabel("fr", "Firstname"))
+                .AddTxt("lastName", cb => cb.AddLabel("fr", "Lastname"))
+                .AddOutputOperationParameter("firstName", ParameterTypes.STRING, true)
+                .AddOutputOperationParameter("lastName", ParameterTypes.STRING, true)
+                .Build();
             services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
@@ -128,7 +138,8 @@ namespace CaseManagement.HumanTask.Host
                 {
                     captureClaimDetails,
                     dressAppropriateForm,
-                    takeTemperatureForm
+                    takeTemperatureForm,
+                    updateClaimantContactDetailsForm
                 });
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>

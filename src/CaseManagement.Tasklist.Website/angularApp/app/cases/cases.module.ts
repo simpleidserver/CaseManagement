@@ -7,6 +7,7 @@ import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { CaseRoutes } from './cases.routes';
 import { ListCasesComponent } from './list/list.component';
+import { ViewCaseComponent } from './view/view.component';
 
 @NgModule({
     imports: [
@@ -23,11 +24,11 @@ import { ListCasesComponent } from './list/list.component';
     ],
 
     declarations: [
-        ListCasesComponent
+        ListCasesComponent,
+        ViewCaseComponent
     ],
 
-    exports: [
-    ],
+    exports: [ ],
 
     providers: [  ]
 })

@@ -55,6 +55,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
         {
             public string Id { get; set; }
             public string EltId { get; set; }
+            public string ParentEltId { get; set; }
             public int NbOccurrence { get; set; }
             public string Name { get; set; }
             public string Type { get; set; }
@@ -108,6 +109,19 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
 
         public static CasePlanInstanceResult ToDto(CasePlanInstanceAggregate casePlanInstance)
         {
+            var children = casePlanInstance.GetFlatListCasePlanItems().Select(_ => CasePlanItemInstanceResult.ToDto(_)).ToList();
+            foreach(var elt in casePlanInstance.Children.Where(_ => _ is StageElementInstance))
+            {
+                var stage = elt as StageElementInstance;
+                foreach(var childEltId in stage.Children.Select(_ => _.EltId))
+                {
+                    foreach(var child in children.Where(_ => _.EltId == childEltId))
+                    {
+                        child.ParentEltId = elt.EltId;
+                    }
+                }
+            }
+
             return new CasePlanInstanceResult
             {
                 Id = casePlanInstance.AggregateId,
@@ -118,7 +132,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                 Roles = casePlanInstance.Roles.Select(_ => CasePlanInstanceRoleResult.ToDto(_)).ToList(),
                 CreateDateTime = casePlanInstance.CreateDateTime,
                 UpdateDateTime = casePlanInstance.UpdateDateTime,
-                Children = casePlanInstance.GetFlatListCasePlanItems().Select(_ => CasePlanItemInstanceResult.ToDto(_)).ToList(),
+                Children = children,
                 Files = casePlanInstance.Files.Select(_ => CasePlanInstanceFileItemResult.ToDTO(_)).ToList(),
                 ExecutionContext = casePlanInstance.ExecutionContext == null ? new Dictionary<string, string>() : casePlanInstance.ExecutionContext.Variables.ToDictionary(k => k.Key, k => k.Value)
             };

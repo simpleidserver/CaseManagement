@@ -32,6 +32,7 @@
             public const string RemoveReference = "removereference";
             public const string Delete = "delete";
             public const string Occur = "occur";
+            public const string Disable = "disable";
         }
 
         public static class RouteNames

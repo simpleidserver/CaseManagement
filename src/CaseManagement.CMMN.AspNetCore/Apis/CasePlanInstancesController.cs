@@ -460,5 +460,38 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
                 }, HttpStatusCode.BadRequest, Request);
             }
         }
+
+        [HttpGet("{id}/disable/{elt}")]
+        [Authorize("disable_caseplaninstance")]
+        public async Task<IActionResult> Disable(string id, string elt, CancellationToken token)
+        {
+            try
+            {
+                await _mediator.Send(new DisableCommand(id, elt), token);
+                return new OkResult();
+            }
+            catch (UnknownCasePlanInstanceException)
+            {
+                return new NotFoundResult();
+            }
+            catch (UnknownCasePlanElementInstanceException)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "bad_request", "case instance element doesn't exist" }
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+            catch (Exception ex)
+            {
+                return this.ToError(new Dictionary<string, string>
+                {
+                    { "invalid_request", ex.Message }
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
     }
 }

@@ -19,25 +19,26 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _humanTaskHandlers = humanTaskHandlers;
         }
 
-        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
+        protected override async Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
         {
             var handler = _humanTaskHandlers.FirstOrDefault(_ => _.Implementation == elt.Implemention);
-            if (handler == null)
+            if (handler != null)
             {
-                throw new CMMNProcessorException(Global.UnknownHumanTaskImplementation);
-            }
-
-            if (!executionContext.Instance.WorkerTaskExists(elt.Id))
-            {
-                var workerTaskId = await handler.Create(executionContext, elt, cancellationToken);
-                executionContext.Instance.TryAddWorkerTask(elt.Id, workerTaskId);
+                if (!executionContext.Instance.WorkerTaskExists(elt.Id))
+                {
+                    var workerTaskId = await handler.Create(executionContext, elt, cancellationToken);
+                    executionContext.Instance.TryAddWorkerTask(elt.Id, workerTaskId);
+                }
             }
 
             var completeSubscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
             if (completeSubscription.IsCaptured)
             {
                 executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete);
+                return true;
             }
+
+            return false;
         }
     }
 }
