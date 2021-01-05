@@ -32,6 +32,8 @@ export class Instance {
 })
 export class ViewCmmnInstanceComponent implements OnInit, OnDestroy {
     cmmnFileListener: any;
+    overlayStore: { overlayIds: any[], eltId: string }[] = [];
+    interval: any;
     cmmnPlanInstanceListener: any;
     displayedColumns: string[] = ['name', 'executionDateTime', 'state', 'transition', 'nbOccurrence', 'message'];
     viewer: any;
@@ -83,11 +85,15 @@ export class ViewCmmnInstanceComponent implements OnInit, OnDestroy {
             }
 
             this.cmmnFile = e.content;
-            this.viewer.importXML(e.content.payload, function () {
+            if (self.overlayStore.length === 0) {
+                this.viewer.importXML(e.content.payload, function () {
+                    self.displayExecution();
+                    const canvas = self.viewer.get('canvas');
+                    canvas.zoom('fit-viewport');
+                });
+            } else {
                 self.displayExecution();
-                const canvas = self.viewer.get('canvas');
-                canvas.zoom('fit-viewport');
-            });
+            }
         });
         this.cmmnPlanInstanceListener = this.store.pipe(select(fromAppState.selectCmmnPlanInstanceResult)).subscribe((e: CmmnPlanInstanceResult) => {
             if (!e) {
@@ -100,12 +106,18 @@ export class ViewCmmnInstanceComponent implements OnInit, OnDestroy {
         });
         this.cmmnFileId = this.activatedRoute.snapshot.params['id'];
         this.cmmnPlanInstanceId = this.activatedRoute.snapshot.params['instanceid'];
+        this.interval = setInterval(function () {
+            self.refresh();
+        }, 2000);
         this.refresh();
     }
 
     ngOnDestroy(): void {
         this.cmmnFileListener.unsubscribe();
         this.cmmnPlanInstanceListener.unsubscribe();
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
     }
 
     ngAfterViewInit() {
@@ -134,6 +146,12 @@ export class ViewCmmnInstanceComponent implements OnInit, OnDestroy {
             rv[x.eltId].push(x);
             return rv;
         }, {});
+        self.overlayStore.forEach((record: any) => {
+            record.overlayIds.forEach((id: string) => {
+                overlays.remove(id);
+            });
+        });
+        self.overlayStore = [];
         for (var key in grouped) {
             let values: CmmnPlanItemInstanceResult[] = grouped[key];
             let ordered = values.sort((a: CmmnPlanItemInstanceResult, b: CmmnPlanItemInstanceResult) => {
@@ -148,29 +166,30 @@ export class ViewCmmnInstanceComponent implements OnInit, OnDestroy {
             let stateHtml = "<div class='state " + firstValue.state + "'>" + firstValue.state + "</div>";
             let nbOccurrenceHtml = "<div class='nbOccurrence'>" + values.length + "</div>";
             let overlayHtml: any = "<div data-id='" + firstValue.eltId + "' style='cursor: pointer !important; width:" + eltReg.width + "px;height:" + eltReg.height + "px;'></div>"
+
             overlayHtml = $(overlayHtml);
-            overlays.add(firstValue.eltId, {
+            const id1 = overlays.add(firstValue.eltId, {
                 position: {
                     top: 0,
                     right: 50
                 },
                 html: nbOccurrenceHtml
             });
-            overlays.add(firstValue.eltId, {
+            const id2 = overlays.add(firstValue.eltId, {
                 position: {
                     top: 0,
                     right: 20
                 },
                 html: stateHtml
             });
-
-            overlays.add(firstValue.eltId, {
+            const id3 = overlays.add(firstValue.eltId, {
                 position: {
                     top: 0,
                     left: 0,
                 },
                 html: overlayHtml
             });
+            self.overlayStore.push({ overlayIds: [id1, id2, id3], eltId: firstValue.eltId });
             $(overlayHtml).click(function () {
                 const eltid = $(this).data('id');
                 let elts = elementRegistry.getAll();

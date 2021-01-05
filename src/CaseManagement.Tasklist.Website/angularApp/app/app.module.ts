@@ -17,12 +17,12 @@ import { AuthGuard } from './infrastructure/auth-guard.service';
 import { MaterialModule } from './shared/material.module';
 import { SharedModule } from './shared/shared.module';
 import { appReducer } from './stores/appstate';
+import { CasesEffects } from './stores/cases/effects/cases.effects';
+import { CasesService } from './stores/cases/services/cases.service';
 import { NotificationsEffects } from './stores/notifications/effects/notifications.effects';
+import { NotificationsService } from './stores/notifications/services/notifications.service';
 import { TasksEffects } from './stores/tasks/effects/tasks.effects';
 import { TasksService } from './stores/tasks/services/tasks.service';
-import { NotificationsService } from './stores/notifications/services/notifications.service';
-import { CasesService } from './stores/cases/services/cases.service';
-import { CasesEffects } from './stores/cases/effects/cases.effects';
 
 export function createTranslateLoader(http: HttpClient) {
     const url = process.env.BASE_URL + 'assets/i18n/';

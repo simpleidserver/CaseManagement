@@ -72,6 +72,10 @@ namespace CaseManagement.CMMN.Domains
 
         public bool IsCriteriaSatisfied(Criteria criteria, int nbOccurrence)
         {
+            var check = new Func<CMMNTransitions, ConcurrentBag<CasePlanElementInstanceTransitionHistory>, bool>((tr, transitions) =>
+            {
+                return transitions.Any(_ => _.Transition == tr);
+            });
             if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
             {
                 if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, ExecutionContext))
@@ -84,7 +88,7 @@ namespace CaseManagement.CMMN.Domains
             {
                 var id = BaseCasePlanItemInstance.BuildId(AggregateId, planItemOnPart.SourceRef, nbOccurrence);
                 var source = GetCasePlanItem(id);
-                if (planItemOnPart.StandardEvent != source.LatestTransition)
+                if (!check(planItemOnPart.StandardEvent, source.TransitionHistories))
                 {
                     return false;
                 }
@@ -94,7 +98,7 @@ namespace CaseManagement.CMMN.Domains
             {
                 var id = CaseFileItemInstance.BuildId(AggregateId, caseItemOnPart.SourceRef);
                 var source = GetCaseFileItem(id);
-                if (caseItemOnPart.StandardEvent != source.LatestTransition)
+                if (!check(caseItemOnPart.StandardEvent, source.TransitionHistories))
                 {
                     return false;
                 }

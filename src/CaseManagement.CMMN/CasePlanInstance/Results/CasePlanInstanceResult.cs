@@ -7,6 +7,15 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
 {
     public class CasePlanInstanceResult
     {
+        public CasePlanInstanceResult()
+        {
+            ExecutionContext = new Dictionary<string, string>();
+            Files = new List<CasePlanInstanceFileItemResult>();
+            Roles = new List<CasePlanInstanceRoleResult>();
+            Children = new List<CasePlanItemInstanceResult>();
+            WorkerTasks = new List<WorkerTaskResult>();
+        }
+
         public string Id { get; set; }
         public string CaseFileId { get; set; }
         public string CasePlanId { get; set; }
@@ -16,6 +25,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
         public ICollection<CasePlanInstanceFileItemResult> Files { get; set; }
         public ICollection<CasePlanInstanceRoleResult> Roles { get; set; }
         public ICollection<CasePlanItemInstanceResult> Children { get; set; }
+        public ICollection<WorkerTaskResult> WorkerTasks { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
 
@@ -35,6 +45,24 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                 };
             }
         }
+
+        public class WorkerTaskResult
+        {
+            public string CasePlanElementInstanceId { get; set; }
+            public string ExternalId { get; set; }
+            public DateTime CreateDateTime { get; set; }
+
+            public static WorkerTaskResult ToDTO(CasePlanInstanceWorkerTask workerTask)
+            {
+                return new WorkerTaskResult
+                {
+                    CasePlanElementInstanceId = workerTask.CasePlanElementInstanceId,
+                    CreateDateTime = workerTask.CreateDateTime,
+                    ExternalId = workerTask.ExternalId
+                };
+            }
+        }
+
 
         public class CasePlanInstanceRoleResult
         {
@@ -60,11 +88,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             public string Name { get; set; }
             public string Type { get; set; }
             public string State { get; set; }
+            public string FormId { get; set; }
             public ICollection<TransitionHistoryResult> TransitionHistories { get; set; }
 
             public static CasePlanItemInstanceResult ToDto(BaseCasePlanItemInstance casePlanItemInstance)
             {
-                string stateStr = null;
+                string stateStr = null, formId = null;
                 if (casePlanItemInstance is BaseTaskOrStageElementInstance)
                 {
                     var state = ((BaseTaskOrStageElementInstance)casePlanItemInstance).State;
@@ -77,6 +106,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                     stateStr = state == null ? null : Enum.GetName(typeof(MilestoneEventStates), state);
                 }
 
+                if (casePlanItemInstance is HumanTaskElementInstance)
+                {
+                    var humanTaskInstance = casePlanItemInstance as HumanTaskElementInstance;
+                    formId = humanTaskInstance.FormId;
+                }
+
                 return new CasePlanItemInstanceResult
                 {
                     Id = casePlanItemInstance.Id,
@@ -84,6 +119,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                     NbOccurrence = casePlanItemInstance.NbOccurrence,
                     EltId = casePlanItemInstance.EltId,
                     State = stateStr,
+                    FormId = formId,
                     Type = Enum.GetName(typeof(CasePlanElementInstanceTypes), casePlanItemInstance.Type).ToUpperInvariant(),
                     TransitionHistories = casePlanItemInstance.TransitionHistories.Select(_ => TransitionHistoryResult.ToDto(_)).ToList()
                 };
@@ -134,6 +170,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                 UpdateDateTime = casePlanInstance.UpdateDateTime,
                 Children = children,
                 Files = casePlanInstance.Files.Select(_ => CasePlanInstanceFileItemResult.ToDTO(_)).ToList(),
+                WorkerTasks = casePlanInstance.WorkerTasks.Select(_ => WorkerTaskResult.ToDTO(_)).ToList(),
                 ExecutionContext = casePlanInstance.ExecutionContext == null ? new Dictionary<string, string>() : casePlanInstance.ExecutionContext.Variables.ToDictionary(k => k.Key, k => k.Value)
             };
         }

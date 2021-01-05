@@ -33,6 +33,7 @@
             public const string Delete = "delete";
             public const string Occur = "occur";
             public const string Disable = "disable";
+            public const string Reenable = "reenable";
         }
 
         public static class RouteNames

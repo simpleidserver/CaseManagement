@@ -4,10 +4,12 @@
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="angularApp\app\infrastructure\pipes.module.ts" />
     <None Remove="angularApp\app\stores\cases\models\caseinstance.model.ts" />
     <None Remove="angularApp\app\stores\cases\models\caseplaninstancefileitem.model.ts" />
     <None Remove="angularApp\app\stores\cases\models\caseplaniteminstance.model.ts" />
     <None Remove="angularApp\app\stores\cases\models\transitionhistory.model.ts" />
+    <None Remove="angularApp\app\stores\cases\models\workertask.model.ts" />
     <None Remove="angularApp\app\stores\notifications\models\notification.model.ts" />
   </ItemGroup>
   <ItemGroup>
@@ -17,12 +19,14 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="angularApp\app\infrastructure\pipes.module.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\cases\models\caseinstance.model.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\stores\cases\models\caseplaninstancefileitem.model.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\cases\models\caseplaniteminstance.model.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\cases\models\transitionhistory.model.ts" />
+    <TypeScriptCompile Include="angularApp\app\stores\cases\models\workertask.model.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\notifications\models\notification.model.ts" />
   </ItemGroup>
 </Project>

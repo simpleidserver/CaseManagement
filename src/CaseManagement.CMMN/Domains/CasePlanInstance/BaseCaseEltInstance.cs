@@ -73,7 +73,7 @@ namespace CaseManagement.CMMN.Domains
                     result = TaskStageStates.Disabled;
                     break;
                 case CMMNTransitions.Reenable:
-                    if (state != TaskStageStates.Enabled)
+                    if (state != TaskStageStates.Disabled)
                     {
                         throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                         {
@@ -81,7 +81,7 @@ namespace CaseManagement.CMMN.Domains
                         });
                     }
 
-                    result = TaskStageStates.Disabled;
+                    result = TaskStageStates.Enabled;
                     break;
                 case CMMNTransitions.Fault:
                     if (state != TaskStageStates.Active)

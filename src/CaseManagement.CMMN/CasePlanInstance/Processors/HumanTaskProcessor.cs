@@ -35,6 +35,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             if (completeSubscription.IsCaptured)
             {
                 executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete);
+                await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
                 return true;
             }
 

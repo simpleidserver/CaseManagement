@@ -18,7 +18,8 @@ namespace CaseManagement.CMMN.Domains
             return new CasePlanInstanceWorkerTask
             {
                 CasePlanElementInstanceId = CasePlanElementInstanceId,
-                CreateDateTime = CreateDateTime
+                CreateDateTime = CreateDateTime,
+                ExternalId = ExternalId
             };
         }
     }

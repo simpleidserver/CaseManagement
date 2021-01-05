@@ -63,13 +63,16 @@
     }
   },
   "CASES": {
-    "ACTIVEHUMANTASKS": "Human tasks",
+    "ACTIVEHUMANTASKS": "Active tasks",
     "ENABLINGTASKS": "Enabling tasks",
     "DISABLINGTASKS": "Disabling tasks",
     "DOCUMENTS": "Documents",
     "HISTORYACTIONS": "History of actions",
+    "COMPLETEDTASKS": "Completed tasks",
+    "CONFIRM": "Confirm",
     "DISABLE": "Disable",
     "ENABLE": "Enable",
+    "REENABLE": "Reenable",
     "STATES": {
       "Available": "Available",
       "Enabled": "Enabled",
@@ -85,7 +88,11 @@
       "ACTIVATED": "Task is activated",
       "ERROR_ACTIVATE": "An error occured while trying to activate the task",
       "DISABLED": "Task is disabled",
-      "ERROR_DISABLE": "An error occured while trying to disable the task"
+      "ERROR_DISABLE": "An error occured while trying to disable the task",
+      "REENABLED": "Task is reenabled",
+      "ERROR_REENABLE": "An error occured while trying to reenable the task",
+      "COMPLETED": "Task is completed",
+      "ERROR_COMPLETE_CASE": "An error occured while trying to complete the task"
     }
   },
   "SHARED": {

@@ -24,17 +24,22 @@
             <!-- Actions -->
             <mat-card fxFlex="70%">
                 <mat-card-content>
-                    <div fxLayout="row">
+                    <div fxLayout="row" fxLayoutGap="10px">
                         <div fxFlex="40%">
                             <mat-accordion>
-                                <!-- Active human tasks -->
+                                <!-- Active tasks -->
                                 <mat-expansion-panel [expanded]="true">
                                     <mat-expansion-panel-header>
                                         <mat-panel-title>{{ 'CASES.ACTIVEHUMANTASKS' | translate }}</mat-panel-title>
                                     </mat-expansion-panel-header>
                                     <mat-list>
                                         <mat-list-item *ngFor="let act of activeHumanTasks">
-                                            {{ act.name }}
+                                            <button *ngIf="canConfirmTask(act)" (click)="confirmTask(act)" mat-icon-button [matTooltip]="'CASES.CONFIRM' | translate">
+                                                <mat-icon>check</mat-icon>
+                                            </button>
+                                            <a [routerLink]="getFormUrl(act)">
+                                                {{ act.name }}
+                                            </a>
                                         </mat-list-item>
                                     </mat-list>
                                 </mat-expansion-panel>
@@ -62,6 +67,20 @@
                                     </mat-expansion-panel-header>
                                     <mat-list>
                                         <mat-list-item *ngFor="let act of disabledTasks">
+                                            <button (click)="reenableTask(act)" mat-icon-button [matTooltip]="'CASES.REENABLE' | translate">
+                                                <mat-icon>refresh</mat-icon>
+                                            </button>
+                                            {{ act.name }}
+                                        </mat-list-item>
+                                    </mat-list>
+                                </mat-expansion-panel>
+                                <!-- Completed tasks -->
+                                <mat-expansion-panel>
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>{{ 'CASES.COMPLETEDTASKS' | translate }}</mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let act of completedTasks">
                                             {{ act.name }}
                                         </mat-list-item>
                                     </mat-list>
@@ -69,7 +88,7 @@
                             </mat-accordion>
                         </div>
                         <div fxFlex="60%">
-
+                            <router-outlet></router-outlet>
                         </div>
                     </div>
                 </mat-card-content>

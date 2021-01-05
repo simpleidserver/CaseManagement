@@ -8,6 +8,8 @@ import { SharedModule } from '../shared/shared.module';
 import { CaseRoutes } from './cases.routes';
 import { ListCasesComponent } from './list/list.component';
 import { ViewCaseComponent } from './view/view.component';
+import { ViewFormComponent } from './view/viewform.component';
+import { PipesModule } from '../infrastructure/pipes.module';
 
 @NgModule({
     imports: [
@@ -17,7 +19,8 @@ import { ViewCaseComponent } from './view/view.component';
         HttpClientModule,
         CaseRoutes,
         MaterialModule,
-        SharedModule
+        SharedModule,
+        PipesModule
     ],
 
     entryComponents: [
@@ -25,7 +28,8 @@ import { ViewCaseComponent } from './view/view.component';
 
     declarations: [
         ListCasesComponent,
-        ViewCaseComponent
+        ViewCaseComponent,
+        ViewFormComponent
     ],
 
     exports: [ ],

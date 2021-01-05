@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
@@ -9,14 +9,16 @@ import { CasePlanItemInstance } from '@app/stores/cases/models/caseplaniteminsta
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { WorkerTask } from '../../stores/cases/models/workertask.model';
 
 @Component({
     selector: 'view-case-component',
     templateUrl: './view.component.html',
     styleUrls: ['./view.component.scss']
 })
-export class ViewCaseComponent implements OnInit {
+export class ViewCaseComponent implements OnInit, OnDestroy {
     caseInstance: CaseInstance = new CaseInstance();
+    interval: any = null;
     get activeHumanTasks() {
         return this.caseInstance.children.filter((child: CasePlanItemInstance) => {
             return child.state === 'Active' && child.type === 'HUMANTASK';
@@ -32,6 +34,11 @@ export class ViewCaseComponent implements OnInit {
             return child.state === 'Disabled';
         });
     }
+    get completedTasks() {
+        return this.caseInstance.children.filter((child: CasePlanItemInstance) => {
+            return child.state === 'Completed' && child.type === 'HUMANTASK';
+        });
+    }
 
     constructor(
         private store: Store<fromAppState.AppState>,
@@ -43,6 +50,20 @@ export class ViewCaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseActions.ActionTypes.ERROR_COMPLETE))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant('CASES.MESSAGES.ERROR_COMPLETE_CASE'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseActions.ActionTypes.COMPLETED))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant('CASES.MESSAGES.COMPLETED'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
         this.actions$.pipe(
             filter((action: any) => action.type === fromCaseActions.ActionTypes.ERROR_GET_CASE))
             .subscribe(() => {
@@ -78,6 +99,20 @@ export class ViewCaseComponent implements OnInit {
                     duration: 2000
                 });
             });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseActions.ActionTypes.COMPLETE_REENABLE))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant('CASES.MESSAGES.REENABLED'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromCaseActions.ActionTypes.ERROR_REENABLE))
+            .subscribe(() => {
+                this.snackBar.open(this.translate.instant('CASES.MESSAGES.ERROR_REENABLE'), this.translate.instant('undo'), {
+                    duration: 2000
+                });
+            });
         this.store.pipe(select(fromAppState.selectCaseResult)).subscribe((l: CaseInstance) => {
             if (!l) {
                 return;
@@ -86,7 +121,16 @@ export class ViewCaseComponent implements OnInit {
             this.caseInstance = l;
 
         });
+        this.interval = setInterval(() => {
+            this.refresh();
+        }, 2000);
         this.refresh();
+    }
+
+    ngOnDestroy() {
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
     }
 
     refresh() {
@@ -104,6 +148,36 @@ export class ViewCaseComponent implements OnInit {
     disableTask(task: CasePlanItemInstance) {
         const id = this.activatedRoute.snapshot.params['id'];
         const request = new fromCaseActions.Disable(id, task.id);
+        this.store.dispatch(request);
+    }
+
+    reenableTask(task: CasePlanItemInstance) {
+        const id = this.activatedRoute.snapshot.params['id'];
+        const request = new fromCaseActions.Reenable(id, task.id);
+        this.store.dispatch(request);
+    }
+
+    canConfirmTask(task: CasePlanItemInstance) {
+        const filtered = this.caseInstance.workerTasks.filter((workerTask: WorkerTask) => {
+            return workerTask.casePlanElementInstanceId === task.id;
+        });
+        return filtered.length !== 1;
+    }
+
+    getFormUrl(task: CasePlanItemInstance) {
+        const filtered = this.caseInstance.workerTasks.filter((workerTask: WorkerTask) => {
+            return workerTask.casePlanElementInstanceId === task.id;
+        });
+        if (filtered.length !== 1) {
+            return '/cases/' + this.caseInstance.id;
+        }
+
+        return '/cases/' + this.caseInstance.id + '/' + filtered[0].externalId;
+    }
+
+    confirmTask(task : CasePlanItemInstance) {
+        const id = this.activatedRoute.snapshot.params['id'];
+        const request = new fromCaseActions.Complete(id, task.id);
         this.store.dispatch(request);
     }
 }

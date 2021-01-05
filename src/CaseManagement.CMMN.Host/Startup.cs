@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace CaseManagement.CMMN.Host
@@ -91,9 +92,10 @@ namespace CaseManagement.CMMN.Host
                 policy.AddPolicy("terminate_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("activate_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("disable_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("reenable_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("complete_caseplaninstance", p => 
                 {
-                    p.AddAuthenticationSchemes("OAuthScheme");
+                    p.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme, "OAuthScheme");
                     p.RequireAssertion(_ =>
                     {
                         if (_.User == null || _.User.Claims == null  || !_.User.Claims.Any())
@@ -107,7 +109,7 @@ namespace CaseManagement.CMMN.Host
                             return true;
                         }
 
-                        cl = _.User.Claims.FirstOrDefault(_ => _.Type == "sub");
+                        cl = _.User.Claims.FirstOrDefault(_ => _.Type == "sub" || _.Type == ClaimTypes.NameIdentifier);
                         if (cl != null)
                         {
                             return true;

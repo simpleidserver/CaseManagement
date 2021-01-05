@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ActionTypes, GetCase, SearchCases, Activate } from '../actions/cases.actions';
+import { ActionTypes, Activate, GetCase, Reenable, SearchCases } from '../actions/cases.actions';
 import { CasesService } from '../services/cases.service';
 
 @Injectable()
@@ -66,5 +66,34 @@ export class CasesEffects {
                     );
             }
             )
+    );
+
+    @Effect()
+    reenable$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.REENABLE),
+            mergeMap((evt: Reenable) => {
+                return this.casesService.reenable(evt.id, evt.elt)
+                    .pipe(
+                        map(() => { return { type: ActionTypes.COMPLETE_REENABLE }; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_REENABLE }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    complete$ = this.actions$
+        .pipe(
+            ofType(ActionTypes.COMPLETE),
+            mergeMap((evt: Reenable) => {
+                return this.casesService.complete(evt.id, evt.elt)
+                    .pipe(
+                        map(() => { return { type: ActionTypes.COMPLETED }; }),
+                        catchError(() => of({ type: ActionTypes.ERROR_COMPLETE }))
+                    );
+            }
+            )
         );
+
 }

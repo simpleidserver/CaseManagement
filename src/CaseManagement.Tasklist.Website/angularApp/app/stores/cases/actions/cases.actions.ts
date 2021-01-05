@@ -14,7 +14,13 @@ export enum ActionTypes {
     ERROR_ACTIVATE = "[Cases] ERROR_ACTIVATE",
     DISABLE = "[Cases] DISABLE",
     COMPLETE_DISABLE = "[Cases] COMPLETE_DISABLE",
-    ERROR_DISABLE = "[Cases] ERROR_DISABLE"
+    ERROR_DISABLE = "[Cases] ERROR_DISABLE",
+    REENABLE = "[Cases] REENABLE",
+    COMPLETE_REENABLE = "[Cases] COMPLETE_REENABLE",
+    ERROR_REENABLE = "[Cases] ERROR_REENABLE",
+    COMPLETE = "[Cases] COMPLETE",
+    COMPLETED = "[Cases] COMPLETED",
+    ERROR_COMPLETE = "[Cases] ERROR_COMPLETE"
 }
 
 export class SearchCases implements Action {
@@ -47,9 +53,21 @@ export class Disable implements Action {
     constructor(public id: string, public elt: string) { }
 }
 
+export class Reenable implements Action {
+    readonly type = ActionTypes.REENABLE
+    constructor(public id: string, public elt: string) { }
+}
+
+export class Complete implements Action {
+    readonly type = ActionTypes.COMPLETE
+    constructor(public id: string, public elt: string) { }
+}
+
 export type ActionsUnion = SearchCases |
     CompleteSearchCases |
     GetCase |
     CompleteGetCase |
     Activate |
-    Disable;
+    Disable |
+    Reenable |
+    Complete;
