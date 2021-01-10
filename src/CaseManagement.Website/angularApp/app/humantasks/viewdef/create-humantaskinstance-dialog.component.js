@@ -18,7 +18,6 @@ var CreateHumanTaskInstanceDialog = (function () {
     function CreateHumanTaskInstanceDialog(dialogRef, data) {
         this.dialogRef = dialogRef;
         this.data = data;
-        this.baseTranslationKey = "HUMANTASK.DEF.VIEW.CREATE_HUMANTASKINSTANCE";
         this.createHumanTaskInstance = new CreateHumanTaskInstance();
         this.createHumanTaskInstance.humanTaskName = this.data.name;
     }

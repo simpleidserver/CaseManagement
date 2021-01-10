@@ -46,8 +46,9 @@ var GetBpmnFile = (function () {
 }());
 export { GetBpmnFile };
 var CompleteBpmnFile = (function () {
-    function CompleteBpmnFile(bpmnFile) {
+    function CompleteBpmnFile(bpmnFile, humanTaskDefs) {
         this.bpmnFile = bpmnFile;
+        this.humanTaskDefs = humanTaskDefs;
         this.type = ActionTypes.COMPLETE_GET_BPMNFILE;
     }
     return CompleteBpmnFile;

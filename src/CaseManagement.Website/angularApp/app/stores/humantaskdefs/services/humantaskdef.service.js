@@ -24,6 +24,13 @@ var HumanTaskDefService = (function () {
         var targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + humanTaskDefId;
         return this.http.get(targetUrl, { headers: headers });
     };
+    HumanTaskDefService.prototype.getAll = function () {
+        var headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        var targetUrl = process.env.HUMANTASK_API_URL + '/humantasksdefs';
+        return this.http.get(targetUrl, { headers: headers });
+    };
     HumanTaskDefService.prototype.update = function (humanTaskDef) {
         return of(humanTaskDef);
     };

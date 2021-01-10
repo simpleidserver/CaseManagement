@@ -10,34 +10,37 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import * as fromAppState from '@app/stores/appstate';
-import * as fromBpmnFileActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
+import * as fromCmmnFileActions from '@app/stores/cmmnfiles/actions/cmmn-files.actions';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
-var ListBpmnFilesComponent = (function () {
-    function ListBpmnFilesComponent(store) {
+var ListCmmnFilesComponent = (function () {
+    function ListCmmnFilesComponent(store) {
         this.store = store;
-        this.displayedColumns = ['name', 'nbInstances', 'version', 'status', 'create_datetime', 'update_datetime'];
-        this.bpmnFiles$ = [];
+        this.displayedColumns = ['name', 'version', 'status', 'create_datetime', 'update_datetime'];
+        this.cmmnFiles$ = [];
     }
-    ListBpmnFilesComponent.prototype.ngOnInit = function () {
+    ListCmmnFilesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe(function (searchBpmnFilesResult) {
-            if (!searchBpmnFilesResult) {
+        this.cmmnFilesListener = this.store.pipe(select(fromAppState.selectCmmnFileLstResult)).subscribe(function (searchCmmnFilesResult) {
+            if (!searchCmmnFilesResult) {
                 return;
             }
-            _this.bpmnFiles$ = searchBpmnFilesResult.content;
-            _this.length = searchBpmnFilesResult.totalLength;
+            _this.cmmnFiles$ = searchCmmnFilesResult.content;
+            _this.length = searchCmmnFilesResult.totalLength;
         });
         this.refresh();
     };
-    ListBpmnFilesComponent.prototype.onSubmit = function () {
+    ListCmmnFilesComponent.prototype.ngOnDestroy = function () {
+        this.cmmnFilesListener.unsubscribe();
+    };
+    ListCmmnFilesComponent.prototype.onSubmit = function () {
         this.refresh();
     };
-    ListBpmnFilesComponent.prototype.ngAfterViewInit = function () {
+    ListCmmnFilesComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         merge(this.sort.sortChange, this.paginator.page).subscribe(function () { return _this.refresh(); });
     };
-    ListBpmnFilesComponent.prototype.refresh = function () {
+    ListCmmnFilesComponent.prototype.refresh = function () {
         var startIndex = 0;
         var count = 5;
         if (this.paginator.pageIndex && this.paginator.pageSize) {
@@ -54,26 +57,26 @@ var ListBpmnFilesComponent = (function () {
         if (this.sort.direction) {
             direction = this.sort.direction;
         }
-        var request = new fromBpmnFileActions.SearchBpmnFiles(active, direction, count, startIndex, true, null);
+        var request = new fromCmmnFileActions.SearchCmmnFiles(active, direction, count, startIndex, null, null, true);
         this.store.dispatch(request);
     };
     __decorate([
         ViewChild(MatPaginator),
         __metadata("design:type", MatPaginator)
-    ], ListBpmnFilesComponent.prototype, "paginator", void 0);
+    ], ListCmmnFilesComponent.prototype, "paginator", void 0);
     __decorate([
         ViewChild(MatSort),
         __metadata("design:type", MatSort)
-    ], ListBpmnFilesComponent.prototype, "sort", void 0);
-    ListBpmnFilesComponent = __decorate([
+    ], ListCmmnFilesComponent.prototype, "sort", void 0);
+    ListCmmnFilesComponent = __decorate([
         Component({
-            selector: 'list-bpmn-files',
+            selector: 'list-cmmn-files',
             templateUrl: './listfiles.component.html',
             styleUrls: ['./listfiles.component.scss']
         }),
         __metadata("design:paramtypes", [Store])
-    ], ListBpmnFilesComponent);
-    return ListBpmnFilesComponent;
+    ], ListCmmnFilesComponent);
+    return ListCmmnFilesComponent;
 }());
-export { ListBpmnFilesComponent };
+export { ListCmmnFilesComponent };
 //# sourceMappingURL=listfiles.component.js.map

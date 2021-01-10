@@ -17,6 +17,7 @@ export var initialBpmnFileLstState = {
 };
 export var initialBpmnFileState = {
     content: null,
+    humanTaskDefs: [],
     isLoading: true,
     isErrorLoadOccured: false
 };
@@ -35,6 +36,7 @@ export function bpmnFileReducer(state, action) {
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_GET_BPMNFILE:
             state.content = action.bpmnFile;
+            state.humanTaskDefs = action.humanTaskDefs;
             return __assign({}, state);
         case fromActions.ActionTypes.COMPLETE_UPDATE_BPMNFILE:
             return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { name: action.name, description: action.description, payload: action.payload, updateDateTime: new Date() }) });

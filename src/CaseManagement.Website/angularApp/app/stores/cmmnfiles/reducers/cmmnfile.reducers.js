@@ -12,6 +12,7 @@ var __assign = (this && this.__assign) || function () {
 import * as fromActions from '../actions/cmmn-files.actions';
 export var initialCmmnFileState = {
     content: null,
+    humanTaskDefs: [],
     isLoading: true,
     isErrorLoadOccured: false
 };
@@ -25,9 +26,10 @@ export function cmmnFileReducer(state, action) {
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_GET_CMMNFILE:
             state.content = action.content;
+            state.humanTaskDefs = action.humanTaskDefs;
             return __assign({}, state);
         case fromActions.ActionTypes.COMPLETE_UPDATE_CMMNFILE:
-            return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { name: action.name, description: action.description, version: (state.content.version + 1), updateDateTime: new Date() }) });
+            return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { name: action.name, description: action.description, payload: action.xml, version: (state.content.version + 1), updateDateTime: new Date() }) });
         case fromActions.ActionTypes.COMPLETE_UPDATE_CMMNFILE_PAYLOAD:
             return __assign(__assign({}, state), { content: __assign(__assign({}, state.content), { payload: action.payload }) });
         case fromActions.ActionTypes.COMPLETE_PUBLISH_CMMNFILE:

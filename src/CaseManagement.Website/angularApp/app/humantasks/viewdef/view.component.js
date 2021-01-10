@@ -12,6 +12,7 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
+import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import * as fromHumanTaskInstActions from '@app/stores/humantaskinstances/actions/humantaskinst.actions';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,22 +26,21 @@ var ViewHumanTaskDef = (function () {
         this.translateService = translateService;
         this.dialog = dialog;
         this.route = route;
-        this.humanTaskDef = null;
+        this.humanTaskDef = new HumanTaskDef();
         this.isErrorOccured = false;
-        this.baseTranslationKey = "HUMANTASK.DEF.VIEW";
     }
     ViewHumanTaskDef.prototype.ngOnInit = function () {
         var _this = this;
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_GET_HUMANTASKDEF; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.HUMANTASKDEF_DOESNT_EXIST'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.UNKNOWN_HUMANTASK'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
             _this.isErrorOccured = true;
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskInstActions.ActionTypes.COMPLETE_ME_CREATE_HUMANTASKINSTANCE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.HUMANTASKINSTANCE_CREATED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.HUMANTASKINSTANCE_CREATED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });

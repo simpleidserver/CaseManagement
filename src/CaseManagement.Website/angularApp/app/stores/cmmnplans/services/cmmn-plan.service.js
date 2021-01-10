@@ -15,12 +15,12 @@ var CmmnPlanService = (function () {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CmmnPlanService.prototype.search = function (startIndex, count, order, direction, caseFileId) {
+    CmmnPlanService.prototype.search = function (startIndex, count, order, direction, caseFileId, takeLatest) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plans/search";
-        var request = { startIndex: startIndex, count: count, takeLatest: true };
+        var request = { startIndex: startIndex, count: count, takeLatest: takeLatest };
         if (order) {
             request["orderBy"] = order;
         }

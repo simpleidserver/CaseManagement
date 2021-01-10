@@ -8,12 +8,13 @@ export var ActionTypes;
     ActionTypes["ERROR_GET_CMMN_PLAN"] = "[CmmnPlans] ERROR_GET_CMMN_PLAN";
 })(ActionTypes || (ActionTypes = {}));
 var SearchCmmnPlans = (function () {
-    function SearchCmmnPlans(order, direction, count, startIndex, caseFileId) {
+    function SearchCmmnPlans(order, direction, count, startIndex, caseFileId, takeLatest) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
         this.caseFileId = caseFileId;
+        this.takeLatest = takeLatest;
         this.type = ActionTypes.SEARCH_CMMN_PLANS;
     }
     return SearchCmmnPlans;

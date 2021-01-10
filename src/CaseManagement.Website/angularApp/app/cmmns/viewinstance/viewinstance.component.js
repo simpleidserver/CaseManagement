@@ -8,234 +8,215 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, ViewChild } from '@angular/core';
-import { MatSnackBar, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { CmmnFile } from '@app/stores/cmmnfiles/models/cmmn-file.model';
+import { CmmnPlanInstanceResult } from '@app/stores/cmmninstances/models/cmmn-planinstance.model';
 import * as fromAppState from '@app/stores/appstate';
-import * as fromBpmnFilesActions from '@app/stores/bpmnfiles/actions/bpmn-files.actions';
-import { BpmnFile } from '@app/stores/bpmnfiles/models/bpmn-file.model';
-import * as fromBpmnInstanceActions from '@app/stores/bpmninstances/actions/bpmn-instances.actions';
-import { BpmnInstance, ActivityStateHistory, BpmnMessageToken } from '@app/stores/bpmninstances/models/bpmn-instance.model';
-import { ScannedActionsSubject, select, Store } from '@ngrx/store';
+import { Store, select, ScannedActionsSubject } from '@ngrx/store';
+import * as fromCmmnPlanInstanceActions from '@app/stores/cmmninstances/actions/cmmn-instances.actions';
+import * as fromCmmnFileActions from '@app/stores/cmmnfiles/actions/cmmn-files.actions';
+import { MatSnackBar, MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
-var BpmnViewer = require('bpmn-js/lib/Viewer');
-var ViewBpmnInstanceComponent = (function () {
-    function ViewBpmnInstanceComponent(store, translateService, route, snackBar, actions$, router, dialog) {
+import { ViewMessageDialog } from './view-message-dialog';
+var CmmnViewer = require('cmmn-js/lib/Viewer');
+var Instance = (function () {
+    function Instance() {
+    }
+    return Instance;
+}());
+export { Instance };
+var ViewCmmnInstanceComponent = (function () {
+    function ViewCmmnInstanceComponent(activatedRoute, store, snackBar, actions$, translateService, dialog) {
+        this.activatedRoute = activatedRoute;
         this.store = store;
-        this.translateService = translateService;
-        this.route = route;
         this.snackBar = snackBar;
         this.actions$ = actions$;
-        this.router = router;
+        this.translateService = translateService;
         this.dialog = dialog;
-        this.activityStatesDisplayedColumns = ['state', 'executionDateTime', 'message'];
-        this.incomingTokensDisplayedColumns = ['name', 'content'];
-        this.outgoingTokensDisplayedColumns = ['name', 'content'];
-        this.activityStates$ = new MatTableDataSource();
-        this.incomingTokens$ = new MatTableDataSource();
-        this.outgoingTokens$ = new MatTableDataSource();
-        this.bpmnInstance = new BpmnInstance();
-        this.bpmnFile = new BpmnFile();
-        this.executionPaths = [];
-        this.executionPathFormControl = new FormControl();
+        this.overlayStore = [];
+        this.displayedColumns = ['name', 'executionDateTime', 'state', 'transition', 'nbOccurrence', 'message'];
+        this.cmmnFile = new CmmnFile();
+        this.cmmnPlanInstance = new CmmnPlanInstanceResult();
+        this.instances$ = new MatTableDataSource();
     }
-    ViewBpmnInstanceComponent.prototype.ngOnInit = function () {
+    ViewCmmnInstanceComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.viewer = new BpmnViewer.default({
+        var self = this;
+        this.instances$.data = [new Instance(), new Instance()];
+        this.viewer = new CmmnViewer({
             container: "#canvas",
             keyboard: {
                 bindTo: window
             }
         });
-        this.activityStates$.data = [new ActivityStateHistory(), new ActivityStateHistory()];
-        this.incomingTokens$.data = [new BpmnMessageToken(), new BpmnMessageToken()];
-        this.outgoingTokens$.data = [new BpmnMessageToken(), new BpmnMessageToken()];
-        this.actions$.pipe(filter(function (action) { return action.type === fromBpmnInstanceActions.ActionTypes.ERROR_GET_BPMNINSTANCE; }))
+        this.actions$.pipe(filter(function (action) { return action.type === fromCmmnPlanInstanceActions.ActionTypes.ERROR_GET_CMMN_PLANINSTANCE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant('BPMN..MESSAGES.ERROR_GET_BPMNINSTANCE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('CMMN.MESSAGES.ERROR_GET_CMMNPLANINSTANCE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
-        this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (e) {
-            if (!e || !e.payload) {
+        this.actions$.pipe(filter(function (action) { return action.type === fromCmmnFileActions.ActionTypes.ERROR_GET_CMMNFILE; }))
+            .subscribe(function () {
+            _this.snackBar.open(_this.translateService.instant('CMMN.MESSAGES.ERROR_GET_CMMNFILE'), _this.translateService.instant('undo'), {
+                duration: 2000
+            });
+        });
+        this.cmmnFileListener = this.store.pipe(select(fromAppState.selectCmmnFileResult)).subscribe(function (e) {
+            if (!e || !e.content) {
                 return;
             }
-            _this.bpmnFile = e;
-            _this.refreshCanvas();
+            _this.cmmnFile = e.content;
+            if (self.overlayStore.length === 0) {
+                _this.viewer.importXML(e.content.payload, function () {
+                    self.displayExecution();
+                    var canvas = self.viewer.get('canvas');
+                    canvas.zoom('fit-viewport');
+                });
+            }
+            else {
+                self.displayExecution();
+            }
         });
-        this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe(function (e) {
+        this.cmmnPlanInstanceListener = this.store.pipe(select(fromAppState.selectCmmnPlanInstanceResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
-            e.executionPaths.sort(function (a, b) {
-                return new Date(b.createDateTime).getTime() - new Date(a.createDateTime).getTime();
-            });
-            _this.executionPaths = e.executionPaths;
-            _this.bpmnInstance = e;
+            _this.cmmnPlanInstance = e;
+            var getCmmnFileRequest = new fromCmmnFileActions.GetCmmnFile(e.caseFileId);
+            _this.store.dispatch(getCmmnFileRequest);
         });
-        this.fileId = this.route.snapshot.params['id'];
-        this.instanceId = this.route.snapshot.params['instanceid'];
-        this.execPathId = this.route.snapshot.params['pathid'];
-        if (this.execPathId) {
-            this.executionPathFormControl.setValue(this.execPathId);
-        }
+        this.cmmnFileId = this.activatedRoute.snapshot.params['id'];
+        this.cmmnPlanInstanceId = this.activatedRoute.snapshot.params['instanceid'];
+        this.interval = setInterval(function () {
+            self.refresh();
+        }, 2000);
         this.refresh();
     };
-    ViewBpmnInstanceComponent.prototype.ngAfterViewInit = function () {
-        this.activityStates$.sort = this.activityStatesSort;
+    ViewCmmnInstanceComponent.prototype.ngOnDestroy = function () {
+        this.cmmnFileListener.unsubscribe();
+        this.cmmnPlanInstanceListener.unsubscribe();
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
     };
-    ViewBpmnInstanceComponent.prototype.updateExecutionPath = function () {
-        this.execPathId = this.executionPathFormControl.value;
-        this.router.navigate(['/bpmns/' + this.fileId + '/' + this.instanceId + '/' + this.execPathId]);
+    ViewCmmnInstanceComponent.prototype.ngAfterViewInit = function () {
+        this.instances$.sort = this.instancesSort;
     };
-    ViewBpmnInstanceComponent.prototype.refreshCanvas = function () {
-        var self = this;
-        this.viewer.importXML(self.bpmnFile.payload).then(function () {
-            if (self.bpmnInstance.executionPaths && self.bpmnInstance.executionPaths.length > 0) {
-                var filtered = self.bpmnInstance.executionPaths.filter(function (v) {
-                    return v.id === self.execPathId;
-                });
-                var canvas = self.viewer.get('canvas');
-                canvas.zoom('fit-viewport');
-                if (filtered.length !== 1) {
-                    return;
-                }
-                self.displayExecutionPath(null, filtered[0]);
-            }
+    ViewCmmnInstanceComponent.prototype.viewMessage = function (json) {
+        if (typeof json !== "string") {
+            json = JSON.stringify(json);
+        }
+        this.dialog.open(ViewMessageDialog, {
+            data: { json: json },
+            width: '800px'
         });
     };
-    ViewBpmnInstanceComponent.prototype.refresh = function () {
-        this.store.dispatch(new fromBpmnInstanceActions.GetBpmnInstance(this.instanceId));
-        this.store.dispatch(new fromBpmnFilesActions.GetBpmnFile(this.fileId));
-    };
-    ViewBpmnInstanceComponent.prototype.viewMessage = function (ActivityStateHistory) {
-    };
-    ViewBpmnInstanceComponent.prototype.displayExecutionPath = function (evt, execPath) {
-        if (evt) {
-            evt.preventDefault();
-        }
+    ViewCmmnInstanceComponent.prototype.displayExecution = function () {
         var self = this;
         var overlays = self.viewer.get('overlays');
         var elementRegistry = self.viewer.get('elementRegistry');
-        execPath.executionPointers.forEach(function (execPointer) {
-            var elt = execPointer.flowNodeInstance;
-            var eltReg = elementRegistry.get(elt.flowNodeId);
-            overlays.remove({ element: elt.flowNodeId });
-            var errorOverlayHtml = "<div class='{0}' data-id='" + execPointer.id + "' style='width:" + eltReg.width + "px;height:" + eltReg.height + "px;'></div>";
-            var completeOverlayHtml = "<div class='{0}' data-id='" + execPointer.id + "' style='width:" + eltReg.width + "px;height:" + eltReg.height + "px;'></div>";
-            var selectedOverlayHtml = "<div class='{0}'></div>";
-            var outgoingTokens = "<div class='outgoing-tokens'>" + execPointer.outgoingTokens.length + "</div>";
-            var isCircle = eltReg.type === "bpmn:StartEvent" ? true : false;
-            var isDiamond = eltReg.type === "bpmn:ExclusiveGateway" ? true : false;
-            var errorOverlayCl = "error-overlay";
-            var completeOverlayCl = "complete-overlay";
-            var selectedOverlayCl = "selected-overlay";
-            if (isCircle) {
-                errorOverlayCl = errorOverlayCl + " circle";
-                completeOverlayCl = completeOverlayCl + " circle";
-                selectedOverlayCl = selectedOverlayCl + " selected-circle";
-            }
-            if (isDiamond) {
-                errorOverlayCl = errorOverlayCl + " diamond";
-                completeOverlayCl = completeOverlayCl + " diamond";
-                selectedOverlayCl = selectedOverlayCl + " selected-diamond";
-            }
-            errorOverlayHtml = errorOverlayHtml.replace('{0}', errorOverlayCl);
-            completeOverlayHtml = completeOverlayHtml.replace('{0}', completeOverlayCl);
-            selectedOverlayHtml = selectedOverlayHtml.replace('{0}', selectedOverlayCl);
-            errorOverlayHtml = $(errorOverlayHtml);
-            completeOverlayHtml = $(completeOverlayHtml);
-            selectedOverlayHtml = $(selectedOverlayHtml);
-            selectedOverlayHtml.hide();
-            if (elt.activityState && elt.activityState === 'FAILING') {
-                overlays.add(elt.flowNodeId, {
-                    position: {
-                        top: 0,
-                        left: 0,
-                    },
-                    html: errorOverlayHtml
-                });
-            }
-            else if (elt.state === 'Complete') {
-                overlays.add(elt.flowNodeId, {
-                    position: {
-                        top: 0,
-                        left: 0,
-                    },
-                    html: completeOverlayHtml
-                });
-            }
-            overlays.add(elt.flowNodeId, {
-                position: {
-                    top: -1,
-                    left: -1,
-                },
-                html: selectedOverlayHtml
-            });
-            overlays.add(elt.flowNodeId, {
-                position: {
-                    bottom: 10,
-                    right: 10
-                },
-                html: outgoingTokens
-            });
-            $(completeOverlayHtml).click(function () {
-                var eltid = $(this).data('id');
-                $(".selected-overlay").hide();
-                selectedOverlayHtml.show();
-                self.displayElt(eltid);
-            });
-            $(errorOverlayHtml).click(function () {
-                var eltid = $(this).data('id');
-                $(".selected-overlay").hide();
-                selectedOverlayHtml.show();
-                self.displayElt(eltid);
+        var grouped = this.cmmnPlanInstance.children.filter(function (x) {
+            return x.state;
+        }).reduce(function (rv, x) {
+            rv[x.eltId] = rv[x.eltId] || [];
+            rv[x.eltId].push(x);
+            return rv;
+        }, {});
+        self.overlayStore.forEach(function (record) {
+            record.overlayIds.forEach(function (id) {
+                overlays.remove(id);
             });
         });
-    };
-    ViewBpmnInstanceComponent.prototype.displayElt = function (eltid) {
-        var self = this;
-        var filteredPath = self.executionPaths.filter(function (execPath) {
-            return execPath.id = self.execPathId;
-        });
-        if (filteredPath.length != 1) {
-            return;
+        self.overlayStore = [];
+        for (var key in grouped) {
+            var values = grouped[key];
+            var ordered = values.sort(function (a, b) {
+                return b.nbOccurrence - a.nbOccurrence;
+            });
+            var firstValue = ordered[0];
+            var eltReg = elementRegistry.get(firstValue.eltId);
+            if (!eltReg) {
+                continue;
+            }
+            var stateHtml = "<div class='state " + firstValue.state + "'>" + firstValue.state + "</div>";
+            var nbOccurrenceHtml = "<div class='nbOccurrence'>" + values.length + "</div>";
+            var overlayHtml = "<div data-id='" + firstValue.eltId + "' style='cursor: pointer !important; width:" + eltReg.width + "px;height:" + eltReg.height + "px;'></div>";
+            overlayHtml = $(overlayHtml);
+            var id1 = overlays.add(firstValue.eltId, {
+                position: {
+                    top: 0,
+                    right: 50
+                },
+                html: nbOccurrenceHtml
+            });
+            var id2 = overlays.add(firstValue.eltId, {
+                position: {
+                    top: 0,
+                    right: 20
+                },
+                html: stateHtml
+            });
+            var id3 = overlays.add(firstValue.eltId, {
+                position: {
+                    top: 0,
+                    left: 0,
+                },
+                html: overlayHtml
+            });
+            self.overlayStore.push({ overlayIds: [id1, id2, id3], eltId: firstValue.eltId });
+            $(overlayHtml).click(function () {
+                var eltid = $(this).data('id');
+                var elts = elementRegistry.getAll();
+                elts.forEach(function (e) {
+                    $("[data-element-id='" + e.id + "']").find(".djs-visual > rect").css("stroke", "black");
+                    $("[data-element-id='" + e.id + "']").find(".djs-visual > polygon").css("stroke", "black");
+                });
+                $("[data-element-id='" + eltid + "']").find(".djs-visual > rect").css("stroke", "red");
+                $("[data-element-id='" + eltid + "']").find(".djs-visual > polygon").css("stroke", "red");
+                self.displayInstances(grouped[eltid]);
+            });
         }
-        var execPointer = filteredPath[0].executionPointers.filter(function (p) {
-            return p.id === eltid;
-        })[0];
-        this.activityStates$.data = execPointer.flowNodeInstance.activityStates;
-        this.incomingTokens$.data = execPointer.incomingTokens;
-        this.outgoingTokens$.data = execPointer.outgoingTokens;
+    };
+    ViewCmmnInstanceComponent.prototype.displayInstances = function (arr) {
+        var self = this;
+        var records = [];
+        arr.forEach(function (r) {
+            r.transitionHistories.forEach(function (th) {
+                var record = new Instance();
+                record.executionDateTime = th.executionDateTime;
+                record.transition = th.transition;
+                record.name = r.name;
+                record.nbOccurrence = r.nbOccurrence;
+                record.state = r.state;
+                record.message = th.message;
+                records.push(record);
+            });
+        });
+        self.instances$.data = records;
+    };
+    ViewCmmnInstanceComponent.prototype.refresh = function () {
+        var getCmmnPlanInstanceRequest = new fromCmmnPlanInstanceActions.GetCmmnPlanInstance(this.cmmnPlanInstanceId);
+        this.store.dispatch(getCmmnPlanInstanceRequest);
     };
     __decorate([
-        ViewChild('activityStatesSort'),
+        ViewChild('instancesSort'),
         __metadata("design:type", MatSort)
-    ], ViewBpmnInstanceComponent.prototype, "activityStatesSort", void 0);
-    __decorate([
-        ViewChild('incomingTokensSort'),
-        __metadata("design:type", MatSort)
-    ], ViewBpmnInstanceComponent.prototype, "incomingTokensSort", void 0);
-    __decorate([
-        ViewChild('outgoingTokensSort'),
-        __metadata("design:type", MatSort)
-    ], ViewBpmnInstanceComponent.prototype, "outgoingTokensSort", void 0);
-    ViewBpmnInstanceComponent = __decorate([
+    ], ViewCmmnInstanceComponent.prototype, "instancesSort", void 0);
+    ViewCmmnInstanceComponent = __decorate([
         Component({
-            selector: 'view-bpmn-instance',
-            templateUrl: './view.component.html',
-            styleUrls: ['./view.component.scss']
+            selector: 'view-cmmn-instance',
+            templateUrl: './viewinstance.component.html',
+            styleUrls: ['./viewinstance.component.scss']
         }),
-        __metadata("design:paramtypes", [Store,
-            TranslateService,
-            ActivatedRoute,
+        __metadata("design:paramtypes", [ActivatedRoute,
+            Store,
             MatSnackBar,
             ScannedActionsSubject,
-            Router,
+            TranslateService,
             MatDialog])
-    ], ViewBpmnInstanceComponent);
-    return ViewBpmnInstanceComponent;
+    ], ViewCmmnInstanceComponent);
+    return ViewCmmnInstanceComponent;
 }());
-export { ViewBpmnInstanceComponent };
-//# sourceMappingURL=view.component.js.map
+export { ViewCmmnInstanceComponent };
+//# sourceMappingURL=viewinstance.component.js.map

@@ -20,6 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ViewXmlDialog } from './view-xml-dialog';
+import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 var BpmnViewer = require('bpmn-js/lib/Modeler'), propertiesPanelModule = require('bpmn-js-properties-panel'), propertiesProviderModule = require('bpmn-js-properties-panel/lib/provider/bpmn');
 var caseMgtBpmnModdle = require('@app/moddlextensions/casemanagement-bpmn');
 var ViewBpmnFileComponent = (function () {
@@ -41,6 +42,8 @@ var ViewBpmnFileComponent = (function () {
         this.bpmnFile = new BpmnFile();
         this.bpmnFiles = [];
         this.bpmnInstances$ = [];
+        this.inputParameters = [];
+        this.humanTaskDefs = [];
         this.versionFormControl = new FormControl('');
         this.saveForm = new FormGroup({
             name: new FormControl({ value: '' }),
@@ -88,22 +91,23 @@ var ViewBpmnFileComponent = (function () {
             _this.bpmnInstances$ = searchBpmnInstancesResult.content;
             _this.length = searchBpmnInstancesResult.totalLength;
         });
-        this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe(function (res) {
+        this.bpmnInstancesListener = this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe(function (res) {
             if (!res) {
                 return;
             }
             _this.bpmnFiles = res.content;
             _this.versionFormControl.setValue(_this.bpmnFile.version);
         });
-        this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (bpmnFile) {
-            if (!bpmnFile) {
+        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (bpmnFileState) {
+            if (!bpmnFileState || !bpmnFileState.content) {
                 return;
             }
-            _this.bpmnFile = bpmnFile;
-            _this.saveForm.controls['name'].setValue(bpmnFile.name);
-            _this.saveForm.controls['description'].setValue(bpmnFile.description);
-            _this.viewer.importXML(bpmnFile.payload);
-            var request = new fromBpmnFileActions.SearchBpmnFiles("create_datetime", "desc", 20000, 0, false, bpmnFile.fileId);
+            _this.bpmnFile = bpmnFileState.content;
+            _this.humanTaskDefs = bpmnFileState.humanTaskDefs;
+            _this.saveForm.controls['name'].setValue(bpmnFileState.content.name);
+            _this.saveForm.controls['description'].setValue(bpmnFileState.content.description);
+            _this.viewer.importXML(bpmnFileState.content.payload);
+            var request = new fromBpmnFileActions.SearchBpmnFiles("create_datetime", "desc", 20000, 0, false, bpmnFileState.content.fileId);
             _this.store.dispatch(request);
         });
         this.updatePropertiesForm.valueChanges.subscribe(function () {
@@ -184,6 +188,8 @@ var ViewBpmnFileComponent = (function () {
     };
     ViewBpmnFileComponent.prototype.ngOnDestroy = function () {
         this.paramsSub.unsubscribe();
+        this.bpmnInstancesListener.unsubscribe();
+        this.bpmnFileListener.unsubscribe();
     };
     ViewBpmnFileComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -246,6 +252,7 @@ var ViewBpmnFileComponent = (function () {
         if (bo.$type === 'bpmn:UserTask') {
             var index = this.parameters.indexOf(elt);
             this.parameters.splice(index, 1);
+            this.saveProperties(this.updatePropertiesForm.value);
         }
     };
     ViewBpmnFileComponent.prototype.addParameter = function (form) {
@@ -256,6 +263,7 @@ var ViewBpmnFileComponent = (function () {
         if (bo.$type === 'bpmn:UserTask') {
             this.parameters.push(form);
             this.addParameterForm.reset();
+            this.saveProperties(this.updatePropertiesForm.value);
         }
     };
     ViewBpmnFileComponent.prototype.createInstance = function () {
@@ -286,6 +294,20 @@ var ViewBpmnFileComponent = (function () {
             self.store.dispatch(act);
         });
     };
+    ViewBpmnFileComponent.prototype.onHumanTaskChanged = function (evt) {
+        var value = evt.value;
+        this.selectHumanTask(value);
+    };
+    ViewBpmnFileComponent.prototype.selectHumanTask = function (name) {
+        var filteredHumanTaskDefs = this.humanTaskDefs.filter(function (ht) {
+            return ht.name === name;
+        });
+        if (filteredHumanTaskDefs.length !== 1) {
+            this.inputParameters = [];
+            return;
+        }
+        this.inputParameters = HumanTaskDef.getInputOperationParameters(filteredHumanTaskDefs[0]);
+    };
     ViewBpmnFileComponent.prototype.updateProperties = function (elt) {
         this.buildingForm = true;
         this.updatePropertiesForm.reset();
@@ -302,6 +324,7 @@ var ViewBpmnFileComponent = (function () {
         if (bo.$type === 'bpmn:UserTask') {
             this.updatePropertiesForm.get('implementation').setValue(bo.implementation);
             this.updatePropertiesForm.get('wsHumanTaskDefName').setValue(bo.get('cmg:wsHumanTaskDefName'));
+            this.selectHumanTask(bo.get('cmg:wsHumanTaskDefName'));
             var parameters = this.getExtension(bo, 'cmg:Parameters');
             self.parameters = [];
             if (parameters && parameters.parameter) {

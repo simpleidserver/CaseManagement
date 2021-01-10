@@ -1,0 +1,14 @@
+﻿<h1 mat-dialog-title>{{ 'HUMANTASK.EDITOR.CONFIGUREROW' | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="configureRowForm" (ngSubmit)="onSave(configureRowForm.value)">
+        <!-- Nb columns -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'SHARED.NBCOLUMNS' | translate }}</mat-label>
+            <input matInput name="nbColumns" formControlName="nbColumns" />
+        </mat-form-field>
+        <button mat-raised-button color="primary">{{ 'SHARED.SAVE' | translate }}</button>
+    </form>
+</div>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>{{ 'SHARED.CANCEL' | translate }}</button>
+</mat-dialog-actions>

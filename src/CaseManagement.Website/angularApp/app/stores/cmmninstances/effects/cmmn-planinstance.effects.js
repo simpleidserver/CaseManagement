@@ -28,7 +28,7 @@ var CmmnPlanInstanceEffects = (function () {
         }));
         this.searchCasePlanInstances = this.actions$
             .pipe(ofType(fromCmmnPlanInstance.ActionTypes.SEARCH_CMMN_PLANINSTANCE), mergeMap(function (evt) {
-            return _this.cmmnPlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId)
+            return _this.cmmnPlanInstanceService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.casePlanId, evt.caseFileId)
                 .pipe(map(function (cmmnPlanInstances) { return { type: fromCmmnPlanInstance.ActionTypes.COMPLETE_SEARCH_CMMN_PLANINSTANCE, content: cmmnPlanInstances }; }), catchError(function () { return of({ type: fromCmmnPlanInstance.ActionTypes.ERROR_SEARCH_CMMN_PLANINSTANCE }); }));
         }));
         this.getCasePlanInstance = this.actions$

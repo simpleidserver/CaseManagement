@@ -21,7 +21,7 @@ var ListBpmnFilesComponent = (function () {
     }
     ListBpmnFilesComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe(function (searchBpmnFilesResult) {
+        this.bpmnFilesListener = this.store.pipe(select(fromAppState.selectBpmnFilesResult)).subscribe(function (searchBpmnFilesResult) {
             if (!searchBpmnFilesResult) {
                 return;
             }
@@ -29,6 +29,9 @@ var ListBpmnFilesComponent = (function () {
             _this.length = searchBpmnFilesResult.totalLength;
         });
         this.refresh();
+    };
+    ListBpmnFilesComponent.prototype.ngOnDestroy = function () {
+        this.bpmnFilesListener.unsubscribe();
     };
     ListBpmnFilesComponent.prototype.onSubmit = function () {
         this.refresh();

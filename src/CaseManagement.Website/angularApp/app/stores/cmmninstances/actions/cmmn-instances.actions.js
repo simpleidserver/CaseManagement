@@ -19,12 +19,13 @@ var LaunchCmmnPlanInstance = (function () {
 }());
 export { LaunchCmmnPlanInstance };
 var SearchCmmnPlanInstance = (function () {
-    function SearchCmmnPlanInstance(order, direction, count, startIndex, casePlanId) {
+    function SearchCmmnPlanInstance(order, direction, count, startIndex, casePlanId, caseFileId) {
         this.order = order;
         this.direction = direction;
         this.count = count;
         this.startIndex = startIndex;
         this.casePlanId = casePlanId;
+        this.caseFileId = caseFileId;
         this.type = ActionTypes.SEARCH_CMMN_PLANINSTANCE;
     }
     return SearchCmmnPlanInstance;

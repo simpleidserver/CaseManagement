@@ -94,6 +94,31 @@
     .state.Enabled, .state.Available, .state.Disabled {
         background-color: orange;
     }
+
+    .fields .mat-list-item:hover {
+        background-color: whitesmoke;
+    }
+
+    .ui-editor {
+        background-color: whitesmoke;
+    }
+
+
+    .component.hover {
+        outline: 1px solid mat-color($primary, 300) !important;
+    }
+
+    .component.selected {
+        outline: 3px solid mat-color($primary, 300) !important;
+    }
+
+    .component > .toolbar {
+        background-color: mat-color($primary, 300);
+    }
+
+    .component > .title {
+        background-color: mat-color($primary, 300);
+    }
 }
 
 @mixin component-themes($theme) {

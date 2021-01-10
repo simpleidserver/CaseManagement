@@ -9,15 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ActionTypes } from '../actions/bpmn-files.actions';
 import { BpmnFilesService } from '../services/bpmnfiles.service';
+import { HumanTaskDefService } from '@app/stores/humantaskdefs/services/humantaskdef.service';
 var BpmnFilesEffects = (function () {
-    function BpmnFilesEffects(actions$, bpmnFilesService) {
+    function BpmnFilesEffects(actions$, bpmnFilesService, humanTaskService) {
         var _this = this;
         this.actions$ = actions$;
         this.bpmnFilesService = bpmnFilesService;
+        this.humanTaskService = humanTaskService;
         this.searchBpmnFiles$ = this.actions$
             .pipe(ofType(ActionTypes.START_SEARCH_BPMNFILES), mergeMap(function (evt) {
             return _this.bpmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.takeLatest, evt.fileId)
@@ -25,8 +27,9 @@ var BpmnFilesEffects = (function () {
         }));
         this.getBpmnFile$ = this.actions$
             .pipe(ofType(ActionTypes.START_GET_BPMNFILE), mergeMap(function (evt) {
-            return _this.bpmnFilesService.get(evt.id)
-                .pipe(map(function (bpmnFile) { return { type: ActionTypes.COMPLETE_GET_BPMNFILE, bpmnFile: bpmnFile }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_BPMNFILE }); }));
+            var getHumanTasksCall = _this.humanTaskService.getAll();
+            var getBpmnFileCall = _this.bpmnFilesService.get(evt.id);
+            return forkJoin([getHumanTasksCall, getBpmnFileCall]).pipe(map(function (results) { return { type: ActionTypes.COMPLETE_GET_BPMNFILE, humanTaskDefs: results[0], bpmnFile: results[1] }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_BPMNFILE }); }));
         }));
         this.updateBpmnFile$ = this.actions$
             .pipe(ofType(ActionTypes.UPDATE_BPMNFILE), mergeMap(function (evt) {
@@ -70,7 +73,8 @@ var BpmnFilesEffects = (function () {
     BpmnFilesEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            BpmnFilesService])
+            BpmnFilesService,
+            HumanTaskDefService])
     ], BpmnFilesEffects);
     return BpmnFilesEffects;
 }());

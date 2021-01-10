@@ -20,7 +20,7 @@ var CmmnPlanEffects = (function () {
         this.cmmnPlanService = cmmnPlanService;
         this.searchCmmnPlans$ = this.actions$
             .pipe(ofType(fromCasePlan.ActionTypes.SEARCH_CMMN_PLANS), mergeMap(function (evt) {
-            return _this.cmmnPlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.caseFileId)
+            return _this.cmmnPlanService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.caseFileId, evt.takeLatest)
                 .pipe(map(function (cmmnPlans) { return { type: fromCasePlan.ActionTypes.COMPLETE_SEARCH_CMMN_PLANS, content: cmmnPlans }; }), catchError(function () { return of({ type: fromCasePlan.ActionTypes.ERROR_SEARCH_CMMN_PLANS }); }));
         }));
         this.getCmmnPlan$ = this.actions$

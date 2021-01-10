@@ -33,7 +33,7 @@ export var selectCmmnFileResult = createSelector(selectCmmnFile, function (state
     if (!state || state.content == null) {
         return null;
     }
-    return state.content;
+    return state;
 });
 export var selectCmmnFileLstResult = createSelector(selectCmmnFileLst, function (state) {
     if (!state || state.content == null) {
@@ -81,7 +81,7 @@ export var selectBpmnFileResult = createSelector(selectBpmnFile, function (state
     if (!state || state.content == null) {
         return null;
     }
-    return state.content;
+    return state;
 });
 export var selectBpmnInstancesResult = createSelector(selectBpmnInstances, function (state) {
     if (!state || state.content == null) {

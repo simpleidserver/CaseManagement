@@ -53,7 +53,8 @@ var GetCmmnFile = (function () {
 }());
 export { GetCmmnFile };
 var CompleteGetCmmnFile = (function () {
-    function CompleteGetCmmnFile(content) {
+    function CompleteGetCmmnFile(humanTaskDefs, content) {
+        this.humanTaskDefs = humanTaskDefs;
         this.content = content;
         this.type = ActionTypes.COMPLETE_GET_CMMNFILE;
     }
@@ -94,20 +95,22 @@ var CompletePublishCmmnFile = (function () {
 }());
 export { CompletePublishCmmnFile };
 var UpdateCmmnFile = (function () {
-    function UpdateCmmnFile(id, name, description) {
+    function UpdateCmmnFile(id, name, description, xml) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.xml = xml;
         this.type = ActionTypes.UPDATE_CMMNFILE;
     }
     return UpdateCmmnFile;
 }());
 export { UpdateCmmnFile };
 var CompleteUpdateCmmnFile = (function () {
-    function CompleteUpdateCmmnFile(id, name, description) {
+    function CompleteUpdateCmmnFile(id, name, description, xml) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.xml = xml;
         this.type = ActionTypes.COMPLETE_UPDATE_CMMNFILE;
     }
     return CompleteUpdateCmmnFile;

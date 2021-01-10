@@ -15,6 +15,7 @@ import { ListBpmnFilesComponent } from './listfiles/listfiles.component';
 import { ViewXmlDialog } from './viewfile/view-xml-dialog';
 import { ViewBpmnFileComponent } from './viewfile/viewfile.component';
 import { ViewBpmnInstanceComponent } from './viewinstance/view.component';
+import { ViewMessageDialog } from './viewinstance/view-message-dialog';
 var BpmnsModule = (function () {
     function BpmnsModule() {
     }
@@ -27,12 +28,13 @@ var BpmnsModule = (function () {
                 BpmnsRoutes,
                 MonacoEditorModule.forRoot()
             ],
-            entryComponents: [ViewXmlDialog],
+            entryComponents: [ViewXmlDialog, ViewMessageDialog],
             declarations: [
                 BpmnsComponent,
                 ListBpmnFilesComponent,
                 ViewBpmnFileComponent,
                 ViewXmlDialog,
+                ViewMessageDialog,
                 ViewBpmnInstanceComponent
             ],
             providers: []

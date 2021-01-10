@@ -29,16 +29,15 @@ var ViewTaskPeopleAssignmentComponent = (function () {
         this.taskStakeHolders = [];
         this.businessAdministrators = [];
         this.recipients = [];
-        this.baseTranslationKey = "HUMANTASK.DEF.VIEW.PEOPLEASSIGNMENT";
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.PEOPLE_ASSIGNMENT_UPDATED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.PEOPLE_ASSIGNMENT_UPDATED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_PEOPLE_ASSIGNMENT; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.CANNOT_UPDATE_PEOPLE_ASSIGNMENT'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.CANNOT_UPDATE_PEOPLE_ASSIGNMENT'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });

@@ -35,7 +35,6 @@ var ViewHumanTaskDefDeadlinesComponent = (function () {
         this.snackBar = snackBar;
         this.dialog = dialog;
         this.translateService = translateService;
-        this.baseTranslationKey = "HUMANTASK.DEF.VIEW.DEADLINES";
         this.humanTaskDef = new HumanTaskDef();
         this.displayedDeadLineColumns = ['name', 'for', 'until', 'actions'];
         this.displayedEscalationColumns = ['condition', 'actions'];
@@ -72,151 +71,151 @@ var ViewHumanTaskDefDeadlinesComponent = (function () {
         var _this = this;
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_START_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.START_DEADLINE_ADDED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.START_DEADLINE_ADDED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.COMPLETION_DEADLINE_ADDED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.COMPLETION_DEADLINE_ADDED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_START_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_START_DEADLINE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_START_DEADLINE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_COMPLETION_DEADLINE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_COMPLETION_DEADLINE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_START_DEALINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.START_DEADLINE_REMOVED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.START_DEADLINE_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_START_DEALINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_REMOVE_START_DEADLINE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_REMOVE_START_DEADLINE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.COMPLETION_DEADLINE_REMOVED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.COMPLETION_DEADLINE_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_START_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_START_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_UPDATE_DEADLINE'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_ESCALATION_STARTDEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ADD_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ADD_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_ESCALATION_STARTDEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ADD_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ADD_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_ESCALATION_COMPLETIONDEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_START_ESCALATION; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_START_ESCALATION; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_COMPLETION_ESCALATION; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_COMPLETION_ESCALATION; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_UPDATE_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_START_ESCALATION; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_COMPLETION_ESCALATION; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_START_ESCALATION; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_DELETE_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ESCALATION_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_COMPLETION_DEADLINE; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_DELETE_ESCALATION'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_ESCALATION'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });

@@ -14,7 +14,6 @@ var AddEscalationDialog = (function () {
     function AddEscalationDialog(dialogRef, formBuilder) {
         this.dialogRef = dialogRef;
         this.formBuilder = formBuilder;
-        this.baseTranslationKey = "HUMANTASK.DEF.VIEW.DEADLINES";
         this.addEscalationForm = this.formBuilder.group({
             condition: new FormControl('', [
                 Validators.required

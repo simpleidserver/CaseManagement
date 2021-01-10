@@ -80,6 +80,16 @@
     }
   },
   "HUMANTASK": {
+    "EDITOR": {
+      "CONFIGUREROW": "Configure the row",
+      "CONFIGURETXT": "Configure the textbox",
+      "CONFIGURESELECT": "Configure select",
+      "LAYOUT": "Layout",
+      "FIELDS": "Fields",
+      "TEXTBOX": "Textbox",
+      "SELECT": "Select",
+      "COLUMNS": "Columns"
+    },
     "FILES": "Human Task definitions",
     "INSTANCES": "Human Task instances",
     "ADD_HUMANTASK": "Add Human Task",
@@ -183,6 +193,7 @@
     "ID": "Identifier",
     "NAME": "Name",
     "VERSION": "Version",
+    "LABEL": "Label",
     "TEXT": "Text",
     "SELECT": "Select",
     "DESCRIPTION": "Description",
@@ -192,6 +203,7 @@
     "INPUT_PARAMETERS": "Input Parameters",
     "OUTPUT_PARAMETERS": "Output Parameters",
     "STATUS": "Status",
+    "NBCOLUMNS": "Number of columns",
     "SAVE": "Save",
     "KEY": "Key",
     "VALUE": "Value",

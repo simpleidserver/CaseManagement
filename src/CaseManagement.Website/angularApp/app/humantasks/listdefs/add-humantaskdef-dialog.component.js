@@ -14,7 +14,6 @@ var AddHumanTaskDefDialog = (function () {
     function AddHumanTaskDefDialog(dialogRef, formBuilder) {
         this.dialogRef = dialogRef;
         this.formBuilder = formBuilder;
-        this.baseTranslationKey = "HUMANTASK.DEF.LIST";
         this.addHumanTaskForm = this.formBuilder.group({
             name: new FormControl('', [
                 Validators.required

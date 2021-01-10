@@ -23,7 +23,6 @@ var ViewHumanTaskDefInfoComponent = (function () {
         this.snackBar = snackBar;
         this.translateService = translateService;
         this.actions$ = actions$;
-        this.baseTranslationKey = "HUMANTASK.DEF.VIEW.TASK";
         this.humanTaskDef = new HumanTaskDef();
         this.inputOperationParameters = [];
         this.outputOperationParameters = [];
@@ -39,65 +38,65 @@ var ViewHumanTaskDefInfoComponent = (function () {
         var _this = this;
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_HUMANTASK_INFO; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.TASK_INFO_UPDATED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.TASK_INFO_UPDATED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_HUMANTASK_INFO; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_TASK_INFO_UPDATED'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_UPDATE_TASK_INFO'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ADD_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.INPUT_PARAMETER_ADDED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ADD_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.OUTPUT_PARAMETER_ADDED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_INPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_OUTPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_ADD_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.DELETE_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.INPUT_PARAMETER_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.DELETE_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.OUTPUT_PARAMETER_REMOVED'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_INPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_DELETE_OPERATION_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_INPUT_PARAMETER'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translateService.instant(_this.baseTranslationKey + '.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
+            _this.snackBar.open(_this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_OUTPUT_PARAMETER'), _this.translateService.instant('undo'), {
                 duration: 2000
             });
         });
-        this.store.pipe(select(fromAppState.selectHumanTaskResult)).subscribe(function (e) {
+        this.humanTaskListener = this.store.pipe(select(fromAppState.selectHumanTaskResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
@@ -108,6 +107,9 @@ var ViewHumanTaskDefInfoComponent = (function () {
             _this.inputOperationParameters = HumanTaskDef.getInputOperationParameters(_this.humanTaskDef);
             _this.outputOperationParameters = HumanTaskDef.getOutputOperationParameters(_this.humanTaskDef);
         });
+    };
+    ViewHumanTaskDefInfoComponent.prototype.ngOnDestroy = function () {
+        this.humanTaskListener.unsubscribe();
     };
     ViewHumanTaskDefInfoComponent.prototype.updateInfo = function (form) {
         if (!this.infoForm.valid) {

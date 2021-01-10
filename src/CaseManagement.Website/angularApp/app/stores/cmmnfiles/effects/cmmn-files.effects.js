@@ -9,15 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ActionTypes } from '../actions/cmmn-files.actions';
 import { CmmnFilesService } from '../services/cmmnfiles.service';
+import { HumanTaskDefService } from '@app/stores/humantaskdefs/services/humantaskdef.service';
+import { of, forkJoin } from 'rxjs';
 var CmmnFilesEffects = (function () {
-    function CmmnFilesEffects(actions$, cmmnFilesService) {
+    function CmmnFilesEffects(actions$, cmmnFilesService, humanTaskDefService) {
         var _this = this;
         this.actions$ = actions$;
         this.cmmnFilesService = cmmnFilesService;
+        this.humanTaskDefService = humanTaskDefService;
         this.searchCmmnFiles$ = this.actions$
             .pipe(ofType(ActionTypes.START_SEARCH_CMMNFILES), mergeMap(function (evt) {
             return _this.cmmnFilesService.search(evt.startIndex, evt.count, evt.order, evt.direction, evt.text, evt.caseFileId, evt.takeLatest)
@@ -25,8 +27,9 @@ var CmmnFilesEffects = (function () {
         }));
         this.getCmmnFile$ = this.actions$
             .pipe(ofType(ActionTypes.START_GET_CMMNFILE), mergeMap(function (evt) {
-            return _this.cmmnFilesService.get(evt.id)
-                .pipe(map(function (cmmnfile) { return { type: ActionTypes.COMPLETE_GET_CMMNFILE, content: cmmnfile }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_CMMNFILE }); }));
+            var getCmmnFileCall = _this.cmmnFilesService.get(evt.id);
+            var getHumanTaskDefsCall = _this.humanTaskDefService.getAll();
+            return forkJoin([getCmmnFileCall, getHumanTaskDefsCall]).pipe(map(function (results) { return { type: ActionTypes.COMPLETE_GET_CMMNFILE, humanTaskDefs: results[1], content: results[0] }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_CMMNFILE }); }));
         }));
         this.addCmmnFile$ = this.actions$
             .pipe(ofType(ActionTypes.ADD_CMMNFILE), mergeMap(function (evt) {
@@ -41,7 +44,10 @@ var CmmnFilesEffects = (function () {
         this.updateCmmnFile$ = this.actions$
             .pipe(ofType(ActionTypes.UPDATE_CMMNFILE), mergeMap(function (evt) {
             return _this.cmmnFilesService.update(evt.id, evt.name, evt.description)
-                .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_CMMNFILE, id: evt.id, name: evt.name, description: evt.description }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_CMMNFILE }); }));
+                .pipe(mergeMap(function () {
+                return _this.cmmnFilesService.updatePayload(evt.id, evt.xml)
+                    .pipe(map(function () { return { type: ActionTypes.COMPLETE_UPDATE_CMMNFILE, id: evt.id, name: evt.name, description: evt.description, xml: evt.xml }; }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_CMMNFILE }); }));
+            }), catchError(function () { return of({ type: ActionTypes.ERROR_UPDATE_CMMNFILE }); }));
         }));
         this.updateCmmnFilePayload$ = this.actions$
             .pipe(ofType(ActionTypes.UPDATE_CMMNFILE_PAYLOAD), mergeMap(function (evt) {
@@ -76,7 +82,8 @@ var CmmnFilesEffects = (function () {
     CmmnFilesEffects = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [Actions,
-            CmmnFilesService])
+            CmmnFilesService,
+            HumanTaskDefService])
     ], CmmnFilesEffects);
     return CmmnFilesEffects;
 }());

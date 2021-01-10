@@ -15,13 +15,13 @@ var CmmnPlanInstanceService = (function () {
         this.http = http;
         this.oauthService = oauthService;
     }
-    CmmnPlanInstanceService.prototype.search = function (startIndex, count, order, direction, casePlanId) {
+    CmmnPlanInstanceService.prototype.search = function (startIndex, count, order, direction, casePlanId, caseFileId) {
         var headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-plan-instances/search";
-        var request = { startIndex: startIndex, count: count, casePlanId: casePlanId };
+        var request = { startIndex: startIndex, count: count, casePlanId: casePlanId, caseFileId: caseFileId };
         if (order) {
             request["orderBy"] = order;
         }

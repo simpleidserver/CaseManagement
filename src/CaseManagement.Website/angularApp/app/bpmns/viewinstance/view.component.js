@@ -19,6 +19,7 @@ import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
+import { ViewMessageDialog } from './view-message-dialog';
 var BpmnViewer = require('bpmn-js/lib/Viewer');
 var ViewBpmnInstanceComponent = (function () {
     function ViewBpmnInstanceComponent(store, translateService, route, snackBar, actions$, router, dialog) {
@@ -57,14 +58,14 @@ var ViewBpmnInstanceComponent = (function () {
                 duration: 2000
             });
         });
-        this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (e) {
-            if (!e || !e.payload) {
+        this.bpmnFileListener = this.store.pipe(select(fromAppState.selectBpmnFileResult)).subscribe(function (e) {
+            if (!e || !e.content || !e.content.payload) {
                 return;
             }
-            _this.bpmnFile = e;
+            _this.bpmnFile = e.content;
             _this.refreshCanvas();
         });
-        this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe(function (e) {
+        this.bpmnInstanceListener = this.store.pipe(select(fromAppState.selectBpmnInstanceResult)).subscribe(function (e) {
             if (!e) {
                 return;
             }
@@ -76,11 +77,18 @@ var ViewBpmnInstanceComponent = (function () {
         });
         this.fileId = this.route.snapshot.params['id'];
         this.instanceId = this.route.snapshot.params['instanceid'];
-        this.execPathId = this.route.snapshot.params['pathid'];
-        if (this.execPathId) {
-            this.executionPathFormControl.setValue(this.execPathId);
-        }
+        this.route.params.subscribe(function () {
+            _this.execPathId = _this.route.snapshot.params['pathid'];
+            if (_this.execPathId) {
+                _this.executionPathFormControl.setValue(_this.execPathId);
+                _this.refresh();
+            }
+        });
         this.refresh();
+    };
+    ViewBpmnInstanceComponent.prototype.ngOnDestroy = function () {
+        this.bpmnFileListener.unsubscribe();
+        this.bpmnInstanceListener.unsubscribe();
     };
     ViewBpmnInstanceComponent.prototype.ngAfterViewInit = function () {
         this.activityStates$.sort = this.activityStatesSort;
@@ -96,20 +104,27 @@ var ViewBpmnInstanceComponent = (function () {
                 var filtered = self.bpmnInstance.executionPaths.filter(function (v) {
                     return v.id === self.execPathId;
                 });
-                var canvas = self.viewer.get('canvas');
-                canvas.zoom('fit-viewport');
                 if (filtered.length !== 1) {
                     return;
                 }
                 self.displayExecutionPath(null, filtered[0]);
             }
+            var canvas = self.viewer.get('canvas');
+            canvas.zoom('fit-viewport');
         });
     };
     ViewBpmnInstanceComponent.prototype.refresh = function () {
         this.store.dispatch(new fromBpmnInstanceActions.GetBpmnInstance(this.instanceId));
         this.store.dispatch(new fromBpmnFilesActions.GetBpmnFile(this.fileId));
     };
-    ViewBpmnInstanceComponent.prototype.viewMessage = function (ActivityStateHistory) {
+    ViewBpmnInstanceComponent.prototype.viewMessage = function (json) {
+        if (typeof json !== "string") {
+            json = JSON.stringify(json);
+        }
+        this.dialog.open(ViewMessageDialog, {
+            data: { json: json },
+            width: '800px'
+        });
     };
     ViewBpmnInstanceComponent.prototype.displayExecutionPath = function (evt, execPath) {
         if (evt) {
@@ -197,7 +212,7 @@ var ViewBpmnInstanceComponent = (function () {
     ViewBpmnInstanceComponent.prototype.displayElt = function (eltid) {
         var self = this;
         var filteredPath = self.executionPaths.filter(function (execPath) {
-            return execPath.id = self.execPathId;
+            return execPath.id === self.execPathId;
         });
         if (filteredPath.length != 1) {
             return;

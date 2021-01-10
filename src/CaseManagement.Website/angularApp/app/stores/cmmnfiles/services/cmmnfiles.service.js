@@ -79,7 +79,7 @@ var CmmnFilesService = (function () {
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         var targetUrl = process.env.API_URL + "/case-files/" + id + "/publish";
         return this.http.get(targetUrl, { headers: headers }).pipe(map(function (res) {
-            return res['id'];
+            return res;
         }));
     };
     CmmnFilesService = __decorate([
