@@ -4,6 +4,8 @@
         <li><a href="#" [routerLink]="['/humantasks']">{{ 'BREADCRUMB.HUMANTASKS' | translate }}</a></li>
         <li>{{ humanTaskDef.name }}</li>
     </ul>
+    <router-outlet></router-outlet>
+    <!--
     <div class="m-10">
         <div>
             <button mat-raised-button color="primary" (click)="createHumanTaskInstance()">{{ 'HUMANTASK.CREATE_INSTANCE' | translate }}</button>
@@ -47,8 +49,8 @@
                 </a>
             </nav>
             <div class="mleft-10 mright-10 mt-10">
-                <router-outlet></router-outlet>
             </div>
         </div>
     </div>
+    -->
 </div>

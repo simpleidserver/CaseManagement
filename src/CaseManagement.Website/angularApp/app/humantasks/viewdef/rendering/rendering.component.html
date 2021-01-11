@@ -1,16 +1,147 @@
-﻿<div fxLayout="row" fxLayoutGap="10px">
-    <div fxFlex="20%">
-        <mat-accordion>
-            <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                    {{ 'HUMANTASK.EDITOR.LABELS' | translate }}
-                </mat-expansion-panel-header>
-                <mat-list class="fields">
-                    <mat-list-item draggable="true" (dragstart)="dragHeader($event)">
-                        <svg class="icon" viewBox="0 0 31.29 31.29">
-                            <g>
+﻿<div fxLayout="column" fxLayoutGap="10px">
+    <div fxLayout="row" fxLayoutGap="10px">
+        <mat-card fxFlex="20%">
+            <mat-card-content>
+                <!-- Update information -->
+                <form [formGroup]="infoForm" (ngSubmit)="updateInfo(infoForm.value)">
+                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                        <mat-label>{{ "SHARED.NAME" | translate }}</mat-label>
+                        <input matInput type="text" formControlName="name" required />
+                        <mat-error *ngIf="infoForm.get('name').hasError('required')">
+                            {{ 'SHARED.IS_REQUIRED' | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                        <mat-label>{{ "SHARED.PRIORITY" | translate }}</mat-label>
+                        <input matInput type="number" formControlName="priority" />
+                    </mat-form-field>
+                    <button mat-raised-button color="primary">{{ "SHARED.UPDATE" | translate }}</button>
+                </form>
+            </mat-card-content>
+        </mat-card>
+        <div fxLayout="column" fxFlex="80%" fxLayoutGap="10px">
+            <div fxLayout="row" fxLayoutGap="10px">
+                <!-- Parameters -->
+                <mat-card fxFlex="50%">
+                    <mat-card-header>
+                        <mat-card-title>{{ 'HUMANTASK.PARAMETERS' | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <table mat-table class="full-width" [dataSource]="operationParameters$">
+                            <ng-container matColumnDef="usage">
+                                <th mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let parameter">
+                                    <mat-icon [matTooltip]="'HUMANTASK.INPUT_PARAMETER' | translate" *ngIf="parameter.usage === 'INPUT'">arrow_back</mat-icon>
+                                    <mat-icon [matTooltip]="'HUMANTASK.OUTPUT_PARAMETER' | translate" *ngIf="parameter.usage === 'OUTPUT'">arrow_forward</mat-icon>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.NAME' | translate }}</th>
+                                <td mat-cell *matCellDef="let parameter">{{ parameter.name }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.TYPE' | translate }}</th>
+                                <td mat-cell *matCellDef="let parameter">{{ parameter.type }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="isRequired">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.IS_REQUIRED' | translate }}</th>
+                                <td mat-cell *matCellDef="let parameter">
+                                    <mat-icon *ngIf="parameter.isRequired">check</mat-icon>
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="parameterDisplayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: parameterDisplayedColumns;"></tr>
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+                <!-- Presentation parameters -->
+                <mat-card fxFlex="50%">
+                    <mat-card-header>
+                        <mat-card-title>{{ 'HUMANTASK.PRESENTATION_PARAMETERS' | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <table mat-table class="full-width" [dataSource]="presentationParameters$">
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.NAME' | translate }}</th>
+                                <td mat-cell *matCellDef="let parameter">{{ parameter.name }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.TYPE' | translate }}</th>
+                                <td mat-cell *matCellDef="let parameter">{{ parameter.type }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="expression">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.EXPRESSION' | translate }}</th>
+                                <td mat-cell *matCellDef="let parameter">{{ parameter.expression }}</td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="presentationParameterDisplayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: presentationParameterDisplayedColumns;"></tr>
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+
+            </div>
+            <div fxLayout="row" fxLayoutGap="10px">
+                <!-- Assignments -->
+                <mat-card fxFlex="50%">
+                    <mat-card-header>
+                        <mat-card-title>{{ 'HUMANTASK.ASSIGNMENT' | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <table mat-table class="full-width" [dataSource]="peopleAssignments$">
+                            <ng-container matColumnDef="type">
+                                <th mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let peopleAssignment">
+                                    <mat-icon [matTooltip]="'HUMANTASK.USERIDENTIFIERS' | translate" *ngIf="peopleAssignment.type === 'USERIDENTIFIERS'">account_circle</mat-icon>
+                                    <mat-icon [matTooltip]="'HUMANTASK.GROUPNAMES' | translate" *ngIf="peopleAssignment.type == 'GROUPNAMES'">supervised_user_circle</mat-icon>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="value">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.VALUE' | translate }}</th>
+                                <td mat-cell *matCellDef="let peopleAssignment">{{ peopleAssignment.value }}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="usage">
+                                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.USAGE' | translate }}</th>
+                                <td mat-cell *matCellDef="let peopleAssignment">{{ ('HUMANTASK.' + peopleAssignment.usage) | translate }}</td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="peopleAssignmentDisplayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: peopleAssignmentDisplayedColumns;"></tr>
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+                <!-- Deadlines -->
+                <mat-card fxFlex="50%" fxLayoutGap="10px">
+                    <mat-card-header>
+                        <mat-card-title>{{ 'HUMANTASK.DEADLINES' | translate }}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <table mat-table class="full-width" [dataSource]="deadlines$">
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let deadline">
+                                    {{ deadline.name }}
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="deadlineDisplayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: deadlineDisplayedColumns;"></tr>
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px">
+        <div fxFlex="20%">
+            <mat-accordion>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        {{ 'HUMANTASK.EDITOR.LABELS' | translate }}
+                    </mat-expansion-panel-header>
+                    <mat-list class="fields">
+                        <mat-list-item draggable="true" (dragstart)="dragHeader($event)">
+                            <svg class="icon" viewBox="0 0 31.29 31.29">
                                 <g>
-                                    <path d="M18.585,31.226v-1.833h0.577c0.497,0,0.961-0.036,1.395-0.105c0.436-0.072,0.812-0.219,1.131-0.438
+                                    <g>
+                                        <path d="M18.585,31.226v-1.833h0.577c0.497,0,0.961-0.036,1.395-0.105c0.436-0.072,0.812-0.219,1.131-0.438
 			                        s0.576-0.537,0.769-0.948c0.192-0.412,0.287-0.959,0.287-1.643V16.03H8.547v10.229c0,0.683,0.095,1.229,0.287,1.644
 			                        c0.192,0.41,0.448,0.729,0.768,0.947c0.32,0.221,0.699,0.365,1.14,0.438c0.442,0.07,0.902,0.106,1.386,0.106h0.577v1.833H0v-1.833
 			                        h0.555c0.497,0,0.961-0.036,1.396-0.106c0.434-0.071,0.813-0.217,1.141-0.438c0.326-0.221,0.582-0.537,0.769-0.947
@@ -22,69 +153,70 @@
 			                        c-0.498,0-0.961,0.035-1.396,0.107c-0.434,0.07-0.812,0.217-1.141,0.437c-0.326,0.22-0.582,0.536-0.768,0.948
 			                        c-0.186,0.411-0.277,0.959-0.277,1.642v21.442c0,0.64,0.097,1.155,0.287,1.545c0.192,0.392,0.453,0.687,0.779,0.884
 			                        c0.326,0.2,0.705,0.331,1.141,0.396c0.434,0.064,0.892,0.096,1.373,0.096h0.556v1.833H18.585z" />
+                                    </g>
                                 </g>
-                            </g>
-                        </svg>
-                        <span class="label">{{ 'HUMANTASK.EDITOR.HEADER' | translate }}</span>
-                    </mat-list-item>
-                </mat-list>
-            </mat-expansion-panel>
-            <!-- Fields -->
-            <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                    {{ 'HUMANTASK.EDITOR.FIELDS' | translate }}
-                </mat-expansion-panel-header>
-                <mat-list class="fields">
-                    <mat-list-item draggable="true" (dragstart)="dragTxt($event)">
-                        <svg class="icon" viewBox="0 0 16 16">
-                            <path fill="#444444" d="M16 5c0-0.6-0.4-1-1-1h-14c-0.6 0-1 0.4-1 1v6c0 0.6 0.4 1 1 1h14c0.6 0 1-0.4 1-1v-6zM15 11h-14v-6h14v6z"></path>
-                            <path fill="#444444" d="M2 6h1v4h-1v-4z"></path>
-                        </svg>
-                        <span class="label">{{ 'HUMANTASK.EDITOR.TEXTBOX' | translate }}</span>
-                    </mat-list-item>
-                    <mat-divider></mat-divider>
-                    <mat-list-item draggable="true" (dragstart)="dragSelect($event)">
-                        <svg class="icon" viewBox="0 0 16 16">
-                            <path d="M16 5c0-0.6-0.4-1-1-1h-14c-0.6 0-1 0.4-1 1v6c0 0.6 0.4 1 1 1h14c0.6 0 1-0.4 1-1v-6zM15 11h-14v-6h14v6z"
-                                  id="path905"
-                                  fill="#444444" />
-                            <path style="opacity:1;fill:#444444;fill-opacity:1;stroke:#ffffff;stroke-width:0.17552735;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.17552735, 0.17552735;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
-                                  d="M 9.8680231,5.6833858 V 10.507859 H 14.692496 V 5.6833858 Z m 0.7292049,0.7878018 h 3.216317 V 9.687503 h -3.216317 z"
-                                  id="rect1473"
-                                  inkscape:connector-curvature="0" />
-                            <path style="opacity:1;fill:#444444;fill-opacity:1;stroke:#ffffff;stroke-width:0.08869114;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.08869114, 0.08869114;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
-                                  d="m 10.892036,7.4021402 1.346692,1.3869661 1.429757,-1.3869661 H 12.832783 L 12.248797,7.9634713 11.697533,7.4021402 Z"
-                                  id="path1576"
-                                  inkscape:connector-curvature="0" />
-                            <path style="opacity:1;fill:#444444;fill-opacity:1;stroke:#ffffff;stroke-width:0.06881704;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.06881704, 0.06881704;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
-                                  d="m 12.556906,3.1867706 -0.0078,0.00781 0.0078,0.00781 z"
-                                  id="path1574"
-                                  inkscape:connector-curvature="0" />
-                        </svg>
-                        <span class="label">{{ 'HUMANTASK.EDITOR.SELECT' | translate }}</span>
-                    </mat-list-item>
-                </mat-list>
-            </mat-expansion-panel>
-            <!-- Layout -->
-            <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                    {{ 'HUMANTASK.EDITOR.LAYOUT' | translate }}
-                </mat-expansion-panel-header>
-                <mat-list class="fields">
-                    <mat-list-item draggable="true" (dragstart)="dragColumn($event)">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="m22.5 24h-8c-.827 0-1.5-.673-1.5-1.5v-21c0-.827.673-1.5 1.5-1.5h8c.827 0 1.5.673 1.5 1.5v21c0 .827-.673 1.5-1.5 1.5zm-8-23c-.276 0-.5.224-.5.5v21c0 .276.224.5.5.5h8c.276 0 .5-.224.5-.5v-21c0-.276-.224-.5-.5-.5z" />
-                            <path d="m9.5 24h-8c-.827 0-1.5-.673-1.5-1.5v-21c0-.827.673-1.5 1.5-1.5h8c.827 0 1.5.673 1.5 1.5v21c0 .827-.673 1.5-1.5 1.5zm-8-23c-.276 0-.5.224-.5.5v21c0 .276.224.5.5.5h8c.276 0 .5-.224.5-.5v-21c0-.276-.224-.5-.5-.5z" />
-                        </svg>
-                        <span class="label">{{ 'HUMANTASK.EDITOR.COLUMNS' | translate }}</span>
-                    </mat-list-item>
-                </mat-list>
-            </mat-expansion-panel>
-        </mat-accordion>
-        <mat-list>
-        </mat-list>
-    </div>
-    <div fxFlex="80%" class="ui-editor" (drop)="dropColumn($event)" (dragover)="dragOver($event)">
-        <dynamic-component [option]="option"></dynamic-component>
+                            </svg>
+                            <span class="label">{{ 'HUMANTASK.EDITOR.HEADER' | translate }}</span>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-expansion-panel>
+                <!-- Fields -->
+                <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                        {{ 'HUMANTASK.EDITOR.FIELDS' | translate }}
+                    </mat-expansion-panel-header>
+                    <mat-list class="fields">
+                        <mat-list-item draggable="true" (dragstart)="dragTxt($event)">
+                            <svg class="icon" viewBox="0 0 16 16">
+                                <path fill="#444444" d="M16 5c0-0.6-0.4-1-1-1h-14c-0.6 0-1 0.4-1 1v6c0 0.6 0.4 1 1 1h14c0.6 0 1-0.4 1-1v-6zM15 11h-14v-6h14v6z"></path>
+                                <path fill="#444444" d="M2 6h1v4h-1v-4z"></path>
+                            </svg>
+                            <span class="label">{{ 'HUMANTASK.EDITOR.TEXTBOX' | translate }}</span>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                        <mat-list-item draggable="true" (dragstart)="dragSelect($event)">
+                            <svg class="icon" viewBox="0 0 16 16">
+                                <path d="M16 5c0-0.6-0.4-1-1-1h-14c-0.6 0-1 0.4-1 1v6c0 0.6 0.4 1 1 1h14c0.6 0 1-0.4 1-1v-6zM15 11h-14v-6h14v6z"
+                                      id="path905"
+                                      fill="#444444" />
+                                <path style="opacity:1;fill:#444444;fill-opacity:1;stroke:#ffffff;stroke-width:0.17552735;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.17552735, 0.17552735;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
+                                      d="M 9.8680231,5.6833858 V 10.507859 H 14.692496 V 5.6833858 Z m 0.7292049,0.7878018 h 3.216317 V 9.687503 h -3.216317 z"
+                                      id="rect1473"
+                                      inkscape:connector-curvature="0" />
+                                <path style="opacity:1;fill:#444444;fill-opacity:1;stroke:#ffffff;stroke-width:0.08869114;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.08869114, 0.08869114;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
+                                      d="m 10.892036,7.4021402 1.346692,1.3869661 1.429757,-1.3869661 H 12.832783 L 12.248797,7.9634713 11.697533,7.4021402 Z"
+                                      id="path1576"
+                                      inkscape:connector-curvature="0" />
+                                <path style="opacity:1;fill:#444444;fill-opacity:1;stroke:#ffffff;stroke-width:0.06881704;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.06881704, 0.06881704;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
+                                      d="m 12.556906,3.1867706 -0.0078,0.00781 0.0078,0.00781 z"
+                                      id="path1574"
+                                      inkscape:connector-curvature="0" />
+                            </svg>
+                            <span class="label">{{ 'HUMANTASK.EDITOR.SELECT' | translate }}</span>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-expansion-panel>
+                <!-- Layout -->
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        {{ 'HUMANTASK.EDITOR.LAYOUT' | translate }}
+                    </mat-expansion-panel-header>
+                    <mat-list class="fields">
+                        <mat-list-item draggable="true" (dragstart)="dragColumn($event)">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="m22.5 24h-8c-.827 0-1.5-.673-1.5-1.5v-21c0-.827.673-1.5 1.5-1.5h8c.827 0 1.5.673 1.5 1.5v21c0 .827-.673 1.5-1.5 1.5zm-8-23c-.276 0-.5.224-.5.5v21c0 .276.224.5.5.5h8c.276 0 .5-.224.5-.5v-21c0-.276-.224-.5-.5-.5z" />
+                                <path d="m9.5 24h-8c-.827 0-1.5-.673-1.5-1.5v-21c0-.827.673-1.5 1.5-1.5h8c.827 0 1.5.673 1.5 1.5v21c0 .827-.673 1.5-1.5 1.5zm-8-23c-.276 0-.5.224-.5.5v21c0 .276.224.5.5.5h8c.276 0 .5-.224.5-.5v-21c0-.276-.224-.5-.5-.5z" />
+                            </svg>
+                            <span class="label">{{ 'HUMANTASK.EDITOR.COLUMNS' | translate }}</span>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <mat-list>
+            </mat-list>
+        </div>
+        <div fxFlex="80%" class="ui-editor" (drop)="dropColumn($event)" (dragover)="dragOver($event)">
+            <dynamic-component [option]="option"></dynamic-component>
+        </div>
     </div>
 </div>
