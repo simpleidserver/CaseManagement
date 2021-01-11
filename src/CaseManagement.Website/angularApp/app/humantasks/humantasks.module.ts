@@ -19,12 +19,14 @@ import { ViewHumanTaskDefInfoComponent } from './viewdef/info/info.component';
 import { ViewTaskPeopleAssignmentComponent } from './viewdef/peopleassignment/view-peopleassignment.component';
 import { ViewPresentationParametersComponent } from './viewdef/presentationparameters/view-presentationparameters.component';
 import { ColumnComponent } from './viewdef/rendering/components/column/column.component';
+import { ContainerComponent } from './viewdef/rendering/components/container/container.component';
 import { DynamicComponent } from './viewdef/rendering/components/dynamic.component';
-import { RowComponent } from './viewdef/rendering/components/row/row.component';
+import { HeaderComponent, HeaderComponentDialog } from './viewdef/rendering/components/header/header.component';
+import { RowComponent, RowComponentDialog } from './viewdef/rendering/components/row/row.component';
+import { SelectComponent, SelectComponentDialog } from './viewdef/rendering/components/select/select.component';
+import { TxtComponent, TxtComponentDialog } from './viewdef/rendering/components/txt/txt.component';
 import { ViewHumanTaskDefRenderingComponent } from './viewdef/rendering/rendering.component';
 import { ViewHumanTaskDef } from './viewdef/view.component';
-import { TxtComponent } from './viewdef/rendering/components/txt/txt.component';
-import { SelectComponent } from './viewdef/rendering/components/select/select.component';
 
 @NgModule({
     imports: [
@@ -38,16 +40,23 @@ import { SelectComponent } from './viewdef/rendering/components/select/select.co
         CreateHumanTaskInstanceDialog,
         AddEscalationDialog,
         EditEscalationDialog,
+        RowComponentDialog,
+        TxtComponentDialog,
+        SelectComponentDialog,
+        HeaderComponentDialog,
         RowComponent,
         ColumnComponent,
         TxtComponent,
-        SelectComponent
+        SelectComponent,
+        HeaderComponent,
+        ContainerComponent
     ],
     declarations: [
         AddHumanTaskDefDialog,
         CreateHumanTaskInstanceDialog,
         AddEscalationDialog,
         EditEscalationDialog,
+        SelectComponentDialog,
         HumanTasksComponent,
         ListHumanTaskFilesComponent,
         ViewHumanTaskDef,
@@ -59,12 +68,17 @@ import { SelectComponent } from './viewdef/rendering/components/select/select.co
         ViewHumanTaskDefDeadlinesComponent,
         ViewHumanTaskDefRenderingComponent,
         PeopleAssignmentComponent,
+        RowComponentDialog,
+        TxtComponentDialog,
+        HeaderComponentDialog,
         PresentationParameterComponent,
         DynamicComponent,
         ColumnComponent,
         SelectComponent,
         RowComponent,
         TxtComponent,
+        HeaderComponent,
+        ContainerComponent,
         TranslateFieldPipe
     ],
     providers: [ TranslateFieldPipe ]

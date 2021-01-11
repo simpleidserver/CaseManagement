@@ -1,9 +1,11 @@
 ﻿import { Component, ComponentFactoryResolver, ComponentRef, Input, OnDestroy, OnInit, ViewChild, ViewContainerRef } from "@angular/core";
-import { ColumnComponent } from "./column/column.component";
-import { RowComponent } from "./row/row.component";
-import { TxtComponent } from "./txt/txt.component";
 import { BaseUIComponent } from "./baseui.component";
+import { ColumnComponent } from "./column/column.component";
+import { ContainerComponent } from "./container/container.component";
+import { RowComponent } from "./row/row.component";
 import { SelectComponent } from "./select/select.component";
+import { TxtComponent } from "./txt/txt.component";
+import { HeaderComponent } from "./header/header.component";
 
 @Component({
     selector: 'dynamic-component',
@@ -12,27 +14,21 @@ import { SelectComponent } from "./select/select.component";
 
 })
 export class DynamicComponent implements OnInit, OnDestroy {
-    private _option: any;
     private componentRef: ComponentRef<{}>;
     private _dic: any = {
         'row': RowComponent,
         'column': ColumnComponent,
         'txt': TxtComponent,
-        'select': SelectComponent
+        'select': SelectComponent,
+        'container': ContainerComponent,
+        'header': HeaderComponent
     };
     @ViewChild('container', { read: ViewContainerRef }) container: ViewContainerRef;
     @ViewChild('parent', { read: ViewContainerRef }) parent: ViewContainerRef;
-    @Input()
-    get option() {
-        return this._option;
-    }
-    set option(v: any) {
-        if (!v) {
-            return;
-        }
+    baseUIComponent: BaseUIComponent = null;
+    @Input() option: any = null;
+    @Input() parentOption: any = null;
 
-        this._option = v;
-    }
     isSelected: boolean = false;
     title: string = null;
 
@@ -68,6 +64,35 @@ export class DynamicComponent implements OnInit, OnDestroy {
         this.option.children.push(json);
     }
 
+    openSettings(evt: any) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (!this.baseUIComponent) {
+            return;
+        }
+
+        this.baseUIComponent.openDialog();
+    }
+
+    remove(evt: any) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (!this.baseUIComponent || !this.parentOption || !this.parentOption.children) {
+            return;
+        }
+
+        const self = this;
+        const filtered = this.parentOption.children.filter((r: any) => {
+            return self.baseUIComponent.option.id === r.id;
+        });
+        if (filtered.length !== 1) {
+            return;
+        }
+
+        const index = this.parentOption.children.indexOf(filtered[0]);
+        this.parentOption.children.splice(index, 1);
+    }
+
     private refresh() {
         if (!this.option || !this.option.type) {
             return;
@@ -76,9 +101,9 @@ export class DynamicComponent implements OnInit, OnDestroy {
         const type = this._dic[this.option.type];
         const factory = this.compFactoryResolver.resolveComponentFactory(type);
         this.componentRef = this.container.createComponent(factory);
-        const instance = this.componentRef.instance as BaseUIComponent;
-        instance.option = this.option;
-        instance.parent = this.parent;
+        this.baseUIComponent = this.componentRef.instance as BaseUIComponent;
+        this.baseUIComponent .option = this.option;
+        this.baseUIComponent .parent = this.parent;
         this.title = this.option.type;
     }
 }

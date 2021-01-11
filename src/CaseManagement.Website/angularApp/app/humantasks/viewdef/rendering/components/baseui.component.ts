@@ -3,4 +3,7 @@
 export class BaseUIComponent {
     option: any;
     parent: ViewContainerRef;
+    openDialog() {
+
+    }
 }

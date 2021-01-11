@@ -84,11 +84,14 @@
       "CONFIGUREROW": "Configure the row",
       "CONFIGURETXT": "Configure the textbox",
       "CONFIGURESELECT": "Configure select",
+      "CONFIGUREHEADER": "Configure header",
       "LAYOUT": "Layout",
       "FIELDS": "Fields",
       "TEXTBOX": "Textbox",
       "SELECT": "Select",
-      "COLUMNS": "Columns"
+      "COLUMNS": "Columns",
+      "LABELS": "Labels",
+      "HEADER": "Header"
     },
     "FILES": "Human Task definitions",
     "INSTANCES": "Human Task instances",
