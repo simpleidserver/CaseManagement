@@ -201,6 +201,18 @@ namespace CaseManagement.HumanTask.Domains
             return id;
         }
 
+        public void AddPresentationElement(PresentationElementDefinition presentationElement)
+        {
+            var evt = new HumanTaskDefPresentationElementAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, presentationElement, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void DeletePresentationElement(PresentationElementUsages usage, string language)
+        {
+            var evt = new HumanTaskDefPresentationElementRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, usage, language, DateTime.UtcNow);
+            Handle(evt);
+        }
+
         public void IncrementInstance()
         {
             NbInstances++;
@@ -273,6 +285,32 @@ namespace CaseManagement.HumanTask.Domains
         public void UpdateRendering(ICollection<RenderingElement> renderingElements)
         {
             var evt = new HumanTaskDefRenderingUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, renderingElements, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void AddPresentationParameter(PresentationParameter presentationParameter)
+        {
+            var evt = new HumanTaskPresentationParameterAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, presentationParameter, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public void DeletePresentationParameter(string name)
+        {
+            var evt = new HumanTaskPresentationParameterRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, name, DateTime.UtcNow);
+            Handle(evt);
+        }
+
+        public string Assign(PeopleAssignmentDefinition peopleAssignment)
+        {
+            peopleAssignment.Id = Guid.NewGuid().ToString();
+            var evt = new HumanTaskDefPeopleAssignedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, peopleAssignment, DateTime.UtcNow);
+            Handle(evt);
+            return peopleAssignment.Id;
+        }
+
+        public void RemoveAssignment(string assignmentId)
+        {
+            var evt = new HumanTaskDefPeopleAssignmentRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, assignmentId, DateTime.UtcNow);
             Handle(evt);
         }
 
@@ -650,6 +688,51 @@ namespace CaseManagement.HumanTask.Domains
 
             RenderingElements = evt.RenderingElements;
             UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskPresentationParameterAddedEvent evt)
+        {
+            PresentationParameters.Add(evt.PresentationParameter);
+            UpdateDateTime = evt.CreateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskPresentationParameterRemovedEvent evt)
+        {
+            var record = PresentationParameters.First(_ => _.Name == evt.Name);
+            PresentationParameters.Remove(record);
+            UpdateDateTime = evt.ReceptionDate;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefPresentationElementAddedEvent evt)
+        {
+            PresentationElements.Add(evt.PresentationElement);
+            UpdateDateTime = evt.ReceptionDate;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefPresentationElementRemovedEvent evt)
+        {
+            var presentationElt = PresentationElements.First(_ => _.Language == evt.Language && _.Usage == evt.Usage);
+            PresentationElements.Remove(presentationElt);
+            UpdateDateTime = evt.ReceptionDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefPeopleAssignedEvent evt)
+        {
+            PeopleAssignments.Add(evt.PeopleAssignment);
+            UpdateDateTime = evt.CreateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefPeopleAssignmentRemovedEvent evt)
+        {
+            var record = PeopleAssignments.First(_ => _.Id == evt.AssignmentId);
+            PeopleAssignments.Remove(record);
+            UpdateDateTime = evt.RemovedDateTime;
             Version = evt.Version;
         }
 

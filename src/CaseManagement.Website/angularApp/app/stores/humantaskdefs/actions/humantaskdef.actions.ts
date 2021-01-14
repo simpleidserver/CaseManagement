@@ -82,7 +82,25 @@ export enum ActionTypes {
     GET_HUMANTASKDEF = "[HumanTaskDef] GET_HUMANTASKDEF",
     UPDATE_PRESENTATIONELEMENT = "[HumanTaskDef] UPDATE_PRESENTATIONELEMENT",
     COMPLETE_UPDATE_PRESENTATIONELEMENT = "[HumanTaskDef] COMPLETE_UPDATE_PRESENTATIONELEMENT",
-    ERROR_UPDATE_PRESENTATIONELEMENT = "[HumanTaskDef] ERROR_UPDATE_PRESENTATIONELEMENT"
+    ERROR_UPDATE_PRESENTATIONELEMENT = "[HumanTaskDef] ERROR_UPDATE_PRESENTATIONELEMENT",
+    ADD_PRESENTATION_PARAMETER = "[HumanTaskDef] ADD_PRESENTATION_PARAMETER",
+    COMPLETE_ADD_PRESENTATION_PARAMETER = "[HumanTaskDef] COMPLETE_ADD_PRESENTATION_PARAMETER",
+    DELETE_PRESENTATION_PARAMETER = "[HumanTaskDef] DELETE_PRESENTATION_PARAMETER",
+    COMPLETE_DELETE_PRESENTATION_PARAMETER = "[HumanTaskDef] COMPLETE_DELETE_PRESENTATION_PARAMETER",
+    ERROR_ADD_PRESENTATION_PARAMETER = "[HumanTaskDef] ERROR_ADD_PRESENTATION_PARAMETER",
+    ERROR_DELETE_PRESENTATION_PARAMETER = "[HumanTaskDef] ERROR_DELETE_PRESENTATION_PARAMETER",
+    ADD_PRESENTATION_ELT = "[HumanTaskDef] ADD_PRESENTATION_ELT",
+    COMPLETE_ADD_PRESENTATION_ELT = "[HumanTaskDef] COMPLETE_ADD_PRESENTATION_ELT",
+    ERROR_ADD_PRESENTATION_ELT = "[HumanTaskDef] ERROR_ADD_PRESENTATION_ELT",
+    DELETE_PRESENTATION_ELT = "[HumanTaskDef] DELETE_PRESENTATION_ELT",
+    COMPLETE_DELETE_PRESENTATION_ELT = "[HumanTaskDef] COMPLETE_DELETE_PRESENTATION_ELT",
+    ERROR_DELETE_PRESENTATION_ELT = "[HumanTaskDef] ERROR_DELETE_PRESENTATION_ELT",
+    ADD_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ADD_PEOPLE_ASSIGNMENT",
+    COMPLETE_ADD_PEOPLE_ASSIGNMENT = "[HumanTaskDef] COMPLETE_ADD_PEOPLE_ASSIGNMENT",
+    ERROR_ADD_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ERROR_ADD_PEOPLE_ASSIGNMENT",
+    DELETE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] DELETE_PEOPLE_ASSIGNMENT",
+    COMPLETE_DELETE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] COMPLETE_DELETE_PEOPLE_ASSIGNMENT",
+    ERROR_DELETE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ERROR_DELETE_PEOPLE_ASSIGNMENT"
 }
 
 export class GetHumanTaskDef implements Action {
@@ -325,6 +343,66 @@ export class CompleteUpdatePresentationElementOperation implements Action {
     constructor(public presentationElements: PresentationElement[], public presentationParameters: PresentationParameter[]) { }
 }
 
+export class AddPresentationParameter implements Action {
+    readonly type = ActionTypes.ADD_PRESENTATION_PARAMETER;
+    constructor(public id: string, public presentationParameter: PresentationParameter) { }
+}
+
+export class CompleteAddPresentationParameter implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_PRESENTATION_PARAMETER;
+    constructor(public presentationParameter: PresentationParameter) { }
+}
+
+export class DeletePresentationParameter implements Action {
+    readonly type = ActionTypes.DELETE_PRESENTATION_PARAMETER;
+    constructor(public id: string, public presentationParameter: PresentationParameter) { }
+}
+
+export class CompleteDeletePresentationParameter implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_PRESENTATION_PARAMETER;
+    constructor(public presentationParameter: PresentationParameter) { }
+}
+
+export class AddPresentationElt implements Action {
+    readonly type = ActionTypes.ADD_PRESENTATION_ELT;
+    constructor(public id: string, public presentationElt: PresentationElement) { }
+}
+
+export class CompleteAddPresentationElt implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_PRESENTATION_ELT;
+    constructor(public presentationElt: PresentationElement) { }
+}
+
+export class DeletePresentationElt implements Action {
+    readonly type = ActionTypes.DELETE_PRESENTATION_ELT;
+    constructor(public id: string, public presentationElt: PresentationElement) { }
+}
+
+export class CompleteDeletePresentationElt implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_PRESENTATION_ELT;
+    constructor(public presentationElt: PresentationElement) { }
+}
+
+export class AddPeopleAssignment implements Action {
+    readonly type = ActionTypes.ADD_PEOPLE_ASSIGNMENT;
+    constructor(public id: string, public peopleAssignment: PeopleAssignment) { }
+}
+
+export class CompleteAddPeopleAssigment implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_PEOPLE_ASSIGNMENT;
+    constructor(public peopleAssignment: PeopleAssignment, public assignmentId: string) { }
+}
+
+export class DeletePeopleAssignment implements Action {
+    readonly type = ActionTypes.DELETE_PEOPLE_ASSIGNMENT;
+    constructor(public id: string, public peopleAssignment: PeopleAssignment) { }
+}
+
+export class CompleteDeletePeopleAssignment implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_PEOPLE_ASSIGNMENT;
+    constructor(public id: string, public peopleAssignment: PeopleAssignment) { }
+}
+
 export type ActionsUnion = GetHumanTaskDef |
     GetHumanTaskDefComplete |
     UpdateHumanTaskDef |
@@ -372,4 +450,16 @@ export type ActionsUnion = GetHumanTaskDef |
     SearchHumanTaskDefOperation |
     CompleteSearchHumanTaskDefOperation |
     UpdatePresentationElementOperation |
-    CompleteUpdatePresentationElementOperation;
+    CompleteUpdatePresentationElementOperation |
+    AddPresentationParameter |
+    CompleteAddPresentationParameter |
+    DeletePresentationParameter |
+    CompleteDeletePresentationParameter |
+    AddPresentationElt |
+    CompleteAddPresentationElt |
+    DeletePresentationElt |
+    CompleteDeletePresentationElt |
+    AddPeopleAssignment |
+    CompleteAddPeopleAssigment |
+    DeletePeopleAssignment |
+    CompleteDeletePeopleAssignment;

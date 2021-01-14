@@ -3,16 +3,7 @@
         <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
         <li>{{ 'BREADCRUMB.HUMANTASKS' | translate }}</li>
     </ul>
-    <mat-card fxFlex class="m-10">
-        <mat-card-header>
-            <mat-card-title>
-                {{ 'HUMANTASK.FILES' | translate }}
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <list-humantask-files></list-humantask-files>
-        </mat-card-content>
-    </mat-card>
+    <list-humantask-files></list-humantask-files>
     <mat-card fxFlex class="m-10">
         <mat-card-header>
             <mat-card-title>

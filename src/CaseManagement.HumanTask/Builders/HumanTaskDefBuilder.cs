@@ -165,6 +165,7 @@ namespace CaseManagement.HumanTask.Builders
             {
                 _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Usage = PeopleAssignmentUsages.TASKINITIATOR,
                     Type = PeopleAssignmentTypes.USERIDENTIFIERS,
                     Value = userIdentifier
@@ -184,6 +185,7 @@ namespace CaseManagement.HumanTask.Builders
             {
                 _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Usage = PeopleAssignmentUsages.POTENTIALOWNER,
                     Type = PeopleAssignmentTypes.GROUPNAMES,
                     Value = groupName
@@ -199,6 +201,7 @@ namespace CaseManagement.HumanTask.Builders
             {
                 _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Usage = PeopleAssignmentUsages.POTENTIALOWNER,
                     Type = PeopleAssignmentTypes.USERIDENTIFIERS,
                     Value = userIdentifier
@@ -218,6 +221,7 @@ namespace CaseManagement.HumanTask.Builders
             {
                 _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Usage = PeopleAssignmentUsages.BUSINESSADMINISTRATOR,
                     Type = PeopleAssignmentTypes.USERIDENTIFIERS,
                     Value = userIdentifier

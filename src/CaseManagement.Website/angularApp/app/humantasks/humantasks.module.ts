@@ -15,9 +15,8 @@ import { CreateHumanTaskInstanceDialog } from './viewdef/create-humantaskinstanc
 import { AddEscalationDialog } from './viewdef/deadlines/add-escalation-dialog.component';
 import { ViewHumanTaskDefDeadlinesComponent } from './viewdef/deadlines/deadlines.component';
 import { EditEscalationDialog } from './viewdef/deadlines/edit-escalation-dialog.component';
-import { ViewHumanTaskDefInfoComponent } from './viewdef/info/info.component';
+import { AddAssignmentDialogComponent, AddDeadlineComponentDialog, AddParameterDialogComponent, AddPresentationElementDialogComponent, AddPresentationParameterDialogComponent, ViewHumanTaskDefInfoComponent } from './viewdef/info/info.component';
 import { ViewTaskPeopleAssignmentComponent } from './viewdef/peopleassignment/view-peopleassignment.component';
-import { ViewPresentationParametersComponent } from './viewdef/presentationparameters/view-presentationparameters.component';
 import { ColumnComponent } from './viewdef/rendering/components/column/column.component';
 import { ContainerComponent } from './viewdef/rendering/components/container/container.component';
 import { DynamicComponent } from './viewdef/rendering/components/dynamic.component';
@@ -44,6 +43,11 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         TxtComponentDialog,
         SelectComponentDialog,
         HeaderComponentDialog,
+        AddParameterDialogComponent,
+        AddPresentationParameterDialogComponent,
+        AddPresentationElementDialogComponent,
+        AddAssignmentDialogComponent,
+        AddDeadlineComponentDialog,
         RowComponent,
         ColumnComponent,
         TxtComponent,
@@ -64,14 +68,18 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         CreateHumanTaskInstanceComponent,
         OperationParameterComponent,
         ViewTaskPeopleAssignmentComponent,
-        ViewPresentationParametersComponent,
         ViewHumanTaskDefDeadlinesComponent,
         ViewHumanTaskDefRenderingComponent,
+        AddParameterDialogComponent,
+        AddDeadlineComponentDialog,
         PeopleAssignmentComponent,
         RowComponentDialog,
         TxtComponentDialog,
         HeaderComponentDialog,
         PresentationParameterComponent,
+        AddPresentationParameterDialogComponent,
+        AddPresentationElementDialogComponent,
+        AddAssignmentDialogComponent,
         DynamicComponent,
         ColumnComponent,
         SelectComponent,

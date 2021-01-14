@@ -1,4 +1,5 @@
 ﻿using CaseManagement.Common.Exceptions;
+using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.HumanTaskDef.Commands;
 using CaseManagement.HumanTask.HumanTaskDef.Queries;
@@ -94,13 +95,38 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
-        [HttpPut("{id}/assignment")]
-        public async Task<IActionResult> UpdatePeopleAssignment(string id, [FromBody] UpdateHumanTaskDefPeopleAssignmentCommand cmd, CancellationToken token)
+        [HttpPost("{id}/assignments")]
+        public async Task<IActionResult> AddPeopleAssignment(string id, [FromBody] AddHumanTaskDefPeopleAssignmentCommand cmd, CancellationToken token)
         {
             try
             {
                 cmd.Id = id;
                 var result = await _mediator.Send(cmd, token);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpDelete("{id}/assignments/{assignmentId}")]
+        public async Task<IActionResult> DeletePeopleAssignment(string id, string assignmentId, CancellationToken token)
+        {
+            try
+            {
+                var cmd = new DeleteHumanTaskDefPeopleAssignmentCommand { Id = id, AssignmentId = assignmentId };
+                await _mediator.Send(cmd, token);
                 return new NoContentResult();
             }
             catch (UnknownHumanTaskDefException ex)
@@ -109,6 +135,13 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 {
                     new KeyValuePair<string, string>("bad_request", ex.Message)
                 }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
             }
         }
 
@@ -212,12 +245,88 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
-        [HttpPut("{id}/presentationelts")]
-        public async Task<IActionResult> UpdatePresentationElements(string id, [FromBody] UpdateHumanTaskDefPresentationParametersCommand parameter, CancellationToken token)
+        [HttpPost("{id}/presentationelts")]
+        public async Task<IActionResult> AddPresentationElement(string id, [FromBody] AddHumanTaskDefPresentationElementCommand parameter, CancellationToken token)
         {
             try
             {
                 parameter.Id = id;
+                await _mediator.Send(parameter, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+
+        [HttpDelete("{id}/presentationelts/{usage}/{language}")]
+        public async Task<IActionResult> AddPresentationElement(string id, PresentationElementUsages usage, string language, CancellationToken token)
+        {
+            try
+            {
+                var cmd = new DeleteHumanTaskDefPresentationElementCommand { Id = id, Usage = usage, Language = language };
+                await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpPost("{id}/presentationparameters")]
+        public async Task<IActionResult> AddPresentationParameter(string id, [FromBody] AddHumanTaskDefPresentationParameterCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.Id = id;
+                await _mediator.Send(parameter, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpDelete("{id}/presentationparameters/{name}")]
+        public async Task<IActionResult> DeletePresentationParameter(string id, string name, CancellationToken token)
+        {
+            try
+            {
+                var parameter = new DeleteHumanTaskDefPresentationParameterCommand { Id = id, Name = name };
                 await _mediator.Send(parameter, token);
                 return new NoContentResult();
             }

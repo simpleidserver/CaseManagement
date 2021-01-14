@@ -1,57 +1,243 @@
-﻿<div class="mleft-10 mright-10">
-    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px">
-        <!-- Update global information -->
-        <div fxFlex="50%">
-            <h2>
-                {{ 'HUMANTASK.INFO' | translate }}
-            </h2>
+﻿<div fxLayout="row" fxLayoutGap="10px">
+    <mat-card fxFlex="20%">
+        <mat-card-content>
+            <!-- Update information -->
             <form [formGroup]="infoForm" (ngSubmit)="updateInfo(infoForm.value)">
-                <mat-form-field class="full-width">
-                    <mat-label>{{ "SHARED.ID" | translate }}</mat-label>
-                    <input matInput type="text" formControlName="id" required />
-                </mat-form-field>
-                <mat-form-field class="full-width">
+                <mat-form-field class="full-width" appearance="outline" floatLabel="always">
                     <mat-label>{{ "SHARED.NAME" | translate }}</mat-label>
                     <input matInput type="text" formControlName="name" required />
                     <mat-error *ngIf="infoForm.get('name').hasError('required')">
                         {{ 'SHARED.IS_REQUIRED' | translate }}
                     </mat-error>
                 </mat-form-field>
-                <mat-form-field class="full-width">
+                <mat-form-field class="full-width" appearance="outline" floatLabel="always">
                     <mat-label>{{ "SHARED.PRIORITY" | translate }}</mat-label>
                     <input matInput type="number" formControlName="priority" />
                 </mat-form-field>
                 <button mat-raised-button color="primary">{{ "SHARED.UPDATE" | translate }}</button>
             </form>
+        </mat-card-content>
+    </mat-card>
+    <div fxLayout="column" fxFlex="80%" fxLayoutGap="10px">
+        <div fxLayout="row" fxLayoutGap="10px">
+            <!-- Parameters -->
+            <mat-card fxFlex="50%">
+                <mat-card-header>
+                    <mat-card-title>{{ 'HUMANTASK.PARAMETERS' | translate }}</mat-card-title>
+                    <div class="actions">
+                        <button mat-icon-button (click)="addParameter($event)">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-header>
+                <mat-card-content>
+                    <table mat-table class="full-width" [dataSource]="operationParameters$">
+                        <ng-container matColumnDef="usage">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let parameter">
+                                <mat-icon [matTooltip]="'HUMANTASK.INPUT_PARAMETER' | translate" *ngIf="parameter.usage === 'INPUT'">arrow_back</mat-icon>
+                                <mat-icon [matTooltip]="'HUMANTASK.OUTPUT_PARAMETER' | translate" *ngIf="parameter.usage === 'OUTPUT'">arrow_forward</mat-icon>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.NAME' | translate }}</th>
+                            <td mat-cell *matCellDef="let parameter">{{ parameter.name }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="type">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.TYPE' | translate }}</th>
+                            <td mat-cell *matCellDef="let parameter">{{ parameter.type }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="isRequired">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.IS_REQUIRED' | translate }}</th>
+                            <td mat-cell *matCellDef="let parameter">
+                                <mat-icon *ngIf="parameter.isRequired">check</mat-icon>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let parameter">
+                                <button *ngIf="parameter.name" mat-icon-button (click)="deleteParameter(parameter)">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="parameterDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: parameterDisplayedColumns;"></tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+            <!-- Presentation parameters -->
+            <mat-card fxFlex="50%">
+                <mat-card-header>
+                    <mat-card-title>{{ 'HUMANTASK.PRESENTATION_PARAMETERS' | translate }}</mat-card-title>
+                    <div class="actions">
+                        <button mat-icon-button (click)="addPresentationParameter($event)">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-header>
+                <mat-card-content>
+                    <table mat-table class="full-width" [dataSource]="presentationParameters$">
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.NAME' | translate }}</th>
+                            <td mat-cell *matCellDef="let parameter">{{ parameter.name }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="type">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.TYPE' | translate }}</th>
+                            <td mat-cell *matCellDef="let parameter">{{ parameter.type }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="expression">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.EXPRESSION' | translate }}</th>
+                            <td mat-cell *matCellDef="let parameter">{{ parameter.expression }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let parameter">
+                                <button *ngIf="parameter.name" mat-icon-button (click)="deletePresentationParameter(parameter)">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="presentationParameterDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: presentationParameterDisplayedColumns;"></tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
         </div>
-        <!-- Update operation parameters -->
-        <div fxFlex="50%">
-            <h2>
-                {{ "HUMANTASK.UPDATE_OPERATION" | translate }}
-                <mat-icon matTooltip="{{ 'HUMANTASK.UPDATE_OPERATION_INFO' | translate }}">info</mat-icon>
-            </h2>
-            <mat-accordion>
-                <!-- Manage input parameters -->
-                <mat-expansion-panel [expanded]="true">
-                    <mat-expansion-panel-header>
-                        {{ "HUMANTASK.ADD_INPUT_PARAMETER" | translate }}
-                    </mat-expansion-panel-header>
-                    <operationparameter-component (parameterAdded)="addInputParameter($event)"
-                                                  (parameterRemoved)="deleteInputParameter($event)"
-                                                  usage="INPUT"
-                                                  [parameters]="inputOperationParameters"></operationparameter-component>
-                </mat-expansion-panel>
-                <!-- Manage output parameters -->
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header>
-                        {{ "HUMANTASK.ADD_OUTPUT_PARAMETER" | translate }}
-                    </mat-expansion-panel-header>
-                    <operationparameter-component (parameterAdded)="addOutputParameter($event)"
-                                                  (parameterRemoved)="deleteOutputParameter($event)"
-                                                  usage="OUTPUT"
-                                                  [parameters]="outputOperationParameters"></operationparameter-component>
-                </mat-expansion-panel>
-            </mat-accordion>
+        <div fxLayout="row" fxLayoutGap="10px">
+            <!-- Presentation elements -->
+            <mat-card fxFlex="50%">
+                <mat-card-header>
+                    <mat-card-title>{{ 'HUMANTASK.PRESENTATIONELEMENTS' | translate }}</mat-card-title>
+                    <div class="actions">
+                        <button mat-icon-button (click)="addPresentationElt($event)">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-header>
+                <mat-card-content>
+                    <table mat-table class="full-width" [dataSource]="presentationElts$">
+                        <ng-container matColumnDef="usage">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let presentationElt">
+                                <span *ngIf="presentationElt.usage">{{ ('HUMANTASK.PRESENTATIONELTUSAGES.' + presentationElt.usage) | translate }}</span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="value">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.VALUE' | translate }}</th>
+                            <td mat-cell *matCellDef="let presentationElt">{{ presentationElt.value }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let presentationElt">
+                                <button *ngIf="presentationElt.usage" mat-icon-button (click)="deletePresentationElt(presentationElt)">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="presentationEltDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: presentationEltDisplayedColumns;"></tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+            <!-- Assignments -->
+            <mat-card fxFlex="50%">
+                <mat-card-header>
+                    <mat-card-title>{{ 'HUMANTASK.ASSIGNMENT' | translate }}</mat-card-title>
+                    <div class="actions">
+                        <button mat-icon-button (click)="addAssignment($event)">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-header>
+                <mat-card-content>
+                    <table mat-table class="full-width" [dataSource]="peopleAssignments$">
+                        <ng-container matColumnDef="type">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let peopleAssignment">
+                                <mat-icon [matTooltip]="'HUMANTASK.USERIDENTIFIERS' | translate" *ngIf="peopleAssignment.type === 'USERIDENTIFIERS'">account_circle</mat-icon>
+                                <mat-icon [matTooltip]="'HUMANTASK.GROUPNAMES' | translate" *ngIf="peopleAssignment.type == 'GROUPNAMES'">supervised_user_circle</mat-icon>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="usage">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.USAGE' | translate }}</th>
+                            <td mat-cell *matCellDef="let peopleAssignment">
+                                <span *ngIf="peopleAssignment.usage">{{ ('HUMANTASK.' + peopleAssignment.usage) | translate }}</span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="value">
+                            <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.VALUE' | translate }}</th>
+                            <td mat-cell *matCellDef="let peopleAssignment">{{ peopleAssignment.value }}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let peopleAssignment">
+                                <button *ngIf="peopleAssignment.usage" mat-icon-button (click)="deletePeopleAssignment(peopleAssignment)">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="peopleAssignmentDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: peopleAssignmentDisplayedColumns;"></tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
         </div>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>{{ 'HUMANTASK.DEADLINES' | translate }}</mat-card-title>
+                <div class="actions">
+                    <button mat-icon-button (click)="addDeadline($event)">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+            </mat-card-header>
+            <mat-card-content>
+                <table mat-table class="full-width" [dataSource]="deadlines$">
+                    <ng-container matColumnDef="usage">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let deadline">
+                            <span *ngIf="deadline.usage">{{ ('HUMANTASK.DEADLINE_TYPES.' + deadline.usage) | translate }}</span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.NAME' | translate }}</th>
+                        <td mat-cell *matCellDef="let deadline">
+                            {{ deadline.name }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="for">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.DURATION' | translate }}</th>
+                        <td mat-cell *matCellDef="let deadline">
+                            {{ deadline.for }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="until">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.EXPIRATION_TIME' | translate }}</th>
+                        <td mat-cell *matCellDef="let deadline">
+                            {{ deadline.until }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="escalation">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'HUMANTASK.NBESCALATIONS' | translate }}</th>
+                        <td mat-cell *matCellDef="let deadline">
+                            <span *ngIf="deadline.usage">
+                                {{ deadline.escalations.length }}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let deadline">
+                            <button *ngIf="deadline.usage" mat-icon-button (click)="deleteDeadline(deadline)">
+                                <mat-icon>remove_circle</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="deadlineDisplayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: deadlineDisplayedColumns;"></tr>
+                </table>
+            </mat-card-content>
+        </mat-card>
     </div>
 </div>

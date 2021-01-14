@@ -241,6 +241,51 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à People assignment &apos;{0}&apos; doesn&apos;t exist.
+        /// </summary>
+        internal static string PeopleAssignmentDoesntExist {
+            get {
+                return ResourceManager.GetString("PeopleAssignmentDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Presentation element doesn&apos;t exist.
+        /// </summary>
+        internal static string PresentationElementDoesntExist {
+            get {
+                return ResourceManager.GetString("PresentationElementDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Presentation element exists.
+        /// </summary>
+        internal static string PresentationElementExists {
+            get {
+                return ResourceManager.GetString("PresentationElementExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Presentation parameter &apos;{0}&apos; doesn&apos;t exist.
+        /// </summary>
+        internal static string PresentationParameterDoesntExist {
+            get {
+                return ResourceManager.GetString("PresentationParameterDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Presentation parameter &apos;{0}&apos; exists.
+        /// </summary>
+        internal static string PresentationParameterExists {
+            get {
+                return ResourceManager.GetString("PresentationParameterExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Start deadline doesn&apos;t exist.
         /// </summary>
         internal static string StartDeadLineDoesntExist {

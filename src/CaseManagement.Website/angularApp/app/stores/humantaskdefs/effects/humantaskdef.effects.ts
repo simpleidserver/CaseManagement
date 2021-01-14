@@ -237,20 +237,6 @@ export class HumanTaskDefEffects {
     );
 
     @Effect()
-    updatePeopleAssignment = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.UPDATE_PEOPLE_ASSIGNMENT),
-            mergeMap((evt: fromHumanTask.UpdatePeopleAssignmentOperation) => {
-                return this.humanTaskDefService.updatePeopleAssignment(evt.id, evt.peopleAssignments)
-                    .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PEOPLE_ASSIGNMENT, peopleAssignments: evt.peopleAssignments }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PEOPLE_ASSIGNMENT }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
     updateStartEscalation = this.actions$
         .pipe(
             ofType(fromHumanTask.ActionTypes.UPDATE_START_ESCALATION),
@@ -343,6 +329,90 @@ export class HumanTaskDefEffects {
                     .pipe(
                         map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_PRESENTATIONELEMENT, presentationElements: evt.presentationElements, presentationParameters: evt.presentationParameters }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_PRESENTATIONELEMENT }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    addPresentationParameter = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_PRESENTATION_PARAMETER),
+            mergeMap((evt: fromHumanTask.AddPresentationParameter) => {
+                return this.humanTaskDefService.addPresentationParameter(evt.id, evt.presentationParameter)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_PRESENTATION_PARAMETER, presentationParameter: evt.presentationParameter }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_PRESENTATION_PARAMETER }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deletePresentationParameter = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_PRESENTATION_PARAMETER),
+            mergeMap((evt: fromHumanTask.AddPresentationParameter) => {
+                return this.humanTaskDefService.deletePresentationParameter(evt.id, evt.presentationParameter)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_PRESENTATION_PARAMETER, presentationParameter: evt.presentationParameter }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_PRESENTATION_PARAMETER }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    addPresentationElt = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_PRESENTATION_ELT),
+            mergeMap((evt: fromHumanTask.AddPresentationElt) => {
+                return this.humanTaskDefService.addPresentationElt(evt.id, evt.presentationElt)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_PRESENTATION_ELT, presentationElt: evt.presentationElt }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_PRESENTATION_ELT }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deletePresentationElt = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_PRESENTATION_ELT),
+            mergeMap((evt: fromHumanTask.DeletePresentationElt) => {
+                return this.humanTaskDefService.deletePresentationElt(evt.id, evt.presentationElt)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_PRESENTATION_ELT, presentationElt: evt.presentationElt }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_PRESENTATION_ELT }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    addPeopleAssignment = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_PEOPLE_ASSIGNMENT),
+            mergeMap((evt: fromHumanTask.AddPeopleAssignment) => {
+                return this.humanTaskDefService.addPeopleAssignment(evt.id, evt.peopleAssignment)
+                    .pipe(
+                        map((id: string) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_PEOPLE_ASSIGNMENT, peopleAssignment: evt.peopleAssignment, assignmentId: id }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_PEOPLE_ASSIGNMENT }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deletePeopleAssignment = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_PEOPLE_ASSIGNMENT),
+            mergeMap((evt: fromHumanTask.DeletePeopleAssignment) => {
+                return this.humanTaskDefService.deletePeopleAssignment(evt.id, evt.peopleAssignment)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_PEOPLE_ASSIGNMENT, peopleAssignment: evt.peopleAssignment }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_PEOPLE_ASSIGNMENT }))
                     );
             }
             )

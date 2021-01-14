@@ -394,6 +394,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
 
         public class PeopleAssignmentDefinitionResult
         {
+            public string Id { get; set; }
             public string Type { get; set; }
             public string Usage { get; set; }
             public string Value { get; set; }
@@ -402,6 +403,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             {
                 return new PeopleAssignmentDefinitionResult
                 {
+                    Id = peopleAssignment.Id,
                     Type = Enum.GetName(typeof(PeopleAssignmentTypes), peopleAssignment.Type),
                     Usage = Enum.GetName(typeof(PeopleAssignmentUsages), peopleAssignment.Usage),
                     Value = peopleAssignment.Value

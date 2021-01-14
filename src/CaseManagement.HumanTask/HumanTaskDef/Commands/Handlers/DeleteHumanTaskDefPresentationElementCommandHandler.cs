@@ -1,4 +1,4 @@
-﻿using CaseManagement.HumanTask.Domains;
+﻿using CaseManagement.Common.Exceptions;
 using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
@@ -10,20 +10,23 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
 {
-    public class UpdateHumanTaskDefPeopleAssignmentCommandHandler : IRequestHandler<UpdateHumanTaskDefPeopleAssignmentCommand, bool>
+    public class DeleteHumanTaskDefPresentationElementCommandHandler : IRequestHandler<DeleteHumanTaskDefPresentationElementCommand, bool>
     {
-        private readonly ILogger<UpdateHumanTaskDefPeopleAssignmentCommandHandler> _logger;
+        private readonly ILogger<DeleteHumanTaskDefPresentationElementCommandHandler> _logger;
         private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
         private readonly IHumanTaskDefCommandRepository _humanTaskDefCommandRepository;
 
-        public UpdateHumanTaskDefPeopleAssignmentCommandHandler(ILogger<UpdateHumanTaskDefPeopleAssignmentCommandHandler> logger, IHumanTaskDefQueryRepository humanTaskDefQueryRepository, IHumanTaskDefCommandRepository humanTaskDefCommandRepository)
+        public DeleteHumanTaskDefPresentationElementCommandHandler(
+            ILogger<DeleteHumanTaskDefPresentationElementCommandHandler> logger,
+            IHumanTaskDefQueryRepository humanTaskDefQueryRepository,
+            IHumanTaskDefCommandRepository humanTaskDefCommandRepository)
         {
             _logger = logger;
             _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
             _humanTaskDefCommandRepository = humanTaskDefCommandRepository;
         }
 
-        public async Task<bool> Handle(UpdateHumanTaskDefPeopleAssignmentCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeleteHumanTaskDefPresentationElementCommand request, CancellationToken cancellationToken)
         {
             var result = await _humanTaskDefQueryRepository.Get(request.Id, cancellationToken);
             if (result == null)
@@ -32,15 +35,16 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            result.UpdatePeopleAssignment(request.PeopleAssignments.Select(_ => new PeopleAssignmentDefinition
+            if (!result.PresentationElements.Any(_ => _.Usage == request.Usage && _.Language == request.Language))
             {
-                Type = _.Type,
-                Usage = _.Usage,
-                Value = _.Value
-            }).ToArray());
+                _logger.LogError($"The presentation element doesn't exist");
+                throw new BadRequestException(Global.PresentationElementDoesntExist);
+            }
+
+            result.DeletePresentationElement(request.Usage, request.Language);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
-            _logger.LogInformation($"Human task definition '{result.Name}', people assignment has been updated");
+            _logger.LogInformation($"Human task definition '{result.Name}', presentation element has been remvoed");
             return true;
         }
     }

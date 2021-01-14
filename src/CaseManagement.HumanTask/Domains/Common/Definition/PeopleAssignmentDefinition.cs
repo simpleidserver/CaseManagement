@@ -14,7 +14,7 @@ namespace CaseManagement.HumanTask.Domains
 
     public class PeopleAssignmentDefinition : ICloneable
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public PeopleAssignmentTypes Type { get; set; }
         public PeopleAssignmentUsages Usage { get; set; }
         public string Value { get; set; }

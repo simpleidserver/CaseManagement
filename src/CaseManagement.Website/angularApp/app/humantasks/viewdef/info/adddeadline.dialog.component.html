@@ -1,0 +1,49 @@
+﻿<h1 mat-dialog-title>{{ "HUMANTASK.ADDDEADLINE" | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="addDeadlineForm" (ngSubmit)="addDeadline(addDeadlineForm.value)">
+        <!-- Deadline type -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'HUMANTASK.SELECT_DEADLINE_TYPE' | translate }}</mat-label>
+            <mat-select formControlName="deadlineType" required>
+                <mat-option *ngFor="let dt of deadlineTypes" [value]="dt">
+                    {{  ('HUMANTASK.DEADLINE_TYPES.' + dt) | translate }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addDeadlineForm.get('deadlineType').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- Name -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+            <input matInput type="text" formControlName="name" required />
+            <mat-error *ngIf="addDeadlineForm.get('name').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- Validity type -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'HUMANTASK.SELECT_DEADLINE_VALIDITY_TYPE' | translate }}</mat-label>
+            <mat-select formControlName="validityType" required>
+                <mat-option *ngFor="let validityType of validityTypes" [value]="validityType">
+                    {{  ('HUMANTASK.DEADLINE_VALIDITY_TYPES.' + validityType) | translate }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addDeadlineForm.get('validityType').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- Validity -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'SHARED.VALUE' | translate }}</mat-label>
+            <input matInput type="text" formControlName="validity" required />
+            <mat-error *ngIf="addDeadlineForm.get('validity').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+    </form>
+</div>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>{{ 'SHARED.CANCEL' | translate }}</button>
+</mat-dialog-actions>

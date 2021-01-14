@@ -177,6 +177,21 @@
   <data name="ParametersCannotSpecifiedAtSameTime" xml:space="preserve">
     <value>Parameters '{0}' cannot be specified at the same time</value>
   </data>
+  <data name="PeopleAssignmentDoesntExist" xml:space="preserve">
+    <value>People assignment '{0}' doesn't exist</value>
+  </data>
+  <data name="PresentationElementDoesntExist" xml:space="preserve">
+    <value>Presentation element doesn't exist</value>
+  </data>
+  <data name="PresentationElementExists" xml:space="preserve">
+    <value>Presentation element exists</value>
+  </data>
+  <data name="PresentationParameterDoesntExist" xml:space="preserve">
+    <value>Presentation parameter '{0}' doesn't exist</value>
+  </data>
+  <data name="PresentationParameterExists" xml:space="preserve">
+    <value>Presentation parameter '{0}' exists</value>
+  </data>
   <data name="StartDeadLineDoesntExist" xml:space="preserve">
     <value>Start deadline doesn't exist</value>
   </data>
