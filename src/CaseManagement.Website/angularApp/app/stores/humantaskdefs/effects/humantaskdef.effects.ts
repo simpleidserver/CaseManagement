@@ -41,32 +41,18 @@ export class HumanTaskDefEffects {
     );
 
     @Effect()
-    addStartDeadline = this.actions$
+    addDeadline = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.ADD_START_DEADLINE),
-            mergeMap((evt: fromHumanTask.AddStartDeadLine) => {
-                return this.humanTaskDefService.addStartDeadline(evt.id, evt.deadLine)
+            ofType(fromHumanTask.ActionTypes.ADD_DEADLINE),
+            mergeMap((evt: fromHumanTask.AddDeadline) => {
+                return this.humanTaskDefService.addDeadline(evt.id, evt.deadLine)
                     .pipe(
-                        map((deadLine) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_START_DEADLINE, content: deadLine }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_START_DEADLINE }))
+                        map((deadLine) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_DEADLINE, content: deadLine }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_DEADLINE }))
                     );
             }
             )
     );
-
-    @Effect()
-    addCompletionDeadline = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.ADD_COMPLETION_DEADLINE),
-            mergeMap((evt: fromHumanTask.AddCompletionDeadLine) => {
-                return this.humanTaskDefService.addCompletionDeadline(evt.id, evt.deadLine)
-                    .pipe(
-                        map((deadLine) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE, content: deadLine }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_COMPLETION_DEADLINE }))
-                    );
-            }
-            )
-        );
 
     @Effect()
     updateHumanTaskDefInfo = this.actions$
@@ -83,56 +69,28 @@ export class HumanTaskDefEffects {
         );
 
     @Effect()
-    addInputParameterAction = this.actions$
+    addParameterAction = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.ADD_OPERATION_INPUT_PARAMETER),
-            mergeMap((evt: fromHumanTask.AddInputParameterOperation) => {
-                return this.humanTaskDefService.addInputParameter(evt.id, evt.parameter)
+            ofType(fromHumanTask.ActionTypes.ADD_OPERATION_PARAMETER),
+            mergeMap((evt: fromHumanTask.AddOperationParameterOperation) => {
+                return this.humanTaskDefService.addParameter(evt.id, evt.parameter)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER, parameter: evt.parameter }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_OPERATION_INPUT_PARAMETER }))
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_OPERATION_PARAMETER, parameter: evt.parameter }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_OPERATION_PARAMETER }))
                     );
             }
             )
     );
 
     @Effect()
-    addOutputParameterAction = this.actions$
+    deleteParameterAction = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.ADD_OPERATION_OUTPUT_PARAMETER),
-            mergeMap((evt: fromHumanTask.AddOutputParameterOperation) => {
-                return this.humanTaskDefService.addOutputParameter(evt.id, evt.parameter)
+            ofType(fromHumanTask.ActionTypes.DELETE_OPERATION_PARAMETER),
+            mergeMap((evt: fromHumanTask.DeleteOperationParameterOperation) => {
+                return this.humanTaskDefService.deleteParameter(evt.id, evt.parameterId)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER, parameter: evt.parameter }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_OPERATION_OUTPUT_PARAMETER }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
-    deleteInputParameterAction = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.DELETE_OPERATION_INPUT_PARAMETER),
-            mergeMap((evt: fromHumanTask.DeleteInputParameterOperation) => {
-                return this.humanTaskDefService.deleteInputParameter(evt.id, evt.name)
-                    .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER, name: evt.name }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_OPERATION_INPUT_PARAMETER }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
-    deleteOutputParameterAction = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.DELETE_OPERATION_OUTPUT_PARAMETER),
-            mergeMap((evt: fromHumanTask.DeleteInputParameterOperation) => {
-                return this.humanTaskDefService.deleteOutputParameter(evt.id, evt.name)
-                    .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER, name: evt.name }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER }))
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_OPERATION_PARAMETER, parameterId: evt.parameterId }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_OPERATION_PARAMETER }))
                     );
             }
             )
@@ -153,140 +111,70 @@ export class HumanTaskDefEffects {
     );
 
     @Effect()
-    deleteStartDealineAction = this.actions$
+    deleteDealineAction = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.DELETE_START_DEADLINE),
-            mergeMap((evt: fromHumanTask.DeleteStartDeadlineOperation) => {
-                return this.humanTaskDefService.deleteStartDeadline(evt.id, evt.deadLineId)
+            ofType(fromHumanTask.ActionTypes.DELETE_DEADLINE),
+            mergeMap((evt: fromHumanTask.DeleteDeadlineOperation) => {
+                return this.humanTaskDefService.deleteDeadline(evt.id, evt.deadLineId)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_START_DEALINE, deadLineId: evt.deadLineId}; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_START_DEALINE }))
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_DEADLINE, deadLineId: evt.deadLineId}; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_DEADLINE }))
                     );
             }
             )
     );
 
     @Effect()
-    deleteCompletionDeadlineAction = this.actions$
+    updateDealine = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.DELETE_COMPLETION_DEADLINE),
-            mergeMap((evt: fromHumanTask.DeleteStartDeadlineOperation) => {
-                return this.humanTaskDefService.deleteCompletionDeadline(evt.id, evt.deadLineId)
+            ofType(fromHumanTask.ActionTypes.UPDATE_DEADLINE),
+            mergeMap((evt: fromHumanTask.UpdateDeadlineOperation) => {
+                return this.humanTaskDefService.updateDealine(evt.id, evt.deadline)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE, deadLineId: evt.deadLineId }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_COMPLETION_DEADLINE }))
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_DEADLINE, deadline: evt.deadline }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_DEADLINE }))
                     );
             }
             )
     );
 
     @Effect()
-    updateStartDealine = this.actions$
+    addEscalationDeadline = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.UPDATE_START_DEADLINE),
-            mergeMap((evt: fromHumanTask.UpdateStartDeadlineOperation) => {
-                return this.humanTaskDefService.updateStartDealine(evt.id, evt.deadline)
+            ofType(fromHumanTask.ActionTypes.ADD_ESCALATION_DEADLINE),
+            mergeMap((evt: fromHumanTask.AddEscalationDeadlineOperation) => {
+                return this.humanTaskDefService.addEscalationDeadline(evt.id, evt.deadlineId, evt.condition)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_START_DEADLINE, deadline: evt.deadline }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_START_DEADLINE }))
+                        map((escId) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_ESCALATION_DEADLINE, deadlineId: evt.deadlineId, condition: evt.condition, escId: escId }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_ESCALATION_DEADLINE }))
                     );
             }
             )
     );
 
     @Effect()
-    updateCompletionDeadline = this.actions$
+    updateEscalation = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.UPDATE_COMPLETION_DEADLINE),
-            mergeMap((evt: fromHumanTask.UpdateCompletionDeadlineOperation) => {
-                return this.humanTaskDefService.updateCompletionDealine(evt.id, evt.deadline)
+            ofType(fromHumanTask.ActionTypes.UPDATE_ESCALATION),
+            mergeMap((evt: fromHumanTask.UpdateEscalationOperation) => {
+                return this.humanTaskDefService.updateEscalation(evt.id, evt.deadLineId, evt.escalation)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE, deadline: evt.deadline }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_COMPLETION_DEADLINE }))
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_ESCALATION }))
                     );
             }
             )
     );
 
     @Effect()
-    addEscalationStartDeadline = this.actions$
+    deleteEscalation = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.ADD_ESCALATION_STARTDEADLINE),
-            mergeMap((evt: fromHumanTask.AddEscalationStartDeadlineOperation) => {
-                return this.humanTaskDefService.addEscalationStartDeadline(evt.id, evt.deadlineId, evt.condition)
+            ofType(fromHumanTask.ActionTypes.DELETE_ESCALATION),
+            mergeMap((evt: fromHumanTask.DeleteEscalationOperation) => {
+                return this.humanTaskDefService.deleteEscalation(evt.id, evt.deadLineId, evt.escalation)
                     .pipe(
-                        map((escId) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_ESCALATION_STARTDEADLINE, deadlineId: evt.deadlineId, condition: evt.condition, escId: escId }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_ESCALATION_STARTDEADLINE }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
-    addEscalationCompletionDeadline = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.ADD_ESCALATION_COMPLETIONDEADLINE),
-            mergeMap((evt: fromHumanTask.AddEscalationCompletionDeadlineOperation) => {
-                return this.humanTaskDefService.addEscalationCompletionDeadline(evt.id, evt.deadlineId, evt.condition)
-                    .pipe(
-                        map((escId) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE, deadlineId: evt.deadlineId, condition: evt.condition, escId: escId }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_ESCALATION_COMPLETIONDEADLINE }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
-    updateStartEscalation = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.UPDATE_START_ESCALATION),
-            mergeMap((evt: fromHumanTask.UpdateStartEscalationOperation) => {
-                return this.humanTaskDefService.updateStartEscalation(evt.id, evt.deadLineId, evt.escalation)
-                    .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_START_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_START_ESCALATION }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
-    updateCompletionEscalation = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.UPDATE_COMPLETION_ESCALATION),
-            mergeMap((evt: fromHumanTask.UpdateCompletionEscalationOperation) => {
-                return this.humanTaskDefService.updateCompletionEscalation(evt.id, evt.deadLineId, evt.escalation)
-                    .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_COMPLETION_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_COMPLETION_ESCALATION }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
-    deleteCompletionEscalation = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.DELETE_COMPLETION_ESCALATION),
-            mergeMap((evt: fromHumanTask.DeleteCompletionEscalationOperation) => {
-                return this.humanTaskDefService.deleteCompletionEscalation(evt.id, evt.deadLineId, evt.escalation)
-                    .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_COMPLETION_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_COMPLETION_DEADLINE }))
-                    );
-            }
-            )
-    );
-
-    @Effect()
-    deleteStartEscalation = this.actions$
-        .pipe(
-            ofType(fromHumanTask.ActionTypes.DELETE_START_ESCALATION),
-            mergeMap((evt: fromHumanTask.DeleteCompletionEscalationOperation) => {
-                return this.humanTaskDefService.deleteStartEscalation(evt.id, evt.deadLineId, evt.escalation)
-                    .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_START_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_START_ESCALATION }))
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_DEADLINE }))
                     );
             }
             )
@@ -413,6 +301,34 @@ export class HumanTaskDefEffects {
                     .pipe(
                         map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_PEOPLE_ASSIGNMENT, peopleAssignment: evt.peopleAssignment }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_PEOPLE_ASSIGNMENT }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    addEscalationToPart = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.ADD_ESCALATION_TOPART),
+            mergeMap((evt: fromHumanTask.AddToPartEscalation) => {
+                return this.humanTaskDefService.addEscalationToPart(evt.id, evt.deadlineId, evt.escalationId, evt.toPart)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_ESCALATION_TOPART, id: evt.id, deadlineId: evt.deadlineId, escalationId: evt.escalationId, toPart: evt.toPart }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_ESCALATION_TOPART }))
+                    );
+            }
+            )
+    );
+
+    @Effect()
+    deleteEscalationToPart$ = this.actions$
+        .pipe(
+            ofType(fromHumanTask.ActionTypes.DELETE_ESCALATION_TOPART),
+            mergeMap((evt: fromHumanTask.DeleteToPartEscalation) => {
+                return this.humanTaskDefService.deleteEscalationToPart(evt.id, evt.deadlineId, evt.escalationId, evt.toPartName)
+                    .pipe(
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_ESCALATION_TOPART, id: evt.id, deadlineId: evt.deadlineId, escalationId: evt.escalationId, toPartName: evt.toPartName }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_ESCALATION_TOPART }))
                     );
             }
             )

@@ -35,12 +35,6 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            if (!result.PeopleAssignments.Any(_ => _.Id == request.AssignmentId))
-            {
-                _logger.LogError($"People assignment '{request.AssignmentId}' doesn't exist");
-                throw new BadRequestException(string.Format(Global.PeopleAssignmentDoesntExist, request.AssignmentId));
-            }
-
             result.RemoveAssignment(request.AssignmentId);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);

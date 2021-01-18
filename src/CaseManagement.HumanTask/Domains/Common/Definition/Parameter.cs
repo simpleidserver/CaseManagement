@@ -10,7 +10,7 @@ namespace CaseManagement.HumanTask.Domains
 
     public class Parameter : ICloneable
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public ParameterUsages Usage { get; set; }
         public ParameterTypes Type { get; set; }

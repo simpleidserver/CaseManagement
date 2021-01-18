@@ -12,6 +12,7 @@ import { Deadline } from '../models/deadline';
 import { RenderingElement } from '../../common/rendering.model';
 import { PeopleAssignment } from '../../common/people-assignment.model';
 import { PresentationParameter } from '../../common/presentationparameter.model';
+import { ToPart } from '../../common/topart.model';
 
 @Injectable()
 export class HumanTaskDefService {
@@ -37,25 +38,12 @@ export class HumanTaskDefService {
         return of(humanTaskDef);
     }
 
-    addStartDeadline(id: string, deadline: Deadline): Observable<Deadline> {
+    addDeadline(id: string, deadline: Deadline): Observable<Deadline> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start";
-        const request: any = { deadLine: deadline };
-        return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map((_: any) => {
-            deadline.id = _.id;
-            return deadline;
-        }));
-    }
-
-    addCompletionDeadline(id: string, deadline: Deadline): Observable<Deadline> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion";
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines";
         const request: any = { deadLine: deadline };
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map((_: any) => {
             deadline.id = _.id;
@@ -73,41 +61,22 @@ export class HumanTaskDefService {
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    addInputParameter(id: string, parameter: Parameter): Observable<boolean> {
+    addParameter(id: string, parameter: Parameter): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/input";
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters";
         const request: any = { parameter: parameter };
         return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    addOutputParameter(id: string, parameter: Parameter): Observable<boolean> {
+    deleteParameter(id: string, parameterId: string): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/output";
-        const request: any = { parameter: parameter };
-        return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
-    }
-
-    deleteInputParameter(id: string, name: string): Observable<boolean> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/input/" + name;
-        return this.http.delete<boolean>(targetUrl, { headers: headers });
-    }
-
-    deleteOutputParameter(id: string, name: string): Observable<boolean> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/output/" + name;
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/" + parameterId;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
 
@@ -121,103 +90,53 @@ export class HumanTaskDefService {
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    deleteStartDeadline(id: string, deadLineId: string): Observable<boolean> {
+    deleteDeadline(id: string, deadLineId: string): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start/" + deadLineId;
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadLineId;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
 
-    deleteCompletionDeadline(id: string, deadLineId: string): Observable<boolean> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion/" + deadLineId;
-        return this.http.delete<boolean>(targetUrl, { headers: headers });
-    }
-
-    updateStartDealine(id: string, deadline: Deadline): Observable<boolean> {
+    updateDealine(id: string, deadline: Deadline): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const request: any = { deadLineInfo: deadline };
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start/" + deadline.id;
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadline.id;
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    updateCompletionDealine(id: string, deadline: Deadline): Observable<boolean> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const request: any = { deadLineInfo: deadline };
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion/" + deadline.id;
-        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
-    }
-
-    addEscalationStartDeadline(id: string, startDeadlineId: string, condition: string): Observable<string> {
+    addEscalationDeadline(id: string, deadlineId: string, condition: string): Observable<string> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const request: any = { condition: condition };
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start/" + startDeadlineId + "/escalations";
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadlineId + "/escalations";
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map((_: any) => {
             return _.id;
         }));
     }
 
-    addEscalationCompletionDeadline(id: string, startDeadlineId: string, condition: string): Observable<string> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const request: any = { condition: condition };
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion/" + startDeadlineId + "/escalations";
-        return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map((_: any) => {
-            return _.id;
-        }));
-    }
-
-    updateStartEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
+    updateEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const request: any = { escalation: escalation};
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start/" + deadLineId + "/escalations/" + escalation.id;
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadLineId + "/escalations/" + escalation.id;
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    updateCompletionEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
+    deleteEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const request: any = { escalation: escalation };
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion/" + deadLineId + "/escalations/" + escalation.id;
-        return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
-    }
-
-    deleteCompletionEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/completion/" + deadLineId + "/escalations/" + escalation.id;
-        return this.http.delete<boolean>(targetUrl, { headers: headers });
-    }
-
-    deleteStartEscalation(id: string, deadLineId: string, escalation: Escalation): Observable<boolean> {
-        let headers = new HttpHeaders();
-        headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
-        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/start/" + deadLineId + "/escalations/" + escalation.id;
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadLineId + "/escalations/" + escalation.id;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
 
@@ -313,5 +232,25 @@ export class HumanTaskDefService {
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/assignments/" + peopleAssignment.id;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
+    }
+
+    addEscalationToPart(id: string, deadlineId: string, escalationId: string, toPart: ToPart) {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const request: any = { toPart: toPart };
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadlineId + "/escalations/" + escalationId + "/toparts";
+        return this.http.post<boolean>(targetUrl, JSON.stringify(request),  { headers: headers });
+    }
+
+    deleteEscalationToPart(id: string, deadlineId: string, escalationId: string, toPartName: string) {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadlineId + "/escalations/" + escalationId + "/toparts/" + toPartName;
+        return this.http.delete<boolean>(targetUrl, { headers: headers });
+
     }
 }

@@ -79,11 +79,20 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Completion deadline doesn&apos;t exist.
+        ///   Recherche une chaîne localisée semblable à Deadline doesn&apos;t exist.
         /// </summary>
-        internal static string CompletionDeadLineDoesntExist {
+        internal static string DeadLineDoesntExist {
             get {
-                return ResourceManager.GetString("CompletionDeadLineDoesntExist", resourceCulture);
+                return ResourceManager.GetString("DeadLineDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ToPart &apos;{0}&apos; already exists.
+        /// </summary>
+        internal static string ExistingToPart {
+            get {
+                return ResourceManager.GetString("ExistingToPart", resourceCulture);
             }
         }
         
@@ -102,24 +111,6 @@ namespace CaseManagement.HumanTask.Resources {
         internal static string HumanTaskDefExists {
             get {
                 return ResourceManager.GetString("HumanTaskDefExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Input parameter &apos;{0}&apos; doesn&apos;t exist.
-        /// </summary>
-        internal static string InputParameterDoesntExist {
-            get {
-                return ResourceManager.GetString("InputParameterDoesntExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Input parameter &apos;{0}&apos; already exists.
-        /// </summary>
-        internal static string InputParameterExists {
-            get {
-                return ResourceManager.GetString("InputParameterExists", resourceCulture);
             }
         }
         
@@ -205,6 +196,24 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Operation parameter &apos;{0}&apos; doesn&apos;t exist.
+        /// </summary>
+        internal static string OperationParameterDoesntExist {
+            get {
+                return ResourceManager.GetString("OperationParameterDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Operation parameter &apos;{0}&apos; already exists.
+        /// </summary>
+        internal static string OperationParameterExists {
+            get {
+                return ResourceManager.GetString("OperationParameterExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Output parameter &apos;{0}&apos; doesn&apos;t exist.
         /// </summary>
         internal static string OutputParameterDoesntExist {
@@ -286,15 +295,6 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Start deadline doesn&apos;t exist.
-        /// </summary>
-        internal static string StartDeadLineDoesntExist {
-            get {
-                return ResourceManager.GetString("StartDeadLineDoesntExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à The sub task &apos;{0}&apos; is already created.
         /// </summary>
         internal static string SubTaskAlreadyCreated {
@@ -309,6 +309,15 @@ namespace CaseManagement.HumanTask.Resources {
         internal static string UnknownCompletionDeadline {
             get {
                 return ResourceManager.GetString("UnknownCompletionDeadline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unknown deadline.
+        /// </summary>
+        internal static string UnknownDeadline {
+            get {
+                return ResourceManager.GetString("UnknownDeadline", resourceCulture);
             }
         }
         
@@ -354,6 +363,15 @@ namespace CaseManagement.HumanTask.Resources {
         internal static string UnknownStartDeadline {
             get {
                 return ResourceManager.GetString("UnknownStartDeadline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unknown ToPart &apos;{0}&apos;.
+        /// </summary>
+        internal static string UnknownToPart {
+            get {
+                return ResourceManager.GetString("UnknownToPart", resourceCulture);
             }
         }
         

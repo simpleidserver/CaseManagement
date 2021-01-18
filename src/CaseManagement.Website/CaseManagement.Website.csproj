@@ -6,6 +6,8 @@
   <ItemGroup>
     <None Remove="angularApp\app\humantasks\viewdef\info\addassignment.dialog.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\info\addassignment.dialog.component.scss" />
+    <None Remove="angularApp\app\humantasks\viewdef\info\adddeadline.dialog.component.html" />
+    <None Remove="angularApp\app\humantasks\viewdef\info\adddeadline.dialog.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\info\addparameter.dialog.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\info\addparameter.dialog.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\baseui.component.ts" />
@@ -41,6 +43,10 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\info\adddeadline.dialog.component.html" />
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\info\adddeadline.dialog.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\info\addassignment.dialog.component.html" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\info\addassignment.dialog.component.scss">
       <SubType>Code</SubType>

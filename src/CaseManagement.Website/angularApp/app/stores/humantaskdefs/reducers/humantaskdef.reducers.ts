@@ -7,6 +7,7 @@ import { Deadline } from '../models/deadline';
 import { PresentationParameter } from '../../common/presentationparameter.model';
 import { PresentationElement } from '../../common/presentationelement.model';
 import { PeopleAssignment } from '../../common/people-assignment.model';
+import { ToPart } from '../../common/topart.model';
 
 export interface HumanTaskDefState{
     isLoading: boolean;
@@ -41,19 +42,8 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
         case fromActions.ActionTypes.COMPLETE_UPDATE_HUMANASKDEF:
             state.content = action.content;
             return { ...state };
-        case fromActions.ActionTypes.COMPLETE_ADD_START_DEADLINE:
+        case fromActions.ActionTypes.COMPLETE_ADD_DEADLINE:
             return {
-                ...state,
-                content: {
-                    ...state.content,
-                    deadLines: [
-                        ...state.content.deadLines,
-                        action.content
-                    ]
-                }
-            };
-        case fromActions.ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE:
-            return { 
                 ...state,
                 content: {
                     ...state.content,
@@ -72,7 +62,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     priority: action.priority
                 }
             };
-        case fromActions.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER:
+        case fromActions.ActionTypes.COMPLETE_ADD_OPERATION_PARAMETER:
             return {
                 ...state,
                 content: {
@@ -83,22 +73,11 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     ]
                 }
             };
-        case fromActions.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER:
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    operationParameters: [
-                        ...state.content.operationParameters,
-                        action.parameter
-                    ]
-                }
-            };
-        case fromActions.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER:
+        case fromActions.ActionTypes.COMPLETE_DELETE_OPERATION_PARAMETER:
             {
                 const inputParameters = state.content.operationParameters;
                 const param1 = inputParameters.filter(function (p: Parameter) {
-                    return p.name === action.name && p.usage === 'INPUT';
+                    return p.id === action.parameterId;
                 })[0];
                 const index1 = inputParameters.indexOf(param1);
                 inputParameters.splice(index1, 1);
@@ -113,29 +92,6 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 };
                 return result;
             }
-        case fromActions.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER:
-            {
-                const outputParameters = state.content.operationParameters;
-                const param2 = outputParameters.filter(function (p: Parameter) {
-                    return p.name === action.name && p.usage === 'OUTPUT';
-                })[0];
-                const index2 = outputParameters.indexOf(param2);
-                outputParameters.splice(index2, 1);
-                const result = {
-                    ...state,
-                    content: {
-                        ...state.content,
-                        operationParameters: [
-                            ...outputParameters
-                        ]
-                    }
-                };
-                if (outputParameters.length === 0) {
-                    result.content.operationParameters = [];
-                }
-
-                return result;
-            }
         case fromActions.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER:
             return {
                 ...state,
@@ -146,10 +102,10 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     ]
                 }
             };
-        case fromActions.ActionTypes.DELETE_START_DEADLINE:
+        case fromActions.ActionTypes.DELETE_DEADLINE:
             var startDeadLines = state.content.deadLines;
             const filteredStartDealine = startDeadLines.filter(function (p: Deadline) {
-                return p.id === action.deadLineId && p.usage === 'START';
+                return p.id === action.deadLineId;
             })[0];
             const startDealineIndex = startDeadLines.indexOf(filteredStartDealine);
             startDeadLines.splice(startDealineIndex, 1);
@@ -162,26 +118,10 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     ]
                 }
             };
-        case fromActions.ActionTypes.DELETE_COMPLETION_DEADLINE:
-            var completionDeadLines = state.content.deadLines;
-            const filteredCompletionDeadline = completionDeadLines.filter(function (p: Deadline) {
-                return p.id === action.deadLineId && p.usage === 'COMPLETION';
-            })[0];
-            const completionDealineIndex = completionDeadLines.indexOf(filteredCompletionDeadline);
-            completionDeadLines.splice(completionDealineIndex, 1);
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    deadLines: [
-                        ...completionDeadLines
-                    ]
-                }
-            };
-        case fromActions.ActionTypes.COMPLETE_UPDATE_START_DEADLINE:
+        case fromActions.ActionTypes.COMPLETE_UPDATE_DEADLINE:
             var startDealines2 = state.content.deadLines;
             const filteredStartedDeadline2 = startDealines2.filter(function (p: Deadline) {
-                return p.id === action.deadline.id && p.usage === 'START';
+                return p.id === action.deadline.id;
             })[0];
             const startDealineIndex2 = startDealines2.indexOf(filteredStartedDeadline2);
             startDealines2.splice(startDealineIndex2, 1);
@@ -195,24 +135,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     ]
                 }
             };
-        case fromActions.ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE:
-            var completionDealines2 = state.content.deadLines;
-            const filteredCompletionDeadline2 = completionDealines2.filter(function (p: Deadline) {
-                return p.id === action.deadline.id && p.usage === 'COMPLETION';
-            })[0];
-            const completionDealineIndex2 = completionDealines2.indexOf(filteredCompletionDeadline2);
-            completionDealines2.splice(completionDealineIndex2, 1);
-            completionDealines2.push(action.deadline);
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    deadLines: [
-                        ...completionDealines2
-                    ]
-                }
-            };
-        case fromActions.ActionTypes.COMPLETE_ADD_ESCALATION_STARTDEADLINE:
+        case fromActions.ActionTypes.COMPLETE_ADD_ESCALATION_DEADLINE:
             var startDealine3 = state.content.deadLines.filter(function (p: Deadline) {
                 return p.id === action.deadlineId;
             })[0];
@@ -220,23 +143,6 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
             escalation1.id = action.escId;
             escalation1.condition = action.condition;
             startDealine3.escalations.push(escalation1);
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    deadLines: [
-                        ...state.content.deadLines
-                    ]
-                }
-            };
-        case fromActions.ActionTypes.COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE:
-            var completionDealine3 = state.content.deadLines.filter(function (p: Deadline) {
-                return p.id === action.deadlineId;
-            })[0];
-            const escalation2 = new Escalation();
-            escalation2.id = action.escId;
-            escalation2.condition = action.condition;
-            completionDealine3.escalations.push(escalation2);
             return {
                 ...state,
                 content: {
@@ -254,7 +160,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     peopleAssignments: action.peopleAssignments
                 }
             };
-        case fromActions.ActionTypes.COMPLETE_UPDATE_COMPLETION_ESCALATION:
+        case fromActions.ActionTypes.COMPLETE_UPDATE_ESCALATION:
             var dl = state.content.deadLines.filter(function (p: Deadline) {
                 return p.id === action.deadLineId;
             })[0];
@@ -273,44 +179,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                     ]
                 }
             };
-        case fromActions.ActionTypes.COMPLETE_UPDATE_START_ESCALATION:
-            var dl = state.content.deadLines.filter(function (p: Deadline) {
-                return p.id === action.deadLineId;
-            })[0];
-            var esc = dl.escalations.filter(function (esc: Escalation) {
-                return esc.id === action.escalation.id;
-            })[0];
-            id = dl.escalations.indexOf(esc);
-            dl.escalations.splice(id, 1);
-            dl.escalations.push(action.escalation);
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    deadLines: [
-                        ...state.content.deadLines
-                    ]
-                }
-            };
-        case fromActions.ActionTypes.COMPLETE_DELETE_START_ESCALATION:
-            var dl = state.content.deadLines.filter(function (p: Deadline) {
-                return p.id === action.deadLineId;
-            })[0];
-            var esc = dl.escalations.filter(function (esc: Escalation) {
-                return esc.id === action.escalation.id;
-            })[0];
-            id = dl.escalations.indexOf(esc);
-            dl.escalations.splice(id, 1);
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    deadLines: [
-                        ...state.content.deadLines
-                    ]
-                }
-            };
-        case fromActions.ActionTypes.COMPLETE_DELETE_COMPLETION_ESCALATION:
+        case fromActions.ActionTypes.COMPLETE_DELETE_ESCALATION:
             var dl = state.content.deadLines.filter(function (p: Deadline) {
                 return p.id === action.deadLineId;
             })[0];
@@ -422,6 +291,50 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                         ...state.content,
                         peopleAssignments: [
                             ...state.content.peopleAssignments
+                        ]
+                    }
+                };
+            }
+            break;
+        case fromActions.ActionTypes.COMPLETE_ADD_ESCALATION_TOPART:
+            {
+                const dl = state.content.deadLines.filter(function (d: Deadline) {
+                    return d.id === action.deadlineId;
+                })[0];
+                const esc = dl.escalations.filter(function (e: Escalation) {
+                    return e.id === action.escalationId;
+                })[0];
+                esc.toParts.push(action.toPart);
+                return {
+                    ...state,
+                    content: {
+                        ...state.content,
+                        deadLines: [
+                            ...state.content.deadLines
+                        ]
+                    }
+                };
+            }
+            break;
+        case fromActions.ActionTypes.COMPLETE_DELETE_ESCALATION_TOPART:
+            {
+                const dl = state.content.deadLines.filter(function (d: Deadline) {
+                    return d.id === action.deadlineId;
+                })[0];
+                const esc = dl.escalations.filter(function (e: Escalation) {
+                    return e.id === action.escalationId;
+                })[0];
+                const tp = esc.toParts.filter(function (t: ToPart) {
+                    return t.name === action.toPartName;
+                })[0];
+                const id = esc.toParts.indexOf(tp);
+                esc.toParts.splice(id, 1);
+                return {
+                    ...state,
+                    content: {
+                        ...state.content,
+                        deadLines: [
+                            ...state.content.deadLines
                         ]
                     }
                 };

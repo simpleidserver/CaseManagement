@@ -310,13 +310,15 @@ Scenario: Search human task instances
 	| name | searchHumanTask |
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'
-	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/assignment'
-    | Key               | Value                                                                                                                                                        |
-    | peopleAssignments | [ { "type": "USERIDENTIFIERS", "value": "user1", "usage" : "POTENTIALOWNER" }, { "type" : "USERIDENTIFIERS", "value": "user1", "usage" : "TASKINITIATOR" } ] |
-	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/presentationelts'
-	| Key                    | Value                                                           |
-	| presentationElements   | [ { "language" : "fr", "value": "bonjour", "usage" : "NAME" } ] |
-	| presentationParameters | [ ]                                                             |
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/assignments'
+    | Key              | Value                                                                       |
+    | peopleAssignment | { "type": "USERIDENTIFIERS", "value": "user1", "usage" : "POTENTIALOWNER" } |
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/assignments'
+	| Key              | Value                                                                       |
+	| peopleAssignment | { "type" : "USERIDENTIFIERS", "value": "user1", "usage" : "TASKINITIATOR" } |
+	And execute HTTP POST JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/presentationelts'
+	| Key                 | Value                                                       |
+	| presentationElement | { "language" : "fr", "value": "bonjour", "usage" : "NAME" } |
 	And authenticate
 	| Key                                                                  | Value |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | user1 |

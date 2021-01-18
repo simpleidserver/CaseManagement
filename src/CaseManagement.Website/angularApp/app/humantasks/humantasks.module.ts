@@ -7,16 +7,16 @@ import { HumanTasksComponent } from './humantasks.component';
 import { HumanTasksRoutes } from './humantasks.routes';
 import { AddHumanTaskDefDialog } from './listdefs/add-humantaskdef-dialog.component';
 import { ListHumanTaskFilesComponent } from './listdefs/listfiles.component';
+import { AddEscalationDialog } from './viewdeadline/add-escalation-dialog.component';
+import { ViewDeadlineComponent } from './viewdeadline/viewdeadline.component';
+import { AddToPartDialog } from './viewdeadline/viewescalation/add-topart-dialog.component';
+import { ViewEscalationComponent } from './viewdeadline/viewescalation/viewescalation.component';
 import { CreateHumanTaskInstanceComponent } from './viewdef/common/createhumantaskinstance/createhumantaskinstance.component';
 import { OperationParameterComponent } from './viewdef/common/operationparameter/operationparameter.component';
 import { PeopleAssignmentComponent } from './viewdef/common/peopleassignment/peopleassignment.component';
 import { PresentationParameterComponent } from './viewdef/common/presentationelement/presentationparameter.component';
 import { CreateHumanTaskInstanceDialog } from './viewdef/create-humantaskinstance-dialog.component';
-import { AddEscalationDialog } from './viewdef/deadlines/add-escalation-dialog.component';
-import { ViewHumanTaskDefDeadlinesComponent } from './viewdef/deadlines/deadlines.component';
-import { EditEscalationDialog } from './viewdef/deadlines/edit-escalation-dialog.component';
 import { AddAssignmentDialogComponent, AddDeadlineComponentDialog, AddParameterDialogComponent, AddPresentationElementDialogComponent, AddPresentationParameterDialogComponent, ViewHumanTaskDefInfoComponent } from './viewdef/info/info.component';
-import { ViewTaskPeopleAssignmentComponent } from './viewdef/peopleassignment/view-peopleassignment.component';
 import { ColumnComponent } from './viewdef/rendering/components/column/column.component';
 import { ContainerComponent } from './viewdef/rendering/components/container/container.component';
 import { DynamicComponent } from './viewdef/rendering/components/dynamic.component';
@@ -38,7 +38,6 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         AddHumanTaskDefDialog,
         CreateHumanTaskInstanceDialog,
         AddEscalationDialog,
-        EditEscalationDialog,
         RowComponentDialog,
         TxtComponentDialog,
         SelectComponentDialog,
@@ -48,6 +47,7 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         AddPresentationElementDialogComponent,
         AddAssignmentDialogComponent,
         AddDeadlineComponentDialog,
+        AddToPartDialog,
         RowComponent,
         ColumnComponent,
         TxtComponent,
@@ -59,7 +59,6 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         AddHumanTaskDefDialog,
         CreateHumanTaskInstanceDialog,
         AddEscalationDialog,
-        EditEscalationDialog,
         SelectComponentDialog,
         HumanTasksComponent,
         ListHumanTaskFilesComponent,
@@ -67,8 +66,6 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         ViewHumanTaskDefInfoComponent,
         CreateHumanTaskInstanceComponent,
         OperationParameterComponent,
-        ViewTaskPeopleAssignmentComponent,
-        ViewHumanTaskDefDeadlinesComponent,
         ViewHumanTaskDefRenderingComponent,
         AddParameterDialogComponent,
         AddDeadlineComponentDialog,
@@ -80,6 +77,9 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         AddPresentationParameterDialogComponent,
         AddPresentationElementDialogComponent,
         AddAssignmentDialogComponent,
+        ViewEscalationComponent,
+        ViewDeadlineComponent,
+        AddToPartDialog,
         DynamicComponent,
         ColumnComponent,
         SelectComponent,

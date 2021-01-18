@@ -8,6 +8,7 @@ import { Deadline } from '../models/deadline';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
 import { PresentationParameter } from '../../common/presentationparameter.model';
+import { ToPart } from '../../common/topart.model';
 
 export enum ActionTypes {
     START_GET_HUMANTASKDEF = "[HumanTaskDef] START_GET_HUMANTASKDEF",
@@ -16,63 +17,40 @@ export enum ActionTypes {
     UPDATE_HUMANASKDEF = "[HumanTaskDef] UPDATE_HUMANASKDEF",
     COMPLETE_UPDATE_HUMANASKDEF = "[HumanTaskDef] COMPLETE_UPDATE_HUMANASKDEF",
     ERROR_UPDATE_HUMANASKDEF = "[HumanTaskDef] ERROR_UPDATE_HUMANASKDEF",
-    ADD_START_DEADLINE = "[HumanTaskDef] ADD_START_DEADLINE",
-    COMPLETE_ADD_START_DEADLINE = "[HumanTaskDef] COMPLETE_ADD_STARTDEADLINE",
-    ERROR_ADD_START_DEADLINE = "[HumanTaskDef] ERROR_ADD_START_DEADLINE",
+    ADD_DEADLINE = "[HumanTaskDef] ADD_DEADLINE",
+    COMPLETE_ADD_DEADLINE = "[HumanTaskDef] COMPLETE_ADD_DEADLINE",
+    ERROR_ADD_DEADLINE = "[HumanTaskDef] ERROR_ADD_DEADLINE",
     ADD_COMPLETION_DEADLINE = "[HumanTaskDef] ADD_COMPLETION_DEADLINE",
-    COMPLETE_ADD_COMPLETION_DEADLINE = "[HumanTaskDef] COMPLETE_ADD_COMPLETION_DEADLINE",
-    ERROR_ADD_COMPLETION_DEADLINE = "[HumanTaskDef] ERROR_ADD_COMPLETION_DEADLINE",
     UPDATE_HUMANTASKDEF_INFO = "[HumanTaskDef] UPDATE_HUMANTASKDEF_INFO",
     COMPLETE_UPDATE_HUMANTASK_INFO = "[HumanTaskDef] COMPLETE_UPDATE_HUMANTASK_INFO",
     ERROR_UPDATE_HUMANTASK_INFO = "[HumanTaskDef] ERROR_UPDATE_HUMANTASK_INFO",
-    ADD_OPERATION_INPUT_PARAMETER = "[HumanTaskDef] ADD_OPERATION_INPUT_PARAMETER",
-    COMPLETE_ADD_OPERATION_INPUT_PARAMETER = "[HumanTaskDef] COMPLETE_ADD_OPERATION_INPUT_PARAMETER",
-    ERROR_ADD_OPERATION_INPUT_PARAMETER = "[HumanTaskDef] ERROR_ADD_OPERATION_INPUT_PARAMETER",
-    ADD_OPERATION_OUTPUT_PARAMETER = "[HumanTaskDef] ADD_OPERATION_OUTPUT_PARAMETER",
-    COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER = "[HumanTaskDef] COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER",
-    ERROR_ADD_OPERATION_OUTPUT_PARAMETER = "[HumanTaskDef] ERROR_ADD_OPERATION_OUTPUT_PARAMETER",
-    DELETE_OPERATION_INPUT_PARAMETER = "[HumanTaskDef] DELETE_OPERATION_INPUT_PARAMETER",
-    COMPLETE_DELETE_OPERATION_INPUT_PARAMETER = "[HumanTaskDef] COMPLETE_DELETE_OPERATION_INPUT_PARAMETER",
-    ERROR_DELETE_OPERATION_INPUT_PARAMETER = "[HumanTaskDef] ERROR_DELETE_OPERATION_INPUT_PARAMETER",
-    DELETE_OPERATION_OUTPUT_PARAMETER = "[HumanTaskDef] DELETE_OPERATION_OUTPUT_PARAMETER",
-    COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER = "[HumanTaskDef] COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER",
-    ERROR_DELETE_OPERATION_OUTPUT_PARAMETER = "[HumanTaskDef] ERROR_DELETE_OPERATION_OUTPUT_PARAMETER",
+    ADD_OPERATION_PARAMETER = "[HumanTaskDef] ADD_OPERATION_PARAMETER",
+    COMPLETE_ADD_OPERATION_PARAMETER = "[HumanTaskDef] COMPLETE_ADD_OPERATION_PARAMETER",
+    ERROR_ADD_OPERATION_PARAMETER = "[HumanTaskDef] ERROR_ADD_OPERATION_PARAMETER",
+    DELETE_OPERATION_PARAMETER = "[HumanTaskDef] DELETE_OPERATION_PARAMETER",
+    COMPLETE_DELETE_OPERATION_PARAMETER = "[HumanTaskDef] COMPLETE_DELETE_OPERATION_PARAMETER",
+    ERROR_DELETE_OPERATION_PARAMETER = "[HumanTaskDef] ERROR_DELETE_OPERATION_PARAMETER",
     UPDATE_RENDERING_PARAMETER = "[HumanTaskDef] UPDATE_RENDERING_PARAMETER",
     COMPLETE_UPDATE_RENDERING_PARAMETER = "[HumanTaskDef] COMPLETE_UPDATE_RENDERING_PARAMETER",
     ERROR_UPDATE_RENDERING_PARAMETER = "[HumanTaskDef] ERROR_UPDATE_RENDERING_PARAMETER",
-    DELETE_START_DEADLINE = "[HumanTaskDef] DELETE_START_DEADLINE",
-    COMPLETE_DELETE_START_DEALINE = "[HumanTaskDef] COMPLETE_DELETE_START_DEALINE",
-    ERROR_DELETE_START_DEALINE = "[HumanTaskDef] ERROR_DELETE_START_DEALINE",
-    DELETE_COMPLETION_DEADLINE = "[HumanTaskDef] DELETE_COMPLETION_DEADLINE",
-    COMPLETE_DELETE_COMPLETION_DEADLINE = "[HumanTaskDef] COMPLETE_DELETE_COMPLETION_DEADLINE",
-    ERROR_DELETE_COMPLETION_DEADLINE = "[HumanTaskDef] ERROR_DELETE_COMPLETION_DEADLINE",
-    UPDATE_START_DEADLINE = "[HumanTaskDef] UPDATE_START_DEADLINE",
-    COMPLETE_UPDATE_START_DEADLINE = "[HumanTaskDef] COMPLETE_UPDATE_START_DEADLINE",
-    ERROR_UPDATE_START_DEADLINE = "[HumanTaskDef] ERROR_UPDATE_START_DEADLINE",
-    UPDATE_COMPLETION_DEADLINE = "[HumanTaskDef] UPDATE_COMPLETION_DEADLINE",
-    COMPLETE_UPDATE_COMPLETION_DEADLINE = "[HumanTaskDef] COMPLETE_UPDATE_COMPLETION_DEADLINE",
-    ERROR_UPDATE_COMPLETION_DEADLINE = "[HumanTaskDef] ERROR_UPDATE_COMPLETION_DEADLINE",
-    ADD_ESCALATION_STARTDEADLINE = "[HumanTaskDef] ADD_ESCALATION_STARTDEADLINE",
-    COMPLETE_ADD_ESCALATION_STARTDEADLINE = "[HumanTaskDef] COMPLETE_ADD_ESCALATION_STARTDEADLINE",
-    ERROR_ADD_ESCALATION_STARTDEADLINE = "[HumanTaskDef] ERROR_ADD_ESCALATION_STARTDEADLINE",
-    ADD_ESCALATION_COMPLETIONDEADLINE = "[HumanTaskDef] ADD_ESCALATION_COMPLETIONDEADLINE",
-    COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE = "[HumanTaskDef] COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE",
-    ERROR_ADD_ESCALATION_COMPLETIONDEADLINE = "[HumanTaskDef] ERROR_ADD_ESCALATION_COMPLETIONDEADLINE",
+    DELETE_DEADLINE = "[HumanTaskDef] DELETE_DEADLINE",
+    COMPLETE_DELETE_DEADLINE = "[HumanTaskDef] COMPLETE_DELETE_DEADLINE",
+    ERROR_DELETE_DEADLINE = "[HumanTaskDef] ERROR_DELETE_DEADLINE",
+    UPDATE_DEADLINE = "[HumanTaskDef] UPDATE_DEADLINE",
+    COMPLETE_UPDATE_DEADLINE = "[HumanTaskDef] COMPLETE_UPDATE_DEADLINE",
+    ERROR_UPDATE_DEADLINE = "[HumanTaskDef] ERROR_UPDATE_DEADLINE",
+    ADD_ESCALATION_DEADLINE = "[HumanTaskDef] ADD_ESCALATION_DEADLINE",
+    COMPLETE_ADD_ESCALATION_DEADLINE = "[HumanTaskDef] COMPLETE_ADD_ESCALATION_DEADLINE",
+    ERROR_ADD_ESCALATION_DEADLINE = "[HumanTaskDef] ERROR_ADD_ESCALATION_DEADLINE",
     UPDATE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] UPDATE_PEOPLE_ASSIGNMENT",
     COMPLETE_UPDATE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] COMPLETE_UPDATE_PEOPLE_ASSIGNMENT",
     ERROR_UPDATE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ERROR_UPDATE_PEOPLE_ASSIGNMENT",
-    UPDATE_COMPLETION_ESCALATION = "[HumanTaskDef] UPDATE_COMPLETION_ESCALATION",
-    COMPLETE_UPDATE_COMPLETION_ESCALATION = "[HumanTaskDef] COMPLETE_UPDATE_COMPLETION_ESCALATION",
-    ERROR_UPDATE_COMPLETION_ESCALATION = "[HumanTaskDef] ERROR_UPDATE_COMPLETION_ESCALATION",
-    UPDATE_START_ESCALATION = "[HumanTaskDef] UPDATE_START_ESCALATION",
-    ERROR_UPDATE_START_ESCALATION = "[HumanTaskDef] ERROR_UPDATE_START_ESCALATION",
-    COMPLETE_UPDATE_START_ESCALATION = "[HumanTaskDef] COMPLETE_UPDATE_START_ESCALATION",
-    DELETE_START_ESCALATION = "[HumanTaskDef] DELETE_START_ESCALATION",
-    ERROR_DELETE_START_ESCALATION = "[HumanTaskDef] ERROR_DELETE_START_ESCALATION",
-    COMPLETE_DELETE_START_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_START_ESCALATION",
-    DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] DELETE_COMPLETION_ESCALATION",
-    ERROR_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] ERROR_DELETE_COMPLETION_ESCALATION",
-    COMPLETE_DELETE_COMPLETION_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_COMPLETION_ESCALATION",
+    UPDATE_ESCALATION = "[HumanTaskDef] UPDATE_ESCALATION",
+    COMPLETE_UPDATE_ESCALATION = "[HumanTaskDef] COMPLETE_UPDATE_ESCALATION",
+    ERROR_UPDATE_ESCALATION = "[HumanTaskDef] ERROR_UPDATE_ESCALATION",
+    DELETE_ESCALATION = "[HumanTaskDef] DELETE_ESCALATION",
+    ERROR_DELETE_ESCALATION = "[HumanTaskDef] ERROR_DELETE_ESCALATION",
+    COMPLETE_DELETE_ESCALATION = "[HumanTaskDef] COMPLETE_DELETE_ESCALATION",
     ADD_HUMANTASKEF = "[HumanTaskDef] ADD_HUMANTASKDEF",
     COMPLETE_ADD_HUMANTASKDEF = "[HumanTaskDef] COMPLETE_ADD_HUMANTASKDEF",
     ERROR_ADD_HUMANTASKDEF = "[HumanTaskDef] ERROR_ADD_HUMANTASKDEF",
@@ -100,7 +78,13 @@ export enum ActionTypes {
     ERROR_ADD_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ERROR_ADD_PEOPLE_ASSIGNMENT",
     DELETE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] DELETE_PEOPLE_ASSIGNMENT",
     COMPLETE_DELETE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] COMPLETE_DELETE_PEOPLE_ASSIGNMENT",
-    ERROR_DELETE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ERROR_DELETE_PEOPLE_ASSIGNMENT"
+    ERROR_DELETE_PEOPLE_ASSIGNMENT = "[HumanTaskDef] ERROR_DELETE_PEOPLE_ASSIGNMENT",
+    ADD_ESCALATION_TOPART = "[HumanTaskDef] ADD_ESCALATION_TOPART",
+    COMPLETE_ADD_ESCALATION_TOPART = "[HumanTaskDef] COMPLETE_ADD_ESCALATION_TOPART",
+    ERROR_ADD_ESCALATION_TOPART = "[HumanTaskDef] ERROR_ADD_ESCALATION_TOPART",
+    DELETE_ESCALATION_TOPART = "[HumanTaskDef] DELETE_ESCALATION_TOPART",
+    COMPLETE_DELETE_ESCALATION_TOPART = "[HumanTaskDef] COMPLETE_DELETE_ESCALATION_TOPART",
+    ERROR_DELETE_ESCALATION_TOPART = "[HumanTaskDef] ERROR_DELETE_ESCALATION_TOPART"
 }
 
 export class GetHumanTaskDef implements Action {
@@ -123,23 +107,13 @@ export class UpdateHumanTaskDefComplete implements Action {
     constructor(public content : HumanTaskDef) { }
 }
 
-export class AddStartDeadLine implements Action {
-    readonly type = ActionTypes.ADD_START_DEADLINE;
+export class AddDeadline implements Action {
+    readonly type = ActionTypes.ADD_DEADLINE;
     constructor(public id: string, public deadLine: Deadline) { }
 }
 
-export class CompleteAddStartDeadLine implements Action {
-    readonly type = ActionTypes.COMPLETE_ADD_START_DEADLINE;
-    constructor(public content: Deadline) { }
-}
-
-export class AddCompletionDeadLine implements Action {
-    readonly type = ActionTypes.ADD_COMPLETION_DEADLINE;
-    constructor(public id: string, public deadLine: Deadline) { }
-}
-
-export class CompleteCompletionDeadLine implements Action {
-    readonly type = ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE;
+export class CompleteAddDeadLine implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_DEADLINE;
     constructor(public content: Deadline) { }
 }
 
@@ -153,44 +127,24 @@ export class CompleteUpdateHumanTaskInfo implements Action {
     constructor(public name: string, public priority: number) { }
 }
 
-export class AddInputParameterOperation implements Action {
-    readonly type = ActionTypes.ADD_OPERATION_INPUT_PARAMETER;
+export class AddOperationParameterOperation implements Action {
+    readonly type = ActionTypes.ADD_OPERATION_PARAMETER;
     constructor(public id: string, public parameter : Parameter) { }
 }
 
-export class CompleteAddInputParameterOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER;
+export class CompleteAddOperationParameterOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_OPERATION_PARAMETER;
     constructor(public parameter: Parameter) { }
 }
 
-export class AddOutputParameterOperation implements Action {
-    readonly type = ActionTypes.ADD_OPERATION_OUTPUT_PARAMETER;
-    constructor(public id: string, public parameter: Parameter) { }
+export class DeleteOperationParameterOperation implements Action {
+    readonly type = ActionTypes.DELETE_OPERATION_PARAMETER;
+    constructor(public id: string, public parameterId: string) { }
 }
 
-export class CompleteAddOutputParameterOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER;
-    constructor(public id: string, public parameter: Parameter) { }
-}
-
-export class DeleteInputParameterOperation implements Action {
-    readonly type = ActionTypes.DELETE_OPERATION_INPUT_PARAMETER;
-    constructor(public id: string, public name: string) { }
-}
-
-export class CompleteDeleteInputParameterOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER;
-    constructor(public name: string) { }
-}
-
-export class DeleteOutputParameterOperation implements Action {
-    readonly type = ActionTypes.DELETE_OPERATION_OUTPUT_PARAMETER;
-    constructor(public id: string, public name: string) { }
-}
-
-export class CompleteDeleteOutputParameterOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER;
-    constructor(public name: string) { }
+export class CompleteDeleteOperationParameterOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_OPERATION_PARAMETER;
+    constructor(public parameterId: string) { }
 }
 
 export class UpdateRenderingOperation implements Action {
@@ -203,63 +157,33 @@ export class CompleteUpdateRenderingOperation implements Action {
     constructor(public renderingElements: RenderingElement[]) { }
 }
 
-export class DeleteStartDeadlineOperation implements Action {
-    readonly type = ActionTypes.DELETE_START_DEADLINE;
+export class DeleteDeadlineOperation implements Action {
+    readonly type = ActionTypes.DELETE_DEADLINE;
     constructor(public id: string, public deadLineId: string) { }
 }
 
-export class CompleteDeleteStartDeadlineOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_DELETE_START_DEALINE;
+export class CompleteDeleteDeadlineOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_DEADLINE;
     constructor(public deadLineId: string) { }
 }
 
-export class DeleteCompletionDeadlineOperation implements Action {
-    readonly type = ActionTypes.DELETE_COMPLETION_DEADLINE;
-    constructor(public id: string, public deadLineId: string) { }
-}
-
-export class CompleteDeleteCompletionDeadlineOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE;
-    constructor(public deadLineId: string) { }
-}
-
-export class UpdateStartDeadlineOperation implements Action {
-    readonly type = ActionTypes.UPDATE_START_DEADLINE;
+export class UpdateDeadlineOperation implements Action {
+    readonly type = ActionTypes.UPDATE_DEADLINE;
     constructor(public id: string, public deadline: Deadline) { }
 }
 
-export class CompleteUpdateStartDeadlineOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_UPDATE_START_DEADLINE;
+export class CompleteUpdateDeadlineOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_DEADLINE;
     constructor(public deadline: Deadline) { }
 }
 
-export class UpdateCompletionDeadlineOperation implements Action {
-    readonly type = ActionTypes.UPDATE_COMPLETION_DEADLINE;
-    constructor(public id: string, public deadline: Deadline) { }
-}
-
-export class CompleteCompletionStartDeadlineOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_UPDATE_COMPLETION_DEADLINE;
-    constructor(public deadline: Deadline) { }
-}
-
-export class AddEscalationStartDeadlineOperation implements Action {
-    readonly type = ActionTypes.ADD_ESCALATION_STARTDEADLINE;
+export class AddEscalationDeadlineOperation implements Action {
+    readonly type = ActionTypes.ADD_ESCALATION_DEADLINE;
     constructor(public id: string, public deadlineId: string, public condition: string) { }
 }
 
-export class CompleteAddEscalationStartDeadlineOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_ADD_ESCALATION_STARTDEADLINE;
-    constructor(public deadlineId: string, public condition: string, public escId: string) { }
-}
-
-export class AddEscalationCompletionDeadlineOperation implements Action {
-    readonly type = ActionTypes.ADD_ESCALATION_COMPLETIONDEADLINE;
-    constructor(public id: string, public deadlineId: string, public condition: string) { }
-}
-
-export class CompleteAddEscalationCompletionDeadlineOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_ADD_ESCALATION_COMPLETIONDEADLINE;
+export class CompleteAddEscalationDeadlineOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_ESCALATION_DEADLINE;
     constructor(public deadlineId: string, public condition: string, public escId: string) { }
 }
 
@@ -273,43 +197,23 @@ export class CompletePeopleAssignmentOperation implements Action {
     constructor(public peopleAssignments: PeopleAssignment[]) { }
 }
 
-export class UpdateStartEscalationOperation implements Action {
-    readonly type = ActionTypes.UPDATE_START_ESCALATION;
+export class UpdateEscalationOperation implements Action {
+    readonly type = ActionTypes.UPDATE_ESCALATION;
     constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
 }
 
-export class CompleteUpdateStartEscalationOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_UPDATE_START_ESCALATION;
+export class CompleteUpdateEscalationOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_UPDATE_ESCALATION;
     constructor(public deadLineId: string, public escalation: Escalation) { }
 }
 
-export class UpdateCompletionEscalationOperation implements Action {
-    readonly type = ActionTypes.UPDATE_COMPLETION_ESCALATION;
+export class DeleteEscalationOperation implements Action {
+    readonly type = ActionTypes.DELETE_ESCALATION;
     constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
 }
 
-export class CompleteUpdateCompletionEscalationOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_UPDATE_COMPLETION_ESCALATION;
-    constructor(public deadLineId: string, public escalation: Escalation) { }
-}
-
-export class DeleteStartEscalationOperation implements Action {
-    readonly type = ActionTypes.DELETE_START_ESCALATION;
-    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
-}
-
-export class CompleteDeleteStartEscalationOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_DELETE_START_ESCALATION;
-    constructor(public deadLineId: string, public escalation: Escalation) { }
-}
-
-export class DeleteCompletionEscalationOperation implements Action {
-    readonly type = ActionTypes.DELETE_COMPLETION_ESCALATION;
-    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
-}
-
-export class CompleteDeleteCompletionEscalationOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_DELETE_COMPLETION_ESCALATION;
+export class CompleteDeleteEscalationOperation implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_ESCALATION;
     constructor(public deadLineId: string, public escalation: Escalation) { }
 }
 
@@ -403,48 +307,52 @@ export class CompleteDeletePeopleAssignment implements Action {
     constructor(public id: string, public peopleAssignment: PeopleAssignment) { }
 }
 
+export class AddToPartEscalation implements Action {
+    readonly type = ActionTypes.ADD_ESCALATION_TOPART;
+    constructor(public id: string, public deadlineId: string, public escalationId: string, public toPart: ToPart) { }
+}
+
+export class CompleteAddToPartEscalation implements Action {
+    readonly type = ActionTypes.COMPLETE_ADD_ESCALATION_TOPART;
+    constructor(public id: string, public deadlineId: string, public escalationId: string, public toPart: ToPart) { }
+}
+
+export class DeleteToPartEscalation implements Action {
+    readonly type = ActionTypes.DELETE_ESCALATION_TOPART;
+    constructor(public id: string, public deadlineId: string, public escalationId: string, public toPartName: string) { }
+}
+
+export class CompleteDeleteToPartEscalation implements Action {
+    readonly type = ActionTypes.COMPLETE_DELETE_ESCALATION_TOPART;
+    constructor(public id: string, public deadlineId: string, public escalationId: string, public toPartName: string) { }
+}
+
 export type ActionsUnion = GetHumanTaskDef |
     GetHumanTaskDefComplete |
     UpdateHumanTaskDef |
     UpdateHumanTaskDefComplete |
-    AddStartDeadLine |
-    CompleteAddStartDeadLine |
-    AddCompletionDeadLine |
-    CompleteCompletionDeadLine |
+    AddDeadline |
+    CompleteAddDeadLine |
     UpdateHumanTaskInfo |
     CompleteUpdateHumanTaskInfo |
-    AddInputParameterOperation |
-    CompleteAddInputParameterOperation |
-    AddOutputParameterOperation |
-    CompleteAddOutputParameterOperation |
-    DeleteInputParameterOperation |
-    CompleteDeleteInputParameterOperation |
-    DeleteOutputParameterOperation |
-    CompleteDeleteOutputParameterOperation |
+    AddOperationParameterOperation |
+    CompleteAddOperationParameterOperation |
+    DeleteOperationParameterOperation |
+    CompleteDeleteOperationParameterOperation |
     UpdateRenderingOperation |
     CompleteUpdateRenderingOperation |
-    DeleteStartDeadlineOperation |
-    CompleteDeleteStartDeadlineOperation |
-    DeleteCompletionDeadlineOperation |
-    CompleteDeleteCompletionDeadlineOperation |
-    UpdateStartDeadlineOperation |
-    CompleteUpdateStartDeadlineOperation |
-    UpdateCompletionDeadlineOperation |
-    CompleteCompletionStartDeadlineOperation |
-    AddEscalationStartDeadlineOperation |
-    CompleteAddEscalationStartDeadlineOperation |
-    AddEscalationCompletionDeadlineOperation |
-    CompleteAddEscalationCompletionDeadlineOperation |
+    DeleteDeadlineOperation |
+    CompleteDeleteDeadlineOperation |
+    UpdateDeadlineOperation |
+    CompleteUpdateDeadlineOperation |
+    AddEscalationDeadlineOperation |
+    CompleteAddEscalationDeadlineOperation |
     UpdatePeopleAssignmentOperation |
     CompletePeopleAssignmentOperation |
-    UpdateCompletionEscalationOperation |
-    CompleteUpdateCompletionEscalationOperation |
-    UpdateStartEscalationOperation |
-    CompleteUpdateStartEscalationOperation |
-    DeleteStartEscalationOperation |
-    CompleteDeleteStartEscalationOperation |
-    DeleteCompletionEscalationOperation |
-    CompleteDeleteCompletionEscalationOperation |
+    UpdateEscalationOperation |
+    CompleteUpdateEscalationOperation |
+    DeleteEscalationOperation |
+    CompleteDeleteEscalationOperation |
     AddHumanTaskDefOperation |
     CompleteAddHumanTaskDefOperation |
     SearchHumanTaskDefOperation |
@@ -462,4 +370,8 @@ export type ActionsUnion = GetHumanTaskDef |
     AddPeopleAssignment |
     CompleteAddPeopleAssigment |
     DeletePeopleAssignment |
-    CompleteDeletePeopleAssignment;
+    CompleteDeletePeopleAssignment |
+    AddToPartEscalation |
+    CompleteAddToPartEscalation |
+    DeleteToPartEscalation |
+    CompleteDeleteToPartEscalation;

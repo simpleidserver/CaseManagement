@@ -35,12 +35,6 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            if (!result.PresentationElements.Any(_ => _.Usage == request.Usage && _.Language == request.Language))
-            {
-                _logger.LogError($"The presentation element doesn't exist");
-                throw new BadRequestException(Global.PresentationElementDoesntExist);
-            }
-
             result.DeletePresentationElement(request.Usage, request.Language);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);

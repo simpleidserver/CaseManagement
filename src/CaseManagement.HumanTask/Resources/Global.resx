@@ -123,20 +123,17 @@
   <data name="CompletionBehaviorMustBeSatisfied" xml:space="preserve">
     <value>At least one completion behavior must be specified</value>
   </data>
-  <data name="CompletionDeadLineDoesntExist" xml:space="preserve">
-    <value>Completion deadline doesn't exist</value>
+  <data name="DeadLineDoesntExist" xml:space="preserve">
+    <value>Deadline doesn't exist</value>
+  </data>
+  <data name="ExistingToPart" xml:space="preserve">
+    <value>ToPart '{0}' already exists</value>
   </data>
   <data name="GroupNamesAndUserIdentifiersSpecified" xml:space="preserve">
     <value>GroupNames and UserIdentifiers parameters cannot be specified at the same time</value>
   </data>
   <data name="HumanTaskDefExists" xml:space="preserve">
     <value>The human task def '{0}' already exists</value>
-  </data>
-  <data name="InputParameterDoesntExist" xml:space="preserve">
-    <value>Input parameter '{0}' doesn't exist</value>
-  </data>
-  <data name="InputParameterExists" xml:space="preserve">
-    <value>Input parameter '{0}' already exists</value>
   </data>
   <data name="InvalidParameterType" xml:space="preserve">
     <value>Parameter '{0}' is not a valid '{1}'</value>
@@ -165,6 +162,12 @@
   <data name="OperationCanBePerformed" xml:space="preserve">
     <value>Operation '{0}' can be performed only on '{1}' human task instance state</value>
   </data>
+  <data name="OperationParameterDoesntExist" xml:space="preserve">
+    <value>Operation parameter '{0}' doesn't exist</value>
+  </data>
+  <data name="OperationParameterExists" xml:space="preserve">
+    <value>Operation parameter '{0}' already exists</value>
+  </data>
   <data name="OutputParameterDoesntExist" xml:space="preserve">
     <value>Output parameter '{0}' doesn't exist</value>
   </data>
@@ -192,14 +195,14 @@
   <data name="PresentationParameterExists" xml:space="preserve">
     <value>Presentation parameter '{0}' exists</value>
   </data>
-  <data name="StartDeadLineDoesntExist" xml:space="preserve">
-    <value>Start deadline doesn't exist</value>
-  </data>
   <data name="SubTaskAlreadyCreated" xml:space="preserve">
     <value>The sub task '{0}' is already created</value>
   </data>
   <data name="UnknownCompletionDeadline" xml:space="preserve">
     <value>Unknown completion deadline</value>
+  </data>
+  <data name="UnknownDeadline" xml:space="preserve">
+    <value>Unknown deadline</value>
   </data>
   <data name="UnknownEscalation" xml:space="preserve">
     <value>Unknown escalation</value>
@@ -215,6 +218,9 @@
   </data>
   <data name="UnknownStartDeadline" xml:space="preserve">
     <value>Unknown start deadline</value>
+  </data>
+  <data name="UnknownToPart" xml:space="preserve">
+    <value>Unknown ToPart '{0}'</value>
   </data>
   <data name="UserNotAuthenticated" xml:space="preserve">
     <value>User is not authenticated</value>

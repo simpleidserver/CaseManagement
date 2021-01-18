@@ -104,7 +104,8 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Name = Name,
                     For = For,
-                    Until = Until
+                    Until = Until,
+                    Usage = (DeadlineUsages)Enum.Parse(typeof(DeadlineUsages), Usage)
                 };
             }
         }

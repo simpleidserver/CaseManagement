@@ -197,7 +197,9 @@
                     <ng-container matColumnDef="usage">
                         <th mat-header-cell *matHeaderCellDef></th>
                         <td mat-cell *matCellDef="let deadline">
-                            <span *ngIf="deadline.usage">{{ ('HUMANTASK.DEADLINE_TYPES.' + deadline.usage) | translate }}</span>
+                            <a href="#" [routerLink]="['/humantasks/' + humanTaskDef.id + '/deadline/' + deadline.id]" *ngIf="deadline.usage">
+                                {{ ('HUMANTASK.DEADLINE_TYPES.' + deadline.usage) | translate }}
+                            </a>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="name">

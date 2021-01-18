@@ -1,0 +1,64 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/humantasks']">{{ 'BREADCRUMB.HUMANTASKS' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/humantasks/' + humanTaskDef.id]">{{ humanTaskDef.name }}</a></li>
+        <li>{{ deadline.name }}</li>
+    </ul>
+    <div class="m-10">
+        <div fxLayout="column" fxLayoutGap="10px">
+            <mat-card>
+                <mat-card-content>
+                    <!-- Update information -->
+                    <form [formGroup]="infoForm" (ngSubmit)="updateInfo(infoForm.value)">
+                        <!-- Name -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+                            <input matInput type="text" formControlName="name" required />
+                            <mat-error *ngIf="infoForm.get('name').hasError('required')">
+                                {{ 'SHARED.IS_REQUIRED' | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                        <!-- Duration -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ "HUMANTASK.DEADLINE_VALIDITY_TYPES.DURATION" | translate }}</mat-label>
+                            <input matInput type="text" formControlName="for" />
+                        </mat-form-field>
+                        <!-- Until -->
+                        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                            <mat-label>{{ "HUMANTASK.DEADLINE_VALIDITY_TYPES.EXPIRATION" | translate }}</mat-label>
+                            <input matInput type="text" formControlName="until" />
+                        </mat-form-field>
+                        <button mat-raised-button color="primary">{{ "SHARED.UPDATE" | translate }}</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+            <div fxLayout="row" fxLayoutGap="10px">
+                <mat-card fxFlex="20%">
+                    <mat-card-header>
+                        <mat-card-title>
+                            {{ 'HUMANTASK.ESCALATIONS' | translate }}
+                        </mat-card-title>
+                        <div class="actions">
+                            <button mat-icon-button (click)="addDeadline($event)">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-header>
+                    <mat-card-content style="min-height: 150px;">
+                        <mat-list>
+                            <a href="#" [routerLink]="['/humantasks/' + humanTaskDef.id + '/deadline/' + deadline.id + '/' + escalation.id]" mat-list-item *ngFor="let escalation of escalations$; let i = index;">
+                                {{ 'HUMANTASK.ESCALATION_LINK' | translate:{index: i, condition: escalation.condition} }}
+                            </a>
+                        </mat-list>
+                    </mat-card-content>
+                </mat-card>
+                <mat-card fxFlex="80%">
+                    <mat-card-content>
+                        <router-outlet></router-outlet>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

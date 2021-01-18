@@ -320,58 +320,30 @@ export class ViewHumanTaskDefInfoComponent implements OnInit, OnDestroy {
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_INPUT_PARAMETER))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_PARAMETER))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.INPUT_PARAMETER_ADDED'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.PARAMETER_ADDED'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_OPERATION_OUTPUT_PARAMETER))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_PARAMETER))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.OUTPUT_PARAMETER_ADDED'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_PARAMETER'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_INPUT_PARAMETER))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_PARAMETER))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_INPUT_PARAMETER'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.PARAMETER_REMOVED'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_OPERATION_OUTPUT_PARAMETER))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_PARAMETER))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_OUTPUT_PARAMETER'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_INPUT_PARAMETER))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.INPUT_PARAMETER_REMOVED'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_OPERATION_OUTPUT_PARAMETER))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.OUTPUT_PARAMETER_REMOVED'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_INPUT_PARAMETER))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_INPUT_PARAMETER'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_OPERATION_OUTPUT_PARAMETER))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_OUTPUT_PARAMETER'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_PARAMETER'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
@@ -460,58 +432,30 @@ export class ViewHumanTaskDefInfoComponent implements OnInit, OnDestroy {
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_START_DEADLINE))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_DEADLINE))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.START_DEADLINE_ADDED'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.DEADLINE_ADDED'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_START_DEADLINE))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_DEADLINE))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_START_DEADLINE'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_DEADLINE'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_ADD_COMPLETION_DEADLINE))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_DEADLINE))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.COMPLETION_DEADLINE_ADDED'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.DEADLINE_REMOVED'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
         this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_ADD_COMPLETION_DEADLINE))
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_DEADLINE))
             .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_ADD_COMPLETION_DEADLINE'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_START_DEALINE))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.START_DEADLINE_REMOVED'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_START_DEALINE))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_REMOVE_START_DEADLINE'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_DELETE_COMPLETION_DEADLINE))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.COMPLETION_DEADLINE_REMOVED'), this.translateService.instant('undo'), {
-                    duration: 2000
-                });
-            });
-        this.actions$.pipe(
-            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_COMPLETION_DEADLINE))
-            .subscribe(() => {
-                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_REMOVE_COMPLETION_DEADLINE'), this.translateService.instant('undo'), {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_REMOVE_DEADLINE'), this.translateService.instant('undo'), {
                     duration: 2000
                 });
             });
@@ -600,14 +544,8 @@ export class ViewHumanTaskDefInfoComponent implements OnInit, OnDestroy {
     }
 
     deleteParameter(p: Parameter) {
-        switch (p.usage) {
-            case 'INPUT':
-                this.deleteInputParameter(p);
-                break;
-            case 'OUTPUT':
-                this.deleteOutputParameter(p);
-                break;
-        }
+        const request = new fromHumanTaskDefActions.DeleteOperationParameterOperation(this.humanTaskDef.id, p.id);
+        this.store.dispatch(request);
     }
 
     addPresentationParameter(evt: any) {
@@ -685,20 +623,8 @@ export class ViewHumanTaskDefInfoComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            switch (d.usage) {
-                case 'START':
-                    {
-                        const request = new fromHumanTaskDefActions.AddStartDeadLine(this.humanTaskDef.id, d);
-                        this.store.dispatch(request);
-                    }
-                    break;
-                case 'COMPLETION':
-                    {
-                        const request = new fromHumanTaskDefActions.AddCompletionDeadLine(this.humanTaskDef.id, d);
-                        this.store.dispatch(request);
-                    }
-                    break;
-            }
+            const request = new fromHumanTaskDefActions.AddDeadline(this.humanTaskDef.id, d);
+            this.store.dispatch(request);
         });
     }
 
@@ -718,39 +644,19 @@ export class ViewHumanTaskDefInfoComponent implements OnInit, OnDestroy {
     }
 
     deleteDeadline(deadline: Deadline) {
-        switch (deadline.usage) {
-            case 'START':
-                {
-                    const request = new fromHumanTaskDefActions.DeleteStartDeadlineOperation(this.humanTaskDef.id, deadline.id);
-                    this.store.dispatch(request);
-                }
-                break;
-            case 'COMPLETION':
-                {
-                    const request = new fromHumanTaskDefActions.DeleteCompletionDeadlineOperation(this.humanTaskDef.id, deadline.id);
-                    this.store.dispatch(request);
-                }
-                break;
-        }
+        const request = new fromHumanTaskDefActions.DeleteDeadlineOperation(this.humanTaskDef.id, deadline.id);
+        this.store.dispatch(request);
     }
 
     private addInputParameter(param: Parameter) {
-        const request = new fromHumanTaskDefActions.AddInputParameterOperation(this.humanTaskDef.id, param);
+        param.usage = 'INPUT';
+        const request = new fromHumanTaskDefActions.AddOperationParameterOperation(this.humanTaskDef.id, param);
         this.store.dispatch(request);
     }
 
     private addOutputParameter(param: Parameter) {
-        const request = new fromHumanTaskDefActions.AddOutputParameterOperation(this.humanTaskDef.id, param);
-        this.store.dispatch(request);
-    }
-
-    private deleteInputParameter(param: Parameter) {
-        const request = new fromHumanTaskDefActions.DeleteInputParameterOperation(this.humanTaskDef.id, param.name);
-        this.store.dispatch(request);
-    }
-
-    private deleteOutputParameter(param: Parameter) {
-        const request = new fromHumanTaskDefActions.DeleteOutputParameterOperation(this.humanTaskDef.id, param.name);
+        param.usage = 'OUTPUT';
+        const request = new fromHumanTaskDefActions.AddOperationParameterOperation(this.humanTaskDef.id, param);
         this.store.dispatch(request);
     }
 }

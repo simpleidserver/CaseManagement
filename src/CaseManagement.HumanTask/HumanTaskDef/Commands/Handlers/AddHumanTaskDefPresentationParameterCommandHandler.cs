@@ -38,12 +38,6 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new BadRequestException(string.Format(Global.MissingParameter, "parameter"));
             }
 
-            if (result.PresentationParameters.Any(_ => _.Name == request.PresentationParameter.Name))
-            {
-                _logger.LogError($"The presentation parameter '{request.PresentationParameter.Name}' already exists");
-                throw new BadRequestException(string.Format(Global.PresentationParameterExists, request.PresentationParameter.Name));
-            }
-
             result.AddPresentationParameter(request.PresentationParameter.ToDomain());
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
