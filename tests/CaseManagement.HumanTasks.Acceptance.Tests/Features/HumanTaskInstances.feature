@@ -227,7 +227,7 @@ Scenario: Check a notification is created by StartDeadLine
 
 	Then HTTP status code equals to '200'
 	Then JSON 'totalLength'='1'
-	Then JSON 'content[0].name'='notification'
+	Then JSON 'content[0].name'='firstnotification'
 	Then JSON 'content[0].status'='READY'
 
 Scenario: Check a notification is created by CompletionDeadLine

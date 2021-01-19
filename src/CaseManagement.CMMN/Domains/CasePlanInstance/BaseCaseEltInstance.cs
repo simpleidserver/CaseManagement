@@ -26,10 +26,10 @@ namespace CaseManagement.CMMN.Domains
 
         #region Update state
 
-        public void MakeTransition(CMMNTransitions transition, string message, DateTime executionDateTime)
+        public void MakeTransition(CMMNTransitions transition, string message, Dictionary<string, string> incomingTokens, DateTime executionDateTime)
         {
             UpdateTransition(transition, executionDateTime);
-            TransitionHistories.Add(new CasePlanElementInstanceTransitionHistory { Message = message, ExecutionDateTime = executionDateTime, Transition = transition });
+            TransitionHistories.Add(new CasePlanElementInstanceTransitionHistory { Message = message, ExecutionDateTime = executionDateTime, Transition = transition, IncomingTokens = incomingTokens });
         }
 
         protected abstract void UpdateTransition(CMMNTransitions transition, DateTime executionDateTime);

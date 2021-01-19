@@ -9,12 +9,11 @@ namespace CaseManagement.HumanTask.Domains
         public Escalation()
         {
             ToParts = new List<ToPart>();
-            Notification = new NotificationDefinition();
         }
 
         public string Id { get; set; }
         public string Condition { get; set; }
-        public NotificationDefinition Notification { get; set; }
+        public string NotificationId { get; set; }
         /// <summary>
         /// The toParts element is used to assign values to input message of the sub-task.
         /// </summary>
@@ -26,7 +25,7 @@ namespace CaseManagement.HumanTask.Domains
             {
                 Id = Id,
                 Condition = Condition,
-                Notification = Notification,
+                NotificationId = NotificationId,
                 ToParts = ToParts.Select(_ => (ToPart)_.Clone()).ToList()
             };
         }

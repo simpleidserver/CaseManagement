@@ -26,9 +26,9 @@ namespace CaseManagement.CMMN
             return _messageBroker.QueueCasePlanInstance(casePlanInstanceId, token);
         }
 
-        public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId, CancellationToken token)
+        public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId, Dictionary<string, string> parameters, CancellationToken token)
         {
-            return _messageBroker.QueueExternalEvent(evt, casePlanInstanceId, casePlanElementInstanceId, token);
+            return _messageBroker.QueueExternalEvent(evt, casePlanInstanceId, casePlanElementInstanceId, parameters, token);
         }
 
         public async Task RegisterCasePlanInstance(CasePlanInstanceAggregate casePlanInstance, CancellationToken token)

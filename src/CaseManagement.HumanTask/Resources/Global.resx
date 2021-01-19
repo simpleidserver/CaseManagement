@@ -156,6 +156,9 @@
   <data name="NotActualOwner" xml:space="preserve">
     <value>Authenticated user is not the actual owner</value>
   </data>
+  <data name="NotificationDefExists" xml:space="preserve">
+    <value>Notification definition '{0}' exist</value>
+  </data>
   <data name="NotSubTask" xml:space="preserve">
     <value>'{0}' is not a subtask of '{1}'</value>
   </data>
@@ -194,6 +197,9 @@
   </data>
   <data name="PresentationParameterExists" xml:space="preserve">
     <value>Presentation parameter '{0}' exists</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
   <data name="SubTaskAlreadyCreated" xml:space="preserve">
     <value>The sub task '{0}' is already created</value>

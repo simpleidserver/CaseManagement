@@ -37,13 +37,13 @@ namespace CaseManagement.CMMN.CasePlanInstance.Command.Handlers
                 }
 
                 caseInstance.MakeTransition(elt, CMMNTransitions.Resume);
-                await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Resume, resumeCommand.CasePlanInstanceId, resumeCommand.CasePlanInstanceElementId, token);
+                await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Resume, resumeCommand.CasePlanInstanceId, resumeCommand.CasePlanInstanceElementId, resumeCommand.Parameters, token);
                 return true;
 
             }
 
             caseInstance.MakeTransition(CMMNTransitions.Resume);
-            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Resume, resumeCommand.CasePlanInstanceId, resumeCommand.CasePlanInstanceElementId, token);
+            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Resume, resumeCommand.CasePlanInstanceId, resumeCommand.CasePlanInstanceElementId, resumeCommand.Parameters, token);
             return true;
         }
     }

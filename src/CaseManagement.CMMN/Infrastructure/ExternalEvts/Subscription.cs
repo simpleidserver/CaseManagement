@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Infrastructure.ExternalEvts
 {
@@ -10,5 +11,6 @@ namespace CaseManagement.CMMN.Infrastructure.ExternalEvts
         public bool IsCaptured { get; set; }
         public DateTime? CaptureDateTime { get; set; }
         public DateTime CreationDateTime { get; set; }
+        public Dictionary<string, string> Parameters { get; set; }
     }
 }

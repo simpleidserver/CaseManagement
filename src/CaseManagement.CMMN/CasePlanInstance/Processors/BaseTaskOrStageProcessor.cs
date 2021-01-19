@@ -12,6 +12,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         protected override async Task<bool> Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
         {
+            Subscription sub = null;
             var terminate = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
             var manualStart = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.ManualStart, cancellationToken);
             var disable = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Disable, cancellationToken);
@@ -36,8 +37,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             {
                 if (disable.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Disable);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Disable, cancellationToken);
+                    sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Disable, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Disable, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                     return false;
                 }
 
@@ -46,16 +47,16 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                     return false;
                 }
 
-                executionContext.Instance.MakeTransition(elt, CMMNTransitions.ManualStart);
-                await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.ManualStart, cancellationToken);
+                sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.ManualStart, cancellationToken);
+                executionContext.Instance.MakeTransition(elt, CMMNTransitions.ManualStart, incomingTokens: MergeParameters(executionContext, sub.Parameters));
             }
 
             if (elt.State == TaskStageStates.Disabled) 
             {
                 if (reenable.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Reenable);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Reenable, cancellationToken);
+                    sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Reenable, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Reenable, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                 }
 
                 return false;
@@ -67,8 +68,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 {
                     if (terminate.IsCaptured)
                     {
-                        executionContext.Instance.MakeTransition(elt, CMMNTransitions.Terminate);
-                        await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
+                        sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
+                        executionContext.Instance.MakeTransition(elt, CMMNTransitions.Terminate, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                         return true;
                     }
 

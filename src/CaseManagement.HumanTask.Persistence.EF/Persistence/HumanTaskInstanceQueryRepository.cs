@@ -31,10 +31,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 .Include(_ => _.RenderingElements)
                 .Include(_ => _.Completions).ThenInclude(_ => _.CopyLst)
                 .Include(_ => _.PresentationElements)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.OperationParameters)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
                 .Include(_ => _.PeopleAssignments)
                 .Include(_ => _.SubTasks).ThenInclude(_ => _.ToParts)
@@ -66,9 +62,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
         public async Task<ICollection<HumanTaskInstanceAggregate>> GetPendingDeadLines(CancellationToken token, DateTime currentDateTime)
         {
             ICollection<HumanTaskInstanceAggregate> result = await _dbContext.HumanTaskInstanceAggregate
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
+                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations)
                 .Where(_ => _.DeadLines.Any(d => currentDateTime >= d.EndDateTime))
                 .ToListAsync(token);
             return result;

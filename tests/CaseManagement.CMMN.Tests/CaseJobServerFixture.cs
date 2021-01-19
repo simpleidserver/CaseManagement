@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -24,7 +25,6 @@ namespace CaseManagement.CMMN.Tests
             var instance = CasePlanInstanceBuilder.New("1", "firstCase")
                 .AddEmptyTask("2", "firstTask", (_) =>
                 {
-
                 })
                 .AddEmptyTask("3", "secondTask", (_) =>
                 {
@@ -89,7 +89,7 @@ namespace CaseManagement.CMMN.Tests
                 await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
                 jobServer.Start();
                 await jobServer.EnqueueCasePlanInstance("1", CancellationToken.None);
-                await jobServer.PublishExternalEvt("complete", "1", HumanTaskElementInstance.BuildId("1", "2", 0), CancellationToken.None);
+                await jobServer.PublishExternalEvt("complete", "1", HumanTaskElementInstance.BuildId("1", "2", 0), new Dictionary<string, string> { { "firstname", "firstname" } }, CancellationToken.None);
                 var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
                 {
                     if (c == null)
@@ -218,7 +218,7 @@ namespace CaseManagement.CMMN.Tests
                 await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
                 jobServer.Start();
                 await jobServer.EnqueueCasePlanInstance("1", CancellationToken.None);
-                await jobServer.PublishExternalEvt("addchild", "1", CaseFileItemInstance.BuildId("1", "2"), CancellationToken.None);
+                await jobServer.PublishExternalEvt("addchild", "1", CaseFileItemInstance.BuildId("1", "2"), new Dictionary<string, string> { { "fileId", "file" } }, CancellationToken.None);
                 var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
                 {
                     if (c == null)
@@ -324,7 +324,7 @@ namespace CaseManagement.CMMN.Tests
                 await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
                 jobServer.Start();
                 await jobServer.EnqueueCasePlanInstance("1", CancellationToken.None);
-                await jobServer.PublishExternalEvt("manualstart", "1", EmptyTaskElementInstance.BuildId("1", "2", 0), CancellationToken.None);
+                await jobServer.PublishExternalEvt("manualstart", "1", EmptyTaskElementInstance.BuildId("1", "2", 0), new Dictionary<string, string>(), CancellationToken.None);
                 var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
                 {
                     if (c == null)
@@ -396,7 +396,7 @@ namespace CaseManagement.CMMN.Tests
                 await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
                 jobServer.Start();
                 await jobServer.EnqueueCasePlanInstance("1", CancellationToken.None);
-                await jobServer.PublishExternalEvt("terminate", "1", null, CancellationToken.None);
+                await jobServer.PublishExternalEvt("terminate", "1", null, new Dictionary<string, string>(), CancellationToken.None);
                 var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
                 {
                     if (c == null)
@@ -436,7 +436,7 @@ namespace CaseManagement.CMMN.Tests
                 await jobServer.RegisterCasePlanInstance(instance, CancellationToken.None);
                 jobServer.Start();
                 await jobServer.EnqueueCasePlanInstance("1", CancellationToken.None);
-                await jobServer.PublishExternalEvt("terminate", "1", HumanTaskElementInstance.BuildId("1", "2", 0), CancellationToken.None);
+                await jobServer.PublishExternalEvt("terminate", "1", HumanTaskElementInstance.BuildId("1", "2", 0), new Dictionary<string, string>(), CancellationToken.None);
                 var casePlanInstance = await jobServer.MonitorCasePlanInstance("1", (c) =>
                 {
                     if (c == null || !c.StageContent.Children.Any())
@@ -567,9 +567,9 @@ namespace CaseManagement.CMMN.Tests
                 return _caseJobServer.RegisterCasePlanInstance(casePlanInstance, token);
             }
 
-            public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId, CancellationToken token)
+            public Task PublishExternalEvt(string evt, string casePlanInstanceId, string casePlanElementInstanceId, Dictionary<string, string> parameters, CancellationToken token)
             {
-                return _caseJobServer.PublishExternalEvt(evt, casePlanInstanceId, casePlanElementInstanceId, token);
+                return _caseJobServer.PublishExternalEvt(evt, casePlanInstanceId, casePlanElementInstanceId, parameters, token);
             }
 
             public Task EnqueueCasePlanInstance(string id, CancellationToken token)

@@ -36,12 +36,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands.Handlers
                 }
 
                 caseInstance.MakeTransition(elt, CMMNTransitions.Terminate);
-                await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Terminate, caseInstance.AggregateId, elt.Id, token);
+                await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Terminate, caseInstance.AggregateId, elt.Id, terminateCommand.Parameters, token);
                 return true;
             }
 
             caseInstance.MakeTransition(CMMNTransitions.Terminate);
-            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Terminate, caseInstance.AggregateId, null, token);
+            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Terminate, caseInstance.AggregateId, null, terminateCommand.Parameters, token);
             return true;
         }
     }

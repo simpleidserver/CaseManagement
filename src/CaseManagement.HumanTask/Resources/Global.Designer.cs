@@ -178,6 +178,15 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Notification definition &apos;{0}&apos; exist.
+        /// </summary>
+        internal static string NotificationDefExists {
+            get {
+                return ResourceManager.GetString("NotificationDefExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à &apos;{0}&apos; is not a subtask of &apos;{1}&apos;.
         /// </summary>
         internal static string NotSubTask {
@@ -291,6 +300,15 @@ namespace CaseManagement.HumanTask.Resources {
         internal static string PresentationParameterExists {
             get {
                 return ResourceManager.GetString("PresentationParameterExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à .
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         

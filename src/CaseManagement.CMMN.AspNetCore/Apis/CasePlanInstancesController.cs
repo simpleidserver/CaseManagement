@@ -87,12 +87,13 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/suspend")]
+        [HttpPost("{id}/suspend")]
         [Authorize("suspend_caseplaninstance")]
-        public async Task<IActionResult> Suspend(string id, CancellationToken token)
+        public async Task<IActionResult> Suspend(string id, [FromBody] SuspendCommand suspendCommand, CancellationToken token)
         {
             try
             {
+                suspendCommand.CasePlanInstanceId = id;
                 await _mediator.Send(new SuspendCommand(id, null), token);
                 return new OkResult();
             }
@@ -123,13 +124,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/suspend/{elt}")]
+        [HttpPost("{id}/suspend/{elt}")]
         [Authorize("suspend_caseplaninstance")]
-        public async Task<IActionResult> Suspend(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Suspend(string id, string elt, [FromBody] SuspendCommand suspendCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new SuspendCommand(id, elt), token);
+                suspendCommand.CasePlanInstanceId = id;
+                suspendCommand.CasePlanInstanceElementId = elt;
+                await _mediator.Send(suspendCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -159,13 +162,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/reactivate")]
+        [HttpPost("{id}/reactivate")]
         [Authorize("reactivate_caseplaninstance")]
-        public async Task<IActionResult> Reactivate(string id, CancellationToken token)
+        public async Task<IActionResult> Reactivate(string id, [FromBody] ReactivateCommand reactivateCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new ReactivateCommand(id, null), token);
+                reactivateCommand.CaseInstanceId = id;
+                await _mediator.Send(reactivateCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -195,13 +199,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/reactivate/{elt}")]
+        [HttpPost("{id}/reactivate/{elt}")]
         [Authorize("reactivate_caseplaninstance")]
-        public async Task<IActionResult> Reactivate(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Reactivate(string id, string elt, [FromBody] ReactivateCommand reactivateCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new ReactivateCommand(id, elt), token);
+                reactivateCommand.CaseInstanceId = id;
+                reactivateCommand.CaseInstanceElementId = elt;
+                await _mediator.Send(reactivateCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -231,13 +237,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/resume")]
+        [HttpPost("{id}/resume")]
         [Authorize("resume_caseplaninstance")]
-        public async Task<IActionResult> Resume(string id, CancellationToken token)
+        public async Task<IActionResult> Resume(string id, [FromBody] ResumeCommand resumeCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new ResumeCommand(id, null), token);
+                resumeCommand.CasePlanInstanceId = id;
+                await _mediator.Send(resumeCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -260,13 +267,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/resume/{elt}")]
+        [HttpPost("{id}/resume/{elt}")]
         [Authorize("resume_caseplaninstance")]
-        public async Task<IActionResult> Resume(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Resume(string id, string elt, [FromBody] ResumeCommand resumeCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new ResumeCommand(id, elt), token);
+                resumeCommand.CasePlanInstanceId = id;
+                resumeCommand.CasePlanInstanceElementId = elt;
+                await _mediator.Send(resumeCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -327,13 +336,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/terminate")]
+        [HttpPost("{id}/terminate")]
         [Authorize("terminate_caseplaninstance")]
-        public async Task<IActionResult> Terminate(string id, CancellationToken token)
+        public async Task<IActionResult> Terminate(string id, [FromBody] TerminateCommand terminateCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new TerminateCommand(id, null), token);
+                terminateCommand.CaseInstanceId = id;
+                await _mediator.Send(terminateCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -363,13 +373,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/terminate/{elt}")]
+        [HttpPost("{id}/terminate/{elt}")]
         [Authorize("terminate_caseplaninstance")]
-        public async Task<IActionResult> Terminate(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Terminate(string id, string elt, [FromBody] TerminateCommand terminateCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new TerminateCommand(id, elt), token);
+                terminateCommand.CaseInstanceId = id;
+                terminateCommand.CaseInstanceElementId = elt;
+                await _mediator.Send(terminateCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -399,13 +411,14 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/close")]
+        [HttpPost("{id}/close")]
         [Authorize("close_caseplaninstance")]
-        public async Task<IActionResult> Close(string id, CancellationToken token)
+        public async Task<IActionResult> Close(string id, [FromBody] CloseCommand closeCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new CloseCommand(id), token);
+                closeCommand.CasePlanInstanceId = id;
+                await _mediator.Send(closeCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -428,13 +441,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/activate/{elt}")]
+        [HttpPost("{id}/activate/{elt}")]
         [Authorize("activate_caseplaninstance")]
-        public async Task<IActionResult> Activate(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Activate(string id, string elt, [FromBody] ActivateCommand activateCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new ActivateCommand(id, elt), token);
+                activateCommand.CasePlanInstanceId = id;
+                activateCommand.CasePlanElementInstanceId = elt;
+                await _mediator.Send(activateCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -461,13 +476,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/disable/{elt}")]
+        [HttpPost("{id}/disable/{elt}")]
         [Authorize("disable_caseplaninstance")]
-        public async Task<IActionResult> Disable(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Disable(string id, string elt, [FromBody] DisableCommand disableCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new DisableCommand(id, elt), token);
+                disableCommand.CasePlanInstanceId = id;
+                disableCommand.CasePlanElementInstanceId = elt;
+                await _mediator.Send(disableCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)
@@ -494,13 +511,15 @@ namespace CaseManagement.CMMN.AspNetCore.Controllers
             }
         }
 
-        [HttpGet("{id}/reenable/{elt}")]
+        [HttpPost("{id}/reenable/{elt}")]
         [Authorize("reenable_caseplaninstance")]
-        public async Task<IActionResult> Reenable(string id, string elt, CancellationToken token)
+        public async Task<IActionResult> Reenable(string id, string elt, [FromBody] ReenableCommand reenableCommand, CancellationToken token)
         {
             try
             {
-                await _mediator.Send(new ReenableCommand(id, elt), token);
+                reenableCommand.CasePlanInstanceId = id;
+                reenableCommand.CasePlanElementInstanceId = elt;
+                await _mediator.Send(reenableCommand, token);
                 return new OkResult();
             }
             catch (UnknownCasePlanInstanceException)

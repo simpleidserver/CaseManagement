@@ -6,14 +6,20 @@ namespace CaseManagement.HumanTask.Builders
 {
     public class NotificationDefBuilder
     {
-        private readonly NotificationDefinition _notification;
+        private readonly NotificationDefinitionAggregate _notification;
 
-        public NotificationDefBuilder(string name)
+        private NotificationDefBuilder(string name)
         {
-            _notification = new NotificationDefinition
+            _notification = new NotificationDefinitionAggregate
             {
+                AggregateId = name,
                 Name = name
             };
+        }
+
+        public static NotificationDefBuilder New(string name)
+        {
+            return new NotificationDefBuilder(name);
         }
 
         public NotificationDefBuilder SetPriority(int priority)
@@ -148,7 +154,7 @@ namespace CaseManagement.HumanTask.Builders
 
         #endregion
 
-        public NotificationDefinition Build()
+        public NotificationDefinitionAggregate Build()
         {
             return _notification;
         }

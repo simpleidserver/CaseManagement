@@ -38,49 +38,50 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 await caseFileItemStore.TryAddCaseFileItem(elt, executionContext.Instance, cancellationToken);
                 if (update.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Update);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Update, cancellationToken);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Update, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Update, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                     return;
                 }
 
                 if (replace.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Replace);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Replace, cancellationToken);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Replace, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Replace, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                     return;
                 }
 
                 if (removeChild.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.RemoveChild);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveChild, cancellationToken);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveChild, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.RemoveChild, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                     return;
                 }
 
                 if (addChild.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.AddChild);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddChild, cancellationToken);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddChild, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.AddChild, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                     return;
                 }
 
                 if (addReference.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.AddReference);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddReference, cancellationToken);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddReference, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.AddReference, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                     return;
                 }
 
                 if (removeReference.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.RemoveReference);
-                    await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveReference, cancellationToken);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveReference, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.RemoveReference, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                     return;
                 }
 
                 if (delete.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Delete);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Delete, cancellationToken);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Delete, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                 }
             }
         }

@@ -9,7 +9,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Configuration
         public void Configure(EntityTypeBuilder<Escalation> builder)
         {
             builder.HasKey(_ => _.Id);
-            builder.HasOne(_ => _.Notification).WithOne(_ => _.Escalation).HasForeignKey<NotificationDefinition>(_ => _.EscalationId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(_ => _.ToParts).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }

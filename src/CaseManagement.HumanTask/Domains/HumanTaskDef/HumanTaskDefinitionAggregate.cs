@@ -149,14 +149,14 @@ namespace CaseManagement.HumanTask.Domains
         {
             var parameterId = Guid.NewGuid().ToString();
             parameter.Id = parameterId;
-            var evt = new HumanTaskDefParameterAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameter, DateTime.UtcNow);
+            var evt = new NotificationDefinitionParameterAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameter, DateTime.UtcNow);
             Handle(evt);
             return parameterId;
         }
 
         public void RemoveParameter(string parameterId)
         {
-            var evt = new HumanTaskDefParameterRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameterId, DateTime.UtcNow);
+            var evt = new NotificationDefinitionParameterRemovedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, parameterId, DateTime.UtcNow);
             Handle(evt);
         }
 
@@ -301,7 +301,7 @@ namespace CaseManagement.HumanTask.Domains
             Version = evt.Version;
         }
 
-        private void Handle(HumanTaskDefParameterAddedEvent evt)
+        private void Handle(NotificationDefinitionParameterAddedEvent evt)
         {
             var parameter = OperationParameters.FirstOrDefault(_ => _.Name == evt.Parameter.Name && _.Usage == evt.Parameter.Usage);
             if (parameter != null)
@@ -323,7 +323,7 @@ namespace CaseManagement.HumanTask.Domains
             Version = evt.Version;
         }
 
-        private void Handle(HumanTaskDefParameterRemovedEvent evt)
+        private void Handle(NotificationDefinitionParameterRemovedEvent evt)
         {
             var op = OperationParameters.FirstOrDefault(_ => _.Id == evt.ParameterId);
             if (op == null)

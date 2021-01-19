@@ -717,7 +717,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 229
  testRunner.Then("JSON \'totalLength\'=\'1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 230
- testRunner.Then("JSON \'content[0].name\'=\'notification\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'content[0].name\'=\'firstnotification\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 231
  testRunner.Then("JSON \'content[0].status\'=\'READY\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

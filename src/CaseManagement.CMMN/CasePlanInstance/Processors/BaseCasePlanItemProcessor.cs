@@ -13,16 +13,18 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         protected override async Task Handle(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
         {
-            if (!executionContext.Instance.IsEntryCriteriaSatisfied(elt))
+            var entryCriteria = executionContext.Instance.IsEntryCriteriaSatisfied(elt);
+            if (!entryCriteria.IsSatisfied)
             {
                 return;
             }
 
+            var newExecutionContext = executionContext.NewExecutionContext(entryCriteria.Data);
             var createNewOccurrence = await Process(executionContext, elt, cancellationToken);
-            if (createNewOccurrence && executionContext.Instance.IsRepetitionRuleSatisfied(elt))
+            if (createNewOccurrence && newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt))
             {
-                var result = executionContext.Instance.TryCreateInstance(elt) as T;
-                await Handle(executionContext, result, cancellationToken);
+                var result = newExecutionContext.Instance.TryCreateInstance(elt) as T;
+                await Handle(newExecutionContext, result, cancellationToken);
             }
         }
 

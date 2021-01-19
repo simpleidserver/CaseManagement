@@ -253,7 +253,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table10.AddRow(new string[] {
                         "operationParameters",
-                        "{}"});
+                        "{ \"firstname\": \"sid\" }"});
 #line 64
  testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
                     "tanceId$/complete\'", ((string)(null)), table10, "And ");

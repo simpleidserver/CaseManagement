@@ -120,7 +120,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             public string Id { get; set; }
             public string Condition { get; set; }
             public ICollection<ToPartResult> ToParts { get; set; }
-            public NotificationDefResult Notification { get; set; }
+            public string NotificationId { get; set; }
             
             public static EscalationResult ToDto(Escalation esc)
             {
@@ -129,7 +129,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                     Id = esc.Id,
                     Condition = esc.Condition,
                     ToParts = esc.ToParts.Select(_ => ToPartResult.ToDto(_)).ToList(),
-                    Notification = esc.Notification == null ? null : NotificationDefResult.ToDto(esc.Notification)
+                    NotificationId = esc.NotificationId
                 };
             }
 
@@ -139,7 +139,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Id = Id,
                     Condition = Condition,
-                    Notification = Notification?.ToDomain(),
+                    NotificationId = NotificationId,
                     ToParts = ToParts.Select(_ => _.ToDomain()).ToList()
                 };
             }
@@ -179,7 +179,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             public ICollection<PresentationElementDefinitionResult> PresentationElements { get; set; }
             public ICollection<PresentationParameterResult> PresentationParameters { get; set; }
 
-            public static NotificationDefResult ToDto(NotificationDefinition notif)
+            public static NotificationDefResult ToDto(NotificationDefinitionAggregate notif)
             {
                 return new NotificationDefResult
                 {
@@ -193,9 +193,9 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 };
             }
 
-            public NotificationDefinition ToDomain()
+            public NotificationDefinitionAggregate ToDomain()
             {
-                return new NotificationDefinition
+                return new NotificationDefinitionAggregate
                 {
                     Name = Name,
                     Priority = Priority,

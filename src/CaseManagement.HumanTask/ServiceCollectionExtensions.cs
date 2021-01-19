@@ -64,6 +64,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var humanTaskDefs = new ConcurrentBag<HumanTaskDefinitionAggregate>();
             var humanTaskInstances = new ConcurrentBag<HumanTaskInstanceAggregate>();
             var notifications = new ConcurrentBag<NotificationInstanceAggregate>();
+            var notificationDefs = new ConcurrentBag<NotificationDefinitionAggregate>();
             services.AddTransient<IHttpClientFactory, HttpClientFactory>();
             services.TryAddSingleton<IHumanTaskDefCommandRepository>(new HumanTaskDefCommandRepository(humanTaskDefs));
             services.TryAddSingleton<IHumanTaskDefQueryRepository>(new HumanTaskDefQueryRepository(humanTaskDefs));
@@ -71,6 +72,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IHumanTaskInstanceQueryRepository>(new HumanTaskInstanceQueryRepository(humanTaskInstances));
             services.TryAddSingleton<INotificationInstanceCommandRepository>(new NotificationInstanceCommandRepository(notifications));
             services.TryAddSingleton<INotificationInstanceQueryRepository>(new NotificationInstanceQueryRepository(notifications));
+            services.TryAddSingleton<INotificationDefCommandRepository>(new NotificationDefCommandRepository(notificationDefs));
+            services.TryAddSingleton<INotificationDefQueryRepository>(new NotificationDefQueryRepository(notificationDefs));
             return services;
         }
     }

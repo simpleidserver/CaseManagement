@@ -4,12 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CaseManagement.HumanTask.Persistence.EF.Configuration
 {
-    public class NotificationDefinitionConfiguration : IEntityTypeConfiguration<NotificationDefinition>
+    public class NotificationDefinitionConfiguration : IEntityTypeConfiguration<NotificationDefinitionAggregate>
     {
-        public void Configure(EntityTypeBuilder<NotificationDefinition> builder)
+        public void Configure(EntityTypeBuilder<NotificationDefinitionAggregate> builder)
         {
-            builder.HasKey(_ => _.Id);
-            builder.Property(_ => _.Id).ValueGeneratedOnAdd();
+            builder.HasKey(_ => _.AggregateId);
             builder.Ignore(_ => _.InputParameters);
             builder.Ignore(_ => _.OutputParameters);
             builder.HasMany(_ => _.OperationParameters).WithOne();

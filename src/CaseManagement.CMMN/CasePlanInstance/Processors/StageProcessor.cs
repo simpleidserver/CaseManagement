@@ -27,7 +27,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 return true;
             }
 
-            if (executionContext.Instance.IsExitCriteriaSatisfied(stageElt))
+            if (executionContext.Instance.IsExitCriteriaSatisfied(stageElt).IsSatisfied)
             {
                 executionContext.Instance.MakeTransition(stageElt, CMMNTransitions.Terminate);
                 return true;

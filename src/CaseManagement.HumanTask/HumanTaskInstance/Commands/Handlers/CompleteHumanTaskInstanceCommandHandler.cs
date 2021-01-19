@@ -109,7 +109,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             {
                 var jObj = new JObject
                 {
-                    { "content", parameters.ToJObj() }
+                    { "parameters", parameters.ToJObj() }
                 };
                 using (var httpClient = _httpClientFactory.Build())
                 {

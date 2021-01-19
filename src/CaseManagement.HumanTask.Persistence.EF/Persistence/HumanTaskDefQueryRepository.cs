@@ -33,10 +33,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
                 .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.OperationParameters)
                 .FirstOrDefaultAsync(_ => _.AggregateId == id, token);
         }
 
@@ -50,10 +46,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
                 .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.OperationParameters)
                 .OrderByDescending(_ => _.Version).FirstOrDefaultAsync(_ => _.Name == name, token);
         }
 
@@ -65,10 +57,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
                 .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PeopleAssignments)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationParameters)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.PresentationElements)
-                .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.Notification).ThenInclude(_ => _.OperationParameters)
                 .Include(_ => _.PresentationParameters)
                 .Include(_ => _.PeopleAssignments);
             if (!string.IsNullOrWhiteSpace(parameter.Name))

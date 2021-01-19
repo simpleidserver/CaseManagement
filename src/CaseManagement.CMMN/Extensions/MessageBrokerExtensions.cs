@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN;
 using CaseManagement.CMMN.Infrastructure.Jobs.Notifications;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,13 +9,14 @@ namespace CaseManagement.Common.Bus
 {
     public static class MessageBrokerExtensions
     {
-        public static Task QueueExternalEvent(this IMessageBroker messageBroker, string evtName, string casePlanInstanceId, string casePlanElementInstanceId, CancellationToken token)
+        public static Task QueueExternalEvent(this IMessageBroker messageBroker, string evtName, string casePlanInstanceId, string casePlanElementInstanceId, Dictionary<string, string> parameters, CancellationToken token)
         {
             return messageBroker.Queue(CMMNConstants.QueueNames.ExternalEvents, new ExternalEventNotification(Guid.NewGuid().ToString())
             {
                 CasePlanElementInstanceId = casePlanElementInstanceId,
                 CasePlanInstanceId = casePlanInstanceId,
-                EvtName = evtName
+                EvtName = evtName,
+                Parameters = parameters
             }, token);
         }
 

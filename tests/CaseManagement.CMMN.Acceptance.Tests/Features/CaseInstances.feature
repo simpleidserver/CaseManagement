@@ -62,8 +62,8 @@ Scenario: Launch caseWithOneHumanTask and check his status is completed
 	And extract '$.content[?(@.name == 'emptyTask')].id' from JSON body into 'humanTaskInstanceId'
 	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
-	| Key                 | Value |
-	| operationParameters | {}    |
+	| Key                 | Value                  |
+	| operationParameters | { "firstname": "sid" } |
 	And poll 'http://localhost/case-plan-instances/$casePlanInstanceId$', until 'state'='Completed'
 	And extract JSON from body
 	

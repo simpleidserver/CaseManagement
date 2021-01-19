@@ -9,6 +9,6 @@ namespace CaseManagement.CMMN.Infrastructure.ExternalEvts
         Task<bool> Update(Subscription subscription, CancellationToken cancellationToken);
         Task<Subscription> TrySubscribe(string casePlanInstanceId, string evtName, CancellationToken token);
         Task<Subscription> TrySubscribe(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token);
-        Task<bool> TryReset(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token);
+        Task<Subscription> TryReset(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token);
     }
 }

@@ -60,6 +60,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "thabart" })
                 .AddInputOperationParameter("city", ParameterTypes.STRING, true)
+                .AddOutputOperationParameter("firstname", ParameterTypes.STRING, true)
                 .Build();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()

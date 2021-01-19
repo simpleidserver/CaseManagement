@@ -41,6 +41,7 @@ namespace CaseManagement.CMMN.Infrastructure.Jobs
                 }
 
                 subscriber.IsCaptured = true;
+                subscriber.Parameters = notification.Parameters;
                 await _subscriberRepository.Update(subscriber, cancellationToken);
                 await MessageBroker.QueueCasePlanInstance(notification.CasePlanInstanceId, cancellationToken);
             }

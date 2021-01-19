@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Commands
 {
@@ -12,5 +13,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands
 
         public string CasePlanInstanceId { get; set; }
         public string CasePlanInstanceElementId { get; set; }
+        public Dictionary<string, string> Parameters { get; set; }
     }
 }

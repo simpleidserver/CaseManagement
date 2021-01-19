@@ -1,8 +1,6 @@
-﻿using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.CMMN.CasePlanInstance.Processors.Handlers;
+﻿using CaseManagement.CMMN.CasePlanInstance.Processors.Handlers;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using CaseManagement.CMMN.Resources;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,8 +32,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             var completeSubscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
             if (completeSubscription.IsCaptured)
             {
-                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete);
-                await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
+                var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
+                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete, incomingTokens: MergeParameters(executionContext, MergeParameters(executionContext, completeSubscription.Parameters)));
                 return true;
             }
 

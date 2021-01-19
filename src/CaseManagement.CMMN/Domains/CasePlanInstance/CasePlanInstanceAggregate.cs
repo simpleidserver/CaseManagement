@@ -1,5 +1,4 @@
-﻿using CaseManagement.CMMN.Infrastructure;
-using CaseManagement.CMMN.Parser;
+﻿using CaseManagement.CMMN.Parser;
 using CaseManagement.Common.Domains;
 using CaseManagement.Common.Exceptions;
 using CaseManagement.Common.Expression;
@@ -10,6 +9,29 @@ using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
+    public class CriteriaResult
+    {
+        public bool IsSatisfied { get; private set; }
+        public List<KeyValuePair<string, string>> Data { get; private set; }
+
+        public static CriteriaResult Satisfied(List<KeyValuePair<string, string>> data)
+        {
+            return new CriteriaResult
+            {
+                IsSatisfied = true,
+                Data = data
+            };
+        }
+
+        public static CriteriaResult NotSatisifed()
+        {
+            return new CriteriaResult
+            {
+                IsSatisfied = false
+            };
+        }
+    }
+
     [Serializable]
     public class CasePlanInstanceAggregate : BaseAggregate
     {
@@ -43,15 +65,21 @@ namespace CaseManagement.CMMN.Domains
 
         #region Getters
 
-        public bool IsEntryCriteriaSatisfied(string id)
+        public CriteriaResult IsEntryCriteriaSatisfied(string id)
         {
             var child = GetCasePlanItem(id);
             return IsEntryCriteriaSatisfied(child);
         }
 
-        public bool IsEntryCriteriaSatisfied(BaseCasePlanItemInstance elt)
+        public CriteriaResult IsEntryCriteriaSatisfied(BaseCasePlanItemInstance elt)
         {
-            return elt.EntryCriterions == null || !elt.EntryCriterions.Any() || elt.EntryCriterions.Any(_ => IsCriteriaSatisfied(_, elt.NbOccurrence));
+            if (elt.EntryCriterions == null || !elt.EntryCriterions.Any())
+            {
+                return CriteriaResult.Satisfied(new List<KeyValuePair<string, string>>());
+            }
+
+            var res = elt.EntryCriterions.Select(_ => IsCriteriaSatisfied(_, elt.NbOccurrence)).FirstOrDefault(_ => _.IsSatisfied);
+            return res == null ? CriteriaResult.NotSatisifed() : res;
         }
 
         public bool IsRepetitionRuleSatisfied(BaseCasePlanItemInstance elt)
@@ -59,28 +87,35 @@ namespace CaseManagement.CMMN.Domains
             return elt.RepetitionRule != null && ExpressionParser.IsValid(elt.RepetitionRule.Condition.Body, ExecutionContext);
         }
 
-        public bool IsExitCriteriaSatisfied(string id)
+        public CriteriaResult IsExitCriteriaSatisfied(string id)
         {
             var child = GetCasePlanItem(id);
             return IsExitCriteriaSatisfied(child);
         }
 
-        public bool IsExitCriteriaSatisfied(BaseCasePlanItemInstance elt)
+        public CriteriaResult IsExitCriteriaSatisfied(BaseCasePlanItemInstance elt)
         {
-            return elt.ExitCriterions != null && elt.ExitCriterions.Any() && elt.ExitCriterions.Any(_ => IsCriteriaSatisfied(_, elt.NbOccurrence));
+            if (elt.ExitCriterions == null || !elt.ExitCriterions.Any())
+            {
+                return CriteriaResult.NotSatisifed();
+            }
+
+            var res = elt.ExitCriterions.Select(_ => IsCriteriaSatisfied(_, elt.NbOccurrence)).FirstOrDefault(_ => _.IsSatisfied);
+            return res == null ? CriteriaResult.NotSatisifed() : res;
         }
 
-        public bool IsCriteriaSatisfied(Criteria criteria, int nbOccurrence)
+        public CriteriaResult IsCriteriaSatisfied(Criteria criteria, int nbOccurrence)
         {
-            var check = new Func<CMMNTransitions, ConcurrentBag<CasePlanElementInstanceTransitionHistory>, bool>((tr, transitions) =>
+            var data = new List<KeyValuePair<string, string>>();
+            var get = new Func<CMMNTransitions, ConcurrentBag<CasePlanElementInstanceTransitionHistory>, CasePlanElementInstanceTransitionHistory>((tr, transitions) =>
             {
-                return transitions.Any(_ => _.Transition == tr);
+                return transitions.FirstOrDefault(_ => _.Transition == tr);
             });
             if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
             {
                 if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, ExecutionContext))
                 {
-                    return false;
+                    return CriteriaResult.NotSatisifed();
                 }
             }
 
@@ -88,23 +123,31 @@ namespace CaseManagement.CMMN.Domains
             {
                 var id = BaseCasePlanItemInstance.BuildId(AggregateId, planItemOnPart.SourceRef, nbOccurrence);
                 var source = GetCasePlanItem(id);
-                if (!check(planItemOnPart.StandardEvent, source.TransitionHistories))
+                var tr = get(planItemOnPart.StandardEvent, source.TransitionHistories);
+                if (tr == null)
                 {
-                    return false;
+                    return CriteriaResult.NotSatisifed();
                 }
+
+                var incomingTokens = tr.IncomingTokens == null ? new Dictionary<string, string>() : tr.IncomingTokens;
+                data.AddRange(incomingTokens);
             }
 
             foreach (var caseItemOnPart in criteria.SEntry.FileItemOnParts)
             {
                 var id = CaseFileItemInstance.BuildId(AggregateId, caseItemOnPart.SourceRef);
                 var source = GetCaseFileItem(id);
-                if (!check(caseItemOnPart.StandardEvent, source.TransitionHistories))
+                var tr = get(caseItemOnPart.StandardEvent, source.TransitionHistories);
+                if (tr == null)
                 {
-                    return false;
+                    return CriteriaResult.NotSatisifed();
                 }
+
+                var incomingTokens = tr.IncomingTokens == null ? new Dictionary<string, string>() : tr.IncomingTokens;
+                data.AddRange(incomingTokens);
             }
 
-            return true;
+            return CriteriaResult.Satisfied(data);
         }
 
         public bool IsFileExists(string casePlanInstanceElementId)
@@ -163,9 +206,9 @@ namespace CaseManagement.CMMN.Domains
             }
         }
 
-        public void MakeTransition(BaseCaseEltInstance element, CMMNTransitions transition, string message = null, bool isEvtPropagate = true)
+        public void MakeTransition(BaseCaseEltInstance element, CMMNTransitions transition, string message = null, Dictionary<string, string> incomingTokens = null, bool isEvtPropagate = true)
         {
-            var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, element.Id, transition, message, DateTime.UtcNow);
+            var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, element.Id, transition, message, incomingTokens, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
             var caseWorkerTask = WorkerTasks.FirstOrDefault(_ => _.CasePlanElementInstanceId == element.Id);
@@ -328,7 +371,7 @@ namespace CaseManagement.CMMN.Domains
         private void Handle(CaseElementTransitionRaisedEvent evt)
         {
             var child = GetChild(evt.ElementId);
-            child.MakeTransition(evt.Transition, evt.Message, DateTime.UtcNow);
+            child.MakeTransition(evt.Transition, evt.Message, evt.IncomingTokens, DateTime.UtcNow);
         }
 
         private void Handle(CasePlanInstanceCreatedEvent evt)

@@ -1,5 +1,7 @@
 ﻿using CaseManagement.CMMN.Infrastructure.ExternalEvts;
 using CaseManagement.CMMN.Persistence.EF.Models;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
 {
@@ -14,7 +16,8 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
                 EventName = sub.EventName,
                 CasePlanElementInstanceId = sub.CasePlanElementInstanceId,
                 CasePlanInstanceId = sub.CasePlanInstanceId,
-                IsCaptured = sub.IsCaptured
+                IsCaptured = sub.IsCaptured,
+                Parameters = string.IsNullOrEmpty(sub.Parameters) ? new Dictionary<string, string>() : JsonConvert.DeserializeObject<Dictionary<string, string>> (sub.Parameters)
             };
         }
 
@@ -27,7 +30,8 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
                 EventName = sub.EventName,
                 CasePlanElementInstanceId = sub.CasePlanElementInstanceId,
                 CasePlanInstanceId = sub.CasePlanInstanceId,
-                IsCaptured = sub.IsCaptured
+                IsCaptured = sub.IsCaptured,
+                Parameters = sub.Parameters == null ? null : JsonConvert.SerializeObject(sub.Parameters)
             };
         }
     }

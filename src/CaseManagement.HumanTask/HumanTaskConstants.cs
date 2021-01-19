@@ -6,6 +6,7 @@
         {
             public const string HumanTaskDefs = "humantasksdefs";
             public const string HumanTaskInstances = "humantaskinstances";
+            public const string NotificationDefs = "notificationdefs";
             public const string NotificationInstances = "notificationinstances";
         }
 

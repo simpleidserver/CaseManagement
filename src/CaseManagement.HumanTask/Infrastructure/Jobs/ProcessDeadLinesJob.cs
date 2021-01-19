@@ -65,10 +65,10 @@ namespace CaseManagement.HumanTask.Infrastructure.Jobs
                                     continue;
                                 }
 
-                                if (escalation.Notification != null)
+                                if (!string.IsNullOrWhiteSpace(escalation.NotificationId))
                                 {
                                     var parameters = _parameterParser.ParseToPartParameters(escalation.ToParts, humanTaskInstance.InputParameters);
-                                    await _mediator.Send(new CreateNotificationInstanceCommand { NotificationDef = escalation.Notification, Parameters = parameters }, token);
+                                    await _mediator.Send(new CreateNotificationInstanceCommand { NotificationId = escalation.NotificationId, Parameters = parameters }, token);
                                 }
                             }
                         }

@@ -26,6 +26,14 @@ namespace CaseManagement.HumanTask
             return this;
         }
 
+        public ServerBuilder AddNotificationDefs(ICollection<NotificationDefinitionAggregate> notificationDefs)
+        {
+            var lst = new ConcurrentBag<NotificationDefinitionAggregate>(notificationDefs);
+            _services.TryUpdateSingleton<INotificationDefCommandRepository>(new NotificationDefCommandRepository(lst));
+            _services.TryUpdateSingleton<INotificationDefQueryRepository>(new NotificationDefQueryRepository(lst));
+            return this;
+        }
+
         public ServerBuilder AddLogicalPeopleGroups(ICollection<LogicalPeopleGroup> logicalPeopleGroups)
         {
             var lst = new ConcurrentBag<LogicalPeopleGroup>(logicalPeopleGroups);

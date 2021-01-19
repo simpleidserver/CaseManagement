@@ -2,6 +2,7 @@
 using CaseManagement.CMMN.Persistence.EF.DomainMapping;
 using CaseManagement.CMMN.Persistence.EF.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,20 +27,20 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             }
         }
 
-        public async Task<bool> TryReset(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token)
+        public async Task<Subscription> TryReset(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token)
         {
             using (await _dbContext.Lock())
             {
                 var result = await _dbContext.SubscriptionLst.FirstOrDefaultAsync(_ => _.CasePlanInstanceId == casePlanInstanceId && _.CasePlanElementInstanceId == casePlanElementInstanceId && _.EventName == evtName, token);
                 if (result == null)
                 {
-                    return false;
+                    return null;
                 }
 
                 result.IsCaptured = false;
                 result.CaptureDateTime = null;
                 await _dbContext.SaveChangesAsync(token);
-                return true;
+                return result.ToDomain();
             }
         }
 
@@ -100,6 +101,7 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
 
                 result.IsCaptured = subscription.IsCaptured;
                 result.CaptureDateTime = subscription.CaptureDateTime;
+                result.Parameters = subscription.Parameters == null ? null : JsonConvert.SerializeObject(subscription.Parameters);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 return true;
             }

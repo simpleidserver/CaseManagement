@@ -1,5 +1,5 @@
 ﻿Feature: HumanTaskDef
-	Check errors returned by /humantasksdefs
+	Check /humantaskdefs
 	
 Scenario: Check humantask can be created
 	When execute HTTP POST JSON request 'http://localhost/humantasksdefs'

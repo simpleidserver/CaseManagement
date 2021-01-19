@@ -1,0 +1,2 @@
+﻿Feature: NotificationDef
+	Check /notificationdefs

@@ -34,7 +34,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands.Handlers
             }
 
             casePlanInstance.MakeTransition(elt, CMMNTransitions.Reenable);
-            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Reenable, command.CasePlanInstanceId, command.CasePlanElementInstanceId, token);
+            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Reenable, command.CasePlanInstanceId, command.CasePlanElementInstanceId, command.Parameters, token);
             return true;
         }
     }

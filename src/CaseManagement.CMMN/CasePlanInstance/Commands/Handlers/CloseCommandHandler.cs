@@ -29,7 +29,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Command.Handlers
             }
 
             caseInstance.MakeTransition(CMMNTransitions.Close);
-            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Close, closeCommand.CasePlanInstanceId, null,token);
+            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Close, closeCommand.CasePlanInstanceId, null, closeCommand.Parameters, token);
             return true;
         }
     }

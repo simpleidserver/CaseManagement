@@ -59,16 +59,10 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     dl.AddEscalation(eb =>
                     {
                         eb.AddToPart("firstName", "context.GetInput(\"firstName\")");
-                        eb.SetNotification("notification", nt =>
-                        {
-                            nt.AddInputOperationParameter("firstName", ParameterTypes.STRING, true);
-                            nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
-                            nt.AddName("en-US", "<b>firstName is $firstName$</b>");
-                            nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");                        
-                        });
+                        eb.SetNotification("firstNotification");
                     });
                 })
-                .Build();
+                .Build();     
             var completionDeadLine = HumanTaskDefBuilder.New("completionDeadLine")
                 .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })
@@ -79,13 +73,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     dl.AddEscalation(eb =>
                     {
                         eb.AddToPart("firstName", "context.GetInput(\"firstName\")");
-                        eb.SetNotification("notificationCompletion", nt =>
-                        {
-                            nt.AddInputOperationParameter("firstName", ParameterTypes.STRING, true);
-                            nt.SetRecipientUserIdentifiers(new List<string> { "guest" });
-                            nt.AddName("en-US", "<b>firstName is $firstName$</b>");
-                            nt.AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")");
-                        });
+                        eb.SetNotification("secondNotification");
                     });
                 })
                 .Build();
@@ -129,6 +117,18 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     });
                 })
                 .Build();
+            var firstNotification = NotificationDefBuilder.New("firstNotification")
+                .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
+                .SetRecipientUserIdentifiers(new List<string> { "guest" })
+                .AddName("en-US", "<b>firstName is $firstName$</b>")
+                .AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")")
+                .Build();
+            var secondNotification = NotificationDefBuilder.New("secondNotification")
+                .AddInputOperationParameter("firstName", ParameterTypes.STRING, true)
+                .SetRecipientUserIdentifiers(new List<string> { "guest" })
+                .AddName("en-US", "<b>firstName is $firstName$</b>")
+                .AddPresentationParameter("firstName", ParameterTypes.STRING, "context.GetInput(\"firstName\")")
+                .Build();
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddHumanTasksApi();
             services.AddHumanTaskServer()
@@ -142,6 +142,11 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                     completionDeadLine,
                     compositeTaskWithAutomaticCompletionBehavior,
                     emptyTask
+                })
+                .AddNotificationDefs(new List<NotificationDefinitionAggregate>
+                {
+                    firstNotification,
+                    secondNotification
                 })
                 .AddScheduledJobs(new List<ScheduleJob>
                 {

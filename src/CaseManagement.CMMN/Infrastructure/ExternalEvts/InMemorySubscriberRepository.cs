@@ -42,16 +42,16 @@ namespace CaseManagement.CMMN.Infrastructure.ExternalEvts
             return CommonTrySubscribe(casePlanInstanceId, casePlanElementInstanceId, evtName, result, token);
         }
 
-        public Task<bool> TryReset(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token)
+        public Task<Subscription> TryReset(string casePlanInstanceId, string casePlanElementInstanceId, string evtName, CancellationToken token)
         {
             var result = _subscriptions.FirstOrDefault(_ => _.EventName == evtName && _.CasePlanInstanceId == casePlanInstanceId && _.CasePlanElementInstanceId == casePlanElementInstanceId);
             if (result == null)
             {
-                return Task.FromResult(false);
+                return Task.FromResult((Subscription)null);
             }
 
             result.IsCaptured = false;
-            return Task.FromResult(true);
+            return Task.FromResult(result);
         }
 
 

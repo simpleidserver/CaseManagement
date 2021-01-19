@@ -33,10 +33,19 @@ namespace CaseManagement.CMMN.Builders
     public abstract class BaseCasePlanItemEltInstanceBuilder : CaseEltInstanceBuilder
     {
         private ICollection<CriteriaBuilder> _entryCriterions;
+        private int _version = 0;
 
         public BaseCasePlanItemEltInstanceBuilder(string casePlanInstanceId, string eltId, string name) : base(casePlanInstanceId, eltId, name)
         {
             _entryCriterions = new List<CriteriaBuilder>();
+        }
+
+        protected int Version => _version;
+
+        public BaseCasePlanItemEltInstanceBuilder SetVersion(int version)
+        {
+            _version = version;
+            return this;
         }
 
 
@@ -98,7 +107,8 @@ namespace CaseManagement.CMMN.Builders
             var result = new EmptyTaskElementInstance
             {
                 ManualActivationRule = ManualActivationRule,
-                RepetitionRule = RepetitionRule
+                RepetitionRule = RepetitionRule,
+                NbOccurrence = Version
             };
             SeedCasePlanItem(result);
             return result;
@@ -106,7 +116,7 @@ namespace CaseManagement.CMMN.Builders
 
         protected override string BuildId()
         {
-            return EmptyTaskElementInstance.BuildId(CasePlanInstanceId, EltId, 0);
+            return EmptyTaskElementInstance.BuildId(CasePlanInstanceId, EltId, Version);
         }
     }
 
@@ -126,7 +136,8 @@ namespace CaseManagement.CMMN.Builders
                 ManualActivationRule = ManualActivationRule,
                 RepetitionRule = RepetitionRule,
                 Implemention = Implementation,
-                InputParameters = InputParameters
+                InputParameters = InputParameters,
+                NbOccurrence = Version
             };
             SeedCasePlanItem(result);
             return result;
@@ -134,7 +145,7 @@ namespace CaseManagement.CMMN.Builders
 
         protected override string BuildId()
         {
-            return HumanTaskElementInstance.BuildId(CasePlanInstanceId, EltId, 0);
+            return HumanTaskElementInstance.BuildId(CasePlanInstanceId, EltId, Version);
         }
     }
 
@@ -147,13 +158,14 @@ namespace CaseManagement.CMMN.Builders
         protected override BaseCaseEltInstance InternalBuild()
         {
             var result = new MilestoneElementInstance();
+            result.NbOccurrence = Version;
             SeedCasePlanItem(result);
             return result;
         }
 
         protected override string BuildId()
         {
-            return MilestoneElementInstance.BuildId(CasePlanInstanceId, EltId, 0);
+            return MilestoneElementInstance.BuildId(CasePlanInstanceId, EltId, Version);
         }
     }
 
@@ -189,7 +201,8 @@ namespace CaseManagement.CMMN.Builders
         {
             var result = new TimerEventListener
             {
-                TimerExpression = TimerExpression
+                TimerExpression = TimerExpression,
+                NbOccurrence = Version
             };
             SeedCasePlanItem(result);
             return result;
@@ -197,7 +210,7 @@ namespace CaseManagement.CMMN.Builders
 
         protected override string BuildId()
         {
-            return TimerEventListener.BuildId(CasePlanInstanceId, EltId, 0);
+            return TimerEventListener.BuildId(CasePlanInstanceId, EltId, Version);
         }
     }
 }

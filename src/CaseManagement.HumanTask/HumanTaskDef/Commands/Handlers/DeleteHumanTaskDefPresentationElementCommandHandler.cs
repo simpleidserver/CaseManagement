@@ -1,10 +1,8 @@
-﻿using CaseManagement.Common.Exceptions;
-using CaseManagement.HumanTask.Exceptions;
+﻿using CaseManagement.HumanTask.Exceptions;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -67,11 +67,9 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
-        public EscalationBuilder SetNotification(string name, Action<NotificationDefBuilder> callback)
+        public EscalationBuilder SetNotification(string notificationId)
         {
-            var builder = new NotificationDefBuilder(name);
-            callback(builder);
-            _escalation.Notification = builder.Build();
+            _escalation.NotificationId = notificationId;
             return this;
         }
 
