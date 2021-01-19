@@ -23,6 +23,9 @@
     <PackageReference Include="Moq" Version="4.10.1" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Cmmns\caseWithComplexRepetitionRule.cmmn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Cmmns\caseWithOneTimerEventListener.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

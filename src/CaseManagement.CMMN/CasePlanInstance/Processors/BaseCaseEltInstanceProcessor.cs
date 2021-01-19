@@ -16,11 +16,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
         public async Task<ExecutionResult> Execute(CMMNExecutionContext executionContext, TElt elt, CancellationToken cancellationToken)
         {
-            if (elt.LatestTransition == null)
-            {
-                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Create);
-            }
-
             await Handle(executionContext, elt, cancellationToken);
             return ExecutionResult.Next();
         }

@@ -6,9 +6,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
     public class CMMNExecutionContext : ExecutionContext<CasePlanInstanceAggregate>
     {
-        public List<KeyValuePair<string, string>> IncomingTokens { get; set; }
+        public Dictionary<string, string> IncomingTokens { get; set; }
 
-        public CMMNExecutionContext NewExecutionContext(List<KeyValuePair<string, string>> incomingTokens)
+        public CMMNExecutionContext NewExecutionContext(Dictionary<string, string> incomingTokens)
         {
             var result = new CMMNExecutionContext
             {

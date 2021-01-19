@@ -24,7 +24,8 @@ Scenario: Get unknown case instance and check error is returned
 	Then HTTP status code equals to '404'
 
 Scenario: Suspend unknown case instance and check error is returned
-	When execute HTTP GET request 'http://localhost/case-plan-instances/1/suspend'
+	When execute HTTP POST JSON request 'http://localhost/case-plan-instances/1/suspend'
+	| Key | Value |
 	And extract JSON from body
 	
 	Then HTTP status code equals to '404'

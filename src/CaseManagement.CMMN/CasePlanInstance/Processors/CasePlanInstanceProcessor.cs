@@ -28,11 +28,12 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             if (casePlanInstance.State == CaseStates.Active)
             {
                 var executionContext = new CMMNExecutionContext { Instance = casePlanInstance };
-                foreach(var child in casePlanInstance.Children)
+                foreach (var fileItem in casePlanInstance.FileItems)
                 {
-                    await _processorFactory.Execute(executionContext, child, cancellationToken);
+                    await _processorFactory.Execute(executionContext, fileItem  , cancellationToken);
                 }
 
+                await _processorFactory.Execute(executionContext, casePlanInstance.StageContent, cancellationToken);
                 if (casePlanInstance.StageContent.State == TaskStageStates.Completed)
                 {
                     casePlanInstance.MakeTransition(CMMNTransitions.Complete, false);

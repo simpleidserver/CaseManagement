@@ -512,8 +512,8 @@ namespace CaseManagement.CMMN.Tests
                 var secondEmptyTask = casePlanInstance.StageContent.Children.ElementAt(1) as EmptyTaskElementInstance;
                 var thirdEmptyTask = casePlanInstance.StageContent.Children.ElementAt(2) as EmptyTaskElementInstance;
                 Assert.Equal(TaskStageStates.Completed, firstEmptyTask.State);
-                Assert.Equal(TaskStageStates.Available, secondEmptyTask.State);
                 Assert.Equal(TaskStageStates.Completed, thirdEmptyTask.State);
+                Assert.Null(secondEmptyTask.State);
             }
             finally
             {

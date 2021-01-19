@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" id="Definitions_1qvc2di" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.20.0">
+  <cmmn:case id="Case_18rma7t">
+    <cmmn:casePlanModel id="caseWithComplexRepetitionRule" name="caseWithComplexRepetitionRule">
+      <cmmn:planItem id="task2" definitionRef="Task_13ancqp">
+        <cmmn:itemControl id="PlanItemControl_0qafvia">
+          <cmmn:manualActivationRule id="ManualActivationRule_13w3fz9">
+            <cmmn:condition>true</cmmn:condition>
+          </cmmn:manualActivationRule>
+        </cmmn:itemControl>
+      </cmmn:planItem>
+      <cmmn:planItem id="task1" definitionRef="Task_1mn7xew">
+        <cmmn:itemControl id="PlanItemControl_08tdf2y">
+          <cmmn:manualActivationRule id="ManualActivationRule_1glxhcx">
+            <cmmn:condition>true</cmmn:condition>
+          </cmmn:manualActivationRule>
+        </cmmn:itemControl>
+      </cmmn:planItem>
+      <cmmn:planItem id="task4" definitionRef="Task_0q5tocg">
+        <cmmn:itemControl id="PlanItemControl_1q501i9">
+          <cmmn:repetitionRule id="RepetitionRule_04t6ivv">
+            <cmmn:condition>true</cmmn:condition>
+          </cmmn:repetitionRule>
+        </cmmn:itemControl>
+        <cmmn:entryCriterion id="EntryCriterion_030mnyl" sentryRef="Sentry_0ryn4b9" />
+        <cmmn:entryCriterion id="EntryCriterion_02f021k" sentryRef="Sentry_0ir4ol2" />
+        <cmmn:entryCriterion id="EntryCriterion_0ju31i3" sentryRef="Sentry_0yg0lcz" />
+      </cmmn:planItem>
+      <cmmn:planItem id="task5" definitionRef="Task_1jsodz1">
+        <cmmn:itemControl id="PlanItemControl_0r3p1pe">
+          <cmmn:manualActivationRule id="ManualActivationRule_0n2igvt">
+			<cmmn:condition>true</cmmn:condition>
+		  </cmmn:manualActivationRule>
+        </cmmn:itemControl>
+      </cmmn:planItem>
+      <cmmn:sentry id="Sentry_0ryn4b9">
+        <cmmn:planItemOnPart id="PlanItemOnPart_06ztmyn" sourceRef="task1">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+      <cmmn:sentry id="Sentry_0ir4ol2">
+        <cmmn:planItemOnPart id="PlanItemOnPart_0hpotz2" sourceRef="task2">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+      <cmmn:sentry id="Sentry_0yg0lcz">
+        <cmmn:planItemOnPart id="PlanItemOnPart_1d9adfo" sourceRef="task5">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+      <cmmn:task id="Task_13ancqp" name="Task2" />
+      <cmmn:task id="Task_1mn7xew" name="Task1" />
+      <cmmn:task id="Task_0q5tocg" name="Task4" />
+      <cmmn:task id="Task_1jsodz1" name="Task5" />
+    </cmmn:casePlanModel>
+  </cmmn:case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_1">
+      <cmmndi:Size width="500" height="500" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel_05mi46u" cmmnElementRef="caseWithComplexRepetitionRule">
+        <dc:Bounds x="156" y="99" width="542" height="445" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="task1_di" cmmnElementRef="task2">
+        <dc:Bounds x="192" y="276" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="EntryCriterion_030mnyl_di" cmmnElementRef="EntryCriterion_030mnyl">
+        <dc:Bounds x="487" y="158" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="PlanItemOnPart_06ztmyn_di" cmmnElementRef="PlanItemOnPart_06ztmyn" targetCMMNElementRef="EntryCriterion_030mnyl" isStandardEventVisible="true">
+        <di:waypoint x="292" y="172" />
+        <di:waypoint x="487" y="172" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="372" y="152" width="51" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNShape id="PlanItem_0icwmkb_di" cmmnElementRef="task1">
+        <dc:Bounds x="192" y="132" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_1cowdg3_di" cmmnElementRef="task4">
+        <dc:Bounds x="497" y="132" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="EntryCriterion_02f021k_di" cmmnElementRef="EntryCriterion_02f021k">
+        <dc:Bounds x="587" y="157" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="PlanItemOnPart_0hpotz2_di" cmmnElementRef="PlanItemOnPart_0hpotz2" targetCMMNElementRef="EntryCriterion_02f021k" isStandardEventVisible="true">
+        <di:waypoint x="292" y="316" />
+        <di:waypoint x="665" y="316" />
+        <di:waypoint x="665" y="171" />
+        <di:waypoint x="607" y="171" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="399" y="425.5" width="51" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNShape id="task5_di" cmmnElementRef="task5">
+        <dc:Bounds x="192" y="406" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="EntryCriterion_0ju31i3_di" cmmnElementRef="EntryCriterion_0ju31i3">
+        <dc:Bounds x="535" y="198" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="PlanItemOnPart_1d9adfo_di" cmmnElementRef="PlanItemOnPart_1d9adfo" targetCMMNElementRef="EntryCriterion_0ju31i3" isStandardEventVisible="true">
+        <di:waypoint x="292" y="446" />
+        <di:waypoint x="545" y="446" />
+        <di:waypoint x="545" y="226" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="388" y="319" width="51" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

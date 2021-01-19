@@ -15,7 +15,8 @@ namespace CaseManagement.CMMN.CasePlanInstance
         IDomainEvtConsumerGeneric<CaseFileItemAddedEvent>,
         IDomainEvtConsumerGeneric<CaseInstanceWorkerTaskRemovedEvent>,
         IDomainEvtConsumerGeneric<VariableUpdatedEvent>,
-        IDomainEvtConsumerGeneric<CasePlanItemInstanceCreatedEvent>
+        IDomainEvtConsumerGeneric<CasePlanItemInstanceCreatedEvent>,
+        IDomainEvtConsumerGeneric<OnPartEvtConsumedEvent>
     {
         private readonly ICasePlanInstanceCommandRepository _casePlanInstanceCommandRepository;
         private readonly ICasePlanInstanceQueryRepository _casePlanInstanceQueryRepository;
@@ -90,6 +91,14 @@ namespace CaseManagement.CMMN.CasePlanInstance
         }
 
         public async Task Handle(CasePlanItemInstanceCreatedEvent message, CancellationToken token)
+        {
+            var record = await _casePlanInstanceQueryRepository.Get(message.AggregateId, token);
+            record.Handle(message);
+            await _casePlanInstanceCommandRepository.Update(record, token);
+            await _casePlanInstanceCommandRepository.SaveChanges(token);
+        }
+
+        public async Task Handle(OnPartEvtConsumedEvent message, CancellationToken token)
         {
             var record = await _casePlanInstanceQueryRepository.Get(message.AggregateId, token);
             record.Handle(message);

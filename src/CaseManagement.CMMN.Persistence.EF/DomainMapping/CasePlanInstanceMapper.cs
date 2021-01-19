@@ -27,13 +27,13 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
                 Roles = record.Roles.Select(_ => ToCasePlanInstanceRoleDomain(_)).ToList(),
                 Files = new ConcurrentBag<CasePlanInstanceFileItem>(record.Files.Select(_ => ToDomain(_)).ToList()),
                 WorkerTasks = new ConcurrentBag<CasePlanInstanceWorkerTask>(record.WorkerTasks.Select(_ => ToDomain(_)).ToArray()),
-                Children = new ConcurrentBag<BaseCaseEltInstance>(record.Children.Where(_ => _.ParentId == null).Select(c => c.ToElementInstance()).ToList()),
+                Children = new ConcurrentBag<BaseCaseEltDef>(record.Children.Where(_ => _.ParentId == null).Select(c => c.ToElementInstance()).ToList()),
                 CreateDateTime = record.CreateDateTime,
                 UpdateDateTime = record.UpdateDateTime
             };
         }
 
-        public static BaseCaseEltInstance ToElementInstance(this CasePlanElementInstanceModel model)
+        public static BaseCaseEltDef ToElementInstance(this CasePlanElementInstanceModel model)
         {
             var type = (CasePlanElementInstanceTypes)model.Type;
             switch(type)
@@ -138,7 +138,7 @@ namespace CaseManagement.CMMN.Persistence.EF.DomainMapping
             };
         }
 
-        public static CasePlanElementInstanceModel ToModel(this BaseCaseEltInstance casePlanElementInstance, string casePlanInstanceId)
+        public static CasePlanElementInstanceModel ToModel(this BaseCaseEltDef casePlanElementInstance, string casePlanInstanceId)
         {
             var stage = casePlanElementInstance as StageElementInstance;
             if (stage != null)

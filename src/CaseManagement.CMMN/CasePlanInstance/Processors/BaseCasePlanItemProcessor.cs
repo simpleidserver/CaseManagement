@@ -1,5 +1,6 @@
 ﻿using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,13 +20,21 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 return;
             }
 
+            bool firstInstance = false;
+            if (elt.LatestTransition == null)
+            {
+                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Create);
+                firstInstance = true;
+            }
+
             var newExecutionContext = executionContext.NewExecutionContext(entryCriteria.Data);
-            var createNewOccurrence = await Process(executionContext, elt, cancellationToken);
-            if (createNewOccurrence && newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt))
+            if (firstInstance && newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt))
             {
                 var result = newExecutionContext.Instance.TryCreateInstance(elt) as T;
                 await Handle(newExecutionContext, result, cancellationToken);
             }
+
+            await Process(executionContext, elt, cancellationToken);
         }
 
         protected abstract Task<bool> Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);

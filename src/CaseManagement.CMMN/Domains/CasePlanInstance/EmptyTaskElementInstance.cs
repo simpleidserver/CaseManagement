@@ -24,6 +24,8 @@ namespace CaseManagement.CMMN.Domains
             clone.TransitionHistories = new ConcurrentBag<CasePlanElementInstanceTransitionHistory>();
             clone.NbOccurrence = NbOccurrence + 1;
             clone.Id = BuildId(casePlanInstanceId, EltId, clone.NbOccurrence);
+            clone.EntryCriterions = CloneEntryCriterions();
+            clone.ExitCriterions = CloneExitCriterions();
             return clone;
         }
     }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" id="Definitions_1uwcfw9" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.20.0">
+  <cmmn:caseFileItemDefinition id="CaseFileItemDefinition_0dkb50i" name="Test" />
+  <cmmn:case id="Case_0ohj9lj">
+    <cmmn:caseFileModel id="CaseFileModel_11ilytr">
+      <cmmn:caseFileItem id="CaseFileItem_0hkq3v3" definitionRef="CaseFileItemDefinition_0dkb50i" />
+    </cmmn:caseFileModel>
+    <cmmn:casePlanModel id="CasePlanModel_12ycjkb" name="A CasePlanModel">
+      <cmmn:planItem id="PlanItem_0o1onff" definitionRef="Task_09xxsmv">
+        <cmmn:entryCriterion id="EntryCriterion_0braf2w" sentryRef="Sentry_050t5nr" />
+      </cmmn:planItem>
+      <cmmn:sentry id="Sentry_050t5nr">
+        <cmmn:caseFileItemOnPart id="CaseFileItemOnPart_15pgk5g" sourceRef="CaseFileItem_0hkq3v3">
+          <cmmn:standardEvent>update</cmmn:standardEvent>
+        </cmmn:caseFileItemOnPart>
+      </cmmn:sentry>
+      <cmmn:task id="Task_09xxsmv" />
+    </cmmn:casePlanModel>
+  </cmmn:case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_1">
+      <cmmndi:Size width="500" height="500" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel_12ycjkb" cmmnElementRef="CasePlanModel_12ycjkb">
+        <dc:Bounds x="156" y="99" width="534" height="389" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_0o1onff_di" cmmnElementRef="PlanItem_0o1onff">
+        <dc:Bounds x="192" y="132" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CaseFileItem_0hkq3v3_di" cmmnElementRef="CaseFileItem_0hkq3v3">
+        <dc:Bounds x="209" y="308" width="36" height="50" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="216" y="358" width="22" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="EntryCriterion_0braf2w_di" cmmnElementRef="EntryCriterion_0braf2w">
+        <dc:Bounds x="235" y="198" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="CaseFileItemOnPart_15pgk5g_di" cmmnElementRef="CaseFileItemOnPart_15pgk5g" targetCMMNElementRef="EntryCriterion_0braf2w" isStandardEventVisible="true">
+        <di:waypoint x="227" y="308" />
+        <di:waypoint x="227" y="267" />
+        <di:waypoint x="245" y="267" />
+        <di:waypoint x="245" y="226" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="216" y="257" width="40" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

@@ -12,9 +12,9 @@ namespace CaseManagement.CMMN.Domains
     public class CriteriaResult
     {
         public bool IsSatisfied { get; private set; }
-        public List<KeyValuePair<string, string>> Data { get; private set; }
+        public Dictionary<string, string> Data { get; private set; }
 
-        public static CriteriaResult Satisfied(List<KeyValuePair<string, string>> data)
+        public static CriteriaResult Satisfied(Dictionary<string, string> data)
         {
             return new CriteriaResult
             {
@@ -65,6 +65,16 @@ namespace CaseManagement.CMMN.Domains
 
         #region Getters
 
+        public ICollection<BaseCasePlanItemInstance> GetNextCasePlanItems(BaseCaseEltInstance elt)
+        {
+            var children = StageContent.Children.Where(ch => 
+                ch.EntryCriterions.Any(
+                    ec => ec.SEntry != null && ec.SEntry.PlanItemOnParts != null && ((ec.SEntry.PlanItemOnParts.Any(pi => pi.SourceRef == elt.EltId)) || (ec.SEntry.FileItemOnParts.Any(pi => pi.SourceRef == elt.EltId)))
+                )
+            ).ToList();
+            return children;
+        }
+
         public CriteriaResult IsEntryCriteriaSatisfied(string id)
         {
             var child = GetCasePlanItem(id);
@@ -75,10 +85,10 @@ namespace CaseManagement.CMMN.Domains
         {
             if (elt.EntryCriterions == null || !elt.EntryCriterions.Any())
             {
-                return CriteriaResult.Satisfied(new List<KeyValuePair<string, string>>());
+                return CriteriaResult.Satisfied(new Dictionary<string, string>());
             }
 
-            var res = elt.EntryCriterions.Select(_ => IsCriteriaSatisfied(_, elt.NbOccurrence)).FirstOrDefault(_ => _.IsSatisfied);
+            var res = elt.EntryCriterions.Select(_ => IsCriteriaSatisfied(_)).FirstOrDefault(_ => _.IsSatisfied);
             return res == null ? CriteriaResult.NotSatisifed() : res;
         }
 
@@ -100,17 +110,13 @@ namespace CaseManagement.CMMN.Domains
                 return CriteriaResult.NotSatisifed();
             }
 
-            var res = elt.ExitCriterions.Select(_ => IsCriteriaSatisfied(_, elt.NbOccurrence)).FirstOrDefault(_ => _.IsSatisfied);
+            var res = elt.ExitCriterions.Select(c => IsCriteriaSatisfied(c)).FirstOrDefault(c => c.IsSatisfied);
             return res == null ? CriteriaResult.NotSatisifed() : res;
         }
 
-        public CriteriaResult IsCriteriaSatisfied(Criteria criteria, int nbOccurrence)
+        public CriteriaResult IsCriteriaSatisfied(Criteria criteria)
         {
-            var data = new List<KeyValuePair<string, string>>();
-            var get = new Func<CMMNTransitions, ConcurrentBag<CasePlanElementInstanceTransitionHistory>, CasePlanElementInstanceTransitionHistory>((tr, transitions) =>
-            {
-                return transitions.FirstOrDefault(_ => _.Transition == tr);
-            });
+            var data = new Dictionary<string, string>();
             if (criteria.SEntry.IfPart != null && criteria.SEntry.IfPart.Condition != null)
             {
                 if (!ExpressionParser.IsValid(criteria.SEntry.IfPart.Condition, ExecutionContext))
@@ -121,30 +127,34 @@ namespace CaseManagement.CMMN.Domains
 
             foreach (var planItemOnPart in criteria.SEntry.PlanItemOnParts)
             {
-                var id = BaseCasePlanItemInstance.BuildId(AggregateId, planItemOnPart.SourceRef, nbOccurrence);
-                var source = GetCasePlanItem(id);
-                var tr = get(planItemOnPart.StandardEvent, source.TransitionHistories);
-                if (tr == null)
+                if (!planItemOnPart.IsConsumed)
                 {
                     return CriteriaResult.NotSatisifed();
                 }
-
-                var incomingTokens = tr.IncomingTokens == null ? new Dictionary<string, string>() : tr.IncomingTokens;
-                data.AddRange(incomingTokens);
+                
+                if (planItemOnPart.IncomingTokens != null)
+                {
+                    foreach (var kvp in planItemOnPart.IncomingTokens)
+                    {
+                        data.Add(kvp.Key, kvp.Value);
+                    }
+                }
             }
 
             foreach (var caseItemOnPart in criteria.SEntry.FileItemOnParts)
             {
-                var id = CaseFileItemInstance.BuildId(AggregateId, caseItemOnPart.SourceRef);
-                var source = GetCaseFileItem(id);
-                var tr = get(caseItemOnPart.StandardEvent, source.TransitionHistories);
-                if (tr == null)
+                if (!caseItemOnPart.IsConsumed)
                 {
                     return CriteriaResult.NotSatisifed();
                 }
 
-                var incomingTokens = tr.IncomingTokens == null ? new Dictionary<string, string>() : tr.IncomingTokens;
-                data.AddRange(incomingTokens);
+                if (caseItemOnPart.IncomingTokens != null)
+                {
+                    foreach (var kvp in caseItemOnPart.IncomingTokens)
+                    {
+                        data.Add(kvp.Key, kvp.Value);
+                    }
+                }
             }
 
             return CriteriaResult.Satisfied(data);
@@ -181,11 +191,6 @@ namespace CaseManagement.CMMN.Domains
             return StageContent.GetParent(id);
         }
 
-        public CaseFileItemInstance GetCaseFileItem(string id)
-        {
-            return FileItems.FirstOrDefault(f => f.Id == id);
-        }
-
         public ICollection<BaseCasePlanItemInstance> GetFlatListCasePlanItems()
         {
             return StageContent.GetFlatListChildren();
@@ -194,6 +199,13 @@ namespace CaseManagement.CMMN.Domains
         #endregion
 
         #region Operations
+
+        public void ConsumeTransitionEvts(BaseCaseEltInstance node, string sourceElementId, ICollection<IncomingTransition> transitions)
+        {
+            var evt = new OnPartEvtConsumedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, node.Id, sourceElementId, transitions);
+            Handle(evt);
+            DomainEvents.Add(evt);
+        }
 
         public void MakeTransition(CMMNTransitions transition, bool isEvtPropagate = true)
         {
@@ -371,7 +383,7 @@ namespace CaseManagement.CMMN.Domains
         private void Handle(CaseElementTransitionRaisedEvent evt)
         {
             var child = GetChild(evt.ElementId);
-            child.MakeTransition(evt.Transition, evt.Message, evt.IncomingTokens, DateTime.UtcNow);
+            child.MakeTransition(evt.Transition, evt.Message, DateTime.UtcNow);
         }
 
         private void Handle(CasePlanInstanceCreatedEvent evt)
@@ -618,6 +630,43 @@ namespace CaseManagement.CMMN.Domains
 
             var child = GetCasePlanItem(evt.CasePlanItemInstanceId);
             parent.Children.Add(child.NewOccurrence(AggregateId));
+        }
+
+        private void Handle(OnPartEvtConsumedEvent evt)
+        {
+            var source = GetChild(evt.SourceElementId);
+            var target = GetCasePlanItem(evt.ElementId);
+            foreach(var entryCriteria in target.EntryCriterions)
+            {
+                if (entryCriteria.SEntry == null)
+                {
+                    continue;
+                }
+
+                foreach(var onPart in entryCriteria.SEntry.PlanItemOnParts)
+                {
+                    if (onPart.SourceRef == source.EltId)
+                    {
+                        var transition = evt.Transitions.FirstOrDefault(tr => tr.Transition == onPart.StandardEvent);
+                        if (transition != null)
+                        {
+                            onPart.Consume(transition.IncomingTokens);
+                        }
+                    }
+                }
+
+                foreach(var onPart in entryCriteria.SEntry.FileItemOnParts)
+                {
+                    if (onPart.SourceRef == source.EltId)
+                    {
+                        var transition = evt.Transitions.FirstOrDefault(tr => tr.Transition == onPart.StandardEvent);
+                        if (transition != null)
+                        {
+                            onPart.Consume(transition.IncomingTokens);
+                        }
+                    }
+                }
+            }
         }
 
         #endregion

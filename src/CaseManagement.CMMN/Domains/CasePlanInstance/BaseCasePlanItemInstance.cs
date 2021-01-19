@@ -26,7 +26,7 @@ namespace CaseManagement.CMMN.Domains
 
         public bool IsLeaf()
         {
-            return EntryCriterions == null || !EntryCriterions.Any();
+            return EntryCriterions == null || !EntryCriterions.Any() || EntryCriterions.All(ec => ec.SEntry == null || !ec.SEntry.PlanItemOnParts.Any());
         }
 
         protected void FeedCasePlanItem(BaseCasePlanItemInstance elt)
@@ -53,5 +53,51 @@ namespace CaseManagement.CMMN.Domains
         }
 
         public abstract BaseCasePlanItemInstance NewOccurrence(string casePlanInstanceId);
+
+        protected ICollection<Criteria> CloneEntryCriterions()
+        {
+            return EntryCriterions.Select(_ => CloneCriteria(_)).ToList();
+        }
+
+        protected ICollection<Criteria> CloneExitCriterions()
+        {
+            return ExitCriterions.Select(_ => CloneCriteria(_)).ToList();
+        }
+
+        private Criteria CloneCriteria(Criteria criteria)
+        {
+            var result = new Criteria(criteria.Name);
+            if (criteria.SEntry != null)
+            {
+                result.SEntry = new SEntry(criteria.SEntry.Name);
+                foreach(var fileItemOnPart in criteria.SEntry.FileItemOnParts)
+                {
+                    result.SEntry.FileItemOnParts.Add(new CaseFileItemOnPart
+                    {
+                        SourceRef = fileItemOnPart.SourceRef,
+                        StandardEvent = fileItemOnPart.StandardEvent
+                    });
+                }
+
+                foreach (var planItemOnPart in criteria.SEntry.PlanItemOnParts)
+                {
+                    result.SEntry.PlanItemOnParts.Add(new PlanItemOnPart
+                    {
+                        SourceRef = planItemOnPart.SourceRef,
+                        StandardEvent = planItemOnPart.StandardEvent
+                    });
+                }
+
+                if (criteria.SEntry.IfPart != null)
+                {
+                    result.SEntry.IfPart = new IfPart
+                    {
+                        Condition = result.SEntry.IfPart.Condition
+                    };
+                }
+            }
+
+            return result;
+        }
     }
 }

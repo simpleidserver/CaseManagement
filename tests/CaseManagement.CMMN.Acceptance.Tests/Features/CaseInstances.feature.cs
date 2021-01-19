@@ -76,12 +76,12 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Features
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Launch caseWithOneTask and check his status is completed")]
+        [Xunit.FactAttribute(DisplayName="Launch caseWithComplexRepetitionRule and check his status is completed")]
         [Xunit.TraitAttribute("FeatureTitle", "CaseInstances")]
-        [Xunit.TraitAttribute("Description", "Launch caseWithOneTask and check his status is completed")]
-        public virtual void LaunchCaseWithOneTaskAndCheckHisStatusIsCompleted()
+        [Xunit.TraitAttribute("Description", "Launch caseWithComplexRepetitionRule and check his status is completed")]
+        public virtual void LaunchCaseWithComplexRepetitionRuleAndCheckHisStatusIsCompleted()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneTask and check his status is completed", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithComplexRepetitionRule and check his status is completed", null, ((string[])(null)));
 #line 4
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -91,7 +91,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
             table3.AddRow(new string[] {
                         "casePlanId",
-                        "CaseWithOneTask"});
+                        "caseWithComplexRepetitionRule"});
 #line 5
  testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table3, "When ");
 #line 8
@@ -115,13 +115,107 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
                     "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 16
- testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
-                    "Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'$.childr" +
+                    "en[?(@.eltId == \'task1\' && @.state == \'Enabled\')].eltId\'=\'task1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 17
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 18
+ testRunner.And("extract \'$.children[?(@.eltId == \'task1\' && @.state == \'Enabled\')].id\' from JSON " +
+                    "body into \'firstTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 19
- testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'$.childr" +
+                    "en[?(@.eltId == \'task2\' && @.state == \'Enabled\')].eltId\'=\'task2\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 20
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 21
+ testRunner.And("extract \'$.children[?(@.eltId == \'task2\' && @.state == \'Enabled\')].id\' from JSON " +
+                    "body into \'secondTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 22
+ testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'$.childr" +
+                    "en[?(@.eltId == \'task5\' && @.state == \'Enabled\')].eltId\'=\'task5\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 23
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 24
+ testRunner.And("extract \'$.children[?(@.eltId == \'task5\' && @.state == \'Enabled\')].id\' from JSON " +
+                    "body into \'fifthTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 25
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances/$casePlanIns" +
+                    "tanceId$/activate/$firstTask$\'", ((string)(null)), table5, "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 27
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances/$casePlanIns" +
+                    "tanceId$/activate/$secondTask$\'", ((string)(null)), table6, "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 29
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances/$casePlanIns" +
+                    "tanceId$/activate/$fifthTask$\'", ((string)(null)), table7, "And ");
+#line 31
+ testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'$.childr" +
+                    "en[?(@.eltId == \'task4\' && @.nbOccurrence == 3)].eltId\'=\'task4\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 33
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 35
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Launch caseWithOneTask and check his status is completed")]
+        [Xunit.TraitAttribute("FeatureTitle", "CaseInstances")]
+        [Xunit.TraitAttribute("Description", "Launch caseWithOneTask and check his status is completed")]
+        public virtual void LaunchCaseWithOneTaskAndCheckHisStatusIsCompleted()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneTask and check his status is completed", null, ((string[])(null)));
+#line 37
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table8.AddRow(new string[] {
+                        "casePlanId",
+                        "CaseWithOneTask"});
+#line 38
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table8, "When ");
+#line 41
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 42
+ testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table9.AddRow(new string[] {
+                        "casePlanId",
+                        "$casePlanId$"});
+#line 43
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table9, "And ");
+#line 46
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 47
+ testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 48
+ testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
+                    "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 49
+ testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
+                    "Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 50
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 52
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 53
  testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -133,130 +227,38 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void LaunchCaseWithTwoStagesAndCheckHisStatusIsCompleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithTwoStages and check his status is completed", null, ((string[])(null)));
-#line 22
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line hidden
-            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Key",
-                        "Value"});
-            table5.AddRow(new string[] {
-                        "casePlanId",
-                        "CaseWithTwoStages"});
-#line 23
- testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table5, "When ");
-#line 26
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 27
- testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Key",
-                        "Value"});
-            table6.AddRow(new string[] {
-                        "casePlanId",
-                        "$casePlanId$"});
-#line 28
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table6, "And ");
-#line 31
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 32
- testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 33
- testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
-                    "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 34
- testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
-                    "Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 35
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 37
- testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 38
- testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 39
- testRunner.Then("JSON \'children[0].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 40
- testRunner.Then("JSON \'children[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 41
- testRunner.Then("JSON \'children[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 42
- testRunner.Then("JSON \'children[3].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 43
- testRunner.Then("JSON \'children[4].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [Xunit.FactAttribute(DisplayName="Launch caseWithOneHumanTask and check his status is completed")]
-        [Xunit.TraitAttribute("FeatureTitle", "CaseInstances")]
-        [Xunit.TraitAttribute("Description", "Launch caseWithOneHumanTask and check his status is completed")]
-        public virtual void LaunchCaseWithOneHumanTaskAndCheckHisStatusIsCompleted()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneHumanTask and check his status is completed", null, ((string[])(null)));
-#line 45
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line hidden
-            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Key",
-                        "Value"});
-            table7.AddRow(new string[] {
-                        "casePlanId",
-                        "CaseWithOneHumanTask"});
-#line 46
- testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table7, "When ");
-#line 49
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 50
- testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Key",
-                        "Value"});
-            table8.AddRow(new string[] {
-                        "casePlanId",
-                        "$casePlanId$"});
-            table8.AddRow(new string[] {
-                        "parameters",
-                        "{ \"city\": \"Bruxelles\" }"});
-#line 51
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table8, "And ");
 #line 55
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 56
- testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 57
- testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
-                    "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 58
- testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
-                    "Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Key",
-                        "Value"});
-#line 59
- testRunner.And("poll HTTP POST JSON request \'http://localhost/humantaskinstances/.search\', until " +
-                    "\'$.content[?(@.name == \'emptyTask\')].name\'=\'emptyTask\'", ((string)(null)), table9, "And ");
-#line 61
- testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 62
- testRunner.And("extract \'$.content[?(@.name == \'emptyTask\')].id\' from JSON body into \'humanTaskIn" +
-                    "stanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 63
- testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
-                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
 #line hidden
             TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
             table10.AddRow(new string[] {
-                        "operationParameters",
-                        "{ \"firstname\": \"sid\" }"});
+                        "casePlanId",
+                        "CaseWithTwoStages"});
+#line 56
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table10, "When ");
+#line 59
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 60
+ testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table11.AddRow(new string[] {
+                        "casePlanId",
+                        "$casePlanId$"});
+#line 61
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table11, "And ");
 #line 64
- testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
-                    "tanceId$/complete\'", ((string)(null)), table10, "And ");
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 65
+ testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 66
+ testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
+                    "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 67
  testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
                     "Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -270,6 +272,98 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("JSON \'children[0].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 73
  testRunner.Then("JSON \'children[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 74
+ testRunner.Then("JSON \'children[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 75
+ testRunner.Then("JSON \'children[3].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 76
+ testRunner.Then("JSON \'children[4].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Launch caseWithOneHumanTask and check his status is completed")]
+        [Xunit.TraitAttribute("FeatureTitle", "CaseInstances")]
+        [Xunit.TraitAttribute("Description", "Launch caseWithOneHumanTask and check his status is completed")]
+        public virtual void LaunchCaseWithOneHumanTaskAndCheckHisStatusIsCompleted()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneHumanTask and check his status is completed", null, ((string[])(null)));
+#line 78
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line hidden
+            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table12.AddRow(new string[] {
+                        "casePlanId",
+                        "CaseWithOneHumanTask"});
+#line 79
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table12, "When ");
+#line 82
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 83
+ testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table13.AddRow(new string[] {
+                        "casePlanId",
+                        "$casePlanId$"});
+            table13.AddRow(new string[] {
+                        "parameters",
+                        "{ \"city\": \"Bruxelles\" }"});
+#line 84
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table13, "And ");
+#line 88
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 89
+ testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 90
+ testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
+                    "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 91
+ testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
+                    "Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 92
+ testRunner.And("poll HTTP POST JSON request \'http://localhost/humantaskinstances/.search\', until " +
+                    "\'$.content[?(@.name == \'emptyTask\')].name\'=\'emptyTask\'", ((string)(null)), table14, "And ");
+#line 94
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 95
+ testRunner.And("extract \'$.content[?(@.name == \'emptyTask\')].id\' from JSON body into \'humanTaskIn" +
+                    "stanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 96
+ testRunner.And("execute HTTP GET request \'http://localhost/humantaskinstances/$humanTaskInstanceI" +
+                    "d$/start\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+            table15.AddRow(new string[] {
+                        "operationParameters",
+                        "{ \"firstname\": \"sid\" }"});
+#line 97
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/humantaskinstances/$humanTaskIns" +
+                    "tanceId$/complete\'", ((string)(null)), table15, "And ");
+#line 100
+ testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
+                    "Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 101
+ testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 103
+ testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 104
+ testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 105
+ testRunner.Then("JSON \'children[0].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 106
+ testRunner.Then("JSON \'children[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -280,60 +374,64 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void LaunchCaseWithOneManualActivationTaskAndCheckHisStatusIsCompleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneManualActivationTask and check his status is completed", null, ((string[])(null)));
-#line 75
+#line 108
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table11.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "casePlanId",
                         "CaseWithOneManualActivationTask"});
-#line 76
- testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table11, "When ");
-#line 79
+#line 109
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table16, "When ");
+#line 112
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 80
+#line 113
  testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table12.AddRow(new string[] {
+            table17.AddRow(new string[] {
                         "casePlanId",
                         "$casePlanId$"});
-#line 81
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table12, "And ");
-#line 84
+#line 114
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table17, "And ");
+#line 117
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 85
+#line 118
  testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 86
+#line 119
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
                     "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 87
+#line 120
  testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
                     "Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 88
+#line 121
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 89
+#line 122
  testRunner.And("extract \'children[1].id\' from JSON body into \'emptyTaskId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 90
- testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
-                    "d$/activate/$emptyTaskId$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 91
+#line hidden
+            TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Key",
+                        "Value"});
+#line 123
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances/$casePlanIns" +
+                    "tanceId$/activate/$emptyTaskId$\'", ((string)(null)), table18, "And ");
+#line 125
  testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
                     "Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 92
+#line 126
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 94
+#line 128
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 95
+#line 129
  testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 96
+#line 130
  testRunner.Then("JSON \'children[0].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 97
+#line 131
  testRunner.Then("JSON \'children[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -345,52 +443,52 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void LaunchCaseWithRepetitionRuleAndCheckHisStatusIsCompleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithRepetitionRule and check his status is completed", null, ((string[])(null)));
-#line 99
+#line 133
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table13.AddRow(new string[] {
+            table19.AddRow(new string[] {
                         "casePlanId",
                         "CaseWithRepetitionRule"});
-#line 100
- testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table13, "When ");
-#line 103
+#line 134
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table19, "When ");
+#line 137
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 104
+#line 138
  testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table20 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table14.AddRow(new string[] {
+            table20.AddRow(new string[] {
                         "casePlanId",
                         "$casePlanId$"});
-#line 105
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table14, "And ");
-#line 108
+#line 139
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table20, "And ");
+#line 142
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 109
+#line 143
  testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 110
+#line 144
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
                     "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 111
+#line 145
  testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'state\'=\'" +
                     "Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 112
+#line 146
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 114
+#line 148
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 115
+#line 149
  testRunner.Then("JSON \'state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 116
+#line 150
  testRunner.Then("JSON \'children[0].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 117
+#line 151
  testRunner.Then("JSON \'children[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 118
+#line 152
  testRunner.Then("JSON \'children[2].name\'=\'EmptyTask\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -402,56 +500,54 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void LaunchCaseWithOneSEntryAndCheckHisStatusIsCompleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneSEntry and check his status is completed", null, ((string[])(null)));
-#line 120
+#line 154
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table21 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table15.AddRow(new string[] {
+            table21.AddRow(new string[] {
                         "casePlanId",
                         "caseWithOneSEntry"});
-#line 121
- testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table15, "When ");
-#line 124
+#line 155
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table21, "When ");
+#line 158
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 125
+#line 159
  testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table22 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table16.AddRow(new string[] {
+            table22.AddRow(new string[] {
                         "casePlanId",
                         "$casePlanId$"});
-            table16.AddRow(new string[] {
+            table22.AddRow(new string[] {
                         "parameters",
                         "{ \"action\": \"secondTask\" }"});
-#line 126
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table16, "And ");
-#line 130
+#line 160
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table22, "And ");
+#line 164
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 131
+#line 165
  testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 132
+#line 166
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
                     "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 133
+#line 167
  testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'children" +
                     "[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 134
+#line 168
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 136
+#line 170
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 137
+#line 171
  testRunner.Then("JSON \'state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 138
- testRunner.Then("JSON \'children[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 139
- testRunner.Then("JSON \'children[2].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 140
- testRunner.Then("JSON \'children[3].state\'=\'Available\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 172
+ testRunner.Then("JSON \'$.children[?(@.eltId == \'PlanItem_1du4gwx\')].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 173
+ testRunner.Then("JSON \'$.children[?(@.eltId == \'PlanItem_1swlh77\')].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -462,48 +558,48 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void LaunchCaseWithOneTimerEventListenerAndCheckHisStatusIsCompleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Launch caseWithOneTimerEventListener and check his status is completed", null, ((string[])(null)));
-#line 142
+#line 175
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table17 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table23 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table17.AddRow(new string[] {
+            table23.AddRow(new string[] {
                         "casePlanId",
                         "CaseWithOneTimerEventListener"});
-#line 143
- testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table17, "When ");
-#line 146
+#line 176
+ testRunner.When("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table23, "When ");
+#line 179
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 147
+#line 180
  testRunner.And("extract \'content[0].id\' from JSON body into \'casePlanId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
                         "Key",
                         "Value"});
-            table18.AddRow(new string[] {
+            table24.AddRow(new string[] {
                         "casePlanId",
                         "$casePlanId$"});
-#line 148
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table18, "And ");
-#line 151
+#line 181
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plan-instances\'", ((string)(null)), table24, "And ");
+#line 184
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 152
+#line 185
  testRunner.And("extract \'id\' from JSON body into \'casePlanInstanceId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 153
+#line 186
  testRunner.And("execute HTTP GET request \'http://localhost/case-plan-instances/$casePlanInstanceI" +
                     "d$/launch\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 154
+#line 187
  testRunner.And("poll \'http://localhost/case-plan-instances/$casePlanInstanceId$\', until \'children" +
                     "[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 155
+#line 188
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 157
+#line 190
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 158
+#line 191
  testRunner.Then("JSON \'state\'=\'Active\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 159
+#line 192
  testRunner.Then("JSON \'children[1].state\'=\'Completed\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

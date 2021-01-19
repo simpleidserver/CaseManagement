@@ -131,7 +131,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             public string Transition { get; set; }
             public DateTime ExecutionDateTime { get; set; }
             public string Message { get; set; }
-            public Dictionary<string, string> IncomingTokens { get; set; }
 
             public static TransitionHistoryResult ToDto(CasePlanElementInstanceTransitionHistory history)
             {
@@ -139,8 +138,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
                 {
                     ExecutionDateTime = history.ExecutionDateTime,
                     Message = history.Message,
-                    Transition = Enum.GetName(typeof(CMMNTransitions), history.Transition),
-                    IncomingTokens = history.IncomingTokens
+                    Transition = Enum.GetName(typeof(CMMNTransitions), history.Transition)
                 };
             }
         }

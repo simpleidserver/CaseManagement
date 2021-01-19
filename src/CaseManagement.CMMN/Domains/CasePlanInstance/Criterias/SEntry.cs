@@ -13,11 +13,18 @@ namespace CaseManagement.CMMN.Domains
     public interface IOnPart : ICloneable
     {
         OnPartTypes Type { get; }
+        bool IsConsumed { get; }
+        Dictionary<string, string> IncomingTokens { get; }
     }
 
     [Serializable]
     public class PlanItemOnPart : IOnPart
     {
+        public PlanItemOnPart()
+        {
+            IsConsumed = false;
+        }
+
         /// <summary>
         /// Refer to a PlanItem.
         /// </summary>
@@ -30,12 +37,23 @@ namespace CaseManagement.CMMN.Domains
 
         public OnPartTypes Type => OnPartTypes.PlanItem;
 
+        public bool IsConsumed { get; set; }
+        public Dictionary<string, string> IncomingTokens { get; set; }
+
+        public void Consume(Dictionary<string, string> incomingTokens)
+        {
+            IsConsumed = true;
+            IncomingTokens = incomingTokens;
+        }
+
         public object Clone()
         {
             return new PlanItemOnPart
             {
                 SourceRef = SourceRef,
-                StandardEvent = StandardEvent
+                StandardEvent = StandardEvent,
+                IsConsumed = IsConsumed,
+                IncomingTokens = IncomingTokens
             };
         }
     }
@@ -55,12 +73,24 @@ namespace CaseManagement.CMMN.Domains
 
         public OnPartTypes Type => OnPartTypes.FileItem;
 
+        public bool IsConsumed { get; set; }
+
+        public Dictionary<string, string> IncomingTokens { get; set; }
+
+        public void Consume(Dictionary<string, string> incomingTokens)
+        {
+            IsConsumed = true;
+            IncomingTokens = incomingTokens;
+        }
+
         public object Clone()
         {
             return new CaseFileItemOnPart
             {
                 StandardEvent = StandardEvent,
-                SourceRef = SourceRef
+                SourceRef = SourceRef,
+                IsConsumed = IsConsumed,
+                IncomingTokens = IncomingTokens
             };
         }
     }
