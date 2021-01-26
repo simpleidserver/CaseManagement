@@ -18,6 +18,7 @@ namespace CaseManagement.HumanTask.Domains
         }
 
         public string Name { get; set; }
+        public int NbInstances { get; set; }
         /// <summary>
         /// This element is used to specify the priority of the notification.
         /// </summary>
@@ -134,6 +135,7 @@ namespace CaseManagement.HumanTask.Domains
 
             OperationParameters.Add(new Parameter
             {
+                Id = evt.Parameter.Id,
                 IsRequired = evt.Parameter.IsRequired,
                 Name = evt.Parameter.Name,
                 Type = evt.Parameter.Type,
@@ -256,12 +258,18 @@ namespace CaseManagement.HumanTask.Domains
         {
             return new NotificationDefinitionAggregate
             {
+                AggregateId = AggregateId,
+                Version = Version,
+                UpdateDateTime = UpdateDateTime,
+                NbInstances = NbInstances,
+                CreateDateTime = CreateDateTime,
                 Name = Name,
-                OperationParameters = OperationParameters.Select(_ => (Parameter)_.Clone()).ToList(),
                 Priority = Priority,
+                Rendering = Rendering,
                 PeopleAssignments = PeopleAssignments.Select(_ => (PeopleAssignmentDefinition)_.Clone()).ToList(),
                 PresentationElements = PresentationElements.Select(_ => (PresentationElementDefinition)_.Clone()).ToList(),
-                Rendering = Rendering
+                PresentationParameters = PresentationParameters.Select(_ => (PresentationParameter)_.Clone()).ToList(),
+                OperationParameters = OperationParameters.Select(_ => (Parameter)_.Clone()).ToList()
             };
         }
     }

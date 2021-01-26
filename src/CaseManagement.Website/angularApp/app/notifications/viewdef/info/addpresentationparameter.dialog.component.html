@@ -1,0 +1,37 @@
+﻿<h1 mat-dialog-title>{{ "HUMANTASK.ADDPRESENTATIONPARAMETER" | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="addPresentationParameterForm" (ngSubmit)="addPresentationParameter(addPresentationParameterForm.value)">
+        <!-- Language -->
+        <mat-form-field class="full-width"  appearance="outline" floatLabel="always">
+            <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+            <input matInput type="text" formControlName="name" required />
+            <mat-error *ngIf="addPresentationParameterForm.get('name').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- Value -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'HUMANTASK.SELECT_PARAMETER_TYPE' | translate }}</mat-label>
+            <mat-select formControlName="type" required>
+                <mat-option *ngFor="let type of types" [value]="type.type">
+                    {{ type.displayName }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addPresentationParameterForm.get('type').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- ContentType -->
+        <mat-form-field class="full-width"  appearance="outline" floatLabel="always">
+            <mat-label>{{ 'SHARED.EXPRESSION' | translate }}</mat-label>
+            <input matInput type="text" formControlName="expression" required />
+            <mat-error *ngIf="addPresentationParameterForm.get('expression').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+    </form>
+</div>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>{{ 'SHARED.CANCEL' | translate }}</button>
+</mat-dialog-actions>

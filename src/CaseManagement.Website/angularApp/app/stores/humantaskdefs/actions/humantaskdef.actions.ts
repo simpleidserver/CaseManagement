@@ -134,7 +134,7 @@ export class AddOperationParameterOperation implements Action {
 
 export class CompleteAddOperationParameterOperation implements Action {
     readonly type = ActionTypes.COMPLETE_ADD_OPERATION_PARAMETER;
-    constructor(public parameter: Parameter) { }
+    constructor(public parameter: Parameter, public id: string) { }
 }
 
 export class DeleteOperationParameterOperation implements Action {

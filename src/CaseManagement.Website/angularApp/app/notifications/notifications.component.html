@@ -1,0 +1,17 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li>{{ 'BREADCRUMB.NOTIFICATIONS' | translate }}</li>
+    </ul>
+    <list-notification-definitions></list-notification-definitions>
+    <mat-card fxFlex class="m-10">
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'NOTIFICATION.INSTANCES' | translate }}
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+        </mat-card-content>
+    </mat-card>
+</div>

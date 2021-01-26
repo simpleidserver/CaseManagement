@@ -1,0 +1,44 @@
+﻿<h1 mat-dialog-title>{{ "HUMANTASK.ADDPARAMETER" | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="addParameterForm" (ngSubmit)="addParameter(addParameterForm.value)">
+        <!-- Name -->
+        <mat-form-field class="full-width"  appearance="outline" floatLabel="always">
+            <mat-label>{{ 'SHARED.NAME' | translate }}</mat-label>
+            <input matInput type="text" formControlName="name" required />
+            <mat-error *ngIf="addParameterForm.get('name').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- Type -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'HUMANTASK.SELECT_PARAMETER_TYPE' | translate }}</mat-label>
+            <mat-select formControlName="type" required>
+                <mat-option *ngFor="let type of parameterTypes" [value]="type.type">
+                    {{ type.displayName }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addParameterForm.get('type').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <!-- Usage -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'HUMANTASK.PARAMETER_USAGE' | translate }}</mat-label>
+            <mat-select formControlName="usage" required>
+                <mat-option *ngFor="let usage of usages" [value]="usage">
+                    {{ ( 'HUMANTASK.PARAMETERTYPES.' + usage ) | translate }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addParameterForm.get('usage').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <div class="full-width">
+            <mat-checkbox formControlName="isRequired">{{  'SHARED.IS_REQUIRED' | translate }}</mat-checkbox>
+        </div>
+        <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+    </form>
+</div>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>{{ 'SHARED.CANCEL' | translate }}</button>
+</mat-dialog-actions>

@@ -5,6 +5,7 @@
             <a *ngIf="isConnected" [routerLink]="['/bpmns']" mat-list-item href="#">{{ "MENU.PROCESSES" | translate }}</a>
             <a *ngIf="isConnected" [routerLink]="['/cmmns']" mat-list-item href="#">{{ "MENU.CASES" | translate }}</a>
             <a *ngIf="isConnected" [routerLink]="['/humantasks']" mat-list-item href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/notifications']" mat-list-item href="#">{{ "MENU.NOTIFICATIONS" | translate }}</a>
             <a href="#" *ngIf="!isConnected" (click)="login($event)" mat-button>{{ "MENU.AUTHENTICATE" | translate }}</a>
             <a href="#" *ngIf="!isConnected" (click)="chooseSession($event)" mat-button>{{ "MENU.CHOOSE_SESSION" | translate }}</a>
         </mat-list>
@@ -20,6 +21,7 @@
             <a *ngIf="isConnected" [routerLink]="['/bpmns']" mat-button href="#">{{ "MENU.PROCESSES" | translate }}</a>
             <a *ngIf="isConnected" [routerLink]="['/cmmns']" mat-button href="#">{{ "MENU.CASES" | translate }}</a>
             <a *ngIf="isConnected" [routerLink]="['/humantasks']" mat-button href="#">{{ "MENU.HUMANTASKS" | translate }}</a>
+            <a *ngIf="isConnected" [routerLink]="['/notifications']" mat-button href="#">{{ "MENU.NOTIFICATIONS" | translate }}</a>
         </div>
         <span class="navigation-spacer"></span>
         <div fxShow="true" fxHide.lt-md="true">

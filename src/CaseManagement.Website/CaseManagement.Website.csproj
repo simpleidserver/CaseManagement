@@ -33,8 +33,13 @@
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\guidgenerator.ts" />
+    <None Remove="angularApp\app\notifications\viewdef\info\addassignment.dialog.component.html" />
+    <None Remove="angularApp\app\notifications\viewdef\info\addassignment.dialog.component.scss" />
+    <None Remove="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.html" />
+    <None Remove="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.scss" />
     <None Remove="angularApp\app\shared\SidenavService.ts" />
     <None Remove="angularApp\app\stores\bpmninstances\models\bpmn-instance.model.ts" />
+    <None Remove="angularApp\app\stores\notificationdefs\models\notificationdef.model.ts" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -114,7 +119,16 @@
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\guidgenerator.ts" />
+    <TypeScriptCompile Include="angularApp\app\notifications\viewdef\info\addassignment.dialog.component.html" />
+    <TypeScriptCompile Include="angularApp\app\notifications\viewdef\info\addassignment.dialog.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.html" />
+    <TypeScriptCompile Include="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\shared\SidenavService.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\bpmninstances\models\bpmn-instance.model.ts" />
+    <TypeScriptCompile Include="angularApp\app\stores\notificationdefs\models\notificationdef.model.ts" />
   </ItemGroup>
 </Project>

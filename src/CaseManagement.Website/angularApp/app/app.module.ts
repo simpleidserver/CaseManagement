@@ -32,6 +32,8 @@ import { HumanTaskDefEffects } from './stores/humantaskdefs/effects/humantaskdef
 import { HumanTaskDefService } from './stores/humantaskdefs/services/humantaskdef.service';
 import { HumanTaskInstEffects } from './stores/humantaskinstances/effects/humantaskinst.effects';
 import { HumanTaskInstService } from './stores/humantaskinstances/services/humantaskinst.service';
+import { NotificationDefEffects } from './stores/notificationdefs/effects/notificationdef.effects';
+import { NotificationDefService } from './stores/notificationdefs/services/notificationdef.service';
 
 export function createTranslateLoader(http: HttpClient) {
     const url = process.env.BASE_URL + 'assets/i18n/';
@@ -49,7 +51,16 @@ export function createTranslateLoader(http: HttpClient) {
         BrowserAnimationsModule,
         HttpClientModule,
         OAuthModule.forRoot(),
-        EffectsModule.forRoot([BpmnInstancesEffects, CmmnFilesEffects, CmmnPlanInstanceEffects, CmmnPlanEffects, HumanTaskDefEffects, HumanTaskInstEffects, BpmnFilesEffects]),
+        EffectsModule.forRoot([
+            BpmnInstancesEffects,
+            CmmnFilesEffects,
+            CmmnPlanInstanceEffects,
+            CmmnPlanEffects,
+            HumanTaskDefEffects,
+            HumanTaskInstEffects,
+            BpmnFilesEffects,
+            NotificationDefEffects
+        ]),
         StoreModule.forRoot(appReducer),
         StoreDevtoolsModule.instrument({
             maxAge: 10
@@ -66,6 +77,16 @@ export function createTranslateLoader(http: HttpClient) {
         AppComponent
     ],
     bootstrap: [AppComponent],
-    providers: [AuthGuard, CmmnFilesService, CmmnPlanService, CmmnPlanInstanceService, HumanTaskDefService, HumanTaskInstService, BpmnFilesService, SidenavService, BpmnInstancesService ]
+    providers: [AuthGuard,
+        CmmnFilesService,
+        CmmnPlanService,
+        CmmnPlanInstanceService,
+        HumanTaskDefService,
+        HumanTaskInstService,
+        BpmnFilesService,
+        SidenavService,
+        BpmnInstancesService,
+        NotificationDefService
+    ]
 })
 export class AppModule { }

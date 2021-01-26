@@ -92,7 +92,7 @@ namespace CaseManagement.CMMN.Domains
                 {
                     result.SEntry.IfPart = new IfPart
                     {
-                        Condition = result.SEntry.IfPart.Condition
+                        Condition = criteria.SEntry.IfPart.Condition
                     };
                 }
             }

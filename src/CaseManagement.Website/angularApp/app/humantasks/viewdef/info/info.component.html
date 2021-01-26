@@ -162,7 +162,7 @@
                         <ng-container matColumnDef="usage">
                             <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.USAGE' | translate }}</th>
                             <td mat-cell *matCellDef="let peopleAssignment">
-                                <span *ngIf="peopleAssignment.usage">{{ ('HUMANTASK.' + peopleAssignment.usage) | translate }}</span>
+                                <span *ngIf="peopleAssignment.usage">{{ ('HUMANTASK.ROLES.' + peopleAssignment.usage) | translate }}</span>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="value">

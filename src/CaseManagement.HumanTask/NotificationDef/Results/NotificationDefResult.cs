@@ -23,7 +23,13 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
         {
             return new NotificationDefResult
             {
-
+                CreateDateTime = notificationDef.CreateDateTime,
+                Id = notificationDef.AggregateId,
+                Name = notificationDef.Name,
+                NbInstances = notificationDef.NbInstances,
+                Priority = notificationDef.Priority,
+                UpdateDateTime = notificationDef.UpdateDateTime,
+                Version = notificationDef.Version,
                 OperationParameters = notificationDef.OperationParameters.Select(_ => ParameterResult.ToDto(_)).ToList(),
                 PeopleAssignments = notificationDef.PeopleAssignments.Select(_ => PeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
                 PresentationElements = notificationDef.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
@@ -33,6 +39,7 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
 
         public class ParameterResult
         {
+            public string Id { get; set; }
             public string Name { get; set; }
             public string Type { get; set; }
             public bool IsRequired { get; set; }
@@ -42,6 +49,7 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
             {
                 return new ParameterResult
                 {
+                    Id = par.Id,
                     IsRequired = par.IsRequired,
                     Name = par.Name,
                     Type = Enum.GetName(typeof(ParameterTypes), par.Type),

@@ -63,6 +63,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 }
             };
         case fromActions.ActionTypes.COMPLETE_ADD_OPERATION_PARAMETER:
+            action.parameter.id = action.id;
             return {
                 ...state,
                 content: {

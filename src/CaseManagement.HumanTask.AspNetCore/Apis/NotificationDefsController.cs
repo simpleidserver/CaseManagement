@@ -88,6 +88,64 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPost("{id}/parameters")]
+        public async Task<IActionResult> AddParameter(string id, [FromBody] AddNotificationDefParameterCommand parameter, CancellationToken token)
+        {
+            try
+            {
+                parameter.Id = id;
+                var result = await _mediator.Send(parameter, token);
+                return new OkObjectResult(result);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+        [HttpDelete("{id}/parameters/{parameterId}")]
+        public async Task<IActionResult> DeleteParameter(string id, string parameterId, CancellationToken token)
+        {
+            try
+            {
+                var cmd = new DeleteNotificationDefParameterCommand { Id = id, ParameterId = parameterId };
+                await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
         [HttpPost("{id}/assignments")]
         public async Task<IActionResult> AddPeopleAssignment(string id, [FromBody] AddNotificationDefPeopleAssignmentCommand cmd, CancellationToken token)
         {
@@ -162,7 +220,6 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
                 }, HttpStatusCode.BadRequest, Request);
             }
         }
-
 
         [HttpDelete("{id}/presentationelts/{usage}/{language}")]
         public async Task<IActionResult> AddPresentationElement(string id, PresentationElementUsages usage, string language, CancellationToken token)

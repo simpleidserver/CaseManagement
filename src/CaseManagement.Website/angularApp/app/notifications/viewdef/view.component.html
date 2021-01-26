@@ -1,0 +1,23 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/notifications']">{{ 'BREADCRUMB.NOTIFICATIONS' | translate }}</a></li>
+        <li>{{ notificationDef.name }}</li>
+    </ul>
+    <div class="m-10">
+        <div class="mtop-10" *ngIf="!isErrorOccured">
+            <nav mat-tab-nav-bar>
+                <a mat-tab-link
+                   [routerLink]="['/notifications/'+id+'/info']"
+                   routerLinkActive
+                   #rla1="routerLinkActive"
+                   [active]="rla1.isActive">
+                    {{ 'NOTIFICATION.INFO' | translate }}
+                </a>
+            </nav>
+            <div class="mleft-10 mright-10 mtop-10">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

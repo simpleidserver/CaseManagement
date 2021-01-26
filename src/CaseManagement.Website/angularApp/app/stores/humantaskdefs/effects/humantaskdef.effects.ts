@@ -75,8 +75,8 @@ export class HumanTaskDefEffects {
             mergeMap((evt: fromHumanTask.AddOperationParameterOperation) => {
                 return this.humanTaskDefService.addParameter(evt.id, evt.parameter)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_OPERATION_PARAMETER, parameter: evt.parameter }; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_OPERATION_PARAMETER }))
+                        map((str) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_OPERATION_PARAMETER, id: str, parameter: evt.parameter }; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_OPERATION_PARAMETER }))
                     );
             }
             )

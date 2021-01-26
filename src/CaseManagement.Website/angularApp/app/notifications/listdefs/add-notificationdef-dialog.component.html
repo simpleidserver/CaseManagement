@@ -1,0 +1,16 @@
+﻿<h1 mat-dialog-title>{{ 'NOTIFICATION.ADD_NOTIFICATION' | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="addNotificationForm" (ngSubmit)="onAddNotification(addNotificationForm.value)">
+        <mat-form-field class="full-width">
+            <mat-label>{{ 'SHARED.NAME' | translate}}</mat-label>
+            <input matInput formControlName="name" type="text" required />
+            <mat-error *ngIf="addNotificationForm.get('name').hasError('required')">
+                {{ 'SHARED.IS_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        <button mat-raised-button color="primary">{{ 'SHARED.ADD' | translate }}</button>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="close()">{{ 'SHARED.CLOSE' | translate }}</button>
+</div>

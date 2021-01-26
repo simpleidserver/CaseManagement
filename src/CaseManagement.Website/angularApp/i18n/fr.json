@@ -7,7 +7,8 @@
     "LANGUAGES": "Languages",
     "PROCESSES": "Processes",
     "CASES": "Cases",
-    "HUMANTASKS": "Human Tasks"
+    "HUMANTASKS": "Human Tasks",
+    "NOTIFICATIONS": "Notifications"
   },
   "LANGUAGES": {
     "FRENCH": "French",
@@ -18,6 +19,7 @@
     "PROCESSES": "Processes",
     "CASES": "Cases",
     "HUMANTASKS": "Human Tasks",
+    "NOTIFICATIONS": "Notifications",
     "PROCESSINSTANCE": "Process instance '{{date}}'"
   },
   "BPMN": {
@@ -245,6 +247,59 @@
       "ERROR_ADD_ESCALATION_TO_PART": "An error occured while trying to add the escalation topart parameter",
       "ESCALATION_TO_PART_REMOVED": "Escalation ToPart parameter is removed",
       "ERROR_REMOVE_ESCALATION_TOPART": "An error occured while trying to remove the escalation topart parameter"
+    }
+  },
+  "NOTIFICATION": {
+    "PARAMETERTYPES": {
+      "INPUT": "Input",
+      "OUTPUT": "Output"
+    },
+    "PRESENTATIONELTUSAGES": {
+      "NAME": "Name",
+      "SUBJECT": "Subject",
+      "DESCRIPTION": "Description"
+    },
+    "ROLES": {
+      "POTENTIALOWNER": "Potential owner",
+      "EXCLUDEDOWNER": "Excluded owner",
+      "TASKINITIATOR": "Task initiator",
+      "TASKSTAKEHOLDER": "Task stake holder",
+      "BUSINESSADMINISTRATOR": "Business administrator",
+      "RECIPIENT": "Recipient"
+    },
+    "PARAMETERS": "Parameters",
+    "ADD_PARAMETER": "Add operation parameter",
+    "SELECT_PARAMETER_TYPE": "Select type",
+    "INSTANCES": "Notification instances",
+    "DEFINITIONS": "Notification definitions",
+    "ADD_NOTIFICATION": "Add notification",
+    "PARAMETER_USAGE": "Select direction",
+    "PRESENTATION_PARAMETERS": "Presentation parameters",
+    "PRESENTATIONELEMENTS": "Presentation elements",
+    "ASSIGNMENT": "Assignment",
+    "INFO": "Information",
+    "MESSAGES": {
+      "NOTIFICATION_CREATED": "Notification is created",
+      "INFO_UPDATED": "Notification is updated",
+      "PARAMETER_ADDED": "Operation parameter is added",
+      "PARAMETER_REMOVED": "Operation parameter is removed",
+      "PRESENTATION_PARAMETER_ADDED": "Presentation parameter is added",
+      "PRESENTATION_PARAMETER_REMOVED": "Presentation parameter is removed",
+      "ERROR_ADD_NOTIFICATIONDEF": "An error occured while trying to add notification",
+      "UNKNOWN_NOTIFICATION": "An error occured while trying to get the notification",
+      "PRESENTATION_ELT_ADDED": "Presentation element is added",
+      "PRESENTATION_ELT_REMOVED": "Presentation element is removed",
+      "PEOPLE_ASSIGNMENT_ADDED": "Assignment is removed",
+      "PEOPLE_ASSIGNMENT_REMOVED": "People is removed",
+      "ERROR_ADD_PARAMETER": "An error occured while trying to add the operation parameter",
+      "ERROR_UPDATE_INFO": "An error occured while trying to update the notification",
+      "ERROR_DELETE_PARAMETER": "An error occured while trying to remove the operation parameter",
+      "ERROR_ADD_PRESENTATION_PARAMETER": "An error occured while trying to add the presentation parameter",
+      "ERROR_DELETE_PRESENTATION_PARAMETER": "An error occured while trying to remove the presentation parameter",
+      "ERROR_ADD_PRESENTATION_ELT": "An error occured while trying to add the presentation element",
+      "ERROR_DELETE_PRESENTATION_ELT": "An error occured while trying to remove the presentation element",
+      "ERROR_DELETE_PEOPLE_ASSIGNMENT": "An error occured while trying to unassign people",
+      "ERROR_ADD_PEOPLE_ASSIGNMENT": "An error occured while trying to assign people"
     }
   },
   "SHARED": {

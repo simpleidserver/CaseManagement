@@ -61,14 +61,14 @@ export class HumanTaskDefService {
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
-    addParameter(id: string, parameter: Parameter): Observable<boolean> {
+    addParameter(id: string, parameter: Parameter): Observable<string> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters";
         const request: any = { parameter: parameter };
-        return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
+        return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 
     deleteParameter(id: string, parameterId: string): Observable<boolean> {
