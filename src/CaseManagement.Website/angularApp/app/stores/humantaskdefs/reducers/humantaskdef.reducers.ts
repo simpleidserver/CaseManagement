@@ -1,13 +1,13 @@
 ﻿import { Escalation } from '../../common/escalation.model';
 import { Parameter } from '../../common/parameter.model';
+import { PeopleAssignment } from '../../common/people-assignment.model';
+import { PresentationElement } from '../../common/presentationelement.model';
+import { PresentationParameter } from '../../common/presentationparameter.model';
+import { ToPart } from '../../common/topart.model';
 import * as fromActions from '../actions/humantaskdef.actions';
+import { Deadline } from '../models/deadline';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
-import { Deadline } from '../models/deadline';
-import { PresentationParameter } from '../../common/presentationparameter.model';
-import { PresentationElement } from '../../common/presentationelement.model';
-import { PeopleAssignment } from '../../common/people-assignment.model';
-import { ToPart } from '../../common/topart.model';
 
 export interface HumanTaskDefState{
     isLoading: boolean;
@@ -120,19 +120,19 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 }
             };
         case fromActions.ActionTypes.COMPLETE_UPDATE_DEADLINE:
-            var startDealines2 = state.content.deadLines;
-            const filteredStartedDeadline2 = startDealines2.filter(function (p: Deadline) {
+            var deadlines = state.content.deadLines;
+            const deadline = deadlines.filter(function (p: Deadline) {
                 return p.id === action.deadline.id;
             })[0];
-            const startDealineIndex2 = startDealines2.indexOf(filteredStartedDeadline2);
-            startDealines2.splice(startDealineIndex2, 1);
-            startDealines2.push(action.deadline);
+            deadline.for = action.deadline.for;
+            deadline.until = action.deadline.until;
+            deadline.name = action.deadline.name;
             return {
                 ...state,
                 content: {
                     ...state.content,
                     deadLines: [
-                        ...startDealines2
+                        ...deadlines
                     ]
                 }
             };
@@ -143,6 +143,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
             const escalation1 = new Escalation();
             escalation1.id = action.escId;
             escalation1.condition = action.condition;
+            escalation1.notificationId = action.notificationId;
             startDealine3.escalations.push(escalation1);
             return {
                 ...state,
@@ -166,11 +167,10 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 return p.id === action.deadLineId;
             })[0];
             var esc = dl.escalations.filter(function (esc: Escalation) {
-                return esc.id === action.escalation.id;
+                return esc.id === action.escalationId;
             })[0];
-            const i = dl.escalations.indexOf(esc);
-            dl.escalations.splice(i, 1);
-            dl.escalations.push(action.escalation);
+            esc.condition = action.condition;
+            esc.notificationId = action.notificationId;
             return {
                 ...state,
                 content: {
@@ -185,7 +185,7 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 return p.id === action.deadLineId;
             })[0];
             var esc = dl.escalations.filter(function (esc: Escalation) {
-                return esc.id === action.escalation.id;
+                return esc.id === action.escalationId;
             })[0];
             id = dl.escalations.indexOf(esc);
             dl.escalations.splice(id, 1);

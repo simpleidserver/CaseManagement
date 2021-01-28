@@ -773,17 +773,15 @@ this.ScenarioInitialize(scenarioInfo);
                         "Value"});
 #line 246
  testRunner.And("poll HTTP POST JSON request \'http://localhost/notificationinstances/.search\', unt" +
-                    "il \'$.content[?(@.name == \'notificationCompletion\')].name\'=\'notificationCompleti" +
-                    "on\'", ((string)(null)), table135, "And ");
+                    "il \'$.content[?(@.name == \'secondNotification\')].name\'=\'secondNotification\'", ((string)(null)), table135, "And ");
 #line 248
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 250
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 251
- testRunner.Then("JSON \'$.content[?(@.name == \'notificationCompletion\')].name\'=\'notificationComplet" +
-                    "ion\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'$.content[?(@.name == \'secondNotification\')].name\'=\'secondNotification\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 252
- testRunner.Then("JSON \'$.content[?(@.name == \'notificationCompletion\')].status\'=\'READY\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'$.content[?(@.name == \'secondNotification\')].status\'=\'READY\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

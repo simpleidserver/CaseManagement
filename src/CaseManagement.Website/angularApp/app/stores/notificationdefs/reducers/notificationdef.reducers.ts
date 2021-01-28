@@ -18,6 +18,12 @@ export interface SearchNotificationDefState {
     content: SearchNotificationDefsResult;
 }
 
+export interface NotificationDefLstState {
+    isLoading: boolean;
+    isErrorLoadOccured: boolean;
+    content: NotificationDefinition[];
+}
+
 export const initialNotificationDefState: NotificationDefState = {
     content: null,
     isLoading: true,
@@ -26,6 +32,12 @@ export const initialNotificationDefState: NotificationDefState = {
 
 export const initialNotificationDefsState: SearchNotificationDefState = {
     content: null,
+    isLoading: true,
+    isErrorLoadOccured: false
+};
+
+export const initialNotificationDefLstState: NotificationDefLstState = {
+    content: [],
     isLoading: true,
     isErrorLoadOccured: false
 };
@@ -177,5 +189,19 @@ export function notificationDefsReducer(state = initialNotificationDefsState, ac
                 ...state,
                 content: action.notificationDefsResult
             };
+        default:
+            return state;
     }
 };
+
+export function notificationDefLstReducer(state = initialNotificationDefLstState, action: fromActions.ActionsUnion) {
+    switch (action.type) {
+        case fromActions.ActionTypes.COMPLETE_GET_ALL:
+            return {
+                ...state,
+                content: action.notificationDefs
+            };
+        default:
+            return state;
+    }
+}

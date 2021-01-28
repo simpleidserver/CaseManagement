@@ -243,13 +243,13 @@ Scenario: Check a notification is created by CompletionDeadLine
 	And authenticate
 	| Key                                                                  | Value |
 	| http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier | guest |
-	And poll HTTP POST JSON request 'http://localhost/notificationinstances/.search', until '$.content[?(@.name == 'notificationCompletion')].name'='notificationCompletion'
+	And poll HTTP POST JSON request 'http://localhost/notificationinstances/.search', until '$.content[?(@.name == 'secondNotification')].name'='secondNotification'
 	| Key | Value |
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
-	Then JSON '$.content[?(@.name == 'notificationCompletion')].name'='notificationCompletion'
-	Then JSON '$.content[?(@.name == 'notificationCompletion')].status'='READY'
+	Then JSON '$.content[?(@.name == 'secondNotification')].name'='secondNotification'
+	Then JSON '$.content[?(@.name == 'secondNotification')].status'='READY'
 
 Scenario: Execute a composite task
 	When authenticate

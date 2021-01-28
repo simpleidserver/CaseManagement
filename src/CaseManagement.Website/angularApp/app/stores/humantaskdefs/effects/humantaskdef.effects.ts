@@ -143,9 +143,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.ADD_ESCALATION_DEADLINE),
             mergeMap((evt: fromHumanTask.AddEscalationDeadlineOperation) => {
-                return this.humanTaskDefService.addEscalationDeadline(evt.id, evt.deadlineId, evt.condition)
+                return this.humanTaskDefService.addEscalationDeadline(evt.id, evt.deadlineId, evt.condition, evt.notificationId)
                     .pipe(
-                        map((escId) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_ESCALATION_DEADLINE, deadlineId: evt.deadlineId, condition: evt.condition, escId: escId }; }),
+                        map((escId) => { return { type: fromHumanTask.ActionTypes.COMPLETE_ADD_ESCALATION_DEADLINE, deadlineId: evt.deadlineId, condition: evt.condition, escId: escId, notificationId: evt.notificationId }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_ADD_ESCALATION_DEADLINE }))
                     );
             }
@@ -157,9 +157,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.UPDATE_ESCALATION),
             mergeMap((evt: fromHumanTask.UpdateEscalationOperation) => {
-                return this.humanTaskDefService.updateEscalation(evt.id, evt.deadLineId, evt.escalation)
+                return this.humanTaskDefService.updateEscalation(evt.id, evt.deadLineId, evt.escalationId, evt.condition, evt.notificationId)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_ESCALATION, id: evt.id, deadLineId: evt.deadLineId, escalationId: evt.escalationId, condition: evt.condition, notificationId: evt.notificationId }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_ESCALATION }))
                     );
             }
@@ -171,9 +171,9 @@ export class HumanTaskDefEffects {
         .pipe(
             ofType(fromHumanTask.ActionTypes.DELETE_ESCALATION),
             mergeMap((evt: fromHumanTask.DeleteEscalationOperation) => {
-                return this.humanTaskDefService.deleteEscalation(evt.id, evt.deadLineId, evt.escalation)
+                return this.humanTaskDefService.deleteEscalation(evt.id, evt.deadLineId, evt.escalationId)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_ESCALATION, deadLineId: evt.deadLineId, escalation: evt.escalation }; }),
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_DELETE_ESCALATION, deadLineId: evt.deadLineId, escalationId: evt.escalationId }; }),
                         catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_DELETE_DEADLINE }))
                     );
             }

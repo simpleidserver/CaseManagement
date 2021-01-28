@@ -19,6 +19,11 @@ namespace CaseManagement.BPMN.Infrastructure.Jobs.Notifications
         {
             get
             {
+                if (Content == null)
+                {
+                    return null;
+                }
+
                 return JObject.Parse(Content);
             }
         }

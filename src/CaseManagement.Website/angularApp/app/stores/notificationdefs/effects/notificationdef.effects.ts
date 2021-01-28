@@ -178,5 +178,20 @@ export class NotificationDefEffects {
                     );
             }
             )
+    );
+
+    @Effect()
+    getAll = this.actions$
+        .pipe(
+            ofType(fromNotification.ActionTypes.GET_ALL),
+            mergeMap(() => {
+                return this.notificationDefService.getAll()
+                    .pipe(
+                        map((notificationDefs) => { return { type: fromNotification.ActionTypes.COMPLETE_GET_ALL, notificationDefs: notificationDefs }; }),
+                        catchError(() => of({ type: fromNotification.ActionTypes.ERROR_GET_ALL }))
+                    );
+            }
+            )
         );
+
 }

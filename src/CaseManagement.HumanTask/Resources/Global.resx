@@ -222,9 +222,6 @@
   <data name="UnknownNotification" xml:space="preserve">
     <value>Unknown notification '{0}'</value>
   </data>
-  <data name="UnknownStartDeadline" xml:space="preserve">
-    <value>Unknown start deadline</value>
-  </data>
   <data name="UnknownToPart" xml:space="preserve">
     <value>Unknown ToPart '{0}'</value>
   </data>

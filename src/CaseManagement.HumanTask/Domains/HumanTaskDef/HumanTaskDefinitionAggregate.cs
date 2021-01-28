@@ -210,12 +210,18 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
-        public string AddEscalationDeadline(string startDeadlineId, string condition)
+        public string AddEscalationDeadline(string startDeadlineId, string condition, string notificationId)
         {
             var result = Guid.NewGuid().ToString();
-            var evt = new HumanTaskDefEscalationDeadlineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, startDeadlineId, result, condition, DateTime.UtcNow);
+            var evt = new HumanTaskDefEscalationDeadlineAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, startDeadlineId, result, condition, notificationId, DateTime.UtcNow);
             Handle(evt);
             return result;
+        }
+
+        public void UpdateEscalationDeadline(string deadlineId, string escalationId, string condition, string notificationId)
+        {
+            var evt = new HumanTaskDefEscalationDeadlineUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, deadlineId, escalationId, condition, notificationId, DateTime.UtcNow);
+            Handle(evt);
         }
 
         public void DeleteEscalationDeadline(string completionDeadLineId, string escalationId)
@@ -390,10 +396,10 @@ namespace CaseManagement.HumanTask.Domains
         private void Handle(HumanTaskDefEscalationDeadlineAddedEvent evt)
         {
             var errors = new List<KeyValuePair<string, string>>();
-            var completionDeadLine = DeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
-            if (completionDeadLine == null)
+            var deadline = DeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            if (deadline == null)
             {
-                errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownStartDeadline));
+                errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownDeadline));
             }
 
             if (errors.Any())
@@ -401,11 +407,41 @@ namespace CaseManagement.HumanTask.Domains
                 throw new AggregateValidationException(errors);
             }
 
-            completionDeadLine.Escalations.Add(new Escalation
+            deadline.Escalations.Add(new Escalation
             {
+                NotificationId = evt.NotificationId,
                 Condition = evt.Condition,
                 Id = evt.EscalationId
             });
+            UpdateDateTime = evt.UpdateDateTime;
+            Version = evt.Version;
+        }
+
+        private void Handle(HumanTaskDefEscalationDeadlineUpdatedEvent evt)
+        {
+            Escalation escalation = null;
+            var errors = new List<KeyValuePair<string, string>>();
+            var deadline = DeadLines.FirstOrDefault(_ => _.Id == evt.DeadLineId);
+            if (deadline == null)
+            {
+                errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownDeadline));
+            }
+            else
+            {
+                escalation = deadline.Escalations.FirstOrDefault(_ => _.Id == evt.EscalationId);
+                if (escalation == null)
+                {
+                    errors.Add(new KeyValuePair<string, string>("validation", Global.UnknownEscalation));
+                }
+            }
+
+            if (errors.Any())
+            {
+                throw new AggregateValidationException(errors);
+            }
+
+            escalation.NotificationId = evt.NotificationId;
+            escalation.Condition = evt.Condition;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -417,7 +453,7 @@ namespace CaseManagement.HumanTask.Domains
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
                 {
-                    new KeyValuePair<string, string>("validation", Global.UnknownStartDeadline)
+                    new KeyValuePair<string, string>("validation", Global.UnknownDeadline)
                 });
             }
 

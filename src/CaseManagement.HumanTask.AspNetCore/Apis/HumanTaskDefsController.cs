@@ -420,6 +420,37 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPut("{id}/deadlines/{deadLineId}/escalations/{escalationId}")]
+        public async Task<IActionResult> UpdateDeadlineEscalation(string id, string deadLineId, string escalationId, [FromBody] UpdateHumanTaskDefEscalationDeadlineCommand updateHumanTaskDefEscalationStartDeadlineCommand, CancellationToken token)
+        {
+            try
+            {
+                updateHumanTaskDefEscalationStartDeadlineCommand.Id = id;
+                updateHumanTaskDefEscalationStartDeadlineCommand.DeadlineId = deadLineId;
+                updateHumanTaskDefEscalationStartDeadlineCommand.EscalationId = escalationId;
+                var newId = await _mediator.Send(updateHumanTaskDefEscalationStartDeadlineCommand, token);
+                return new NoContentResult();
+            }
+            catch (BadRequestException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.BadRequest, Request);
+            }
+            catch (UnknownHumanTaskDefException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+            catch (AggregateValidationException ex)
+            {
+                return this.ToError(ex.Errors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
         [HttpDelete("{id}/deadlines/{deadLineId}/escalations/{escalationId}")]
         public async Task<IActionResult> DeleteStartDeadlineEscalation(string id, string deadLineId, string escalationId, CancellationToken token)
         {

@@ -248,7 +248,7 @@ this.ScenarioInitialize(scenarioInfo);
                     "tanceId$/complete\'", ((string)(null)), table15, "And ");
 #line 55
  testRunner.And("poll \'http://localhost/processinstances/$processInstanceId$\', until \'executionPat" +
-                    "hs[0].executionPointers[?(@.flowNodeId == \'Activity_1b13yqe\')].flowNodeInstance." +
+                    "hs[0].executionPointers[?(@.flowNodeId == \'Activity_12xhvyl\')].flowNodeInstance." +
                     "state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 56
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

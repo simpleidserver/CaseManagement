@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -113,6 +114,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                 result.Add(MessageToken.NewMessage(userTask.Id, stateTransition.Content));
             }
 
+            Debug.WriteLine("COUCOU");
             return result;
         }
     }

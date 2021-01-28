@@ -1,37 +1,67 @@
-﻿<mat-card>
-    <mat-card-header>
-        <mat-card-title>{{ 'HUMANTASK.PARAMETERS' | translate }}</mat-card-title>
-        <div class="actions">
-            <button mat-icon-button (click)="addToPart($event)">
-                <mat-icon>add</mat-icon>
-            </button>
-        </div>
-    </mat-card-header>
-    <mat-card-content>
-        <table mat-table class="full-width" [dataSource]="toParts$">
-            <!-- Name -->
-            <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.NAME' | translate }}</th>
-                <td mat-cell *matCellDef="let toPart">
-                    {{ toPart.name }}
-                </td>
-            </ng-container>
-            <!-- Expression -->
-            <ng-container matColumnDef="expression">
-                <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.EXPRESSION' | translate }}</th>
-                <td mat-cell *matCellDef="let toPart">{{ toPart.expression }}</td>
-            </ng-container>
-            <!-- Actions -->
-            <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let toPart">
-                    <button *ngIf="toPart.name" mat-icon-button (click)="deleteToPart(toPart)">
-                        <mat-icon>remove_circle</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="toPartDisplayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: toPartDisplayedColumns;"></tr>
-        </table>
-    </mat-card-content>
-</mat-card>
+﻿<div fxLayout="column" fxLayoutGap="10px">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>{{ 'HUMANTASK.ESCALATION' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <!-- Update information -->
+            <form [formGroup]="escalationInfoForm" (ngSubmit)="updateEscalationInfo(escalationInfoForm.value)">
+                <!-- Condition -->
+                <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                    <mat-label>{{ 'SHARED.CONDITION' | translate }}</mat-label>
+                    <input matInput type="text" formControlName="condition" required />
+                    <mat-error *ngIf="escalationInfoForm.get('condition').hasError('required')">
+                        {{ 'SHARED.IS_REQUIRED' | translate }}
+                    </mat-error>
+                </mat-form-field>
+                <!-- Notification -->
+                <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+                    <mat-label>{{ "HUMANTASK.CHOOSE_NOTIFICATION" | translate }}</mat-label>
+                    <mat-select formControlName="notificationId">
+                        <mat-option *ngFor="let notificationDef of notificationDefs" [value]="notificationDef.id">
+                            {{ notificationDef.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-raised-button color="primary">{{ "SHARED.UPDATE" | translate }}</button>
+            </form>
+        </mat-card-content>
+    </mat-card>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>{{ 'HUMANTASK.PARAMETERS' | translate }}</mat-card-title>
+            <div class="actions">
+                <button mat-icon-button (click)="addToPart($event)">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </mat-card-header>
+        <mat-card-content>
+            <table mat-table class="full-width" [dataSource]="toParts$">
+                <!-- Name -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.NAME' | translate }}</th>
+                    <td mat-cell *matCellDef="let toPart">
+                        {{ toPart.name }}
+                    </td>
+                </ng-container>
+                <!-- Expression -->
+                <ng-container matColumnDef="expression">
+                    <th mat-header-cell *matHeaderCellDef>{{ 'SHARED.EXPRESSION' | translate }}</th>
+                    <td mat-cell *matCellDef="let toPart">{{ toPart.expression }}</td>
+                </ng-container>
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let toPart">
+                        <button *ngIf="toPart.name" mat-icon-button (click)="deleteToPart(toPart)">
+                            <mat-icon>remove_circle</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="toPartDisplayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: toPartDisplayedColumns;"></tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+</div>

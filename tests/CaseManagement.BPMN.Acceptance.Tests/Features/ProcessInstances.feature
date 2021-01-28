@@ -52,7 +52,7 @@ Scenario: Launch GetAppropriateDress bpmn process
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
 	| Key                 | Value               |
 	| operationParameters | { "degree" : "30" } |	
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[?(@.flowNodeId == 'Activity_1b13yqe')].flowNodeInstance.state'='Complete'
+	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[?(@.flowNodeId == 'Activity_12xhvyl')].flowNodeInstance.state'='Complete'
 	And extract JSON from body
 	
 	Then HTTP status code equals to '200'

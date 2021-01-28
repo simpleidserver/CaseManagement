@@ -1,10 +1,11 @@
 ﻿import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatSnackBar } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
 import { Escalation } from '@app/stores/common/escalation.model';
 import * as fromHumanTaskDefActions from '@app/stores/humantaskdefs/actions/humantaskdef.actions';
+import * as fromNotificationDefActions from '@app/stores/notificationdefs/actions/notificationdef.actions';
 import { Deadline } from '@app/stores/humantaskdefs/models/deadline';
 import { HumanTaskDef } from '@app/stores/humantaskdefs/models/humantaskdef.model';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
@@ -35,6 +36,7 @@ export class ViewDeadlineComponent implements OnInit {
         private store: Store<fromAppState.AppState>,
         private actions$: ScannedActionsSubject,
         private snackBar: MatSnackBar,
+        private router: Router,
         private translateService: TranslateService,
         private route: ActivatedRoute,
         private dialog: MatDialog) {
@@ -64,6 +66,37 @@ export class ViewDeadlineComponent implements OnInit {
                     duration: 2000
                 });
             });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.DELETE_ESCALATION))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ESCALATION_REMOVED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+                const id = this.route.snapshot.params['id'];
+                const deadlineId = this.route.snapshot.params['deadlineid'];
+                this.router.navigate(['/humantasks/' + id + '/deadline/' + deadlineId]);
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_DELETE_ESCALATION))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_DELETE_ESCALATION'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.COMPLETE_UPDATE_DEADLINE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.DEADLINE_UPDATED'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
+        this.actions$.pipe(
+            filter((action: any) => action.type === fromHumanTaskDefActions.ActionTypes.ERROR_UPDATE_DEADLINE))
+            .subscribe(() => {
+                this.snackBar.open(this.translateService.instant('HUMANTASK.MESSAGES.ERROR_UPDATE_DEADLINE'), this.translateService.instant('undo'), {
+                    duration: 2000
+                });
+            });
         this.store.pipe(select(fromAppState.selectHumanTaskResult)).subscribe((e: HumanTaskDef) => {
             if (!e) {
                 return;
@@ -82,7 +115,11 @@ export class ViewDeadlineComponent implements OnInit {
     }
 
     updateInfo(deadline: Deadline) {
-        console.log(deadline);
+        const id = this.route.snapshot.params['id'];
+        const deadlineId = this.route.snapshot.params['deadlineid'];
+        deadline.id = deadlineId;
+        const request = new fromHumanTaskDefActions.UpdateDeadlineOperation(id, deadline);
+        this.store.dispatch(request);
     }
 
     addDeadline(evt: any) {
@@ -95,14 +132,23 @@ export class ViewDeadlineComponent implements OnInit {
                 return;
             }
 
-            const request = new fromHumanTaskDefActions.AddEscalationDeadlineOperation(this.humanTaskDef.id, this.deadline.id, esc.condition);
+            const request = new fromHumanTaskDefActions.AddEscalationDeadlineOperation(this.humanTaskDef.id, this.deadline.id, esc.condition, esc.notificationId);
             this.store.dispatch(request);
         });
+    }
+
+    removeEscalation(escalation: Escalation) {
+        const id = this.route.snapshot.params['id'];
+        const deadlineId = this.route.snapshot.params['deadlineid'];
+        const request = new fromHumanTaskDefActions.DeleteEscalationOperation(id, deadlineId, escalation.id);
+        this.store.dispatch(request);
     }
 
     refresh() {
         const id = this.route.snapshot.params['id'];
         const request = new fromHumanTaskDefActions.GetHumanTaskDef(id);
         this.store.dispatch(request);
+        const getNotificationDefs = new fromNotificationDefActions.GetAll();
+        this.store.dispatch(getNotificationDefs);
     }
 }

@@ -376,15 +376,6 @@ namespace CaseManagement.HumanTask.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Unknown start deadline.
-        /// </summary>
-        internal static string UnknownStartDeadline {
-            get {
-                return ResourceManager.GetString("UnknownStartDeadline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Unknown ToPart &apos;{0}&apos;.
         /// </summary>
         internal static string UnknownToPart {

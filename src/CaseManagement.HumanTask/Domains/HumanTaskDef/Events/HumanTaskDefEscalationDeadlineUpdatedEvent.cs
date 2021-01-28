@@ -2,19 +2,12 @@
 using System;
 using System.Diagnostics;
 
-namespace CaseManagement.HumanTask.Domains.HumanTaskDef.Events
+namespace CaseManagement.HumanTask.Domains
 {
-    [DebuggerDisplay("Add escalation deadline")]
-    public class HumanTaskDefEscalationDeadlineAddedEvent : DomainEvent
+    [DebuggerDisplay("Escalation is updated")]
+    public class HumanTaskDefEscalationDeadlineUpdatedEvent : DomainEvent
     {
-        public HumanTaskDefEscalationDeadlineAddedEvent(string id,
-            string aggregateId,
-            int version,
-            string deadlineId,
-            string escalationId,
-            string condition,
-            string notificationId,
-            DateTime updateDateTime) : base(id, aggregateId, version)
+        public HumanTaskDefEscalationDeadlineUpdatedEvent(string id, string aggregateId, int version, string deadlineId, string escalationId, string condition, string notificationId, DateTime updateDateTime) : base(id, aggregateId, version)
         {
             DeadLineId = deadlineId;
             EscalationId = escalationId;

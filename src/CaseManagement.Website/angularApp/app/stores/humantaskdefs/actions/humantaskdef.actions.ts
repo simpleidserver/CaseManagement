@@ -1,14 +1,13 @@
 ﻿import { Action } from '@ngrx/store';
-import { Escalation } from '../../common/escalation.model';
 import { Parameter } from '../../common/parameter.model';
 import { PeopleAssignment } from '../../common/people-assignment.model';
 import { PresentationElement } from '../../common/presentationelement.model';
+import { PresentationParameter } from '../../common/presentationparameter.model';
 import { RenderingElement } from '../../common/rendering.model';
+import { ToPart } from '../../common/topart.model';
 import { Deadline } from '../models/deadline';
 import { HumanTaskDef } from '../models/humantaskdef.model';
 import { SearchHumanTaskDefsResult } from '../models/searchhumantaskdef.model';
-import { PresentationParameter } from '../../common/presentationparameter.model';
-import { ToPart } from '../../common/topart.model';
 
 export enum ActionTypes {
     START_GET_HUMANTASKDEF = "[HumanTaskDef] START_GET_HUMANTASKDEF",
@@ -179,12 +178,12 @@ export class CompleteUpdateDeadlineOperation implements Action {
 
 export class AddEscalationDeadlineOperation implements Action {
     readonly type = ActionTypes.ADD_ESCALATION_DEADLINE;
-    constructor(public id: string, public deadlineId: string, public condition: string) { }
+    constructor(public id: string, public deadlineId: string, public condition: string, public notificationId: string) { }
 }
 
 export class CompleteAddEscalationDeadlineOperation implements Action {
     readonly type = ActionTypes.COMPLETE_ADD_ESCALATION_DEADLINE;
-    constructor(public deadlineId: string, public condition: string, public escId: string) { }
+    constructor(public deadlineId: string, public condition: string, public escId: string, public notificationId : string) { }
 }
 
 export class UpdatePeopleAssignmentOperation implements Action {
@@ -199,22 +198,22 @@ export class CompletePeopleAssignmentOperation implements Action {
 
 export class UpdateEscalationOperation implements Action {
     readonly type = ActionTypes.UPDATE_ESCALATION;
-    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
+    constructor(public id: string, public deadLineId: string, public escalationId: string, public condition: string, public notificationId: string) { }
 }
 
 export class CompleteUpdateEscalationOperation implements Action {
     readonly type = ActionTypes.COMPLETE_UPDATE_ESCALATION;
-    constructor(public deadLineId: string, public escalation: Escalation) { }
+    constructor(public id: string, public deadLineId: string, public escalationId: string, public condition: string, public notificationId: string) { }
 }
 
 export class DeleteEscalationOperation implements Action {
     readonly type = ActionTypes.DELETE_ESCALATION;
-    constructor(public id: string, public deadLineId: string, public escalation: Escalation) { }
+    constructor(public id: string, public deadLineId: string, public escalationId: string) { }
 }
 
 export class CompleteDeleteEscalationOperation implements Action {
     readonly type = ActionTypes.COMPLETE_DELETE_ESCALATION;
-    constructor(public deadLineId: string, public escalation: Escalation) { }
+    constructor(public id: string, public deadLineId: string, public escalationId: string) { }
 }
 
 export class AddHumanTaskDefOperation implements Action {

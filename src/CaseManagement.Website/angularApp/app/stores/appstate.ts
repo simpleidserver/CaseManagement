@@ -21,7 +21,8 @@ export interface AppState {
     bpmnInstances: fromBpmnInstances.BpmnInstanceLstState;
     bpmnInstance: fromBpmnInstances.BpmnInstanceState;
     notifications: fromNotification.SearchNotificationDefState,
-    notification: fromNotification.NotificationDefState
+    notification: fromNotification.NotificationDefState,
+    notificationLst: fromNotification.NotificationDefLstState
 }
 
 export const selectCmmnPlan = (state: AppState) => state.cmmnPlan;
@@ -38,6 +39,18 @@ export const selectBpmnInstances = (state: AppState) => state.bpmnInstances;
 export const selectBpmnInstance = (state: AppState) => state.bpmnInstance;
 export const selectNotifications = (state: AppState) => state.notifications;
 export const selectNotification = (state: AppState) => state.notification;
+export const selectNotificationLst = (state: AppState) => state.notificationLst;
+
+export const selectNotificationLstResult = createSelector(
+    selectNotificationLst,
+    (state: fromNotification.NotificationDefLstState) => {
+        if (!state || state.content == null) {
+            return [];
+        }
+
+        return state.content;
+    }
+);
 
 export const selectCmmnPlanResult = createSelector(
     selectCmmnPlan,
@@ -207,5 +220,6 @@ export const appReducer = {
     bpmnInstances: fromBpmnInstances.bpmnInstanceLstReducer,
     bpmnInstance: fromBpmnInstances.bpmnInstanceReducer,
     notifications: fromNotification.notificationDefsReducer,
-    notification: fromNotification.notificationDefReducer
+    notification: fromNotification.notificationDefReducer,
+    notificationLst: fromNotification.notificationDefLstReducer
 };

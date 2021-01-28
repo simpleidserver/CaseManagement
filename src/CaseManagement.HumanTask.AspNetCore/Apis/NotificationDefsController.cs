@@ -39,6 +39,13 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll(CancellationToken token)
+        {
+            var result = await _mediator.Send(new GetAllNotificationDefQuery(), token);
+            return new OkObjectResult(result);
+        }
+
         [HttpPost(".search")]
         public async Task<IActionResult> Search([FromBody] SearchNotificationDefQuery parameter, CancellationToken token)
         {

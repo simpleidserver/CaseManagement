@@ -133,4 +133,13 @@ export class NotificationDefService {
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/assignments/" + peopleAssignment.id;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
+
+    getAll(): Observable<NotificationDefinition[]> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json');
+        headers = headers.set('Content-Type', 'application/json');
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs";
+        return this.http.get<NotificationDefinition[]>(targetUrl, { headers: headers });
+    }
 }

@@ -9,23 +9,23 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
 {
-    public class AddHumanTaskDefEscalationDeadlineCommandHandler : IRequestHandler<AddHumanTaskDefEscalationDeadlineCommand, string>
+    public class UpdateHumanTaskDefEscalationDeadlineCommandHandler : IRequestHandler<UpdateHumanTaskDefEscalationDeadlineCommand, bool>
     {
         private readonly IHumanTaskDefCommandRepository _humanTaskDefCommandRepository;
         private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
-        private readonly ILogger<AddHumanTaskDefEscalationDeadlineCommandHandler> _logger;
+        private readonly ILogger<UpdateHumanTaskDefEscalationDeadlineCommandHandler> _logger;
 
-        public AddHumanTaskDefEscalationDeadlineCommandHandler(
+        public UpdateHumanTaskDefEscalationDeadlineCommandHandler(
             IHumanTaskDefCommandRepository humanTaskDefCommandRepository,
             IHumanTaskDefQueryRepository humanTaskDefQueryRepository,
-            ILogger<AddHumanTaskDefEscalationDeadlineCommandHandler> logger)
+            ILogger<UpdateHumanTaskDefEscalationDeadlineCommandHandler> logger)
         {
             _humanTaskDefCommandRepository = humanTaskDefCommandRepository;
             _humanTaskDefQueryRepository = humanTaskDefQueryRepository;
             _logger = logger;
         }
 
-        public async Task<string> Handle(AddHumanTaskDefEscalationDeadlineCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateHumanTaskDefEscalationDeadlineCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Condition))
             {
@@ -40,11 +40,11 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Commands.Handlers
                 throw new UnknownHumanTaskDefException(string.Format(Global.UnknownHumanTaskDef, request.Id));
             }
 
-            var id = result.AddEscalationDeadline(request.DeadlineId, request.Condition, request.NotificationId);
+            result.UpdateEscalationDeadline(request.DeadlineId, request.EscalationId, request.Condition, request.NotificationId);
             await _humanTaskDefCommandRepository.Update(result, cancellationToken);
             await _humanTaskDefCommandRepository.SaveChanges(cancellationToken);
-            _logger.LogInformation("Escalation has been added to deadline");
-            return id;
+            _logger.LogInformation("Escalation has been updated");
+            return true;
         }
     }
 }

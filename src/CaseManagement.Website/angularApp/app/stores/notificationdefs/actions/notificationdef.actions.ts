@@ -42,7 +42,10 @@ export enum ActionTypes {
     ERROR_ADD_PEOPLE_ASSIGNMENT = "[NotificationDef] ERROR_ADD_PEOPLE_ASSIGNMENT",
     DELETE_PEOPLE_ASSIGNMENT = "[NotificationDef] DELETE_PEOPLE_ASSIGNMENT",
     COMPLETE_DELETE_PEOPLE_ASSIGNMENT = "[NotificationDef] COMPLETE_DELETE_PEOPLE_ASSIGNMENT",
-    ERROR_DELETE_PEOPLE_ASSIGNMENT = "[NotificationDef] ERROR_DELETE_PEOPLE_ASSIGNMENT"
+    ERROR_DELETE_PEOPLE_ASSIGNMENT = "[NotificationDef] ERROR_DELETE_PEOPLE_ASSIGNMENT",
+    GET_ALL = "[NotificationDef] GET_ALL",
+    COMPLETE_GET_ALL = "[NotificationDef] COMPLETE_GET_ALL",
+    ERROR_GET_ALL = "[NotificationDef] ERROR_GET_ALL"
 }
 
 export class SearchNotificationDefOperation implements Action {
@@ -165,6 +168,16 @@ export class CompleteDeletePeopleAssignment implements Action {
     constructor(public id: string, public peopleAssignment: PeopleAssignment) { }
 }
 
+export class GetAll implements Action {
+    readonly type = ActionTypes.GET_ALL;
+    constructor() { }
+}
+
+export class CompleteGetAll implements Action {
+    readonly type = ActionTypes.COMPLETE_GET_ALL;
+    constructor(public notificationDefs: NotificationDefinition[]) { }
+}
+
 export type ActionsUnion =
     SearchNotificationDefOperation |
     CompleteSearchNotificationDefOperation |
@@ -189,4 +202,6 @@ export type ActionsUnion =
     AddPeopleAssignment |
     CompleteAddPeopleAssigment |
     DeletePeopleAssignment |
-    CompleteDeletePeopleAssignment;
+    CompleteDeletePeopleAssignment |
+    GetAll |
+    CompleteGetAll;
