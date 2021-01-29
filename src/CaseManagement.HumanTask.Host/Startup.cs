@@ -50,21 +50,6 @@ namespace CaseManagement.HumanTask.Host
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
                 .AddName("fr", "Capturer les détails de la réclamation")
                 .AddName("en", "Capture claim details")
-                .AddTxt("firstName", cb =>
-                {
-                    cb.AddLabel("fr", "Prénom");
-                    cb.AddLabel("en", "Firstname");
-                })
-                .AddTxt("lastName", cb =>
-                {
-                    cb.AddLabel("fr", "Nom");
-                    cb.AddLabel("en", "Lastname");
-                })
-                .AddTxt("claim", cb =>
-                {
-                    cb.AddLabel("fr", "Motif de la réclamation");
-                    cb.AddLabel("en", "Claim");
-                })
                 .AddOutputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .AddOutputOperationParameter("lastName", ParameterTypes.STRING, true)
                 .AddOutputOperationParameter("claim", ParameterTypes.STRING, true)
@@ -74,7 +59,6 @@ namespace CaseManagement.HumanTask.Host
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
                 .AddName("fr", "Saisir la température")
                 .AddName("en", "Enter degree")
-                .AddTxt("degree", cb => cb.AddLabel("fr", "Température"))
                 .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
                 .Build();
             var updateClaimantContactDetailsForm = HumanTaskDefBuilder.New("updateClaimantContactDetailsForm")
@@ -82,8 +66,6 @@ namespace CaseManagement.HumanTask.Host
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
                 .AddName("fr", "Mettre à jour les informations de contact du 'Claimant'")
                 .AddName("en", "Update claimant contact details")
-                .AddTxt("firstName", cb => cb.AddLabel("fr", "Firstname"))
-                .AddTxt("lastName", cb => cb.AddLabel("fr", "Lastname"))
                 .AddOutputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .AddOutputOperationParameter("lastName", ParameterTypes.STRING, true)
                 .Build();

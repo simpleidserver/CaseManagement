@@ -98,7 +98,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 humanTaskDef.OperationParameters,
                 humanTaskDef.CompletionAction,
                 humanTaskDef.Completions,
-                humanTaskDef.RenderingElements,
+                humanTaskDef.Rendering,
                 request.CallbackUrls == null ? new List<CallbackOperation>() : request.CallbackUrls.Select(_ => new CallbackOperation
                 {
                     Id = Guid.NewGuid().ToString(),

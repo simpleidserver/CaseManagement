@@ -17,7 +17,6 @@ namespace CaseManagement.HumanTask.Domains
             OperationParameters = new List<Parameter>();
             PresentationElements = new List<PresentationElementDefinition>();
             PeopleAssignments = new List<PeopleAssignmentDefinition>();
-            RenderingElements = new List<RenderingElement>();
             DeadLines = new List<HumanTaskDefinitionDeadLine>();
             Completions = new List<Completion>();
             SubTasks = new List<HumanTaskDefinitionSubTask>();
@@ -73,7 +72,7 @@ namespace CaseManagement.HumanTask.Domains
         /// <summary>
         /// This element is used to specify rendering method. It is optional.
         /// </summary>
-        public ICollection<RenderingElement> RenderingElements { get; set; }
+        public string Rendering { get; set; }
         /// <summary>
         /// This element specifies different deadlines.
         /// It is optional.
@@ -110,7 +109,7 @@ namespace CaseManagement.HumanTask.Domains
                 PresentationParameters = PresentationParameters.Select(_ => (PresentationParameter)_.Clone()).ToList(),
                 Outcome = Outcome,
                 SearchBy = SearchBy,
-                RenderingElements = RenderingElements.Select(_ => (RenderingElement)_.Clone()).ToList(),
+                Rendering = Rendering,
                 DeadLines = DeadLines.Select(_ => (HumanTaskDefinitionDeadLine)_.Clone()).ToList(),
                 CompletionAction = CompletionAction,
                 InstantiationPattern = InstantiationPattern,
@@ -230,9 +229,9 @@ namespace CaseManagement.HumanTask.Domains
             Handle(evt);
         }
 
-        public void UpdateRendering(ICollection<RenderingElement> renderingElements)
+        public void UpdateRendering(string rendering)
         {
-            var evt = new HumanTaskDefRenderingUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, renderingElements, DateTime.UtcNow);
+            var evt = new HumanTaskDefRenderingUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, rendering, DateTime.UtcNow);
             Handle(evt);
         }
 
@@ -480,31 +479,7 @@ namespace CaseManagement.HumanTask.Domains
 
         private void Handle(HumanTaskDefRenderingUpdatedEvent evt)
         {
-            RenderingElements.Clear();
-            foreach(var renderingElt in evt.RenderingElements)
-            {
-                RenderingElements.Add(new RenderingElement
-                {
-                    Default = renderingElt.Default,
-                    Labels = renderingElt.Labels.Select(_ => new Translation
-                    {
-                        Language = _.Language,
-                        Value = _.Value
-                    }).ToList(),
-                    Values = renderingElt.Values.Select(_ => new OptionValue
-                    {
-                        DisplayNames = _.DisplayNames.Select(d => new Translation
-                        {
-                            Language = d.Language,
-                            Value = d.Value
-                        }).ToList()
-                    }).ToList(),
-                    ValueType = renderingElt.ValueType,
-                    XPath = renderingElt.XPath
-                });
-            }
-
-            RenderingElements = evt.RenderingElements;
+            Rendering = evt.Rendering;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }

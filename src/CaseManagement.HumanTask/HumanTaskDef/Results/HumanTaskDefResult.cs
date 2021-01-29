@@ -1,4 +1,5 @@
 ﻿using CaseManagement.HumanTask.Domains;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
         public ICollection<ParameterResult> OperationParameters { get; set; }
         public ICollection<PeopleAssignmentDefinitionResult> PeopleAssignments { get; set; }
         public ICollection<PresentationElementDefinitionResult> PresentationElements { get; set; }
-        public ICollection<RenderingElementResult> RenderingElements { get; set; }
+        public JObject Rendering { get; set; }
         public ICollection<HumanTaskDefinitionDeadLineResult> DeadLines { get; set; }
         public ICollection<PresentationParameterResult> PresentationParameters { get; set; }
         public ICollection<CallbackOperationResult> CallbackOperations { get; set; }
@@ -39,10 +40,14 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 Version = humanTaskDef.Version,
                 SearchBy = humanTaskDef.SearchBy,
                 Outcome = humanTaskDef.Outcome,
+                Rendering = string.IsNullOrWhiteSpace(humanTaskDef.Rendering) ? new JObject()
+                {
+                    { "type", "container" },
+                    { "children", new JArray() }
+                } : JObject.Parse(humanTaskDef.Rendering),
                 OperationParameters = humanTaskDef.OperationParameters.Select(_ => ParameterResult.ToDto(_)).ToList(),
                 PeopleAssignments = humanTaskDef.PeopleAssignments.Select(_ => PeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
                 PresentationElements = humanTaskDef.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
-                RenderingElements = humanTaskDef.RenderingElements.Select(_ => RenderingElementResult.ToDto(_)).ToList(),
                 DeadLines = humanTaskDef.DeadLines.Select(_ => HumanTaskDefinitionDeadLineResult.ToDto(_)).ToList(),
                 PresentationParameters = humanTaskDef.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList()
             };
@@ -270,48 +275,6 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             }
         }
 
-        public class RenderingElementResult
-        {
-            public RenderingElementResult()
-            {
-                Labels = new List<TranslationResult>();
-                Values = new List<OptionValueResult>();
-            }
-
-            public string Id { get; set; }
-            public string XPath { get; set; }
-            public string ValueType { get; set; }
-            public string Default { get; set; }
-            public IEnumerable<OptionValueResult> Values { get; set; }
-            public IEnumerable<TranslationResult> Labels { get; set; }
-
-            public static RenderingElementResult ToDto(RenderingElement rd)
-            {
-                return new RenderingElementResult
-                {
-                    Id = rd.Id,
-                    Default = rd.Default,
-                    ValueType = rd.ValueType,
-                    XPath = rd.XPath,
-                    Values = rd.Values?.Select(_ => OptionValueResult.ToDto(_)),
-                    Labels = rd.Labels?.Select(_ => TranslationResult.ToDto(_))
-                };
-            }
-
-            public RenderingElement ToDomain()
-            {
-                return new RenderingElement
-                {
-                    Id = Id,
-                    XPath = XPath,
-                    ValueType = ValueType,
-                    Default = Default,
-                    Values = Values?.Select(_ => _.ToDomain()).ToList(),
-                    Labels = Labels?.Select(_ => _.ToDomain()).ToList()
-                };
-            }
-        }
-
         public class TranslationResult
         {
             public string Language { get; set; }
@@ -332,35 +295,6 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
                 {
                     Language = Language,
                     Value = Value
-                };
-            }
-        }
-
-        public class OptionValueResult
-        {
-            public OptionValueResult()
-            {
-                DisplayNames = new List<TranslationResult>();
-            }
-
-            public string Value { get; set; }
-            public ICollection<TranslationResult> DisplayNames { get; set; }
-
-            public static OptionValueResult ToDto(OptionValue ov)
-            {
-                return new OptionValueResult
-                {
-                    Value = ov.Value,
-                    DisplayNames = ov.DisplayNames.Select(_ => TranslationResult.ToDto(_)).ToList()
-                };
-            }
-
-            public OptionValue ToDomain()
-            {
-                return new OptionValue
-                {
-                    Value = Value,
-                    DisplayNames = DisplayNames.Select(_ => _.ToDomain()).ToList()
                 };
             }
         }

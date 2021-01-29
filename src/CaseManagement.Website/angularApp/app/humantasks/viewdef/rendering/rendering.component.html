@@ -83,8 +83,13 @@
             </mat-accordion>
             <mat-list>
             </mat-list>
-        </div>
+    </div>
     <div fxFlex="80%" class="ui-editor" (drop)="dropColumn($event)" (dragover)="dragOver($event)">
+        <div class="actions">
+            <button (click)="save()" mat-icon-button>
+                <mat-icon>save</mat-icon>
+            </button>
+        </div>
         <dynamic-component [option]="option"></dynamic-component>
     </div>
 </div>

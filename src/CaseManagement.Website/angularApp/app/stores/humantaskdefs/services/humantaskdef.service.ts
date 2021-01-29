@@ -7,7 +7,6 @@ import { Parameter } from '../../common/parameter.model';
 import { PeopleAssignment } from '../../common/people-assignment.model';
 import { PresentationElement } from '../../common/presentationelement.model';
 import { PresentationParameter } from '../../common/presentationparameter.model';
-import { RenderingElement } from '../../common/rendering.model';
 import { ToPart } from '../../common/topart.model';
 import { Deadline } from '../models/deadline';
 import { HumanTaskDef } from '../models/humantaskdef.model';
@@ -79,13 +78,13 @@ export class HumanTaskDefService {
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
 
-    updateRendering(id: string, renderingElements: RenderingElement[]): Observable<boolean> {
+    updateRendering(id: string, rendering: any): Observable<boolean> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/rendering";
-        const request: any = { renderingElements: renderingElements};
+        const request: any = { rendering: rendering};
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
     }
 

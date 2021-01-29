@@ -93,16 +93,6 @@ export function humanTaskDefReducer(state = initialHumanTaskDefState, action: fr
                 };
                 return result;
             }
-        case fromActions.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER:
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    renderingElements: [
-                        ...action.renderingElements
-                    ]
-                }
-            };
         case fromActions.ActionTypes.DELETE_DEADLINE:
             var startDeadLines = state.content.deadLines;
             const filteredStartDealine = startDeadLines.filter(function (p: Deadline) {

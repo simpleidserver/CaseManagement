@@ -1,9 +1,8 @@
 ﻿import { Parameter } from "../../common/parameter.model";
 import { PeopleAssignment } from "../../common/people-assignment.model";
 import { PresentationElement } from "../../common/presentationelement.model";
-import { RenderingElement } from "../../common/rendering.model";
-import { Deadline } from "./deadline";
 import { PresentationParameter } from "../../common/presentationparameter.model";
+import { Deadline } from "./deadline";
 
 export class HumanTaskDef {
     constructor() {
@@ -91,7 +90,7 @@ export class HumanTaskDef {
             return d.usage === 'COMPLETION';
         });
     }
-    renderingElements: RenderingElement[];
+    rendering: string[];
     presentationParameters: PresentationParameter[];
     deadLines: Deadline[];
 }

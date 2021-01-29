@@ -15,6 +15,7 @@ import { HeaderComponent } from "./header/header.component";
 })
 export class DynamicComponent implements OnInit, OnDestroy {
     private componentRef: ComponentRef<{}>;
+    private _option: any;
     private _dic: any = {
         'row': RowComponent,
         'column': ColumnComponent,
@@ -26,7 +27,18 @@ export class DynamicComponent implements OnInit, OnDestroy {
     @ViewChild('container', { read: ViewContainerRef }) container: ViewContainerRef;
     @ViewChild('parent', { read: ViewContainerRef }) parent: ViewContainerRef;
     baseUIComponent: BaseUIComponent = null;
-    @Input() option: any = null;
+    @Input()
+    get option() {
+        return this._option;
+    }
+    set option(val: any) {
+        if (!val) {
+            return;
+        }
+
+        this._option = val;
+        this.refresh();
+    }
     @Input() parentOption: any = null;
 
     isSelected: boolean = false;
@@ -98,12 +110,13 @@ export class DynamicComponent implements OnInit, OnDestroy {
             return;
         }
 
+        this.container.clear();
         const type = this._dic[this.option.type];
         const factory = this.compFactoryResolver.resolveComponentFactory(type);
         this.componentRef = this.container.createComponent(factory);
         this.baseUIComponent = this.componentRef.instance as BaseUIComponent;
-        this.baseUIComponent .option = this.option;
-        this.baseUIComponent .parent = this.parent;
+        this.baseUIComponent.option = this.option;
+        this.baseUIComponent.parent = this.parent;
         this.title = this.option.type;
     }
 }

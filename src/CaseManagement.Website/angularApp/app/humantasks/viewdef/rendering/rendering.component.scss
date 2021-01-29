@@ -47,6 +47,14 @@ ul.toolbar li {
 
 .ui-editor {
     min-height: 300px;
+    position: relative;
+}
+
+.ui-editor .actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
 }
 
 .fields {

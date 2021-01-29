@@ -174,11 +174,11 @@ Scenario: Check rendering can be updated
 	And extract JSON from body
 	And extract 'id' from JSON body into 'humanTaskDefId'	
 	And execute HTTP PUT JSON request 'http://localhost/humantasksdefs/$humanTaskDefId$/rendering'
-	| Key               | Value                 |
-	| renderingElements | [ { xPath: 'xpath' }] |
+	| Key       | Value                   |
+	| rendering | { "type": "container" } |
 	And execute HTTP GET request 'http://localhost/humantasksdefs/$humanTaskDefId$'
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
 	Then JSON 'name'='updateRendering'
-	Then JSON 'renderingElements[0].xPath'='xPath'
+	Then JSON 'rendering.type'='container'

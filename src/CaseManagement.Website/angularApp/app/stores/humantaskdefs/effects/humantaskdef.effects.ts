@@ -99,12 +99,12 @@ export class HumanTaskDefEffects {
     @Effect()
     updateRenderingAction = this.actions$
         .pipe(
-            ofType(fromHumanTask.ActionTypes.UPDATE_RENDERING_PARAMETER),
+            ofType(fromHumanTask.ActionTypes.UPDATE_RENDERING),
             mergeMap((evt: fromHumanTask.UpdateRenderingOperation) => {
-                return this.humanTaskDefService.updateRendering(evt.id, evt.renderingElements)
+                return this.humanTaskDefService.updateRendering(evt.id, evt.rendering)
                     .pipe(
-                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER, renderingElements: evt.renderingElements}; }),
-                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_RENDERING_PARAMETER }))
+                        map(() => { return { type: fromHumanTask.ActionTypes.COMPLETE_UPDATE_RENDERING, rendering: evt.rendering}; }),
+                        catchError(() => of({ type: fromHumanTask.ActionTypes.ERROR_UPDATE_RENDERING }))
                     );
             }
             )

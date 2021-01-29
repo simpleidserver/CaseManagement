@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TranslateFieldPipe } from '../infrastructure/pipes/translateFieldPipe';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { HumanTasksComponent } from './humantasks.component';
@@ -86,10 +85,8 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         RowComponent,
         TxtComponent,
         HeaderComponent,
-        ContainerComponent,
-        TranslateFieldPipe
-    ],
-    providers: [ TranslateFieldPipe ]
+        ContainerComponent
+    ]
 })
 
 export class HumanTasksModule { }

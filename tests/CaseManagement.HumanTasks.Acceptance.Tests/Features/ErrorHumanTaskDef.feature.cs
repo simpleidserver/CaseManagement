@@ -1190,7 +1190,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 357
  testRunner.Then("JSON \'status\'=\'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 358
- testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'renderingelements\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'errors.bad_request[0]\'=\'Parameter \'rendering\' is missing\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -1212,8 +1212,8 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
             table39.AddRow(new string[] {
-                        "renderingElements",
-                        "[ { xPath: \'xpath\' }]"});
+                        "rendering",
+                        "{ \"type\": \"container\" }"});
 #line 361
  testRunner.When("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/def/rendering\'", ((string)(null)), table39, "When ");
 #line 364

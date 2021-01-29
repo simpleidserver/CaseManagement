@@ -4,13 +4,14 @@ using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
 {
-    public class GetRenderingQueryHandler : IRequestHandler<GetRenderingQuery, ICollection<RenderingElement>>
+    public class GetRenderingQueryHandler : IRequestHandler<GetRenderingQuery, JObject>
     {
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
         private readonly ILogger<GetRenderingQueryHandler> _logger;
@@ -23,7 +24,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
             _logger = logger;
         }
 
-        public async Task<ICollection<RenderingElement>> Handle(GetRenderingQuery request, CancellationToken cancellationToken)
+        public async Task<JObject> Handle(GetRenderingQuery request, CancellationToken cancellationToken)
         {
             var result = await _humanTaskInstanceQueryRepository.Get(request.HumanTaskInstanceId, cancellationToken);
             if (result == null)
@@ -32,7 +33,11 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Queries.Handlers
                 throw new UnknownHumanTaskInstanceException(string.Format(Global.UnknownHumanTaskInstance, request.HumanTaskInstanceId));
             }
 
-            return result.RenderingElements;
+            return string.IsNullOrWhiteSpace(result.Rendering) ? new JObject()
+            {
+                { "type", "container" },
+                { "children", new JArray() }
+            } : JObject.Parse(result.Rendering);
         }
     }
 }

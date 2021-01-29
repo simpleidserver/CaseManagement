@@ -572,8 +572,8 @@ this.ScenarioInitialize(scenarioInfo);
                         "Key",
                         "Value"});
             table100.AddRow(new string[] {
-                        "renderingElements",
-                        "[ { xPath: \'xpath\' }]"});
+                        "rendering",
+                        "{ \"type\": \"container\" }"});
 #line 176
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/humantasksdefs/$humanTaskDefId$/r" +
                     "endering\'", ((string)(null)), table100, "And ");
@@ -586,7 +586,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 183
  testRunner.Then("JSON \'name\'=\'updateRendering\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 184
- testRunner.Then("JSON \'renderingElements[0].xPath\'=\'xPath\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'rendering.type\'=\'container\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

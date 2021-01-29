@@ -3,7 +3,6 @@ import { Parameter } from '../../common/parameter.model';
 import { PeopleAssignment } from '../../common/people-assignment.model';
 import { PresentationElement } from '../../common/presentationelement.model';
 import { PresentationParameter } from '../../common/presentationparameter.model';
-import { RenderingElement } from '../../common/rendering.model';
 import { ToPart } from '../../common/topart.model';
 import { Deadline } from '../models/deadline';
 import { HumanTaskDef } from '../models/humantaskdef.model';
@@ -29,9 +28,9 @@ export enum ActionTypes {
     DELETE_OPERATION_PARAMETER = "[HumanTaskDef] DELETE_OPERATION_PARAMETER",
     COMPLETE_DELETE_OPERATION_PARAMETER = "[HumanTaskDef] COMPLETE_DELETE_OPERATION_PARAMETER",
     ERROR_DELETE_OPERATION_PARAMETER = "[HumanTaskDef] ERROR_DELETE_OPERATION_PARAMETER",
-    UPDATE_RENDERING_PARAMETER = "[HumanTaskDef] UPDATE_RENDERING_PARAMETER",
-    COMPLETE_UPDATE_RENDERING_PARAMETER = "[HumanTaskDef] COMPLETE_UPDATE_RENDERING_PARAMETER",
-    ERROR_UPDATE_RENDERING_PARAMETER = "[HumanTaskDef] ERROR_UPDATE_RENDERING_PARAMETER",
+    UPDATE_RENDERING = "[HumanTaskDef] UPDATE_RENDERING",
+    COMPLETE_UPDATE_RENDERING = "[HumanTaskDef] COMPLETE_UPDATE_RENDERING",
+    ERROR_UPDATE_RENDERING = "[HumanTaskDef] ERROR_UPDATE_RENDERING",
     DELETE_DEADLINE = "[HumanTaskDef] DELETE_DEADLINE",
     COMPLETE_DELETE_DEADLINE = "[HumanTaskDef] COMPLETE_DELETE_DEADLINE",
     ERROR_DELETE_DEADLINE = "[HumanTaskDef] ERROR_DELETE_DEADLINE",
@@ -147,13 +146,13 @@ export class CompleteDeleteOperationParameterOperation implements Action {
 }
 
 export class UpdateRenderingOperation implements Action {
-    readonly type = ActionTypes.UPDATE_RENDERING_PARAMETER;
-    constructor(public id: string, public renderingElements: RenderingElement[]) { }
+    readonly type = ActionTypes.UPDATE_RENDERING;
+    constructor(public id: string, public rendering: any) { }
 }
 
 export class CompleteUpdateRenderingOperation implements Action {
-    readonly type = ActionTypes.COMPLETE_UPDATE_RENDERING_PARAMETER;
-    constructor(public renderingElements: RenderingElement[]) { }
+    readonly type = ActionTypes.COMPLETE_UPDATE_RENDERING;
+    constructor(public rendering: any) { }
 }
 
 export class DeleteDeadlineOperation implements Action {
