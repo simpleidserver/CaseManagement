@@ -1,6 +1,10 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using CaseManagement.CMMN.AspNetCore;
+using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Parser;
+using CaseManagement.CMMN.Persistence.EF;
+using CaseManagement.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,12 +14,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using NEventStore;
+using NEventStore.Persistence.Sql.SqlDialects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace CaseManagement.CMMN.SqlServer.Host
 {
@@ -32,7 +41,8 @@ namespace CaseManagement.CMMN.SqlServer.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
-            const string connectionString = "Data Source=DESKTOP-T4INEAM\\SQLEXPRESS;Initial Catalog=CaseManagement;Integrated Security=True";
+            var connectionString = _configuration.GetConnectionString("db");
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
             services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
@@ -55,6 +65,22 @@ namespace CaseManagement.CMMN.SqlServer.Host
                         "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
+            })
+            .AddJwtBearer("OAuthScheme", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = ExtractKey("oauth_puk.txt"),
+                    ValidAudiences = new List<string>
+                    {
+                        "humanTaskClient"
+                    },
+                    ValidIssuers = new List<string>
+                    {
+                        "http://localhost:60001",
+                        "http://simpleidserver.northeurope.cloudapp.azure.com/oauth"
+                    }
+                };
             });
             services.AddAuthorization(policy =>
             {
@@ -75,9 +101,33 @@ namespace CaseManagement.CMMN.SqlServer.Host
                 policy.AddPolicy("resume_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("terminate_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("activate_caseplaninstance", p => p.RequireAuthenticatedUser());
-                policy.AddPolicy("complete_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("disable_caseplaninstance", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("reenable_caseplaninstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("complete_caseplaninstance", p =>
+                {
+                    p.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme, "OAuthScheme");
+                    p.RequireAssertion(_ =>
+                    {
+                        if (_.User == null || _.User.Claims == null || !_.User.Claims.Any())
+                        {
+                            return false;
+                        }
+
+                        var cl = _.User.Claims.FirstOrDefault(_ => _.Type == "scope" && _.Value == "complete_humantask");
+                        if (cl != null)
+                        {
+                            return true;
+                        }
+
+                        cl = _.User.Claims.FirstOrDefault(_ => _.Type == "sub" || _.Type == ClaimTypes.NameIdentifier);
+                        if (cl != null)
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    });
+                });
                 // Case plan
                 policy.AddPolicy("get_caseplan", p => p.RequireAuthenticatedUser());
                 // Case worker task
@@ -88,6 +138,13 @@ namespace CaseManagement.CMMN.SqlServer.Host
                 .AllowAnyHeader()));
             services.AddHostedService<CMMNJobServerHostedService>();
             services.AddCaseApi();
+
+            var wireup = Wireup.Init()
+                .UsingSqlPersistence(System.Data.SqlClient.SqlClientFactory.Instance, connectionString)
+                .WithDialect(new MsSqlDialect())
+                .UsingBinarySerialization()
+                .Build();
+            services.AddSingleton(wireup);
             services.AddCaseJobServer(callback: opt =>
             {
                 opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
@@ -95,7 +152,7 @@ namespace CaseManagement.CMMN.SqlServer.Host
             });
             services.AddCaseManagementEFStore(opts =>
             {
-                opts.UseSqlServer(connectionString);
+                opts.UseSqlServer(connectionString, o => o.MigrationsAssembly(migrationsAssembly));
             });
             services.AddDistributedLockSQLServer(opts =>
             {
@@ -111,6 +168,7 @@ namespace CaseManagement.CMMN.SqlServer.Host
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            InitializeDatabase(app);
             if (_configuration.GetChildren().Any(i => i.Key == "pathBase"))
             {
                 app.UsePathBase(_configuration["pathBase"]);
@@ -139,6 +197,36 @@ namespace CaseManagement.CMMN.SqlServer.Host
             };
             rsa.ImportParameters(rsaParameters);
             return new RsaSecurityKey(rsa);
+        }
+
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            var pathLst = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
+            using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                using (var context = scope.ServiceProvider.GetService<CaseManagementDbContext>())
+                {
+                    context.Database.Migrate();
+                    if (context.CasePlans.Any())
+                    {
+                        return;
+                    }
+
+                    var commitAggregateHelper = (ICommitAggregateHelper)scope.ServiceProvider.GetService(typeof(ICommitAggregateHelper));
+                    foreach (var path in pathLst)
+                    {
+                        var cmmnTxt = File.ReadAllText(path);
+                        var name = Path.GetFileName(path);
+                        var caseFile = CaseFileAggregate.New(name, name, 0, cmmnTxt);
+                        var tDefinitions = CMMNParser.ParseWSDL(cmmnTxt);
+                        var newCaseFile = caseFile.Publish();
+                        commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.AggregateId), CancellationToken.None).Wait();
+                        commitAggregateHelper.Commit(newCaseFile, CaseFileAggregate.GetStreamName(newCaseFile.AggregateId), CancellationToken.None).Wait();
+                    }
+
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

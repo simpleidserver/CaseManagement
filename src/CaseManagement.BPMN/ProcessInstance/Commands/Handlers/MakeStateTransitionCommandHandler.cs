@@ -15,7 +15,6 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
     public class MakeStateTransitionCommandHandler : IRequestHandler<MakeStateTransitionCommand, bool>
     {
         private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly IProcessInstanceQueryRepository _processInstanceQueryRepository;
         private readonly ILogger<MakeStateTransitionCommandHandler> _logger;
         private readonly IMessageBroker _messageBroker;
 
@@ -44,7 +43,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
                 throw new UnknownFlowNodeElementInstanceException(string.Format(Global.UnknownProcessElementInstance, request.FlowNodeElementInstanceId));
             }
 
-            await _messageBroker.QueueStateTransition(request.FlowNodeInstanceId, request.FlowNodeElementInstanceId, request.State, request.Content, cancellationToken);
+            await _messageBroker.QueueStateTransition(request.FlowNodeInstanceId, request.FlowNodeElementInstanceId, request.State, request.Parameters, cancellationToken);
             return true;
         }
     }

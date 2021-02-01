@@ -83,8 +83,7 @@ namespace CaseManagement.BPMN.SqlServer.Host
             var factory = new NetStandardConnectionFactory(SqlClientFactory.Instance, _configuration.GetConnectionString("db"));
             var wireup = Wireup.Init()
                 .UsingSqlPersistence(factory)
-                .WithDialect(new SqlDialect())
-                .InitializeStorageEngine()
+                .WithDialect(new MsSqlDialect())
                 .UsingBinarySerialization()
                 .Build();
             services.AddSingleton<IStoreEvents>(wireup);

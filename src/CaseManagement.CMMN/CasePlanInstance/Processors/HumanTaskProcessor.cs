@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             if (completeSubscription.IsCaptured)
             {
                 var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Complete, cancellationToken);
-                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete, incomingTokens: MergeParameters(executionContext, MergeParameters(executionContext, completeSubscription.Parameters)));
+                executionContext.Instance.MakeTransition(elt, CMMNTransitions.Complete, incomingTokens: MergeParameters(executionContext, completeSubscription.Parameters));
                 return true;
             }
 

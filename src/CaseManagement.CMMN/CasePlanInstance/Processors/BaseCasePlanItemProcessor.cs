@@ -28,13 +28,18 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
 
             var newExecutionContext = executionContext.NewExecutionContext(entryCriteria.Data);
-            if (firstInstance && newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt))
+            if (newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt) && firstInstance && !entryCriteria.IsEmpty)
             {
                 var result = newExecutionContext.Instance.TryCreateInstance(elt) as T;
                 await Handle(newExecutionContext, result, cancellationToken);
             }
 
-            await Process(executionContext, elt, cancellationToken);
+            var mustCreate = await Process(executionContext, elt, cancellationToken);
+            if (mustCreate && entryCriteria.IsEmpty && newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt))
+            {
+                var result = newExecutionContext.Instance.TryCreateInstance(elt) as T;
+                await Handle(newExecutionContext, result, cancellationToken);
+            }
         }
 
         protected abstract Task<bool> Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);

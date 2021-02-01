@@ -354,7 +354,7 @@ namespace CaseManagement.CMMN.Tests
             var instance = CasePlanInstanceBuilder.New("1", "firstCase")
                 .AddEmptyTask("2", "firstTask", (_) =>
                 {
-                    _.SetRepetitionRule("name", new CMMNExpression("csharp", "context.GetVariableAndIncrement(\"counter\") < 1"));
+                    _.SetRepetitionRule("name", new CMMNExpression("csharp", "context.GetVariableAndIncrement(\"counter\") < 2"));
                 })
                 .Build();
             var jobServer = FakeCaseJobServer.New();

@@ -385,6 +385,9 @@ namespace CaseManagement.CMMN.SqlServer.Host.Migrations
                     b.Property<bool>("IsCaptured")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Parameters")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("SubscriptionLst");

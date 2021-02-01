@@ -14,7 +14,9 @@ namespace CaseManagement.CMMN.Domains
     {
         OnPartTypes Type { get; }
         bool IsConsumed { get; }
+        CMMNTransitions StandardEvent { get; }
         Dictionary<string, string> IncomingTokens { get; }
+        void Consume(Dictionary<string, string> incomingTokens);
     }
 
     [Serializable]

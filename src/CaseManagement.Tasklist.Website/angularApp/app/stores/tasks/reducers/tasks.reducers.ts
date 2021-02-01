@@ -1,5 +1,4 @@
 ﻿import * as fromActions from '../actions/tasks.actions';
-import { RenderingElement } from '../models/rendering';
 import { SearchTaskHistoryResult } from '../models/search-task-history-result.model';
 import { SearchTasksResult } from "../models/search-tasks-result.model";
 import { Task } from '../models/task.model';
@@ -13,7 +12,7 @@ export interface TaskLstState {
 export interface TaskState {
     isLoading: boolean;
     isErrorLoadOccured: boolean;
-    renderingElts: RenderingElement[];
+    rendering: any;
     description: string;
     searchTaskHistory: SearchTaskHistoryResult;
     task: Task;
@@ -26,7 +25,7 @@ export const initialTaskLstState: TaskLstState = {
 };
 
 export const initialTaskState: TaskState = {
-    renderingElts: null,
+    rendering: {},
     description: null,
     task: null,
     searchTaskHistory: null,
@@ -47,7 +46,7 @@ export function taskLstReducer(state = initialTaskLstState, action: fromActions.
 export function taskReducer(state = initialTaskState, action: fromActions.ActionsUnion) {
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_GET_TASK:
-            state.renderingElts = action.renderingElts;
+            state.rendering = action.rendering;
             state.task = action.task;
             state.description = action.description;
             state.searchTaskHistory = action.searchTaskHistory;

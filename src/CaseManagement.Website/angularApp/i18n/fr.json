@@ -250,7 +250,11 @@
       "ESCALATION_TO_PART_REMOVED": "Escalation ToPart parameter is removed",
       "ERROR_REMOVE_ESCALATION_TOPART": "An error occured while trying to remove the escalation topart parameter",
       "ESCALATION_UPDATED": "Escalation is updated",
-      "DEADLINE_UPDATED": "Deadline is updated"
+      "DEADLINE_UPDATED": "Deadline is updated",
+      "PARAMETER_ADDED": "Operation parameter is added",
+      "ERROR_ADD_PARAMETER": "An error occured while trying to add the operation parameter",
+      "PARAMETER_REMOVED": "Operation parameter is removed",
+      "ERROR_DELETE_PARAMETER": "An error occured while trying to remove the operation parameter"
     }
   },
   "NOTIFICATION": {

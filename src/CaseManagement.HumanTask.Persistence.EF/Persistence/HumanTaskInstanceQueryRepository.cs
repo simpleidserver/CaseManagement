@@ -28,9 +28,9 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
         {
             var result = await _dbContext.HumanTaskInstanceAggregate
                 .Include(_ => _.OperationParameters)
-                .Include(_ => _.RenderingElements)
                 .Include(_ => _.Completions).ThenInclude(_ => _.CopyLst)
                 .Include(_ => _.PresentationElements)
+                .Include(_ => _.CallbackOperations)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
                 .Include(_ => _.PeopleAssignments)
                 .Include(_ => _.SubTasks).ThenInclude(_ => _.ToParts)

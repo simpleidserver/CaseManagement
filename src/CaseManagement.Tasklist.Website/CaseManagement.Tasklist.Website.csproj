@@ -4,6 +4,29 @@
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="angularApp\app\tasks\guidgenerator.ts" />
+    <None Remove="angularApp\app\common\rendering\baseui.component.ts" />
+    <None Remove="angularApp\app\common\rendering\column\column.component.html" />
+    <None Remove="angularApp\app\common\rendering\column\column.component.scss" />
+    <None Remove="angularApp\app\common\rendering\column\column.component.ts" />
+    <None Remove="angularApp\app\common\rendering\container\container.component.html" />
+    <None Remove="angularApp\app\common\rendering\container\container.component.scss" />
+    <None Remove="angularApp\app\common\rendering\container\container.component.ts" />
+    <None Remove="angularApp\app\common\rendering\dynamic.component.html" />
+    <None Remove="angularApp\app\common\rendering\dynamic.component.scss" />
+    <None Remove="angularApp\app\common\rendering\dynamic.component.ts" />
+    <None Remove="angularApp\app\common\rendering\header\header.component.html" />
+    <None Remove="angularApp\app\common\rendering\header\header.component.scss" />
+    <None Remove="angularApp\app\common\rendering\header\header.component.ts" />
+    <None Remove="angularApp\app\common\rendering\row\row.component.html" />
+    <None Remove="angularApp\app\common\rendering\row\row.component.scss" />
+    <None Remove="angularApp\app\common\rendering\row\row.component.ts" />
+    <None Remove="angularApp\app\common\rendering\select\select.component.html" />
+    <None Remove="angularApp\app\common\rendering\select\select.component.scss" />
+    <None Remove="angularApp\app\common\rendering\select\select.component.ts" />
+    <None Remove="angularApp\app\common\rendering\txt\txt.component.html" />
+    <None Remove="angularApp\app\common\rendering\txt\txt.component.scss" />
+    <None Remove="angularApp\app\common\rendering\txt\txt.component.ts" />
     <None Remove="angularApp\app\infrastructure\pipes.module.ts" />
     <None Remove="angularApp\app\stores\cases\models\caseinstance.model.ts" />
     <None Remove="angularApp\app\stores\cases\models\caseplaninstancefileitem.model.ts" />
@@ -19,6 +42,65 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="angularApp\app\common\guidgenerator.ts" />
+    <TypeScriptCompile Include="angularApp\app\common\rendering\baseui.component.ts" />
+    <TypeScriptCompile Include="angularApp\app\common\rendering\column\column.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\column\column.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\column\column.component.ts" />
+    <TypeScriptCompile Include="angularApp\app\common\rendering\container\container.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\container\container.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\container\container.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\dynamic.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\dynamic.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\dynamic.component.ts" />
+    <TypeScriptCompile Include="angularApp\app\common\rendering\header\header.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\header\header.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\header\header.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\row\row.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\row\row.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\row\row.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\select\select.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\select\select.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\select\select.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\txt\txt.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\txt\txt.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\txt\txt.component.ts" />
     <TypeScriptCompile Include="angularApp\app\infrastructure\pipes.module.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\cases\models\caseinstance.model.ts">
       <SubType>Code</SubType>

@@ -1,0 +1,23 @@
+﻿<h1 mat-dialog-title>{{ 'HUMANTASK.EDITOR.CONFIGUREHEADER' | translate }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="configureHeaderForm" (ngSubmit)="onSave(configureHeaderForm.value)">
+        <!-- Text -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-label>{{ 'SHARED.TEXT' | translate }}</mat-label>
+            <input matInput name="txt" formControlName="txt" />
+        </mat-form-field>
+        <!-- Types -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
+            <mat-select formControlName="class">
+                <mat-option value="mat-display-1">Display 1</mat-option>
+                <mat-option value="mat-display-2">Display 2</mat-option>
+                <mat-option value="mat-display-3">Display 3</mat-option>
+                <mat-option value="mat-display-4">Display 4</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary">{{ 'SHARED.SAVE' | translate }}</button>
+    </form>
+</div>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>{{ 'SHARED.CANCEL' | translate }}</button>
+</mat-dialog-actions>

@@ -215,6 +215,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
 
         public class ParameterResult
         {
+            public string Id { get; set; }
             public string Name { get; set; }
             public string Type { get; set; }
             public bool IsRequired { get; set; }
@@ -224,6 +225,7 @@ namespace CaseManagement.HumanTask.HumanTaskDef.Results
             {
                 return new ParameterResult
                 {
+                    Id = par.Id,
                     IsRequired = par.IsRequired,
                     Name = par.Name,
                     Type = Enum.GetName(typeof(ParameterTypes), par.Type),

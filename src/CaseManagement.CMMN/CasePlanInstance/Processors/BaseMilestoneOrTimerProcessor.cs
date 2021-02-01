@@ -17,7 +17,8 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 await ProtectedProcess(executionContext, elt, token);
                 if (terminateSubscription.IsCaptured)
                 {
-                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Terminate);
+                    var sub = await TryReset(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, token);
+                    executionContext.Instance.MakeTransition(elt, CMMNTransitions.Terminate, incomingTokens: MergeParameters(executionContext, sub.Parameters));
                 }
 
                 return true;

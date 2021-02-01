@@ -50,6 +50,7 @@ namespace CaseManagement.HumanTask.Host
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
                 .AddName("fr", "Capturer les détails de la réclamation")
                 .AddName("en", "Capture claim details")
+                .SetRendering("{'type':'container','children':[{'id':'d2a121d7-fe66-4cb3-a7fb-b9f48219ab228','type':'txt','label':'Firstname','name':'firstName'},{'id':'c6a4ca0f-aa78-4743-9787-e5126375945bd','type':'txt','label':'Lastname','name':'lastName'},{'id':'20b21433-b934-4095-b942-06eb73a15b14e','type':'txt','label':'Claim','name':'claim'}]}")
                 .AddOutputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .AddOutputOperationParameter("lastName", ParameterTypes.STRING, true)
                 .AddOutputOperationParameter("claim", ParameterTypes.STRING, true)
@@ -59,6 +60,7 @@ namespace CaseManagement.HumanTask.Host
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
                 .AddName("fr", "Saisir la température")
                 .AddName("en", "Enter degree")
+                .SetRendering("{'type':'container','children':[{'id':'ea71ffe8-517f-4f52-97f0-2658ee0bb1c92','type':'txt','label':'Degree','name':'degree'}]}")
                 .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
                 .Build();
             var updateClaimantContactDetailsForm = HumanTaskDefBuilder.New("updateClaimantContactDetailsForm")
@@ -66,6 +68,7 @@ namespace CaseManagement.HumanTask.Host
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "businessanalyst" })
                 .AddName("fr", "Mettre à jour les informations de contact du 'Claimant'")
                 .AddName("en", "Update claimant contact details")
+                .SetRendering("{'type':'container','children':[{'id':'c6d8ca40-eb7a-48f4-8849-26afc0ffb4cda','type':'txt','label':'Firstname','name':'firstName'},{'id':'3e163681-2147-40f5-9c77-391ad5699c905','type':'txt','label':'Lastname','name':'lastName'}]}")
                 .AddOutputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .AddOutputOperationParameter("lastName", ParameterTypes.STRING, true)
                 .Build();

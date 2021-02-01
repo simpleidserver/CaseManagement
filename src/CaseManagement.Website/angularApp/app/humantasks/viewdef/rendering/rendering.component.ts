@@ -16,9 +16,9 @@ import { filter } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class ViewHumanTaskDefRenderingComponent implements OnInit, OnDestroy {
-    option: any = {
-        type: 'container',
-        children: []
+    option: any = null;
+    uiOption: any = {
+        editMode: true
     };
     humanTaskListener: any;
 
@@ -49,7 +49,6 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            console.log(e.rendering);
             this.option = e.rendering;
         });
     }
@@ -77,7 +76,7 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit, OnDestroy {
             id: GuidGenerator.newGUID(),
             type: 'txt',
             label: 'Label',
-            name: 'name'
+            name: 'txt_' + GuidGenerator.newGUID()
         };
         evt.dataTransfer.setData('json', JSON.stringify(json));
     }
@@ -87,7 +86,7 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit, OnDestroy {
             id: GuidGenerator.newGUID(),
             type: 'select',
             label: 'Label',
-            name: 'name'
+            name: 'select_' + GuidGenerator.newGUID()
         };
         evt.dataTransfer.setData('json', JSON.stringify(json));
     }

@@ -71,7 +71,7 @@ namespace CaseManagement.CMMN.Host
                         "http://simpleidserver.northeurope.cloudapp.azure.com/oauth"
                     }
                 };
-            }); ;
+            });
             services.AddAuthorization(policy =>
             {
                 // Case file

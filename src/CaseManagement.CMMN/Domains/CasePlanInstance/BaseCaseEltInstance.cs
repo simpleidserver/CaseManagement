@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public abstract class BaseCaseEltInstance : ICloneable
     {
         public BaseCaseEltInstance()

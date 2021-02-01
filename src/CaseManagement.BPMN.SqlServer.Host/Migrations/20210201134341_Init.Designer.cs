@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 {
     [DbContext(typeof(BPMNDbContext))]
-    [Migration("20201218131021_Init")]
+    [Migration("20210201134341_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

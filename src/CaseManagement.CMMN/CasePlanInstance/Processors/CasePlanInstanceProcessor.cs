@@ -48,6 +48,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 
                 if (terminateSub.IsCaptured)
                 {
+                    await _subscriberRepository.TryReset(casePlanInstance.AggregateId, null, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
                     casePlanInstance.MakeTransition(CMMNTransitions.Terminate);
                 }
             }

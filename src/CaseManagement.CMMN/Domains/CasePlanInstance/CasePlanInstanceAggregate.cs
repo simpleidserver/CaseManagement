@@ -12,6 +12,7 @@ namespace CaseManagement.CMMN.Domains
     public class CriteriaResult
     {
         public bool IsSatisfied { get; private set; }
+        public bool IsEmpty { get; private set; }
         public Dictionary<string, string> Data { get; private set; }
 
         public static CriteriaResult Satisfied(Dictionary<string, string> data)
@@ -28,6 +29,16 @@ namespace CaseManagement.CMMN.Domains
             return new CriteriaResult
             {
                 IsSatisfied = false
+            };
+        }
+
+        public static CriteriaResult Empty()
+        {
+            return new CriteriaResult
+            {
+                IsSatisfied = true,
+                IsEmpty = true,
+                Data = new Dictionary<string, string>()
             };
         }
     }
@@ -67,7 +78,12 @@ namespace CaseManagement.CMMN.Domains
 
         public ICollection<BaseCasePlanItemInstance> GetNextCasePlanItems(BaseCaseEltInstance elt)
         {
-            var children = StageContent.Children.Where(ch => 
+            var lst = new List<BaseCasePlanItemInstance>();
+            lst.AddRange(GetFlatListCasePlanItems());
+            var children = lst.Where(ch =>
+                ch.ExitCriterions.Any(
+                    ec => ec.SEntry != null && ec.SEntry.PlanItemOnParts != null && ((ec.SEntry.PlanItemOnParts.Any(pi => pi.SourceRef == elt.EltId)) || (ec.SEntry.FileItemOnParts.Any(pi => pi.SourceRef == elt.EltId)))
+                ) ||
                 ch.EntryCriterions.Any(
                     ec => ec.SEntry != null && ec.SEntry.PlanItemOnParts != null && ((ec.SEntry.PlanItemOnParts.Any(pi => pi.SourceRef == elt.EltId)) || (ec.SEntry.FileItemOnParts.Any(pi => pi.SourceRef == elt.EltId)))
                 )
@@ -85,7 +101,7 @@ namespace CaseManagement.CMMN.Domains
         {
             if (elt.EntryCriterions == null || !elt.EntryCriterions.Any())
             {
-                return CriteriaResult.Satisfied(new Dictionary<string, string>());
+                return CriteriaResult.Empty();
             }
 
             var res = elt.EntryCriterions.Select(_ => IsCriteriaSatisfied(_)).FirstOrDefault(_ => _.IsSatisfied);
@@ -202,6 +218,16 @@ namespace CaseManagement.CMMN.Domains
 
         public void ConsumeTransitionEvts(BaseCaseEltInstance node, string sourceElementId, ICollection<IncomingTransition> transitions)
         {
+            var source = GetChild(sourceElementId);
+            var target = GetCasePlanItem(node.Id);
+            var onParts = new List<IOnPart>();
+            onParts.AddRange(GetOnParts(source.EltId, target.EntryCriterions, transitions));
+            onParts.AddRange(GetOnParts(source.EltId, target.ExitCriterions, transitions));
+            if (!onParts.Any())
+            {
+                return;
+            }
+
             var evt = new OnPartEvtConsumedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, node.Id, sourceElementId, transitions);
             Handle(evt);
             DomainEvents.Add(evt);
@@ -636,37 +662,71 @@ namespace CaseManagement.CMMN.Domains
         {
             var source = GetChild(evt.SourceElementId);
             var target = GetCasePlanItem(evt.ElementId);
-            foreach(var entryCriteria in target.EntryCriterions)
+            Consume(source.EltId, target.EntryCriterions, evt);
+            Consume(source.EltId, target.ExitCriterions, evt);
+        }
+
+        private void Consume(string sourceEltId, ICollection<Criteria> criterias, OnPartEvtConsumedEvent evt)
+        {
+            var parts = GetOnParts(sourceEltId, criterias, evt.Transitions);
+            foreach(var part in parts)
             {
-                if (entryCriteria.SEntry == null)
+                var transition = evt.Transitions.FirstOrDefault(tr => tr.Transition == part.StandardEvent);
+                part.Consume(transition.IncomingTokens);
+            }
+        }
+
+        private static ICollection<IOnPart> GetOnParts(string sourceEltId, ICollection<Criteria> criterias, ICollection<IncomingTransition> transitions)
+        {
+            var result = new List<IOnPart>();
+            if (criterias == null)
+            {
+                return result;
+            }
+
+            foreach(var criteria in criterias)
+            {
+                if (criteria.SEntry == null)
                 {
                     continue;
                 }
 
-                foreach(var onPart in entryCriteria.SEntry.PlanItemOnParts)
+                foreach(var onPart in criteria.SEntry.PlanItemOnParts)
                 {
-                    if (onPart.SourceRef == source.EltId)
+                    if (onPart.IsConsumed)
                     {
-                        var transition = evt.Transitions.FirstOrDefault(tr => tr.Transition == onPart.StandardEvent);
+                        continue;
+                    }
+
+                    if (onPart.SourceRef == sourceEltId)
+                    {
+                        var transition = transitions.FirstOrDefault(tr => tr.Transition == onPart.StandardEvent);
                         if (transition != null)
                         {
-                            onPart.Consume(transition.IncomingTokens);
+                            result.Add(onPart);
                         }
                     }
                 }
 
-                foreach(var onPart in entryCriteria.SEntry.FileItemOnParts)
+                foreach(var onPart in criteria.SEntry.FileItemOnParts)
                 {
-                    if (onPart.SourceRef == source.EltId)
+                    if (onPart.IsConsumed)
                     {
-                        var transition = evt.Transitions.FirstOrDefault(tr => tr.Transition == onPart.StandardEvent);
+                        continue;
+                    }
+
+                    if (onPart.SourceRef == sourceEltId)
+                    {
+                        var transition = transitions.FirstOrDefault(tr => tr.Transition == onPart.StandardEvent);
                         if (transition != null)
                         {
-                            onPart.Consume(transition.IncomingTokens);
+                            result.Add(onPart);
                         }
                     }
                 }
             }
+
+            return result;
         }
 
         #endregion

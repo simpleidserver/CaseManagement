@@ -114,7 +114,6 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                 result.Add(MessageToken.NewMessage(userTask.Id, stateTransition.Content));
             }
 
-            Debug.WriteLine("COUCOU");
             return result;
         }
     }

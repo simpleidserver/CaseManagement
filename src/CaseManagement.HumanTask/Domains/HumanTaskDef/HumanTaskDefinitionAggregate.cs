@@ -319,6 +319,7 @@ namespace CaseManagement.HumanTask.Domains
 
             OperationParameters.Add(new Parameter
             {
+                Id = evt.Parameter.Id,
                 IsRequired = evt.Parameter.IsRequired,
                 Name = evt.Parameter.Name,
                 Type = evt.Parameter.Type,

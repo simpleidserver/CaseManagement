@@ -5,7 +5,7 @@
       <cmmn:planItem id="PlanItem_0oqbidl" definitionRef="Task_0dru0rr">
         <cmmn:itemControl id="PlanItemControl_0d9616x">
           <cmmn:repetitionRule id="RepetitionRule_07cwnvr">
-            <cmmn:condition>context.GetVariableAndIncrement("counter") &lt; 1</cmmn:condition>
+            <cmmn:condition>context.GetVariableAndIncrement("counter") &lt; 2</cmmn:condition>
           </cmmn:repetitionRule>
         </cmmn:itemControl>
       </cmmn:planItem>

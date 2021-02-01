@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cmg="https://github.com/simpleidserver/CaseManagement" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" id="Definitions_0m2br72" targetNamespace="http://bpmn.io/schema/cmmn" exporter="cmmn-js (https://demo.bpmn.io/cmmn)" exporterVersion="0.19.2">
+  <cmmn:case id="Case_0t7z7vp">
+    <cmmn:casePlanModel id="CasePlanModel_3394a428-486a-43f5-b491-7b31e417e0db" name="Claim case">
+      <cmmn:planItem id="PlanItem_0zl4ucq" name="Receive claim" definitionRef="Stage_1elok9z" />
+      <cmmn:planItem id="PlanItem_1rr8i0e" definitionRef="HumanTask_1g95uki">
+        <cmmn:itemControl id="PlanItemControl_0h48cmw">
+          <cmmn:repetitionRule id="RepetitionRule_1yoxx24">
+            <cmmn:condition>true</cmmn:condition>
+          </cmmn:repetitionRule>
+          <cmmn:manualActivationRule id="ManualActivationRule_0397xyu">
+            <cmmn:condition>true</cmmn:condition>
+          </cmmn:manualActivationRule>
+        </cmmn:itemControl>
+      </cmmn:planItem>
+      <cmmn:stage id="Stage_1elok9z" name="Receive claim">
+        <cmmn:planItem id="PlanItem_126vzmb" definitionRef="HumanTask_1a25x7y">
+          <cmmn:itemControl id="PlanItemControl_05qv33h">
+            <cmmn:manualActivationRule id="ManualActivationRule_1wudpq3">
+              <cmmn:condition>true</cmmn:condition>
+            </cmmn:manualActivationRule>
+          </cmmn:itemControl>
+          <cmmn:entryCriterion id="EntryCriterion_0dhxom1" sentryRef="Sentry_0e1zurk" />
+        </cmmn:planItem>
+        <cmmn:planItem id="PlanItem_1luzv09" definitionRef="HumanTask_10h2w5m">
+          <cmmn:itemControl id="PlanItemControl_08elreb">
+            <cmmn:manualActivationRule id="ManualActivationRule_0hl6irg">
+              <cmmn:condition>true</cmmn:condition>
+            </cmmn:manualActivationRule>
+          </cmmn:itemControl>
+          <cmmn:entryCriterion id="EntryCriterion_1boeqq0" sentryRef="Sentry_0bz27li" />
+        </cmmn:planItem>
+        <cmmn:planItem id="PlanItem_04q2jwn" definitionRef="HumanTask_1ewr6eu">
+          <cmmn:itemControl id="PlanItemControl_0xs9xli">
+            <cmmn:manualActivationRule id="ManualActivationRule_077ohgl">
+              <cmmn:condition>true</cmmn:condition>
+            </cmmn:manualActivationRule>
+          </cmmn:itemControl>
+        </cmmn:planItem>
+        <cmmn:planItem id="PlanItem_1dphpiz" name="Capture claim details" definitionRef="HumanTask_1oeedji" />
+        <cmmn:sentry id="Sentry_0e1zurk">
+          <cmmn:planItemOnPart id="PlanItemOnPart_1preadf" sourceRef="PlanItem_04q2jwn">
+            <cmmn:standardEvent>manualStart</cmmn:standardEvent>
+          </cmmn:planItemOnPart>
+        </cmmn:sentry>
+        <cmmn:sentry id="Sentry_0bz27li">
+          <cmmn:planItemOnPart id="PlanItemOnPart_0ky2brq" sourceRef="PlanItem_126vzmb">
+            <cmmn:standardEvent>manualStart</cmmn:standardEvent>
+          </cmmn:planItemOnPart>
+        </cmmn:sentry>
+        <cmmn:humanTask id="HumanTask_1oeedji" cmg:formId="captureClaimDetails" cmg:implementation="##WsHumanTask">
+          <cmmn:extensionElements>
+            <cmg:parameters />
+          </cmmn:extensionElements>
+        </cmmn:humanTask>
+        <cmmn:humanTask id="HumanTask_1ewr6eu" name="Need 3rd party report">
+          <cmmn:extensionElements>
+            <cmg:parameters />
+          </cmmn:extensionElements>
+        </cmmn:humanTask>
+        <cmmn:humanTask id="HumanTask_10h2w5m" name="Need legal review">
+          <cmmn:extensionElements>
+            <cmg:parameters />
+          </cmmn:extensionElements>
+        </cmmn:humanTask>
+        <cmmn:humanTask id="HumanTask_1a25x7y" name="Add incident report from police">
+          <cmmn:extensionElements>
+            <cmg:parameters />
+          </cmmn:extensionElements>
+        </cmmn:humanTask>
+      </cmmn:stage>
+      <cmmn:humanTask id="HumanTask_1g95uki" name="Update claimant contact details" cmg:implementation="##WsHumanTask" cmg:formId="updateClaimantContactDetailsForm">
+        <cmmn:extensionElements>
+          <cmg:parameters />
+        </cmmn:extensionElements>
+      </cmmn:humanTask>
+    </cmmn:casePlanModel>
+  </cmmn:case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_1">
+      <cmmndi:Size width="500" height="500" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel_3394a428-486a-43f5-b491-7b31e417e0db" cmmnElementRef="CasePlanModel_3394a428-486a-43f5-b491-7b31e417e0db">
+        <dc:Bounds x="143" y="72" width="723" height="316" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_1qbrgp3_di" cmmnElementRef="PlanItem_1dphpiz">
+        <dc:Bounds x="188" y="139" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_0zl4ucq_di" cmmnElementRef="PlanItem_0zl4ucq">
+        <dc:Bounds x="163" y="109" width="552" height="259" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_0lyn418_di" cmmnElementRef="PlanItem_04q2jwn">
+        <dc:Bounds x="188" y="237" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="EntryCriterion_0dhxom1_di" cmmnElementRef="EntryCriterion_0dhxom1">
+        <dc:Bounds x="366" y="264" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="PlanItemOnPart_1preadf_di" cmmnElementRef="PlanItemOnPart_1preadf" targetCMMNElementRef="EntryCriterion_0dhxom1" isStandardEventVisible="true">
+        <di:waypoint x="288" y="277" />
+        <di:waypoint x="327" y="277" />
+        <di:waypoint x="327" y="278" />
+        <di:waypoint x="366" y="278" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="320" y="256" width="28" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNShape id="EntryCriterion_1boeqq0_di" cmmnElementRef="EntryCriterion_1boeqq0">
+        <dc:Bounds x="539" y="263" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="PlanItemOnPart_0ky2brq_di" cmmnElementRef="PlanItemOnPart_0ky2brq" targetCMMNElementRef="EntryCriterion_1boeqq0" isStandardEventVisible="true">
+        <di:waypoint x="476" y="277" />
+        <di:waypoint x="539" y="277" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="496" y="257" width="28" height="13" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNShape id="PlanItem_0ijgrsu_di" cmmnElementRef="PlanItem_1luzv09">
+        <dc:Bounds x="549" y="237" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_034e7kx_di" cmmnElementRef="PlanItem_126vzmb">
+        <dc:Bounds x="376" y="237" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="PlanItem_0iax7t3_di" cmmnElementRef="PlanItem_1rr8i0e">
+        <dc:Bounds x="744" y="136" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

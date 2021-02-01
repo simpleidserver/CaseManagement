@@ -13,7 +13,9 @@
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\baseui.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\columns.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\columns.component.ts" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.scss" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.ts" />
@@ -61,6 +63,13 @@
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\info\addparameter.dialog.component.html" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\baseui.component.ts" />
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -76,13 +85,6 @@
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\dynamic.component.scss">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.scss">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.html">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\dynamic.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\header\header.component.html">
       <SubType>Code</SubType>
@@ -93,10 +95,10 @@
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\header\header.component.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.scss">
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.html">
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.scss">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.ts">

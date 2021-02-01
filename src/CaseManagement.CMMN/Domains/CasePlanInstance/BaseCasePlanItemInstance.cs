@@ -1,4 +1,5 @@
 ﻿using CaseManagement.Common.Processors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -6,6 +7,7 @@ using System.Text;
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public abstract class BaseCasePlanItemInstance : BaseCaseEltInstance, IBranchNode
     {
         public BaseCasePlanItemInstance() : base()

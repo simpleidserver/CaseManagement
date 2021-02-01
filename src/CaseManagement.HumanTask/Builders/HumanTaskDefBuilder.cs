@@ -239,6 +239,12 @@ namespace CaseManagement.HumanTask.Builders
 
         #endregion
 
+        public HumanTaskDefBuilder SetRendering(string rendering)
+        {
+            _humanTaskDef.Rendering = rendering;
+            return this;
+        }
+
         public HumanTaskDefBuilder SetOutcome(string outcome)
         {
             _humanTaskDef.Outcome = outcome;

@@ -121,6 +121,7 @@ namespace CaseManagement.CMMN.SqlServer.Host.Migrations
                     CasePlanInstanceId = table.Column<string>(nullable: true),
                     CasePlanElementInstanceId = table.Column<string>(nullable: true),
                     IsCaptured = table.Column<bool>(nullable: false),
+                    Parameters = table.Column<string>(nullable: true),
                     CaptureDateTime = table.Column<DateTime>(nullable: true),
                     CreationDateTime = table.Column<DateTime>(nullable: false)
                 },

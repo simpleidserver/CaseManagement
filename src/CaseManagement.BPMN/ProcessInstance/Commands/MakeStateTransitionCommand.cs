@@ -8,6 +8,6 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands
         public string State { get; set; }
         public string FlowNodeInstanceId { get; set; }
         public string FlowNodeElementInstanceId { get; set; }
-        public JObject Content { get; set; }
+        public JObject Parameters { get; set; }
     }
 }

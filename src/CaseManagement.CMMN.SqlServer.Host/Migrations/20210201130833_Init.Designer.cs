@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaseManagement.CMMN.SqlServer.Host.Migrations
 {
     [DbContext(typeof(CaseManagementDbContext))]
-    [Migration("20201218130753_Init")]
+    [Migration("20210201130833_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -386,6 +386,9 @@ namespace CaseManagement.CMMN.SqlServer.Host.Migrations
 
                     b.Property<bool>("IsCaptured")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Parameters")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

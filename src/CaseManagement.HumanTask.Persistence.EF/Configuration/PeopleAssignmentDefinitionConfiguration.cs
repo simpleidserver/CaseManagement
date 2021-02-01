@@ -10,7 +10,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Configuration
         public void Configure(EntityTypeBuilder<PeopleAssignmentDefinition> builder)
         {
             builder.HasKey(_ => _.Id);
-            builder.Property(_ => _.Id).ValueGeneratedOnAdd();
+            builder.Property(_ => _.Id).ValueGeneratedNever();
         }
     }
 }

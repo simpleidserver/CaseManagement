@@ -49,7 +49,6 @@ namespace CaseManagement.BPMN.Acceptance.Tests
             var takeTemperatureForm = HumanTaskDefBuilder.New("temperatureForm")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
                 .SetPotentialOwnerUserIdentifiers(new List<string> { "thabart" })
-                .AddTxt("degree", cb => cb.AddLabel("fr", "Température"))
                 .AddOutputOperationParameter("degree", ParameterTypes.INT, true)
                 .Build();
             services.AddHumanTasksApi();

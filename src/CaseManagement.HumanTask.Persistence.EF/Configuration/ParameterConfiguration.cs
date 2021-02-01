@@ -9,7 +9,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Configuration
         public void Configure(EntityTypeBuilder<Parameter> builder)
         {
             builder.HasKey(_ => _.Id);
-            builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder.Property(p => p.Id).ValueGeneratedNever();
         }
     }
 }

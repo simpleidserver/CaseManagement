@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RenderingTask, SubmitTask } from '@app/stores/tasks/actions/tasks.actions';
 import * as fromAppState from '@app/stores/appstate';
-import { Store, select, ScannedActionsSubject } from '@ngrx/store';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import * as fromTaskActions from '@app/stores/tasks/actions/tasks.actions';
+import { RenderingTask } from '@app/stores/tasks/actions/tasks.actions';
 import { Task } from '@app/stores/tasks/models/task.model';
 import { TaskState } from '@app/stores/tasks/reducers/tasks.reducers';
-import { RenderingElement } from '@app/stores/tasks/models/rendering';
-import * as fromTaskActions from '@app/stores/tasks/actions/tasks.actions';
-import { filter } from 'rxjs/operators';
+import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { MatSnackBar } from '@angular/material';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'view-form-component',
@@ -18,8 +16,10 @@ import { MatSnackBar } from '@angular/material';
     styleUrls: ['./viewform.component.scss']
 })
 export class ViewFormComponent implements OnInit {
-    submitForm: FormGroup;
-    renderingElts: RenderingElement[] = [];
+    option: any = {
+        type: 'container',
+        children: []
+    };
     task: Task = new Task();
 
     constructor(
@@ -28,8 +28,7 @@ export class ViewFormComponent implements OnInit {
         private actions$: ScannedActionsSubject,
         private snackBar: MatSnackBar,
         private router: Router,
-        private translate: TranslateService,
-        private formBuilder: FormBuilder) {
+        private translate: TranslateService) {
 
     }
 
@@ -59,17 +58,9 @@ export class ViewFormComponent implements OnInit {
                 this.task = r.task;
             }
 
-            const grp: any = {};
-            if (r.renderingElts) {
-                this.renderingElts = r.renderingElts;
-                if (r.renderingElts && r.renderingElts.length > 0) {
-                    r.renderingElts.forEach((oe: RenderingElement) => {
-                        grp[oe.id] = new FormControl('');
-                    });
-                }
+            if (r.rendering) {
+                this.option = r.rendering;
             }
-
-            this.submitForm = this.formBuilder.group(grp);
         });
         this.activatedRoute.params.subscribe(() => {
             this.refresh();
@@ -82,9 +73,28 @@ export class ViewFormComponent implements OnInit {
         this.store.dispatch(req);
     }
 
-    onSubmit(e: any) {
-        const id = this.activatedRoute.snapshot.params['formid'];
-        const req = new SubmitTask(id, e);
+    onSubmit() {
+        const result: any = {};
+        this.buildJSON(result, this.option);
+        const id = this.task.id;
+        const req = new fromTaskActions.SubmitTask(id, result);
         this.store.dispatch(req);
+    }
+
+    private buildJSON(result: any, opt: any) {
+        switch (opt.type) {
+            case 'txt':
+            case 'select':
+                if (opt.value) {
+                    result[opt.name] = opt.value;
+                }
+                break;
+            default:
+                if (opt.children && opt.children.length > 0) {
+                    opt.children.forEach((r: any) => {
+                        this.buildJSON(result, r);
+                    });
+                }
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace CaseManagement.CMMN.Domains
 {
+    [Serializable]
     public abstract class BaseMilestoneOrTimerElementInstance : BaseCasePlanItemInstance
     {
         #region Properties

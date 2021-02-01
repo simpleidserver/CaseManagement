@@ -30,8 +30,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 .Include(_ => _.PeopleAssignments)
                 .Include(_ => _.PresentationElements)
                 .Include(_ => _.PresentationParameters)
-                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
-                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
                 .FirstOrDefaultAsync(_ => _.AggregateId == id, token);
         }
@@ -43,8 +41,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 .Include(_ => _.PeopleAssignments)
                 .Include(_ => _.PresentationElements)
                 .Include(_ => _.PresentationParameters)
-                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
-                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
                 .OrderByDescending(_ => _.Version).FirstOrDefaultAsync(_ => _.Name == name, token);
         }
@@ -54,8 +50,6 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
             IQueryable<HumanTaskDefinitionAggregate> result = _humanTaskDBContext.HumanTaskDefinitions
                 .Include(_ => _.OperationParameters)
                 .Include(_ => _.PresentationElements)
-                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Labels)
-                .Include(_ => _.RenderingElements).ThenInclude(_ => _.Values).ThenInclude(_ => _.DisplayNames)
                 .Include(_ => _.DeadLines).ThenInclude(_ => _.Escalations).ThenInclude(_ => _.ToParts)
                 .Include(_ => _.PresentationParameters)
                 .Include(_ => _.PeopleAssignments);

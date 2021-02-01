@@ -1,0 +1,79 @@
+﻿/* UI Editor */
+::ng-deep .row, ::ng-deep .column {
+    padding: 10px;
+}
+
+::ng-deep .column {
+    min-height: 75px;
+}
+
+::ng-deep div.component.editMode {
+    outline: 1px dashed rgba(170,170,170,0.7);
+    position: relative;
+}
+
+::ng-deep .component > .toolbar {
+    position: absolute;
+    display: none;
+    top: -27px;
+    right: 0px;
+    color: white;
+}
+
+::ng-deep .component > .title {
+    position: absolute;
+    top: -20px;
+    left: 0px;
+    color: white;
+    display: none;
+    padding: 0px 5px 0px 5px;
+}
+
+::ng-deep .component.selected > .toolbar, ::ng-deep .component.selected > .title {
+    display: block;
+}
+
+::ng-deep ul.toolbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+::ng-deep ul.toolbar li {
+    margin: 5px 5px 0px 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+::ng-deep .ui-editor {
+    min-height: 300px;
+    position: relative;
+}
+
+::ng-deep .ui-editor .actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+}
+
+::ng-deep .fields {
+    padding-top: 0px;
+}
+
+::ng-deep .fields .icon {
+    width: 30px;
+    height: 30px;
+}
+
+::ng-deep .fields .label {
+    margin-left: 30px;
+}
+
+::ng-deep .fields .mat-list-item {
+    height: 30px;
+}
+
+::ng-deep .fields .mat-list-item-content {
+    padding: 0;
+}
