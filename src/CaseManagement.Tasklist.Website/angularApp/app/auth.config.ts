@@ -6,5 +6,6 @@ export const authConfig: AuthConfig = {
     clientId: 'caseManagementTasklistWebsite',
     scope: 'openid profile email role',
     redirectUri: process.env.REDIRECT_URL,
+    responseType: 'code',
     requireHttps: false
 }

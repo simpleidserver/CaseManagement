@@ -9,11 +9,11 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 
 const ENV = process.env.ENV = process.env.NODE_ENV = 'azure';
-const API_URL = process.env.API_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagementapi";
-const HUMANTASK_API_URL = process.env.HUMANTASK_API_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/humantaskapi";
-const BPMN_API_URL = process.env.BPMN_API_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/bpmnapi";
-const OPENID_URL = process.env.OPENID_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/openid";
-const REDIRECT_URL = process.env.REDIRECT_URL = "http://simpleidserver.northeurope.cloudapp.azure.com/casemanagement";
+const API_URL = process.env.API_URL = "https://simpleidserver.northeurope.cloudapp.azure.com/casemanagementapi";
+const HUMANTASK_API_URL = process.env.HUMANTASK_API_URL = "https://simpleidserver.northeurope.cloudapp.azure.com/humantaskapi";
+const BPMN_API_URL = process.env.BPMN_API_URL = "https://simpleidserver.northeurope.cloudapp.azure.com/bpmnapi";
+const OPENID_URL = process.env.OPENID_URL = "https://simpleidserver.northeurope.cloudapp.azure.com/openid";
+const REDIRECT_URL = process.env.REDIRECT_URL = "https://simpleidserver.northeurope.cloudapp.azure.com/casemanagement";
 const BASE_URL = process.env.BASE_URL || '/casemanagement/';
 
 const ROOT = path.resolve(__dirname, '..');

@@ -56,12 +56,12 @@ namespace CaseManagement.BPMN.SqlServer.Host
                     ValidAudiences = new List<string>
                     {
                         "http://localhost:60000",
-                        "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
+                        "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
                     ValidIssuers = new List<string>
                     {
                         "http://localhost:60000",
-                        "http://simpleidserver.northeurope.cloudapp.azure.com/openid"
+                        "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
             });
@@ -120,8 +120,8 @@ namespace CaseManagement.BPMN.SqlServer.Host
             var rsa = RSA.Create();
             var rsaParameters = new RSAParameters
             {
-                Modulus = Convert.FromBase64String(dic["n"].ToString()),
-                Exponent = Convert.FromBase64String(dic["e"].ToString())
+                Modulus = Base64DecodeBytes(dic["n"].ToString()),
+                Exponent = Base64DecodeBytes(dic["e"].ToString())
             };
             rsa.ImportParameters(rsaParameters);
             return new RsaSecurityKey(rsa);
@@ -149,6 +149,28 @@ namespace CaseManagement.BPMN.SqlServer.Host
                         commitAggregateHelper.Commit(processFile, processFile.GetStreamName(), CancellationToken.None).Wait();
                     }
                 }
+            }
+        }
+
+        private static byte[] Base64DecodeBytes(string base64EncodedData)
+        {
+            var s = base64EncodedData
+                .Trim()
+                .Replace(" ", "+")
+                .Replace('-', '+')
+                .Replace('_', '/');
+            switch (s.Length % 4)
+            {
+                case 0:
+                    return Convert.FromBase64String(s);
+                case 2:
+                    s += "==";
+                    goto case 0;
+                case 3:
+                    s += "=";
+                    goto case 0;
+                default:
+                    throw new InvalidOperationException("Illegal base64url string!");
             }
         }
     }
