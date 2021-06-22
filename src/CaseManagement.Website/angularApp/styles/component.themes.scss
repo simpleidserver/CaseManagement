@@ -108,7 +108,8 @@
         outline: 1px solid mat-color($primary, 300) !important;
     }
 
-    .component.selected {
+    .component.selected,
+    .component.focused {
         outline: 3px solid mat-color($primary, 300) !important;
     }
 

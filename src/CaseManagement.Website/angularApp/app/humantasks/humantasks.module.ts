@@ -25,6 +25,7 @@ import { HeaderComponent, HeaderComponentDialog } from './viewdef/rendering/comp
 import { PwdComponent, PwdComponentDialog } from './viewdef/rendering/components/pwd/pwd.component';
 import { RowComponent, RowComponentDialog } from './viewdef/rendering/components/row/row.component';
 import { SelectComponent, SelectComponentDialog } from './viewdef/rendering/components/select/select.component';
+import { SubmitBtnComponent, SubmitBtnComponentDialog } from './viewdef/rendering/components/submitbtn/submitbtn.component';
 import { TxtComponent, TxtComponentDialog } from './viewdef/rendering/components/txt/txt.component';
 import { ViewHumanTaskDefRenderingComponent } from './viewdef/rendering/rendering.component';
 import { ViewHumanTaskDef } from './viewdef/view.component';
@@ -59,7 +60,9 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         HeaderComponent,
         ContainerComponent,
         ConfirmPwdComponent,
-        ConfirmPwdComponentDialog
+        ConfirmPwdComponentDialog,
+        SubmitBtnComponentDialog,
+        SubmitBtnComponent
     ],
     declarations: [
         AddHumanTaskDefDialog,
@@ -97,7 +100,9 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         ContainerComponent,
         ConfirmPwdComponent,
         ConfirmPwdComponentDialog,
-        TranslateEnumPipe 
+        TranslateEnumPipe,
+        SubmitBtnComponentDialog,
+        SubmitBtnComponent
     ]
 })
 

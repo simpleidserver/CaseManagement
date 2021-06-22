@@ -1,4 +1,4 @@
-﻿<div #parent (drop)="dropElt($event)" [class]="'component '+ title" [class.selected]="isSelected" [class.editMode]="uiOption.editMode" (click)="clickComponent($event)">
+﻿<div #parent (drop)="dropElt($event)" (dragleave)="dragLeave($event)" (dragover)="dragOver($event)" [class]="'component '+ title" [class.focused]="isFocused" [class.selected]="isSelected" [class.editMode]="uiOption.editMode" (click)="clickComponent($event)">
     <div class="title" *ngIf="uiOption.editMode">
         {{ title }}
     </div>

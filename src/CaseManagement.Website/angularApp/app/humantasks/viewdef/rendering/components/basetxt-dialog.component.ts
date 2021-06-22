@@ -11,17 +11,18 @@ export abstract class BaseTxtComponentDialog {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<BaseTxtComponentDialog>
     ) {
-        this.configureForm = new FormGroup({
+        const self = this;
+        self.configureForm = new FormGroup({
             name: new FormControl(''),
             validationRule: new FormControl('')
         });
-        this.languages.forEach((lng: string) => {
-            this.configureForm.addControl('label#' + lng, new FormControl(''));
+        self.languages.forEach((lng: string) => {
+            self.configureForm.addControl('label#' + lng, new FormControl(''));
         });
-        this.configureForm.get('name').setValue(data.opt.name);
+        self.configureForm.get('name').setValue(data.opt.name);
         if (data.opt.translations) {
             data.opt.translations.forEach(function (tr: any) {
-                this.configureForm.get('label#' + tr.language).setValue(tr.value);
+                self.configureForm.get('label#' + tr.language).setValue(tr.value);
             });
         }
 

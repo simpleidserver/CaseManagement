@@ -55,7 +55,10 @@ export abstract class BaseTxtComponent extends BaseUIComponent {
                 return;
             }
 
-            this.option = r;
+            this.option.name = r.name;
+            this.option.type = r.type;
+            this.option.validationRules = r.validationRules;
+            this.option.translations = r.translations;
             this.control = new FormControl('', this.buildValidationRules());
             this.form.removeControl(this.option.name);
             this.form.addControl(this.option.name, this.control);

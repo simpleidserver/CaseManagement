@@ -9,6 +9,7 @@ import { HeaderComponent } from "./header/header.component";
 import { FormGroup } from "@angular/forms";
 import { PwdComponent } from "./pwd/pwd.component";
 import { ConfirmPwdComponent } from "./confirmpwd/confirmpwd.component";
+import { SubmitBtnComponent } from "./submitbtn/submitbtn.component";
 
 @Component({
     selector: 'dynamic-component',
@@ -31,7 +32,8 @@ export class DynamicComponent implements OnInit, OnDestroy {
         'container': ContainerComponent,
         'header': HeaderComponent,
         'pwd': PwdComponent,
-        'confirmpwd': ConfirmPwdComponent
+        'confirmpwd': ConfirmPwdComponent,
+        'submitbtn': SubmitBtnComponent
     };
     @ViewChild('container', { read: ViewContainerRef }) container: ViewContainerRef;
     @ViewChild('parent', { read: ViewContainerRef }) parent: ViewContainerRef;
@@ -74,6 +76,7 @@ export class DynamicComponent implements OnInit, OnDestroy {
     }
     @Input() parentOption: any = null;
     isSelected: boolean = false;
+    isFocused: boolean = false;
     title: string = null;
 
     constructor(private compFactoryResolver: ComponentFactoryResolver) { }
@@ -118,6 +121,35 @@ export class DynamicComponent implements OnInit, OnDestroy {
 
         const json = JSON.parse(evt.dataTransfer.getData('json'));
         this.option.children.push(json);
+        this.isFocused = false;
+    }
+
+    dragLeave(evt: any) {
+        if (!this._uiOption.editMode) {
+            return;
+        }
+
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (!this.option.children) {
+            return;
+        }
+
+        this.isFocused = false;
+    }
+
+    dragOver(evt: any) {
+        if (!this._uiOption.editMode) {
+            return;
+        }
+
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (!this.option.children) {
+            return;
+        }
+
+        this.isFocused = true;
     }
 
     openSettings(evt: any) {

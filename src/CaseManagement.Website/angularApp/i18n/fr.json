@@ -88,6 +88,7 @@
       "CONFIGURESELECT": "Configure select",
       "CONFIGUREHEADER": "Configure header",
       "CONFIGURETITLE": "Configure",
+      "SUBMIT": "Submit",
       "LAYOUT": "Layout",
       "FIELDS": "Fields",
       "TEXTBOX": "Textbox",
@@ -99,6 +100,7 @@
       "CONFIRMPASSWORD": "Confirm Password",
       "SELECTINPUTYPE": "Input Type",
       "SELECTVALIDATIONRULE": "Select Validation Rule",
+      "BUTTONS": "Buttons",
       "INPUTYPES": {
         "TXT": "Text",
         "EMAIL": "Email",

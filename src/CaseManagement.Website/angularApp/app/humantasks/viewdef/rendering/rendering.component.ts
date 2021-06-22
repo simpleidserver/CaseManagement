@@ -128,8 +128,34 @@ export class ViewHumanTaskDefRenderingComponent implements OnInit, OnDestroy {
         const json = {
             id: GuidGenerator.newGUID(),
             type: 'header',
-            txt: 'Header',
+            translations: [{
+                language: 'fr',
+                value: 'Header'
+            }, {
+                language: 'en',
+                value: 'Header'
+            }],
             class: 'mat-display-1'
+        };
+        evt.dataTransfer.setData('json', JSON.stringify(json));
+    }
+
+    dragSubmit(evt: any) {
+        if (this.getUniqueChild(this.option, 'submitbtn') !== null) {
+            return;
+        }
+
+        const json: any = {
+            id: GuidGenerator.newGUID(),
+            name: 'submitbtn',
+            type: 'submitbtn',
+            translations: [{
+                language: 'fr',
+                value: 'Label'
+            }, {
+                language: 'en',
+                value: 'Label'
+            }]
         };
         evt.dataTransfer.setData('json', JSON.stringify(json));
     }
