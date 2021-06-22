@@ -16,7 +16,7 @@ export var initialTaskLstState = {
     isErrorLoadOccured: false
 };
 export var initialTaskState = {
-    renderingElts: null,
+    rendering: {},
     description: null,
     task: null,
     searchTaskHistory: null,
@@ -37,7 +37,7 @@ export function taskReducer(state, action) {
     if (state === void 0) { state = initialTaskState; }
     switch (action.type) {
         case fromActions.ActionTypes.COMPLETE_GET_TASK:
-            state.renderingElts = action.renderingElts;
+            state.rendering = action.rendering;
             state.task = action.task;
             state.description = action.description;
             state.searchTaskHistory = action.searchTaskHistory;

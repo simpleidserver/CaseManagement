@@ -9,44 +9,41 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { TranslateFieldPipe } from '../infrastructure/pipes/translateFieldPipe';
+import { RenderingModule } from '../common/rendering/rendering.module';
+import { PipesModule } from '../infrastructure/pipes.module';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
-import { ListTasksComponent } from './list/list.component';
-import { NominateTaskDialogComponent } from './list/nominate-task-dialog.component';
-import { HomeRoutes } from './tasks.routes';
-import { ViewTaskComponent } from './view/view.component';
-var TasksModule = (function () {
-    function TasksModule() {
+import { CaseRoutes } from './cases.routes';
+import { ListCasesComponent } from './list/list.component';
+import { ViewCaseComponent } from './view/view.component';
+import { ViewFormComponent } from './view/viewform.component';
+var CasesModule = (function () {
+    function CasesModule() {
     }
-    TasksModule = __decorate([
+    CasesModule = __decorate([
         NgModule({
             imports: [
                 CommonModule,
                 NgxChartsModule,
                 FormsModule,
                 HttpClientModule,
-                HomeRoutes,
+                CaseRoutes,
                 MaterialModule,
-                SharedModule
+                SharedModule,
+                PipesModule,
+                RenderingModule
             ],
-            entryComponents: [
-                NominateTaskDialogComponent
-            ],
+            entryComponents: [],
             declarations: [
-                ListTasksComponent,
-                ViewTaskComponent,
-                NominateTaskDialogComponent,
-                TranslateFieldPipe
+                ListCasesComponent,
+                ViewCaseComponent,
+                ViewFormComponent
             ],
-            exports: [
-                ListTasksComponent,
-                NominateTaskDialogComponent
-            ],
+            exports: [],
             providers: []
         })
-    ], TasksModule);
-    return TasksModule;
+    ], CasesModule);
+    return CasesModule;
 }());
-export { TasksModule };
-//# sourceMappingURL=tasks.module.js.map
+export { CasesModule };
+//# sourceMappingURL=cases.module.js.map

@@ -76,8 +76,8 @@ var RenderingTask = (function () {
 }());
 export { RenderingTask };
 var CompleteRenderingTask = (function () {
-    function CompleteRenderingTask(renderingElts, task, description, searchTaskHistory) {
-        this.renderingElts = renderingElts;
+    function CompleteRenderingTask(rendering, task, description, searchTaskHistory) {
+        this.rendering = rendering;
         this.task = task;
         this.description = description;
         this.searchTaskHistory = searchTaskHistory;

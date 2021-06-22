@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net472</TargetFrameworks>
     <Description>Common classes used by the CaseManagement project.</Description>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

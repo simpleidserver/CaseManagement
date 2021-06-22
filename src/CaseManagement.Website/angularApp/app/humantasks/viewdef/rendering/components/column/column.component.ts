@@ -8,6 +8,5 @@ import { BaseUIComponent } from "../baseui.component";
 })
 export class ColumnComponent extends BaseUIComponent implements OnInit {
     ngOnInit() {
-        this.parent.element.nativeElement.style.width = this.option.width;
     }
 }

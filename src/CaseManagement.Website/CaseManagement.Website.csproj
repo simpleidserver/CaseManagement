@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -10,6 +10,8 @@
     <None Remove="angularApp\app\humantasks\viewdef\info\adddeadline.dialog.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\info\addparameter.dialog.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\info\addparameter.dialog.component.scss" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\basetxt-dialog.component.ts" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\basetxt.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\baseui.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\columns.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\columns.component.ts" />
@@ -25,13 +27,15 @@
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\header\header.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\header\header.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\header\header.component.ts" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\pwd\pwd.component.html" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\pwd\pwd.component.scss" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\pwd\pwd.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.ts" />
-    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\guidgenerator.ts" />
@@ -62,6 +66,8 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\info\addparameter.dialog.component.html" />
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\basetxt-dialog.component.ts" />
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\basetxt.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\baseui.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.html">
       <SubType>Code</SubType>
@@ -95,6 +101,13 @@
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\header\header.component.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\basetxt.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\pwd\pwd.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\pwd\pwd.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\row\row.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -111,9 +124,6 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.scss">

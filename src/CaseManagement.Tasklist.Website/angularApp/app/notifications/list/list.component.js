@@ -11,6 +11,7 @@ import { Component, ViewChild } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
+import { Notification } from '@app/stores/notifications/models/notification.model';
 import { select, Store } from '@ngrx/store';
 import { merge } from 'rxjs';
 import { SearchNotifications } from '@app/stores/notifications/actions/notifications.actions';
@@ -23,13 +24,13 @@ var ListNotificationsComponent = (function () {
         this.translate = translate;
         this.dialog = dialog;
         this.displayedColumns = ['priority', 'presentationName', 'presentationSubject', 'status', 'createdTime'];
-        this.baseTranslationKey = "NOTIFICATIONS.LIST";
         this.notifications$ = [];
     }
     ListNotificationsComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.notifications$ = [new Notification(), new Notification(), new Notification()];
         this.store.pipe(select(fromAppState.selectNotificationLstResult)).subscribe(function (l) {
-            if (!l || !l.content) {
+            if (!l || !l.content || l.content.length === 0) {
                 return;
             }
             _this.notifications$ = l.content;

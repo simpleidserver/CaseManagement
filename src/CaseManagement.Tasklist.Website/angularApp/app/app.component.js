@@ -65,17 +65,20 @@ var AppComponent = (function () {
             if (e.type === "logout") {
                 _this.isConnected = false;
             }
-            else if (e.type === "token_received") {
+            else if (e.type === "user_profile_loaded") {
                 _this.init();
             }
         });
     };
     AppComponent.prototype.configureAuth = function () {
+        var _this = this;
         this.oauthService.configure(authConfig);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         var self = this;
         this.oauthService.loadDiscoveryDocumentAndTryLogin({
             disableOAuth2StateCheck: true
+        }).then(function () {
+            _this.oauthService.loadUserProfile();
         });
         this.sessionCheckTimer = setInterval(function () {
             if (!self.oauthService.hasValidIdToken()) {

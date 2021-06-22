@@ -5,6 +5,7 @@
 
 ::ng-deep .column {
     min-height: 75px;
+    flex: auto;
 }
 
 ::ng-deep div.component.editMode {

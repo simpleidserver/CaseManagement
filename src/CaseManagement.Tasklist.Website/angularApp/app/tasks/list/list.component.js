@@ -17,7 +17,7 @@ import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { SearchTasks } from '../../stores/tasks/actions/tasks.actions';
+import { SearchTasks } from '@app/stores/tasks/actions/tasks.actions';
 import { NominateTaskDialogComponent } from './nominate-task-dialog.component';
 var ListTasksComponent = (function () {
     function ListTasksComponent(store, translate, activatedRoute, router, snackBar, actions$, dialog, formBuilder) {
@@ -30,7 +30,6 @@ var ListTasksComponent = (function () {
         this.dialog = dialog;
         this.formBuilder = formBuilder;
         this.displayedColumns = ['priority', 'presentationName', 'presentationSubject', 'actualOwner', 'status', 'createdTime', 'actions'];
-        this.baseTranslationKey = "TASKS.LIST";
         this.tasks$ = [];
         this.searchTasksForm = this.formBuilder.group({
             actualOwner: new FormControl(''),
@@ -41,40 +40,40 @@ var ListTasksComponent = (function () {
         var _this = this;
         this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.COMPLETE_START_TASK; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.TASK_STARTED'), _this.translate.instant('undo'), {
+            _this.snackBar.open(_this.translate.instant('TASKS.MESSAGES.TASK_STARTED'), _this.translate.instant('undo'), {
                 duration: 2000
             });
             _this.refresh();
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.ERROR_START_TASK; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.ERROR_START_TASK'), _this.translate.instant('undo'), {
+            _this.snackBar.open(_this.translate.instant('TASKS.MESSAGES.ERROR_START_TASK'), _this.translate.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.COMPLETE_NOMINATE_TASK; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.TASK_NOMINATED'), _this.translate.instant('undo'), {
+            _this.snackBar.open(_this.translate.instant('TASKS.MESSAGES.TASK_NOMINATED'), _this.translate.instant('undo'), {
                 duration: 2000
             });
             _this.refresh();
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.ERROR_NOMINATE_TASK; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.ERROR_NOMINATE_TASK'), _this.translate.instant('undo'), {
+            _this.snackBar.open(_this.translate.instant('TASKS.MESSAGES.ERROR_NOMINATE_TASK'), _this.translate.instant('undo'), {
                 duration: 2000
             });
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.COMPLETE_CLAIM_TASK; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.TASK_CLAIMED'), _this.translate.instant('undo'), {
+            _this.snackBar.open(_this.translate.instant('TASKS.MESSAGES.TASK_CLAIMED'), _this.translate.instant('undo'), {
                 duration: 2000
             });
             _this.refresh();
         });
         this.actions$.pipe(filter(function (action) { return action.type === fromTaskActions.ActionTypes.ERROR_CLAIM_TASK; }))
             .subscribe(function () {
-            _this.snackBar.open(_this.translate.instant(_this.baseTranslationKey + '.ERROR_CLAIM_TASK'), _this.translate.instant('undo'), {
+            _this.snackBar.open(_this.translate.instant('TASKS.MESSAGES.ERROR_CLAIM_TASK'), _this.translate.instant('undo'), {
                 duration: 2000
             });
         });

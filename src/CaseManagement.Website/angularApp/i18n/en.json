@@ -87,13 +87,36 @@
       "CONFIGURETXT": "Configure the textbox",
       "CONFIGURESELECT": "Configure select",
       "CONFIGUREHEADER": "Configure header",
+      "CONFIGURETITLE": "Configure",
       "LAYOUT": "Layout",
       "FIELDS": "Fields",
       "TEXTBOX": "Textbox",
       "SELECT": "Select",
       "COLUMNS": "Columns",
       "LABELS": "Labels",
-      "HEADER": "Header"
+      "HEADER": "Header",
+      "PASSWORD": "Password",
+      "CONFIRMPASSWORD": "Confirm Password",
+      "SELECTINPUTYPE": "Input Type",
+      "SELECTVALIDATIONRULE": "Select Validation Rule",
+      "INPUTYPES": {
+        "TXT": "Text",
+        "EMAIL": "Email",
+        "PASSWORD": "Password",
+        "NUMBER": "Number"
+      },
+      "VALIDATIONRULES": {
+        "REQUIRED": "Is Required",
+        "CONFIRMPWD": "Password Confirmation"
+      },
+      "ERRORS": {
+        "required": "Is Required",
+        "badPassword": "Password doesn't match"
+      },
+      "TRANSLATIONS": {
+        "fr": "French",
+        "en": "English"
+      }
     },
     "PARAMETERTYPES": {
       "INPUT": "Input",

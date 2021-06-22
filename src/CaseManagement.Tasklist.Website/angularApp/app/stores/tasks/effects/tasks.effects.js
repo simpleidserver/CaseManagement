@@ -44,7 +44,7 @@ var TasksEffects = (function () {
             var detailsCall = _this.tasksService.getDetails(evt.humanTaskInstanceId);
             var descriptionCall = _this.tasksService.getDescription(evt.humanTaskInstanceId);
             var searchTaskHistoryCall = _this.tasksService.searchTaskHistory(evt.humanTaskInstanceId, 0, 200, evt.order, evt.direction);
-            return forkJoin([renderingCall, detailsCall, descriptionCall, searchTaskHistoryCall]).pipe(map(function (results) { return { type: ActionTypes.COMPLETE_GET_TASK, renderingElts: results[0], task: results[1], description: results[2], searchTaskHistory: results[3] }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_TASK }); }));
+            return forkJoin([renderingCall, detailsCall, descriptionCall, searchTaskHistoryCall]).pipe(map(function (results) { return { type: ActionTypes.COMPLETE_GET_TASK, rendering: results[0], task: results[1], description: results[2], searchTaskHistory: results[3] }; }), catchError(function () { return of({ type: ActionTypes.ERROR_GET_TASK }); }));
         }));
         this.completeTask$ = this.actions$
             .pipe(ofType(ActionTypes.SUBMIT_TASK), mergeMap(function (evt) {

@@ -1,9 +1,14 @@
 import { RouterModule } from '@angular/router';
-import { ListTasksComponent } from './list/list.component';
-import { ViewTaskComponent } from './view/view.component';
+import { ListCasesComponent } from './list/list.component';
+import { ViewCaseComponent } from './view/view.component';
+import { ViewFormComponent } from './view/viewform.component';
 var routes = [
-    { path: '', component: ListTasksComponent },
-    { path: ':id', component: ViewTaskComponent }
+    { path: '', component: ListCasesComponent },
+    {
+        path: ':id', component: ViewCaseComponent, children: [
+            { path: ':formid', component: ViewFormComponent }
+        ]
+    }
 ];
-export var HomeRoutes = RouterModule.forChild(routes);
-//# sourceMappingURL=tasks.routes.js.map
+export var CaseRoutes = RouterModule.forChild(routes);
+//# sourceMappingURL=cases.routes.js.map

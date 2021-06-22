@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { TranslateEnumPipe } from '../pipes/translateenum.pipe';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { HumanTasksComponent } from './humantasks.component';
@@ -17,9 +18,11 @@ import { PresentationParameterComponent } from './viewdef/common/presentationele
 import { CreateHumanTaskInstanceDialog } from './viewdef/create-humantaskinstance-dialog.component';
 import { AddAssignmentDialogComponent, AddDeadlineComponentDialog, AddParameterDialogComponent, AddPresentationElementDialogComponent, AddPresentationParameterDialogComponent, ViewHumanTaskDefInfoComponent } from './viewdef/info/info.component';
 import { ColumnComponent } from './viewdef/rendering/components/column/column.component';
+import { ConfirmPwdComponent, ConfirmPwdComponentDialog } from './viewdef/rendering/components/confirmpwd/confirmpwd.component';
 import { ContainerComponent } from './viewdef/rendering/components/container/container.component';
 import { DynamicComponent } from './viewdef/rendering/components/dynamic.component';
 import { HeaderComponent, HeaderComponentDialog } from './viewdef/rendering/components/header/header.component';
+import { PwdComponent, PwdComponentDialog } from './viewdef/rendering/components/pwd/pwd.component';
 import { RowComponent, RowComponentDialog } from './viewdef/rendering/components/row/row.component';
 import { SelectComponent, SelectComponentDialog } from './viewdef/rendering/components/select/select.component';
 import { TxtComponent, TxtComponentDialog } from './viewdef/rendering/components/txt/txt.component';
@@ -47,15 +50,20 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         AddAssignmentDialogComponent,
         AddDeadlineComponentDialog,
         AddToPartDialog,
+        PwdComponentDialog,
         RowComponent,
         ColumnComponent,
         TxtComponent,
+        PwdComponent,
         SelectComponent,
         HeaderComponent,
-        ContainerComponent
+        ContainerComponent,
+        ConfirmPwdComponent,
+        ConfirmPwdComponentDialog
     ],
     declarations: [
         AddHumanTaskDefDialog,
+        PwdComponent,
         CreateHumanTaskInstanceDialog,
         AddEscalationDialog,
         SelectComponentDialog,
@@ -71,6 +79,7 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         PeopleAssignmentComponent,
         RowComponentDialog,
         TxtComponentDialog,
+        PwdComponentDialog,
         HeaderComponentDialog,
         PresentationParameterComponent,
         AddPresentationParameterDialogComponent,
@@ -85,7 +94,10 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         RowComponent,
         TxtComponent,
         HeaderComponent,
-        ContainerComponent
+        ContainerComponent,
+        ConfirmPwdComponent,
+        ConfirmPwdComponentDialog,
+        TranslateEnumPipe 
     ]
 })
 

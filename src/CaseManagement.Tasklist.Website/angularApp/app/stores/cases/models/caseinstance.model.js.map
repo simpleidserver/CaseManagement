@@ -1,1 +1,1 @@
-{"version":3,"file":"notification.model.js","sourceRoot":"","sources":["notification.model.ts"],"names":[],"mappings":"AAAA;IAAA;IASA,CAAC;IAAD,mBAAC;AAAD,CAAC,AATD,IASC"}
+{"version":3,"file":"caseinstance.model.js","sourceRoot":"","sources":["caseinstance.model.ts"],"names":[],"mappings":"AAIA;IACI;QACI,IAAI,CAAC,KAAK,GAAG,EAAE,CAAC;QAChB,IAAI,CAAC,QAAQ,GAAG,EAAE,CAAC;QACnB,IAAI,CAAC,WAAW,GAAG,EAAE,CAAC;IAC1B,CAAC;IAaL,mBAAC;AAAD,CAAC,AAlBD,IAkBC"}

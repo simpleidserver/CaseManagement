@@ -1,7 +1,7 @@
-var SearchNotificationResult = (function () {
-    function SearchNotificationResult() {
+var SearchCaseInstanceResult = (function () {
+    function SearchCaseInstanceResult() {
     }
-    return SearchNotificationResult;
+    return SearchCaseInstanceResult;
 }());
-export { SearchNotificationResult };
-//# sourceMappingURL=search-notification.model.js.map
+export { SearchCaseInstanceResult };
+//# sourceMappingURL=search-caseinstance.model.js.map

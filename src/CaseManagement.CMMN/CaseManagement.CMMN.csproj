@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Description>CMMN V1.1 implementation.</Description>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

@@ -9,7 +9,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { TranslateFieldPipe } from '../infrastructure/pipes/translateFieldPipe';
+import { RenderingModule } from '../common/rendering/rendering.module';
+import { PipesModule } from '../infrastructure/pipes.module';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { ListTasksComponent } from './list/list.component';
@@ -28,7 +29,9 @@ var TasksModule = (function () {
                 HttpClientModule,
                 HomeRoutes,
                 MaterialModule,
-                SharedModule
+                SharedModule,
+                PipesModule,
+                RenderingModule
             ],
             entryComponents: [
                 NominateTaskDialogComponent
@@ -36,8 +39,7 @@ var TasksModule = (function () {
             declarations: [
                 ListTasksComponent,
                 ViewTaskComponent,
-                NominateTaskDialogComponent,
-                TranslateFieldPipe
+                NominateTaskDialogComponent
             ],
             exports: [
                 ListTasksComponent,

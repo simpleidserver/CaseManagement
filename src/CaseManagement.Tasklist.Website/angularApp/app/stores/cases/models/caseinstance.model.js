@@ -1,7 +1,10 @@
-var Notification = (function () {
-    function Notification() {
+var CaseInstance = (function () {
+    function CaseInstance() {
+        this.files = [];
+        this.children = [];
+        this.workerTasks = [];
     }
-    return Notification;
+    return CaseInstance;
 }());
-export { Notification };
-//# sourceMappingURL=notification.model.js.map
+export { CaseInstance };
+//# sourceMappingURL=caseinstance.model.js.map

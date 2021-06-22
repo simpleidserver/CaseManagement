@@ -15,7 +15,6 @@ var NominateTaskDialogComponent = (function () {
     function NominateTaskDialogComponent(dialogRef, formBuilder) {
         this.dialogRef = dialogRef;
         this.formBuilder = formBuilder;
-        this.baseTranslationKey = "NOMINATE";
         this.values = [];
         this.nominateParameterForm = this.formBuilder.group({
             type: new FormControl('', [

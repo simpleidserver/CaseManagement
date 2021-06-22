@@ -12,8 +12,8 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Task } from '../models/task.model';
-import { map, catchError } from 'rxjs/operators';
 var TasksService = (function () {
     function TasksService(http, oauthService, translate) {
         this.http = http;
@@ -62,7 +62,7 @@ var TasksService = (function () {
         headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
         headers = headers.set('Content-Type', 'application/json');
         var targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/rendering";
-        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (r) { return r; }), catchError(function () { return of([]); }));
+        return this.http.get(targetUrl, { headers: headers }).pipe(map(function (r) { return r; }), catchError(function () { return of({}); }));
     };
     TasksService.prototype.getDetails = function (humanTaskInstanceId) {
         var headers = new HttpHeaders();

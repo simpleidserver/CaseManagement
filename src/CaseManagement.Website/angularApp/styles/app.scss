@@ -48,6 +48,19 @@ a.no-style {
     flex: 1 1 auto;
 }
 
+.mat-form-field .left-actions {
+    position: absolute;
+    top: 10px;
+    left: 0px;
+    background-color: white;
+    z-index: 2;
+}
+
+.mat-form-field .left-actions > .mat-icon {
+    cursor: pointer;
+}
+
+
 /* Breadcrumb */
 @media (max-width: 960px) {
     .breadcrumb {

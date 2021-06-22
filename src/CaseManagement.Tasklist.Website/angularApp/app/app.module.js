@@ -23,10 +23,12 @@ import { AuthGuard } from './infrastructure/auth-guard.service';
 import { MaterialModule } from './shared/material.module';
 import { SharedModule } from './shared/shared.module';
 import { appReducer } from './stores/appstate';
+import { CasesEffects } from './stores/cases/effects/cases.effects';
+import { CasesService } from './stores/cases/services/cases.service';
 import { NotificationsEffects } from './stores/notifications/effects/notifications.effects';
+import { NotificationsService } from './stores/notifications/services/notifications.service';
 import { TasksEffects } from './stores/tasks/effects/tasks.effects';
 import { TasksService } from './stores/tasks/services/tasks.service';
-import { NotificationsService } from './stores/notifications/services/notifications.service';
 export function createTranslateLoader(http) {
     var url = process.env.BASE_URL + 'assets/i18n/';
     return new TranslateHttpLoader(http, url, '.json');
@@ -46,7 +48,7 @@ var AppModule = (function () {
                 BrowserAnimationsModule,
                 HttpClientModule,
                 OAuthModule.forRoot(),
-                EffectsModule.forRoot([TasksEffects, NotificationsEffects]),
+                EffectsModule.forRoot([TasksEffects, NotificationsEffects, CasesEffects]),
                 StoreModule.forRoot(appReducer),
                 StoreDevtoolsModule.instrument({
                     maxAge: 10
@@ -63,7 +65,7 @@ var AppModule = (function () {
                 AppComponent
             ],
             bootstrap: [AppComponent],
-            providers: [AuthGuard, TasksService, NotificationsService]
+            providers: [AuthGuard, TasksService, NotificationsService, CasesService]
         })
     ], AppModule);
     return AppModule;
