@@ -8,7 +8,7 @@ Scenario: Launch CreateUserAccount bpmn process
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'processInstanceId'
 	And execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$/start'
-	And poll HTTP POST JSON request 'http://localhost/humantaskinstances/.search', until '$.content[?(@.name == 'emptyTask')].name'='emptyTask'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/.search'
 	| Key | Value |
 	And extract JSON from body
 	And extract '$.content[?(@.name == 'emptyTask')].id' from JSON body into 'humanTaskInstanceId'
@@ -16,8 +16,12 @@ Scenario: Launch CreateUserAccount bpmn process
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
 	| Key                 | Value |
 	| operationParameters | {}    |
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[0].flowNodeInstance.state'='Complete'
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[1].flowNodeInstance.state'='Complete'
+	And execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'executionPaths[0].executionPointers[0].flowNodeInstance.state'='Complete'
+	Then JSON 'executionPaths[0].executionPointers[1].flowNodeInstance.state'='Complete'
 
 Scenario: Launch GetWeatherInformation bpmn process
 	When execute HTTP POST JSON request 'http://localhost/processinstances'
@@ -26,7 +30,7 @@ Scenario: Launch GetWeatherInformation bpmn process
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'processInstanceId'
 	When execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$/start'
-	And poll HTTP POST JSON request 'http://localhost/humantaskinstances/.search', until '$.content[?(@.name == 'dressAppropriateForm')].name'='dressAppropriateForm'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/.search'
 	| Key | Value |	
 	And extract JSON from body
 	And extract '$.content[?(@.name == 'dressAppropriateForm')].id' from JSON body into 'humanTaskInstanceId'
@@ -34,8 +38,12 @@ Scenario: Launch GetWeatherInformation bpmn process
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
 	| Key                 | Value |
 	| operationParameters | {}    |
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[0].flowNodeInstance.state'='Complete'
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[1].flowNodeInstance.state'='Complete'
+	And execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$'
+	And extract JSON from body
+
+	Then HTTP status code equals to '200'
+	Then JSON 'executionPaths[0].executionPointers[0].flowNodeInstance.state'='Complete'
+	Then JSON 'executionPaths[0].executionPointers[1].flowNodeInstance.state'='Complete'
 
 Scenario: Launch GetAppropriateDress bpmn process
 	When execute HTTP POST JSON request 'http://localhost/processinstances'
@@ -43,16 +51,17 @@ Scenario: Launch GetAppropriateDress bpmn process
 	| processFileId | db7c8302dfca4222832aaa98320d228ae2eed2d63b16ed25a5e761a2f781b719 |
 	And extract JSON from body
 	And extract 'content[0].id' from JSON body into 'processInstanceId'
-	When execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$/start'
-	And poll HTTP POST JSON request 'http://localhost/humantaskinstances/.search', until '$.content[?(@.name == 'temperatureForm')].name'='temperatureForm'
+	And execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$/start'
+	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/.search'
 	| Key | Value |
 	And extract JSON from body
 	And extract '$.content[?(@.name == 'temperatureForm')].id' from JSON body into 'humanTaskInstanceId'
 	And execute HTTP GET request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/start'
 	And execute HTTP POST JSON request 'http://localhost/humantaskinstances/$humanTaskInstanceId$/complete'
 	| Key                 | Value               |
-	| operationParameters | { "degree" : "30" } |	
-	And poll 'http://localhost/processinstances/$processInstanceId$', until 'executionPaths[0].executionPointers[?(@.flowNodeId == 'Activity_12xhvyl')].flowNodeInstance.state'='Complete'
+	| operationParameters | { "degree" : "30" } |
+	And execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$'
 	And extract JSON from body
 	
 	Then HTTP status code equals to '200'
+	Then JSON 'executionPaths[0].executionPointers[?(@.flowNodeId == 'Activity_12xhvyl')].flowNodeInstance.state'='Complete'

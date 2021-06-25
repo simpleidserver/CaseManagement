@@ -39,7 +39,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
             return result;
         }
 
-        public async Task<FindResponse<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token)
+        public async Task<SearchResult<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token)
         {
             var result = await _dbContext.HumanTaskInstanceAggregate.Include(_ => _.EventHistories)
                 .FirstOrDefaultAsync(_ => _.AggregateId == parameter.HumanTaskInstanceId, token);
@@ -50,7 +50,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
 
             int totalLength = result.EventHistories.Count();
             var filtered = result.EventHistories.Skip(parameter.StartIndex).Take(parameter.Count);
-            return new FindResponse<HumanTaskInstanceEventHistory>
+            return new SearchResult<HumanTaskInstanceEventHistory>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
@@ -85,7 +85,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
             return result;
         }
 
-        public async Task<FindResponse<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token)
+        public async Task<SearchResult<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token)
         {
             IQueryable<HumanTaskInstanceAggregate> content = _dbContext.HumanTaskInstanceAggregate
                 .Include(_ => _.PeopleAssignments);
@@ -115,7 +115,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
 
             int totalLength = content.Count();
             var result = content.Skip(parameter.StartIndex).Take(parameter.Count);
-            return new FindResponse<HumanTaskInstanceAggregate>
+            return new SearchResult<HumanTaskInstanceAggregate>
             {
                 Content = await result.ToListAsync(token),
                 Count = parameter.Count,

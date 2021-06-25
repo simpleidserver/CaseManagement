@@ -25,7 +25,7 @@ namespace CaseManagement.BPMN.ProcessFile.Queries.Handlers
                 throw new UnknownProcessFileException(string.Format(Global.UnknownProcessFile, request.Id));
             }
 
-            return ProcessFileResult.ToDto(result);
+            return result;
         }
     }
 }

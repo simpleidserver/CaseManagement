@@ -15,22 +15,22 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("ProductVersion", "5.0.3")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ActivityStateHistoryModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ActivityStateHistory", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("ExecutionDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FlowNodeInstanceModelId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("FlowNodeInstanceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
@@ -40,17 +40,20 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FlowNodeInstanceModelId");
+                    b.HasIndex("FlowNodeInstanceId");
 
-                    b.ToTable("ActivityStateHistoryModel");
+                    b.ToTable("ActivityStateHistory");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.BPMNInterfaceModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.BPMNInterface", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("EltId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImplementationRef")
                         .HasColumnType("nvarchar(max)");
@@ -58,17 +61,86 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProcessInstanceModelAggregateId")
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcessInstanceModelAggregateId");
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
 
-                    b.ToTable("BPMNInterfaceModel");
+                    b.ToTable("BPMNInterface");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPathModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.BPMNTranslation", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DelegateConfigurationAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Language")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Key");
+
+                    b.HasIndex("DelegateConfigurationAggregateAggregateId");
+
+                    b.ToTable("BPMNTranslation");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.DelegateConfiguration.DelegateConfigurationAggregate", b =>
+                {
+                    b.Property<string>("AggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullQualifiedName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("AggregateId");
+
+                    b.ToTable("DelegateConfigurationAggregate");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.DelegateConfiguration.DelegateConfigurationRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DelegateConfigurationAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DelegateConfigurationAggregateAggregateId");
+
+                    b.ToTable("DelegateConfigurationRecord");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ExecutionPath", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -76,25 +148,22 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<DateTime>("CreateDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ProcessInstanceModelAggregateId")
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcessInstanceModelAggregateId");
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
 
-                    b.ToTable("ExecutionPathModel");
+                    b.ToTable("ExecutionPath");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPointerModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ExecutionPointer", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ExecutionPathId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ExecutionPathModelId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FlowNodeId")
@@ -108,18 +177,23 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExecutionPathModelId");
+                    b.HasIndex("ExecutionPathId");
 
-                    b.ToTable("ExecutionPointerModel");
+                    b.ToTable("ExecutionPointer");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.FlowNodeInstanceModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.FlowNodeInstance", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("ActivityState")
                         .HasColumnType("int");
+
+                    b.Property<string>("EltId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FlowNodeId")
                         .HasColumnType("nvarchar(max)");
@@ -127,7 +201,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<string>("Metadata")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProcessInstanceModelAggregateId")
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("State")
@@ -135,43 +209,20 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcessInstanceModelAggregateId");
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
 
-                    b.ToTable("FlowNodeInstanceModel");
+                    b.ToTable("FlowNodeInstance");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.FlowNodeModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ItemDefinition", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("EltId")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProcessInstanceModelAggregateId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SerializedContent")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProcessInstanceModelAggregateId");
-
-                    b.ToTable("FlowNodeModel");
-                });
-
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ItemDefinitionModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("IsCollection")
                         .HasColumnType("bit");
@@ -179,7 +230,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<int>("ItemKind")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProcessInstanceModelAggregateId")
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("StructureRef")
@@ -187,17 +238,20 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcessInstanceModelAggregateId");
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
 
-                    b.ToTable("ItemDefinitionModel");
+                    b.ToTable("ItemDefinition");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.MessageModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.Message", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("EltId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemRef")
                         .HasColumnType("nvarchar(max)");
@@ -205,51 +259,49 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProcessInstanceModelAggregateId")
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcessInstanceModelAggregateId");
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
 
-                    b.ToTable("MessageModel");
+                    b.ToTable("Message");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.MessageTokenModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.MessageToken", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Direction")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ExecutionPointerModelId")
+                    b.Property<string>("ExecutionPointerId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MessageContent")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SerializedContent")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExecutionPointerModelId");
+                    b.HasIndex("ExecutionPointerId");
 
-                    b.ToTable("MessageTokenModel");
+                    b.ToTable("MessageToken");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.OperationModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.Operation", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("EltId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("BPMNInterfaceModelId")
-                        .HasColumnType("bigint");
+                    b.Property<int?>("BPMNInterfaceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ImplementationRef")
                         .HasColumnType("nvarchar(max)");
@@ -263,16 +315,16 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<string>("OutMessageRef")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("EltId");
 
-                    b.HasIndex("BPMNInterfaceModelId");
+                    b.HasIndex("BPMNInterfaceId");
 
-                    b.ToTable("OperationModel");
+                    b.ToTable("Operation");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ProcessFileModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ProcessFileAggregate", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("AggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDateTime")
@@ -302,12 +354,12 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("AggregateId");
 
                     b.ToTable("ProcessFiles");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", b =>
                 {
                     b.Property<string>("AggregateId")
                         .HasColumnType("nvarchar(450)");
@@ -338,11 +390,11 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.ToTable("ProcessInstances");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.SequenceFlowModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.SequenceFlow", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ConditionExpression")
@@ -354,7 +406,7 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProcessInstanceModelAggregateId")
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SourceRef")
@@ -365,131 +417,212 @@ namespace CaseManagement.BPMN.SqlServer.Host.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcessInstanceModelAggregateId");
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
 
-                    b.ToTable("SequenceFlowModel");
+                    b.ToTable("SequenceFlow");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.StateTransitionTokenModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.SerializedFlowNodeDefinition", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FlowNodeInstanceId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProcessInstanceModelAggregateId")
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SerializedContent")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("State")
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
+
+                    b.ToTable("SerializedFlowNodeDefinition");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.StateTransitionToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FlowNodeInstanceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProcessInstanceAggregateAggregateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("StateTransition")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcessInstanceModelAggregateId");
+                    b.HasIndex("ProcessInstanceAggregateAggregateId");
 
-                    b.ToTable("StateTransitionTokenModel");
+                    b.ToTable("StateTransitionToken");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ActivityStateHistoryModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ActivityStateHistory", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.FlowNodeInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.FlowNodeInstance", null)
                         .WithMany("ActivityStates")
-                        .HasForeignKey("FlowNodeInstanceModelId")
+                        .HasForeignKey("FlowNodeInstanceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.BPMNInterfaceModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.BPMNInterface", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
                         .WithMany("Interfaces")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPathModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.BPMNTranslation", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.DelegateConfiguration.DelegateConfigurationAggregate", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("DelegateConfigurationAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.DelegateConfiguration.DelegateConfigurationRecord", b =>
+                {
+                    b.HasOne("CaseManagement.BPMN.Domains.DelegateConfiguration.DelegateConfigurationAggregate", null)
+                        .WithMany("Records")
+                        .HasForeignKey("DelegateConfigurationAggregateAggregateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ExecutionPath", b =>
+                {
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
                         .WithMany("ExecutionPathLst")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPointerModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ExecutionPointer", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPathModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ExecutionPath", null)
                         .WithMany("Pointers")
-                        .HasForeignKey("ExecutionPathModelId")
+                        .HasForeignKey("ExecutionPathId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.FlowNodeInstanceModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.FlowNodeInstance", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
                         .WithMany("ElementInstances")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId");
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.FlowNodeModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ItemDefinition", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
-                        .WithMany("ElementDefs")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.ItemDefinitionModel", b =>
-                {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
                         .WithMany("ItemDefs")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.MessageModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.Message", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.MessageTokenModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.MessageToken", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ExecutionPointerModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ExecutionPointer", null)
                         .WithMany("Tokens")
-                        .HasForeignKey("ExecutionPointerModelId")
+                        .HasForeignKey("ExecutionPointerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.OperationModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.Operation", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.BPMNInterfaceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.BPMNInterface", null)
                         .WithMany("Operations")
-                        .HasForeignKey("BPMNInterfaceModelId")
+                        .HasForeignKey("BPMNInterfaceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.SequenceFlowModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.SequenceFlow", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
                         .WithMany("SequenceFlows")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CaseManagement.BPMN.Persistence.EF.Models.StateTransitionTokenModel", b =>
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.SerializedFlowNodeDefinition", b =>
                 {
-                    b.HasOne("CaseManagement.BPMN.Persistence.EF.Models.ProcessInstanceModel", null)
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
+                        .WithMany("SerializedElementDefs")
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.StateTransitionToken", b =>
+                {
+                    b.HasOne("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", null)
                         .WithMany("StateTransitions")
-                        .HasForeignKey("ProcessInstanceModelAggregateId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ProcessInstanceAggregateAggregateId");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.BPMNInterface", b =>
+                {
+                    b.Navigation("Operations");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.DelegateConfiguration.DelegateConfigurationAggregate", b =>
+                {
+                    b.Navigation("Records");
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ExecutionPath", b =>
+                {
+                    b.Navigation("Pointers");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ExecutionPointer", b =>
+                {
+                    b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.FlowNodeInstance", b =>
+                {
+                    b.Navigation("ActivityStates");
+                });
+
+            modelBuilder.Entity("CaseManagement.BPMN.Domains.ProcessInstanceAggregate", b =>
+                {
+                    b.Navigation("ElementInstances");
+
+                    b.Navigation("ExecutionPathLst");
+
+                    b.Navigation("Interfaces");
+
+                    b.Navigation("ItemDefs");
+
+                    b.Navigation("Messages");
+
+                    b.Navigation("SequenceFlows");
+
+                    b.Navigation("SerializedElementDefs");
+
+                    b.Navigation("StateTransitions");
                 });
 #pragma warning restore 612, 618
         }

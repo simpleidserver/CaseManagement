@@ -34,7 +34,7 @@ namespace CaseManagement.BPMN.Builders
 
         protected void FeedFlowNode(BaseFlowNode node)
         {
-            node.Id = Id;
+            node.EltId = Id;
             node.Name = Name;
         }
     }
@@ -207,7 +207,7 @@ namespace CaseManagement.BPMN.Builders
         {
             return new MessageEventDefinition
             {
-                Id = _id,
+                EltId = _id,
                 MessageRef = _messageRef
             };
         }

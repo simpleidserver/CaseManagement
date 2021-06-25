@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -97,6 +96,34 @@ namespace CaseManagement.BPMN.Acceptance.Tests.Steps
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
 
+        [When("execute HTTP POST JSON request '(.*)'")]
+        public async Task WhenExecuteHTTPPostJSONRequest(string url, Table table)
+        {
+            var jObj = new JObject();
+            foreach (var record in table.Rows)
+            {
+                var key = record["Key"];
+                var value = Parse(record["Value"]);
+                try
+                {
+                    jObj.Add(key, JToken.Parse(value));
+                }
+                catch
+                {
+                    jObj.Add(key, value.ToString());
+                }
+            }
+
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(Parse(url)),
+                Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
+            };
+            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
+        }
+
         [When("poll '(.*)', until '(.*)'='(.*)'")]
         public async Task WhenPollHTTPGETRequest(string url, string key, string value)
         {
@@ -124,115 +151,6 @@ namespace CaseManagement.BPMN.Acceptance.Tests.Steps
                 return;
             }
 
-            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
-        }
-
-        [When("poll HTTP POST JSON request '(.*)', until '(.*)'='(.*)'")]
-        public async Task WhenPollHTTPPostJSONRequest(string url, string key, string value, Table table)
-        {
-            var jObj = new JObject();
-            var dic = new Dictionary<string, string>();
-            foreach (var record in table.Rows)
-            {
-                var k = record["Key"];
-                var v = Parse(record["Value"]);
-                if (k == "Accept-Language")
-                {
-                    dic.Add(k, v);
-                }
-                else
-                {
-                    try
-                    {
-                        jObj.Add(k, JToken.Parse(v));
-                    }
-                    catch
-                    {
-                        jObj.Add(k, value.ToString());
-                    }
-                }
-            }
-
-            var httpRequestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri(Parse(url)),
-                Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
-            };
-            foreach (var kvp in dic)
-            {
-                httpRequestMessage.Headers.Add(kvp.Key, kvp.Value);
-            }
-
-            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
-            var json = await httpResponseMessage.Content.ReadAsStringAsync();
-            jObj = JsonConvert.DeserializeObject<JObject>(json);
-            var token = jObj.SelectToken(key);
-            if (token == null || token.ToString() != value)
-            {
-                Thread.Sleep(MS);
-                await WhenPollHTTPPostJSONRequest(url, key, value, table);
-                return;
-            }
-
-            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
-        }
-
-        [When("poll '(.*)', until '(.*)' doesn't exist")]
-        public async Task WhenPollDoesntExist(string url, string key)
-        {
-            url = Parse(url);
-            var httpRequestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(url)
-            };
-            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
-            var json = await httpResponseMessage.Content.ReadAsStringAsync();
-            var jObj = JsonConvert.DeserializeObject<JObject>(json);
-            if (jObj == null)
-            {
-                Thread.Sleep(MS);
-                await WhenPollDoesntExist(url, key);
-                return;
-            }
-
-            var token = jObj.SelectToken(key);
-            if (token != null)
-            {
-                Thread.Sleep(MS);
-                await WhenPollDoesntExist(url, key);
-                return;
-            }
-
-            _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
-        }
-
-        [When("execute HTTP POST JSON request '(.*)'")]
-        public async Task WhenExecuteHTTPPostJSONRequest(string url, Table table)
-        {
-            var jObj = new JObject();
-            foreach (var record in table.Rows)
-            {
-                var key = record["Key"];
-                var value = Parse(record["Value"]);
-                try
-                {
-                    jObj.Add(key, JToken.Parse(value));
-                }
-                catch
-                {
-                    jObj.Add(key, value.ToString());
-                }
-            }
-
-            var httpRequestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri(Parse(url)),
-                Content = new StringContent(jObj.ToString(), Encoding.UTF8, "application/json")
-            };
-            var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
             _scenarioContext.Set(httpResponseMessage, "httpResponseMessage");
         }
 

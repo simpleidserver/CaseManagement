@@ -1,6 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-
-namespace CaseManagement.BPMN.Domains
+﻿namespace CaseManagement.BPMN.Domains
 {
     public class MessageEventDefinition : BaseEventDefinition
     {

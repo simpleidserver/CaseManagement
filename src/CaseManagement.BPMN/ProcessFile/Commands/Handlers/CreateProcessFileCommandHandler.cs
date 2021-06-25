@@ -1,6 +1,6 @@
 ﻿using CaseManagement.BPMN.Domains;
+using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.ProcessFile.Results;
-using CaseManagement.Common;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,16 +13,16 @@ namespace CaseManagement.BPMN.ProcessFile.Commands.Handlers
     public class CreateProcessFileCommandHandler : IRequestHandler<CreateProcessFileCommand, CreateProcessFileResult>
     {
         private readonly ILogger<CreateProcessFileCommandHandler> _logger;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
+        private readonly IProcessFileCommandRepository _processFileCommandRepository;
         private readonly BPMNServerOptions _options;
 
         public CreateProcessFileCommandHandler(
             ILogger<CreateProcessFileCommandHandler> logger,
-            ICommitAggregateHelper commitAggregateHelper,
+            IProcessFileCommandRepository processFileCommandRepository,
             IOptions<BPMNServerOptions> options)
         {
             _logger = logger;
-            _commitAggregateHelper = commitAggregateHelper;
+            _processFileCommandRepository = processFileCommandRepository;
             _options = options.Value;
         }
 
@@ -35,8 +35,8 @@ namespace CaseManagement.BPMN.ProcessFile.Commands.Handlers
             }
 
             var processFile = ProcessFileAggregate.New(Guid.NewGuid().ToString(), request.Name, request.Description, 0, payload);
-            var streamName = ProcessFileAggregate.GetStreamName(processFile.AggregateId);
-            await _commitAggregateHelper.Commit(processFile, streamName, cancellationToken);
+            await _processFileCommandRepository.Add(processFile, cancellationToken);
+            await _processFileCommandRepository.SaveChanges(cancellationToken);
             _logger.LogInformation("Process file has been added");
             return new CreateProcessFileResult
             {

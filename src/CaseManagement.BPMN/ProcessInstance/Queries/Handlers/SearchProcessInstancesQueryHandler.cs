@@ -18,24 +18,17 @@ namespace CaseManagement.BPMN.ProcessInstance.Queries.Handlers
             _processInstanceQueryRepository = processInstanceQueryRepository;
         }
 
-        public async Task<SearchResult<ProcessInstanceResult>> Handle(SearchProcessInstancesQuery request, CancellationToken cancellationToken)
+        public Task<SearchResult<ProcessInstanceResult>> Handle(SearchProcessInstancesQuery request, CancellationToken cancellationToken)
         {
-            var result = await _processInstanceQueryRepository.Find(new FindProcessInstancesParameter
+            return _processInstanceQueryRepository.Find(new FindProcessInstancesParameter
             {
                 Count = request.Count,
                 Order = request.Order,
                 OrderBy = request.OrderBy,
                 ProcessFileId = request.ProcessFileId,
                 StartIndex = request.StartIndex,
-                Status = (int?)request.Status
+                Status = request.Status
             }, cancellationToken);
-            return new SearchResult<ProcessInstanceResult>
-            {
-                Content = result.Content.Select(_ => ProcessInstanceResult.ToDto(_)),
-                Count = result.Count,
-                StartIndex = result.StartIndex,
-                TotalLength = result.TotalLength
-            };
         }
     }
 }

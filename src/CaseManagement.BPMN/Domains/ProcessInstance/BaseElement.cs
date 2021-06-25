@@ -5,11 +5,11 @@ namespace CaseManagement.BPMN.Domains
     [Serializable]
     public class BaseElement
     {
-        public string Id { get; set; }
+        public string EltId { get; set; }
 
         public void FeedElt(BaseElement elt)
         {
-            elt.Id = Id;
+            elt.EltId = EltId;
         }
     }
 }

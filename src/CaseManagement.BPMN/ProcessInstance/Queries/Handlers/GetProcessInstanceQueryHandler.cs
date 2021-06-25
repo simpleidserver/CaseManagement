@@ -31,7 +31,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Queries.Handlers
                 throw new UnknownFlowInstanceException(string.Format(Global.UnknownProcessInstance, request.Id));
             }
 
-            return ProcessInstanceResult.ToDto(result);
+            return result;
         }
     }
 }

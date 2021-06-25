@@ -12,7 +12,7 @@ namespace CaseManagement.BPMN.Domains
         {
             return new SubProcess
             {
-                Id = Id,
+                EltId = EltId,
                 Name = Name,
                 StartQuantity = StartQuantity
             };

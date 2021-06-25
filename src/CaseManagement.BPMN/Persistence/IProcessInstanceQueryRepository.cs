@@ -1,6 +1,6 @@
-﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.BPMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+﻿using CaseManagement.BPMN.Persistence.Parameters;
+using CaseManagement.BPMN.ProcessInstance.Results;
+using CaseManagement.Common.Results;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ namespace CaseManagement.BPMN.Persistence
 {
     public interface IProcessInstanceQueryRepository : IDisposable
     {
-        Task<ProcessInstanceAggregate> Get(string id, CancellationToken token);
-        Task<FindResponse<ProcessInstanceAggregate>> Find(FindProcessInstancesParameter parameter, CancellationToken token);
+        Task<ProcessInstanceResult> Get(string id, CancellationToken token);
+        Task<SearchResult<ProcessInstanceResult>> Find(FindProcessInstancesParameter parameter, CancellationToken token);
     }
 }

@@ -6,6 +6,6 @@ namespace CaseManagement.HumanTask.NotificationDef.Commands
     public class AddNotificationDefPresentationElementCommand : IRequest<bool>
     {
         public string Id { get; set; }
-        public PresentationElementDefinitionResult PresentationElement { get; set; }
+        public NotificationPresentationElementDefinitionResult PresentationElement { get; set; }
     }
 }

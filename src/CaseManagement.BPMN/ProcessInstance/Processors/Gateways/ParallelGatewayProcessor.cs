@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Gateways
             }
             else
             {
-                outcome = incoming;
+                outcome = incoming.ToList();
             }
 
             return Task.FromResult(BPMNExecutionResult.Next(outgoingFlowNodeIds, outcome));

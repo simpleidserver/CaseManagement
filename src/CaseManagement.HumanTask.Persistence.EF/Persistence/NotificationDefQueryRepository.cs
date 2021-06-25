@@ -56,7 +56,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
             return await ordered.FirstOrDefaultAsync(_ => _.Name == name, token);
         }
 
-        public async Task<FindResponse<NotificationDefinitionAggregate>> Search(SearchNotificationDefParameter parameter, CancellationToken token)
+        public async Task<SearchResult<NotificationDefinitionAggregate>> Search(SearchNotificationDefParameter parameter, CancellationToken token)
         {
             IQueryable<NotificationDefinitionAggregate> result = _dbContext.NotificationDefinitions
                 .Include(_ => _.OperationParameters)
@@ -75,7 +75,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
 
             int totalLength = await result.CountAsync(token);
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return new FindResponse<NotificationDefinitionAggregate>
+            return new SearchResult<NotificationDefinitionAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

@@ -28,7 +28,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             return Task.FromResult(_notifications.FirstOrDefault(_ => _.AggregateId == id));
         }
 
-        public Task<FindResponse<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token)
+        public Task<SearchResult<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token)
         {
             IQueryable<NotificationInstanceAggregate> result = _notifications.Where(n =>
             {
@@ -59,7 +59,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             }
 
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<NotificationInstanceAggregate>
+            return Task.FromResult(new SearchResult<NotificationInstanceAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

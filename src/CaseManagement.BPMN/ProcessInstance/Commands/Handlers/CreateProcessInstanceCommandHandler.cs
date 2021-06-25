@@ -1,10 +1,9 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
 using CaseManagement.BPMN.Parser;
+using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.ProcessInstance.Results;
 using CaseManagement.BPMN.Resources;
-using CaseManagement.Common;
-using CaseManagement.Common.EvtStore;
 using CaseManagement.Common.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -17,23 +16,23 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
 {
     public class CreateProcessInstanceCommandHandler : IRequestHandler<CreateProcessInstanceCommand, SearchResult<ProcessInstanceResult>>
     {
+        private readonly IProcessInstanceCommandRepository _processInstanceCommandRepository;
+        private readonly IProcessFileCommandRepository _processFileCommandRepository;
         private readonly ILogger<CreateProcessInstanceCommandHandler> _logger;
-        private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
 
         public CreateProcessInstanceCommandHandler(
-            ILogger<CreateProcessInstanceCommandHandler> logger,
-            IEventStoreRepository eventStoreRepository,
-            ICommitAggregateHelper commitAggregateHelper)
+            IProcessInstanceCommandRepository processInstanceCommandRepository,
+            IProcessFileCommandRepository processFileCommandRepository,
+            ILogger<CreateProcessInstanceCommandHandler> logger)
         {
+            _processInstanceCommandRepository = processInstanceCommandRepository;
+            _processFileCommandRepository = processFileCommandRepository;
             _logger = logger;
-            _eventStoreRepository = eventStoreRepository;
-            _commitAggregateHelper = commitAggregateHelper;
         }
 
         public async Task<SearchResult<ProcessInstanceResult>> Handle(CreateProcessInstanceCommand request, CancellationToken cancellationToken)
         {
-            var processFile = await _eventStoreRepository.GetLastAggregate<ProcessFileAggregate>(request.ProcessFileId, ProcessFileAggregate.GetStreamName(request.ProcessFileId));
+            var processFile = await _processFileCommandRepository.Get(request.ProcessFileId, cancellationToken);
             if (processFile == null || string.IsNullOrWhiteSpace(processFile.AggregateId))
             {
                 _logger.LogError($"the process file '{request.ProcessFileId}' doesn't exist");
@@ -51,10 +50,11 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
                     processInstance.Messages.ToList(),
                     processInstance.ItemDefs.ToList(),
                     processInstance.SequenceFlows.ToList());
-                await _commitAggregateHelper.Commit(pi, pi.GetStreamName(), cancellationToken);
+                await _processInstanceCommandRepository.Add(pi, cancellationToken);
                 result.Add(ProcessInstanceResult.ToDto(pi));
             }
 
+            await _processInstanceCommandRepository.SaveChanges(cancellationToken);
             return new SearchResult<ProcessInstanceResult>
             {
                 Content = result

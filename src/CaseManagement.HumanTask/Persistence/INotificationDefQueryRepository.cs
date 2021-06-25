@@ -12,6 +12,6 @@ namespace CaseManagement.HumanTask.Persistence
         Task<NotificationDefinitionAggregate> Get(string id, CancellationToken token);
         Task<ICollection<NotificationDefinitionAggregate>> GetAll(CancellationToken token);
         Task<NotificationDefinitionAggregate> GetLatest(string name, CancellationToken token);
-        Task<FindResponse<NotificationDefinitionAggregate>> Search(SearchNotificationDefParameter parameter, CancellationToken token);
+        Task<SearchResult<NotificationDefinitionAggregate>> Search(SearchNotificationDefParameter parameter, CancellationToken token);
     }
 }

@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,8 +8,7 @@ namespace CaseManagement.BPMN.Domains
     {
         public ExecutionPointer()
         {
-            Incoming = new List<MessageToken>();
-            Outgoing = new List<MessageToken>();
+            Tokens = new List<MessageToken>();
             IsActive = true;
         }
 
@@ -19,8 +17,57 @@ namespace CaseManagement.BPMN.Domains
         public string InstanceFlowNodeId { get; set; }
         public string FlowNodeId { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<MessageToken> Incoming { get; set; }
-        public ICollection<MessageToken> Outgoing { get; set; }
+        public IEnumerable<MessageToken> Incoming
+        {
+            get
+            {
+                return Tokens.Where(t => t.Type == MessageTokenTypes.INCOMING);
+            }
+        }
+        public IEnumerable<MessageToken> Outgoing
+        {
+            get
+            {
+                return Tokens.Where(t => t.Type == MessageTokenTypes.OUTGOING);
+            }
+        }
+        public ICollection<MessageToken> Tokens { get; set; }
+
+        public void AddIncoming(IEnumerable<MessageToken> tokens)
+        {
+            if (tokens == null)
+            {
+                return;
+            }
+
+            foreach(var token in tokens)
+            {
+                Tokens.Add(new MessageToken
+                {
+                    MessageContent = token.MessageContent,
+                    Name = token.Name,
+                    Type = MessageTokenTypes.INCOMING
+                });
+            }
+        }
+
+        public void AddOutgoing(IEnumerable<MessageToken> tokens)
+        {
+            if (tokens == null)
+            {
+                return;
+            }
+
+            foreach(var token in tokens)
+            {
+                Tokens.Add(new MessageToken
+                {
+                    MessageContent = token.MessageContent,
+                    Name = token.Name,
+                    Type = MessageTokenTypes.OUTGOING
+                });
+            }
+        }
 
         public object Clone()
         {
@@ -31,8 +78,7 @@ namespace CaseManagement.BPMN.Domains
                 FlowNodeId = FlowNodeId,
                 InstanceFlowNodeId = InstanceFlowNodeId,
                 IsActive = IsActive,
-                Incoming = Incoming.Select(_ => (MessageToken)_.Clone()).ToList(),
-                Outgoing = Outgoing.Select(_ => (MessageToken)_.Clone()).ToList()
+                Tokens = Tokens.Select(_ => (MessageToken)_.Clone()).ToList()
             };
         }
     }

@@ -20,7 +20,7 @@ namespace CaseManagement.BPMN.Builders
 
         public BPMNInterfaceBuilder AddOperation(string id, string name, string inMessageRef, string implementationRef, string outMessageRef = null)
         {
-            _operations.Add(new Operation { Id = id, Name = name, InMessageRef = inMessageRef, ImplementationRef = implementationRef, OutMessageRef = outMessageRef });
+            _operations.Add(new Operation { EltId = id, Name = name, InMessageRef = inMessageRef, ImplementationRef = implementationRef, OutMessageRef = outMessageRef });
             return this;
         }
 
@@ -28,7 +28,7 @@ namespace CaseManagement.BPMN.Builders
         {
             return new BPMNInterface
             {
-                Id = _id,
+                EltId = _id,
                 Name = _name,
                 ImplementationRef = _implementationRef,
                 Operations = _operations

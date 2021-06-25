@@ -35,7 +35,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             return Task.FromResult(_caseWorkerTaskLst.FirstOrDefault(a => a.AggregateId == id));
         }
 
-        public Task<FindResponse<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
+        public Task<SearchResult<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
         {
             IEnumerable<CaseWorkerTaskAggregate> result = _caseWorkerTaskLst.ToList();
             if (MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
@@ -45,7 +45,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<CaseWorkerTaskAggregate>
+            return Task.FromResult(new SearchResult<CaseWorkerTaskAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

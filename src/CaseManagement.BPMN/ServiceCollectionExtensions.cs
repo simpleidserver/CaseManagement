@@ -1,20 +1,13 @@
 ﻿using CaseManagement.BPMN;
-using CaseManagement.BPMN.Common;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.Persistence.InMemory;
 using CaseManagement.BPMN.ProcessInstance.Processors;
 using CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers;
 using CaseManagement.Common;
-using CaseManagement.Common.Bus;
-using CaseManagement.Common.Domains;
-using CaseManagement.Common.EvtStore;
 using CaseManagement.Common.Factories;
-using CaseManagement.Common.Jobs;
-using CaseManagement.Common.Lock;
 using CaseManagement.Common.Processors;
 using MediatR;
-using NEventStore;
 using System;
 using System.Collections.Concurrent;
 
@@ -28,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.Configure<CommonOptions>((o) =>
                 {
-                    o.ApplicationAssembly = typeof(IProcessJobServer).Assembly;
+                    o.ApplicationAssembly = typeof(ProcessInstanceAggregate).Assembly;
                 });
             }
             else
@@ -53,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddProcessApiApplication(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(IProcessJobServer));
+            services.AddMediatR(typeof(ProcessInstanceAggregate));
             var processFiles = new ConcurrentBag<ProcessFileAggregate>();
             services.AddSingleton<IProcessFileCommandRepository>(new InMemoryProcessFileCommandRepository(processFiles));
             services.AddSingleton<IProcessFileQueryRepository>(new InMemoryProcessFileQueryRepository(processFiles));
@@ -63,16 +56,11 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddProcessServerApplication(this IServiceCollection services)
         {
             var instances = new ConcurrentBag<ProcessInstanceAggregate>();
-            services.TryAddSingleton<IDistributedLock, InMemoryDistributedLock>();
-            services.TryAddTransient<IProcessJobServer, ProcessJobServer>();
             services.TryAddTransient<IProcessorFactory, ProcessorFactory>();
             services.TryAddTransient<IProcessInstanceProcessor, ProcessInstanceProcessor>();
             services.TryAddSingleton<IProcessInstanceQueryRepository>(new InMemoryProcessInstanceQueryRepository(instances));
             services.TryAddSingleton<IProcessInstanceCommandRepository>(new InMemoryProcessInstanceCommandRepository(instances));
-            services.RegisterAllAssignableType<IJob>(typeof(IProcessJobServer).Assembly);
-            services.RegisterAllAssignableType<IJob>(typeof(ICommitAggregateHelper).Assembly);
-            services.RegisterAllAssignableType(typeof(IDomainEvtConsumerGeneric<>), typeof(IProcessJobServer).Assembly);
-            services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(IProcessJobServer).Assembly);
+            services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(BPMNConstants).Assembly);
             services.RegisterAllAssignableType(typeof(IServiceTaskHandler), typeof(IServiceTaskHandler).Assembly);
             services.RegisterAllAssignableType(typeof(IUserServerTaskHandler), typeof(IUserServerTaskHandler).Assembly);
             foreach(var assm in AppDomain.CurrentDomain.GetAssemblies())
@@ -85,12 +73,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddCommon(this IServiceCollection services)
         {
-            var wireup = Wireup.Init().UsingInMemoryPersistence().Build();
-            services.TryAddSingleton<IStoreEvents>(wireup);
-            services.TryAddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
-            services.TryAddSingleton<IEventStoreRepository, InMemoryEventStoreRepository>();
-            services.TryAddSingleton<IMessageBroker, InMemoryMessageBroker>();
-            services.TryAddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
             services.TryAddTransient<IHttpClientFactory, HttpClientFactory>();
             return services;
         }

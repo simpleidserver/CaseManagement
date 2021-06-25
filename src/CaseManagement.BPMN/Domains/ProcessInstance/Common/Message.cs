@@ -23,7 +23,7 @@ namespace CaseManagement.BPMN.Domains
         {
             return new Message
             {
-                Id = Id,
+                EltId = EltId,
                 Name = Name,
                 ItemRef = ItemRef
             };

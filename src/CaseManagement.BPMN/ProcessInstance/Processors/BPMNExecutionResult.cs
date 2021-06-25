@@ -1,4 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
+﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.Common.Processors;
 using System.Collections.Generic;
 
@@ -23,9 +23,9 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         public bool IsNewExecutionPointerRequired { get; set; }
         public ICollection<string> NextFlowNodeIds { get; set; }
         public ICollection<MessageToken> OutcomingTokens { get; set; }
-        public ICollection<MessageToken> Tokens => OutcomeValue as ICollection<MessageToken>;
+        public IEnumerable<MessageToken> Tokens => OutcomeValue as IEnumerable<MessageToken>;
 
-        public static BPMNExecutionResult Next(ICollection<string> nextFlowNodeIds, ICollection<MessageToken> outcome = null, bool isEltInstanceCompleted = true, bool isNewExecutionPointerRequired = false)
+        public static BPMNExecutionResult Next(ICollection<string> nextFlowNodeIds, IEnumerable<MessageToken> outcome = null, bool isEltInstanceCompleted = true, bool isNewExecutionPointerRequired = false)
         {
             return new BPMNExecutionResult(isNext: true, nextFlowNodeIds: nextFlowNodeIds, outcome: outcome, isEltInstanceCompleted: isEltInstanceCompleted, isNewExecutionPointerRequired: isNewExecutionPointerRequired);
         }

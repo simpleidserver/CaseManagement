@@ -1,5 +1,4 @@
 ﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.BPMN.Persistence.EF.DomainMapping;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,21 +14,21 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
             _dbContext = dbContext;
         }
 
+        public Task<ProcessFileAggregate> Get(string id, CancellationToken cancellationToken)
+        {
+            return _dbContext.ProcessFiles.FirstOrDefaultAsync(p => p.AggregateId == id, cancellationToken);
+        }
+
         public Task Add(ProcessFileAggregate processFile, CancellationToken token)
         {
-            _dbContext.ProcessFiles.Add(processFile.ToModel());
+            _dbContext.ProcessFiles.Add(processFile);
             return Task.CompletedTask;
         }
 
-        public async Task Update(ProcessFileAggregate processFile, CancellationToken token)
+        public Task Update(ProcessFileAggregate processFile, CancellationToken token)
         {
-            var result = await _dbContext.ProcessFiles.FirstOrDefaultAsync(_ => _.Id == processFile.AggregateId, token);
-            result.Name = processFile.Name;
-            result.Description = processFile.Description;
-            result.Payload = processFile.Payload;
-            result.Status = processFile.Status;
-            result.UpdateDateTime = processFile.UpdateDateTime;
-            result.Version = processFile.Version;
+            _dbContext.ProcessFiles.Update(processFile);
+            return Task.CompletedTask;
         }
 
         public Task<int> SaveChanges(CancellationToken token)

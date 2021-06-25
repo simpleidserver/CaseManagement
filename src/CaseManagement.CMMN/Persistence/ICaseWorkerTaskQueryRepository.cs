@@ -9,6 +9,6 @@ namespace CaseManagement.CMMN.Persistence
     public interface ICaseWorkerTaskQueryRepository
     {
         Task<CaseWorkerTaskAggregate> Get(string id, CancellationToken token);
-        Task<FindResponse<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token);
+        Task<SearchResult<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token);
     }
 }

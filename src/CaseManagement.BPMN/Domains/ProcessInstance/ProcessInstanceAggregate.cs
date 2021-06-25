@@ -1,11 +1,8 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Helpers;
-using CaseManagement.BPMN.Infrastructure.Jobs.Notifications;
+﻿using CaseManagement.BPMN.Helpers;
 using CaseManagement.Common.Domains;
 using DynamicExpresso;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,14 +13,14 @@ namespace CaseManagement.BPMN.Domains
     {
         public ProcessInstanceAggregate()
         {
-            ElementDefs = new ConcurrentBag<BaseFlowNode>();
-            ElementInstances = new ConcurrentBag<FlowNodeInstance>();
-            ExecutionPathLst = new ConcurrentBag<ExecutionPath>();
-            ItemDefs = new ConcurrentBag<ItemDefinition>();
-            SequenceFlows = new ConcurrentBag<SequenceFlow>();
-            Interfaces = new ConcurrentBag<BPMNInterface>();
-            Messages = new ConcurrentBag<Message>();
-            StateTransitions = new ConcurrentBag<StateTransitionNotification>();
+            SerializedElementDefs = new List<SerializedFlowNodeDefinition>();
+            ElementInstances = new List<FlowNodeInstance>();
+            ExecutionPathLst = new List<ExecutionPath>();
+            ItemDefs = new List<ItemDefinition>();
+            SequenceFlows = new List<SequenceFlow>();
+            Interfaces = new List<BPMNInterface>();
+            Messages = new List<Message>();
+            StateTransitions = new List<StateTransitionToken>();
         }
 
         public ProcessInstanceStatus Status { get; set; }
@@ -33,18 +30,25 @@ namespace CaseManagement.BPMN.Domains
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public ICollection<StartEvent> StartEvts => ElementDefs.Where(_ => _ is StartEvent).Cast<StartEvent>().ToList();
-        public ConcurrentBag<ItemDefinition> ItemDefs { get; set; }
-        public ConcurrentBag<BPMNInterface> Interfaces { get; set; }
-        public ConcurrentBag<Message> Messages { get; set; }
-        public ConcurrentBag<BaseFlowNode> ElementDefs { get; set; }
-        public ConcurrentBag<SequenceFlow> SequenceFlows { get; set; }
-        public ConcurrentBag<FlowNodeInstance> ElementInstances { get; set; }
-        public ConcurrentBag<ExecutionPath> ExecutionPathLst { get; set; }
-        public ConcurrentBag<StateTransitionNotification> StateTransitions { get; set; }
+        public ICollection<BaseFlowNode> ElementDefs
+        {
+            get
+            {
+                return SerializedElementDefs.Select(e => e.Deserialize()).ToList();
+            }
+        }
+        public ICollection<ItemDefinition> ItemDefs { get; set; }
+        public ICollection<BPMNInterface> Interfaces { get; set; }
+        public ICollection<Message> Messages { get; set; }
+        public ICollection<SerializedFlowNodeDefinition> SerializedElementDefs { get; set; }
+        public ICollection<SequenceFlow> SequenceFlows { get; set; }
+        public ICollection<FlowNodeInstance> ElementInstances { get; set; }
+        public ICollection<ExecutionPath> ExecutionPathLst { get; set; }
+        public ICollection<StateTransitionToken> StateTransitions { get; set; }
 
         #region Getters
 
-        public bool IsIncomingSatisfied(SequenceFlow incomingSequence, ICollection<MessageToken> incomingTokens)
+        public bool IsIncomingSatisfied(SequenceFlow incomingSequence, IEnumerable<MessageToken> incomingTokens)
         {
             if (!string.IsNullOrWhiteSpace(incomingSequence.ConditionExpression))
             {
@@ -56,7 +60,7 @@ namespace CaseManagement.BPMN.Domains
 
         public BaseFlowNode GetDefinition(string elementId)
         {
-            return ElementDefs.FirstOrDefault(_ => _.Id == elementId);
+            return ElementDefs.FirstOrDefault(_ => _.EltId == elementId);
         }
 
         public BaseActivity GetActivity(string elementId)
@@ -66,12 +70,12 @@ namespace CaseManagement.BPMN.Domains
 
         public FlowNodeInstance GetInstance(string id)
         {
-            return ElementInstances.FirstOrDefault(_ => _.Id == id);
+            return ElementInstances.FirstOrDefault(_ => _.EltId == id);
         }
 
         public FlowNodeInstance GetActiveInstance(string elementId)
         {
-            return ElementInstances.FirstOrDefault(_ => _.Id == elementId && _.State == FlowNodeStates.Active);
+            return ElementInstances.FirstOrDefault(_ => _.EltId == elementId && _.State == FlowNodeStates.Active);
         }
 
         public ExecutionPath GetExecutionPath(string executionPathId)
@@ -93,17 +97,17 @@ namespace CaseManagement.BPMN.Domains
 
         public Message GetMessage(string messageRef)
         {
-            return Messages.FirstOrDefault(_ => _.Id == messageRef);
+            return Messages.FirstOrDefault(_ => _.EltId == messageRef);
         }
 
         public Operation GetOperation(string operationRef)
         {
-            return Interfaces.SelectMany(_ => _.Operations).FirstOrDefault(_ => _.Id == operationRef);
+            return Interfaces.SelectMany(_ => _.Operations).FirstOrDefault(_ => _.EltId == operationRef);
         }
 
         public ItemDefinition GetItem(string itemRef)
         {
-            return ItemDefs.FirstOrDefault(_ => _.Id == itemRef);
+            return ItemDefs.FirstOrDefault(_ => _.EltId == itemRef);
         }
 
         public bool IsMessageCorrect(MessageToken messageToken)
@@ -200,7 +204,7 @@ namespace CaseManagement.BPMN.Domains
 
         public void UpdateState(FlowNodeInstance instance, ActivityStates state, string message = null)
         {
-            var evt = new ActivityStateUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, instance.Id, state, message, DateTime.UtcNow);
+            var evt = new ActivityStateUpdatedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, instance.EltId, state, message, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
         }
@@ -219,9 +223,9 @@ namespace CaseManagement.BPMN.Domains
             DomainEvents.Add(evt);
         }
 
-        public void ConsumeStateTransition(StateTransitionNotification stateTransition)
+        public void ConsumeStateTransition(string flowNodeInstanceId, string stateTransition, string content)
         {
-            var nodeInstance = GetInstance(stateTransition.FlowNodeInstanceId);
+            var nodeInstance = GetInstance(flowNodeInstanceId);
             if (nodeInstance == null)
             {
                 return;
@@ -230,7 +234,9 @@ namespace CaseManagement.BPMN.Domains
             var evt = new StateTransitionReceivedEvent(Guid.NewGuid().ToString(),
                 AggregateId,
                 Version + 1,
+                flowNodeInstanceId,
                 stateTransition,
+                content,
                 DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
@@ -270,7 +276,7 @@ namespace CaseManagement.BPMN.Domains
             }
 
             var id = Guid.NewGuid().ToString();
-            var evt = new ExecutionPointerAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, id, pathId, instanceId, flowNode.Id, JsonConvert.SerializeObject(incoming), DateTime.UtcNow);
+            var evt = new ExecutionPointerAddedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, id, pathId, instanceId, flowNode.EltId, JsonConvert.SerializeObject(incoming), DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
             return id;
@@ -278,7 +284,7 @@ namespace CaseManagement.BPMN.Domains
 
         private bool TryAddInstance(BaseFlowNode node, string pathId, out string instanceId)
         {
-            return TryAddInstance(node.Id, pathId, out instanceId);
+            return TryAddInstance(node.EltId, pathId, out instanceId);
         }
 
         private bool TryAddInstance(string elementId, string pathId, out string instanceId)
@@ -290,7 +296,7 @@ namespace CaseManagement.BPMN.Domains
                 var instance = GetActiveInstance(pointer.InstanceFlowNodeId);
                 if (instance != null)
                 {
-                    instanceId = instance.Id;
+                    instanceId = instance.EltId;
                     return false;
                 }
             }
@@ -322,7 +328,7 @@ namespace CaseManagement.BPMN.Domains
             }
         }
 
-        private bool EvaluateConditionalExpression(ICollection<MessageToken> incomingTokens, string expression)
+        private bool EvaluateConditionalExpression(IEnumerable<MessageToken> incomingTokens, string expression)
         {
             var decodedExpressionBody = HttpUtility.HtmlDecode(expression);
             var context = new ConditionalExpressionContext(incomingTokens);
@@ -369,14 +375,14 @@ namespace CaseManagement.BPMN.Domains
                 CreateDateTime = CreateDateTime,
                 UpdateDateTime = UpdateDateTime,
                 Status = Status,
-                SequenceFlows = new ConcurrentBag<SequenceFlow>(SequenceFlows.Select(_ => (SequenceFlow)_.Clone())),
-                ElementDefs = new ConcurrentBag<BaseFlowNode>(ElementDefs.Select(_ => (BaseFlowNode)_.Clone())),
-                ElementInstances =new ConcurrentBag<FlowNodeInstance>(ElementInstances.Select(_ => (FlowNodeInstance)_.Clone())),
-                ExecutionPathLst = new ConcurrentBag<ExecutionPath>(ExecutionPathLst.Select(_ => (ExecutionPath)_.Clone())),
-                ItemDefs = new ConcurrentBag<ItemDefinition>(ItemDefs.Select(_ => (ItemDefinition)_.Clone())),
-                Messages = new ConcurrentBag<Message>(Messages.Select(_ => (Message)_.Clone())),
-                Interfaces = new ConcurrentBag<BPMNInterface>(Interfaces.Select(_ => (BPMNInterface)_.Clone())),
-                StateTransitions = new ConcurrentBag<StateTransitionNotification>(StateTransitions.Select(_ => (StateTransitionNotification)_.Clone()))
+                SequenceFlows = SequenceFlows.Select(_ => (SequenceFlow)_.Clone()).ToList(),
+                SerializedElementDefs = SerializedElementDefs.Select(_ => (SerializedFlowNodeDefinition)_.Clone()).ToList(),
+                ElementInstances = ElementInstances.Select(_ => (FlowNodeInstance)_.Clone()).ToList(),
+                ExecutionPathLst = ExecutionPathLst.Select(_ => (ExecutionPath)_.Clone()).ToList(),
+                ItemDefs = ItemDefs.Select(_ => (ItemDefinition)_.Clone()).ToList(),
+                Messages = Messages.Select(_ => (Message)_.Clone()).ToList(),
+                Interfaces = Interfaces.Select(_ => (BPMNInterface)_.Clone()).ToList(),
+                StateTransitions = StateTransitions.Select(_ => (StateTransitionToken)_.Clone()).ToList()
             };
         }
 
@@ -408,7 +414,7 @@ namespace CaseManagement.BPMN.Domains
 
         private void Handle(StateTransitionReceivedEvent evt)
         {
-            StateTransitions.Add(evt.StateTransitionToken);
+            StateTransitions.Add(StateTransitionToken.Create(evt.FlowNodeInstanceId, evt.State, evt.Content));
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -421,23 +427,23 @@ namespace CaseManagement.BPMN.Domains
             ProcessFileName = evt.ProcessFileName;
             CreateDateTime = evt.CreateDateTime;
             Status = ProcessInstanceStatus.CREATED;
-            Interfaces = new ConcurrentBag<BPMNInterface>(evt.Interfaces);
-            Messages = new ConcurrentBag<Message>(evt.Messages);
-            ItemDefs = new ConcurrentBag<ItemDefinition>(evt.ItemDefs);
-            SequenceFlows = new ConcurrentBag<SequenceFlow>(evt.SequenceFlows);
+            Interfaces = evt.Interfaces;
+            Messages = evt.Messages;
+            ItemDefs = evt.ItemDefs;
+            SequenceFlows = evt.SequenceFlows;
         }
 
         private void Handle(FlowNodeDefCreatedEvent evt)
         {
-            var elt = BaseFlowNode.Deserialize(evt.SerializedContent);
-            ElementDefs.Add(elt);
+            var elt = SerializedFlowNodeDefinition.Create(evt.SerializedContent);
+            SerializedElementDefs.Add(elt);
             Version = evt.Version;
             UpdateDateTime = evt.UpdateDateTime;
         }
 
         private void Handle(FlowNodeInstanceAddedEvent evt)
         {
-            var instance = new FlowNodeInstance { FlowNodeId = evt.FlowNodeId, Id = evt.FlowNodeInstanceId };
+            var instance = new FlowNodeInstance { FlowNodeId = evt.FlowNodeId, EltId = evt.FlowNodeInstanceId };
             ElementInstances.Add(instance);
             Version = evt.Version;
             UpdateDateTime = evt.CreateDateTime;
@@ -455,14 +461,15 @@ namespace CaseManagement.BPMN.Domains
         {
             var tokens = MessageToken.DeserializeLst(evt.SerializedTokens);
             var path = GetExecutionPath(evt.ExecutionPathId);
-            path.Pointers.Add(new ExecutionPointer
+            var executionPoitner = new ExecutionPointer
             {
                 Id = evt.ExecutionPointerId,
                 ExecutionPathId = path.Id,
                 FlowNodeId = evt.FlowNodeId,
-                InstanceFlowNodeId = evt.FlowNodeInstanceId,   
-                Incoming = tokens
-            });
+                InstanceFlowNodeId = evt.FlowNodeInstanceId,
+            };
+            executionPoitner.AddIncoming(tokens);
+            path.Pointers.Add(executionPoitner);
             Version = evt.Version;
             UpdateDateTime = evt.CreateDateTime;
         }
@@ -471,7 +478,7 @@ namespace CaseManagement.BPMN.Domains
         {
             var pointer = GetExecutionPointer(evt.ExecutionPathId, evt.ExecutionPointerId);
             pointer.IsActive = false;
-            pointer.Outgoing = evt.OutcomeValues;
+            pointer.AddOutgoing(evt.OutcomeValues);
             Version = evt.Version;
             UpdateDateTime = evt.CompletionDateTime;
         }
@@ -488,11 +495,7 @@ namespace CaseManagement.BPMN.Domains
         {
             var pointer = GetExecutionPointer(evt.ExecutionPathId, evt.ExecutionPointerId);
             var tokens = MessageToken.DeserializeLst(evt.SerializedToken);
-            foreach(var token in tokens)
-            {
-                pointer.Incoming.Add(token);
-            }
-
+            pointer.AddIncoming(tokens);
             Version = evt.Version;
             UpdateDateTime = evt.CreateDateTime;
         }

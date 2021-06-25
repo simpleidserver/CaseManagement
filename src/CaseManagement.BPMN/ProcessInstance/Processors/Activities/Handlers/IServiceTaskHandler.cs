@@ -1,6 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Domains;
-using CaseManagement.BPMN.ProcessInstance.Processors;
+﻿using CaseManagement.BPMN.Domains;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

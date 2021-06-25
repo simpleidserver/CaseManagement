@@ -177,7 +177,7 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("extract \'id\' from JSON body into \'newProcessFile\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 19
- testRunner.And("poll \'http://localhost/processfiles/$newProcessFile$\', until \'name\'=\'Name.bpmn\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("execute HTTP GET request \'http://localhost/processfiles/$newProcessFile$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 20
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -254,8 +254,7 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("execute HTTP PUT JSON request \'http://localhost/processfiles/$newProcessFile$\'", ((string)(null)), table4, "And ");
 #line hidden
 #line 37
- testRunner.And("poll \'http://localhost/processfiles/$newProcessFile$\', until \'name\'=\'NewName.bpmn" +
-                        "\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("execute HTTP GET request \'http://localhost/processfiles/$newProcessFile$\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 38
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -327,15 +326,17 @@ this.ScenarioInitialize(scenarioInfo);
                             "Key",
                             "Value"});
 #line 52
- testRunner.And("poll HTTP POST JSON request \'http://localhost/processfiles/search\', until \'$.cont" +
-                        "ent[?(@.name == \'PublishProcessFile.bpmn\' && @.status == \'Edited\')].status\'=\'Edi" +
-                        "ted\'", ((string)(null)), table6, "And ");
+ testRunner.And("execute HTTP POST JSON request \'http://localhost/processfiles/search\'", ((string)(null)), table6, "And ");
 #line hidden
 #line 54
  testRunner.And("extract JSON from body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 56
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 57
+ testRunner.Then("JSON \'$.content[?(@.name == \'PublishProcessFile.bpmn\' && @.status == \'Edited\')].s" +
+                        "tatus\'=\'Edited\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

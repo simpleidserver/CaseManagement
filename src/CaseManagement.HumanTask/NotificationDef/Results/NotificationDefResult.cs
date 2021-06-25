@@ -15,9 +15,9 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
         public DateTime CreateDateTime { get; set; }
         public int Priority { get; set; }
         public ICollection<ParameterResult> OperationParameters { get; set; }
-        public ICollection<PeopleAssignmentDefinitionResult> PeopleAssignments { get; set; }
-        public ICollection<PresentationElementDefinitionResult> PresentationElements { get; set; }
-        public ICollection<PresentationParameterResult> PresentationParameters { get; set; }
+        public ICollection<NotificationPeopleAssignmentDefinitionResult> PeopleAssignments { get; set; }
+        public ICollection<NotificationPresentationElementDefinitionResult> PresentationElements { get; set; }
+        public ICollection<NotificationPresentationParameterResult> PresentationParameters { get; set; }
 
         public static NotificationDefResult ToDto(NotificationDefinitionAggregate notificationDef)
         {
@@ -31,9 +31,9 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
                 UpdateDateTime = notificationDef.UpdateDateTime,
                 Version = notificationDef.Version,
                 OperationParameters = notificationDef.OperationParameters.Select(_ => ParameterResult.ToDto(_)).ToList(),
-                PeopleAssignments = notificationDef.PeopleAssignments.Select(_ => PeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
-                PresentationElements = notificationDef.PresentationElements.Select(_ => PresentationElementDefinitionResult.ToDto(_)).ToList(),
-                PresentationParameters = notificationDef.PresentationParameters.Select(_ => PresentationParameterResult.ToDto(_)).ToList()
+                PeopleAssignments = notificationDef.PeopleAssignments.Select(_ => NotificationPeopleAssignmentDefinitionResult.ToDto(_)).ToList(),
+                PresentationElements = notificationDef.PresentationElements.Select(_ => NotificationPresentationElementDefinitionResult.ToDto(_)).ToList(),
+                PresentationParameters = notificationDef.PresentationParameters.Select(_ => NotificationPresentationParameterResult.ToDto(_)).ToList()
             };
         }
 
@@ -71,16 +71,16 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
             }
         }
 
-        public class PresentationElementDefinitionResult
+        public class NotificationPresentationElementDefinitionResult
         {
             public string Usage { get; set; }
             public string Language { get; set; }
             public string Value { get; set; }
             public string ContentType { get; set; }
 
-            public static PresentationElementDefinitionResult ToDto(PresentationElementDefinition presElt)
+            public static NotificationPresentationElementDefinitionResult ToDto(PresentationElementDefinition presElt)
             {
-                return new PresentationElementDefinitionResult
+                return new NotificationPresentationElementDefinitionResult
                 {
                     ContentType = presElt.ContentType,
                     Language = presElt.Language,
@@ -101,15 +101,15 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
             }
         }
 
-        public class PresentationParameterResult
+        public class NotificationPresentationParameterResult
         {
             public string Name { get; set; }
             public string Type { get; set; }
             public string Expression { get; set; }
 
-            public static PresentationParameterResult ToDto(PresentationParameter pp)
+            public static NotificationPresentationParameterResult ToDto(PresentationParameter pp)
             {
-                return new PresentationParameterResult
+                return new NotificationPresentationParameterResult
                 {
                     Name = pp.Name,
                     Type = Enum.GetName(typeof(ParameterTypes), pp.Type),
@@ -129,16 +129,16 @@ namespace CaseManagement.HumanTask.NotificationDef.Results
             }
         }
 
-        public class PeopleAssignmentDefinitionResult
+        public class NotificationPeopleAssignmentDefinitionResult
         {
             public string Id { get; set; }
             public string Type { get; set; }
             public string Usage { get; set; }
             public string Value { get; set; }
 
-            public static PeopleAssignmentDefinitionResult ToDto(PeopleAssignmentDefinition peopleAssignment)
+            public static NotificationPeopleAssignmentDefinitionResult ToDto(PeopleAssignmentDefinition peopleAssignment)
             {
-                return new PeopleAssignmentDefinitionResult
+                return new NotificationPeopleAssignmentDefinitionResult
                 {
                     Id = peopleAssignment.Id,
                     Type = Enum.GetName(typeof(PeopleAssignmentTypes), peopleAssignment.Type),

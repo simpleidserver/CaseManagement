@@ -15,8 +15,8 @@ Scenario: Add process file
 	| name        | Name.bpmn   |
 	| description | description |
 	And extract JSON from body
-	And extract 'id' from JSON body into 'newProcessFile'
-	And poll 'http://localhost/processfiles/$newProcessFile$', until 'name'='Name.bpmn'
+	And extract 'id' from JSON body into 'newProcessFile'	
+	And execute HTTP GET request 'http://localhost/processfiles/$newProcessFile$'
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
@@ -34,7 +34,7 @@ Scenario: Update process file
 	| Key         | Value          |
 	| name        | NewName.bpmn   |
 	| description | NewDescription |
-	And poll 'http://localhost/processfiles/$newProcessFile$', until 'name'='NewName.bpmn'
+	And execute HTTP GET request 'http://localhost/processfiles/$newProcessFile$'
 	And extract JSON from body
 
 	Then HTTP status code equals to '200'
@@ -49,8 +49,9 @@ Scenario: Publish process file
 	And extract JSON from body
 	And extract 'id' from JSON body into 'newProcessFile'
 	And execute HTTP GET request 'http://localhost/processfiles/$newProcessFile$/publish'
-	And poll HTTP POST JSON request 'http://localhost/processfiles/search', until '$.content[?(@.name == 'PublishProcessFile.bpmn' && @.status == 'Edited')].status'='Edited'
+	And execute HTTP POST JSON request 'http://localhost/processfiles/search'
 	| Key | Value |
 	And extract JSON from body
 	
 	Then HTTP status code equals to '200'
+	Then JSON '$.content[?(@.name == 'PublishProcessFile.bpmn' && @.status == 'Edited')].status'='Edited'

@@ -26,7 +26,6 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         private readonly IHumanTaskInstanceQueryRepository _humanTaskInstanceQueryRepository;
         private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
         private readonly IParameterParser _parameterParser;
-        private readonly IMediator _mediator;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly HumanTaskServerOptions _options;
         private readonly ILogger<CompleteHumanTaskInstanceCommandHandler> _logger;
@@ -35,7 +34,6 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             IHumanTaskInstanceQueryRepository humanTaskInstanceQueryRepository,
             IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
             IParameterParser parameteParser,
-            IMediator mediator,
             IHttpClientFactory httpClientFactory,
             IOptions<HumanTaskServerOptions> options,
             ILogger<CompleteHumanTaskInstanceCommandHandler> logger)
@@ -43,7 +41,6 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
             _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
             _parameterParser = parameteParser;
-            _mediator = mediator;
             _httpClientFactory = httpClientFactory;
             _options = options.Value;
             _logger = logger;

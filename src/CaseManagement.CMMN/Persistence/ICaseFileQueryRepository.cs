@@ -9,7 +9,7 @@ namespace CaseManagement.CMMN.Persistence
     public interface ICaseFileQueryRepository
     {
         Task<CaseFileAggregate> Get(string id, CancellationToken token);
-        Task<FindResponse<CaseFileAggregate>> Find(FindCaseFilesParameter parameter, CancellationToken token);
+        Task<SearchResult<CaseFileAggregate>> Find(FindCaseFilesParameter parameter, CancellationToken token);
         Task<int> Count(CancellationToken token);
     }
 }

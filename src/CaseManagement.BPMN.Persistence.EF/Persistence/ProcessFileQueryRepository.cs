@@ -1,8 +1,7 @@
 ﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.BPMN.Persistence.EF.DomainMapping;
-using CaseManagement.BPMN.Persistence.EF.Models;
 using CaseManagement.BPMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.BPMN.ProcessFile.Results;
+using CaseManagement.Common.Results;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,15 +28,15 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
             _dbContext = dbContext;
         }
 
-        public async Task<ProcessFileAggregate> Get(string id, CancellationToken token)
+        public async Task<ProcessFileResult> Get(string id, CancellationToken cancellationToken)
         {
-            var result = await _dbContext.ProcessFiles.FirstOrDefaultAsync(_ => _.Id == id);
-            return result?.ToDomain();
+            var processFile = await _dbContext.ProcessFiles.FirstOrDefaultAsync(_ => _.AggregateId == id, cancellationToken);
+            return processFile == null ? null : ProcessFileResult.ToDto(processFile);
         }
 
-        public async Task<FindResponse<ProcessFileAggregate>> Find(FindProcessFilesParameter parameter, CancellationToken token)
+        public async Task<SearchResult<ProcessFileResult>> Find(FindProcessFilesParameter parameter, CancellationToken token)
         {
-            IQueryable<ProcessFileModel> result = _dbContext.ProcessFiles.AsQueryable();
+            IQueryable<ProcessFileAggregate> result = _dbContext.ProcessFiles;
             if (MAPPING_PROCESSFILE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
             {
                 result = result.InvokeOrderBy(MAPPING_PROCESSFILE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
@@ -51,12 +50,12 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
                 content = content.OrderByDescending(r => r.Version).GroupBy(r => r.FileId).Select(r => r.First()).ToList();
             }
 
-            return new FindResponse<ProcessFileAggregate>
+            return new SearchResult<ProcessFileResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = content.Select(_ => _.ToDomain()).ToList()
+                Content = content.Select(_ => ProcessFileResult.ToDto(_)).ToList()
             };
         }
     }

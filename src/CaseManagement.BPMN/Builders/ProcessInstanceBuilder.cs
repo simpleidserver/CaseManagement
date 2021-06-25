@@ -32,13 +32,13 @@ namespace CaseManagement.BPMN.Builders
 
         public ProcessInstanceBuilder AddMessage(string id, string name, string itemRef)
         {
-            Messages.Add(new Message { Id = id, ItemRef = itemRef, Name = name });
+            Messages.Add(new Message { EltId = id, ItemRef = itemRef, Name = name });
             return this;
         }
 
         public ProcessInstanceBuilder AddItemDef(string id, ItemKinds itemKind, bool isCollection, string structuredRef)
         {
-            ItemDefs.Add(new ItemDefinition { Id = id, ItemKind = itemKind, IsCollection = isCollection, StructureRef = structuredRef });
+            ItemDefs.Add(new ItemDefinition { EltId = id, ItemKind = itemKind, IsCollection = isCollection, StructureRef = structuredRef });
             return this;
         }
 
@@ -56,7 +56,7 @@ namespace CaseManagement.BPMN.Builders
 
         public ProcessInstanceBuilder AddSequenceFlow(string id, string name, string sourceRef, string targetRef, string conditionExpression = null)
         {
-            SequenceFlows.Add(new SequenceFlow { ConditionExpression = conditionExpression, SourceRef = sourceRef, TargetRef = targetRef, Id = id, Name = name });
+            SequenceFlows.Add(new SequenceFlow { ConditionExpression = conditionExpression, SourceRef = sourceRef, TargetRef = targetRef, EltId = id, Name = name });
             return this;
         }
 
@@ -120,19 +120,19 @@ namespace CaseManagement.BPMN.Builders
 
         public ProcessInstanceBuilder AddExclusiveGateway(string id, string name, GatewayDirections direction, string defaultSequenceFlow = null)
         {
-            Gateways.Add(new ExclusiveGateway { Id = id, Name =  name, GatewayDirection = direction, Default = defaultSequenceFlow });
+            Gateways.Add(new ExclusiveGateway { EltId = id, Name =  name, GatewayDirection = direction, Default = defaultSequenceFlow });
             return this;
         }
 
         public ProcessInstanceBuilder AddParallelGateway(string id, string name, GatewayDirections direction)
         {
-            Gateways.Add(new ParallelGateway { Id = id, Name = name, GatewayDirection = direction });
+            Gateways.Add(new ParallelGateway { EltId = id, Name = name, GatewayDirection = direction });
             return this;
         }
 
         public ProcessInstanceBuilder AddInclusiveGateway(string id, string name, GatewayDirections direction, string defaultSequenceFlow = null)
         {
-            Gateways.Add(new InclusiveGateway { Id = id, Name = name, GatewayDirection = direction, Default = defaultSequenceFlow });
+            Gateways.Add(new InclusiveGateway { EltId = id, Name = name, GatewayDirection = direction, Default = defaultSequenceFlow });
             return this;
         }
 

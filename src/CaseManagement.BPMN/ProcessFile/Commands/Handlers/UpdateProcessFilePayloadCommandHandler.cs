@@ -1,10 +1,7 @@
-﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.BPMN.Exceptions;
-using CaseManagement.Common;
-using CaseManagement.Common.EvtStore;
+﻿using CaseManagement.BPMN.Exceptions;
+using CaseManagement.BPMN.Persistence;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,23 +9,20 @@ namespace CaseManagement.BPMN.ProcessFile.Commands.Handlers
 {
     public class UpdateProcessFilePayloadCommandHandler : IRequestHandler<UpdateProcessFilePayloadCommand, bool>
     {
-        private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
+        private readonly IProcessFileCommandRepository _processFileCommandRepository;
         private readonly ILogger<UpdateProcessFilePayloadCommandHandler> _logger;
 
         public UpdateProcessFilePayloadCommandHandler(
-            IEventStoreRepository eventStoreRepository,
-            ICommitAggregateHelper commitAggregateHelper,
+            IProcessFileCommandRepository processFileCommandRepository,
             ILogger<UpdateProcessFilePayloadCommandHandler> logger)
         {
-            _eventStoreRepository = eventStoreRepository;
-            _commitAggregateHelper = commitAggregateHelper;
+            _processFileCommandRepository = processFileCommandRepository;
             _logger = logger;
         }
 
         public async Task<bool> Handle(UpdateProcessFilePayloadCommand request, CancellationToken cancellationToken)
         {
-            var processFile = await _eventStoreRepository.GetLastAggregate<ProcessFileAggregate>(request.Id, ProcessFileAggregate.GetStreamName(request.Id));
+            var processFile = await _processFileCommandRepository.Get(request.Id, cancellationToken);
             if (processFile == null || string.IsNullOrWhiteSpace(processFile.AggregateId))
             {
                 _logger.LogError($"Cannot update process file because it doesn't exist : '{request.Id}'");
@@ -36,7 +30,8 @@ namespace CaseManagement.BPMN.ProcessFile.Commands.Handlers
             }
 
             processFile.UpdatePayload(request.Payload);
-            await _commitAggregateHelper.Commit(processFile, ProcessFileAggregate.GetStreamName(request.Id), cancellationToken);
+            await _processFileCommandRepository.Update(processFile, cancellationToken);
+            await _processFileCommandRepository.SaveChanges(cancellationToken);
             return true;
         }
     }

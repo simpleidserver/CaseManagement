@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.BPMN.ProcessFile.Results;
+using CaseManagement.Common.Results;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,12 +28,14 @@ namespace CaseManagement.BPMN.Persistence.InMemory
             _processFiles = processFiles;
         }
 
-        public Task<ProcessFileAggregate> Get(string id, CancellationToken token)
+        public Task<ProcessFileResult> Get(string id, CancellationToken token)
         {
-            return Task.FromResult(_processFiles.FirstOrDefault(_ => _.AggregateId == id));
+            var processFile = _processFiles.FirstOrDefault(_ => _.AggregateId == id);
+            var result = processFile == null ? null : ProcessFileResult.ToDto(processFile);
+            return Task.FromResult(result);
         }
 
-        public Task<FindResponse<ProcessFileAggregate>> Find(FindProcessFilesParameter parameter, CancellationToken token)
+        public Task<SearchResult<ProcessFileResult>> Find(FindProcessFilesParameter parameter, CancellationToken token)
         {
             IQueryable<ProcessFileAggregate> result = _processFiles.AsQueryable();
             if (!string.IsNullOrWhiteSpace(parameter.FileId))
@@ -53,12 +56,12 @@ namespace CaseManagement.BPMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<ProcessFileAggregate>
+            return Task.FromResult(new SearchResult<ProcessFileResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = result.ToList()
+                Content = result.Select(_ => ProcessFileResult.ToDto(_)).ToList()
             });
         }
     }

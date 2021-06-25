@@ -46,12 +46,12 @@ namespace CaseManagement.CMMN.Host
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "http://localhost:60000",
+                        "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60000",
+                        "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };

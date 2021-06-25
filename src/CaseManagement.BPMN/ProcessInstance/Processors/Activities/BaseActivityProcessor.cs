@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
 using System;
 using System.Collections.Generic;

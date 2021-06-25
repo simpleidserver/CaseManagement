@@ -15,6 +15,11 @@ namespace CaseManagement.BPMN.Persistence.InMemory
             _processFiles = processFiles;
         }
 
+        public Task<ProcessFileAggregate> Get(string id, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_processFiles.FirstOrDefault(_ => _.AggregateId == id));
+        }
+
         public Task Add(ProcessFileAggregate processFile, CancellationToken token)
         {
             _processFiles.Add((ProcessFileAggregate)processFile.Clone());

@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers;
 using System.Collections.Generic;
 using System.Linq;

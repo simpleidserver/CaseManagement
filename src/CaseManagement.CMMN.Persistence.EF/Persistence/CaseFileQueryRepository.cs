@@ -39,7 +39,7 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             }
         }
 
-        public async Task<FindResponse<CaseFileAggregate>> Find(FindCaseFilesParameter parameter, CancellationToken token)
+        public async Task<SearchResult<CaseFileAggregate>> Find(FindCaseFilesParameter parameter, CancellationToken token)
         {
             using (var lck = await _caseManagementDbContext.Lock())
             {
@@ -67,7 +67,7 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
                     content = content.OrderByDescending(r => r.Version).GroupBy(r => r.FileId).Select(r => r.First()).ToList();
                 }
 
-                return new FindResponse<CaseFileAggregate>
+                return new SearchResult<CaseFileAggregate>
                 {
                     StartIndex = parameter.StartIndex,
                     Count = parameter.Count,

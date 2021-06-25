@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
 using CaseManagement.Common.Expression;
 using CaseManagement.Common.Factories;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -44,7 +42,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     {
                         { "nameIdentifier", executionContext.Instance.NameIdentifier }
                     };
-                    var ctx = new ConditionalExpressionContext(pointer.Incoming);
+                    var ctx = new ConditionalExpressionContext(pointer.Incoming.ToList());
                     if (userTask.InputParameters != null && userTask.InputParameters.Any())
                     {
                         foreach(var inputParameter in userTask.InputParameters)
@@ -98,7 +96,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                 }
             }
 
-            var stateTransition = executionContext.Instance.StateTransitions.FirstOrDefault(_ => _.State == "COMPLETED" && _.FlowNodeInstanceId == pointer.InstanceFlowNodeId);
+            var stateTransition = executionContext.Instance.StateTransitions.FirstOrDefault(_ => _.StateTransition == "COMPLETED" && _.FlowNodeInstanceId == pointer.InstanceFlowNodeId);
             if (stateTransition == null)
             {
                 throw new FlowNodeInstanceBlockedException();
@@ -111,7 +109,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
             }
             else
             {
-                result.Add(MessageToken.NewMessage(userTask.Id, stateTransition.Content));
+                result.Add(MessageToken.NewMessage(userTask.EltId, stateTransition.Content));
             }
 
             return result;

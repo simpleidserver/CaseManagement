@@ -18,19 +18,19 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
        
         protected virtual ICollection<string> GetNextFlowNodeIds(BPMNExecutionContext executionContext, BaseFlowNode flowNode)
         {
-            var outgoing = executionContext.Instance.GetOutgoingSequenceFlows(flowNode.Id);
+            var outgoing = executionContext.Instance.GetOutgoingSequenceFlows(flowNode.EltId);
             var filteredOutgoing = outgoing.Where(_ => executionContext.Instance.IsIncomingSatisfied(_, executionContext.Pointer.Incoming));
             return filteredOutgoing.Select(_ => _.TargetRef).ToList();
         }
 
         protected virtual ICollection<string> GetOutgoingFlowNodeIds(BPMNExecutionContext executionContext, BaseFlowNode flowNode)
         {
-            return executionContext.Instance.GetOutgoingSequenceFlows(flowNode.Id).Select(_ => _.TargetRef).ToList();
+            return executionContext.Instance.GetOutgoingSequenceFlows(flowNode.EltId).Select(_ => _.TargetRef).ToList();
         }
 
         protected virtual ICollection<string> GetIncomingFlowNodeIds(BPMNExecutionContext executionContext, BaseFlowNode flowNode)
         {
-            return executionContext.Instance.GetIncomingSequenceFlows(flowNode.Id).Select(_ => _.SourceRef).ToList();
+            return executionContext.Instance.GetIncomingSequenceFlows(flowNode.EltId).Select(_ => _.SourceRef).ToList();
         }
     }
 }

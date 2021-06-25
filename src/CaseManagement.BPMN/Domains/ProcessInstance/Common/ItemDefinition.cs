@@ -27,7 +27,7 @@ namespace CaseManagement.BPMN.Domains
         {
             return new ItemDefinition
             {
-                Id = Id,
+                EltId = EltId,
                 IsCollection = IsCollection,
                 ItemKind = ItemKind,
                 StructureRef = StructureRef

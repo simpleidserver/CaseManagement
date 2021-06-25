@@ -2,7 +2,6 @@
 using CaseManagement.BPMN.ProcessFile.Results;
 using CaseManagement.Common.Results;
 using MediatR;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,9 +16,9 @@ namespace CaseManagement.BPMN.ProcessFile.Queries.Handlers
             _processFileQueryRepository = processFileQueryRepository;
         }
 
-        public async Task<SearchResult<ProcessFileResult>> Handle(SearchProcessFilesQuery request, CancellationToken cancellationToken)
+        public Task<SearchResult<ProcessFileResult>> Handle(SearchProcessFilesQuery request, CancellationToken cancellationToken)
         {
-            var result = await _processFileQueryRepository.Find(new Persistence.Parameters.FindProcessFilesParameter
+            return _processFileQueryRepository.Find(new Persistence.Parameters.FindProcessFilesParameter
             {
                 Count = request.Count,
                 Order = request.Order,
@@ -28,13 +27,6 @@ namespace CaseManagement.BPMN.ProcessFile.Queries.Handlers
                 TakeLatest = request.TakeLatest,
                 FileId = request.FileId
             }, cancellationToken);
-            return new SearchResult<ProcessFileResult>
-            {
-                Content = result.Content.Select(_ => ProcessFileResult.ToDto(_)),
-                Count = result.Count,
-                StartIndex = result.StartIndex,
-                TotalLength = result.TotalLength
-            };
         }
     }
 }

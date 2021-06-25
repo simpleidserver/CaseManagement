@@ -33,7 +33,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             return Task.FromResult((HumanTaskDefinitionAggregate)_humanTaskDefs.OrderByDescending(_ => _.Version).FirstOrDefault(_ => _.Name == name)?.Clone());
         }
 
-        public Task<FindResponse<HumanTaskDefinitionAggregate>> Search(SearchHumanTaskDefParameter parameter, CancellationToken token)
+        public Task<SearchResult<HumanTaskDefinitionAggregate>> Search(SearchHumanTaskDefParameter parameter, CancellationToken token)
         {
             IQueryable<HumanTaskDefinitionAggregate> result = _humanTaskDefs.AsQueryable();
             if (!string.IsNullOrWhiteSpace(parameter.Name))
@@ -48,7 +48,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<HumanTaskDefinitionAggregate>
+            return Task.FromResult(new SearchResult<HumanTaskDefinitionAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

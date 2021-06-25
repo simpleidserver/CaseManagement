@@ -1,8 +1,10 @@
 ﻿using CaseManagement.BPMN.Acceptance.Tests.Middlewares;
-using CaseManagement.BPMN.Infrastructure.Jobs;
+using CaseManagement.BPMN.AspNetCore.Apis;
+using CaseManagement.BPMN.Domains;
 using CaseManagement.Common.Jobs.Persistence;
 using CaseManagement.HumanTask;
 using CaseManagement.HumanTask.AspNetCore;
+using CaseManagement.HumanTask.AspNetCore.Apis;
 using CaseManagement.HumanTask.Builders;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Infrastructure.Jobs;
@@ -34,7 +36,11 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                 _.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
                 _.AddPolicy(HumanTaskConstants.ScopeNames.CreateHumanTaskInstance, p => p.RequireAssertion(__ => true));
             });
-            services.AddMvc();
+            services
+                .AddMvc(opts => opts.EnableEndpointRouting = false)
+                .AddApplicationPart(typeof(ProcessFilesController).Assembly)
+                .AddApplicationPart(typeof(HumanTaskDefsController).Assembly)
+                .AddNewtonsoftJson();
             services.AddLogging();
             var emptyTask = HumanTaskDefBuilder.New("emptyTask")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })
@@ -66,7 +72,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                 });
             services.AddProcessJobServer(callbackOpts: o =>
             {
-                o.ApplicationAssembly = typeof(ProcessInstanceJob).Assembly;
+                o.ApplicationAssembly = typeof(ProcessInstanceAggregate).Assembly;
             }, callbackServerOpts: o =>
             {
                 o.WSHumanTaskAPI = "http://localhost";

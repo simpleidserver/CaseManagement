@@ -1,9 +1,7 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-using CaseManagement.BPMN.AspNetCore;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence.EF;
-using CaseManagement.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,18 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using NEventStore;
-using NEventStore.Persistence.Sql;
-using NEventStore.Persistence.Sql.SqlDialects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Threading;
 
 namespace CaseManagement.BPMN.SqlServer.Host
 {
@@ -69,7 +62,6 @@ namespace CaseManagement.BPMN.SqlServer.Host
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            services.AddHostedService<BPMNJobServerHostedService>();
             services.AddProcessJobServer(callbackServerOpts: opts =>
             {
                 opts.WSHumanTaskAPI = "http://localhost:60006";
@@ -79,14 +71,6 @@ namespace CaseManagement.BPMN.SqlServer.Host
             {
                 opts.UseSqlServer(_configuration.GetConnectionString("db"), o => o.MigrationsAssembly(migrationsAssembly));
             });
-
-            var factory = new NetStandardConnectionFactory(SqlClientFactory.Instance, _configuration.GetConnectionString("db"));
-            var wireup = Wireup.Init()
-                .UsingSqlPersistence(factory)
-                .WithDialect(new MsSqlDialect())
-                .UsingBinarySerialization()
-                .Build();
-            services.AddSingleton<IStoreEvents>(wireup);
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -139,15 +123,16 @@ namespace CaseManagement.BPMN.SqlServer.Host
                         return;
                     }
 
-                    var commitAggregateHelper = scope.ServiceProvider.GetService<ICommitAggregateHelper>();
                     var pathLst = Directory.EnumerateFiles(Path.Combine(_env.ContentRootPath, "Bpmns"), "*.bpmn").ToList();
                     foreach(var path in pathLst)
                     {
                         var bpmnTxt = File.ReadAllText(path);
                         var name = Path.GetFileName(path);
                         var processFile = ProcessFileAggregate.New(name, name, name, 0, bpmnTxt);
-                        commitAggregateHelper.Commit(processFile, processFile.GetStreamName(), CancellationToken.None).Wait();
+                        context.ProcessFiles.Add(processFile);
                     }
+
+                    context.SaveChanges();
                 }
             }
         }

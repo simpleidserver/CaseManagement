@@ -1,8 +1,8 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +23,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
         {
             var type = TypeResolver.ResolveType(serviceTask.ClassName);
             var handler = (IDelegateHandler)_serviceProvider.GetService(type);
-            return handler.Execute(context.Pointer.Incoming, cancellationToken);
+            return handler.Execute(context.Pointer.Incoming.ToList(), cancellationToken);
         }
     }
 }

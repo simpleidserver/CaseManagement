@@ -22,7 +22,6 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CaseManagement.BPMN.Common\CaseManagement.BPMN.Common.csproj" />
     <ProjectReference Include="..\CaseManagement.Common\CaseManagement.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

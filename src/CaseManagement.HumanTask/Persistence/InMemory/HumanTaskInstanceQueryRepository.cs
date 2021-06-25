@@ -47,17 +47,17 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             return Task.FromResult(result);
         }
 
-        public Task<FindResponse<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token)
+        public Task<SearchResult<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token)
         {
             var result = _humanTaskInstances.FirstOrDefault(_ => _.AggregateId == parameter.HumanTaskInstanceId);
             if (result == null)
             {
-                return Task.FromResult((FindResponse<HumanTaskInstanceEventHistory>)null);
+                return Task.FromResult((SearchResult<HumanTaskInstanceEventHistory>)null);
             }
 
             int totalLength = result.EventHistories.Count();
             var filtered = result.EventHistories.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<HumanTaskInstanceEventHistory>
+            return Task.FromResult(new SearchResult<HumanTaskInstanceEventHistory>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
@@ -66,7 +66,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             });
         }
 
-        public Task<FindResponse<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token)
+        public Task<SearchResult<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token)
         {
             IQueryable<HumanTaskInstanceAggregate> content = _humanTaskInstances.AsQueryable();
             if (parameter.StatusLst != null && parameter.StatusLst.Any())
@@ -89,7 +89,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 
             int totalLength = content.Count();
             var result = content.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<HumanTaskInstanceAggregate>
+            return Task.FromResult(new SearchResult<HumanTaskInstanceAggregate>
             {
                 Content = result.ToList(),
                 Count = parameter.Count,

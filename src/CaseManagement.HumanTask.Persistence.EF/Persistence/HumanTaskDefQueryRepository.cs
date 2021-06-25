@@ -45,7 +45,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
                 .OrderByDescending(_ => _.Version).FirstOrDefaultAsync(_ => _.Name == name, token);
         }
 
-        public async Task<FindResponse<HumanTaskDefinitionAggregate>> Search(SearchHumanTaskDefParameter parameter, CancellationToken token)
+        public async Task<SearchResult<HumanTaskDefinitionAggregate>> Search(SearchHumanTaskDefParameter parameter, CancellationToken token)
         {
             IQueryable<HumanTaskDefinitionAggregate> result = _humanTaskDBContext.HumanTaskDefinitions
                 .Include(_ => _.OperationParameters)
@@ -66,7 +66,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
             int totalLength = await result.CountAsync(token);
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
             var content = await result.ToListAsync(token);
-            return new FindResponse<HumanTaskDefinitionAggregate>
+            return new SearchResult<HumanTaskDefinitionAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

@@ -31,7 +31,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             return Task.FromResult(_definitions.FirstOrDefault(d => d.AggregateId == id));
         }
 
-        public Task<FindResponse<CasePlanAggregate>> Find(FindCasePlansParameter parameter, CancellationToken token)
+        public Task<SearchResult<CasePlanAggregate>> Find(FindCasePlansParameter parameter, CancellationToken token)
         {
             IQueryable<CasePlanAggregate> result = _definitions.AsQueryable();
             if (parameter.TakeLatest)
@@ -62,7 +62,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<CasePlanAggregate>
+            return Task.FromResult(new SearchResult<CasePlanAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

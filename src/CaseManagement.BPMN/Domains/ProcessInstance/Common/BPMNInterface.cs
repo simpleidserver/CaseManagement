@@ -17,20 +17,20 @@ namespace CaseManagement.BPMN.Domains
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// This attribute allows to reference a concrete artifact in the underlying implementation technology representing that interface, such as a WSDL porttype.
+        /// </summary>
+        public string ImplementationRef { get; set; }
+        /// <summary>
         /// This attribute specifies operations that are defined as part of the Interface.
         /// An Interface has at least one Operation.
         /// </summary>
         public ICollection<Operation> Operations { get; set; }
-        /// <summary>
-        /// This attribute allows to reference a concrete artifact in the underlying implementation technology representing that interface, such as a WSDL porttype.
-        /// </summary>
-        public string ImplementationRef { get; set; }
 
         public object Clone()
         {
             return new BPMNInterface
             {
-                Id = Id,
+                EltId = EltId,
                 Name = Name,
                 Operations = Operations.Select(_ => (Operation)_.Clone()).ToList(),
                 ImplementationRef = ImplementationRef

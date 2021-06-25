@@ -1,4 +1,4 @@
-﻿using CaseManagement.BPMN.Persistence.EF.Models;
+﻿using CaseManagement.BPMN.Domains;
 using Microsoft.EntityFrameworkCore;
 
 namespace CaseManagement.BPMN.Persistence.EF
@@ -7,8 +7,8 @@ namespace CaseManagement.BPMN.Persistence.EF
     {
         public BPMNDbContext(DbContextOptions<BPMNDbContext> dbContextOptions) : base(dbContextOptions) { }
 
-        public DbSet<ProcessInstanceModel> ProcessInstances { get; set; }
-        public DbSet<ProcessFileModel> ProcessFiles { get; set; }   
+        public DbSet<ProcessInstanceAggregate> ProcessInstances { get; set; }
+        public DbSet<ProcessFileAggregate> ProcessFiles { get; set; }   
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

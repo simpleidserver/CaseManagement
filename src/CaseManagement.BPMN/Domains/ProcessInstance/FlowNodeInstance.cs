@@ -12,7 +12,7 @@ namespace CaseManagement.BPMN.Domains
             ActivityStates = new List<ActivityStateHistory>();
         }
 
-        public string Id { get; set; }
+        public string EltId { get; set; }
         public string FlowNodeId { get; set; }
         public FlowNodeStates State { get; set; }
         public ActivityStates? ActivityState { get; set; }
@@ -23,7 +23,7 @@ namespace CaseManagement.BPMN.Domains
         {
             return new FlowNodeInstance
             {
-                Id = Id,
+                EltId = EltId,
                 FlowNodeId = FlowNodeId,
                 State = State,
                 ActivityState = ActivityState,

@@ -33,7 +33,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
             return Task.FromResult((NotificationDefinitionAggregate)_notifications.OrderByDescending(_ => _.Version).FirstOrDefault(_ => _.Name == name)?.Clone());
         }
 
-        public Task<FindResponse<NotificationDefinitionAggregate>> Search(SearchNotificationDefParameter parameter, CancellationToken token)
+        public Task<SearchResult<NotificationDefinitionAggregate>> Search(SearchNotificationDefParameter parameter, CancellationToken token)
         {
             IQueryable<NotificationDefinitionAggregate> result = _notifications.AsQueryable();
             if (!string.IsNullOrWhiteSpace(parameter.Name))
@@ -48,7 +48,7 @@ namespace CaseManagement.HumanTask.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<NotificationDefinitionAggregate>
+            return Task.FromResult(new SearchResult<NotificationDefinitionAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

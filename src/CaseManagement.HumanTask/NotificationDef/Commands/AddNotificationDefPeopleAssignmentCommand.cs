@@ -6,6 +6,6 @@ namespace CaseManagement.HumanTask.NotificationDef.Commands
     public class AddNotificationDefPeopleAssignmentCommand : IRequest<string>
     {
         public string Id { get; set; }
-        public PeopleAssignmentDefinitionResult PeopleAssignment { get; set; }
+        public NotificationPeopleAssignmentDefinitionResult PeopleAssignment { get; set; }
     }
 }

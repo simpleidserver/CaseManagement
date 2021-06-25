@@ -23,7 +23,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
             _dbContext = dBContext;
         }
 
-        public async Task<FindResponse<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token)
+        public async Task<SearchResult<NotificationInstanceAggregate>> Find(FindNotificationInstanceParameter parameter, CancellationToken token)
         {
             IQueryable<NotificationInstanceAggregate> result = _dbContext.NotificationInstanceAggregate.Include(_ => _.PeopleAssignments)
                 .Include(_ => _.PresentationElements)
@@ -40,7 +40,7 @@ namespace CaseManagement.HumanTask.Persistence.EF.Persistence
 
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
             var content = await result.ToListAsync(token);
-            return new FindResponse<NotificationInstanceAggregate>
+            return new SearchResult<NotificationInstanceAggregate>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,

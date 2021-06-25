@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.BPMN.Domains;
+﻿using CaseManagement.BPMN.Domains;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -64,7 +63,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
                     Id = executionPointer.Id,
                     IsActive = executionPointer.IsActive,
                     FlowNodeId = executionPointer.FlowNodeId,
-                    FlowNodeInstance = FlowNodeInstanceResult.ToDto(flowNodesInstances.First(_ => _.Id == executionPointer.InstanceFlowNodeId)),
+                    FlowNodeInstance = FlowNodeInstanceResult.ToDto(flowNodesInstances.First(_ => _.EltId == executionPointer.InstanceFlowNodeId)),
                     IncomingTokens = executionPointer.Incoming.Select(_ => MessageTokenResult.ToDto(_)).ToList(),
                     OutgoingTokens = executionPointer.Outgoing.Select(_ => MessageTokenResult.ToDto(_)).ToList()
                 };
@@ -99,7 +98,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Results
             {
                 return new FlowNodeInstanceResult
                 {
-                    Id = flowNodeInstance.Id,
+                    Id = flowNodeInstance.EltId,
                     ActivityState = flowNodeInstance.ActivityState == null ? null : Enum.GetName(typeof(ActivityStates), flowNodeInstance.ActivityState),
                     FlowNodeId = flowNodeInstance.FlowNodeId,
                     Metadata = flowNodeInstance.Metadata,

@@ -11,7 +11,7 @@ const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const API_URL = process.env.API_URL = "http://localhost:60006";
 const CM_API_URL = process.env.CM_API_URL = "http://localhost:60005";
-const OPENID_URL = process.env.OPENID_URL = "http://localhost:60000";
+const OPENID_URL = process.env.OPENID_URL = "https://localhost:60000";
 const REDIRECT_URL = process.env.REDIRECT_URL = "http://localhost:8081";
 const BASE_URL = process.env.BASE_URL || "/";
 

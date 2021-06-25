@@ -1,6 +1,6 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-using CaseManagement.BPMN.AspNetCore;
+using CaseManagement.BPMN.AspNetCore.Apis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +32,9 @@ namespace CaseManagement.BPMN.Host
         public void ConfigureServices(IServiceCollection services)
         {
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Bpmns"), "*.bpmn").ToList();
-            services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
+            services
+                .AddMvc(opts => opts.EnableEndpointRouting = false)
+                .AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,12 +47,12 @@ namespace CaseManagement.BPMN.Host
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "http://localhost:60000",
+                        "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60000",
+                        "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
@@ -59,7 +61,6 @@ namespace CaseManagement.BPMN.Host
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            services.AddHostedService<BPMNJobServerHostedService>();
             services.AddProcessJobServer(callbackServerOpts: opts =>
             {
                 opts.WSHumanTaskAPI = "http://localhost:60006";

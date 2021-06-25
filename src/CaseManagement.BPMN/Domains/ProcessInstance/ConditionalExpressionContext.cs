@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Common;
-using CaseManagement.Common.Expression;
+﻿using CaseManagement.Common.Expression;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,9 +6,9 @@ namespace CaseManagement.BPMN.Domains
 {
     public class ConditionalExpressionContext : ExpressionExecutionContext
     {
-        private readonly ICollection<MessageToken> _incomingTokens;
+        private readonly IEnumerable<MessageToken> _incomingTokens;
 
-        public ConditionalExpressionContext(ICollection<MessageToken> incomingTokens)
+        public ConditionalExpressionContext(IEnumerable<MessageToken> incomingTokens)
         {
             _incomingTokens = incomingTokens;
         }

@@ -16,7 +16,6 @@
     <PackageReference Include="Moq" Version="4.16.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\CaseManagement.BPMN.Common\CaseManagement.BPMN.Common.csproj" />
     <ProjectReference Include="..\..\src\CaseManagement.BPMN\CaseManagement.BPMN.csproj" />
   </ItemGroup>
 </Project>

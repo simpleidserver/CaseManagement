@@ -18,6 +18,8 @@
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.ts" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\confirmpwd\confirmpwd.component.scss" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\confirmpwd\confirmpwd.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.ts" />
@@ -36,6 +38,9 @@
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.html" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.ts" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\submitbtn\submitbtn.component.html" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\submitbtn\submitbtn.component.scss" />
+    <None Remove="angularApp\app\humantasks\viewdef\rendering\components\submitbtn\submitbtn.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.scss" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.ts" />
     <None Remove="angularApp\app\humantasks\viewdef\rendering\guidgenerator.ts" />
@@ -43,6 +48,7 @@
     <None Remove="angularApp\app\notifications\viewdef\info\addassignment.dialog.component.scss" />
     <None Remove="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.html" />
     <None Remove="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.scss" />
+    <None Remove="angularApp\app\pipes\translateenum.pipe.ts" />
     <None Remove="angularApp\app\shared\SidenavService.ts" />
     <None Remove="angularApp\app\stores\bpmninstances\models\bpmn-instance.model.ts" />
     <None Remove="angularApp\app\stores\notificationdefs\models\notificationdef.model.ts" />
@@ -76,6 +82,10 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\column\column.component.ts" />
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\confirmpwd\confirmpwd.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\confirmpwd\confirmpwd.component.ts" />
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\container\container.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -126,6 +136,15 @@
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\select\select.component.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\submitbtn\submitbtn.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\submitbtn\submitbtn.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\submitbtn\submitbtn.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\humantasks\viewdef\rendering\components\txt\txt.component.scss">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -139,6 +158,7 @@
     <TypeScriptCompile Include="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.scss">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\pipes\translateenum.pipe.ts" />
     <TypeScriptCompile Include="angularApp\app\shared\SidenavService.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\bpmninstances\models\bpmn-instance.model.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\notificationdefs\models\notificationdef.model.ts" />

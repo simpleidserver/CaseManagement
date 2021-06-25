@@ -44,8 +44,6 @@ namespace CaseManagement.BPMN
 
         public ServerBuilder AddProcessFiles(List<string> lst)
         {
-            var builder = _services.BuildServiceProvider();
-            var commitAggregateHelper = (ICommitAggregateHelper)builder.GetService(typeof(ICommitAggregateHelper));
             var processFiles = new ConcurrentBag<ProcessFileAggregate>();
             foreach (var path in lst)
             {
@@ -53,7 +51,6 @@ namespace CaseManagement.BPMN
                 var name = Path.GetFileName(path);
                 var processFile = ProcessFileAggregate.New(name, name, name, 0, bpmnTxt);
                 processFiles.Add(processFile);
-                commitAggregateHelper.Commit(processFile, processFile.GetStreamName(), CancellationToken.None).Wait();
             }
 
             _services.AddSingleton<IProcessFileCommandRepository>(new InMemoryProcessFileCommandRepository(processFiles));

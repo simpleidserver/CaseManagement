@@ -32,7 +32,7 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             _caseManagementDbContext = caseManagementDbContext;
         }
 
-        public async Task<FindResponse<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
+        public async Task<SearchResult<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
         {
             using (var lck = await _caseManagementDbContext.Lock())
             {
@@ -45,7 +45,7 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
                 int totalLength = result.Count();
                 result = result.Skip(parameter.StartIndex).Take(parameter.Count);
                 var content = await result.ToListAsync(token);
-                return new FindResponse<CaseWorkerTaskAggregate>
+                return new SearchResult<CaseWorkerTaskAggregate>
                 {
                     StartIndex = parameter.StartIndex,
                     Count = parameter.Count,

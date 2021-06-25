@@ -10,6 +10,6 @@ namespace CaseManagement.CMMN.Persistence
     public interface ICasePlanInstanceQueryRepository : IDisposable
     {
         Task<CasePlanInstanceAggregate> Get(string id, CancellationToken token);
-        Task<FindResponse<CasePlanInstanceAggregate>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token);
+        Task<SearchResult<CasePlanInstanceAggregate>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token);
     }
 }

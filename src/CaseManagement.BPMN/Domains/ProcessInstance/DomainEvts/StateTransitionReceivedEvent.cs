@@ -1,5 +1,4 @@
-﻿using CaseManagement.BPMN.Infrastructure.Jobs.Notifications;
-using CaseManagement.Common.Domains;
+﻿using CaseManagement.Common.Domains;
 using System;
 using System.Diagnostics;
 
@@ -9,13 +8,24 @@ namespace CaseManagement.BPMN.Domains
     [Serializable]
     public class StateTransitionReceivedEvent : DomainEvent
     {
-        public StateTransitionReceivedEvent(string id, string aggregateId, int version, StateTransitionNotification stateTransitionToken, DateTime updateDateTime) : base(id, aggregateId, version)
+        public StateTransitionReceivedEvent(
+            string id, 
+            string aggregateId, 
+            int version,
+            string flowNodeInstanceId,
+            string state,
+            string content,
+            DateTime updateDateTime) : base(id, aggregateId, version)
         {
-            StateTransitionToken = stateTransitionToken;
+            FlowNodeInstanceId = flowNodeInstanceId;
+            State = state;
+            Content = content;
             UpdateDateTime = updateDateTime;
         }
 
-        public StateTransitionNotification StateTransitionToken { get; set; }
+        public string FlowNodeInstanceId { get; set; }
+        public string State { get; set; }
+        public string Content { get; set; }
         public DateTime UpdateDateTime { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace CaseManagement.HumanTask.Persistence
         Task<ICollection<HumanTaskInstanceAggregate>> GetSubTasks(string parentHumanTaskId, CancellationToken token);
         Task<ICollection<HumanTaskInstanceAggregate>> GetPendingLst(CancellationToken token);
         Task<ICollection<HumanTaskInstanceAggregate>> GetPendingDeadLines(CancellationToken token, DateTime currentDateTime);
-        Task<FindResponse<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token);
-        Task<FindResponse<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token);
+        Task<SearchResult<HumanTaskInstanceEventHistory>> FindHumanTaskInstanceHistory(FindHumanTaskInstanceHistoryParameter parameter, CancellationToken token);
+        Task<SearchResult<HumanTaskInstanceAggregate>> Search(SearchHumanTaskInstanceParameter parameter, CancellationToken token);
     }
 }

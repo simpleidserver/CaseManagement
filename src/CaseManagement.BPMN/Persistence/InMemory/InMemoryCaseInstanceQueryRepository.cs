@@ -1,6 +1,7 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.BPMN.ProcessInstance.Results;
+using CaseManagement.Common.Results;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,18 +26,18 @@ namespace CaseManagement.BPMN.Persistence.InMemory
             _instances = instances;
         }
 
-        public Task<ProcessInstanceAggregate> Get(string id, CancellationToken token)
+        public Task<ProcessInstanceResult> Get(string id, CancellationToken token)
         {
             var result = _instances.FirstOrDefault(i => i.AggregateId == id);
             if (result == null)
             {
-                return Task.FromResult((ProcessInstanceAggregate)null);
+                return Task.FromResult((ProcessInstanceResult)null);
             }
 
-            return Task.FromResult(result.Clone() as ProcessInstanceAggregate);
+            return Task.FromResult(ProcessInstanceResult.ToDto(result));
         }
 
-        public Task<FindResponse<ProcessInstanceAggregate>> Find(FindProcessInstancesParameter parameter, CancellationToken token)
+        public Task<SearchResult<ProcessInstanceResult>> Find(FindProcessInstancesParameter parameter, CancellationToken token)
         {
             IQueryable<ProcessInstanceAggregate> result = _instances.AsQueryable();
             if (!string.IsNullOrEmpty(parameter.ProcessFileId))
@@ -56,12 +57,12 @@ namespace CaseManagement.BPMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new FindResponse<ProcessInstanceAggregate>
+            return Task.FromResult(new SearchResult<ProcessInstanceResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = result.ToList()
+                Content = result.Select(_ => ProcessInstanceResult.ToDto(_)).ToList()
             });
         }
 

@@ -2,9 +2,9 @@
 
 namespace CaseManagement.Common.Responses
 {
-    public class FindResponse<T>
+    public class SearchResult<T>
     {
-        public FindResponse()
+        public SearchResult()
         {
             Content = new List<T>();
         }

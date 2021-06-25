@@ -39,7 +39,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests.Steps
             var val = jsonHttpBody.SelectToken(selector);
             if (val != null)
             {
-                _scenarioContext.Set(val.ToString(), key);
+               _scenarioContext.Set(val.ToString(), key);
             }
         }
     }

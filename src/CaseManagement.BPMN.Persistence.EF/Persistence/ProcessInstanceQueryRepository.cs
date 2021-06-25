@@ -1,8 +1,7 @@
 ﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.BPMN.Persistence.EF.DomainMapping;
-using CaseManagement.BPMN.Persistence.EF.Models;
 using CaseManagement.BPMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.BPMN.ProcessInstance.Results;
+using CaseManagement.Common.Results;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
             _dbContext = dbContext;
         }
 
-        public async Task<ProcessInstanceAggregate> Get(string id, CancellationToken token)
+        public async Task<ProcessInstanceResult> Get(string id, CancellationToken token)
         {
             var result = await _dbContext.ProcessInstances
                 .AsNoTracking()
@@ -45,12 +44,12 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
                 return null;
             }
 
-            return result.ToDomain();
+            return ProcessInstanceResult.ToDto(result);
         }
 
-        public async Task<FindResponse<ProcessInstanceAggregate>> Find(FindProcessInstancesParameter parameter, CancellationToken token)
+        public async Task<SearchResult<ProcessInstanceResult>> Find(FindProcessInstancesParameter parameter, CancellationToken token)
         {
-            IQueryable<ProcessInstanceModel> result = _dbContext.ProcessInstances
+            IQueryable<ProcessInstanceAggregate> result = _dbContext.ProcessInstances
                 .AsNoTracking()
                 .Include(_ => _.ItemDefs)
                 .Include(_ => _.Interfaces).ThenInclude(_ => _.Operations)
@@ -78,12 +77,12 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
             int totalLength = await result.CountAsync(token);
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
             var content = await result.ToListAsync(token);
-            return new FindResponse<ProcessInstanceAggregate>
+            return new SearchResult<ProcessInstanceResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = content.Select(_ => _.ToDomain()).ToList()
+                Content = content.Select(_ => ProcessInstanceResult.ToDto(_)).ToList()
             };
         }
 
