@@ -1,23 +1,26 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using CaseManagement.Common.Bus;
+using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.Persistence;
 using CaseManagement.Common.ISO8601;
+using MassTransit;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public class TimerEventListenerProcessor : BaseMilestoneOrTimerProcessor<TimerEventListener>
+    public class TimerEventListenerProcessor : BaseMilestoneOrTimerProcessor
     {
-        private readonly IMessageBroker _messageBroker;
+        private readonly IMessageScheduler _messageScheduler;
 
-        public TimerEventListenerProcessor(ISubscriberRepository subscriberRepository, IMessageBroker messageBroker) : base(subscriberRepository)
+        public TimerEventListenerProcessor(ISubscriberRepository subscriberRepository, IMessageScheduler messageScheduler) : base(subscriberRepository)
         {
-            _messageBroker = messageBroker;
+            _messageScheduler = messageScheduler;
         }
 
-        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, TimerEventListener elt, CancellationToken cancellationToken)
+        public override CasePlanElementInstanceTypes Type => CasePlanElementInstanceTypes.TIMER;
+
+        protected override async Task ProtectedProcess(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken)
         {
             if (elt.NbOccurrence == 0)
             {
@@ -37,11 +40,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private async Task Init(CMMNExecutionContext executionContext, TimerEventListener elt, CancellationToken token)
+        private async Task Init(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken token)
         {
             var currentDateTime = DateTime.UtcNow;
-            var elapsedTime = ISO8601Parser.ParseTime(elt.TimerExpression.Body);
-            var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(elt.TimerExpression.Body);
+            var elapsedTime = ISO8601Parser.ParseTime(elt.GetTimerExpression().Body);
+            var repeatingInterval = ISO8601Parser.ParseRepeatingTimeInterval(elt.GetTimerExpression().Body);
             if (repeatingInterval != null)
             {
                 if (currentDateTime >= repeatingInterval.Interval.EndDateTime)
@@ -63,15 +66,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                     var newInstance = elt;
                     if (i > 0)
                     {
-                        newInstance = executionContext.Instance.TryCreateInstance(elt) as TimerEventListener;
+                        newInstance = executionContext.Instance.TryCreateInstance(elt);
                     }
 
                     await TrySubscribe(executionContext, newInstance, CMMNConstants.ExternalTransitionNames.Occur, token);
-                    await _messageBroker.ScheduleExternalEvt(CMMNConstants.ExternalTransitionNames.Occur,
-                        executionContext.Instance.AggregateId,
-                        newInstance.Id,
-                        currentDateTime,
-                        token);
+                    await _messageScheduler.SchedulePublish(currentDateTime, BuildEvent(executionContext.Instance.AggregateId, newInstance.Id), token);
                 }
             }
 
@@ -83,12 +82,13 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 }
 
                 await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Occur, token);
-                await _messageBroker.ScheduleExternalEvt(CMMNConstants.ExternalTransitionNames.Occur, 
-                    executionContext.Instance.AggregateId,
-                    elt.Id, 
-                    elapsedTime.Value, 
-                    token);
+                await _messageScheduler.SchedulePublish(elapsedTime.Value, BuildEvent(executionContext.Instance.AggregateId, elt.Id), token);
             }
+        }
+
+        private static CaseElementOccuredEvent BuildEvent(string aggregateId, string eltId)
+        {
+            return new CaseElementOccuredEvent(Guid.NewGuid().ToString(), aggregateId, 0, eltId);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.FileItem
     public interface ICaseFileItemStore
     {
         string CaseFileItemType { get; }
-        Task<bool> TryAddCaseFileItem(CaseFileItemInstance caseFileItem, CasePlanInstanceAggregate casePlanInstance, CancellationToken token);
+        Task<bool> TryAddCaseFileItem(CaseEltInstance caseFileItem, CasePlanInstanceAggregate casePlanInstance, CancellationToken token);
     }
 }

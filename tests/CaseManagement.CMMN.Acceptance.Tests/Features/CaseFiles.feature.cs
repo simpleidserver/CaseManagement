@@ -145,7 +145,8 @@ this.ScenarioInitialize(scenarioInfo);
                             "caseFileId",
                             "$caseFileId$"});
 #line 15
- testRunner.And("execute HTTP POST JSON request \'http://localhost/case-plans/search\'", ((string)(null)), table2, "And ");
+ testRunner.And("poll HTTP POST JSON request \'http://localhost/case-plans/search\', until \'totalLen" +
+                        "gth\'=\'1\'", ((string)(null)), table2, "And ");
 #line hidden
 #line 18
  testRunner.And("extract JSON from body into \'casePlans\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

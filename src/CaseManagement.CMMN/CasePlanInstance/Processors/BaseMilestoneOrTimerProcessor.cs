@@ -1,18 +1,18 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.CMMN.Persistence;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public abstract class BaseMilestoneOrTimerProcessor<T> : BaseCasePlanItemProcessor<T> where T : BaseMilestoneOrTimerElementInstance
+    public abstract class BaseMilestoneOrTimerProcessor : BaseCasePlanItemProcessor
     {
         public BaseMilestoneOrTimerProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        protected override async Task<bool> Process(CMMNExecutionContext executionContext, T elt, CancellationToken token)
+        protected override async Task<bool> Process(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken token)
         {
             var terminateSubscription = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, token);
-            if (elt.State == MilestoneEventStates.Available)
+            if (elt.MilestoneState == MilestoneEventStates.Available)
             {
                 await ProtectedProcess(executionContext, elt, token);
                 if (terminateSubscription.IsCaptured)
@@ -27,6 +27,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             return false;
         }
 
-        protected abstract Task ProtectedProcess(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task ProtectedProcess(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken);
     }
 }

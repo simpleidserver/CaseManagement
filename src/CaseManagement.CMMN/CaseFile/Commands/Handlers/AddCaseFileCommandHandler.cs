@@ -1,7 +1,7 @@
 ﻿using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Results;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.Common;
+using CaseManagement.CMMN.Persistence;
 using MediatR;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,12 +12,14 @@ namespace CaseManagement.CMMN.CaseFile.Command.Handlers
 {
     public class AddCaseFileCommandHandler : IRequestHandler<AddCaseFileCommand, CreateCaseFileResult>
     {
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
+        private readonly ICaseFileCommandRepository _caseFileCommandRepository;
         private readonly CMMNServerOptions _options;
 
-        public AddCaseFileCommandHandler(ICommitAggregateHelper commitAggregateHelper, IOptions<CMMNServerOptions> options)
+        public AddCaseFileCommandHandler(
+            ICaseFileCommandRepository caseFileCommandRepository,
+            IOptions<CMMNServerOptions> options)
         {
-            _commitAggregateHelper = commitAggregateHelper;
+            _caseFileCommandRepository = caseFileCommandRepository;
             _options = options.Value;
         }
 
@@ -31,8 +33,8 @@ namespace CaseManagement.CMMN.CaseFile.Command.Handlers
             }
 
             var caseFile = CaseFileAggregate.New(addCaseFileCommand.Name, addCaseFileCommand.Description, 0, payload);
-            var streamName = CaseFileAggregate.GetStreamName(caseFile.AggregateId);
-            await _commitAggregateHelper.Commit(caseFile, streamName, token);
+            await _caseFileCommandRepository.Add(caseFile, token);
+            await _caseFileCommandRepository.SaveChanges(token);
             return new CreateCaseFileResult
             {
                 Id = caseFile.AggregateId

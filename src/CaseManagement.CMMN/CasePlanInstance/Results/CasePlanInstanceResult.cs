@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             {
                 return new CasePlanInstanceRoleResult
                 {
-                    Id = role.Id,
+                    Id = role.EltId,
                     Name = role.Name
                 };
             }
@@ -91,25 +92,22 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             public string FormId { get; set; }
             public ICollection<TransitionHistoryResult> TransitionHistories { get; set; }
 
-            public static CasePlanItemInstanceResult ToDto(BaseCasePlanItemInstance casePlanItemInstance)
+            public static CasePlanItemInstanceResult ToDto(CaseEltInstance casePlanItemInstance)
             {
                 string stateStr = null, formId = null;
-                if (casePlanItemInstance is BaseTaskOrStageElementInstance)
+                if (casePlanItemInstance.IsTaskOrStage())
                 {
-                    var state = ((BaseTaskOrStageElementInstance)casePlanItemInstance).State;
-                    stateStr = state == null ? null : Enum.GetName(typeof(TaskStageStates), state);
+                    stateStr = casePlanItemInstance.TakeStageState == null ? null : Enum.GetName(typeof(TaskStageStates), casePlanItemInstance.TakeStageState);
                 }
 
-                if (casePlanItemInstance is BaseMilestoneOrTimerElementInstance)
+                if (casePlanItemInstance.IsMilestone())
                 {
-                    var state = ((BaseMilestoneOrTimerElementInstance)casePlanItemInstance).State;
-                    stateStr = state == null ? null : Enum.GetName(typeof(MilestoneEventStates), state);
+                    stateStr = casePlanItemInstance.MilestoneState == null ? null : Enum.GetName(typeof(MilestoneEventStates), casePlanItemInstance.MilestoneState);
                 }
 
-                if (casePlanItemInstance is HumanTaskElementInstance)
+                if (casePlanItemInstance.Type == CasePlanElementInstanceTypes.HUMANTASK)
                 {
-                    var humanTaskInstance = casePlanItemInstance as HumanTaskElementInstance;
-                    formId = humanTaskInstance.FormId;
+                    formId = casePlanItemInstance.GetFormId();
                 }
 
                 return new CasePlanItemInstanceResult
@@ -132,7 +130,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
             public DateTime ExecutionDateTime { get; set; }
             public string Message { get; set; }
 
-            public static TransitionHistoryResult ToDto(CasePlanElementInstanceTransitionHistory history)
+            public static TransitionHistoryResult ToDto(CaseEltInstanceTransitionHistory history)
             {
                 return new TransitionHistoryResult
                 {
@@ -146,10 +144,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Results
         public static CasePlanInstanceResult ToDto(CasePlanInstanceAggregate casePlanInstance)
         {
             var children = casePlanInstance.GetFlatListCasePlanItems().Select(_ => CasePlanItemInstanceResult.ToDto(_)).ToList();
-            foreach(var elt in casePlanInstance.Children.Where(_ => _ is StageElementInstance))
+            foreach(var elt in casePlanInstance.Children.Where(_ => _.Type == CasePlanElementInstanceTypes.STAGE))
             {
-                var stage = elt as StageElementInstance;
-                foreach(var childEltId in stage.Children.Select(_ => _.EltId))
+                foreach(var childEltId in elt.Children.Select(_ => _.EltId))
                 {
                     foreach(var child in children.Where(_ => _.EltId == childEltId))
                     {

@@ -1,6 +1,7 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.CasePlan.Results;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.Common.Results;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,12 +27,18 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _definitions = definitions;
         }
 
-        public Task<CasePlanAggregate> Get(string id, CancellationToken token)
+        public Task<CasePlanResult> Get(string id, CancellationToken token)
         {
-            return Task.FromResult(_definitions.FirstOrDefault(d => d.AggregateId == id));
+            var result = _definitions.FirstOrDefault(d => d.AggregateId == id);
+            if (result == null)
+            {
+                return Task.FromResult((CasePlanResult)null);
+            }
+
+            return Task.FromResult(CasePlanResult.ToDto(result));
         }
 
-        public Task<SearchResult<CasePlanAggregate>> Find(FindCasePlansParameter parameter, CancellationToken token)
+        public Task<SearchResult<CasePlanResult>> Find(FindCasePlansParameter parameter, CancellationToken token)
         {
             IQueryable<CasePlanAggregate> result = _definitions.AsQueryable();
             if (parameter.TakeLatest)
@@ -62,12 +69,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new SearchResult<CasePlanAggregate>
+            return Task.FromResult(new SearchResult<CasePlanResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = (ICollection<CasePlanAggregate>)result.ToList()
+                Content = result.Select(_ => CasePlanResult.ToDto(_)).ToList()
             });
         }
 

@@ -1,6 +1,7 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.CasePlanInstance.Results;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.Common.Results;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _instances = instances;
         }
 
-        public Task<SearchResult<CasePlanInstanceAggregate>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token)
+        public Task<SearchResult<CasePlanInstanceResult>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token)
         {
             IQueryable<CasePlanInstanceAggregate> result = _instances.AsQueryable();
             if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
@@ -45,24 +46,24 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new SearchResult<CasePlanInstanceAggregate>
+            return Task.FromResult(new SearchResult<CasePlanInstanceResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = result.ToList()
+                Content = result.Select(c => CasePlanInstanceResult.ToDto(c)).ToList()
             });
         }
 
-        public Task<CasePlanInstanceAggregate> Get(string id, CancellationToken token)
+        public Task<CasePlanInstanceResult> Get(string id, CancellationToken token)
         {
             var result = _instances.FirstOrDefault(i => i.AggregateId == id);
             if (result == null)
             {
-                return Task.FromResult((CasePlanInstanceAggregate)null);
+                return Task.FromResult((CasePlanInstanceResult)null);
             }
 
-            return Task.FromResult(result.Clone() as CasePlanInstanceAggregate);
+            return Task.FromResult(CasePlanInstanceResult.ToDto(result));
         }
 
         public void Dispose()

@@ -1,8 +1,6 @@
-﻿using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using CaseManagement.CMMN.Persistence;
+﻿using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.EF;
 using CaseManagement.CMMN.Persistence.EF.Persistence;
-using CaseManagement.Common.Bus;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -22,13 +20,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ICaseWorkerTaskQueryRepository, CaseWorkerTaskQueryRepository>();
             services.TryAddTransient<ISubscriberRepository, SubscriberRepository>();
             services.AddDbContext<CaseManagementDbContext>(optionsAction);
-            return services;
-        }
-
-        public static IServiceCollection AddCaseManagementEFMessageBroker(this IServiceCollection services)
-        {
-            services.TryAddTransient<IMessageBrokerStore, MessageBrokerStore>();
-            services.TryAddTransient<IMessageBroker, PersistedMessageBroker>();
             return services;
         }
     }

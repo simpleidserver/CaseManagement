@@ -15,6 +15,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseDefinitions = caseDefinitions;
         }
 
+        public Task<CasePlanAggregate> Get(string id, CancellationToken token)
+        {
+            return Task.FromResult(_caseDefinitions.FirstOrDefault(_ => _.AggregateId == id));
+        }
+
         public Task Update(CasePlanAggregate workflowDefinition, CancellationToken token)
         {
             var wf = _caseDefinitions.First(w => w.AggregateId == workflowDefinition.AggregateId);

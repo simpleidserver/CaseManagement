@@ -6,6 +6,7 @@ namespace CaseManagement.CMMN.Persistence
 {
     public interface ICaseWorkerTaskCommandRepository
     {
+        Task<CaseWorkerTaskAggregate> Get(string id, CancellationToken token);
         Task Delete(CaseWorkerTaskAggregate caseWorker, CancellationToken token);
         Task Add(CaseWorkerTaskAggregate caseWorker, CancellationToken token);
         Task Update(CaseWorkerTaskAggregate caseWorker, CancellationToken token);

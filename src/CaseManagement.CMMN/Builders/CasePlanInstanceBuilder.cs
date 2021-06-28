@@ -62,13 +62,13 @@ namespace CaseManagement.CMMN.Builders
 
         public new CasePlanInstanceAggregate Build()
         {
-            var files = new List<CaseFileItemInstance>();
+            var files = new List<CaseEltInstance>();
             foreach(var builder in _builders)
             {
-                files.Add(builder.Build() as CaseFileItemInstance);
+                files.Add(builder.Build());
             }
 
-            var result = CasePlanInstanceAggregate.New(CasePlanInstanceId, base.InternalBuild() as StageElementInstance, files);
+            var result = CasePlanInstanceAggregate.New(CasePlanInstanceId, base.InternalBuild(), files);
             return result;
         }
     }

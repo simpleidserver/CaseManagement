@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Processors.Handlers;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.Persistence;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public class HumanTaskProcessor : BaseTaskOrStageProcessor<HumanTaskElementInstance>
+    public class HumanTaskProcessor : BaseTaskOrStageProcessor
     {
         private readonly IEnumerable<IHumanTaskHandler> _humanTaskHandlers;
 
@@ -17,9 +18,11 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _humanTaskHandlers = humanTaskHandlers;
         }
 
-        protected override async Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, HumanTaskElementInstance elt, CancellationToken cancellationToken)
+        public override CasePlanElementInstanceTypes Type => CasePlanElementInstanceTypes.HUMANTASK;
+
+        protected override async Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken)
         {
-            var handler = _humanTaskHandlers.FirstOrDefault(_ => _.Implementation == elt.Implemention);
+            var handler = _humanTaskHandlers.FirstOrDefault(_ => _.Implementation == elt.GetImplementation());
             if (handler != null)
             {
                 if (!executionContext.Instance.WorkerTaskExists(elt.Id))

@@ -15,6 +15,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseFiles = caseFiles;
         }
 
+        public Task<CaseFileAggregate> Get(string id, CancellationToken token)
+        {
+            return Task.FromResult(_caseFiles.FirstOrDefault(_ => _.AggregateId == id));
+        }
+
         public Task Delete(CaseFileAggregate caseFile, CancellationToken token)
         {
             _caseFiles.Remove(_caseFiles.First(a => a.AggregateId == caseFile.AggregateId));

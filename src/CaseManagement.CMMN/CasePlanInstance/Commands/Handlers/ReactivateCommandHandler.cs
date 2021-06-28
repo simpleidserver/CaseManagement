@@ -1,48 +1,25 @@
-﻿using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.Common.Bus;
-using CaseManagement.Common.EvtStore;
+﻿using CaseManagement.CMMN.CasePlanInstance.Processors;
+using CaseManagement.CMMN.Persistence;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Commands.Handlers
 {
-    public class ReactivateCommandHandler : IRequestHandler<ReactivateCommand, bool>
+    public class ReactivateCommandHandler : BaseExternalEventNotification, IRequestHandler<ReactivateCommand, bool>
     {
-        private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly IMessageBroker _messageBroker;
-
-        public ReactivateCommandHandler(IEventStoreRepository eventStoreRepository, IMessageBroker messageBroker)
+        public ReactivateCommandHandler(
+            ICasePlanInstanceCommandRepository casePlanInstanceCommandRepository,
+            ISubscriberRepository subscriberRepository,
+            ICasePlanInstanceProcessor casePlanInstanceProcessor) : base(casePlanInstanceCommandRepository, subscriberRepository, casePlanInstanceProcessor)
         {
-            _eventStoreRepository = eventStoreRepository;
-            _messageBroker = messageBroker;
         }
 
-        public async Task<bool> Handle(ReactivateCommand reactivateCommand, CancellationToken token)
+        public override string EvtName => CMMNConstants.ExternalTransitionNames.Reactivate;
+
+        public Task<bool> Handle(ReactivateCommand command, CancellationToken token)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(reactivateCommand.CaseInstanceId, CasePlanInstanceAggregate.GetStreamName(reactivateCommand.CaseInstanceId));
-            if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.AggregateId))
-            {
-                throw new UnknownCasePlanInstanceException(reactivateCommand.CaseInstanceId);
-            }
-
-            if (!string.IsNullOrWhiteSpace(reactivateCommand.CaseInstanceElementId))
-            {
-                var elt = caseInstance.GetChild(reactivateCommand.CaseInstanceElementId);
-                if (elt == null)
-                {
-                    throw new UnknownCasePlanElementInstanceException(reactivateCommand.CaseInstanceId, reactivateCommand.CaseInstanceElementId);
-                }
-
-                caseInstance.MakeTransition(elt, CMMNTransitions.Reactivate);
-                await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Reactivate, reactivateCommand.CaseInstanceId, reactivateCommand.CaseInstanceElementId, reactivateCommand.Parameters, token);
-                return true;
-            }
-
-            caseInstance.MakeTransition(CMMNTransitions.Reactivate);
-            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Reactivate, reactivateCommand.CaseInstanceId, null, reactivateCommand.Parameters, token);
-            return true;
+            return Execute(command.CaseInstanceId, command.CaseInstanceElementId, command.Parameters, token);
         }
     }
 }

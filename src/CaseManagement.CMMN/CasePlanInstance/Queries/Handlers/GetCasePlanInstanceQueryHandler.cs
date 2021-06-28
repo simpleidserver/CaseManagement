@@ -1,7 +1,7 @@
-﻿using MediatR;
-using CaseManagement.CMMN.CasePlanInstance.Exceptions;
+﻿using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.CasePlanInstance.Results;
 using CaseManagement.CMMN.Persistence;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +25,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Queries.Handlers
                 throw new UnknownCasePlanInstanceException(request.CasePlanInstanceId);
             }
 
-            return CasePlanInstanceResult.ToDto(result);
+            return result;
         }
     }
 }

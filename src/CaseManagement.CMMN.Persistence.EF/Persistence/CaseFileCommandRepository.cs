@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Persistence.EF.DomainMapping;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,51 +14,32 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             _caseManagementDbContext = caseManagementDbContext;
         }
 
+        public Task<CaseFileAggregate> Get(string id, CancellationToken token)
+        {
+            return _caseManagementDbContext.CaseFiles.FirstOrDefaultAsync(_ => _.AggregateId == id, token);
+        }
+
         public Task Add(CaseFileAggregate caseFile, CancellationToken token)
         {
-            _caseManagementDbContext.CaseFiles.Add(caseFile.ToModel());
+            _caseManagementDbContext.CaseFiles.Add(caseFile);
             return Task.CompletedTask;
         }
 
-        public async Task Delete(CaseFileAggregate caseFile, CancellationToken token)
+        public Task Delete(CaseFileAggregate caseFile, CancellationToken token)
         {
-            using (var lck = await _caseManagementDbContext.Lock())
-            {
-                var record = await _caseManagementDbContext.CaseFiles.FirstOrDefaultAsync(_ => _.Id == caseFile.AggregateId, token);
-                if (record == null)
-                {
-                    return;
-                }
-
-                _caseManagementDbContext.CaseFiles.Remove(record);
-            }
+            _caseManagementDbContext.CaseFiles.Remove(caseFile);
+            return Task.CompletedTask;
         }
 
-        public async Task Update(CaseFileAggregate caseFile, CancellationToken token)
+        public Task Update(CaseFileAggregate caseFile, CancellationToken token)
         {
-            using (var lck = await _caseManagementDbContext.Lock())
-            {
-                var record = await _caseManagementDbContext.CaseFiles.FirstOrDefaultAsync(_ => _.Id == caseFile.AggregateId, token);
-                if (record == null)
-                {
-                    return;
-                }
-
-                record.Name = caseFile.Name;
-                record.Description = caseFile.Description;
-                record.UpdateDateTime = caseFile.UpdateDateTime;
-                record.SerializedContent = caseFile.Payload;
-                record.Status = (int)caseFile.Status;
-                record.Version = caseFile.Version;
-            }
+            _caseManagementDbContext.CaseFiles.Update(caseFile);
+            return Task.CompletedTask;
         }
 
-        public async Task<int> SaveChanges(CancellationToken token)
+        public Task<int> SaveChanges(CancellationToken token)
         {
-            using (var lck = await _caseManagementDbContext.Lock())
-            {
-                return await _caseManagementDbContext.SaveChangesAsync(token);
-            }
+            return _caseManagementDbContext.SaveChangesAsync(token);
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using CaseManagement.CMMN.Acceptance.Tests.Middlewares;
-using CaseManagement.CMMN.AspNetCore;
+using CaseManagement.CMMN.AspNetCore.Apis;
 using CaseManagement.Common.Jobs.Persistence;
 using CaseManagement.HumanTask;
+using CaseManagement.HumanTask.AspNetCore.Apis;
 using CaseManagement.HumanTask.Builders;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Infrastructure.Jobs;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +23,8 @@ namespace CaseManagement.CMMN.Acceptance.Tests
 {
     public class FakeStartup
     {
+        private static IBusControl _busControl;
+
         public void ConfigureServices(IServiceCollection services)
         {
             var sp = services.BuildServiceProvider();
@@ -73,21 +77,30 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                     ScheduleJob.New<ProcessActivationTimerJob>(1 * 1000),
                     ScheduleJob.New<ProcessDeadLinesJob>(1 * 1000)
                 });
-            services.AddMvc();
-            services.AddHostedService<CMMNJobServerHostedService>();
+            services
+                .AddMvc(opts => opts.EnableEndpointRouting = false)
+                .AddApplicationPart(typeof(CaseFilesController).Assembly)
+                .AddApplicationPart(typeof(HumanTaskDefsController).Assembly)
+                .AddNewtonsoftJson();
             var files = Directory.EnumerateFiles(Path.Combine(Directory.GetCurrentDirectory(), "Cmmns"), "*.cmmn").ToList();
-            services.AddCaseApi();
-            services.AddCaseJobServer(callback: opt =>
+            services.AddCaseApi(callback: opt =>
             {
                 opt.CallbackUrl = "http://localhost/case-plan-instances/{id}/complete/{eltId}";
                 opt.WSHumanTaskAPI = "http://localhost";
                 opt.OAuthTokenEndpoint = "http://localhost/token";
             }).AddDefinitions(files);
             services.AddSingleton<CaseManagement.Common.Factories.IHttpClientFactory>(httpClientFactory);
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            if (_busControl == null)
+            {
+                _busControl = app.ApplicationServices.GetRequiredService<IBusControl>();
+                _busControl.Start();
+            }
+
             app.UseAuthentication();
             app.Map("/token", b =>
             {

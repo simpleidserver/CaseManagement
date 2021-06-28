@@ -78,12 +78,15 @@ namespace CaseManagement.CMMN.Builders
             return this;
         }
 
-        protected override BaseCaseEltInstance InternalBuild()
+        protected override CaseEltInstance InternalBuild()
         {
-            var result = new StageElementInstance();
+            var result = new CaseEltInstance
+            {
+                Type = CasePlanElementInstanceTypes.STAGE
+            };
             foreach(var builder in Builders)
             {
-                result.AddChild(builder.Build() as BaseCasePlanItemInstance);
+                result.AddChild(builder.Build());
             }
 
             return result;
@@ -91,7 +94,7 @@ namespace CaseManagement.CMMN.Builders
 
         protected override string BuildId()
         {
-            return StageElementInstance.BuildId(CasePlanInstanceId, EltId, 0);
+            return CaseEltInstance.BuildId(CasePlanInstanceId, EltId, 0);
         }
     }
 }

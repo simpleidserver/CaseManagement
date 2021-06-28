@@ -15,6 +15,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseWorkerTaskLst = caseWorkerTaskLst;
         }
 
+        public Task<CaseWorkerTaskAggregate> Get(string id, CancellationToken token)
+        {
+            return Task.FromResult(_caseWorkerTaskLst.FirstOrDefault(_ => _.AggregateId == id));
+        }
+
         public Task Delete(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
         {
             _caseWorkerTaskLst.Remove(_caseWorkerTaskLst.First(a => a.AggregateId == caseWorkerTask.AggregateId));

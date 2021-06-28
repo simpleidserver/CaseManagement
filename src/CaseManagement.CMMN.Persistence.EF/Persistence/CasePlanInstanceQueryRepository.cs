@@ -1,8 +1,7 @@
-﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Persistence.EF.DomainMapping;
-using CaseManagement.CMMN.Persistence.EF.Models;
+﻿using CaseManagement.CMMN.CasePlanInstance.Results;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.Common.Results;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,60 +27,45 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             _dbContext = dbContext;
         }
 
-        public async Task<SearchResult<CasePlanInstanceAggregate>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token)
+        public async Task<SearchResult<CasePlanInstanceResult>> Find(FindCasePlanInstancesParameter parameter, CancellationToken token)
         {
-            using (var lck = await _dbContext.Lock())
+            IQueryable<CasePlanInstanceAggregate> result = _dbContext.CasePlanInstances;
+            if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
             {
-                IQueryable<CasePlanInstanceModel> result = _dbContext.CasePlanInstances
-                    .Include(_ => _.Roles).ThenInclude(_ => _.Claims)
-                    .Include(_ => _.Files)
-                    .Include(_ => _.WorkerTasks)
-                    .Include(_ => _.Children).ThenInclude(_ => _.Children);
-                if (!string.IsNullOrWhiteSpace(parameter.CasePlanId))
-                {
-                    result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
-                }
-
-                if (!string.IsNullOrWhiteSpace(parameter.CaseFileId))
-                {
-                    result = result.Where(r => r.CaseFileId == parameter.CaseFileId);
-                }
-
-                if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
-                {
-                    result = result.InvokeOrderBy(MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
-                }
-
-                int totalLength = result.Count();
-                result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-                var content = await result.ToListAsync();
-                return new SearchResult<CasePlanInstanceAggregate>
-                {
-                    StartIndex = parameter.StartIndex,
-                    Count = parameter.Count,
-                    TotalLength = totalLength,
-                    Content = content.Select(_ => _.ToDomain()).ToList()
-                };
+                result = result.Where(r => r.CasePlanId == parameter.CasePlanId);
             }
+
+            if (!string.IsNullOrWhiteSpace(parameter.CaseFileId))
+            {
+                result = result.Where(r => r.CaseFileId == parameter.CaseFileId);
+            }
+
+            if (MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
+            {
+                result = result.InvokeOrderBy(MAPPING_WORKFLOWINSTANCE_TO_PROPERTYNAME[parameter.OrderBy], parameter.Order);
+            }
+
+            int totalLength = result.Count();
+            result = result.Skip(parameter.StartIndex).Take(parameter.Count);
+            var content = await result.ToListAsync();
+            return new SearchResult<CasePlanInstanceResult>
+            {
+                StartIndex = parameter.StartIndex,
+                Count = parameter.Count,
+                TotalLength = totalLength,
+                Content = content.Select(_ => CasePlanInstanceResult.ToDto(_)).ToList()
+            };
         }
 
-        public async Task<CasePlanInstanceAggregate> Get(string id, CancellationToken token)
+        public async Task<CasePlanInstanceResult> Get(string id, CancellationToken token)
         {
-            using (var lck = await _dbContext.Lock())
+            var result = await _dbContext.CasePlanInstances.FirstOrDefaultAsync(_ => _.AggregateId == id, token);
+            if (result == null)
             {
-                var result = await _dbContext.CasePlanInstances
-                    .Include(_ => _.Roles).ThenInclude(_ => _.Claims)
-                    .Include(_ => _.Files)
-                    .Include(_ => _.WorkerTasks)
-                    .Include(_ => _.Children).ThenInclude(_ => _.Children)
-                    .FirstOrDefaultAsync(_ => _.Id == id, token);
-                if (result == null)
-                {
-                    return null;
-                }
-
-                return result.ToDomain();
+                return null;
             }
+
+            return CasePlanInstanceResult.ToDto(result);
         }
 
         public void Dispose()

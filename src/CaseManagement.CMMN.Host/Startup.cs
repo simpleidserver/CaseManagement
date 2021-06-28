@@ -126,9 +126,7 @@ namespace CaseManagement.CMMN.Host
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            services.AddHostedService<CMMNJobServerHostedService>();
-            services.AddCaseApi();
-            services.AddCaseJobServer(callback: opt =>
+            services.AddCaseApi(callback: opt =>
             {
                 opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
                 opt.WSHumanTaskAPI = "http://localhost:60006";

@@ -1,5 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.CMMN.Persistence;
 using CaseManagement.Common.Processors;
 using System.Collections.Generic;
 using System.Threading;
@@ -7,27 +7,29 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public abstract class BaseCaseEltInstanceProcessor<TElt> : IProcessor<CMMNExecutionContext, TElt, CasePlanInstanceAggregate> where TElt : BaseCaseEltInstance
+    public abstract class BaseCaseEltInstanceProcessor : ICaseEltInstanceProcessor
     {
         public BaseCaseEltInstanceProcessor(ISubscriberRepository subscriberRepository)
         {
             SubscriberRepository = subscriberRepository;
         }
 
-        public async Task<ExecutionResult> Execute(CMMNExecutionContext executionContext, TElt elt, CancellationToken cancellationToken)
+        public async Task<ExecutionResult> Execute(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken)
         {
             await Handle(executionContext, elt, cancellationToken);
             return ExecutionResult.Next();
         }
 
+        public abstract CasePlanElementInstanceTypes Type { get; }
+
         protected ISubscriberRepository SubscriberRepository { get; private set; }
 
-        protected Task<Subscription> TrySubscribe(CMMNExecutionContext executionContext, TElt casePlanElementInstance, string evtName, CancellationToken cancellationToken)
+        protected Task<Subscription> TrySubscribe(CMMNExecutionContext executionContext, CaseEltInstance casePlanElementInstance, string evtName, CancellationToken cancellationToken)
         {
             return SubscriberRepository.TrySubscribe(executionContext.Instance.AggregateId, casePlanElementInstance.Id, evtName, cancellationToken);
         }
 
-        protected Task<Subscription> TryReset(CMMNExecutionContext executionContext, TElt casePlanElementInstance, string evtName, CancellationToken cancellationToken)
+        protected Task<Subscription> TryReset(CMMNExecutionContext executionContext, CaseEltInstance casePlanElementInstance, string evtName, CancellationToken cancellationToken)
         {
             return SubscriberRepository.TryReset(executionContext.Instance.AggregateId, casePlanElementInstance.Id, evtName, cancellationToken);
         }
@@ -54,7 +56,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             return result;
         }
 
-        protected abstract Task Handle(CMMNExecutionContext executionContext, TElt elt, CancellationToken cancellationToken);
+        protected abstract Task Handle(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken);
 
     }
 }

@@ -122,7 +122,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests.Steps
                     }
                     catch
                     {
-                        jObj.Add(k, value.ToString());
+                        jObj.Add(k, v);
                     }
                 }
             }

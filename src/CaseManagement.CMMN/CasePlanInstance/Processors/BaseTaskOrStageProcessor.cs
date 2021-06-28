@@ -1,28 +1,28 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.CMMN.Persistence;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public abstract class BaseTaskOrStageProcessor<T> : BaseCasePlanItemProcessor<T> where T : BaseTaskOrStageElementInstance
+    public abstract class BaseTaskOrStageProcessor : BaseCasePlanItemProcessor
     {
         public BaseTaskOrStageProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository) { }
 
-        protected override async Task<bool> Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
+        protected override async Task<bool> Process(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken)
         {
             Subscription sub = null;
             var terminate = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
             var manualStart = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.ManualStart, cancellationToken);
             var disable = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Disable, cancellationToken);
             var reenable = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Reenable, cancellationToken);
-            if (elt.State == null)
+            if (elt.TakeStageState == null)
             {
                 executionContext.Instance.MakeTransition(elt, CMMNTransitions.Create);
             }
 
-            if (elt.State == TaskStageStates.Available)
+            if (elt.TakeStageState == TaskStageStates.Available)
             {
                 if (elt.ManualActivationRule != null && elt.IsManualActivationRuleSatisfied(executionContext.Instance.ExecutionContext))
                 {
@@ -33,7 +33,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 executionContext.Instance.MakeTransition(elt, CMMNTransitions.Start);
             }
 
-            if (elt.State == TaskStageStates.Enabled)
+            if (elt.TakeStageState == TaskStageStates.Enabled)
             {
                 if (disable.IsCaptured)
                 {
@@ -51,7 +51,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 executionContext.Instance.MakeTransition(elt, CMMNTransitions.ManualStart, incomingTokens: MergeParameters(executionContext, sub.Parameters));
             }
 
-            if (elt.State == TaskStageStates.Disabled) 
+            if (elt.TakeStageState == TaskStageStates.Disabled) 
             {
                 if (reenable.IsCaptured)
                 {
@@ -62,7 +62,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 return false;
             }
 
-            if (elt.State == TaskStageStates.Active)
+            if (elt.TakeStageState == TaskStageStates.Active)
             {
                 try
                 {
@@ -85,6 +85,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             return false;
         }
 
-        protected abstract Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken);
     }
 }

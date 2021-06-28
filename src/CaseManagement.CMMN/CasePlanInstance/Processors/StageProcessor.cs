@@ -1,22 +1,23 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using CaseManagement.Common.Processors;
+using CaseManagement.CMMN.Persistence;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public class StageProcessor : BaseTaskOrStageProcessor<StageElementInstance>
+    public class StageProcessor : BaseTaskOrStageProcessor
     {
-        private readonly IProcessorFactory _processorFactory;
+        private readonly ICMMNProcessorFactory _processorFactory;
 
-        public StageProcessor(ISubscriberRepository subscriberRepository, IProcessorFactory processorFactory) : base(subscriberRepository)
+        public StageProcessor(ISubscriberRepository subscriberRepository, ICMMNProcessorFactory processorFactory) : base(subscriberRepository)
         {
             _processorFactory = processorFactory;
         }
 
-        protected override async Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, StageElementInstance stageElt, CancellationToken cancellationToken)
+        public override CasePlanElementInstanceTypes Type => CasePlanElementInstanceTypes.STAGE;
+
+        protected override async Task<bool> ProtectedProcess(CMMNExecutionContext executionContext, CaseEltInstance stageElt, CancellationToken cancellationToken)
         {
             var rootNodes = stageElt.Children.Where(_ => _.IsLeaf()).ToList();
             foreach(var rootNode in rootNodes)
@@ -39,7 +40,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             return false;
         }
 
-        private async Task ExecuteNode(CMMNExecutionContext executionContext, BaseCasePlanItemInstance node, CancellationToken token)
+        private async Task ExecuteNode(CMMNExecutionContext executionContext, CaseEltInstance node, CancellationToken token)
         {
             await _processorFactory.Execute(executionContext, node, token);
             var domainEvts = executionContext.Instance.DomainEvents.Where((evt) =>
@@ -61,18 +62,17 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private bool IsElementCompleted(BaseCasePlanItemInstance planElementInstance)
+        private bool IsElementCompleted(CaseEltInstance planElementInstance)
         {
-            var stageOrTask = planElementInstance as BaseTaskOrStageElementInstance;
-            var milestone = planElementInstance as MilestoneElementInstance;
-            if (stageOrTask != null && (stageOrTask.State == TaskStageStates.Completed ||
-                stageOrTask.State == TaskStageStates.Terminated ||
-                stageOrTask.State == TaskStageStates.Disabled))
+            if (planElementInstance.IsTaskOrStage() && (planElementInstance.TakeStageState == TaskStageStates.Completed ||
+                planElementInstance.TakeStageState == TaskStageStates.Terminated ||
+                planElementInstance.TakeStageState == TaskStageStates.Disabled))
             {
                 return true;
             }
 
-            if (milestone != null && (milestone.State == MilestoneEventStates.Completed || milestone.State == MilestoneEventStates.Terminated))
+            if (planElementInstance.IsMilestone() && (planElementInstance.MilestoneState == MilestoneEventStates.Completed ||
+                planElementInstance.MilestoneState == MilestoneEventStates.Terminated))
             {
                 return true;
             }

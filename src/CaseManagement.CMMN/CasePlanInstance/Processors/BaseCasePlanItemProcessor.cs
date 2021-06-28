@@ -1,18 +1,17 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using System.Linq;
+using CaseManagement.CMMN.Persistence;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public abstract class BaseCasePlanItemProcessor<T> : BaseCaseEltInstanceProcessor<T> where T : BaseCasePlanItemInstance
+    public abstract class BaseCasePlanItemProcessor : BaseCaseEltInstanceProcessor
     {
         protected BaseCasePlanItemProcessor(ISubscriberRepository subscriberRepository) : base(subscriberRepository)
         {
         }
 
-        protected override async Task Handle(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken)
+        protected override async Task Handle(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken)
         {
             var entryCriteria = executionContext.Instance.IsEntryCriteriaSatisfied(elt);
             if (!entryCriteria.IsSatisfied)
@@ -30,18 +29,18 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             var newExecutionContext = executionContext.NewExecutionContext(entryCriteria.Data);
             if (newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt) && firstInstance && !entryCriteria.IsEmpty)
             {
-                var result = newExecutionContext.Instance.TryCreateInstance(elt) as T;
+                var result = newExecutionContext.Instance.TryCreateInstance(elt);
                 await Handle(newExecutionContext, result, cancellationToken);
             }
 
             var mustCreate = await Process(executionContext, elt, cancellationToken);
             if (mustCreate && entryCriteria.IsEmpty && newExecutionContext.Instance.IsRepetitionRuleSatisfied(elt))
             {
-                var result = newExecutionContext.Instance.TryCreateInstance(elt) as T;
+                var result = newExecutionContext.Instance.TryCreateInstance(elt);
                 await Handle(newExecutionContext, result, cancellationToken);
             }
         }
 
-        protected abstract Task<bool> Process(CMMNExecutionContext executionContext, T elt, CancellationToken cancellationToken);
+        protected abstract Task<bool> Process(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken);
     }
 }

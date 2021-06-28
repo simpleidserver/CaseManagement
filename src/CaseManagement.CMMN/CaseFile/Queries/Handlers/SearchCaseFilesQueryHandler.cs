@@ -17,9 +17,9 @@ namespace CaseManagement.CMMN.CaseFile.Queries.Handlers
             _queryRepository = queryRepository;
         }
 
-        public async Task<SearchResult<CaseFileResult>> Handle(SearchCaseFileQuery request, CancellationToken cancellationToken)
+        public Task<SearchResult<CaseFileResult>> Handle(SearchCaseFileQuery request, CancellationToken cancellationToken)
         {
-            var result = await _queryRepository.Find(new Persistence.Parameters.FindCaseFilesParameter
+            return _queryRepository.Find(new Persistence.Parameters.FindCaseFilesParameter
             {
                 Count = request.Count,
                 Order = request.Order,
@@ -29,13 +29,6 @@ namespace CaseManagement.CMMN.CaseFile.Queries.Handlers
                 TakeLatest = request.TakeLatest,
                 Text = request.Text
             }, cancellationToken);
-            return new SearchResult<CaseFileResult>
-            {
-                Content = result.Content.Select(_ => CaseFileResult.ToDto(_)),
-                Count = result.Count,
-                StartIndex = result.StartIndex,
-                TotalLength = result.TotalLength
-            };
         }
     }
 }

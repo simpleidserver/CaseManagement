@@ -12,7 +12,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.FileItem
 
         public string CaseFileItemType => CMMNConstants.ContentManagementTypes.FAKE_CMIS_DIRECTORY;
 
-        public Task<bool> TryAddCaseFileItem(CaseFileItemInstance caseFileItem, CasePlanInstanceAggregate casePlanInstance, CancellationToken token)
+        public Task<bool> TryAddCaseFileItem(CaseEltInstance caseFileItem, CasePlanInstanceAggregate casePlanInstance, CancellationToken token)
         {
             if (casePlanInstance.IsFileExists(caseFileItem.Id))
             {

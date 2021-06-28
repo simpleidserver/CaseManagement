@@ -5,7 +5,7 @@ namespace CaseManagement.CMMN.Domains
     [Serializable]
     public class CasePlanFileItem : ICloneable
     {
-        public string Id { get; set; }
+        public string EltId { get; set; }
         public string Name { get; set; }
         public string DefinitionType { get; set; }
 
@@ -13,7 +13,7 @@ namespace CaseManagement.CMMN.Domains
         {
             return new CasePlanFileItem
             {
-                Id = Id,
+                EltId = EltId,
                 DefinitionType = DefinitionType,
                 Name = Name
             };

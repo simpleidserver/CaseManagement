@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -12,7 +13,7 @@ namespace CaseManagement.CMMN.Domains
     {
         public CasePlanInstanceExecutionContext()
         {
-            Variables = new ConcurrentDictionary<string, string>();
+            Variables = new Dictionary<string, string>();
         }
 
         public CasePlanInstanceExecutionContext(CasePlanInstanceAggregate casePlanInstance) : this()
@@ -23,7 +24,7 @@ namespace CaseManagement.CMMN.Domains
         [IgnoreDataMember]
         [JsonIgnore]
         public CasePlanInstanceAggregate CasePlanInstance { get; set; }
-        public ConcurrentDictionary<string, string> Variables;
+        public Dictionary<string, string> Variables;
 
         public int GetVariableAndIncrement(string key)
         {
@@ -74,7 +75,7 @@ namespace CaseManagement.CMMN.Domains
         {
             return new CasePlanInstanceExecutionContext
             {
-                Variables = new ConcurrentDictionary<string, string>(Variables.ToDictionary(c => c.Key, c => c.Value))
+                Variables = Variables.ToDictionary(c => c.Key, c => c.Value)
             };
         }
     }

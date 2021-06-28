@@ -12,7 +12,7 @@ Scenario: Publish case file and check caseplan is inserted
 	And extract JSON from body into 'caseFile'
 	And execute HTTP GET request 'http://localhost/case-files/$caseFileId$/publish'
 	And poll 'http://localhost/case-files/$caseFileId$', until 'status'='Published'
-	And execute HTTP POST JSON request 'http://localhost/case-plans/search'
+	And poll HTTP POST JSON request 'http://localhost/case-plans/search', until 'totalLength'='1'
 	| Key        | Value        |
 	| caseFileId | $caseFileId$ |
 	And extract JSON from body into 'casePlans'

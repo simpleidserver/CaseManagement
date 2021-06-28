@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Persistence.EF.DomainMapping;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,48 +14,32 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             _caseManagementDbContext = caseManagementDbContext;
         }
 
+        public Task<CaseWorkerTaskAggregate> Get(string id, CancellationToken token)
+        {
+            return _caseManagementDbContext.CaseWorkers.FirstOrDefaultAsync(_ => _.AggregateId == id, token);
+        }
+
         public Task Add(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
         {
-            var record = caseWorkerTask.ToModel();
-            _caseManagementDbContext.CaseWorkers.Add(record);
+            _caseManagementDbContext.CaseWorkers.Add(caseWorkerTask);
             return Task.CompletedTask;
         }
 
-        public async Task Delete(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
+        public Task Delete(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
         {
-            using (var lck = await _caseManagementDbContext.Lock())
-            {
-                var record = await _caseManagementDbContext.CaseWorkers.FirstOrDefaultAsync(_ => _.Id == caseWorkerTask.AggregateId, token);
-                if (record == null)
-                {
-                    return;
-                }
-
-                _caseManagementDbContext.CaseWorkers.Remove(record);
-            }
+            _caseManagementDbContext.CaseWorkers.Remove(caseWorkerTask);
+            return Task.CompletedTask;
         }
 
-        public async Task Update(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
+        public Task Update(CaseWorkerTaskAggregate caseWorkerTask, CancellationToken token)
         {
-            using (var lck = await _caseManagementDbContext.Lock())
-            {
-                var record = await _caseManagementDbContext.CaseWorkers.FirstOrDefaultAsync(_ => _.Id == caseWorkerTask.AggregateId, token);
-                if (record == null)
-                {
-                    return;
-                }
-
-                _caseManagementDbContext.CaseWorkers.Remove(record);
-                _caseManagementDbContext.CaseWorkers.Add(caseWorkerTask.ToModel());
-            }
+            _caseManagementDbContext.CaseWorkers.Update(caseWorkerTask);
+            return Task.CompletedTask;
         }
 
-        public async Task<int> SaveChanges(CancellationToken token)
+        public Task<int> SaveChanges(CancellationToken token)
         {
-            using (var lck = await _caseManagementDbContext.Lock())
-            {
-                return await _caseManagementDbContext.SaveChangesAsync(token);
-            }
+            return _caseManagementDbContext.SaveChangesAsync(token);
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Exceptions;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.Common;
-using CaseManagement.Common.EvtStore;
+using CaseManagement.CMMN.Persistence;
+using MassTransit;
 using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,26 +12,30 @@ namespace CaseManagement.CMMN.CaseFile.Command.Handlers
 {
     public class PublishCaseFileCommandHandler : IRequestHandler<PublishCaseFileCommand, string>
     {
-        private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
+        private readonly ICaseFileCommandRepository _caseFileCommandRepository;
+        private readonly IBusControl _busControl;
 
-        public PublishCaseFileCommandHandler(IEventStoreRepository eventStoreRepository, ICommitAggregateHelper commitAggregateHelper)
+        public PublishCaseFileCommandHandler(
+            ICaseFileCommandRepository caseFileCommandRepository,
+            IBusControl busControl)
         {
-            _eventStoreRepository = eventStoreRepository;
-            _commitAggregateHelper = commitAggregateHelper;
+            _caseFileCommandRepository = caseFileCommandRepository;
+            _busControl = busControl;
         }
 
         public async Task<string> Handle(PublishCaseFileCommand publishCaseFileCommand, CancellationToken token)
         {
-            var caseFile = await _eventStoreRepository.GetLastAggregate<CaseFileAggregate>(publishCaseFileCommand.Id, CaseFileAggregate.GetStreamName(publishCaseFileCommand.Id));
+            var caseFile = await _caseFileCommandRepository.Get(publishCaseFileCommand.Id, token);
             if (caseFile == null || string.IsNullOrWhiteSpace(caseFile.AggregateId))
             {
                 throw new UnknownCaseFileException(publishCaseFileCommand.Id);
             }
 
             var newCaseFile = caseFile.Publish();
-            await _commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.AggregateId), token);
-            await _commitAggregateHelper.Commit(newCaseFile, CaseFileAggregate.GetStreamName(newCaseFile.AggregateId), token);
+            await _caseFileCommandRepository.Update(caseFile, token);
+            await _caseFileCommandRepository.Add(newCaseFile, token);
+            await _caseFileCommandRepository.SaveChanges(token);
+            await _busControl.Publish(caseFile.DomainEvents.First() as CaseFilePublishedEvent, token);
             return newCaseFile.AggregateId;
         }
     }

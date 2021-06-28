@@ -1,4 +1,5 @@
 ﻿using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,7 +35,7 @@ namespace CaseManagement.CMMN.Parser
             return result;
         }
 
-        public static StageElementInstance ExtractStage(string xmlContent, string casePlanInstanceId)
+        public static CaseEltInstance ExtractStage(string xmlContent, string casePlanInstanceId)
         {
             var tStage = DeserializeStage(xmlContent);
             var result = BuildStage(tStage.id, tStage, casePlanInstanceId);
@@ -52,7 +53,7 @@ namespace CaseManagement.CMMN.Parser
                 {
                     roles.Add(new CasePlanRole
                     {
-                        Id = role.id,
+                        EltId = role.id,
                         Name = role.name
                     });
                 }
@@ -66,7 +67,7 @@ namespace CaseManagement.CMMN.Parser
                     files.Add(new CasePlanFileItem
                     {
                         DefinitionType = caseFileItemDef.definitionType,
-                        Id = caseFileItem.id,
+                        EltId = caseFileItem.id,
                         Name = caseFileItem.name
                     });
                 }
@@ -75,14 +76,15 @@ namespace CaseManagement.CMMN.Parser
             return CasePlanAggregate.New(planModel.id, planModel.name, planModel.name, caseFile.AggregateId, caseFile.Version, Serialize(planModel), roles, files);
         }
 
-        private static StageElementInstance BuildStage(string id, tStage stage, string casePlanInstanceId)
+        private static CaseEltInstance BuildStage(string id, tStage stage, string casePlanInstanceId)
         {
             var planItems = BuildPlanItems(stage, casePlanInstanceId);
-            var result = new StageElementInstance 
+            var result = new CaseEltInstance
             { 
-                Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, stage.id, 0),
+                Id = CaseEltInstance.BuildId(casePlanInstanceId, stage.id, 0),
                 Name = stage.name,
-                EltId = id
+                EltId = id,
+                Type = CasePlanElementInstanceTypes.STAGE
             };
             foreach (var planItem in planItems)
             {
@@ -94,16 +96,16 @@ namespace CaseManagement.CMMN.Parser
                 foreach (var exitCriteria in stage.exitCriterion)
                 {
                     var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
-                    result.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
+                    result.AddExitCriteria(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
                 }
             }
 
             return result;
         }
 
-        private static List<BaseCasePlanItemInstance> BuildPlanItems(tStage stage, string casePlanInstanceId)
+        private static List<CaseEltInstance> BuildPlanItems(tStage stage, string casePlanInstanceId)
         {
-            var planItems = new List<BaseCasePlanItemInstance>();
+            var planItems = new List<CaseEltInstance>();
             if (stage.planItem != null)
             {
                 foreach (var planItem in stage.planItem)
@@ -115,7 +117,7 @@ namespace CaseManagement.CMMN.Parser
                         foreach (var entryCriterion in planItem.entryCriterion)
                         {
                             var sEntry = stage.sentry.First(s => s.id == entryCriterion.sentryRef);
-                            flowInstanceElt.EntryCriterions.Add(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
+                            flowInstanceElt.AddEntryCriteria(new Criteria(entryCriterion.name) { SEntry = BuildSEntry(sEntry) });
                         }
                     }
 
@@ -124,14 +126,13 @@ namespace CaseManagement.CMMN.Parser
                         foreach (var exitCriteria in planItem.exitCriterion)
                         {
                             var sEntry = stage.sentry.First(s => s.id == exitCriteria.sentryRef);
-                            flowInstanceElt.ExitCriterions.Add(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
+                            flowInstanceElt.AddExitCriteria(new Criteria(exitCriteria.name) { SEntry = BuildSEntry(sEntry) });
                         }
                     }
 
                     if (planItem.itemControl != null)
                     {
-                        var baseTask = flowInstanceElt as BaseTaskOrStageElementInstance;
-                        if (planItem.itemControl.manualActivationRule != null && baseTask != null)
+                        if (planItem.itemControl.manualActivationRule != null && flowInstanceElt.IsTaskOrStage())
                         {
                             var manualActivationRule = new ManualActivationRule(planItem.itemControl.manualActivationRule.name);
                             var condition = planItem.itemControl.manualActivationRule.condition;
@@ -140,7 +141,7 @@ namespace CaseManagement.CMMN.Parser
                                 manualActivationRule.Expression = new CMMNExpression(condition.language, condition.Text.First());
                             }
 
-                            baseTask.ManualActivationRule = manualActivationRule;
+                            flowInstanceElt.ManualActivationRule = manualActivationRule;
                         }
 
                         if (planItem.itemControl.repetitionRule != null)
@@ -163,7 +164,7 @@ namespace CaseManagement.CMMN.Parser
             return planItems;
         }
 
-        private static BaseCasePlanItemInstance BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef, string casePlanInstanceId)
+        private static CaseEltInstance BuildPlanItem(string id, string name, tPlanItemDefinition planItemDef, string casePlanInstanceId)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -190,27 +191,30 @@ namespace CaseManagement.CMMN.Parser
                     }
                 }
 
-                return new HumanTaskElementInstance 
+                var result = new CaseEltInstance
                 { 
-                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    Id = CaseEltInstance.BuildId(casePlanInstanceId, id, 0),
                     EltId = id,
                     NbOccurrence = 0,
                     Name = name, 
-                    FormId = humanTask.formId,
-                    Implemention = humanTask.implementation,
-                    InputParameters = pars.ToDictionary(kvp => kvp.key, kvp => kvp.value),
-                    PerformerRef = humanTask.performerRef 
+                    Type = CasePlanElementInstanceTypes.HUMANTASK
                 };
+                result.UpdateFormId(humanTask.formId);
+                result.UpdateImplementation(humanTask.implementation);
+                result.UpdateInputParameters(pars.ToDictionary(kvp => kvp.key, kvp => kvp.value));
+                result.UpdatePerformerRef(humanTask.performerRef);
+                return result;
             }
 
             if (planItemDef is tTask)
             {
-                return new EmptyTaskElementInstance
+                return new CaseEltInstance
                 {
-                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    Id = CaseEltInstance.BuildId(casePlanInstanceId, id, 0),
                     EltId = id,
                     NbOccurrence = 0,
-                    Name = name 
+                    Name = name,
+                    Type = CasePlanElementInstanceTypes.EMPTYTASK
                 };
             }
 
@@ -222,24 +226,27 @@ namespace CaseManagement.CMMN.Parser
                     Body = timer.timerExpression.Text.First(),
                     Language = timer.timerExpression.language
                 };
-                return new TimerEventListener
+                var result = new CaseEltInstance
                 {
-                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    Id = CaseEltInstance.BuildId(casePlanInstanceId, id, 0),
                     EltId = id,
                     NbOccurrence = 0,
                     Name = name, 
-                    TimerExpression = expression 
+                    Type = CasePlanElementInstanceTypes.TIMER
                 };
+                result.UpdateTimerExpression(expression);
+                return result;
             }
 
             if (planItemDef is tMilestone)
             {
-                return new MilestoneElementInstance
+                return new CaseEltInstance
                 {
-                    Id = BaseCasePlanItemInstance.BuildId(casePlanInstanceId, id, 0),
+                    Id = CaseEltInstance.BuildId(casePlanInstanceId, id, 0),
                     EltId = id,
                     NbOccurrence = 0,
-                    Name = name 
+                    Name = name,
+                    Type = CasePlanElementInstanceTypes.MILESTONE
                 };
             }
 

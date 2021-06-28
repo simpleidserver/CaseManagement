@@ -142,6 +142,19 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         public IfPart IfPart { get; set; }
 
+        public void Reset()
+        {
+            foreach(var planItemOnPart in PlanItemOnParts)
+            {
+                planItemOnPart.IsConsumed = false;
+            }
+
+            foreach(var fileItemOnPart in FileItemOnParts)
+            {
+                fileItemOnPart.IsConsumed = false;
+            }
+        }
+
         public object Clone()
         {
             return new SEntry(Name)

@@ -19,11 +19,11 @@ namespace CaseManagement.CMMN.Domains
         public string Name { get; set; }
         public string Description { get; set; }
         public string CaseFileId { get; set; }
+        public string XmlContent { get; set; }
         public int NbInstances { get; set; }
         public DateTime CreateDateTime { get; set; }
         public ICollection<CasePlanRole> Roles { get; set; }
         public ICollection<CasePlanFileItem> Files { get; set; }
-        public string XmlContent { get; set; }
 
         public static CasePlanAggregate New(List<DomainEvent> evts)
         {

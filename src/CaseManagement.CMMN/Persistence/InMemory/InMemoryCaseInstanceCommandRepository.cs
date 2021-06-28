@@ -14,6 +14,11 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _instances = instances;
         }
 
+        public Task<Domains.CasePlanInstanceAggregate> Get(string id, CancellationToken token)
+        {
+            return Task.FromResult(_instances.FirstOrDefault(_ => _.AggregateId == id));
+        }
+
         public Task Add(Domains.CasePlanInstanceAggregate workflowInstance, CancellationToken token)
         {
             _instances.Add((Domains.CasePlanInstanceAggregate)workflowInstance.Clone());

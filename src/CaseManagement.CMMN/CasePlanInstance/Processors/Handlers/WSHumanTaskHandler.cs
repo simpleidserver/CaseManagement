@@ -1,5 +1,6 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Exceptions;
 using CaseManagement.CMMN.Domains;
+using CaseManagement.CMMN.Extensions;
 using CaseManagement.Common.Expression;
 using CaseManagement.Common.Factories;
 using IdentityModel.Client;
@@ -27,7 +28,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Handlers
 
         public string Implementation => CMMNConstants.UserTaskImplementations.WSHUMANTASK;
 
-        public async Task<string> Create(CMMNExecutionContext executionContext, HumanTaskElementInstance humanTaskElt, CancellationToken token)
+        public async Task<string> Create(CMMNExecutionContext executionContext, CaseEltInstance humanTaskElt, CancellationToken token)
         {
             using (var httpClient = _httpClientFactory.Build())
             {
@@ -36,9 +37,10 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Handlers
                     { "nameIdentifier", executionContext.Instance.NameIdentifier }
                 };
 
-                if (humanTaskElt.InputParameters != null && humanTaskElt.InputParameters.Any())
+                var inputParameters = humanTaskElt.GetInputParameters();
+                if (inputParameters != null && inputParameters.Any())
                 {
-                    foreach (var inputParameter in humanTaskElt.InputParameters)
+                    foreach (var inputParameter in inputParameters)
                     {
                         if (string.IsNullOrWhiteSpace(inputParameter.Value))
                         {
@@ -68,7 +70,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Handlers
                 jArr.Add(link);
                 var obj = new JObject
                 {
-                    { "humanTaskName", humanTaskElt.FormId },
+                    { "humanTaskName", humanTaskElt.GetFormId() },
                     { "operationParameters", operationParameters },
                     { "callbackUrls", jArr }
                 };

@@ -1,6 +1,5 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-using CaseManagement.CMMN.AspNetCore;
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence.EF;
@@ -136,8 +135,11 @@ namespace CaseManagement.CMMN.SqlServer.Host
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            services.AddHostedService<CMMNJobServerHostedService>();
-            services.AddCaseApi();
+            services.AddCaseApi(callback: opt =>
+            {
+                opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
+                opt.WSHumanTaskAPI = "http://localhost:60006";
+            });
 
             var wireup = Wireup.Init()
                 .UsingSqlPersistence(System.Data.SqlClient.SqlClientFactory.Instance, connectionString)
@@ -145,11 +147,6 @@ namespace CaseManagement.CMMN.SqlServer.Host
                 .UsingBinarySerialization()
                 .Build();
             services.AddSingleton(wireup);
-            services.AddCaseJobServer(callback: opt =>
-            {
-                opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
-                opt.WSHumanTaskAPI = "http://localhost:60006";
-            });
             services.AddCaseManagementEFStore(opts =>
             {
                 opts.UseSqlServer(connectionString, o => o.MigrationsAssembly(migrationsAssembly));
@@ -158,7 +155,6 @@ namespace CaseManagement.CMMN.SqlServer.Host
             {
                 opts.ConnectionString = connectionString;
             });
-            services.AddCaseManagementEFMessageBroker();
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {

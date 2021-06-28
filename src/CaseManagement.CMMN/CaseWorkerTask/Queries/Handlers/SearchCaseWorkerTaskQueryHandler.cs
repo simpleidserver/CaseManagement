@@ -3,7 +3,6 @@ using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.Parameters;
 using CaseManagement.Common.Results;
 using MediatR;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,9 +17,9 @@ namespace CaseManagement.CMMN.CaseWorkerTask.Queries.Handlers
             _caseWorkerTaskQueryRepository = caseWorkerTaskQueryRepository;
         }
 
-        public async Task<SearchResult<CaseWorkerTaskResult>> Handle(SearchCaseWorkerTaskQuery request, CancellationToken cancellationToken)
+        public Task<SearchResult<CaseWorkerTaskResult>> Handle(SearchCaseWorkerTaskQuery request, CancellationToken cancellationToken)
         {
-            var result = await _caseWorkerTaskQueryRepository.Find(new FindCaseWorkerTasksParameter
+            return _caseWorkerTaskQueryRepository.Find(new FindCaseWorkerTasksParameter
             {
                 Claims = request.Claims,
                 Count = request.Count,
@@ -28,13 +27,6 @@ namespace CaseManagement.CMMN.CaseWorkerTask.Queries.Handlers
                 OrderBy = request.OrderBy,
                 StartIndex = request.StartIndex
             }, cancellationToken);
-            return new SearchResult<CaseWorkerTaskResult>
-            {
-                Count = result.Count,
-                StartIndex = result.StartIndex,
-                TotalLength = result.TotalLength,
-                Content = result.Content.Select(_ => CaseWorkerTaskResult.ToDTO(_))
-            };
         }
     }
 }

@@ -1,36 +1,25 @@
-﻿using CaseManagement.CMMN.CasePlanInstance.Commands;
-using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.Common.Bus;
-using CaseManagement.Common.EvtStore;
+﻿using CaseManagement.CMMN.CasePlanInstance.Processors;
+using CaseManagement.CMMN.Persistence;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CaseManagement.CMMN.CasePlanInstance.Command.Handlers
+namespace CaseManagement.CMMN.CasePlanInstance.Commands.Handlers
 {
-    public class CloseCommandHandler : IRequestHandler<CloseCommand, bool>
+    public class CloseCommandHandler : BaseExternalEventNotification, IRequestHandler<CloseCommand, bool>
     {
-        private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly IMessageBroker _messageBroker;
-
-        public CloseCommandHandler(IEventStoreRepository eventStoreRepository, IMessageBroker messageBroker)
+        public CloseCommandHandler(
+            ICasePlanInstanceCommandRepository casePlanInstanceCommandRepository,
+            ISubscriberRepository subscriberRepository,
+            ICasePlanInstanceProcessor casePlanInstanceProcessor) : base(casePlanInstanceCommandRepository, subscriberRepository, casePlanInstanceProcessor)
         {
-            _eventStoreRepository = eventStoreRepository;
-            _messageBroker = messageBroker;
         }
 
-        public async Task<bool> Handle(CloseCommand closeCommand, CancellationToken token)
-        {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<CasePlanInstanceAggregate>(closeCommand.CasePlanInstanceId, CasePlanInstanceAggregate.GetStreamName(closeCommand.CasePlanInstanceId));
-            if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.AggregateId))
-            {
-                throw new UnknownCasePlanInstanceException(closeCommand.CasePlanInstanceId);
-            }
+        public override string EvtName => CMMNConstants.ExternalTransitionNames.Close;
 
-            caseInstance.MakeTransition(CMMNTransitions.Close);
-            await _messageBroker.QueueExternalEvent(CMMNConstants.ExternalTransitionNames.Close, closeCommand.CasePlanInstanceId, null, closeCommand.Parameters, token);
-            return true;
+        public Task<bool> Handle(CloseCommand closeCommand, CancellationToken token)
+        {
+            return Execute(closeCommand.CasePlanInstanceId, null, closeCommand.Parameters, token);
         }
     }
 }

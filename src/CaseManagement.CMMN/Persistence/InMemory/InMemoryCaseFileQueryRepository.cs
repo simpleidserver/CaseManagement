@@ -1,6 +1,7 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.CaseFile.Results;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.Common.Results;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -28,12 +29,18 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseFileDefinitions = caseFileDefinitions;
         }
 
-        public Task<CaseFileAggregate> Get(string id, CancellationToken token)
+        public Task<CaseFileResult> Get(string id, CancellationToken token)
         {
-            return Task.FromResult(_caseFileDefinitions.FirstOrDefault(c => c.AggregateId == id));
+            var result = _caseFileDefinitions.FirstOrDefault(c => c.AggregateId == id);
+            if (result == null)
+            {
+                return Task.FromResult((CaseFileResult)null);
+            }
+
+            return Task.FromResult(CaseFileResult.ToDto(result));
         }
 
-        public Task<SearchResult<CaseFileAggregate>> Find(FindCaseFilesParameter parameter, CancellationToken token)
+        public Task<SearchResult<CaseFileResult>> Find(FindCaseFilesParameter parameter, CancellationToken token)
         {
             IQueryable<CaseFileAggregate> result = _caseFileDefinitions.AsQueryable();
             if (parameter.TakeLatest)
@@ -59,12 +66,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new SearchResult<CaseFileAggregate>
+            return Task.FromResult(new SearchResult<CaseFileResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = (ICollection<CaseFileAggregate>)result.ToList()
+                Content = result.Select(r => CaseFileResult.ToDto(r)).ToList()
             });
         }
 

@@ -24,7 +24,7 @@ namespace CaseManagement.CMMN.CaseFile.Queries.Handlers
                 throw new UnknownCaseFileException(request.Id);
             }
 
-            return CaseFileResult.ToDto(result);
+            return result;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Persistence.EF.DomainMapping;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,47 +14,32 @@ namespace CaseManagement.CMMN.Persistence.EF.Persistence
             _dbContext = dbContext;
         }
 
-        public Task Add(CasePlanAggregate workflowDefinition, CancellationToken token)
+        public Task<CasePlanAggregate> Get(string id, CancellationToken token)
         {
-            _dbContext.CasePlans.Add(workflowDefinition.ToModel());
+            return _dbContext.CasePlans.FirstOrDefaultAsync(_ => _.AggregateId == id, token);
+        }
+
+        public Task Add(CasePlanAggregate casePlan, CancellationToken token)
+        {
+            _dbContext.CasePlans.Add(casePlan);
             return Task.CompletedTask;
         }
 
-        public async Task Delete(CasePlanAggregate workflowDefinition, CancellationToken token)
+        public Task Delete(CasePlanAggregate casePlan, CancellationToken token)
         {
-            using (var lck = await _dbContext.Lock())
-            {
-                var result = await _dbContext.CasePlans.FirstOrDefaultAsync(_ => _.Id == workflowDefinition.AggregateId, token);
-                if (result == null)
-                {
-                    return;
-                }
-
-                _dbContext.CasePlans.Remove(result);
-            }
+            _dbContext.CasePlans.Remove(casePlan);
+            return Task.CompletedTask;
         }
 
-        public async Task Update(CasePlanAggregate workflowDefinition, CancellationToken token)
+        public Task Update(CasePlanAggregate casePlan, CancellationToken token)
         {
-            using (var lck = await _dbContext.Lock())
-            {
-                var result = await _dbContext.CasePlans.FirstOrDefaultAsync(_ => _.Id == workflowDefinition.AggregateId, token);
-                if (result == null)
-                {
-                    return;
-                }
-
-                _dbContext.CasePlans.Remove(result);
-                _dbContext.CasePlans.Add(workflowDefinition.ToModel());
-            }
+            _dbContext.CasePlans.Update(casePlan);
+            return Task.CompletedTask;
         }
 
-        public async Task<int> SaveChanges(CancellationToken token)
+        public Task<int> SaveChanges(CancellationToken token)
         {
-            using (var lck = await _dbContext.Lock())
-            {
-                return await _dbContext.SaveChangesAsync(token);
-            }
+            return _dbContext.SaveChangesAsync(token);
         }
     }
 }

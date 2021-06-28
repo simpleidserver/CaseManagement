@@ -1,5 +1,6 @@
 ﻿using CaseManagement.Common.Jobs.Persistence;
 using CaseManagement.HumanTask.AspNetCore;
+using CaseManagement.HumanTask.AspNetCore.Apis;
 using CaseManagement.HumanTask.Builders;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Infrastructure.Jobs;
@@ -25,7 +26,10 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
                 policy.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("create_humantaskinstance", p => p.RequireAuthenticatedUser());
             });
-            services.AddMvc();
+            services
+                .AddMvc(opts => opts.EnableEndpointRouting = false)
+                .AddApplicationPart(typeof(HumanTaskDefsController).Assembly)
+                .AddNewtonsoftJson();
             services.AddLogging();
             var emptyTask = HumanTaskDefBuilder.New("emptyTask")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "taskInitiator" })

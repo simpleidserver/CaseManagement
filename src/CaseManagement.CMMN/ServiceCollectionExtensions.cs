@@ -3,19 +3,13 @@ using CaseManagement.CMMN.CasePlanInstance.Processors;
 using CaseManagement.CMMN.CasePlanInstance.Processors.FileItem;
 using CaseManagement.CMMN.CasePlanInstance.Processors.Handlers;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
+using CaseManagement.CMMN.EventHandlers;
 using CaseManagement.CMMN.Persistence;
 using CaseManagement.CMMN.Persistence.InMemory;
-using CaseManagement.Common;
-using CaseManagement.Common.Bus;
-using CaseManagement.Common.Domains;
-using CaseManagement.Common.EvtStore;
 using CaseManagement.Common.Factories;
-using CaseManagement.Common.Jobs;
-using CaseManagement.Common.Lock;
-using CaseManagement.Common.Processors;
+using MassTransit;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MediatR;
-using NEventStore;
 using System;
 using System.Collections.Concurrent;
 
@@ -23,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static ServerBuilder AddCaseJobServer(this IServiceCollection services, Action<CMMNServerOptions> callback = null, Action<CommonOptions> callbackOpts = null)
+        public static ServerBuilder AddCaseApi(this IServiceCollection services, Action<CMMNServerOptions> callback = null, Action<IServiceCollectionBusConfigurator> configureMassTransit = null)
         {
             if (callback == null)
             {
@@ -34,54 +28,42 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.Configure(callback);
             }
 
-            if (callbackOpts == null)
+            if (configureMassTransit == null)
             {
-                services.Configure<CommonOptions>((o) => 
+                var schedulerEdp = new Uri("queue:scheduler");
+                services.AddMassTransit(x =>
                 {
-                    o.ApplicationAssembly = typeof(ICaseJobServer).Assembly;
+                    x.AddMessageScheduler(schedulerEdp);
+                    x.AddConsumer<CaseElementOccuredEventConsumer>();
+                    x.AddConsumer<CaseInstanceWorkerTaskAddedEventConsumer>();
+                    x.AddConsumer<CaseInstanceWorkerTaskRemovedEventConsumer>();
+                    x.AddConsumer<CasePlanInstanceCreatedEventConsumer>();
+                    x.AddConsumer<CasePublishedEventConsumer>();
+                    x.UsingInMemory((context, cfg) =>
+                    {
+                        cfg.UseInMemoryScheduler("scheduler");
+                        cfg.ConfigureEndpoints(context);
+                    });
                 });
             }
             else
             {
-                services.Configure(callbackOpts);
+                services.AddMassTransit(configureMassTransit);
             }
 
             var builder = new ServerBuilder(services);
-            services.AddCommon()
-                .AddCaseJobServerApplication();
+            services.AddCaseApiApplication();
             return builder;
         }
 
-        public static ServerBuilder AddCaseApi(this IServiceCollection services, Action<CMMNServerOptions> callback = null)
-        {
-            if (callback == null)
-            {
-                services.Configure<CMMNServerOptions>((o) => { });
-            }
-            else
-            {
-                services.Configure(callback);
-            }
-
-            var builder = new ServerBuilder(services);
-            services.AddCommon()
-                .AddCaseApiApplication();
-            return builder;
-        }
-
-        private static IServiceCollection AddCommon(this IServiceCollection services)
+        private static IServiceCollection AddCaseApiApplication(this IServiceCollection services)
         {
             var definitions = new ConcurrentBag<CasePlanAggregate>();
             var instances = new ConcurrentBag<CasePlanInstanceAggregate>();
             var files = new ConcurrentBag<CaseFileAggregate>();
             var caseWorkerTasks = new ConcurrentBag<CaseWorkerTaskAggregate>();
-            var wireup = Wireup.Init().UsingInMemoryPersistence().Build();
+            services.AddMediatR(typeof(CMMNExecutionContext));
             services.TryAddTransient<IHttpClientFactory, HttpClientFactory>();
-            services.TryAddSingleton<IStoreEvents>(wireup);
-            services.TryAddSingleton<IAggregateSnapshotStore, InMemoryAggregateSnapshotStore>();
-            services.TryAddSingleton<IEventStoreRepository, InMemoryEventStoreRepository>();
-            services.TryAddSingleton<IMessageBroker, InMemoryMessageBroker>();
-            services.TryAddTransient<ICommitAggregateHelper, CommitAggregateHelper>();
             services.TryAddSingleton<ICaseFileCommandRepository>(new InMemoryCaseFileCommandRepository(files));
             services.TryAddSingleton<ICaseFileQueryRepository>(new InMemoryCaseFileQueryRepository(files));
             services.TryAddSingleton<ICasePlanInstanceCommandRepository>(new InMemoryCaseInstanceCommandRepository(instances));
@@ -90,29 +72,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<ICasePlanQueryRepository>(new InMemoryCasePlanQueryRepository(definitions));
             services.TryAddSingleton<ICaseWorkerTaskCommandRepository>(new InMemoryCaseWorkerTaskCommandRepository(caseWorkerTasks));
             services.TryAddSingleton<ICaseWorkerTaskQueryRepository>(new InMemoryCaseWorkerTaskQueryRepository(caseWorkerTasks));
-            return services;
-        }
-
-        private static IServiceCollection AddCaseJobServerApplication(this IServiceCollection services)
-        {
-            services.TryAddSingleton<ISubscriberRepository, InMemorySubscriberRepository>();
-            services.TryAddSingleton<IDistributedLock, InMemoryDistributedLock>();
-            services.TryAddTransient<ICaseJobServer, CaseJobServer>();
-            services.TryAddTransient<IProcessorFactory, ProcessorFactory>();
+            services.TryAddSingleton<ISubscriberRepository>(new InMemorySubscriberRepository());
             services.TryAddTransient<ICasePlanInstanceProcessor, CasePlanInstanceProcessor>();
-            services.RegisterAllAssignableType<IJob>(typeof(ICaseJobServer).Assembly);
-            services.RegisterAllAssignableType<IJob>(typeof(ICommitAggregateHelper).Assembly);
-            services.RegisterAllAssignableType(typeof(IDomainEvtConsumerGeneric<>), typeof(ICaseJobServer).Assembly);
-            services.RegisterAllAssignableType(typeof(IProcessor<,,>), typeof(ICaseJobServer).Assembly);
-            services.RegisterAllAssignableType(typeof(ICaseFileItemStore), typeof(ICaseJobServer).Assembly);
+            services.TryAddTransient<ICMMNProcessorFactory, CMMNProcessorFactory>();
+            services.RegisterAllAssignableType(typeof(ICaseFileItemStore), typeof(ICaseFileItemStore).Assembly);
+            services.RegisterAllAssignableType(typeof(ICaseEltInstanceProcessor), typeof(ICaseEltInstanceProcessor).Assembly);
             services.RegisterAllAssignableType(typeof(IHumanTaskHandler), typeof(IHumanTaskHandler).Assembly);
             return services;
         }
 
-        private static IServiceCollection AddCaseApiApplication(this IServiceCollection services)
-        {
-            services.AddMediatR(typeof(ICaseJobServer));
-            return services;
-        }
     }
 }

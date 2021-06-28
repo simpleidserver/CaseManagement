@@ -1,9 +1,9 @@
-﻿using CaseManagement.CMMN.Parser;
+﻿using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.Parser;
 using CaseManagement.Common.Domains;
 using CaseManagement.Common.Exceptions;
 using CaseManagement.Common.Expression;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,10 +49,10 @@ namespace CaseManagement.CMMN.Domains
         public CasePlanInstanceAggregate()
         {
             Roles = new List<CasePlanInstanceRole>();
-            WorkerTasks = new ConcurrentBag<CasePlanInstanceWorkerTask>();
-            ExecutionContext = new CasePlanInstanceExecutionContext(this);
-            Files = new ConcurrentBag<CasePlanInstanceFileItem>();
-            Children = new ConcurrentBag<BaseCaseEltInstance>();
+            WorkerTasks = new List<CasePlanInstanceWorkerTask>();
+            ExecutionContextVariables = new Dictionary<string, string>();
+            Files = new List<CasePlanInstanceFileItem>();
+            Children = new List<CaseEltInstance>();
         }
 
         #region Properties
@@ -62,23 +62,33 @@ namespace CaseManagement.CMMN.Domains
         public string NameIdentifier { get; set; }
         public string Name { get; set; }
         public CaseStates? State { get; set; }
-        public CasePlanInstanceExecutionContext ExecutionContext { get; set; }
-        public ICollection<CasePlanInstanceRole> Roles { get; set; }
-        public ConcurrentBag<CasePlanInstanceFileItem> Files { get; set; }
-        public ConcurrentBag<CasePlanInstanceWorkerTask> WorkerTasks { get; set; }
-        public StageElementInstance StageContent => (StageElementInstance)Children.FirstOrDefault(c => c is StageElementInstance);
-        public ICollection<CaseFileItemInstance> FileItems => Children.Where(c => c is CaseFileItemInstance).Cast<CaseFileItemInstance>().ToList();
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
-        public ConcurrentBag<BaseCaseEltInstance> Children { get; set; }
+        public CasePlanInstanceExecutionContext ExecutionContext
+        {
+            get
+            {
+                return new CasePlanInstanceExecutionContext(this)
+                {
+                    Variables = ExecutionContextVariables
+                };
+            }
+        }
+        public CaseEltInstance StageContent => Children.FirstOrDefault(c => c.Type == CasePlanElementInstanceTypes.STAGE);
+        public IReadOnlyCollection<CaseEltInstance> FileItems => Children.Where(c => c.Type == CasePlanElementInstanceTypes.FILEITEM).ToList();
+        public Dictionary<string, string> ExecutionContextVariables { get; set; }
+        public ICollection<CasePlanInstanceRole> Roles { get; set; }
+        public ICollection<CasePlanInstanceFileItem> Files { get; set; }
+        public ICollection<CasePlanInstanceWorkerTask> WorkerTasks { get; set; }
+        public ICollection<CaseEltInstance> Children { get; set; }
 
         #endregion
 
         #region Getters
 
-        public ICollection<BaseCasePlanItemInstance> GetNextCasePlanItems(BaseCaseEltInstance elt)
+        public ICollection<CaseEltInstance> GetNextCasePlanItems(CaseEltInstance elt)
         {
-            var lst = new List<BaseCasePlanItemInstance>();
+            var lst = new List<CaseEltInstance>();
             lst.AddRange(GetFlatListCasePlanItems());
             var children = lst.Where(ch =>
                 ch.ExitCriterions.Any(
@@ -97,7 +107,7 @@ namespace CaseManagement.CMMN.Domains
             return IsEntryCriteriaSatisfied(child);
         }
 
-        public CriteriaResult IsEntryCriteriaSatisfied(BaseCasePlanItemInstance elt)
+        public CriteriaResult IsEntryCriteriaSatisfied(CaseEltInstance elt)
         {
             if (elt.EntryCriterions == null || !elt.EntryCriterions.Any())
             {
@@ -108,7 +118,7 @@ namespace CaseManagement.CMMN.Domains
             return res == null ? CriteriaResult.NotSatisifed() : res;
         }
 
-        public bool IsRepetitionRuleSatisfied(BaseCasePlanItemInstance elt)
+        public bool IsRepetitionRuleSatisfied(CaseEltInstance elt)
         {
             return elt.RepetitionRule != null && ExpressionParser.IsValid(elt.RepetitionRule.Condition.Body, ExecutionContext);
         }
@@ -119,7 +129,7 @@ namespace CaseManagement.CMMN.Domains
             return IsExitCriteriaSatisfied(child);
         }
 
-        public CriteriaResult IsExitCriteriaSatisfied(BaseCasePlanItemInstance elt)
+        public CriteriaResult IsExitCriteriaSatisfied(CaseEltInstance elt)
         {
             if (elt.ExitCriterions == null || !elt.ExitCriterions.Any())
             {
@@ -181,7 +191,7 @@ namespace CaseManagement.CMMN.Domains
             return Files.Any(_ => _.CasePlanElementInstanceId == casePlanInstanceElementId);
         }
 
-        public BaseCaseEltInstance GetChild(string id)
+        public CaseEltInstance GetChild(string id)
         {
             var child = Children.FirstOrDefault(c => c.Id == id);
             if (child != null)
@@ -192,7 +202,7 @@ namespace CaseManagement.CMMN.Domains
             return GetCasePlanItem(id);
         }
 
-        public BaseCasePlanItemInstance GetCasePlanItem(string id)
+        public CaseEltInstance GetCasePlanItem(string id)
         {
             if (StageContent.Id == id)
             {
@@ -202,12 +212,12 @@ namespace CaseManagement.CMMN.Domains
             return StageContent.GetChild(id);
         }
 
-        public StageElementInstance GetCasePlanItemParent(string id)
+        public CaseEltInstance GetCasePlanItemParent(string id)
         {
             return StageContent.GetParent(id);
         }
 
-        public ICollection<BaseCasePlanItemInstance> GetFlatListCasePlanItems()
+        public ICollection<CaseEltInstance> GetFlatListCasePlanItems()
         {
             return StageContent.GetFlatListChildren();
         }
@@ -216,7 +226,7 @@ namespace CaseManagement.CMMN.Domains
 
         #region Operations
 
-        public void ConsumeTransitionEvts(BaseCaseEltInstance node, string sourceElementId, ICollection<IncomingTransition> transitions)
+        public void ConsumeTransitionEvts(CaseEltInstance node, string sourceElementId, ICollection<IncomingTransition> transitions)
         {
             var source = GetChild(sourceElementId);
             var target = GetCasePlanItem(node.Id);
@@ -244,7 +254,7 @@ namespace CaseManagement.CMMN.Domains
             }
         }
 
-        public void MakeTransition(BaseCaseEltInstance element, CMMNTransitions transition, string message = null, Dictionary<string, string> incomingTokens = null, bool isEvtPropagate = true)
+        public void MakeTransition(CaseEltInstance element, CMMNTransitions transition, string message = null, Dictionary<string, string> incomingTokens = null, bool isEvtPropagate = true)
         {
             var evt = new CaseElementTransitionRaisedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, element.Id, transition, message, incomingTokens, DateTime.UtcNow);
             Handle(evt);
@@ -312,12 +322,12 @@ namespace CaseManagement.CMMN.Domains
             DomainEvents.Add(evt);
         }
 
-        public BaseCasePlanItemInstance TryCreateInstance(BaseCasePlanItemInstance elt)
+        public CaseEltInstance TryCreateInstance(CaseEltInstance elt)
         {
             var evt = new CasePlanItemInstanceCreatedEvent(Guid.NewGuid().ToString(), AggregateId, Version, elt.Id, DateTime.UtcNow);
             Handle(evt);
             DomainEvents.Add(evt);
-            var id = BaseCasePlanItemInstance.BuildId(AggregateId, elt.EltId, elt.NbOccurrence + 1);
+            var id = CaseEltInstance.BuildId(AggregateId, elt.EltId, elt.NbOccurrence + 1);
             return GetCasePlanItem(id);
         }
 
@@ -334,33 +344,36 @@ namespace CaseManagement.CMMN.Domains
             return result;
         }
 
-        public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan, string nameIdentifier, ICollection<CasePlanInstanceRole> permissions, Dictionary<string, string> parameters)
+        public static CasePlanInstanceAggregate New(string id, CasePlanAggregate caseplan, string nameIdentifier, Dictionary<string, string> parameters)
         {
             var result = new CasePlanInstanceAggregate();
             var roles = caseplan.Roles.Select(_ => new CasePlanInstanceRole
             {
-                Id = _.Id,
+                EltId = _.EltId,
                 Name = _.Name
             }).ToList();
-            var files = caseplan.Files.Select(_ => new CaseFileItemInstance
+            var files = caseplan.Files.Select(_ =>
             {
-                DefinitionType = _.DefinitionType,
-                EltId = _.Id,
-                Id = CaseFileItemInstance.BuildId(id, _.Id),
-                Name = _.Name
+                var result = new CaseEltInstance
+                {
+                    EltId = _.EltId,
+                    Id = CaseEltInstance.BuildId(id, _.EltId),
+                    Name = _.Name
+                };
+                result.UpdateDefinitionType(_.DefinitionType);
+                return result;
             }).ToList();
             var stage = CMMNParser.ExtractStage(caseplan.XmlContent, id);
-            var json = stage.ToJson();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, nameIdentifier, roles, permissions, json, DateTime.UtcNow, caseplan.CaseFileId, caseplan.AggregateId, caseplan.Name, parameters, files);
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, nameIdentifier, roles, stage, DateTime.UtcNow, caseplan.CaseFileId, caseplan.AggregateId, caseplan.Name, parameters, files);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
         }
 
-        public static CasePlanInstanceAggregate New(string id, StageElementInstance stage, ICollection<CaseFileItemInstance> caseFiles)
+        public static CasePlanInstanceAggregate New(string id, CaseEltInstance stage, ICollection<CaseEltInstance> caseFiles)
         {
             var result = new CasePlanInstanceAggregate();
-            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), new List<CasePlanInstanceRole>(), stage.ToJson(), DateTime.UtcNow, null, null, string.Empty, new Dictionary<string, string>(), caseFiles);
+            var evt = new CasePlanInstanceCreatedEvent(Guid.NewGuid().ToString(), id, 0, null, new List<CasePlanInstanceRole>(), stage, DateTime.UtcNow, null, null, string.Empty, new Dictionary<string, string>(), caseFiles);
             result.Handle(evt);
             result.DomainEvents.Add(evt);
             return result;
@@ -379,13 +392,12 @@ namespace CaseManagement.CMMN.Domains
                 State = State,
                 UpdateDateTime = UpdateDateTime,
                 NameIdentifier = NameIdentifier,
-                Files = new ConcurrentBag<CasePlanInstanceFileItem>(Files.Select(_ => (CasePlanInstanceFileItem)_.Clone()).ToList()),
+                Files = Files.Select(_ => (CasePlanInstanceFileItem)_.Clone()).ToList(),
                 Roles = Roles.Select(_ => (CasePlanInstanceRole)_.Clone()).ToList(),
-                WorkerTasks = new ConcurrentBag<CasePlanInstanceWorkerTask>(WorkerTasks.Select(_ => (CasePlanInstanceWorkerTask)_.Clone()).ToArray()),
-                ExecutionContext = (CasePlanInstanceExecutionContext)ExecutionContext.Clone(),
-                Children = new ConcurrentBag<BaseCaseEltInstance>(Children.Select(_ => (BaseCaseEltInstance)_.Clone()))
+                WorkerTasks = WorkerTasks.Select(_ => (CasePlanInstanceWorkerTask)_.Clone()).ToList(),
+                ExecutionContextVariables = ExecutionContextVariables.ToDictionary(c => c.Key, c => c.Value),
+                Children = Children.Select(_ => (CaseEltInstance)_.Clone()).ToList()
             };
-            result.ExecutionContext.CasePlanInstance = result;
             return result;
         }
 
@@ -415,32 +427,13 @@ namespace CaseManagement.CMMN.Domains
         private void Handle(CasePlanInstanceCreatedEvent evt)
         {
             Roles = evt.Roles.ToList();
-            var unknownRoles = evt.Permissions.Where(_ => !Roles.Any(__ => __.Id == _.Id));
-            if (unknownRoles.Any())
-            {
-                throw new AggregateValidationException(new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>( "validation",  $"unknown roles '{string.Join(",", unknownRoles.Select(_ => _.Id))}'")
-                });
-            }
-
-            foreach(var permission in evt.Permissions)
-            {
-                var role = Roles.First(_ => _.Id == permission.Id);
-                role.Claims = permission.Claims;
-            }
-
             AggregateId = evt.AggregateId;
-            if (!string.IsNullOrWhiteSpace(evt.JsonContent))
-            {
-                Children.Add(StageElementInstance.FromJson(evt.JsonContent));
-            }
-
+            Children.Add(evt.Stage);
             if (evt.Files != null && evt.Files.Any())
             {
                 foreach(var file in evt.Files)
                 {
-                    Children.Add(file.Clone() as CaseFileItemInstance);
+                    Children.Add(file);
                 }
             }
 
@@ -566,7 +559,7 @@ namespace CaseManagement.CMMN.Domains
 
         private void Handle(CaseInstanceRoleUpdatedEvent evt)
         {
-            var role = Roles.FirstOrDefault(_ => _.Id == evt.RoleId);
+            var role = Roles.FirstOrDefault(_ => _.EltId == evt.RoleId);
             if (role == null)
             {
                 throw new AggregateValidationException(new List<KeyValuePair<string, string>>
@@ -575,7 +568,6 @@ namespace CaseManagement.CMMN.Domains
                 });
             }
 
-            role.Claims = evt.Claims;
             UpdateDateTime = evt.UpdateDateTime;
             Version = evt.Version;
         }
@@ -655,7 +647,7 @@ namespace CaseManagement.CMMN.Domains
             }
 
             var child = GetCasePlanItem(evt.CasePlanItemInstanceId);
-            parent.Children.Add(child.NewOccurrence(AggregateId));
+            parent.AddChild(child.NewOccurrence(AggregateId));
         }
 
         private void Handle(OnPartEvtConsumedEvent evt)
@@ -666,7 +658,7 @@ namespace CaseManagement.CMMN.Domains
             Consume(source.EltId, target.ExitCriterions, evt);
         }
 
-        private void Consume(string sourceEltId, ICollection<Criteria> criterias, OnPartEvtConsumedEvent evt)
+        private void Consume(string sourceEltId, IReadOnlyCollection<Criteria> criterias, OnPartEvtConsumedEvent evt)
         {
             var parts = GetOnParts(sourceEltId, criterias, evt.Transitions);
             foreach(var part in parts)
@@ -676,7 +668,7 @@ namespace CaseManagement.CMMN.Domains
             }
         }
 
-        private static ICollection<IOnPart> GetOnParts(string sourceEltId, ICollection<Criteria> criterias, ICollection<IncomingTransition> transitions)
+        private static ICollection<IOnPart> GetOnParts(string sourceEltId, IReadOnlyCollection<Criteria> criterias, ICollection<IncomingTransition> transitions)
         {
             var result = new List<IOnPart>();
             if (criterias == null)
@@ -736,7 +728,7 @@ namespace CaseManagement.CMMN.Domains
         /// </summary>
         /// <param name="elementId"></param>
         /// <param name="transition"></param>
-        private void PropagateTransition(BaseCaseEltInstance elt, CMMNTransitions transition)
+        private void PropagateTransition(CaseEltInstance elt, CMMNTransitions transition)
         {
             CMMNTransitions? newTransition = null;
             if (transition == CMMNTransitions.Terminate || transition == CMMNTransitions.ParentTerminate)
@@ -749,13 +741,12 @@ namespace CaseManagement.CMMN.Domains
                 return;
             }
 
-            var stage = elt as StageElementInstance;
-            if (stage == null)
+            if (elt.Type != CasePlanElementInstanceTypes.STAGE)
             {
                 return;
             }
 
-            foreach(var child in stage.Children)
+            foreach(var child in elt.Children)
             {
                 MakeTransition(child, newTransition.Value);
             }

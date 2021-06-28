@@ -1,6 +1,8 @@
 ﻿using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using CaseManagement.Common.Processors;
+using CaseManagement.CMMN.Persistence;
+using CaseManagement.Common.Domains;
+using MassTransit;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,13 +10,18 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
     public class CasePlanInstanceProcessor : ICasePlanInstanceProcessor
     {
-        private readonly IProcessorFactory _processorFactory;
+        private readonly ICMMNProcessorFactory _processorFactory;
         private readonly ISubscriberRepository _subscriberRepository;
+        private readonly IBusControl _busControl;
 
-        public CasePlanInstanceProcessor(IProcessorFactory processorFactory, ISubscriberRepository subscriberRepository)
+        public CasePlanInstanceProcessor(
+            ICMMNProcessorFactory processorFactory, 
+            ISubscriberRepository subscriberRepository,
+            IBusControl busControl)
         {
             _processorFactory = processorFactory;
             _subscriberRepository = subscriberRepository;
+            _busControl = busControl;
         }
 
         public async Task Execute(CasePlanInstanceAggregate casePlanInstance, CancellationToken cancellationToken)
@@ -34,13 +41,13 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                 }
 
                 await _processorFactory.Execute(executionContext, casePlanInstance.StageContent, cancellationToken);
-                if (casePlanInstance.StageContent.State == TaskStageStates.Completed)
+                if (casePlanInstance.StageContent.TakeStageState == TaskStageStates.Completed)
                 {
                     casePlanInstance.MakeTransition(CMMNTransitions.Complete, false);
                     return;
                 }
 
-                if (casePlanInstance.StageContent.State == TaskStageStates.Terminated)
+                if (casePlanInstance.StageContent.TakeStageState == TaskStageStates.Terminated)
                 {
                     casePlanInstance.MakeTransition(CMMNTransitions.Terminate, false);
                     return;
@@ -51,6 +58,18 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
                     await _subscriberRepository.TryReset(casePlanInstance.AggregateId, null, CMMNConstants.ExternalTransitionNames.Terminate, cancellationToken);
                     casePlanInstance.MakeTransition(CMMNTransitions.Terminate);
                 }
+            }
+
+            await Publish<CaseInstanceWorkerTaskAddedEvent>(casePlanInstance, cancellationToken);
+            await Publish<CaseInstanceWorkerTaskRemovedEvent>(casePlanInstance, cancellationToken);
+        }
+
+        protected async Task Publish<TEvt>(CasePlanInstanceAggregate aggregate, CancellationToken cancellationToken) where TEvt : DomainEvent
+        {
+            var domainEvts = aggregate.DomainEvents.Where(e => e.GetType() == typeof(TEvt)).Cast<TEvt>();
+            foreach(var domainEvt in domainEvts)
+            {
+                await _busControl.Publish(domainEvt, cancellationToken);
             }
         }
     }

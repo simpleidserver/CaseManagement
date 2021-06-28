@@ -7,6 +7,6 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors.Handlers
     public interface IHumanTaskHandler
     {
         string Implementation { get; }
-        Task<string> Create(CMMNExecutionContext cmmnExecutionContext, HumanTaskElementInstance elt, CancellationToken token);
+        Task<string> Create(CMMNExecutionContext cmmnExecutionContext, CaseEltInstance elt, CancellationToken token);
     }
 }

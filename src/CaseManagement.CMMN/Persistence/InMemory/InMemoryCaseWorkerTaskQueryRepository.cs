@@ -1,6 +1,7 @@
-﻿using CaseManagement.CMMN.Domains;
+﻿using CaseManagement.CMMN.CaseWorkerTask.Results;
+using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Persistence.Parameters;
-using CaseManagement.Common.Responses;
+using CaseManagement.Common.Results;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +31,18 @@ namespace CaseManagement.CMMN.Persistence.InMemory
             _caseWorkerTaskLst = caseWorkerTaskLst;
         }
 
-        public Task<CaseWorkerTaskAggregate> Get(string id, CancellationToken token)
+        public Task<CaseWorkerTaskResult> Get(string id, CancellationToken token)
         {
-            return Task.FromResult(_caseWorkerTaskLst.FirstOrDefault(a => a.AggregateId == id));
+            var result = _caseWorkerTaskLst.FirstOrDefault(a => a.AggregateId == id);
+            if (result == null)
+            {
+                return Task.FromResult((CaseWorkerTaskResult)null);
+            }
+
+            return Task.FromResult(CaseWorkerTaskResult.ToDTO(result));
         }
 
-        public Task<SearchResult<CaseWorkerTaskAggregate>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
+        public Task<SearchResult<CaseWorkerTaskResult>> Find(FindCaseWorkerTasksParameter parameter, CancellationToken token)
         {
             IEnumerable<CaseWorkerTaskAggregate> result = _caseWorkerTaskLst.ToList();
             if (MAPPING_ACTIVATIONENAME_TO_PROPERTYNAME.ContainsKey(parameter.OrderBy))
@@ -45,12 +52,12 @@ namespace CaseManagement.CMMN.Persistence.InMemory
 
             int totalLength = result.Count();
             result = result.Skip(parameter.StartIndex).Take(parameter.Count);
-            return Task.FromResult(new SearchResult<CaseWorkerTaskAggregate>
+            return Task.FromResult(new SearchResult<CaseWorkerTaskResult>
             {
                 StartIndex = parameter.StartIndex,
                 Count = parameter.Count,
                 TotalLength = totalLength,
-                Content = result.ToList()
+                Content = result.Select(_ => CaseWorkerTaskResult.ToDTO(_)).ToList()
             });
         }
     }

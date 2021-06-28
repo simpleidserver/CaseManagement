@@ -1,7 +1,7 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Processors.FileItem;
 using CaseManagement.CMMN.Domains;
-using CaseManagement.CMMN.Infrastructure.ExternalEvts;
-using CaseManagement.Common.Processors;
+using CaseManagement.CMMN.Extensions;
+using CaseManagement.CMMN.Persistence;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.CMMN.CasePlanInstance.Processors
 {
-    public class CaseFileItemInstanceProcessor : BaseCaseEltInstanceProcessor<CaseFileItemInstance>
+    public class CaseFileItemInstanceProcessor : BaseCaseEltInstanceProcessor
     {
         private readonly IEnumerable<ICaseFileItemStore> _caseFileItemStores;
 
@@ -18,7 +18,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             _caseFileItemStores = caseFileItemStores;
         }
 
-        protected override async Task Handle(CMMNExecutionContext executionContext, CaseFileItemInstance elt, CancellationToken cancellationToken)
+        public override CasePlanElementInstanceTypes Type => CasePlanElementInstanceTypes.FILEITEM;
+
+        protected override async Task Handle(CMMNExecutionContext executionContext, CaseEltInstance elt, CancellationToken cancellationToken)
         {
             if (elt.LatestTransition == null)
             {
@@ -32,9 +34,9 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             var addReference = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.AddReference, cancellationToken);
             var removeReference = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.RemoveReference, cancellationToken);
             var delete = await TrySubscribe(executionContext, elt, CMMNConstants.ExternalTransitionNames.Delete, cancellationToken);
-            if (elt.State == CaseFileItemStates.Available)
+            if (elt.FileState == CaseFileItemStates.Available)
             {
-                var caseFileItemStore = _caseFileItemStores.FirstOrDefault(_ => _.CaseFileItemType == elt.DefinitionType);
+                var caseFileItemStore = _caseFileItemStores.FirstOrDefault(_ => _.CaseFileItemType == elt.GetDefinitionType());
                 if (caseFileItemStore == null)
                 {
                     // TODO : THROW EXCEPTION.
@@ -99,7 +101,7 @@ namespace CaseManagement.CMMN.CasePlanInstance.Processors
             }
         }
 
-        private void ConsumeTransitionEvts(CMMNExecutionContext executionContext, CaseFileItemInstance node)
+        private void ConsumeTransitionEvts(CMMNExecutionContext executionContext, CaseEltInstance node)
         {
             var domainEvts = executionContext.Instance.DomainEvents.Where((evt) =>
             {

@@ -1,6 +1,6 @@
 ﻿using CaseManagement.CMMN.CasePlanInstance.Exceptions;
-using CaseManagement.Common.Bus;
-using CaseManagement.Common.EvtStore;
+using CaseManagement.CMMN.CasePlanInstance.Processors;
+using CaseManagement.CMMN.Persistence;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,24 +9,28 @@ namespace CaseManagement.CMMN.CasePlanInstance.Commands.Handlers
 {
     public class LaunchCaseInstanceCommandHandler : IRequestHandler<LaunchCaseInstanceCommand, bool>
     {
-        private readonly IMessageBroker _messageBroker;
-        private readonly IEventStoreRepository _eventStoreRepository;
+        private readonly ICasePlanInstanceCommandRepository _casePlanInstanceCommandRepository;
+        private readonly ICasePlanInstanceProcessor _casePlanInstanceProcessor;
 
-        public LaunchCaseInstanceCommandHandler(IMessageBroker messageBroker, IEventStoreRepository eventStoreRepository)
+        public LaunchCaseInstanceCommandHandler(
+            ICasePlanInstanceCommandRepository casePlanInstanceCommandRepository,
+            ICasePlanInstanceProcessor casePlanInstanceProcessor)
         {
-            _messageBroker = messageBroker;
-            _eventStoreRepository = eventStoreRepository;
+            _casePlanInstanceCommandRepository = casePlanInstanceCommandRepository;
+            _casePlanInstanceProcessor = casePlanInstanceProcessor;
         }
 
         public async Task<bool> Handle(LaunchCaseInstanceCommand launchCaseInstanceCommand, CancellationToken token)
         {
-            var caseInstance = await _eventStoreRepository.GetLastAggregate<Domains.CasePlanInstanceAggregate>(launchCaseInstanceCommand.CasePlanInstanceId, Domains.CasePlanInstanceAggregate.GetStreamName(launchCaseInstanceCommand.CasePlanInstanceId));
+            var caseInstance = await _casePlanInstanceCommandRepository.Get(launchCaseInstanceCommand.CasePlanInstanceId, token);
             if (caseInstance == null || string.IsNullOrWhiteSpace(caseInstance.AggregateId))
             {
                 throw new UnknownCasePlanInstanceException(launchCaseInstanceCommand.CasePlanInstanceId);
             }
-            
-            await _messageBroker.QueueCasePlanInstance(caseInstance.AggregateId, token);
+
+            await _casePlanInstanceProcessor.Execute(caseInstance, token);
+            await _casePlanInstanceCommandRepository.Update(caseInstance, token);
+            await _casePlanInstanceCommandRepository.SaveChanges(token);
             return true;
         }
     }

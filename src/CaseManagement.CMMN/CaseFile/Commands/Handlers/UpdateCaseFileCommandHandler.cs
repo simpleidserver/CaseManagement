@@ -1,8 +1,6 @@
 ﻿using CaseManagement.CMMN.CaseFile.Commands;
 using CaseManagement.CMMN.CaseFile.Exceptions;
-using CaseManagement.CMMN.Domains;
-using CaseManagement.Common;
-using CaseManagement.Common.EvtStore;
+using CaseManagement.CMMN.Persistence;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,25 +9,25 @@ namespace CaseManagement.CMMN.CaseFile.Command.Handlers
 {
     public class UpdateCaseFileCommandHandler : IRequestHandler<UpdateCaseFileCommand, bool>
     {
-        private readonly IEventStoreRepository _eventStoreRepository;
-        private readonly ICommitAggregateHelper _commitAggregateHelper;
+        private readonly ICaseFileCommandRepository _caseFileCommandRepository;
 
-        public UpdateCaseFileCommandHandler(IEventStoreRepository eventStoreRepository, ICommitAggregateHelper commitAggregateHelper)
+        public UpdateCaseFileCommandHandler(
+            ICaseFileCommandRepository caseFileCommandRepository)
         {
-            _eventStoreRepository = eventStoreRepository;
-            _commitAggregateHelper = commitAggregateHelper;
+            _caseFileCommandRepository = caseFileCommandRepository;
         }
 
         public async Task<bool> Handle(UpdateCaseFileCommand command, CancellationToken token)
         {
-            var caseFile = await _eventStoreRepository.GetLastAggregate<CaseFileAggregate>(command.Id, CaseFileAggregate.GetStreamName(command.Id));
+            var caseFile = await _caseFileCommandRepository.Get(command.Id, token);
             if (caseFile == null || string.IsNullOrWhiteSpace(caseFile.AggregateId))
             {
                 throw new UnknownCaseFileException(command.Id);
             }
 
             caseFile.Update(command.Name, command.Description);
-            await _commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.AggregateId), token);
+            await _caseFileCommandRepository.Update(caseFile, token);
+            await _caseFileCommandRepository.SaveChanges(token);
             return true;
         }
     }
