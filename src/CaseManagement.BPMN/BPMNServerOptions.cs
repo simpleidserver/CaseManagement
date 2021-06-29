@@ -48,7 +48,7 @@
 "    </bpmndi:BPMNPlane>" +
 "  </bpmndi:BPMNDiagram>" +
 "</definitions>";
-            OAuthTokenEndpoint = "http://localhost:60001/token";
+            OAuthTokenEndpoint = "https://localhost:60000/token";
             ClientId = "bpmnClient";
             ClientSecret = "bpmnClientSecret";
         }

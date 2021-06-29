@@ -35,8 +35,8 @@ namespace CaseManagement.BPMN.Domains.DelegateConfiguration
                 return Translations.Where(t => t.Type == DESCRIPTION);
             }
         }
-        public ICollection<BPMNTranslation> Translations { get; set; }
-        public ICollection<DelegateConfigurationRecord> Records { get; set; }
+        public virtual ICollection<BPMNTranslation> Translations { get; set; }
+        public virtual ICollection<DelegateConfigurationRecord> Records { get; set; }
 
         #endregion
 

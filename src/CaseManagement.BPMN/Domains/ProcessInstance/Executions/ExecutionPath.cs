@@ -15,7 +15,7 @@ namespace CaseManagement.BPMN.Domains
         public string Id { get; set; }
         public DateTime CreateDateTime { get; set; }
         public ICollection<ExecutionPointer> ActivePointers => Pointers.Where(_ => _.IsActive).ToList();
-        public ICollection<ExecutionPointer> Pointers { get; set; }
+        public virtual ICollection<ExecutionPointer> Pointers { get; set; }
 
         public object Clone()
         {

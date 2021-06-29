@@ -3,7 +3,6 @@
 using CaseManagement.CMMN.Domains;
 using CaseManagement.CMMN.Parser;
 using CaseManagement.CMMN.Persistence.EF;
-using CaseManagement.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,7 +22,6 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Threading;
 
 namespace CaseManagement.CMMN.SqlServer.Host
 {
@@ -55,12 +53,12 @@ namespace CaseManagement.CMMN.SqlServer.Host
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "http://localhost:60000",
+                        "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60000",
+                        "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
@@ -76,7 +74,7 @@ namespace CaseManagement.CMMN.SqlServer.Host
                     },
                     ValidIssuers = new List<string>
                     {
-                        "http://localhost:60001",
+                        "https://localhost:60001",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/oauth"
                     }
                 };
@@ -140,16 +138,10 @@ namespace CaseManagement.CMMN.SqlServer.Host
                 opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
                 opt.WSHumanTaskAPI = "http://localhost:60006";
             });
-
-            var wireup = Wireup.Init()
-                .UsingSqlPersistence(System.Data.SqlClient.SqlClientFactory.Instance, connectionString)
-                .WithDialect(new MsSqlDialect())
-                .UsingBinarySerialization()
-                .Build();
-            services.AddSingleton(wireup);
             services.AddCaseManagementEFStore(opts =>
             {
-                opts.UseSqlServer(connectionString, o => o.MigrationsAssembly(migrationsAssembly));
+                opts.UseSqlServer(connectionString, o => o.MigrationsAssembly(migrationsAssembly))
+                    .UseLazyLoadingProxies();
             });
             services.AddDistributedLockSQLServer(opts =>
             {
@@ -230,7 +222,6 @@ namespace CaseManagement.CMMN.SqlServer.Host
                         return;
                     }
 
-                    var commitAggregateHelper = (ICommitAggregateHelper)scope.ServiceProvider.GetService(typeof(ICommitAggregateHelper));
                     foreach (var path in pathLst)
                     {
                         var cmmnTxt = File.ReadAllText(path);
@@ -238,8 +229,12 @@ namespace CaseManagement.CMMN.SqlServer.Host
                         var caseFile = CaseFileAggregate.New(name, name, 0, cmmnTxt);
                         var tDefinitions = CMMNParser.ParseWSDL(cmmnTxt);
                         var newCaseFile = caseFile.Publish();
-                        commitAggregateHelper.Commit(caseFile, CaseFileAggregate.GetStreamName(caseFile.AggregateId), CancellationToken.None).Wait();
-                        commitAggregateHelper.Commit(newCaseFile, CaseFileAggregate.GetStreamName(newCaseFile.AggregateId), CancellationToken.None).Wait();
+                        context.CaseFiles.Add(caseFile);
+                        context.CaseFiles.Add(newCaseFile);
+                        foreach (var casePlan in CMMNParser.ExtractCasePlans(tDefinitions, caseFile))
+                        {
+                            context.CasePlans.Add(casePlan);
+                        }
                     }
 
                     context.SaveChanges();

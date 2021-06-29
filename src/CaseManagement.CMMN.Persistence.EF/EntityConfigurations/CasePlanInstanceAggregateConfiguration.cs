@@ -20,7 +20,7 @@ namespace CaseManagement.CMMN.Persistence.EF.EntityConfigurations
             builder.HasMany(_ => _.Roles).WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(_ => _.Files).WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(_ => _.WorkerTasks).WithOne().OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany(_ => _.SerializedCaseEltInstances).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(_ => _.Children).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

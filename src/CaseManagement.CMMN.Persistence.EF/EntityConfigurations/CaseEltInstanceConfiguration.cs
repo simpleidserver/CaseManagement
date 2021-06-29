@@ -1,6 +1,7 @@
 ﻿using CaseManagement.CMMN.Domains;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 
 namespace CaseManagement.CMMN.Persistence.EF.EntityConfigurations
 {
@@ -13,11 +14,14 @@ namespace CaseManagement.CMMN.Persistence.EF.EntityConfigurations
             builder.Ignore(_ => _.ExitCriterions);
             builder.Ignore(_ => _.Incoming);
             builder.Ignore(_ => _.LatestTransition);
-            builder.HasOne(_ => _.ManualActivationRule).WithOne().OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(_ => _.RepetitionRule).WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(_ => _.TransitionHistories).WithOne().OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany(_ => _.Children).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(_ => _.Children).WithOne();
             builder.HasMany(_ => _.Properties).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(_ => _.Criterias).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.Property(_ => _.ManualActivationRule).HasConversion(v => JsonConvert.SerializeObject(v),
+                v => v == null ? new ManualActivationRule() : JsonConvert.DeserializeObject<ManualActivationRule>(v));
+            builder.Property(_ => _.RepetitionRule).HasConversion(v => JsonConvert.SerializeObject(v),
+                v => v == null ? new RepetitionRule() : JsonConvert.DeserializeObject<RepetitionRule>(v));
         }
     }
 }

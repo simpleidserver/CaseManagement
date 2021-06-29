@@ -77,10 +77,10 @@ namespace CaseManagement.CMMN.Domains
         public CaseEltInstance StageContent => Children.FirstOrDefault(c => c.Type == CasePlanElementInstanceTypes.STAGE);
         public IReadOnlyCollection<CaseEltInstance> FileItems => Children.Where(c => c.Type == CasePlanElementInstanceTypes.FILEITEM).ToList();
         public Dictionary<string, string> ExecutionContextVariables { get; set; }
-        public ICollection<CasePlanInstanceRole> Roles { get; set; }
-        public ICollection<CasePlanInstanceFileItem> Files { get; set; }
-        public ICollection<CasePlanInstanceWorkerTask> WorkerTasks { get; set; }
-        public ICollection<CaseEltInstance> Children { get; set; }
+        public virtual ICollection<CasePlanInstanceRole> Roles { get; set; }
+        public virtual ICollection<CasePlanInstanceFileItem> Files { get; set; }
+        public virtual ICollection<CasePlanInstanceWorkerTask> WorkerTasks { get; set; }
+        public virtual ICollection<CaseEltInstance> Children { get; set; }
 
         #endregion
 

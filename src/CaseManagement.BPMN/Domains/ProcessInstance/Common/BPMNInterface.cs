@@ -24,7 +24,7 @@ namespace CaseManagement.BPMN.Domains
         /// This attribute specifies operations that are defined as part of the Interface.
         /// An Interface has at least one Operation.
         /// </summary>
-        public ICollection<Operation> Operations { get; set; }
+        public virtual ICollection<Operation> Operations { get; set; }
 
         public object Clone()
         {

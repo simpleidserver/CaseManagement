@@ -27,7 +27,9 @@ namespace CaseManagement.CMMN
                 var cmmnTxt = File.ReadAllText(path);
                 var name = Path.GetFileName(path);
                 var caseFile = CaseFileAggregate.New(name, name, 0, cmmnTxt);
-                caseFile.Publish();
+                var newCaseFile = caseFile.Publish();
+                caseFiles.Add(caseFile);
+                caseFiles.Add(newCaseFile);
                 var tDefinitions = CMMNParser.ParseWSDL(cmmnTxt);
                 var caseDefinition = CMMNParser.ExtractCasePlans(tDefinitions, caseFile);
                 foreach(var cd in caseDefinition)

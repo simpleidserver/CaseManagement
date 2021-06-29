@@ -28,17 +28,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
 
         public async Task<ProcessInstanceResult> Get(string id, CancellationToken token)
         {
-            var result = await _dbContext.ProcessInstances
-                .AsNoTracking()
-                .Include(_ => _.ItemDefs)
-                .Include(_ => _.Interfaces).ThenInclude(_ => _.Operations)
-                .Include(_ => _.Messages)
-                .Include(_ => _.ElementDefs)
-                .Include(_ => _.SequenceFlows)
-                .Include(_ => _.ExecutionPathLst).ThenInclude(_ => _.Pointers).ThenInclude(_ => _.Tokens)
-                .Include(_ => _.StateTransitions)
-                .Include(_ => _.ElementInstances).ThenInclude(_ => _.ActivityStates)
-                .FirstOrDefaultAsync(_ => _.AggregateId == id, token);
+            var result = await _dbContext.ProcessInstances.FirstOrDefaultAsync(_ => _.AggregateId == id, token);
             if (result == null)
             {
                 return null;
@@ -49,16 +39,7 @@ namespace CaseManagement.BPMN.Persistence.EF.Persistence
 
         public async Task<SearchResult<ProcessInstanceResult>> Find(FindProcessInstancesParameter parameter, CancellationToken token)
         {
-            IQueryable<ProcessInstanceAggregate> result = _dbContext.ProcessInstances
-                .AsNoTracking()
-                .Include(_ => _.ItemDefs)
-                .Include(_ => _.Interfaces).ThenInclude(_ => _.Operations)
-                .Include(_ => _.Messages)
-                .Include(_ => _.ElementDefs)
-                .Include(_ => _.SequenceFlows)
-                .Include(_ => _.ExecutionPathLst).ThenInclude(_ => _.Pointers).ThenInclude(_ => _.Tokens)
-                .Include(_ => _.StateTransitions)
-                .Include(_ => _.ElementInstances).ThenInclude(_ => _.ActivityStates);
+            IQueryable<ProcessInstanceAggregate> result = _dbContext.ProcessInstances;
             if (!string.IsNullOrEmpty(parameter.ProcessFileId))
             {
                 result = result.Where(_ => _.ProcessFileId == parameter.ProcessFileId);

@@ -31,7 +31,7 @@ namespace CaseManagement.BPMN.Domains
                 return Tokens.Where(t => t.Type == MessageTokenTypes.OUTGOING);
             }
         }
-        public ICollection<MessageToken> Tokens { get; set; }
+        public virtual ICollection<MessageToken> Tokens { get; set; }
 
         public void AddIncoming(IEnumerable<MessageToken> tokens)
         {

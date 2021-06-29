@@ -12,7 +12,8 @@ namespace CaseManagement.CMMN.Domains
     {
         public CasePlanAggregate()
         {
-
+            Roles = new List<CasePlanRole>();
+            Files = new List<CasePlanFileItem>();
         }
 
         public string CasePlanId { get; set; }
@@ -22,8 +23,8 @@ namespace CaseManagement.CMMN.Domains
         public string XmlContent { get; set; }
         public int NbInstances { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public ICollection<CasePlanRole> Roles { get; set; }
-        public ICollection<CasePlanFileItem> Files { get; set; }
+        public virtual ICollection<CasePlanRole> Roles { get; set; }
+        public virtual ICollection<CasePlanFileItem> Files { get; set; }
 
         public static CasePlanAggregate New(List<DomainEvent> evts)
         {

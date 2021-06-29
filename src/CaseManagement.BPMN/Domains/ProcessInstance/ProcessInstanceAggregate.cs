@@ -37,14 +37,14 @@ namespace CaseManagement.BPMN.Domains
                 return SerializedElementDefs.Select(e => e.Deserialize()).ToList();
             }
         }
-        public ICollection<ItemDefinition> ItemDefs { get; set; }
-        public ICollection<BPMNInterface> Interfaces { get; set; }
-        public ICollection<Message> Messages { get; set; }
-        public ICollection<SerializedFlowNodeDefinition> SerializedElementDefs { get; set; }
-        public ICollection<SequenceFlow> SequenceFlows { get; set; }
-        public ICollection<FlowNodeInstance> ElementInstances { get; set; }
-        public ICollection<ExecutionPath> ExecutionPathLst { get; set; }
-        public ICollection<StateTransitionToken> StateTransitions { get; set; }
+        public virtual ICollection<ItemDefinition> ItemDefs { get; set; }
+        public virtual ICollection<BPMNInterface> Interfaces { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<SerializedFlowNodeDefinition> SerializedElementDefs { get; set; }
+        public virtual ICollection<SequenceFlow> SequenceFlows { get; set; }
+        public virtual ICollection<FlowNodeInstance> ElementInstances { get; set; }
+        public virtual ICollection<ExecutionPath> ExecutionPathLst { get; set; }
+        public virtual ICollection<StateTransitionToken> StateTransitions { get; set; }
 
         #region Getters
 

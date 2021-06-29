@@ -11,7 +11,7 @@ namespace CaseManagement.CMMN.Domains
         }
 
         public string Name { get; set; }
-        public SEntry SEntry { get; set; }
+        public virtual SEntry SEntry { get; set; }
         public CriteriaTypes Type { get; set; }
 
         public object Clone()

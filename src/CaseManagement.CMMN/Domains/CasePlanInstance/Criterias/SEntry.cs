@@ -132,11 +132,11 @@ namespace CaseManagement.CMMN.Domains
         /// <summary>
         /// Defines the OnParts of the Sentry.
         /// </summary>
-        public ICollection<PlanItemOnPart> PlanItemOnParts { get; set; }
+        public virtual ICollection<PlanItemOnPart> PlanItemOnParts { get; set; }
         /// <summary>
         /// Defines the OnParts of the Sentry.
         /// </summary>
-        public ICollection<CaseFileItemOnPart> FileItemOnParts { get; set; }
+        public virtual ICollection<CaseFileItemOnPart> FileItemOnParts { get; set; }
         /// <summary>
         /// Defines the IfPart of the Sentry. 
         /// </summary>

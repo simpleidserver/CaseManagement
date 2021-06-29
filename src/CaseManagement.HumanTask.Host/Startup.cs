@@ -85,30 +85,14 @@ namespace CaseManagement.HumanTask.Host
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
-                        "https://localhost:60000",
-                        "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
-                    },
-                    ValidIssuers = new List<string>
-                    {
-                        "https://localhost:60000",
-                        "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
-                    }
-                };
-            })
-            .AddJwtBearer("OAuthScheme", options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    IssuerSigningKey = ExtractKey("oauth_puk.txt"),
-                    ValidAudiences = new List<string>
-                    {
                         "bpmnClient",
-                        "cmmnClient"
+                        "https://localhost:60000",
+                        "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
                     ValidIssuers = new List<string>
                     {
-                        "https://localhost:60001",
-                        "https://simpleidserver.northeurope.cloudapp.azure.com/oauth"
+                        "https://localhost:60000",
+                        "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     }
                 };
             });

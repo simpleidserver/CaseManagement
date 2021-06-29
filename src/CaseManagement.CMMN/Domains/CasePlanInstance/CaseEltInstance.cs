@@ -48,10 +48,10 @@ namespace CaseManagement.CMMN.Domains
         public CasePlanElementInstanceTypes Type { get; set; }
         public ICollection<string> Incoming => EntryCriterions.SelectMany(ec => ec.SEntry.PlanItemOnParts.Select(pp => pp.SourceRef)).ToList();
         public CMMNTransitions? LatestTransition => TransitionHistories.OrderByDescending(_ => _.ExecutionDateTime).FirstOrDefault()?.Transition;
-        public ICollection<CaseEltInstanceTransitionHistory> TransitionHistories { get; set; }
-        public ICollection<CaseEltInstance> Children { get; set; }
-        public ICollection<Criteria> Criterias { get; set; }
-        public ICollection<CaseEltInstanceProperty> Properties { get; set; }
+        public virtual ICollection<CaseEltInstanceTransitionHistory> TransitionHistories { get; set; }
+        public virtual ICollection<CaseEltInstance> Children { get; set; }
+        public virtual ICollection<Criteria> Criterias { get; set; }
+        public virtual ICollection<CaseEltInstanceProperty> Properties { get; set; }
 
         #endregion
 
