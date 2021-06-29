@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CaseManagement.BPMN.Domains.DelegateConfiguration
+namespace CaseManagement.BPMN.Domains
 {
     public class DelegateConfigurationRecord : ICloneable
     {

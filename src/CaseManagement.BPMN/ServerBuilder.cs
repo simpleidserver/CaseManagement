@@ -57,5 +57,11 @@ namespace CaseManagement.BPMN
             _services.AddSingleton<IProcessFileQueryRepository>(new InMemoryProcessFileQueryRepository(processFiles));
             return this;
         }
+
+        public ServerBuilder AddDelegateConfigurations(ConcurrentBag<DelegateConfigurationAggregate> configurations)
+        {
+            _services.AddSingleton<IDelegateConfigurationRepository>(new InMemoryDelegateConfigurationRepository(configurations));
+            return this;
+        }
     }
 }

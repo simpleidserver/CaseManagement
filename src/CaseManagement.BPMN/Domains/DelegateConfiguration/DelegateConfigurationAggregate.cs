@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CaseManagement.BPMN.Domains.DelegateConfiguration
+namespace CaseManagement.BPMN.Domains
 {
     public class DelegateConfigurationAggregate : BaseAggregate
     {
@@ -40,6 +40,17 @@ namespace CaseManagement.BPMN.Domains.DelegateConfiguration
 
         #endregion
 
+        public static DelegateConfigurationAggregate Create(string id, string fullQualifiedName)
+        {
+            return new DelegateConfigurationAggregate
+            {
+                AggregateId = id,
+                FullQualifiedName = fullQualifiedName,
+                CreateDateTime = DateTime.UtcNow,
+                UpdateDateTime = DateTime.UtcNow
+            };
+        }
+
         public override object Clone()
         {
             return new DelegateConfigurationAggregate
@@ -50,6 +61,45 @@ namespace CaseManagement.BPMN.Domains.DelegateConfiguration
                 Records = Records.Select(r => (DelegateConfigurationRecord)r.Clone()).ToList()
             };
         }
+
+        #region Getters
+
+        public string GetValue(string key)
+        {
+            var record = Records.FirstOrDefault(r => r.Key == key);
+            if (record == null)
+            {
+                return null;
+            }
+
+            return record.Value;
+        }
+
+        public int GetValueNumber(string key)
+        {
+            var str = GetValue(key);
+            int result = 0;
+            if (string.IsNullOrWhiteSpace(str) || !int.TryParse(str, out result))
+            {
+                return default(int);
+            }
+
+            return result;
+        }
+
+        public bool GetValueBoolean(string key)
+        {
+            var str = GetValue(key);
+            bool result = false;
+            if (string.IsNullOrWhiteSpace(str) || !bool.TryParse(str, out result))
+            {
+                return default(bool);
+            }
+
+            return result;
+        }
+
+        #endregion
 
         #region Actions
 

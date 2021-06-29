@@ -1,4 +1,5 @@
-﻿using CaseManagement.BPMN.Acceptance.Tests.Middlewares;
+﻿using CaseManagement.BPMN.Acceptance.Tests.Delegates;
+using CaseManagement.BPMN.Acceptance.Tests.Middlewares;
 using CaseManagement.BPMN.AspNetCore.Apis;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.Common.Jobs.Persistence;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -79,7 +81,11 @@ namespace CaseManagement.BPMN.Acceptance.Tests
                 o.OAuthTokenEndpoint = "http://localhost/token";
                 o.CallbackUrl = "http://localhost/processinstances/{id}/complete/{eltId}";
             })
-            .AddProcessFiles(files);
+            .AddProcessFiles(files)
+            .AddDelegateConfigurations(new ConcurrentBag<DelegateConfigurationAggregate>
+            {
+                DelegateConfigurationAggregate.Create("GetWeatherInformationDelegate", typeof(GetWeatherInformationDelegate).FullName)
+            });
             services.AddHostedService<HumanTaskJobServerHostedService>();
             services.AddSingleton<CaseManagement.Common.Factories.IHttpClientFactory>(httpClientFactory);
         }

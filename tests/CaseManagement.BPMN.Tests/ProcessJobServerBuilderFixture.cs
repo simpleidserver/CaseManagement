@@ -11,6 +11,7 @@ using Moq.Protected;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -55,7 +56,7 @@ namespace CaseManagement.BPMN.Tests
                 {
                     _.AddMessageEvtDef("id", cb =>
                     {
-                        cb.SetMessageRef(messageName);
+                        cb.SetMessageRef("message");
                     });
                 })
                 .AddEmptyTask("2", "name", _ =>
@@ -68,9 +69,9 @@ namespace CaseManagement.BPMN.Tests
             await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
             await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
             var casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
-            await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, null, CancellationToken.None);
+            await jobServer.EnqueueMessage(processInstance.AggregateId, "message", null, CancellationToken.None);
             casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
-            await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, null, CancellationToken.None);
+            await jobServer.EnqueueMessage(processInstance.AggregateId, "message", null, CancellationToken.None);
             casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
             var startEventInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1");
             var emptyTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
@@ -97,7 +98,7 @@ namespace CaseManagement.BPMN.Tests
                 })
                 .AddServiceTask("2", "name", _ =>
                 {
-                    _.SetCallback(typeof(GetWeatherInformationDelegate).FullName);
+                    _.SetDelegate("GetWeatherInformationDelegate");
                 })
                 .AddSequenceFlow("seq1", "sequence", "1", "2")
                 .Build();
@@ -277,7 +278,7 @@ namespace CaseManagement.BPMN.Tests
                 .AddStartEvent("1", "evt")
                 .AddServiceTask("2", "serviceTask", (cb) =>
                 {
-                    cb.SetCallback(typeof(GetWeatherInformationDelegate).FullName);
+                    cb.SetDelegate("GetWeatherInformationDelegate");
                 })
                 .AddUserTask("3", "userTask", (cb) =>
                 {
@@ -325,6 +326,9 @@ namespace CaseManagement.BPMN.Tests
                 {
                     o.WSHumanTaskAPI = "http://localhost";
                     o.CallbackUrl = "http://localhost/{id}/{eltId}";
+                }).AddDelegateConfigurations(new ConcurrentBag<DelegateConfigurationAggregate>
+                {
+                    DelegateConfigurationAggregate.Create("GetWeatherInformationDelegate", typeof(GetWeatherInformationDelegate).FullName)
                 });
                 serviceCollection.AddSingleton<IHttpClientFactory>(_factory);
                 _serviceProvider = serviceCollection.BuildServiceProvider();

@@ -40,12 +40,19 @@ namespace CaseManagement.BPMN.Parser
         {
             var result = new List<ProcessInstanceAggregate>();
             var processes = definitions.Items.Where(_ => _ is tProcess).Cast<tProcess>();
+            var messages = definitions.Items.Where(_ => _ is tMessage).Cast<tMessage>();
             foreach(var process in processes)
             {
                 var builder = ProcessInstanceBuilder.New(processFileId);
+                foreach(var message in messages)
+                {
+                    builder.AddMessage(message.id, message.name, string.Empty);
+                }
+
                 foreach(var item in process.Items)
                 {
                     tStartEvent startEvt;
+                    tEndEvent endEvt;
                     tTask task;
                     tSequenceFlow sequenceFlow;
                     tExclusiveGateway exclusiveGateway;
@@ -53,7 +60,27 @@ namespace CaseManagement.BPMN.Parser
                     tServiceTask serviceTask;
                     if ((startEvt = item as tStartEvent) != null)
                     {
-                        builder.AddStartEvent(startEvt.id, startEvt.name);
+                        builder.AddStartEvent(startEvt.id, startEvt.name, cb =>
+                        {
+                            if (startEvt.Items == null)
+                            {
+                                return;
+                            }
+
+                            var tMessageEvt = startEvt.Items.FirstOrDefault(i => i is tMessageEventDefinition);
+                            if (tMessageEvt != null)
+                            {
+                                var evt = tMessageEvt as tMessageEventDefinition;
+                                cb.AddMessageEvtDef(evt.id, (cb) => 
+                                {
+                                    cb.SetMessageRef(evt.messageRef.Name);    
+                                });
+                            }
+                        });
+                    }
+                    else if ((endEvt = item as tEndEvent) != null)
+                    {
+                        builder.AddEndEvent(endEvt.id, endEvt.name);
                     }
                     else if ((userTask = item as tUserTask) != null)
                     {
@@ -85,7 +112,7 @@ namespace CaseManagement.BPMN.Parser
                         {
                             if (serviceTask.implementation == BPMNConstants.ServiceTaskImplementations.CALLBACK)
                             {
-                                cb.SetCallback(serviceTask.className);
+                                cb.SetDelegate(serviceTask.delegateId);
                             }
                         });
                     }

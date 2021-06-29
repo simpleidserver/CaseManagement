@@ -7,6 +7,6 @@ namespace CaseManagement.BPMN
 {
     public interface IDelegateHandler
     {
-        Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, CancellationToken cancellationToken);
+        Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken);
     }
 }

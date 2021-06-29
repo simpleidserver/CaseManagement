@@ -1,6 +1,6 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-using CaseManagement.BPMN.AspNetCore.Apis;
+using CaseManagement.BPMN.Host.Delegates;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -65,7 +66,10 @@ namespace CaseManagement.BPMN.Host
             {
                 opts.WSHumanTaskAPI = "http://localhost:60006";
                 opts.CallbackUrl = "http://localhost:60007/processinstances/{id}/complete/{eltId}";
-            }).AddProcessFiles(files);
+            }).AddProcessFiles(files).AddDelegateConfigurations(new ConcurrentBag<Domains.DelegateConfigurationAggregate>
+            {
+                Domains.DelegateConfigurationAggregate.Create("GetWeatherInformationDelegate", typeof(GetWeatherInformationDelegate).FullName)
+            });
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {

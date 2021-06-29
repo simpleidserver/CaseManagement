@@ -9,7 +9,7 @@ namespace CaseManagement.BPMN.Host.Delegates
 {
     public class GetWeatherInformationDelegate : IDelegateHandler
     {
-        public Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, CancellationToken cancellationToken)
+        public Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
         {
             ICollection<MessageToken> result = new List<MessageToken>();
             var rnd = new Random();

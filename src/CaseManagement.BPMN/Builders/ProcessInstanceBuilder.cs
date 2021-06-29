@@ -74,6 +74,18 @@ namespace CaseManagement.BPMN.Builders
             return this;
         }
 
+        public ProcessInstanceBuilder AddEndEvent(string id, string name, Action<EndEventBuilder> callback = null)
+        {
+            var endEvtBuilder = new EndEventBuilder(id, name);
+            if (callback != null)
+            {
+                callback(endEvtBuilder);
+            }
+
+            Builders.Add(endEvtBuilder);
+            return this;
+        }
+
         #endregion
 
         #region Build tasks

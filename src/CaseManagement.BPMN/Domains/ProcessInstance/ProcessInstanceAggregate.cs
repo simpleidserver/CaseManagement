@@ -100,6 +100,11 @@ namespace CaseManagement.BPMN.Domains
             return Messages.FirstOrDefault(_ => _.EltId == messageRef);
         }
 
+        public Message GetMessageByName(string messageName)
+        {
+            return Messages.FirstOrDefault(_ => _.Name == messageName);
+        }
+
         public Operation GetOperation(string operationRef)
         {
             return Interfaces.SelectMany(_ => _.Operations).FirstOrDefault(_ => _.EltId == operationRef);
@@ -112,7 +117,7 @@ namespace CaseManagement.BPMN.Domains
 
         public bool IsMessageCorrect(MessageToken messageToken)
         {
-            var message = GetMessage(messageToken.Name);
+            var message = GetMessageByName(messageToken.Name);
             if (message == null || messageToken.Name != messageToken.Name)
             {
                 return false;

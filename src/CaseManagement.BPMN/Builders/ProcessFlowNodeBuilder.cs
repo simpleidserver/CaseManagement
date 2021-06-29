@@ -71,17 +71,17 @@ namespace CaseManagement.BPMN.Builders
 
         internal string OperationRef { get; set; }
         internal string Implementation { get; set; }
-        internal string ClassName { get; set; }
+        internal string DelegateId { get; set; }
 
         public void SetOperationRef(string operationRef)
         {
             OperationRef = operationRef;
         }
 
-        public void SetCallback(string className)
+        public void SetDelegate(string delegateId)
         {
             Implementation = BPMNConstants.ServiceTaskImplementations.CALLBACK;
-            ClassName = className;
+            DelegateId = delegateId;
         }
 
         public override BaseFlowNode Build()
@@ -90,7 +90,7 @@ namespace CaseManagement.BPMN.Builders
             {
                 OperationRef = OperationRef,
                 Implementation = Implementation,
-                ClassName = ClassName
+                DelegateId = DelegateId
             };
             FeedActivityNode(result);
             return result;
@@ -179,6 +179,20 @@ namespace CaseManagement.BPMN.Builders
         public override BaseFlowNode Build()
         {
             var result = new StartEvent();
+            FeedCatchEvt(result);
+            return result;
+        }
+    }
+
+    public class EndEventBuilder : CatchEventBuilder
+    {
+        public EndEventBuilder(string id, string name) : base(id, name)
+        {
+        }
+
+        public override BaseFlowNode Build()
+        {
+            var result = new EndEvent();
             FeedCatchEvt(result);
             return result;
         }

@@ -4502,7 +4502,7 @@ namespace CaseManagement.BPMN.Parser {
     public partial class tServiceTask : tTask {
         
         private string implementationField;
-        private string classNameField;
+        private string delegateIdField;
 
         private System.Xml.XmlQualifiedName operationRefField;
         
@@ -4523,15 +4523,15 @@ namespace CaseManagement.BPMN.Parser {
         }
 
         [System.Xml.Serialization.XmlAttributeAttribute(Namespace = BPMNConstants.BPMNNamespace)]
-        public string className
+        public string delegateId
         {
             get
             {
-                return this.classNameField;
+                return this.delegateIdField;
             }
             set
             {
-                this.classNameField = value;
+                this.delegateIdField = value;
             }
         }
 

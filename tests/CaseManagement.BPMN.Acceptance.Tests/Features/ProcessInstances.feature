@@ -1,6 +1,23 @@
 ﻿Feature: ProcessInstances
 	Check result returned by /processinstances
 
+Scenario: Launch MessageEvent bpmn process
+	When execute HTTP POST JSON request 'http://localhost/processinstances'
+	| Key           | Value                                                            |
+	| processFileId | 52e27e4659af9be63154a6094e8392ce222107a063a78b8328d967bd4b9982cb |
+	And extract JSON from body
+	And extract 'content[0].id' from JSON body into 'processInstanceId'
+	And execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$/start'
+	And execute HTTP POST JSON request 'http://localhost/processinstances/$processInstanceId$/messages'
+	| Key            | Value                            |
+	| name           | newMessage                       |
+	| messageContent | { "email": "email@hotmail.com" } |
+	And execute HTTP GET request 'http://localhost/processinstances/$processInstanceId$'
+	And extract JSON from body
+	
+	Then HTTP status code equals to '200'
+	Then JSON 'executionPaths[0].executionPointers[?(@.flowNodeId == 'Event_1x42h83')].flowNodeInstance.state'='Complete'
+
 Scenario: Launch CreateUserAccount bpmn process
 	When execute HTTP POST JSON request 'http://localhost/processinstances'
 	| Key           | Value                                                            |

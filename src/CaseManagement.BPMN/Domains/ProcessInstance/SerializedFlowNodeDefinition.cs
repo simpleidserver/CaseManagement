@@ -45,6 +45,8 @@ namespace CaseManagement.BPMN.Domains
                     return Deserialize<InclusiveGateway>(json);
                 case FlowNodeTypes.USERTASK:
                     return Deserialize<UserTask>(json);
+                case FlowNodeTypes.ENDEVENT:
+                    return Deserialize<EndEvent>(json);
             }
 
             return null;

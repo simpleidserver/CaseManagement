@@ -12,7 +12,7 @@
         /// This attribute specifies the operation that is invoked by the service task.
         /// </summary>
         public string OperationRef { get; set; }
-        public string ClassName { get; set; }
+        public string DelegateId { get; set; }
 
         public override FlowNodeTypes FlowNode => FlowNodeTypes.SERVICETASK;
 
@@ -22,7 +22,7 @@
             {
                 Implementation = Implementation,
                 OperationRef = OperationRef,
-                ClassName = ClassName
+                DelegateId = DelegateId
             };
             FeedActivity(result);
             return result;

@@ -83,6 +83,24 @@ namespace CaseManagement.BPMN.AspNetCore.Apis
             }
         }
 
+        [HttpPost("{id}/messages")]
+        public async Task<IActionResult> ConsumeMessage(string id, [FromBody] ConsumeMessageInstanceCommand consumeMessageInstanceCommand, CancellationToken token)
+        {
+            try
+            {
+                consumeMessageInstanceCommand.FlowNodeInstanceId = id;
+                await _mediator.Send(consumeMessageInstanceCommand, token);
+                return new OkResult();
+            }
+            catch (UnknownFlowInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         [HttpPost("{id}/statetransitions")]
         public async Task<IActionResult> MakeTransition(string id, [FromBody] MakeStateTransitionCommand stateTransitionCommand, CancellationToken token)
         {

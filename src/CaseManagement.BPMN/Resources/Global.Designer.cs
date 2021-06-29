@@ -88,6 +88,15 @@ namespace CaseManagement.BPMN.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à delegate &apos;{0}&apos; is unknown.
+        /// </summary>
+        internal static string UnknownDelegate {
+            get {
+                return ResourceManager.GetString("UnknownDelegate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à process element instance &apos;{0}&apos; is unknown.
         /// </summary>
         internal static string UnknownProcessElementInstance {

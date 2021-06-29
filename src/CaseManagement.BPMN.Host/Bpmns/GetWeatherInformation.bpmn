@@ -5,7 +5,7 @@
       <outgoing>SequenceFlow_0h21x7r</outgoing>
     </startEvent>
     <sequenceFlow id="SequenceFlow_0h21x7r" sourceRef="StartEvent_1y45yut" targetRef="Task_1hcentk" />
-    <serviceTask id="Task_1hcentk" name="Check weather conditions" implementation="##csharpcallback" cmg:className="CaseManagement.BPMN.Host.Delegates.GetWeatherInformationDelegate">
+    <serviceTask id="Task_1hcentk" name="Check weather conditions" implementation="##csharpcallback" cmg:delegateId="GetWeatherInformationDelegate">
       <incoming>SequenceFlow_0h21x7r</incoming>
       <outgoing>Flow_0ofj7xp</outgoing>
     </serviceTask>

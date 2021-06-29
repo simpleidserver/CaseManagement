@@ -22,9 +22,6 @@
     <None Include="..\..\key.snk" Link="key.snk" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Cmmns\caseWithComplexRepetitionRule.cmmn">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Cmmns\claimCase.cmmn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence.EF;
+using CaseManagement.BPMN.SqlServer.Host.Delegates;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -134,6 +135,7 @@ namespace CaseManagement.BPMN.SqlServer.Host
                         context.ProcessFiles.Add(processFile);
                     }
 
+                    context.DelegateConfigurations.Add(DelegateConfigurationAggregate.Create("GetWeatherInformationDelegate", typeof(GetWeatherInformationDelegate).FullName));
                     context.SaveChanges();
                 }
             }
