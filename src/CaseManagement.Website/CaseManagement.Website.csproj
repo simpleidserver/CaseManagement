@@ -49,8 +49,10 @@
     <None Remove="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.html" />
     <None Remove="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.scss" />
     <None Remove="angularApp\app\pipes\translateenum.pipe.ts" />
+    <None Remove="angularApp\app\pipes\translateobj.pipe.ts" />
     <None Remove="angularApp\app\shared\SidenavService.ts" />
     <None Remove="angularApp\app\stores\bpmninstances\models\bpmn-instance.model.ts" />
+    <None Remove="angularApp\app\stores\delegateconfigurations\models\delegateconfiguration.model.ts" />
     <None Remove="angularApp\app\stores\notificationdefs\models\notificationdef.model.ts" />
   </ItemGroup>
   <ItemGroup>
@@ -158,9 +160,13 @@
     <TypeScriptCompile Include="angularApp\app\notifications\viewdef\info\addparameter.dialog.component.scss">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\pipes\translateobj.pipe.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\pipes\translateenum.pipe.ts" />
     <TypeScriptCompile Include="angularApp\app\shared\SidenavService.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\bpmninstances\models\bpmn-instance.model.ts" />
+    <TypeScriptCompile Include="angularApp\app\stores\delegateconfigurations\models\delegateconfiguration.model.ts" />
     <TypeScriptCompile Include="angularApp\app\stores\notificationdefs\models\notificationdef.model.ts" />
   </ItemGroup>
 </Project>

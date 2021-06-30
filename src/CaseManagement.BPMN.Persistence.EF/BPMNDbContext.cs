@@ -1,5 +1,4 @@
 ﻿using CaseManagement.BPMN.Domains;
-using CaseManagement.BPMN.Domains.DelegateConfiguration;
 using Microsoft.EntityFrameworkCore;
 
 namespace CaseManagement.BPMN.Persistence.EF

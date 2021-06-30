@@ -20,10 +20,23 @@
     "CASES": "Cases",
     "HUMANTASKS": "Human Tasks",
     "NOTIFICATIONS": "Notifications",
-    "PROCESSINSTANCE": "Process instance '{{date}}'"
+    "PROCESSINSTANCE": "Process instance '{{date}}'",
+    "DELEGATECONFIGURATIONS": "Delegate Configurations"
+  },
+  "DELEGATECONFIGURATION": {
+    "LIST": "Delegates",
+    "ID": "Identifier",
+    "FULLQUALIFIEDNAME": "Full Qualified Name",
+    "PARAMETERS": "Parameters",
+    "GENERALINFO": "General Information",
+    "MESSAGES": {
+      "ERROR_UPDATE_DELEGATE_CONFIGURATION": "An error occured while trying to update the Delegate Configuration",
+      "COMPLETE_UPDATE_DELEGATE_CONFIGURATION": "Delegate Configuration has been updated"
+    }
   },
   "BPMN": {
     "FILES": "Process definitions",
+    "DELEGATES": "Delegates",
     "INSTANCES": "Process instances",
     "GENERALINFO": "Information",
     "VIEW_MESSAGE": "View message",
@@ -340,6 +353,7 @@
     "NAME": "Name",
     "USAGE": "Usage",
     "TYPE": "Type",
+    "DELEGATE": "Delegate",
     "VERSION": "Version",
     "LABEL": "Label",
     "TEXT": "Text",

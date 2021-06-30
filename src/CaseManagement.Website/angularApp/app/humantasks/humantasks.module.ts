@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TranslateEnumPipe } from '../pipes/translateenum.pipe';
 import { MaterialModule } from '../shared/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { HumanTasksComponent } from './humantasks.component';
@@ -100,7 +99,6 @@ import { ViewHumanTaskDef } from './viewdef/view.component';
         ContainerComponent,
         ConfirmPwdComponent,
         ConfirmPwdComponentDialog,
-        TranslateEnumPipe,
         SubmitBtnComponentDialog,
         SubmitBtnComponent
     ]

@@ -57,6 +57,9 @@ namespace CaseManagement.BPMN.Domains
             {
                 AggregateId = AggregateId,
                 Version = Version,
+                CreateDateTime = CreateDateTime,
+                FullQualifiedName = FullQualifiedName,
+                UpdateDateTime = UpdateDateTime,
                 Translations = Translations.Select(t => (BPMNTranslation)t.Clone()).ToList(),
                 Records = Records.Select(r => (DelegateConfigurationRecord)r.Clone()).ToList()
             };
@@ -111,6 +114,21 @@ namespace CaseManagement.BPMN.Domains
         public void AddDescription(string language, string value)
         {
             Translations.Add(BPMNTranslation.Create($"delegateconf_{DESCRIPTION}_{language}", value, language, DESCRIPTION));
+        }
+
+        public void AddRecord(string key, string value)
+        {
+            Records.Add(DelegateConfigurationRecord.Create(key, value));
+        }
+
+        public void Update(Dictionary<string, string> records)
+        {
+            UpdateDateTime = DateTime.UtcNow;
+            Records = records.Select(kvp => new DelegateConfigurationRecord
+            {
+                Key = kvp.Key,
+                Value = kvp.Value
+            }).ToList();
         }
 
         #endregion

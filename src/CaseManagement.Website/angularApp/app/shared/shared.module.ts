@@ -1,17 +1,23 @@
-import { NgModule } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslateEnumPipe } from '../pipes/translateenum.pipe';
+import { TranslateObjPipe } from '../pipes/translateobj.pipe';
 
 @NgModule({
     imports: [
     ],
-    declarations: [ ],
+    declarations: [
+        TranslateEnumPipe,
+        TranslateObjPipe
+    ],
     exports: [
         CommonModule,
         RouterModule,
-        TranslateModule
+        TranslateModule,
+        TranslateEnumPipe,
+        TranslateObjPipe
     ]
 })
 

@@ -7,6 +7,7 @@
         {
             public const string ProcessInstances = "processinstances";
             public const string ProcessFiles = "processfiles";
+            public const string DelegateConfigurations = "delegateconfigurations";
         }
 
         public static class QueueNames

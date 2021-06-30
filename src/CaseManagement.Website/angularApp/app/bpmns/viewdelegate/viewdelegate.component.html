@@ -1,0 +1,52 @@
+﻿<div fxLayout="column" fxFlexFill>
+    <ul class="breadcrumb">
+        <li><a href="#" [routerLink]="['/']">{{ 'BREADCRUMB.DASHBOARD' | translate }}</a></li>
+        <li><a href="#" [routerLink]="['/bpmns']">{{ 'BREADCRUMB.PROCESSES' | translate }}</a></li>
+        <li>{{ content$?.displayNames | translateobj }}</li>
+    </ul>
+    <mat-card fxFlex class="m-10">
+        <form [formGroup]="updateParametersFormGroup" (ngSubmit)="onSave(updateParametersFormGroup.value)">
+            <mat-card-content>
+                <div fxLayout="column" fxLayoutGap="10px">
+                    <!-- General Information -->
+                    <div fxLayout="row">
+                        <div fxFlex="20%">
+                            {{ 'DELEGATECONFIGURATION.GENERALINFO' | translate }}
+                        </div>
+                        <div fxFlex>
+                            <!-- Identifier -->
+                            <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+                                <mat-label>{{ 'DELEGATECONFIGURATION.ID' | translate }}</mat-label>
+                                <input matInput type="text" disabled [value]="content$?.id" />
+                            </mat-form-field>
+                            <!-- Full Qualified Name -->
+                            <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+                                <mat-label>{{ 'DELEGATECONFIGURATION.FULLQUALIFIEDNAME' | translate }}</mat-label>
+                                <input matInput type="text" disabled [value]="content$?.fullQualifiedName" />
+                            </mat-form-field>
+                            <!--  Parameters -->
+                        </div>
+                    </div>
+                    <div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <!-- Parameters -->
+                    <div fxLayout="row">
+                        <div fxFlex="20%">
+                            {{ 'DELEGATECONFIGURATION.PARAMETERS' | translate }}
+                        </div>
+                        <div fxFlex>
+                            <mat-form-field appearance="outline" floatLabel="always" class="full-width" *ngFor="let record of records">
+                                <mat-label>{{ record.key }}</mat-label>
+                                <input matInput type="text" [formControlName]="record.key" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="primary">{{ "SHARED.SAVE" | translate }}</button>
+            </mat-card-actions>
+        </form>
+    </mat-card>
+</div>

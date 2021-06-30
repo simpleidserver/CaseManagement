@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Host.Delegates;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -66,10 +67,7 @@ namespace CaseManagement.BPMN.Host
             {
                 opts.WSHumanTaskAPI = "http://localhost:60006";
                 opts.CallbackUrl = "http://localhost:60007/processinstances/{id}/complete/{eltId}";
-            }).AddProcessFiles(files).AddDelegateConfigurations(new ConcurrentBag<Domains.DelegateConfigurationAggregate>
-            {
-                Domains.DelegateConfigurationAggregate.Create("GetWeatherInformationDelegate", typeof(GetWeatherInformationDelegate).FullName)
-            });
+            }).AddProcessFiles(files).AddDelegateConfigurations(GetDelegateConfigurations());
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -129,6 +127,43 @@ namespace CaseManagement.BPMN.Host
                 default:
                     throw new InvalidOperationException("Illegal base64url string!");
             }
+        }
+
+        private static ConcurrentBag<DelegateConfigurationAggregate> GetDelegateConfigurations()
+        {
+            var getWeatherInformationDelegate = DelegateConfigurationAggregate.Create("GetWeatherInformationDelegate", typeof(GetWeatherInformationDelegate).FullName);
+            getWeatherInformationDelegate.AddDisplayName("fr", "Récupérer météo");
+            getWeatherInformationDelegate.AddDescription("fr", "Récupérer les informations sur la météo");
+            getWeatherInformationDelegate.AddDisplayName("en", "Get meteo");
+            getWeatherInformationDelegate.AddDescription("en", "Get informations about meteo");
+
+            var sendEmailDelegate = DelegateConfigurationAggregate.Create("SendEmailDelegate", typeof(SendEmailDelegate).FullName);
+            sendEmailDelegate.AddDisplayName("fr", "Envoyer un email");
+            sendEmailDelegate.AddDisplayName("en", "Send email");
+            sendEmailDelegate.AddRecord("httpBody", "Please click on this link to update the password");
+            sendEmailDelegate.AddRecord("subject", "Update password");
+            sendEmailDelegate.AddRecord("fromEmail", "");
+            sendEmailDelegate.AddRecord("smtpHost", "");
+            sendEmailDelegate.AddRecord("smtpPort", "");
+            sendEmailDelegate.AddRecord("smtpUserName", "");
+            sendEmailDelegate.AddRecord("smtpPassword", "");
+            sendEmailDelegate.AddRecord("smtpEnableSsl", "");
+
+            var updateUserPasswordDelegate = DelegateConfigurationAggregate.Create("UpdateUserPasswordDelegate", typeof(UpdateUserPasswordDelegate).FullName);
+            updateUserPasswordDelegate.AddDisplayName("fr", "Mettre à jour le mot de passe");
+            updateUserPasswordDelegate.AddDisplayName("en", "Update password");
+            updateUserPasswordDelegate.AddRecord("clientId", "");
+            updateUserPasswordDelegate.AddRecord("clientSecret", "");
+            updateUserPasswordDelegate.AddRecord("tokenUrl", "https://localhost:60000/token");
+            updateUserPasswordDelegate.AddRecord("userUrl", "");
+            updateUserPasswordDelegate.AddRecord("scope", "update_password");
+
+            return new ConcurrentBag<DelegateConfigurationAggregate>
+            {
+                getWeatherInformationDelegate,
+                sendEmailDelegate,
+                updateUserPasswordDelegate
+            };
         }
     }
 }

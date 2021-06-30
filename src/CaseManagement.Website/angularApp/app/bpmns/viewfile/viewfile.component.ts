@@ -9,6 +9,7 @@ import { SearchBpmnFilesResult } from '@app/stores/bpmnfiles/models/search-bpmn-
 import * as fromBpmnInstanceActions from '@app/stores/bpmninstances/actions/bpmn-instances.actions';
 import { BpmnInstance } from '@app/stores/bpmninstances/models/bpmn-instance.model';
 import { SearchBpmnInstancesResult } from '@app/stores/bpmninstances/models/search-bpmn-instances-result.model';
+import { GetAllDelegateConfiguration } from '@app/stores/delegateconfigurations/actions/delegateconfiguration.actions';
 import { ScannedActionsSubject, select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
@@ -31,6 +32,7 @@ let caseMgtBpmnModdle = require('@app/moddlextensions/casemanagement-bpmn');
 export class ViewBpmnFileComponent implements OnInit, OnDestroy {
     bpmnInstancesListener: any;
     bpmnFileListener: any;
+    delegateConfigurationListener: any;
     displayedColumns: string[] = ['status', 'create_datetime', 'update_datetime', 'nbExecutionPath', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -41,6 +43,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
     isEltSelected: boolean = false;
     outgoingElts: string[] = [];
     selectedElt: any = null;
+    delegateIds: string[];
     parameters: { key: string, value: string }[] = [];
     bpmnFile: BpmnFile = new BpmnFile();
     bpmnFiles: BpmnFile[] = [];
@@ -56,7 +59,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         id: new FormControl(''),
         name: new FormControl(''),
         implementation: new FormControl(''),
-        className: new FormControl(''),
+        delegateId: new FormControl(''),
         wsHumanTaskDefName: new FormControl(''),
         default: new FormControl(''),
         gatewayDirection: new FormControl(''),
@@ -132,6 +135,14 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
 
             self.saveProperties(this.updatePropertiesForm.value);
         });
+        this.delegateConfigurationListener = this.store.pipe(select(fromAppState.selectDelegateConfigurationLstIdsResult)).subscribe((delegateIds: string[]) => {
+            if (!delegateIds) {
+                return;
+            }
+
+            console.log(delegateIds);
+            this.delegateIds = delegateIds;
+        })
         this.updatePropertiesForm.get('default').valueChanges.subscribe(() => {
             const selectedPath = self.updatePropertiesForm.get('default').value;
             if (!selectedPath || !self.selectedElt) {
@@ -217,6 +228,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         this.paramsSub.unsubscribe();
         this.bpmnInstancesListener.unsubscribe();
         this.bpmnFileListener.unsubscribe();
+        this.delegateConfigurationListener.unsubscribe();
     }
 
     ngAfterViewInit() {
@@ -227,6 +239,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         let id = this.route.snapshot.params['id'];
         const request = new fromBpmnFileActions.GetBpmnFile(id);
         this.store.dispatch(request);
+        this.store.dispatch(new GetAllDelegateConfiguration());
         this.refreshBpmnInstances();
     }
 
@@ -341,6 +354,10 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         });
     }
 
+    onDelegateChanged(evt: any) {
+
+    }
+
     onHumanTaskChanged(evt: any) {
         const value: string = evt.value;
         this.selectHumanTask(value);
@@ -369,7 +386,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         this.updatePropertiesForm.get('name').setValue(bo.name);
         if (bo.$type === 'bpmn:ServiceTask') {
             this.updatePropertiesForm.get('implementation').setValue(bo.implementation);
-            this.updatePropertiesForm.get('className').setValue(bo.get('cmg:className'));
+            this.updatePropertiesForm.get('delegateId').setValue(bo.get('cmg:delegateId'));
         }
 
         if (bo.$type === 'bpmn:UserTask') {
@@ -422,7 +439,7 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
 
         const bo = this.selectedElt.businessObject;
         if (bo.$type === 'bpmn:ServiceTask') {
-            obj['cmg:className'] = form.className;
+            obj['cmg:delegateId'] = form.delegateId;
             obj['implementation'] = form.implementation;
         }
 

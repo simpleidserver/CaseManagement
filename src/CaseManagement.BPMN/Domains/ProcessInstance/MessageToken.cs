@@ -21,6 +21,16 @@ namespace CaseManagement.BPMN.Domains
             }
         }
 
+        public string GetProperty(string key)
+        {
+            if (JObjMessageContent.ContainsKey(key))
+            {
+                return null;
+            }
+
+            return JObjMessageContent[key].ToString();
+        }
+
         private static MessageToken Deserialize(string json)
         {
             var jObj = JsonConvert.DeserializeObject<MessageToken>(json);

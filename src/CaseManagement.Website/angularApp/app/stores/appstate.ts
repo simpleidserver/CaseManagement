@@ -1,9 +1,10 @@
 ﻿import { createSelector } from '@ngrx/store';
 import * as fromBpmnFiles from './bpmnfiles/reducers/bpmnfile.reducers';
 import * as fromBpmnInstances from './bpmninstances/reducers/bpmninstance.reducers';
-import * as fromCmmnPlan from './cmmnplans/reducers/cmmnplan.reducers';
 import * as fromCmmnFile from './cmmnfiles/reducers/cmmnfile.reducers';
 import * as fromCmmnPlanInstance from './cmmninstances/reducers/cmmn-planinstance.reducers';
+import * as fromCmmnPlan from './cmmnplans/reducers/cmmnplan.reducers';
+import * as fromDelegateConfiguration from './delegateconfigurations/reducers/delegateconfiguration.reducers';
 import * as fromHumanTask from './humantaskdefs/reducers/humantaskdef.reducers';
 import * as fromNotification from './notificationdefs/reducers/notificationdef.reducers';
 
@@ -22,7 +23,9 @@ export interface AppState {
     bpmnInstance: fromBpmnInstances.BpmnInstanceState;
     notifications: fromNotification.SearchNotificationDefState,
     notification: fromNotification.NotificationDefState,
-    notificationLst: fromNotification.NotificationDefLstState
+    notificationLst: fromNotification.NotificationDefLstState,
+    delegateConfigurationLst: fromDelegateConfiguration.DelegateConfigurationLstState,
+    delegateConfiguration: fromDelegateConfiguration.DelegateConfigurationState
 }
 
 export const selectCmmnPlan = (state: AppState) => state.cmmnPlan;
@@ -40,6 +43,8 @@ export const selectBpmnInstance = (state: AppState) => state.bpmnInstance;
 export const selectNotifications = (state: AppState) => state.notifications;
 export const selectNotification = (state: AppState) => state.notification;
 export const selectNotificationLst = (state: AppState) => state.notificationLst;
+export const selectDelegateConfigurationLst = (state: AppState) => state.delegateConfigurationLst;
+export const selectDelegateConfiguration = (state: AppState) => state.delegateConfiguration;
 
 export const selectNotificationLstResult = createSelector(
     selectNotificationLst,
@@ -206,6 +211,39 @@ export const selectNotificationResult = createSelector(
     }
 );
 
+export const selectDelegateConfigurationLstResult = createSelector(
+    selectDelegateConfigurationLst,
+    (state: fromDelegateConfiguration.DelegateConfigurationLstState) => {
+        if (!state || state.content == null) {
+            return null;
+        }
+
+        return state.content;
+    }
+);
+
+export const selectDelegateConfigurationResult = createSelector(
+    selectDelegateConfiguration,
+    (state: fromDelegateConfiguration.DelegateConfigurationState) => {
+        if (!state || state.content == null) {
+            return null;
+        }
+
+        return state.content;
+    }
+);
+
+export const selectDelegateConfigurationLstIdsResult = createSelector(
+    selectDelegateConfigurationLst,
+    (state: fromDelegateConfiguration.DelegateConfigurationLstState) => {
+        if (!state || state.lstIds.length === 0) {
+            return null;
+        }
+
+        return state.lstIds;
+    }
+);
+
 export const appReducer = {
     cmmnPlan: fromCmmnPlan.cmmnPlanReducer,
     cmmnPlanLst: fromCmmnPlan.cmmnPlanLstReducer,
@@ -221,5 +259,7 @@ export const appReducer = {
     bpmnInstance: fromBpmnInstances.bpmnInstanceReducer,
     notifications: fromNotification.notificationDefsReducer,
     notification: fromNotification.notificationDefReducer,
-    notificationLst: fromNotification.notificationDefLstReducer
+    notificationLst: fromNotification.notificationDefLstReducer,
+    delegateConfigurationLst: fromDelegateConfiguration.delegateConfigurationLstReducer,
+    delegateConfiguration: fromDelegateConfiguration.delegateConfigurationReducer
 };

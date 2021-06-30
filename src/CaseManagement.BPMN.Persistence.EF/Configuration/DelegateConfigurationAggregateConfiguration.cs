@@ -1,4 +1,4 @@
-﻿using CaseManagement.BPMN.Domains.DelegateConfiguration;
+﻿using CaseManagement.BPMN.Domains;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

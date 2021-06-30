@@ -28,6 +28,8 @@ import { CmmnPlanInstanceEffects } from './stores/cmmninstances/effects/cmmn-pla
 import { CmmnPlanInstanceService } from './stores/cmmninstances/services/cmmn-planinstance.service';
 import { CmmnPlanEffects } from './stores/cmmnplans/effects/cmmn-plans.effects';
 import { CmmnPlanService } from './stores/cmmnplans/services/cmmn-plan.service';
+import { DelegateConfigurationEffects } from './stores/delegateconfigurations/effects/delegateconfiguration.effects';
+import { DelegateConfigurationService } from './stores/delegateconfigurations/services/delegateconfiguration.service';
 import { HumanTaskDefEffects } from './stores/humantaskdefs/effects/humantaskdef.effects';
 import { HumanTaskDefService } from './stores/humantaskdefs/services/humantaskdef.service';
 import { HumanTaskInstEffects } from './stores/humantaskinstances/effects/humantaskinst.effects';
@@ -59,7 +61,8 @@ export function createTranslateLoader(http: HttpClient) {
             HumanTaskDefEffects,
             HumanTaskInstEffects,
             BpmnFilesEffects,
-            NotificationDefEffects
+            NotificationDefEffects,
+            DelegateConfigurationEffects
         ]),
         StoreModule.forRoot(appReducer),
         StoreDevtoolsModule.instrument({
@@ -86,7 +89,8 @@ export function createTranslateLoader(http: HttpClient) {
         BpmnFilesService,
         SidenavService,
         BpmnInstancesService,
-        NotificationDefService
+        NotificationDefService,
+        DelegateConfigurationService
     ]
 })
 export class AppModule { }

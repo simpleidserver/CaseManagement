@@ -1,6 +1,5 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,12 +13,17 @@ namespace CaseManagement.BPMN.Host.Delegates
     {
         public Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
         {
-            var email = incoming.FirstOrDefault(i => i.Name == "email");
-            if (email == null)
+            var user = incoming.FirstOrDefault(i => i.Name == "userMessage");
+            if (user == null)
             {
-                throw new BPMNProcessorException("Email parameter is missing");
+                throw new BPMNProcessorException("userMessage must be passed in the request");
             }
 
+            var email = user.GetProperty("email");
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new BPMNProcessorException("email is not passed in the request");
+            }
 
             var parameter = SendDelegateParameter.Build(delegateConfiguration);
             using (var smtpClient = new SmtpClient(parameter.SmtpHost)
@@ -31,17 +35,24 @@ namespace CaseManagement.BPMN.Host.Delegates
             {
                 var mailMessage = new MailMessage
                 {
-
+                    From = new MailAddress(parameter.FromEmail),
+                    Subject = parameter.Subject,
+                    Body = parameter.HttpBody,
+                    IsBodyHtml = true
                 };
+
+                mailMessage.To.Add(email);
+                smtpClient.Send(mailMessage);
             }
-            
-            throw new NotImplementedException();
+
+            return Task.FromResult(incoming);
         }
 
         private class SendDelegateParameter
         {
             public string HttpBody { get; set; }
             public string Subject { get; set; }
+            public string FromEmail { get; set; }
             public string SmtpHost { get; set; }
             public int SmtpPort { get; set; }
             public string SmtpUserName { get; set; }
@@ -54,6 +65,7 @@ namespace CaseManagement.BPMN.Host.Delegates
                 {
                     HttpBody = delegateConfiguration.GetValue("httpBody"),
                     Subject = delegateConfiguration.GetValue("subject"),
+                    FromEmail = delegateConfiguration.GetValue("fromEmail"),
                     SmtpHost = delegateConfiguration.GetValue("smtpHost"),
                     SmtpPort = delegateConfiguration.GetValueNumber("smtpPort"),
                     SmtpUserName = delegateConfiguration.GetValue("smtpUserName"),

@@ -87,10 +87,14 @@
                                             <mat-option value="##csharpcallback">{{ 'BPMN.SERVICEIMPLEMENTATION.CSHARPCALLBACK' | translate }}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <!-- Classname -->
+                                    <!-- DelegateId -->
                                     <mat-form-field class="full-width" appearance="outline" floatLabel="always">
-                                        <mat-label>{{ 'SHARED.CLASS_NAME' | translate }}</mat-label>
-                                        <input matInput name="className" formControlName="className" />
+                                        <mat-label>{{ 'SHARED.DELEGATE' | translate }}</mat-label>
+                                        <mat-select formControlName="delegateId">
+                                            <mat-option [value]="delegateId" *ngFor="let delegateId of delegateIds">
+                                                {{ delegateId }}
+                                            </mat-option>
+                                        </mat-select>
                                     </mat-form-field>
                                 </mat-expansion-panel>
                                 <!-- User task information -->
