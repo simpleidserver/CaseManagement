@@ -72,6 +72,11 @@ namespace CaseManagement.HumanTask.Host
                 .AddOutputOperationParameter("firstName", ParameterTypes.STRING, true)
                 .AddOutputOperationParameter("lastName", ParameterTypes.STRING, true)
                 .Build();
+            var updatePasswordForm = HumanTaskDefBuilder.New("updatePassword")
+                .AddName("fr", "Mettre à jour le mot de passe")
+                .AddName("en", "Update password")
+                .AddOutputOperationParameter("password", ParameterTypes.STRING, true)
+                .Build();
             services.AddMvc(opts => opts.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthentication(options =>
             {

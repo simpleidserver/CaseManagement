@@ -86,6 +86,18 @@ namespace CaseManagement.BPMN.Builders
             return this;
         }
 
+        public ProcessInstanceBuilder AddBoundaryEvent(string id, string name, Action<BoundaryEventBuilder> callback = null)
+        {
+            var boundaryEvtBuilder = new BoundaryEventBuilder(id, name);
+            if (callback != null)
+            {
+                callback(boundaryEvtBuilder);
+            }
+
+            Builders.Add(boundaryEvtBuilder);
+            return this;
+        }
+
         #endregion
 
         #region Build tasks

@@ -1,14 +1,15 @@
 ﻿using CaseManagement.BPMN.Builders;
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Persistence;
-using CaseManagement.BPMN.ProcessInstance.Processors;
+using CaseManagement.BPMN.ProcessInstance.Commands;
 using CaseManagement.BPMN.Tests.Delegates;
 using CaseManagement.BPMN.Tests.ItemDefs;
 using CaseManagement.Common.Factories;
+using MassTransit;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
@@ -308,13 +309,112 @@ namespace CaseManagement.BPMN.Tests
             Assert.True(casePlanInstance.ElementInstances.All(_ => _.State == FlowNodeStates.Complete));
         }
 
+        [Fact]
+        public async Task When_Execute_BoundaryEvent()
+        {
+            var humanTaskInstanceId = Guid.NewGuid().ToString();
+            const string messageName = "message";
+            var processInstance = ProcessInstanceBuilder.New("processFile")
+                .AddMessage(messageName, "message", "item")
+                .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
+                .AddStartEvent("1", "evt")
+                .AddUserTask("2", "userTask", (cb) =>
+                {
+                    cb.SetWsHumanTask("dressAppropriate");
+                    cb.AddBoundaryEventRef("3");
+                })
+                .AddBoundaryEvent("3", "messageReceived", _ =>
+                {
+                    _.AddMessageEvtDef("id", cb =>
+                    {
+                        cb.SetMessageRef(messageName);
+                    });
+                })
+                .AddEmptyTask("4", "emptyTask")
+                .AddSequenceFlow("seq1", "sequence", "1", "2")
+                .AddSequenceFlow("seq2", "sequence", "2", "3")
+                .AddSequenceFlow("seq3", "sequence", "3", "4")
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            jobServer.HttpMessageHandler.Protected()
+                .As<IHttpMessageHandler>()
+                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    Content = new StringContent("{ 'id' : '{" + humanTaskInstanceId + "}' }")
+                });
+
+            await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
+            await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+            await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, new PersonParameter { }, CancellationToken.None);
+            var casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
+            var ei = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
+            await jobServer.EnqueueStateTransition(casePlanInstance.AggregateId, ei.EltId, "COMPLETED", new JObject(), CancellationToken.None);
+            casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
+            Assert.True(casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1").State == FlowNodeStates.Complete);
+            Assert.True(casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2").State == FlowNodeStates.Complete);
+            Assert.True(casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "4").State == FlowNodeStates.Complete);
+        }
+
+        [Fact]
+        public async Task When_Execute_HumanTaskWithBoundaryEvent()
+        {
+            var humanTaskInstanceId = Guid.NewGuid().ToString();
+            const string messageName = "humanTaskCreated";
+            var processInstance = ProcessInstanceBuilder.New("processFile")
+                .AddMessage(messageName, "humanTaskCreated", "item")
+                .AddItemDef("item", ItemKinds.Information, false, typeof(HumanTaskParameter).FullName)
+                .AddStartEvent("1", "evt")
+                .AddUserTask("2", "userTask", (cb) =>
+                {
+                    cb.SetWsHumanTask("dressAppropriate");
+                    cb.AddBoundaryEventRef("3");
+                })
+                .AddBoundaryEvent("3", "humanTaskCreated", _ =>
+                {
+                    _.AddMessageEvtDef("id", cb =>
+                    {
+                        cb.SetMessageRef(messageName);
+                    });
+                })
+                .AddEmptyTask("4", "emptyTask")
+                .AddSequenceFlow("seq1", "sequence", "1", "2")
+                .AddSequenceFlow("seq2", "sequence", "2", "3")
+                .AddSequenceFlow("seq3", "sequence", "3", "4")
+                .Build();
+            var jobServer = FakeCaseJobServer.New();
+            jobServer.Start();
+            jobServer.HttpMessageHandler.Protected()
+                .As<IHttpMessageHandler>()
+                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    Content = new StringContent("{ 'id' : '{" + humanTaskInstanceId + "}' }")
+                });
+            await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
+            await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
+            var result = await jobServer.MonitoringProcessInstance(processInstance.AggregateId, (p) =>
+            {
+                var elt = p.ElementInstances.FirstOrDefault(_ => _.FlowNodeId == "4");
+                return elt != null && elt.State == FlowNodeStates.Complete;
+            }, CancellationToken.None);
+            var ei = result.ElementInstances.First(_ => _.FlowNodeId == "2");
+            await jobServer.EnqueueStateTransition(result.AggregateId, ei.EltId, "COMPLETED", new JObject(), CancellationToken.None);
+            result = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
+            Assert.True(result.ElementInstances.First(_ => _.FlowNodeId == "1").State == FlowNodeStates.Complete);
+            Assert.True(result.ElementInstances.First(_ => _.FlowNodeId == "2").State == FlowNodeStates.Complete);
+            Assert.True(result.ElementInstances.First(_ => _.FlowNodeId == "4").State == FlowNodeStates.Complete);
+            jobServer.Stop();
+        }
+
         #endregion
 
         private class FakeCaseJobServer
         {
             private readonly IServiceProvider _serviceProvider;
             private readonly IProcessInstanceCommandRepository _processInstanceCommandRepository;
-            private readonly IProcessInstanceProcessor _processInstanceProcessor;
+            private readonly IBusControl _busControl;
+            private readonly IMediator _mediator;
             private FakeHttpClientFactory _factory;
 
             private FakeCaseJobServer()
@@ -333,15 +433,39 @@ namespace CaseManagement.BPMN.Tests
                 serviceCollection.AddSingleton<IHttpClientFactory>(_factory);
                 _serviceProvider = serviceCollection.BuildServiceProvider();
                 _processInstanceCommandRepository = _serviceProvider.GetRequiredService<IProcessInstanceCommandRepository>();
-                _processInstanceProcessor = _serviceProvider.GetRequiredService<IProcessInstanceProcessor>();
+                _busControl = _serviceProvider.GetRequiredService<IBusControl>();
+                _mediator = _serviceProvider.GetRequiredService<IMediator>();
             }
 
             public Mock<HttpMessageHandler> HttpMessageHandler => _factory.MockHttpHandler;
+
+            public void Start()
+            {
+                _busControl.Start();
+            }
+
+            public void Stop()
+            {
+                _busControl.Stop();
+            }
 
             public static FakeCaseJobServer New()
             {
                 var result = new FakeCaseJobServer();
                 return result;
+            }
+
+            public async Task<ProcessInstanceAggregate> MonitoringProcessInstance(string id, Func<ProcessInstanceAggregate, bool> callback, CancellationToken token)
+            {
+                while (true)
+                {
+                    Thread.Sleep(100);
+                    var result = await _processInstanceCommandRepository.Get(id, token);
+                    if (callback(result))
+                    {
+                        return result;
+                    }
+                }
             }
 
             public Task<ProcessInstanceAggregate> Get(string id, CancellationToken token)
@@ -354,38 +478,35 @@ namespace CaseManagement.BPMN.Tests
                 await _processInstanceCommandRepository.Add(processInstance, token);
             }
 
-            public async Task EnqueueProcessInstance(string processInstanceId, bool isNewInstance, CancellationToken token)
+            public Task EnqueueProcessInstance(string processInstanceId, bool isNewInstance, CancellationToken token)
             {
-                var processInstance = await _processInstanceCommandRepository.Get(processInstanceId, token);
-                if (isNewInstance)
+                return _mediator.Send(new StartProcessInstanceCommand
                 {
-                    processInstance.NewExecutionPath();
-                }
-
-                await _processInstanceProcessor.Execute(processInstance, token);
-                await _processInstanceCommandRepository.Update(processInstance, token);
+                    NewExecutionPath = isNewInstance,
+                    ProcessInstanceId = processInstanceId
+                }, token);
             }
 
-            public async Task EnqueueStateTransition(string processInstanceId, string flowNodeInstanceId, string state, JObject jObj, CancellationToken token)
+            public Task EnqueueStateTransition(string processInstanceId, string flowNodeInstanceId, string state, JObject jObj, CancellationToken token)
             {
-                var processInstance = await _processInstanceCommandRepository.Get(processInstanceId, token);
-                var content = jObj == null ? string.Empty : jObj.ToString();
-                processInstance.ConsumeStateTransition(flowNodeInstanceId, state, content);
-                await _processInstanceProcessor.Execute(processInstance, token);
-                await _processInstanceCommandRepository.Update(processInstance, token);
+                return _mediator.Send(new MakeStateTransitionCommand
+                {
+                    FlowNodeElementInstanceId = flowNodeInstanceId,
+                    FlowNodeInstanceId = processInstanceId,
+                    Parameters = jObj,
+                    State = state
+                }, token);
             }
 
-            public async Task EnqueueMessage(string processInstanceId, string messageName, object jObj, CancellationToken token)
+            public Task EnqueueMessage(string processInstanceId, string messageName, object jObj, CancellationToken token)
             {
-                var content = jObj == null ? string.Empty : JsonConvert.SerializeObject(jObj).ToString();
-                var processInstance = await _processInstanceCommandRepository.Get(processInstanceId, token);
-                processInstance.ConsumeMessage(new MessageToken
+                var content = jObj == null ? null : JObject.FromObject(jObj);
+                return _mediator.Send(new ConsumeMessageInstanceCommand
                 {
-                    Name = messageName,
-                    MessageContent = content
+                    FlowNodeInstanceId = processInstanceId,
+                    MessageContent = content,
+                    Name = messageName
                 });
-                await _processInstanceProcessor.Execute(processInstance, token);
-                await _processInstanceCommandRepository.Update(processInstance, token);
             }
         }
 

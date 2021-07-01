@@ -9,16 +9,19 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         protected BPMNExecutionResult(
             bool isNext = false, 
             bool isBlocked = false, 
+            bool isRestarted = false,
             object outcome = null, 
             bool isEltInstanceCompleted = true, 
             bool isNewExecutionPointerRequired = false, 
             ICollection<string> nextFlowNodeIds = null) : base(isNext, isBlocked, outcome)
         {
+            IsRestarted = isRestarted;
             IsEltInstanceCompleted = isEltInstanceCompleted;
             IsNewExecutionPointerRequired = isNewExecutionPointerRequired;
             NextFlowNodeIds = nextFlowNodeIds;
         }
 
+        public bool IsRestarted { get; set; }
         public bool IsEltInstanceCompleted { get; set; }
         public bool IsNewExecutionPointerRequired { get; set; }
         public ICollection<string> NextFlowNodeIds { get; set; }
@@ -34,5 +37,10 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         {
             return new BPMNExecutionResult(isBlocked: true);
         }
+
+        public static BPMNExecutionResult Restart()
+        {
+            return new BPMNExecutionResult(isBlocked: true, isRestarted: true);
+        } 
     }
 }

@@ -46,7 +46,9 @@ namespace CaseManagement.BPMN.Domains
                 case FlowNodeTypes.USERTASK:
                     return Deserialize<UserTask>(json);
                 case FlowNodeTypes.ENDEVENT:
-                    return Deserialize<EndEvent>(json);
+                    return EndEvent.Deserialize<EndEvent>(json);
+                case FlowNodeTypes.BOUNDARYEVENT:
+                    return BoundaryEvent.Deserialize<BoundaryEvent>(json);
             }
 
             return null;

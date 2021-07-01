@@ -44,6 +44,7 @@ namespace CaseManagement.BPMN.Builders
         public ActivityNodeBuilder(string id, string name) : base(id, name)
         {
             StartQuantity = 1;
+            BoundaryEvtRefs = new List<string>();
         }
 
         public ActivityNodeBuilder SetStartQuantity(int startQuantity)
@@ -52,12 +53,20 @@ namespace CaseManagement.BPMN.Builders
             return this;
         }
 
+        internal List<string> BoundaryEvtRefs { get; set; }
         internal int StartQuantity { get; set; }
+
+        public ActivityNodeBuilder AddBoundaryEventRef(string boundaryEvtRef)
+        {
+            BoundaryEvtRefs.Add(boundaryEvtRef);
+            return this;
+        }
 
         protected void FeedActivityNode(BaseActivity node)
         {
             FeedFlowNode(node);
             node.StartQuantity = StartQuantity;
+            node.BoundaryEvtRefs = BoundaryEvtRefs;
         }
     }
 
@@ -193,6 +202,18 @@ namespace CaseManagement.BPMN.Builders
         public override BaseFlowNode Build()
         {
             var result = new EndEvent();
+            FeedCatchEvt(result);
+            return result;
+        }
+    }
+
+    public class BoundaryEventBuilder : CatchEventBuilder
+    {
+        public BoundaryEventBuilder(string id, string name) : base(id, name) { }
+
+        public override BaseFlowNode Build()
+        {
+            var result = new BoundaryEvent();
             FeedCatchEvt(result);
             return result;
         }

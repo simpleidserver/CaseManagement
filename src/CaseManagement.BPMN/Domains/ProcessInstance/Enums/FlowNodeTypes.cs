@@ -10,6 +10,7 @@
         PARALLELGATEWAY = 5,
         INCLUSIVEGATEWAY = 6,
         USERTASK = 7,
-        ENDEVENT = 8
+        ENDEVENT = 8,
+        BOUNDARYEVENT = 9
     }
 }

@@ -2,6 +2,7 @@
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.ProcessInstance.Processors;
 using CaseManagement.BPMN.Resources;
+using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
     {
         private readonly IProcessInstanceCommandRepository _processInstanceCommandRepository;
         private readonly IProcessInstanceProcessor _processInstanceProcessor;
+        private readonly IBusControl _busControl;
         private readonly ILogger<MakeStateTransitionCommandHandler> _logger;
 
         public MakeStateTransitionCommandHandler(
             IProcessInstanceCommandRepository processInstanceCommandRepository,
             IProcessInstanceProcessor processInstanceProcessor,
+            IBusControl busControl,
             ILogger<MakeStateTransitionCommandHandler> logger)
         {
             _processInstanceCommandRepository = processInstanceCommandRepository;
@@ -43,7 +46,13 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
 
             var content = request.Parameters == null ? string.Empty : request.Parameters.ToString();
             processInstance.ConsumeStateTransition(request.FlowNodeElementInstanceId, request.State, content);
-            await _processInstanceProcessor.Execute(processInstance, cancellationToken);
+            var isRestarted = await _processInstanceProcessor.Execute(processInstance, cancellationToken);
+            if (isRestarted)
+            {
+                var evt = processInstance.Restart();
+                await _busControl.Publish(evt, cancellationToken);
+            }
+
             await _processInstanceCommandRepository.Update(processInstance, cancellationToken);
             await _processInstanceCommandRepository.SaveChanges(cancellationToken);
             return true;

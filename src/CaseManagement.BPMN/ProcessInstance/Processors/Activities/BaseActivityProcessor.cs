@@ -42,9 +42,15 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
             {
                 try
                 {
+                    executionContext.Instance.LaunchBoundaryEvts(executionContext.Pointer.ExecutionPathId, elt.BoundaryEvtRefs);
                     var addOutcome = await Process(executionContext, elt, cancellationToken);
                     outcome.AddRange(addOutcome);
                     executionContext.Instance.UpdateState(instance, ActivityStates.COMPLETED);
+                    executionContext.Instance.CompleteBoundaryEvts(executionContext.Pointer.ExecutionPathId, elt.BoundaryEvtRefs);
+                }
+                catch(FlowNodeInstanceRestartedException)
+                {
+                    return BPMNExecutionResult.Restart();
                 }
                 catch(FlowNodeInstanceBlockedException)
                 {

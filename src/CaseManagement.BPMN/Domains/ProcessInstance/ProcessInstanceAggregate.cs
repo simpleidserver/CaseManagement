@@ -195,6 +195,26 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
+        public void LaunchBoundaryEvts(string pathId, List<string> evts)
+        {
+            var items = evts.Select(e => GetDefinition(e));
+            foreach(var item in items)
+            {
+                TryAddExecutionPointer(pathId, item);
+            }
+        }
+
+        public void CompleteBoundaryEvts(string pathId, List<string> evts)
+        {
+            var path = GetExecutionPath(pathId);
+            var pointers = path.ActivePointers.Where(p => evts.Contains(p.FlowNodeId));
+            foreach(var pointer in pointers)
+            {
+                var evt = new ExecutionPointerExitedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, pointer.ExecutionPathId, pointer.Id, DateTime.UtcNow);
+                Handle(evt);
+            }
+        }
+
         public string LaunchNewExecutionPointer(ExecutionPointer pointer)
         {
             return TryAddExecutionPointer(pointer.ExecutionPathId, GetDefinition(pointer.FlowNodeId));
@@ -253,6 +273,11 @@ namespace CaseManagement.BPMN.Domains
             {
                 ConsumeMessage(executionPath, messageToken);
             }
+        }
+
+        public ProcessInstanceRestartedEvent Restart()
+        {
+            return new ProcessInstanceRestartedEvent(Guid.NewGuid().ToString(), AggregateId, Version + 1, DateTime.UtcNow);
         }
 
         #endregion
@@ -486,6 +511,14 @@ namespace CaseManagement.BPMN.Domains
             pointer.AddOutgoing(evt.OutcomeValues);
             Version = evt.Version;
             UpdateDateTime = evt.CompletionDateTime;
+        }
+
+        private void Handle(ExecutionPointerExitedEvent evt)
+        {
+            var pointer = GetExecutionPointer(evt.ExecutionPathId, evt.ExecutionPointerId);
+            pointer.IsActive = false;
+            Version = evt.Version;
+            UpdateDateTime = evt.ExitDateTime;
         }
 
         private void Handle(ActivityStateUpdatedEvent evt)

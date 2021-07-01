@@ -58,24 +58,12 @@ namespace CaseManagement.BPMN.Parser
                     tExclusiveGateway exclusiveGateway;
                     tUserTask userTask;
                     tServiceTask serviceTask;
+                    tBoundaryEvent boundaryEvent;
                     if ((startEvt = item as tStartEvent) != null)
                     {
                         builder.AddStartEvent(startEvt.id, startEvt.name, cb =>
                         {
-                            if (startEvt.Items == null)
-                            {
-                                return;
-                            }
-
-                            var tMessageEvt = startEvt.Items.FirstOrDefault(i => i is tMessageEventDefinition);
-                            if (tMessageEvt != null)
-                            {
-                                var evt = tMessageEvt as tMessageEventDefinition;
-                                cb.AddMessageEvtDef(evt.id, (cb) => 
-                                {
-                                    cb.SetMessageRef(evt.messageRef.Name);    
-                                });
-                            }
+                            Update(cb, startEvt);
                         });
                     }
                     else if ((endEvt = item as tEndEvent) != null)
@@ -86,6 +74,7 @@ namespace CaseManagement.BPMN.Parser
                     {
                         builder.AddUserTask(userTask.id, userTask.name, (cb) =>
                         {
+                            Update(cb, item.id, process.Items);
                             if (userTask.implementation == BPMNConstants.UserTaskImplementations.WSHUMANTASK)
                             {
                                 var parameters = userTask.extensionElements?.Any.FirstOrDefault(_ => _.Name == "cmg:parameters");
@@ -110,6 +99,7 @@ namespace CaseManagement.BPMN.Parser
                     {
                         builder.AddServiceTask(serviceTask.id, serviceTask.name, (cb) =>
                         {
+                            Update(cb, item.id, process.Items);
                             if (serviceTask.implementation == BPMNConstants.ServiceTaskImplementations.CALLBACK)
                             {
                                 cb.SetDelegate(serviceTask.delegateId);
@@ -118,7 +108,10 @@ namespace CaseManagement.BPMN.Parser
                     }
                     else if((task = item as tTask) != null)
                     {
-                        builder.AddEmptyTask(task.id, task.name);
+                        builder.AddEmptyTask(task.id, task.name, (cb)=>
+                        {
+                            Update(cb, item.id, process.Items);
+                        });
                     }
                     else if((sequenceFlow = item as tSequenceFlow) != null)
                     {
@@ -128,12 +121,47 @@ namespace CaseManagement.BPMN.Parser
                     {
                         builder.AddExclusiveGateway(exclusiveGateway.id, exclusiveGateway.name, MAPPING_GATEWAY_DIRECTIONS[exclusiveGateway.gatewayDirection], exclusiveGateway.@default);
                     }
+                    else if ((boundaryEvent = item as tBoundaryEvent) != null)
+                    {
+                        builder.AddBoundaryEvent(boundaryEvent.id, boundaryEvent.name, cb =>
+                        {
+                            Update(cb, boundaryEvent);
+                        });
+                    }
                 }
 
                 result.Add(builder.Build());
             }
 
             return result;
+        }
+
+        private static void Update(ActivityNodeBuilder builder, string eltId, tFlowElement[] items)
+        {
+            var boundaryEvts = items.Where(i => i is tBoundaryEvent).Cast<tBoundaryEvent>();
+            var filteredBoundaryEvts = boundaryEvts.Where(e => e.attachedToRef.Name == eltId);
+            foreach(var boundaryEvt in filteredBoundaryEvts)
+            {
+                builder.AddBoundaryEventRef(boundaryEvt.id);
+            }
+        }
+
+        private static void Update(CatchEventBuilder builder, tCatchEvent catchEvt)
+        {
+            if (catchEvt.Items == null)
+            {
+                return;
+            }
+
+            var tMessageEvt = catchEvt.Items.FirstOrDefault(i => i is tMessageEventDefinition);
+            if (tMessageEvt != null)
+            {
+                var messageEvt = tMessageEvt as tMessageEventDefinition;
+                builder.AddMessageEvtDef(catchEvt.id, (cb) =>
+                {
+                    cb.SetMessageRef(messageEvt.messageRef.Name);
+                });
+            }
         }
     }
 }

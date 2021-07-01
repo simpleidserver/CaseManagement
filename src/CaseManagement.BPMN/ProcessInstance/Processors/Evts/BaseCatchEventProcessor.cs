@@ -8,8 +8,9 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Evts
 {
     public abstract class BaseCatchEventProcessor<T> : BaseFlowNodeProcessor<T> where T : BaseCatchEvent
     {
-        protected override Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, T nodeDef, CancellationToken cancellationToken)
+        protected override async Task<BPMNExecutionResult> Handle(BPMNExecutionContext executionContext, T nodeDef, CancellationToken cancellationToken)
         {
+            await InternalHandle(executionContext, nodeDef, cancellationToken);
             var flowNodeIds = GetNextFlowNodeIds(executionContext, nodeDef);
             if (nodeDef.EventDefinitions.Any())
             {
@@ -24,13 +25,15 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Evts
                 {
                     var outcome = new List<MessageToken>();
                     outcome.AddRange(executionContext.Pointer.Incoming);
-                    return Task.FromResult(BPMNExecutionResult.Next(flowNodeIds, executionContext.Pointer.Incoming.ToList(), isEltInstanceCompleted: false, isNewExecutionPointerRequired: true));
+                    return BPMNExecutionResult.Next(flowNodeIds, executionContext.Pointer.Incoming.ToList(), isEltInstanceCompleted: false, isNewExecutionPointerRequired: true);
                 }
 
-                return Task.FromResult(BPMNExecutionResult.Block());
+                return BPMNExecutionResult.Block();
             }
 
-            return Task.FromResult(BPMNExecutionResult.Next(flowNodeIds, new List<MessageToken>() { MessageToken.EmptyMessage() }));
+            return BPMNExecutionResult.Next(flowNodeIds, new List<MessageToken>() { MessageToken.EmptyMessage() });
         }
+
+        protected abstract Task InternalHandle(BPMNExecutionContext executionContext, T nodeDef, CancellationToken cancellationToken);
     }
 }

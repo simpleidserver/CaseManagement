@@ -4,6 +4,7 @@ using CaseManagement.Common.Expression;
 using CaseManagement.Common.Factories;
 using IdentityModel.Client;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -92,7 +93,12 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     var o = JObject.Parse(str);
                     var humanTaskInstancId = o["id"].ToString();
                     executionContext.Instance.UpdateMetadata(pointer.InstanceFlowNodeId, HUMANTASK_INSTANCE_ID_NAME, humanTaskInstancId);
-                    throw new FlowNodeInstanceBlockedException();
+                    executionContext.Instance.ConsumeMessage(new MessageToken
+                    {
+                        Name = "humanTaskCreated",
+                        MessageContent = JsonConvert.SerializeObject(new { Id = humanTaskInstancId })
+                    });
+                    throw new FlowNodeInstanceRestartedException();
                 }
             }
 

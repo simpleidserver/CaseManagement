@@ -2,6 +2,7 @@
 using CaseManagement.BPMN.Persistence;
 using CaseManagement.BPMN.ProcessInstance.Processors;
 using CaseManagement.BPMN.Resources;
+using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Threading;
@@ -13,15 +14,18 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
     {
         private readonly IProcessInstanceCommandRepository _processInstanceCommandRepository;
         private readonly IProcessInstanceProcessor _processInstanceProcessor;
+        private readonly IBusControl _busControl;
         private readonly ILogger<StartProcessInstanceCommandHandler> _logger;
 
         public StartProcessInstanceCommandHandler(
             IProcessInstanceCommandRepository processInstanceCommandRepository,
             IProcessInstanceProcessor processInstanceProcessor,
+            IBusControl busControl,
             ILogger<StartProcessInstanceCommandHandler> logger)
         {
             _processInstanceCommandRepository = processInstanceCommandRepository;
             _processInstanceProcessor = processInstanceProcessor;
+            _busControl = busControl;
             _logger = logger;
         }
 
@@ -35,8 +39,18 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
             }
 
             processInstance.Start(request.NameIdentifier);
-            processInstance.NewExecutionPath();
-            await _processInstanceProcessor.Execute(processInstance, cancellationToken);
+            if (request.NewExecutionPath)
+            {
+                processInstance.NewExecutionPath();
+            }
+
+            var isRestarted = await _processInstanceProcessor.Execute(processInstance, cancellationToken);
+            if (isRestarted)
+            {
+                var evt = processInstance.Restart();
+                await _busControl.Publish(evt, cancellationToken);
+            }
+
             await _processInstanceCommandRepository.Update(processInstance, cancellationToken);
             await _processInstanceCommandRepository.SaveChanges(cancellationToken);
             return true;
