@@ -30,23 +30,50 @@ export class HeaderComponent extends BaseUIComponent {
     templateUrl: 'headerdialog.component.html',
 })
 export class HeaderComponentDialog {
-    configureHeaderForm: FormGroup;
+    configureForm: FormGroup;
+    languages: string[] = ['fr', 'en'];
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<HeaderComponentDialog>
     ) {
-        this.configureHeaderForm = new FormGroup({
+        const self = this;
+        this.configureForm = new FormGroup({
             txt: new FormControl({ value: '' }),
             class: new FormControl({ value: '' })
         });
-        this.configureHeaderForm.get('txt').setValue(data.opt.txt);
-        this.configureHeaderForm.get('class').setValue(data.opt.class);
+        self.languages.forEach((lng: string) => {
+            this.configureForm.addControl('label#' + lng, new FormControl(''));
+        });
+        this.configureForm.get('class').setValue(data.opt.class);
+        if (data.opt.translations) {
+            data.opt.translations.forEach(function (tr: any) {
+                self.configureForm.get('label#' + tr.language).setValue(tr.value);
+            });
+        }
     }
 
-    onSave(val: { txt: string, class: string }) {
+    onSave(val: { class: string }) {
+        const translations: any[] = [];
+        for (const key in this.configureForm.controls) {
+            if (key.startsWith('label')) {
+                const language = key.split('#')[1];
+                translations.push({
+                    language: language,
+                    value: this.configureForm.get(key).value
+                });
+            }
+        }
+
         const opt = this.data.opt;
-        opt.txt = val.txt;
+        opt.translations = translations;
         opt.class = val.class;
         this.dialogRef.close(opt);
+    }
+
+    close(evt: any) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        this.dialogRef.close(null);
     }
 }

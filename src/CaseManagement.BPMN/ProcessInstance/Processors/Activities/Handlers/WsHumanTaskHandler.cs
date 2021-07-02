@@ -93,10 +93,20 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     var o = JObject.Parse(str);
                     var humanTaskInstancId = o["id"].ToString();
                     executionContext.Instance.UpdateMetadata(pointer.InstanceFlowNodeId, HUMANTASK_INSTANCE_ID_NAME, humanTaskInstancId);
+                    var jObj = new JObject();
+                    jObj.Add("id", humanTaskInstancId);
+                    var incoming = executionContext.Pointer.Incoming.ToList();
+                    incoming.Add(new MessageToken
+                    {
+                        Name = "humanTaskInstance",
+                        MessageContent = jObj.ToString()
+                    });
+                    var messageContent = new JObject();
+                    messageContent.Add("incoming", JArray.FromObject(incoming));
                     executionContext.Instance.ConsumeMessage(new MessageToken
                     {
                         Name = "humanTaskCreated",
-                        MessageContent = JsonConvert.SerializeObject(new { Id = humanTaskInstancId })
+                        MessageContent = messageContent.ToString()
                     });
                     throw new FlowNodeInstanceRestartedException();
                 }

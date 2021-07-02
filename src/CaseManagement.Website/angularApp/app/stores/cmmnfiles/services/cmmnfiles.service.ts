@@ -14,7 +14,7 @@ export class CmmnFilesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/case-files/search";
         const request: any = { startIndex: startIndex, count: count, takeLatest: takeLatest };
         if (order) {
@@ -39,7 +39,7 @@ export class CmmnFilesService {
     get(id: string): Observable<CmmnFile> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         let targetUrl = process.env.API_URL + "/case-files/" + id;
         return this.http.get<CmmnFile>(targetUrl, { headers: headers });
     }
@@ -49,7 +49,7 @@ export class CmmnFilesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         let targetUrl = process.env.API_URL + "/case-files";
         return this.http.post(targetUrl, request, { headers: headers }).pipe(map((res: any) => {
             return res['id'];
@@ -61,7 +61,7 @@ export class CmmnFilesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         let targetUrl = process.env.API_URL + "/case-files/" + id;
         return this.http.put(targetUrl, request, { headers: headers });
     }
@@ -71,7 +71,7 @@ export class CmmnFilesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         let targetUrl = process.env.API_URL + "/case-files/" + id + "/payload";
         return this.http.put(targetUrl, request, { headers: headers });
     }
@@ -79,7 +79,7 @@ export class CmmnFilesService {
     publish(id: string) : Observable<string> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         let targetUrl = process.env.API_URL + "/case-files/" + id + "/publish";
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return res;

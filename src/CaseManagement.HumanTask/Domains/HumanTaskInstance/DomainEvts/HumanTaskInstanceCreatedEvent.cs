@@ -13,6 +13,7 @@ namespace CaseManagement.HumanTask.Domains
             string aggregateId, 
             int version, 
             string humanTaskDefName, 
+            string validatorFullQualifiedName,
             DateTime createDateTime, 
             Dictionary<string, string> inputParameters,
             ICollection<PeopleAssignmentInstance> peopleAssignments, 
@@ -32,6 +33,7 @@ namespace CaseManagement.HumanTask.Domains
             DateTime? expirationTime = null) : base(id, aggregateId, version)
         {
             HumanTaskDefName = humanTaskDefName;
+            ValidatorFullQualifiedName = validatorFullQualifiedName;
             CreateDateTime = createDateTime;
             InputParameters = inputParameters;
             PeopleAssignments = peopleAssignments;
@@ -51,6 +53,7 @@ namespace CaseManagement.HumanTask.Domains
             ExpirationTime = expirationTime;
         }
 
+        public string ValidatorFullQualifiedName { get; set; }
         public string HumanTaskDefName { get; set; }
         public DateTime CreateDateTime { get; set; }
         public Dictionary<string, string> InputParameters { get; set; }

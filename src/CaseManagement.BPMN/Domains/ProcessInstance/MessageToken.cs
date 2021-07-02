@@ -23,7 +23,7 @@ namespace CaseManagement.BPMN.Domains
 
         public string GetProperty(string key)
         {
-            if (JObjMessageContent.ContainsKey(key))
+            if (!JObjMessageContent.ContainsKey(key))
             {
                 return null;
             }

@@ -4,6 +4,17 @@
     <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="angularApp\app\common\rendering\basetxt-dialog.component.ts" />
+    <None Remove="angularApp\app\common\rendering\basetxt.component.html" />
+    <None Remove="angularApp\app\common\rendering\basetxt.component.ts" />
+    <None Remove="angularApp\app\common\rendering\confirmpwd\confirmpwd.component.scss" />
+    <None Remove="angularApp\app\common\rendering\confirmpwd\confirmpwd.component.ts" />
+    <None Remove="angularApp\app\common\rendering\pwd\pwd.component.scss" />
+    <None Remove="angularApp\app\common\rendering\pwd\pwd.component.ts" />
+    <None Remove="angularApp\app\common\rendering\submitbtn\submitbtn.component.html" />
+    <None Remove="angularApp\app\common\rendering\submitbtn\submitbtn.component.scss" />
+    <None Remove="angularApp\app\common\rendering\submitbtn\submitbtn.component.ts" />
+    <None Remove="angularApp\app\pipes\translateenum.pipe.ts" />
     <None Remove="angularApp\app\tasks\guidgenerator.ts" />
     <None Remove="angularApp\app\common\rendering\baseui.component.ts" />
     <None Remove="angularApp\app\common\rendering\column\column.component.html" />
@@ -43,6 +54,15 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="angularApp\app\common\guidgenerator.ts" />
+    <TypeScriptCompile Include="angularApp\app\common\rendering\basetxt-dialog.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\basetxt.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\basetxt.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\common\rendering\baseui.component.ts" />
     <TypeScriptCompile Include="angularApp\app\common\rendering\column\column.component.html">
       <SubType>Code</SubType>
@@ -51,6 +71,10 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\common\rendering\column\column.component.ts" />
+    <TypeScriptCompile Include="angularApp\app\common\rendering\confirmpwd\confirmpwd.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\confirmpwd\confirmpwd.component.ts" />
     <TypeScriptCompile Include="angularApp\app\common\rendering\container\container.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -76,6 +100,10 @@
     <TypeScriptCompile Include="angularApp\app\common\rendering\header\header.component.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\pwd\pwd.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\pwd\pwd.component.ts" />
     <TypeScriptCompile Include="angularApp\app\common\rendering\row\row.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -94,6 +122,15 @@
     <TypeScriptCompile Include="angularApp\app\common\rendering\select\select.component.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\submitbtn\submitbtn.component.html">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\submitbtn\submitbtn.component.scss">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="angularApp\app\common\rendering\submitbtn\submitbtn.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\common\rendering\txt\txt.component.html">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -102,6 +139,9 @@
     </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\common\rendering\txt\txt.component.ts" />
     <TypeScriptCompile Include="angularApp\app\infrastructure\pipes.module.ts" />
+    <TypeScriptCompile Include="angularApp\app\pipes\translateenum.pipe.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="angularApp\app\stores\cases\models\caseinstance.model.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

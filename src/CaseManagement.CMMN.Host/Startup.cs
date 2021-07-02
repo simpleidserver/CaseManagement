@@ -1,6 +1,6 @@
 ﻿// Copyright (c) SimpleIdServer. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-using CaseManagement.CMMN.AspNetCore;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,10 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -21,6 +23,11 @@ namespace CaseManagement.CMMN.Host
 {
     public class Startup
     {
+        private Dictionary<string, string> MAPPING_OPENIDCLAIM_TO_CLAIM = new Dictionary<string, string>
+        {
+            { "sub", ClaimTypes.NameIdentifier },
+            { "role", ClaimTypes.Role }
+        };
         private readonly IHostingEnvironment _env;
         private readonly IConfiguration _configuration;
 
@@ -41,11 +48,58 @@ namespace CaseManagement.CMMN.Host
             })
             .AddJwtBearer(options =>
             {
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async (ctx) =>
+                    {
+                        var issuer = ctx.Principal.Claims.First(c => c.Type == "iss").Value;
+                        using (var httpClient = new HttpClient())
+                        {
+                            var authorization = ctx.Request.Headers["Authorization"][0];
+                            var bearer = authorization.Split(" ").Last();
+                            var requestMessage = new HttpRequestMessage
+                            {
+                                RequestUri = new Uri($"{issuer}/userinfo"),
+                                Method = HttpMethod.Get
+                            };
+                            requestMessage.Headers.Add("Authorization", $"Bearer {bearer}");
+                            var httpResponse = await httpClient.SendAsync(requestMessage);
+                            var json = await httpResponse.Content.ReadAsStringAsync();
+                            var jObj = JObject.Parse(json);
+                            var identity = new ClaimsIdentity("userInfo");
+                            foreach (var kvp in jObj)
+                            {
+                                var key = kvp.Key;
+                                if (MAPPING_OPENIDCLAIM_TO_CLAIM.ContainsKey(key))
+                                {
+                                    key = MAPPING_OPENIDCLAIM_TO_CLAIM[key];
+                                }
+
+                                if (kvp.Value.ToString().StartsWith('['))
+                                {
+                                    var arr = JArray.Parse(kvp.Value.ToString()).Select(_ => _.ToString()).ToList();
+                                    foreach (var str in arr)
+                                    {
+                                        identity.AddClaim(new Claim(kvp.Key, str));
+                                    }
+                                }
+                                else
+                                {
+                                    identity.AddClaim(new Claim(kvp.Key, kvp.Value.ToString()));
+                                }
+                            }
+
+                            var principal = new ClaimsPrincipal(identity);
+                            ctx.Principal = principal;
+                        }
+                    }
+                };
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
+                        "caseManagementWebsite",
                         "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
@@ -131,6 +185,7 @@ namespace CaseManagement.CMMN.Host
                 opt.CallbackUrl = "http://localhost:60005/case-plan-instances/{id}/complete/{eltId}";
                 opt.WSHumanTaskAPI = "http://localhost:60006";
             }).AddDefinitions(files);
+            services.AddMassTransitHostedService();
             services.AddSwaggerGen();
             services.Configure<ForwardedHeadersOptions>(options =>
             {

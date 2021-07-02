@@ -58,6 +58,12 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
+        public HumanTaskDefBuilder SetValidator(string validator)
+        {
+            _humanTaskDef.ValidatorFullQualifiedName = validator;
+            return this;
+        }
+
         #region Deadlines
 
         public HumanTaskDefBuilder AddStartDeadLine(string name, Action<DeadLineBuilder> callback)  
@@ -145,6 +151,22 @@ namespace CaseManagement.HumanTask.Builders
             return this;
         }
 
+        public HumanTaskDefBuilder SetTaskInitiatorUserRoles(ICollection<string> roles)
+        {
+            foreach (var role in roles)
+            {
+                _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Usage = PeopleAssignmentUsages.TASKINITIATOR,
+                    Type = PeopleAssignmentTypes.GROUPNAMES,
+                    Value = role
+                });
+            }
+
+            return this;
+        }
+
         #endregion
 
         #region Potential owner
@@ -175,6 +197,22 @@ namespace CaseManagement.HumanTask.Builders
                     Usage = PeopleAssignmentUsages.POTENTIALOWNER,
                     Type = PeopleAssignmentTypes.USERIDENTIFIERS,
                     Value = userIdentifier
+                });
+            }
+
+            return this;
+        }
+
+        public HumanTaskDefBuilder SetPotentialOwnerUserRoles(ICollection<string> roles)
+        {
+            foreach (var role in roles)
+            {
+                _humanTaskDef.PeopleAssignments.Add(new PeopleAssignmentDefinition
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Usage = PeopleAssignmentUsages.POTENTIALOWNER,
+                    Type = PeopleAssignmentTypes.GROUPNAMES,
+                    Value = role
                 });
             }
 

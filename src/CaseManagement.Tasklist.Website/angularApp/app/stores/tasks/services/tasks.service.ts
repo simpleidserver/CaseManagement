@@ -20,7 +20,7 @@ export class TasksService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.API_URL + "/humantaskinstances/.search";
         const request: any = { startIndex: startIndex, count: count, actualOwner: owner, statusLst: status };
@@ -37,14 +37,14 @@ export class TasksService {
 
     start(humanTaskInstanceId: string): Observable<boolean> {
         let headers = new HttpHeaders();
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/start";
         return this.http.get<boolean>(targetUrl, { headers: headers });
     }
 
     claim(humanTaskInstanceId: string): Observable<boolean> {
         let headers = new HttpHeaders();
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/claim";
         return this.http.get<boolean>(targetUrl, { headers: headers });
     }
@@ -53,14 +53,14 @@ export class TasksService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/nominate";
         return this.http.post<boolean>(targetUrl, JSON.stringify(nominate), { headers: headers });
     }
 
     getRendering(humanTaskInstanceId: string): Observable<any> {
         let headers = new HttpHeaders();
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Content-Type', 'application/json');
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/rendering";
         return this.http.get<any>(targetUrl, { headers: headers }).pipe(
@@ -71,7 +71,7 @@ export class TasksService {
     getDetails(humanTaskInstanceId: string): Observable<Task> {
         let headers = new HttpHeaders();
         const defaultLang = this.translate.currentLang;
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Content-Type', 'application/json');
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/details";
@@ -83,7 +83,7 @@ export class TasksService {
     getDescription(humanTaskInstanceId: string): Observable<string> {
         let headers = new HttpHeaders();
         const defaultLang = this.translate.currentLang;
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/description";
         return this.http.get<string>(targetUrl, { headers: headers }).pipe(
@@ -96,7 +96,7 @@ export class TasksService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/history";
         const request: any = { startIndex: startIndex, count: count };
@@ -116,7 +116,7 @@ export class TasksService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.API_URL + "/humantaskinstances/" + humanTaskInstanceId + "/complete";
         const request: any = { operationParameters: operationParameters };

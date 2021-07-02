@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.Domains
 {
@@ -29,6 +30,7 @@ namespace CaseManagement.HumanTask.Domains
         public string HumanTaskDefName { get; set; }
         public string ActualOwner { get; set; }
         public int Priority { get; set; }
+        public string ValidatorFullQualifiedName { get; set; }
         public DateTime? ActivationDeferralTime { get; set; }
         public DateTime? ExpirationTime { get; set; }
         public CompositionTypes Type { get; set; }
@@ -60,8 +62,9 @@ namespace CaseManagement.HumanTask.Domains
 
         public static HumanTaskInstanceAggregate New(
             string id,
-            string userPrincipal, 
-            string humanTaskDefName, 
+            string userPrincipal,
+            string humanTaskDefName,
+            string validatorFullQualifiedName,
             Dictionary<string, string> inputParameters, 
             ICollection<PeopleAssignmentInstance> peopleAssignments, 
             int priority, 
@@ -82,7 +85,8 @@ namespace CaseManagement.HumanTask.Domains
                 Guid.NewGuid().ToString(), 
                 id, 
                 0, 
-                humanTaskDefName, 
+                humanTaskDefName,
+                validatorFullQualifiedName,
                 DateTime.UtcNow, 
                 inputParameters,
                 peopleAssignments, 
@@ -115,6 +119,7 @@ namespace CaseManagement.HumanTask.Domains
                 Status = Status,
                 HumanTaskDefName = HumanTaskDefName,
                 ActualOwner = ActualOwner,
+                ValidatorFullQualifiedName = ValidatorFullQualifiedName,
                 OperationParameters = OperationParameters.Select(_ => (Parameter)_.Clone()).ToList(),
                 InputParameters = InputParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
                 OutputParameters = OutputParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
@@ -222,6 +227,7 @@ namespace CaseManagement.HumanTask.Domains
             DomainEvents.Add(evt);
         }
 
+
         /// <summary>
         /// Complete the human task instance.
         /// </summary>
@@ -272,6 +278,7 @@ namespace CaseManagement.HumanTask.Domains
                 UpdateDateTime = evt.CreateDateTime;
                 CreateDateTime = evt.CreateDateTime;
                 Version = evt.Version;
+                ValidatorFullQualifiedName = evt.ValidatorFullQualifiedName;
                 UpdateStatus();
             }
         }

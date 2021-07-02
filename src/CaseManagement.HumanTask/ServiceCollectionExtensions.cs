@@ -46,6 +46,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDeadlineParser, DeadlineParser>();
             services.AddMediatR(typeof(IHumanTaskServer));
             services.TryAddSingleton<ILogicalPeopleGroupStore>(new InMemoryLogicalPeopleGroupStore(logicalPeopleGroup));
+            foreach (var assm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                services.RegisterAllAssignableType(typeof(IHumanTaskInstanceValidator), assm, true);
+            }
+
             return services;
         }
 
@@ -56,6 +61,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IScheduledJobStore>(new InMemoryScheduledJobStore(lstScheduledJobst));
             services.TryAddTransient<IHumanTaskServer, HumanTaskServer>();
             services.RegisterAllAssignableType<IJob>(typeof(ProcessActivationTimerJob).Assembly);
+            foreach (var assm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                services.RegisterAllAssignableType(typeof(IHumanTaskInstanceValidator), assm, true);
+            }
+
             return services;
         }
 

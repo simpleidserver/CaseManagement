@@ -354,10 +354,6 @@ export class ViewBpmnFileComponent implements OnInit, OnDestroy {
         });
     }
 
-    onDelegateChanged(evt: any) {
-
-    }
-
     onHumanTaskChanged(evt: any) {
         const value: string = evt.value;
         this.selectHumanTask(value);

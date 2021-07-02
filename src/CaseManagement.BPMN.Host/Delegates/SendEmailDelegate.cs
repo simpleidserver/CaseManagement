@@ -1,5 +1,6 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,26 +14,24 @@ namespace CaseManagement.BPMN.Host.Delegates
     {
         public Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
         {
-            var user = incoming.FirstOrDefault(i => i.Name == "userMessage");
-            if (user == null)
+            var humanTaskInstanceCreated = incoming.FirstOrDefault(i => i.Name == "humanTaskCreated");
+            if (humanTaskInstanceCreated == null)
             {
-                throw new BPMNProcessorException("userMessage must be passed in the request");
+                throw new BPMNProcessorException("humanTaskCreated must be passed in the request");
             }
 
-            var email = user.GetProperty("email");
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                throw new BPMNProcessorException("email is not passed in the request");
-            }
-
+            var inc = humanTaskInstanceCreated.JObjMessageContent.SelectToken("$.incoming[?(@.Name == 'user')].MessageContent");
+            var messageContent = JObject.Parse(inc.ToString());
+            var email = messageContent["email"].ToString();
             var parameter = SendDelegateParameter.Build(delegateConfiguration);
-            using (var smtpClient = new SmtpClient(parameter.SmtpHost)
+            using (var smtpClient = new SmtpClient())
             {
-                Port = parameter.SmtpPort,
-                Credentials = new NetworkCredential(parameter.SmtpUserName, parameter.SmtpPassword),
-                EnableSsl = parameter.SmtpEnableSsl
-            })
-            {
+                smtpClient.EnableSsl = parameter.SmtpEnableSsl;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential(parameter.SmtpUserName, parameter.SmtpPassword);
+                smtpClient.Host = parameter.SmtpHost;
+                smtpClient.Port = parameter.SmtpPort;
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(parameter.FromEmail),

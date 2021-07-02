@@ -12,7 +12,7 @@ export class CmmnPlanService {
     search(startIndex: number, count: number, order: string, direction: string, caseFileId: string, takeLatest: boolean): Observable<SearchCmmnPlanResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         let targetUrl = process.env.API_URL + "/case-plans/search";
         const request: any = { startIndex: startIndex, count: count, takeLatest: takeLatest };
         if (order) {
@@ -33,7 +33,7 @@ export class CmmnPlanService {
     get(id: string): Observable<CmmnPlan> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         let targetUrl = process.env.API_URL + "/case-plans/" + id;
         return this.http.get<CmmnPlan>(targetUrl, { headers: headers });
     }

@@ -52,4 +52,10 @@ export class RowComponentDialog {
 
         this.dialogRef.close(opt);
     }
+
+    close(evt: any) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        this.dialogRef.close(null);
+    }
 }

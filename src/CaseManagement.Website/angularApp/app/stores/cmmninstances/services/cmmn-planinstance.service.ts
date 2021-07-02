@@ -13,7 +13,7 @@ export class CmmnPlanInstanceService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/case-plan-instances/search";
         const request: any = { startIndex: startIndex, count: count, casePlanId: casePlanId, caseFileId: caseFileId };
         if (order) {
@@ -31,7 +31,7 @@ export class CmmnPlanInstanceService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/case-plan-instances";
         const request: any = { casePlanId: casePlanId };
         return this.http.post<CmmnPlanInstanceResult>(targetUrl, request, { headers: headers });
@@ -40,7 +40,7 @@ export class CmmnPlanInstanceService {
     launchCasePlanInstance(casePlanInstanceId: string) {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId + "/launch";
         return this.http.get(targetUrl, { headers: headers });
     }
@@ -48,7 +48,7 @@ export class CmmnPlanInstanceService {
     get(casePlanInstanceId: string) {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.API_URL + "/case-plan-instances/" + casePlanInstanceId;
         return this.http.get(targetUrl, { headers: headers });
     }

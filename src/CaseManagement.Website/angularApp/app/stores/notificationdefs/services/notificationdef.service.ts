@@ -17,7 +17,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/.search";
         const request: any = { startIndex: startIndex, count: count };
         if (order) {
@@ -34,7 +34,7 @@ export class NotificationDefService {
     addNotification(name: string): Observable<NotificationDefinition> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const request: any = { name: name };
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs";
         return this.http.post<NotificationDefinition>(targetUrl, request, { headers: headers });
@@ -43,7 +43,7 @@ export class NotificationDefService {
     getNotification(id: string): Observable<NotificationDefinition> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id;
         return this.http.get<NotificationDefinition>(targetUrl, { headers: headers });
     }
@@ -52,7 +52,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/info";
         const request: any = { name: name, priority: priority };
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -62,7 +62,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/parameters";
         const request: any = { parameter: parameter };
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -72,7 +72,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/parameters/" + parameterId;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -81,7 +81,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/presentationparameters";
         const request: any = { presentationParameter: presentationParameter };
         return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -91,7 +91,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/presentationparameters/" + presentationParameter.name;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -100,7 +100,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/presentationelts";
         const request: any = { presentationElement: presentationElt };
         return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -110,7 +110,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/presentationelts/" + presentationElt.usage + '/' + presentationElt.language;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -119,7 +119,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/assignments";
         const request: any = { peopleAssignment: peopleAssignment };
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -129,7 +129,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs/" + id + "/assignments/" + peopleAssignment.id;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -138,7 +138,7 @@ export class NotificationDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/notificationdefs";
         return this.http.get<NotificationDefinition[]>(targetUrl, { headers: headers });
     }

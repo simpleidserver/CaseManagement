@@ -13,7 +13,7 @@ export class BpmnInstancesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processinstances/search";
         const request: any = { startIndex: startIndex, count: count };
         if (order) {
@@ -35,7 +35,7 @@ export class BpmnInstancesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processinstances/" + id;
         return this.http.get<BpmnInstance>(targetUrl, { headers: headers });
     }
@@ -44,7 +44,7 @@ export class BpmnInstancesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processinstances";
         const request: any = { processFileId: processFileId };
         return this.http.post<BpmnInstance>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -52,7 +52,7 @@ export class BpmnInstancesService {
 
     start(id: string): Observable<any> {
         let headers = new HttpHeaders();
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processinstances/" + id + "/start";
         return this.http.get<any>(targetUrl, { headers: headers });
     }

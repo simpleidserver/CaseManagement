@@ -14,11 +14,11 @@ namespace CaseManagement.BPMN.Host.Delegates
 {
     public class UpdateUserPasswordDelegate : IDelegateHandler
     {
-        private const string ActivityName = "Activity_12xhvyl";
+        private const string ActivityName = "Activity_0fhwdxz";
 
         public async Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
         {
-            var user = incoming.FirstOrDefault(i => i.Name == "userMessage");
+            var user = incoming.FirstOrDefault(i => i.Name == "user");
             if (user == null)
             {
                 throw new BPMNProcessorException("userMessage must be passed in the request");
@@ -36,7 +36,7 @@ namespace CaseManagement.BPMN.Host.Delegates
                 throw new BPMNProcessorException($"incoming token '{ActivityName}' doesn't exist");
             }
 
-            var password = messageToken.GetProperty("password");
+            var password = messageToken.GetProperty("pwd");
             var parameter = UpdateUserPasswordParameter.Create(delegateConfiguration);
             using (var httpClient = new HttpClient())
             {
@@ -57,11 +57,12 @@ namespace CaseManagement.BPMN.Host.Delegates
                     { "password", password }
                 };
                 var content = new StringContent(obj.ToString(), Encoding.UTF8, "application/json");
+                var url = parameter.UserUrl.Replace("{id}", userId);
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Put,
                     Content = content,
-                    RequestUri = new Uri($"{parameter.UserUrl}/{userId}/password")
+                    RequestUri = new Uri(url)
                 };
                 request.Headers.Add("Authorization", $"Bearer {tokenResponse.AccessToken}");
                 var httpResponse = await httpClient.SendAsync(request, cancellationToken);

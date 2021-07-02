@@ -14,7 +14,7 @@ export class BpmnFilesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processfiles/search";
         const request: any = { startIndex: startIndex, count: count, takeLatest: takeLatest };
         if (order) {
@@ -34,7 +34,7 @@ export class BpmnFilesService {
 
     get(id: string): Observable<BpmnFile> {
         let headers = new HttpHeaders();
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id;
         return this.http.get<BpmnFile>(targetUrl, { headers: headers });
     }
@@ -43,7 +43,7 @@ export class BpmnFilesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id;
         const request: any = { name: name, description: description };
         return this.http.put<any>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -53,7 +53,7 @@ export class BpmnFilesService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id + "/payload";
         const request: any = { payload: payload };
         return this.http.put<any>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -62,7 +62,7 @@ export class BpmnFilesService {
 
     publish(id: string): Observable<any> {
         let headers = new HttpHeaders();
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/processfiles/" + id + "/publish";
         return this.http.get(targetUrl, { headers: headers }).pipe(map((res: any) => {
             return res['id'];

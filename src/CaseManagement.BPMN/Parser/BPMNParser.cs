@@ -41,12 +41,18 @@ namespace CaseManagement.BPMN.Parser
             var result = new List<ProcessInstanceAggregate>();
             var processes = definitions.Items.Where(_ => _ is tProcess).Cast<tProcess>();
             var messages = definitions.Items.Where(_ => _ is tMessage).Cast<tMessage>();
+            var itemDefs = definitions.Items.Where(_ => _ is tItemDefinition).Cast<tItemDefinition>();
             foreach(var process in processes)
             {
                 var builder = ProcessInstanceBuilder.New(processFileId);
                 foreach(var message in messages)
                 {
-                    builder.AddMessage(message.id, message.name, string.Empty);
+                    builder.AddMessage(message.id, message.name, message.itemRef?.Name);
+                }
+
+                foreach(var itemDef in itemDefs)
+                {
+                    builder.AddItemDef(itemDef.id, ItemKinds.Information, false, null);
                 }
 
                 foreach(var item in process.Items)

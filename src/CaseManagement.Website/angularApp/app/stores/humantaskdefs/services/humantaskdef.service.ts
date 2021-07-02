@@ -19,7 +19,7 @@ export class HumanTaskDefService {
     get(humanTaskDefId: string): Observable<HumanTaskDef> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + humanTaskDefId;
         return this.http.get<HumanTaskDef>(targetUrl, { headers: headers });
     }
@@ -27,7 +27,7 @@ export class HumanTaskDefService {
     getAll() : Observable<HumanTaskDef[]> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + '/humantasksdefs';
         return this.http.get<HumanTaskDef[]>(targetUrl, { headers: headers });
     }
@@ -40,7 +40,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines";
         const request: any = { deadLine: deadline };
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map((_: any) => {
@@ -53,7 +53,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/info";
         const request: any = { name: name, priority: priority};
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -63,7 +63,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters";
         const request: any = { parameter: parameter };
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -73,7 +73,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/parameters/" + parameterId;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -82,7 +82,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/rendering";
         const request: any = { rendering: rendering};
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -92,7 +92,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadLineId;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -101,7 +101,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const request: any = { deadLineInfo: deadline };
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadline.id;
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -111,7 +111,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const request: any = { condition: condition, escalationId: escalationId };
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadlineId + "/escalations";
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers }).pipe(map((_: any) => {
@@ -123,7 +123,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const request: any = { condition: condition, notificationId: notificationId };
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadLineId + "/escalations/" + escalationId;
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -133,7 +133,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadLineId + "/escalations/" + escalationId;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -141,7 +141,7 @@ export class HumanTaskDefService {
     addHumanTask(name: string): Observable<HumanTaskDef> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const request: any = { name: name };
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs";
         return this.http.post<HumanTaskDef>(targetUrl, request, { headers: headers });
@@ -151,7 +151,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/.search";
         const request: any = { startIndex: startIndex, count: count };
         if (order) {
@@ -169,7 +169,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationelts";
         const request: any = { presentationElements: presentationElements, presentationParameters: presentationParameters };
         return this.http.put<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -179,7 +179,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationparameters";
         const request: any = { presentationParameter: presentationParameter };
         return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -189,7 +189,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationparameters/" + presentationParameter.name;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -198,7 +198,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationelts";
         const request: any = { presentationElement: presentationElt };
         return this.http.post<boolean>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -208,7 +208,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/presentationelts/" + presentationElt.usage + '/' + presentationElt.language;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -217,7 +217,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/assignments";
         const request: any = { peopleAssignment: peopleAssignment };
         return this.http.post<string>(targetUrl, JSON.stringify(request), { headers: headers });
@@ -227,7 +227,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/assignments/" + peopleAssignment.id;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
     }
@@ -236,7 +236,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const request: any = { toPart: toPart };
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadlineId + "/escalations/" + escalationId + "/toparts";
         return this.http.post<boolean>(targetUrl, JSON.stringify(request),  { headers: headers });
@@ -246,7 +246,7 @@ export class HumanTaskDefService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantasksdefs/" + id + "/deadlines/" + deadlineId + "/escalations/" + escalationId + "/toparts/" + toPartName;
         return this.http.delete<boolean>(targetUrl, { headers: headers });
 

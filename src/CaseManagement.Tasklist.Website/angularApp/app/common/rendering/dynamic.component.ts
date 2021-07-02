@@ -6,6 +6,10 @@ import { RowComponent } from "./row/row.component";
 import { SelectComponent } from "./select/select.component";
 import { TxtComponent } from "./txt/txt.component";
 import { HeaderComponent } from "./header/header.component";
+import { FormGroup } from "@angular/forms";
+import { PwdComponent } from "./pwd/pwd.component";
+import { ConfirmPwdComponent } from "./confirmpwd/confirmpwd.component";
+import { SubmitBtnComponent } from "./submitbtn/submitbtn.component";
 
 @Component({
     selector: 'dynamic-component',
@@ -16,8 +20,9 @@ import { HeaderComponent } from "./header/header.component";
 export class DynamicComponent implements OnInit, OnDestroy {
     private componentRef: ComponentRef<{}>;
     private _option: any;
+    private _form: FormGroup;
     private _uiOption: { editMode: boolean } = {
-        editMode: false
+        editMode: true
     };
     private _dic: any = {
         'row': RowComponent,
@@ -25,7 +30,10 @@ export class DynamicComponent implements OnInit, OnDestroy {
         'txt': TxtComponent,
         'select': SelectComponent,
         'container': ContainerComponent,
-        'header': HeaderComponent
+        'header': HeaderComponent,
+        'pwd': PwdComponent,
+        'confirmpwd': ConfirmPwdComponent,
+        'submitbtn': SubmitBtnComponent
     };
     @ViewChild('container', { read: ViewContainerRef }) container: ViewContainerRef;
     @ViewChild('parent', { read: ViewContainerRef }) parent: ViewContainerRef;
@@ -43,6 +51,18 @@ export class DynamicComponent implements OnInit, OnDestroy {
         this.refresh();
     }
     @Input()
+    get form() {
+        return this._form;
+    }
+    set form(f: any) {
+        if (!f) {
+            return;
+        }
+
+        this._form = f;
+        this.refresh();
+    }
+    @Input()
     get uiOption() {
         return this._uiOption;
     }
@@ -56,6 +76,7 @@ export class DynamicComponent implements OnInit, OnDestroy {
     }
     @Input() parentOption: any = null;
     isSelected: boolean = false;
+    isFocused: boolean = false;
     title: string = null;
 
     constructor(private compFactoryResolver: ComponentFactoryResolver) { }
@@ -93,8 +114,42 @@ export class DynamicComponent implements OnInit, OnDestroy {
             return;
         }
 
+        const str = evt.dataTransfer.getData('json');
+        if (!str) {
+            return;
+        }
+
         const json = JSON.parse(evt.dataTransfer.getData('json'));
         this.option.children.push(json);
+        this.isFocused = false;
+    }
+
+    dragLeave(evt: any) {
+        if (!this._uiOption.editMode) {
+            return;
+        }
+
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (!this.option.children) {
+            return;
+        }
+
+        this.isFocused = false;
+    }
+
+    dragOver(evt: any) {
+        if (!this._uiOption.editMode) {
+            return;
+        }
+
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (!this.option.children) {
+            return;
+        }
+
+        this.isFocused = true;
     }
 
     openSettings(evt: any) {
@@ -135,7 +190,7 @@ export class DynamicComponent implements OnInit, OnDestroy {
     }
 
     private refresh() {
-        if (!this.option) {
+        if (!this.option || !this.form) {
             return;
         }
 
@@ -149,6 +204,7 @@ export class DynamicComponent implements OnInit, OnDestroy {
         this.componentRef = this.container.createComponent(factory);
         this.baseUIComponent = this.componentRef.instance as BaseUIComponent;
         this.baseUIComponent.option = this.option;
+        this.baseUIComponent.form = this.form;
         this.baseUIComponent.onInitialized.subscribe(() => {
             this.baseUIComponent.uiOption = this.uiOption;
             this.baseUIComponent.parent = this.parent;

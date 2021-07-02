@@ -17,7 +17,7 @@ export class CasesService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.CM_API_URL + "/case-plan-instances/search";
         const request: any = { startIndex: startIndex, count: count };
@@ -37,7 +37,7 @@ export class CasesService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id;
         return this.http.get<CaseInstance>(targetUrl, { headers: headers });
@@ -48,7 +48,7 @@ export class CasesService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id + "/activate/" + elt;
         const request: any = {};
@@ -60,7 +60,7 @@ export class CasesService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id + "/disable/" + elt;
         const request: any = {};
@@ -72,7 +72,7 @@ export class CasesService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id + "/reenable/" + elt;
         const request: any = {};
@@ -84,7 +84,7 @@ export class CasesService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const request: any = { };
         const targetUrl = process.env.CM_API_URL + "/case-plan-instances/" + id + "/complete/" + elt;

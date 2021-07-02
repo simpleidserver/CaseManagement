@@ -3,6 +3,7 @@ using CaseManagement.Common.Expression;
 using CaseManagement.Common.Factories;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
+using CaseManagement.HumanTask.Helpers;
 using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
@@ -27,6 +28,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
         private readonly IHumanTaskInstanceCommandRepository _humanTaskInstanceCommandRepository;
         private readonly IParameterParser _parameterParser;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IServiceProvider _serviceProvider;
         private readonly HumanTaskServerOptions _options;
         private readonly ILogger<CompleteHumanTaskInstanceCommandHandler> _logger;
 
@@ -35,12 +37,14 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             IHumanTaskInstanceCommandRepository humanTaskInstanceCommandRepository,
             IParameterParser parameteParser,
             IHttpClientFactory httpClientFactory,
+            IServiceProvider serviceProvider,
             IOptions<HumanTaskServerOptions> options,
             ILogger<CompleteHumanTaskInstanceCommandHandler> logger)
         {
             _humanTaskInstanceQueryRepository = humanTaskInstanceQueryRepository;
             _humanTaskInstanceCommandRepository = humanTaskInstanceCommandRepository;
             _parameterParser = parameteParser;
+            _serviceProvider = serviceProvider;
             _httpClientFactory = httpClientFactory;
             _options = options.Value;
             _logger = logger;
@@ -177,6 +181,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
 
         private async Task Complete(HumanTaskInstanceAggregate humanTaskInstance, Dictionary<string, string> parameters, string nameIdentifier, CancellationToken token)
         {
+            await Validate(humanTaskInstance, parameters, token);
             humanTaskInstance.Complete(parameters, nameIdentifier);
             await _humanTaskInstanceCommandRepository.Update(humanTaskInstance, token);
             var subTasks = await _humanTaskInstanceQueryRepository.GetSubTasks(humanTaskInstance.AggregateId, token);
@@ -193,6 +198,17 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             }
 
             await _humanTaskInstanceCommandRepository.SaveChanges(token);
+        }
+        private async Task Validate(HumanTaskInstanceAggregate humanTaskInstance, Dictionary<string, string> parameters, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(humanTaskInstance.ValidatorFullQualifiedName))
+            {
+                return;
+            }
+
+            var type = TypeResolver.ResolveType(humanTaskInstance.ValidatorFullQualifiedName);
+            var service = (IHumanTaskInstanceValidator)_serviceProvider.GetService(type);
+            await service.Validate(humanTaskInstance, parameters, cancellationToken);
         }
     }
 }

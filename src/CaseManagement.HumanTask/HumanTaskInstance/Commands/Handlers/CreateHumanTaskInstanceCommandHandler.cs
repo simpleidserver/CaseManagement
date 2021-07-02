@@ -81,6 +81,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 id, 
                 userPrincipal, 
                 request.HumanTaskName, 
+                humanTaskDef.ValidatorFullQualifiedName,
                 parameters,
                 assignmentInstance, 
                 priority, 

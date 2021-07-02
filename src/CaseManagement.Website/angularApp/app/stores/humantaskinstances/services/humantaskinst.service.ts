@@ -13,7 +13,7 @@ export class HumanTaskInstService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantaskinstances";
         return this.http.post<string>(targetUrl, JSON.stringify(cmd), { headers: headers }).pipe(map((_: any) => {
             return _.id;
@@ -24,7 +24,7 @@ export class HumanTaskInstService {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.HUMANTASK_API_URL + "/humantaskinstances/me";
         return this.http.post<string>(targetUrl, JSON.stringify(cmd), { headers: headers }).pipe(map((_: any) => {
             return _.id;

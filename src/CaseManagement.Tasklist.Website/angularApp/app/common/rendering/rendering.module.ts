@@ -9,6 +9,9 @@ import { ContainerComponent } from './container/container.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../shared/material.module';
 import { SharedModule } from '../../shared/shared.module';
+import { PwdComponent } from './pwd/pwd.component';
+import { ConfirmPwdComponent } from './confirmpwd/confirmpwd.component';
+import { SubmitBtnComponent } from './submitbtn/submitbtn.component';
 
 @NgModule({
     imports: [
@@ -20,6 +23,10 @@ import { SharedModule } from '../../shared/shared.module';
         ContainerComponent,
         TxtComponent,
         SelectComponent,
+        HeaderComponent,
+        PwdComponent,
+        ConfirmPwdComponent,
+        SubmitBtnComponent
     ],
     declarations: [
         ContainerComponent,
@@ -28,6 +35,9 @@ import { SharedModule } from '../../shared/shared.module';
         ColumnComponent,
         RowComponent,
         TxtComponent,
+        PwdComponent,
+        ConfirmPwdComponent,
+        SubmitBtnComponent,
         DynamicComponent
     ],
     exports: [

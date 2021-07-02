@@ -18,6 +18,10 @@ export class AuthGuard implements CanActivate {
 
         if (next.data && next.data.role) {
             var filteredRoles = next.data.role.filter(function (role: string) {
+                if (claims.role.includes) {
+                    return claims.role.includes(role);
+                }
+                    
                 return role === claims.role;
             });
 

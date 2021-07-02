@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Host.Delegates;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,17 +12,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace CaseManagement.BPMN.Host
 {
     public class Startup
     {
+        private Dictionary<string, string> MAPPING_OPENIDCLAIM_TO_CLAIM = new Dictionary<string, string>
+        {
+            { "sub", ClaimTypes.NameIdentifier },
+            { "role", ClaimTypes.Role }
+        };
         private readonly IHostingEnvironment _env;
         private readonly IConfiguration _configuration;
 
@@ -44,11 +53,58 @@ namespace CaseManagement.BPMN.Host
             })
             .AddJwtBearer(options =>
             {
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async (ctx) =>
+                    {
+                        var issuer = ctx.Principal.Claims.First(c => c.Type == "iss").Value;
+                        using (var httpClient = new HttpClient())
+                        {
+                            var authorization = ctx.Request.Headers["Authorization"][0];
+                            var bearer = authorization.Split(" ").Last();
+                            var requestMessage = new HttpRequestMessage
+                            {
+                                RequestUri = new Uri($"{issuer}/userinfo"),
+                                Method = HttpMethod.Get
+                            };
+                            requestMessage.Headers.Add("Authorization", $"Bearer {bearer}");
+                            var httpResponse = await httpClient.SendAsync(requestMessage);
+                            var json = await httpResponse.Content.ReadAsStringAsync();
+                            var jObj = JObject.Parse(json);
+                            var identity = new ClaimsIdentity("userInfo");
+                            foreach (var kvp in jObj)
+                            {
+                                var key = kvp.Key;
+                                if (MAPPING_OPENIDCLAIM_TO_CLAIM.ContainsKey(key))
+                                {
+                                    key = MAPPING_OPENIDCLAIM_TO_CLAIM[key];
+                                }
+
+                                if (kvp.Value.ToString().StartsWith('['))
+                                {
+                                    var arr = JArray.Parse(kvp.Value.ToString()).Select(_ => _.ToString()).ToList();
+                                    foreach (var str in arr)
+                                    {
+                                        identity.AddClaim(new Claim(kvp.Key, str));
+                                    }
+                                }
+                                else
+                                {
+                                    identity.AddClaim(new Claim(kvp.Key, kvp.Value.ToString()));
+                                }
+                            }
+
+                            var principal = new ClaimsPrincipal(identity);
+                            ctx.Principal = principal;
+                        }
+                    }
+                };
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     IssuerSigningKey = ExtractKey("openid_puk.txt"),
                     ValidAudiences = new List<string>
                     {
+                        "caseManagementWebsite",
                         "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },
@@ -69,6 +125,7 @@ namespace CaseManagement.BPMN.Host
                 opts.CallbackUrl = "http://localhost:60007/processinstances/{id}/complete/{eltId}";
             }).AddProcessFiles(files).AddDelegateConfigurations(GetDelegateConfigurations());
             services.AddSwaggerGen();
+            services.AddMassTransitHostedService();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -131,6 +188,7 @@ namespace CaseManagement.BPMN.Host
 
         private static ConcurrentBag<DelegateConfigurationAggregate> GetDelegateConfigurations()
         {
+            var credential = JsonConvert.DeserializeObject<CredentialsParameter>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "credentials.json")));
             var getWeatherInformationDelegate = DelegateConfigurationAggregate.Create("GetWeatherInformationDelegate", typeof(GetWeatherInformationDelegate).FullName);
             getWeatherInformationDelegate.AddDisplayName("fr", "Récupérer météo");
             getWeatherInformationDelegate.AddDescription("fr", "Récupérer les informations sur la météo");
@@ -142,21 +200,21 @@ namespace CaseManagement.BPMN.Host
             sendEmailDelegate.AddDisplayName("en", "Send email");
             sendEmailDelegate.AddRecord("httpBody", "Please click on this link to update the password");
             sendEmailDelegate.AddRecord("subject", "Update password");
-            sendEmailDelegate.AddRecord("fromEmail", "");
-            sendEmailDelegate.AddRecord("smtpHost", "");
-            sendEmailDelegate.AddRecord("smtpPort", "");
-            sendEmailDelegate.AddRecord("smtpUserName", "");
-            sendEmailDelegate.AddRecord("smtpPassword", "");
-            sendEmailDelegate.AddRecord("smtpEnableSsl", "");
+            sendEmailDelegate.AddRecord("fromEmail", credential.Login);
+            sendEmailDelegate.AddRecord("smtpHost", "smtp.gmail.com");
+            sendEmailDelegate.AddRecord("smtpPort", "587");
+            sendEmailDelegate.AddRecord("smtpUserName", credential.Login);
+            sendEmailDelegate.AddRecord("smtpPassword", credential.Password);
+            sendEmailDelegate.AddRecord("smtpEnableSsl", "true");
 
             var updateUserPasswordDelegate = DelegateConfigurationAggregate.Create("UpdateUserPasswordDelegate", typeof(UpdateUserPasswordDelegate).FullName);
             updateUserPasswordDelegate.AddDisplayName("fr", "Mettre à jour le mot de passe");
             updateUserPasswordDelegate.AddDisplayName("en", "Update password");
-            updateUserPasswordDelegate.AddRecord("clientId", "");
-            updateUserPasswordDelegate.AddRecord("clientSecret", "");
+            updateUserPasswordDelegate.AddRecord("clientId", "humanTaskClient");
+            updateUserPasswordDelegate.AddRecord("clientSecret", "humanTaskClientSecret");
             updateUserPasswordDelegate.AddRecord("tokenUrl", "https://localhost:60000/token");
-            updateUserPasswordDelegate.AddRecord("userUrl", "");
-            updateUserPasswordDelegate.AddRecord("scope", "update_password");
+            updateUserPasswordDelegate.AddRecord("userUrl", "https://localhost:60000/management/users/{id}/password");
+            updateUserPasswordDelegate.AddRecord("scope", "manage_users");
 
             return new ConcurrentBag<DelegateConfigurationAggregate>
             {
@@ -164,6 +222,12 @@ namespace CaseManagement.BPMN.Host
                 sendEmailDelegate,
                 updateUserPasswordDelegate
             };
+        }
+
+        private class CredentialsParameter
+        {
+            public string Login { get; set; }
+            public string Password { get; set; }
         }
     }
 }

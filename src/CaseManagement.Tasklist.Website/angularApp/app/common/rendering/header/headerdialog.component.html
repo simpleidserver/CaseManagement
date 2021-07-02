@@ -1,10 +1,10 @@
 ﻿<h1 mat-dialog-title>{{ 'HUMANTASK.EDITOR.CONFIGUREHEADER' | translate }}</h1>
-<div mat-dialog-content>
-    <form [formGroup]="configureHeaderForm" (ngSubmit)="onSave(configureHeaderForm.value)">
-        <!-- Text -->
-        <mat-form-field class="full-width" appearance="outline" floatLabel="always">
-            <mat-label>{{ 'SHARED.TEXT' | translate }}</mat-label>
-            <input matInput name="txt" formControlName="txt" />
+<form [formGroup]="configureForm" (ngSubmit)="onSave(configureForm.value)">
+    <div mat-dialog-content>
+        <!-- Label -->
+        <mat-form-field class="full-width" appearance="outline" floatLabel="always" *ngFor="let language of languages">
+            <mat-label>{{ 'HUMANTASK.EDITOR.TRANSLATIONS.' + language | translate }}</mat-label>
+            <input matInput name="label" [formControlName]="'label#' + language" />
         </mat-form-field>
         <!-- Types -->
         <mat-form-field class="full-width" appearance="outline" floatLabel="always">
@@ -15,9 +15,9 @@
                 <mat-option value="mat-display-4">Display 4</mat-option>
             </mat-select>
         </mat-form-field>
+    </div>
+    <mat-dialog-actions>
         <button mat-raised-button color="primary">{{ 'SHARED.SAVE' | translate }}</button>
-    </form>
-</div>
-<mat-dialog-actions>
-    <button mat-button mat-dialog-close>{{ 'SHARED.CANCEL' | translate }}</button>
-</mat-dialog-actions>
+        <button mat-button (click)="close($event)">{{ 'SHARED.CANCEL' | translate }}</button>
+    </mat-dialog-actions>
+</form>

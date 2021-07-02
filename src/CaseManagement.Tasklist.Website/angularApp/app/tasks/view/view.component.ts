@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatSnackBar, MatSort, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as fromAppState from '@app/stores/appstate';
@@ -20,6 +21,10 @@ export class ViewTaskComponent implements OnInit {
     displayedColumns: string[] = ["eventTime", "userPrincipal", "eventType", "startOwner", "endOwner"];
     task: Task = new Task();
     histories$: MatTableDataSource<TaskHistory>;
+    formGroup: FormGroup = new FormGroup({});
+    uiOption: any = {
+        editMode: false
+    };
     option: any = {
         type: 'container',
         children: []
@@ -77,10 +82,12 @@ export class ViewTaskComponent implements OnInit {
     }
 
     onSubmit() {
-        const result: any = {};
-        this.buildJSON(result, this.option);
+        if (!this.formGroup.valid) {
+            return;
+        }
+
         const id = this.route.snapshot.params['id'];
-        const req = new fromTaskActions.SubmitTask(id, result);
+        const req = new fromTaskActions.SubmitTask(id, this.formGroup.value);
         this.store.dispatch(req);
     }
 

@@ -51,6 +51,7 @@ namespace CaseManagement.HumanTask.Domains
         /// This optional element is used to search for task instances based on a custom search criterion.
         /// </summary>
         public string SearchBy { get; set; }
+        public string ValidatorFullQualifiedName { get; set; }
         /// <summary>
         /// This element is used to specify subtasks of a composite task. 
         /// It is optional.
@@ -101,6 +102,7 @@ namespace CaseManagement.HumanTask.Domains
                 NbInstances = NbInstances,
                 AggregateId = AggregateId,
                 Version = Version,
+                ValidatorFullQualifiedName = ValidatorFullQualifiedName,
                 ActualOwnerRequired = ActualOwnerRequired,
                 OperationParameters = OperationParameters.Select(_ => (Parameter)_.Clone()).ToList(),
                 Priority = Priority,

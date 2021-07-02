@@ -90,17 +90,12 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 opt.OAuthTokenEndpoint = "http://localhost/token";
             }).AddDefinitions(files);
             services.AddSingleton<CaseManagement.Common.Factories.IHttpClientFactory>(httpClientFactory);
+            services.AddMassTransitHostedService();
 
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (_busControl == null)
-            {
-                _busControl = app.ApplicationServices.GetRequiredService<IBusControl>();
-                _busControl.Start();
-            }
-
             app.UseAuthentication();
             app.Map("/token", b =>
             {

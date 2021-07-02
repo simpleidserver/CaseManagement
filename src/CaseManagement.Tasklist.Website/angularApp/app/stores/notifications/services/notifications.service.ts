@@ -16,7 +16,7 @@ export class NotificationsService {
         const defaultLang = this.translate.currentLang;
         headers = headers.set('Accept', 'application/json');
         headers = headers.set('Content-Type', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         headers = headers.set('Accept-Language', defaultLang);
         const targetUrl = process.env.API_URL + "/notificationinstances/.search";
         const request: any = { startIndex: startIndex, count: count };

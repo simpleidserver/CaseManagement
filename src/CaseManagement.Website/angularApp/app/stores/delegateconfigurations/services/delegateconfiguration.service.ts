@@ -12,7 +12,7 @@ export class DelegateConfigurationService {
     search(startIndex: number, count: number, order: string, direction: string): Observable<SearchDelegateConfigurationResult> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/delegateconfigurations/search";
         const request: any = { startIndex: startIndex, count: count };
         if (order) {
@@ -29,7 +29,7 @@ export class DelegateConfigurationService {
     get(id: string): Observable<DelegateConfiguration> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/delegateconfigurations/" + id;
         return this.http.get<DelegateConfiguration>(targetUrl, { headers : headers });
     }
@@ -37,7 +37,7 @@ export class DelegateConfigurationService {
     getAll(): Observable<DelegateConfiguration[]> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/delegateconfigurations";
         return this.http.get<DelegateConfiguration[]>(targetUrl, { headers: headers });
     }
@@ -45,7 +45,7 @@ export class DelegateConfigurationService {
     update(id: string, records: any): Observable<any> {
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/json');
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getAccessToken());
         const targetUrl = process.env.BPMN_API_URL + "/delegateconfigurations/" + id;
         return this.http.put(targetUrl, { records: records }, { headers: headers });
     }
