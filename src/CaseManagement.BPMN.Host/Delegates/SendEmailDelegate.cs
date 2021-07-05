@@ -1,6 +1,6 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
-using Newtonsoft.Json.Linq;
+using CaseManagement.BPMN.ProcessInstance.Processors;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,17 +12,20 @@ namespace CaseManagement.BPMN.Host.Delegates
 {
     public class SendEmailDelegate : IDelegateHandler
     {
-        public Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
+        public Task<ICollection<MessageToken>> Execute(BPMNExecutionContext context, ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
         {
-            var humanTaskInstanceCreated = incoming.FirstOrDefault(i => i.Name == "humanTaskCreated");
-            if (humanTaskInstanceCreated == null)
+            var user = incoming.FirstOrDefault(i => i.Name == "user");
+            if (user == null)
             {
-                throw new BPMNProcessorException("humanTaskCreated must be passed in the request");
+                throw new BPMNProcessorException("user must be passed in the request");
             }
 
-            var inc = humanTaskInstanceCreated.JObjMessageContent.SelectToken("$.incoming[?(@.Name == 'user')].MessageContent");
-            var messageContent = JObject.Parse(inc.ToString());
-            var email = messageContent["email"].ToString();
+            var email = user.GetProperty("email");
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new BPMNProcessorException("email is not passed in the request");
+            }
+
             var parameter = SendDelegateParameter.Build(delegateConfiguration);
             using (var smtpClient = new SmtpClient())
             {
@@ -40,11 +43,15 @@ namespace CaseManagement.BPMN.Host.Delegates
                     IsBodyHtml = true
                 };
 
-                mailMessage.To.Add(email);
+                mailMessage.To.Add(email.ToString());
                 smtpClient.Send(mailMessage);
             }
 
-            return Task.FromResult(incoming);
+            ICollection<MessageToken> result = new List<MessageToken>
+            {
+                MessageToken.EmptyMessage(context.Pointer.InstanceFlowNodeId, "sendEmail")
+            };
+            return Task.FromResult(result);
         }
 
         private class SendDelegateParameter

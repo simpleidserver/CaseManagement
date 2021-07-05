@@ -16,7 +16,7 @@ Scenario: Launch MessageEvent bpmn process
 	And extract JSON from body
 	
 	Then HTTP status code equals to '200'
-	Then JSON 'executionPaths[0].executionPointers[?(@.flowNodeId == 'Event_1x42h83')].flowNodeInstance.state'='Complete'
+	Then JSON 'executionPaths[0].executionPointers[?(@.flowNodeId == 'Task_1hcentk')].flowNodeInstance.state'='Complete'
 
 Scenario: Launch CreateUserAccount bpmn process
 	When execute HTTP POST JSON request 'http://localhost/processinstances'

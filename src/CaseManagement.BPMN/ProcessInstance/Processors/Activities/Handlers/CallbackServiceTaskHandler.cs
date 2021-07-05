@@ -36,7 +36,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
 
             var type = TypeResolver.ResolveType(configuration.FullQualifiedName);
             var handler = (IDelegateHandler)_serviceProvider.GetService(type);
-            return await handler.Execute(context.Pointer.Incoming.ToList(), configuration, cancellationToken);
+            return await handler.Execute(context, context.Pointer.Incoming.ToList(), configuration, cancellationToken);
         }
     }
 }

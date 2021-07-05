@@ -8,6 +8,7 @@ namespace CaseManagement.BPMN.Domains
     [Serializable]
     public class MessageToken : ICloneable
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string MessageContent { get; set; }
         public MessageTokenTypes Type { get; set; }
@@ -52,6 +53,7 @@ namespace CaseManagement.BPMN.Domains
         {
             var result = new MessageToken
             {
+                Id = Id,
                 Name = Name,
                 MessageContent = MessageContent,
                 Type = Type
@@ -59,15 +61,20 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public static MessageToken EmptyMessage()
-        {
-            return new MessageToken();
-        }
-
-        public static MessageToken NewMessage(string name, string content)
+        public static MessageToken EmptyMessage(string id, string name)
         {
             return new MessageToken
             {
+                Id = id,
+                Name = name
+            };
+        }
+
+        public static MessageToken NewMessage(string id, string name, string content)
+        {
+            return new MessageToken
+            {
+                Id = id,
                 MessageContent = content,
                 Name = name
             };

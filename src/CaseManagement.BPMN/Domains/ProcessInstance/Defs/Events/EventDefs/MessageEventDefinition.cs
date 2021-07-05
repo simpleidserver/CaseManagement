@@ -16,7 +16,7 @@
 
         public override bool IsSatisfied(ProcessInstanceAggregate processInstance, MessageToken token)
         {
-            return processInstance.IsMessageCorrect(token);
+            return processInstance.IsMessageCorrect(MessageRef, token);
         }
 
         public override object Clone()

@@ -23,15 +23,13 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Evts
                 if ((nodeDef.ParallelMultiple && lst.All(_ => _ == true)) ||
                     (!nodeDef.ParallelMultiple && lst.Any(_ => _ == true)))
                 {
-                    var outcome = new List<MessageToken>();
-                    outcome.AddRange(executionContext.Pointer.Incoming);
                     return BPMNExecutionResult.Next(flowNodeIds, executionContext.Pointer.Incoming.ToList(), isEltInstanceCompleted: false, isNewExecutionPointerRequired: true);
                 }
 
                 return BPMNExecutionResult.Block();
             }
 
-            return BPMNExecutionResult.Next(flowNodeIds, new List<MessageToken>() { MessageToken.EmptyMessage() });
+            return BPMNExecutionResult.Next(flowNodeIds, new List<MessageToken> { MessageToken.EmptyMessage(executionContext.Pointer.InstanceFlowNodeId, nodeDef.EltId) });
         }
 
         protected abstract Task InternalHandle(BPMNExecutionContext executionContext, T nodeDef, CancellationToken cancellationToken);

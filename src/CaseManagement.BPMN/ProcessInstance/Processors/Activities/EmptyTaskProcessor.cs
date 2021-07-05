@@ -9,8 +9,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
     {
         protected override Task<ICollection<MessageToken>> Process(BPMNExecutionContext context, EmptyTask elt, CancellationToken cancellationToken)
         {
-            ICollection<MessageToken> emptyTokens = new List<MessageToken>();
-            return Task.FromResult(emptyTokens);
+            ICollection<MessageToken> result = new List<MessageToken> { MessageToken.EmptyMessage(context.Pointer.InstanceFlowNodeId, elt.EltId) };
+            return Task.FromResult(result);
         }
     }
 }

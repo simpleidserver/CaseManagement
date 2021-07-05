@@ -48,6 +48,11 @@ namespace CaseManagement.BPMN.Domains
 
         #region Getters
 
+        public bool IsEvent(string elementId)
+        {
+            return GetDefinition(elementId) as BaseEvent != null;
+        }
+
         public bool IsIncomingSatisfied(SequenceFlow incomingSequence, IEnumerable<MessageToken> incomingTokens)
         {
             if (!string.IsNullOrWhiteSpace(incomingSequence.ConditionExpression))
@@ -115,10 +120,10 @@ namespace CaseManagement.BPMN.Domains
             return ItemDefs.FirstOrDefault(_ => _.EltId == itemRef);
         }
 
-        public bool IsMessageCorrect(MessageToken messageToken)
+        public bool IsMessageCorrect(string messageRef, MessageToken messageToken)
         {
             var message = GetMessageByName(messageToken.Name);
-            if (message == null || messageToken.Name != messageToken.Name)
+            if (message == null || messageToken.Name != message.Name || message.EltId != messageRef)
             {
                 return false;
             }
@@ -195,12 +200,12 @@ namespace CaseManagement.BPMN.Domains
             return result;
         }
 
-        public void LaunchBoundaryEvts(string pathId, List<string> evts)
+        public void LaunchBoundaryEvts(string pathId, List<string> evts, List<MessageToken> incomingTokens)
         {
             var items = evts.Select(e => GetDefinition(e));
             foreach(var item in items)
             {
-                TryAddExecutionPointer(pathId, item);
+                TryAddExecutionPointer(pathId, item, incomingTokens);
             }
         }
 

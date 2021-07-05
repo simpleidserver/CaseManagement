@@ -5,6 +5,7 @@ using CaseManagement.BPMN.Resources;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,6 +41,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
 
             processInstance.ConsumeMessage(new Domains.MessageToken
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = request.Name,
                 MessageContent = request.MessageContent == null ? string.Empty : request.MessageContent.ToString()
             });
@@ -47,6 +49,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
             if (isRestarted)
             {
                 var evt = processInstance.Restart();
+                await _processInstanceCommandRepository.Update(processInstance, cancellationToken);
+                await _processInstanceCommandRepository.SaveChanges(cancellationToken);
                 await _busControl.Publish(evt, cancellationToken);
             }
 

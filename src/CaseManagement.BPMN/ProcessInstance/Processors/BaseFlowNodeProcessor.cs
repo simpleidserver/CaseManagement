@@ -19,7 +19,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         protected virtual ICollection<string> GetNextFlowNodeIds(BPMNExecutionContext executionContext, BaseFlowNode flowNode)
         {
             var outgoing = executionContext.Instance.GetOutgoingSequenceFlows(flowNode.EltId);
-            var filteredOutgoing = outgoing.Where(_ => executionContext.Instance.IsIncomingSatisfied(_, executionContext.Pointer.Incoming));
+            var filteredOutgoing = outgoing.Where(_ => executionContext.Instance.IsIncomingSatisfied(_, executionContext.Pointer.Incoming) 
+                && !executionContext.Instance.IsEvent(_.TargetRef));
             return filteredOutgoing.Select(_ => _.TargetRef).ToList();
         }
 

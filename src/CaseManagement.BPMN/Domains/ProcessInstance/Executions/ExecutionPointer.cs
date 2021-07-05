@@ -42,8 +42,14 @@ namespace CaseManagement.BPMN.Domains
 
             foreach(var token in tokens)
             {
+                if (Tokens.Any(t => t.Id == token.Id))
+                {
+                    continue;
+                }
+
                 Tokens.Add(new MessageToken
                 {
+                    Id = token.Id,
                     MessageContent = token.MessageContent,
                     Name = token.Name,
                     Type = MessageTokenTypes.INCOMING
@@ -60,8 +66,14 @@ namespace CaseManagement.BPMN.Domains
 
             foreach(var token in tokens)
             {
+                if (Tokens.Any(t => t.Id == token.Id))
+                {
+                    continue;
+                }
+
                 Tokens.Add(new MessageToken
                 {
+                    Id = token.Id,
                     MessageContent = token.MessageContent,
                     Name = token.Name,
                     Type = MessageTokenTypes.OUTGOING

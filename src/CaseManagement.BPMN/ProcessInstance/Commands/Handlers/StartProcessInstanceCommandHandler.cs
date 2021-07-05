@@ -48,6 +48,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Commands.Handlers
             if (isRestarted)
             {
                 var evt = processInstance.Restart();
+                await _processInstanceCommandRepository.Update(processInstance, cancellationToken);
+                await _processInstanceCommandRepository.SaveChanges(cancellationToken);
                 await _busControl.Publish(evt, cancellationToken);
             }
 

@@ -231,7 +231,7 @@ namespace CaseManagement.BPMN.Tests
             Assert.Equal(FlowNodeStates.Complete, secondParallelGateway.State);
             Assert.Equal(FlowNodeStates.Complete, thirdEmptyTaskInstance.State);
             Assert.Equal(2, secondParallelGatewayExecPointer.Incoming.Count());
-            Assert.Equal(1, thirdEmptyTaskExecPointer.Incoming.Count());
+            Assert.Equal(2, thirdEmptyTaskExecPointer.Incoming.Count());
         }
 
         [Fact]
@@ -316,6 +316,7 @@ namespace CaseManagement.BPMN.Tests
             const string messageName = "message";
             var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddMessage(messageName, "message", "item")
+                .AddMessage("humanTaskCreated", "humanTaskCreated", "item")
                 .AddItemDef("item", ItemKinds.Information, false, typeof(PersonParameter).FullName)
                 .AddStartEvent("1", "evt")
                 .AddUserTask("2", "userTask", (cb) =>
@@ -351,9 +352,15 @@ namespace CaseManagement.BPMN.Tests
             var ei = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
             await jobServer.EnqueueStateTransition(casePlanInstance.AggregateId, ei.EltId, "COMPLETED", new JObject(), CancellationToken.None);
             casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
+            var executionPath = casePlanInstance.ExecutionPathLst.First();
             Assert.True(casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1").State == FlowNodeStates.Complete);
             Assert.True(casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2").State == FlowNodeStates.Complete);
             Assert.True(casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "4").State == FlowNodeStates.Complete);
+            Assert.Equal(1, executionPath.Pointers.First(p => p.FlowNodeId == "1").Outgoing.Count());
+            Assert.Equal(1, executionPath.Pointers.First(p => p.FlowNodeId == "2").Incoming.Count());
+            Assert.Equal(1, executionPath.Pointers.First(p => p.FlowNodeId == "2").Outgoing.Count());
+            Assert.Equal(3, executionPath.Pointers.First(p => p.FlowNodeId == "3").Incoming.Count());
+            Assert.Equal(3, executionPath.Pointers.First(p => p.FlowNodeId == "4").Incoming.Count());
         }
 
         [Fact]
@@ -377,10 +384,12 @@ namespace CaseManagement.BPMN.Tests
                         cb.SetMessageRef(messageName);
                     });
                 })
-                .AddEmptyTask("4", "emptyTask")
+                .AddEmptyTask("4", "firstEmptyTask")
+                .AddEmptyTask("5", "secondEmptyTask")
                 .AddSequenceFlow("seq1", "sequence", "1", "2")
                 .AddSequenceFlow("seq2", "sequence", "2", "3")
                 .AddSequenceFlow("seq3", "sequence", "3", "4")
+                .AddSequenceFlow("seq4", "sequence", "2", "5")
                 .Build();
             var jobServer = FakeCaseJobServer.New();
             jobServer.Start();

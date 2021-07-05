@@ -4,7 +4,6 @@ using CaseManagement.Common.Expression;
 using CaseManagement.Common.Factories;
 using IdentityModel.Client;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -91,20 +90,15 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     var httpResult = await httpClient.SendAsync(request, token);
                     var str = await httpResult.Content.ReadAsStringAsync();
                     var o = JObject.Parse(str);
-                    var humanTaskInstancId = o["id"].ToString();
-                    executionContext.Instance.UpdateMetadata(pointer.InstanceFlowNodeId, HUMANTASK_INSTANCE_ID_NAME, humanTaskInstancId);
-                    var jObj = new JObject();
-                    jObj.Add("id", humanTaskInstancId);
-                    var incoming = executionContext.Pointer.Incoming.ToList();
-                    incoming.Add(new MessageToken
-                    {
-                        Name = "humanTaskInstance",
-                        MessageContent = jObj.ToString()
-                    });
+                    var humanTaskInstanceId = o["id"].ToString();
+                    executionContext.Instance.UpdateMetadata(pointer.InstanceFlowNodeId, HUMANTASK_INSTANCE_ID_NAME, humanTaskInstanceId);
+                    var humanTaskInstance = new JObject();
+                    humanTaskInstance.Add("id", humanTaskInstanceId);
                     var messageContent = new JObject();
-                    messageContent.Add("incoming", JArray.FromObject(incoming));
+                    messageContent.Add("humanTaskInstance", humanTaskInstance);
                     executionContext.Instance.ConsumeMessage(new MessageToken
                     {
+                        Id = Guid.NewGuid().ToString(),
                         Name = "humanTaskCreated",
                         MessageContent = messageContent.ToString()
                     });
@@ -119,13 +113,13 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
             }
 
             var result = new List<MessageToken>();
-            if (stateTransition.Content == null)
+            if (string.IsNullOrWhiteSpace(stateTransition.Content))
             {
-                result.Add(MessageToken.EmptyMessage());
+                result.Add(MessageToken.EmptyMessage(pointer.InstanceFlowNodeId, userTask.EltId));
             }
             else
             {
-                result.Add(MessageToken.NewMessage(userTask.EltId, stateTransition.Content));
+                result.Add(MessageToken.NewMessage(pointer.InstanceFlowNodeId, userTask.EltId, stateTransition.Content));
             }
 
             return result;

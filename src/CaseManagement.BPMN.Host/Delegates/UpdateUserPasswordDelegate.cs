@@ -1,5 +1,6 @@
 ﻿using CaseManagement.BPMN.Domains;
 using CaseManagement.BPMN.Exceptions;
+using CaseManagement.BPMN.ProcessInstance.Processors;
 using IdentityModel.Client;
 using Newtonsoft.Json.Linq;
 using System;
@@ -16,7 +17,7 @@ namespace CaseManagement.BPMN.Host.Delegates
     {
         private const string ActivityName = "Activity_0fhwdxz";
 
-        public async Task<ICollection<MessageToken>> Execute(ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
+        public async Task<ICollection<MessageToken>> Execute(BPMNExecutionContext context, ICollection<MessageToken> incoming, DelegateConfigurationAggregate delegateConfiguration, CancellationToken cancellationToken)
         {
             var user = incoming.FirstOrDefault(i => i.Name == "user");
             if (user == null)
@@ -69,7 +70,11 @@ namespace CaseManagement.BPMN.Host.Delegates
                 httpResponse.EnsureSuccessStatusCode();
             }
 
-            return incoming;
+            ICollection<MessageToken> result = new List<MessageToken>
+            {
+                MessageToken.EmptyMessage(context.Pointer.InstanceFlowNodeId, "updatePassword")
+            };
+            return result;
         }
 
         private class UpdateUserPasswordParameter

@@ -42,7 +42,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities
             {
                 try
                 {
-                    executionContext.Instance.LaunchBoundaryEvts(executionContext.Pointer.ExecutionPathId, elt.BoundaryEvtRefs);
+                    executionContext.Instance.LaunchBoundaryEvts(executionContext.Pointer.ExecutionPathId, elt.BoundaryEvtRefs, executionContext.Pointer.Incoming.ToList());
                     var addOutcome = await Process(executionContext, elt, cancellationToken);
                     outcome.AddRange(addOutcome);
                     executionContext.Instance.UpdateState(instance, ActivityStates.COMPLETED);

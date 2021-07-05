@@ -150,8 +150,8 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("HTTP status code equals to \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 19
- testRunner.Then("JSON \'executionPaths[0].executionPointers[?(@.flowNodeId == \'Event_1x42h83\')].flo" +
-                        "wNodeInstance.state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("JSON \'executionPaths[0].executionPointers[?(@.flowNodeId == \'Task_1hcentk\')].flow" +
+                        "NodeInstance.state\'=\'Complete\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

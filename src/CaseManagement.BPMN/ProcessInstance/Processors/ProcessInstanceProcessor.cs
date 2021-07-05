@@ -42,7 +42,8 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors
         {
             var pointer = context.Pointer;
             var nodeDef = context.Instance.GetDefinition(pointer.FlowNodeId);
-            var result = (await _processorFactory.Execute(context, nodeDef, token)) as BPMNExecutionResult;
+            var res = await _processorFactory.Execute(context, nodeDef, token);
+            var result = res as BPMNExecutionResult;
             var isRestarted = result.IsRestarted;
             if (result.IsNext)
             {
