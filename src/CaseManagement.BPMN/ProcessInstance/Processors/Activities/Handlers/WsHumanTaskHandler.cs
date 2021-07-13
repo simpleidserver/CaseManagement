@@ -94,6 +94,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     executionContext.Instance.UpdateMetadata(pointer.InstanceFlowNodeId, HUMANTASK_INSTANCE_ID_NAME, humanTaskInstanceId);
                     var humanTaskInstance = new JObject();
                     humanTaskInstance.Add("id", humanTaskInstanceId);
+                    humanTaskInstance.Add("fileId", userTask.HumanTaskName);
                     var messageContent = new JObject();
                     messageContent.Add("humanTaskInstance", humanTaskInstance);
                     executionContext.Instance.ConsumeMessage(new MessageToken

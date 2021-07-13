@@ -198,13 +198,14 @@ namespace CaseManagement.BPMN.Host
             var sendEmailDelegate = DelegateConfigurationAggregate.Create("SendEmailDelegate", typeof(SendEmailDelegate).FullName);
             sendEmailDelegate.AddDisplayName("fr", "Envoyer un email");
             sendEmailDelegate.AddDisplayName("en", "Send email");
-            sendEmailDelegate.AddRecord("httpBody", "Please click on this link to update the password");
+            sendEmailDelegate.AddRecord("httpBody", "Please update the password by clicking on the website {{configuration.Get('humanTaskUrl')}}/humantasks/{{messages.Get('humanTaskCreated', 'humanTaskInstance.fileId')}}/instances/{{messages.Get('humanTaskCreated', 'humanTaskInstance.id')}}?auth=email, the OTP code is {{messages.Get('otp', 'otpCode')}}");
             sendEmailDelegate.AddRecord("subject", "Update password");
             sendEmailDelegate.AddRecord("fromEmail", credential.Login);
             sendEmailDelegate.AddRecord("smtpHost", "smtp.gmail.com");
             sendEmailDelegate.AddRecord("smtpPort", "587");
             sendEmailDelegate.AddRecord("smtpUserName", credential.Login);
             sendEmailDelegate.AddRecord("smtpPassword", credential.Password);
+            sendEmailDelegate.AddRecord("humanTaskUrl", "http://localhost:4200");
             sendEmailDelegate.AddRecord("smtpEnableSsl", "true");
 
             var updateUserPasswordDelegate = DelegateConfigurationAggregate.Create("UpdateUserPasswordDelegate", typeof(UpdateUserPasswordDelegate).FullName);
@@ -216,11 +217,21 @@ namespace CaseManagement.BPMN.Host
             updateUserPasswordDelegate.AddRecord("userUrl", "https://localhost:60000/management/users/{id}/password");
             updateUserPasswordDelegate.AddRecord("scope", "manage_users");
 
+            var generateOTPDelegate = DelegateConfigurationAggregate.Create("GenerateOTPDelegate", typeof(GenerateOTPDelegate).FullName);
+            generateOTPDelegate.AddDisplayName("fr", "Générer le code OTP");
+            generateOTPDelegate.AddDisplayName("en", "Generate OTP code");
+            generateOTPDelegate.AddRecord("clientId", "humanTaskClient");
+            generateOTPDelegate.AddRecord("clientSecret", "humanTaskClientSecret");
+            generateOTPDelegate.AddRecord("tokenUrl", "https://localhost:60000/token");
+            generateOTPDelegate.AddRecord("userUrl", "https://localhost:60000/management/users/{id}/otp");
+            generateOTPDelegate.AddRecord("scope", "manage_users");
+
             return new ConcurrentBag<DelegateConfigurationAggregate>
             {
                 getWeatherInformationDelegate,
                 sendEmailDelegate,
-                updateUserPasswordDelegate
+                updateUserPasswordDelegate,
+                generateOTPDelegate
             };
         }
 

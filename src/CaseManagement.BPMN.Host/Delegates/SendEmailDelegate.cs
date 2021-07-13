@@ -39,7 +39,7 @@ namespace CaseManagement.BPMN.Host.Delegates
                 {
                     From = new MailAddress(parameter.FromEmail),
                     Subject = parameter.Subject,
-                    Body = parameter.HttpBody,
+                    Body = DelegateHelper.Parse(delegateConfiguration, incoming, parameter.HttpBody),
                     IsBodyHtml = true
                 };
 
