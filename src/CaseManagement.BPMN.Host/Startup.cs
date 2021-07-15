@@ -198,7 +198,7 @@ namespace CaseManagement.BPMN.Host
             var sendEmailDelegate = DelegateConfigurationAggregate.Create("SendEmailDelegate", typeof(SendEmailDelegate).FullName);
             sendEmailDelegate.AddDisplayName("fr", "Envoyer un email");
             sendEmailDelegate.AddDisplayName("en", "Send email");
-            sendEmailDelegate.AddRecord("httpBody", "Please update the password by clicking on the website {{configuration.Get('humanTaskUrl')}}/humantasks/{{messages.Get('humanTaskCreated', 'humanTaskInstance.fileId')}}/instances/{{messages.Get('humanTaskCreated', 'humanTaskInstance.id')}}?auth=email, the OTP code is {{messages.Get('otp', 'otpCode')}}");
+            sendEmailDelegate.AddRecord("httpBody", "Please update the password by clicking on the website {{configuration.Get('humanTaskUrl')}}/humantaskinstances/{{messages.Get('humanTaskCreated', 'humanTaskInstance.id')}}?auth=email, the OTP code is {{messages.Get('otp', 'otpCode')}}");
             sendEmailDelegate.AddRecord("subject", "Update password");
             sendEmailDelegate.AddRecord("fromEmail", credential.Login);
             sendEmailDelegate.AddRecord("smtpHost", "smtp.gmail.com");
@@ -226,12 +226,22 @@ namespace CaseManagement.BPMN.Host
             generateOTPDelegate.AddRecord("userUrl", "https://localhost:60000/management/users/{id}/otp");
             generateOTPDelegate.AddRecord("scope", "manage_users");
 
+            var assignHumanTaskInstanceDelegate = DelegateConfigurationAggregate.Create("assignHumanTask", typeof(AssignHumanTaskInstanceDelegate).FullName);
+            assignHumanTaskInstanceDelegate.AddDisplayName("fr", "Assigner la tâche humaine");
+            assignHumanTaskInstanceDelegate.AddDisplayName("en", "Assign human task");
+            assignHumanTaskInstanceDelegate.AddRecord("clientId", "humanTaskClient");
+            assignHumanTaskInstanceDelegate.AddRecord("clientSecret", "humanTaskClientSecret");
+            assignHumanTaskInstanceDelegate.AddRecord("tokenUrl", "https://localhost:60000/token");
+            assignHumanTaskInstanceDelegate.AddRecord("humanTaskInstanceClaimUrl", "http://localhost:60006/humantaskinstances/{id}/force/claim");
+            assignHumanTaskInstanceDelegate.AddRecord("humanTaskInstanceStartUrl", "http://localhost:60006/humantaskinstances/{id}/force/start");
+
             return new ConcurrentBag<DelegateConfigurationAggregate>
             {
                 getWeatherInformationDelegate,
                 sendEmailDelegate,
                 updateUserPasswordDelegate,
-                generateOTPDelegate
+                generateOTPDelegate,
+                assignHumanTaskInstanceDelegate
             };
         }
 

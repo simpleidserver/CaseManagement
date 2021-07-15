@@ -12,7 +12,7 @@
 
         public static class ScopeNames
         {
-            public const string CreateHumanTaskInstance = "create_humantaskinstance";
+            public const string ManageHumanTaskInstance = "manage_humantaskinstance";
         }
     }
 }

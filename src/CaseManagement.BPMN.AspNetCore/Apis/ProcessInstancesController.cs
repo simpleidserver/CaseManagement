@@ -64,7 +64,7 @@ namespace CaseManagement.BPMN.AspNetCore.Apis
         }
 
         [HttpGet("{id}/start")]
-        [Authorize("Authenticated")]
+        // [Authorize("Authenticated")]
         public async Task<IActionResult> Start(string id, CancellationToken cancellationToken)
         {
             try

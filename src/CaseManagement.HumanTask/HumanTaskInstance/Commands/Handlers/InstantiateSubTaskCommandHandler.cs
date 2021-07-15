@@ -70,11 +70,11 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
                 OperationParameters = operationParameters,
                 IgnorePermissions = true
             }, cancellationToken);
-            var hi = await _humanTaskInstanceQueryRepository.Get(result, cancellationToken);
+            var hi = await _humanTaskInstanceQueryRepository.Get(result.Id, cancellationToken);
             hi.SetParent(humanTaskInstance.HumanTaskDefName, humanTaskInstance.AggregateId);
             await _humanTaskInstanceCommandRepository.Update(hi, cancellationToken);
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
-            return result;
+            return result.Id;
         }
     }
 }

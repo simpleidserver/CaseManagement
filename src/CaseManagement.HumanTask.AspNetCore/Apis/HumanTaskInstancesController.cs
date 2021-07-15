@@ -27,7 +27,7 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
         #region Actions
 
         [HttpPost]
-        [Authorize(HumanTaskConstants.ScopeNames.CreateHumanTaskInstance)]
+        [Authorize(HumanTaskConstants.ScopeNames.ManageHumanTaskInstance)]
         public Task<IActionResult> Add([FromBody] CreateHumanTaskInstanceCommand parameter, CancellationToken token)
         {
             parameter.IgnorePermissions = true;
@@ -113,6 +113,25 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             }
         }
 
+        [HttpPost("{id}/force/claim")]
+        [Authorize(HumanTaskConstants.ScopeNames.ManageHumanTaskInstance)]
+        public async Task<IActionResult> Claim(string id, [FromBody] ForceClaimHumanTaskInstanceCommand cmd, CancellationToken token)
+        {
+            try
+            {
+                cmd.HumanTaskInstanceId = id;
+                await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
+            }
+        }
+
         [HttpGet("{id}/start")]
         [Authorize("Authenticated")]
         public async Task<IActionResult> Start(string id, CancellationToken token)
@@ -141,6 +160,26 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             {
                 var valErrors = ex.ValidationErrors.Select(_ => new KeyValuePair<string, string>("bad_request", _)).ToList();
                 return this.ToError(valErrors, HttpStatusCode.BadRequest, Request);
+            }
+        }
+
+
+        [HttpPost("{id}/force/start")]
+        [Authorize(HumanTaskConstants.ScopeNames.ManageHumanTaskInstance)]
+        public async Task<IActionResult> Start(string id, [FromBody] ForceStartHumanTaskInstanceCommand cmd, CancellationToken token)
+        {
+            try
+            {
+                cmd.HumanTaskInstanceId = id;
+                await _mediator.Send(cmd, token);
+                return new NoContentResult();
+            }
+            catch (UnknownHumanTaskInstanceException ex)
+            {
+                return this.ToError(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("bad_request", ex.Message)
+                }, HttpStatusCode.NotFound, Request);
             }
         }
 
@@ -309,7 +348,7 @@ namespace CaseManagement.HumanTask.AspNetCore.Apis
             {
                 parameter.Claims = User.GetClaims();
                 var result = await _mediator.Send(parameter, token);
-                return new CreatedResult(string.Empty, new { id = result });
+                return new CreatedResult(string.Empty, result);
             }
             catch (UnknownHumanTaskDefException ex)
             {

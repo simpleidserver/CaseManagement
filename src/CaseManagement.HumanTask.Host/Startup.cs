@@ -157,6 +157,8 @@ namespace CaseManagement.HumanTask.Host
                         "bpmnClient",
                         "caseManagementTasklistWebsite",
                         "caseManagementWebsite",
+                        "simpleIdServerWebsite",
+                        "humanTaskClient",
                         "https://localhost:60000",
                         "https://simpleidserver.northeurope.cloudapp.azure.com/openid"
                     },

@@ -1,6 +1,7 @@
 ﻿using CaseManagement.HumanTask.Authorization;
 using CaseManagement.HumanTask.Domains;
 using CaseManagement.HumanTask.Exceptions;
+using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
 using CaseManagement.HumanTask.Parser;
 using CaseManagement.HumanTask.Persistence;
 using CaseManagement.HumanTask.Resources;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
 {
-    public class CreateHumanTaskInstanceCommandHandler : IRequestHandler<CreateHumanTaskInstanceCommand, string>
+    public class CreateHumanTaskInstanceCommandHandler : IRequestHandler<CreateHumanTaskInstanceCommand, TaskInstanceCreatedResult>
     {
         private readonly IHumanTaskDefQueryRepository _humanTaskDefQueryRepository;
         private readonly IHumanTaskDefCommandRepository _humanTaskDefCommandRepository;
@@ -42,7 +43,7 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             _logger = logger;
         }
 
-        public async Task<string> Handle(CreateHumanTaskInstanceCommand request, CancellationToken cancellationToken)
+        public async Task<TaskInstanceCreatedResult> Handle(CreateHumanTaskInstanceCommand request, CancellationToken cancellationToken)
         {
             if (request.Claims == null || !request.Claims.Any())
             {
@@ -109,7 +110,11 @@ namespace CaseManagement.HumanTask.HumanTaskInstance.Commands.Handlers
             await _humanTaskInstanceCommandRepository.SaveChanges(cancellationToken);
             humanTaskDef.IncrementInstance();
             await _humanTaskDefCommandRepository.Update(humanTaskDef, cancellationToken);
-            return humanTaskInstance.AggregateId;
+            return new TaskInstanceCreatedResult
+            {
+                Id = humanTaskInstance.AggregateId,
+                DefId = humanTaskDef.AggregateId
+            };
         }
 
         private static ICollection<PeopleAssignmentDefinition> EnrichAssignment(HumanTaskDefinitionAggregate humanTaskDef, CreateHumanTaskInstanceCommand request)

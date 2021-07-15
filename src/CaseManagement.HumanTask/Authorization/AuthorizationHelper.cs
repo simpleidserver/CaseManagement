@@ -116,7 +116,7 @@ namespace CaseManagement.HumanTask.Authorization
 
         private static bool IsAdmin(IEnumerable<KeyValuePair<string, string>> claims)
         {
-            return claims.Any(_ => _.Key == "scope" && _.Value == HumanTaskConstants.ScopeNames.CreateHumanTaskInstance);
+            return claims.Any(_ => _.Key == "scope" && _.Value == HumanTaskConstants.ScopeNames.ManageHumanTaskInstance);
         }
     }
 }

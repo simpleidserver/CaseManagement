@@ -66,7 +66,7 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                         Address = _options.OAuthTokenEndpoint,
                         ClientId = _options.ClientId,
                         ClientSecret = _options.ClientSecret,
-                        Scope = "create_humantaskinstance"
+                        Scope = "manage_humantaskinstance"
                     }, token);
                     if (tokenResponse.IsError)
                     {
@@ -91,10 +91,11 @@ namespace CaseManagement.BPMN.ProcessInstance.Processors.Activities.Handlers
                     var str = await httpResult.Content.ReadAsStringAsync();
                     var o = JObject.Parse(str);
                     var humanTaskInstanceId = o["id"].ToString();
+                    var humanTaskDefId = o["defId"].ToString();
                     executionContext.Instance.UpdateMetadata(pointer.InstanceFlowNodeId, HUMANTASK_INSTANCE_ID_NAME, humanTaskInstanceId);
                     var humanTaskInstance = new JObject();
                     humanTaskInstance.Add("id", humanTaskInstanceId);
-                    humanTaskInstance.Add("fileId", userTask.HumanTaskName);
+                    humanTaskInstance.Add("fileId", humanTaskDefId);
                     var messageContent = new JObject();
                     messageContent.Add("humanTaskInstance", humanTaskInstance);
                     executionContext.Instance.ConsumeMessage(new MessageToken

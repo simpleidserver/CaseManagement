@@ -1,11 +1,12 @@
 ﻿using CaseManagement.HumanTask.Common;
+using CaseManagement.HumanTask.HumanTaskInstance.Queries.Results;
 using MediatR;
 using System;
 using System.Collections.Generic;
 
 namespace CaseManagement.HumanTask.HumanTaskInstance.Commands
 {
-    public class CreateHumanTaskInstanceCommand : IRequest<string>
+    public class CreateHumanTaskInstanceCommand : IRequest<TaskInstanceCreatedResult>
     {
         public CreateHumanTaskInstanceCommand()
         {

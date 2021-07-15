@@ -10,9 +10,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void AddDefaultHumanTaskAuthorizationPolicy(this AuthorizationOptions opts)
         {
             opts.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
-            opts.AddPolicy(HumanTaskConstants.ScopeNames.CreateHumanTaskInstance, p =>
+            opts.AddPolicy(HumanTaskConstants.ScopeNames.ManageHumanTaskInstance, p =>
             {
-                p.RequireClaim("scope", HumanTaskConstants.ScopeNames.CreateHumanTaskInstance);
+                p.RequireClaim("scope", HumanTaskConstants.ScopeNames.ManageHumanTaskInstance);
             });
         }
     }
