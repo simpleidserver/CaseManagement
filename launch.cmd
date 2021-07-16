@@ -1,5 +1,3 @@
-START cmd /k "cd src/CaseManagement.Identity && dotnet run"
-START cmd /k "cd src/CaseManagement.OAuth && dotnet run"
 START cmd /k "cd src/CaseManagement.HumanTask.Host && dotnet run
 START cmd /k "cd src/CaseManagement.BPMN.Host && dotnet run"
 START cmd /k "cd src/CaseManagement.CMMN.Host && dotnet run"
