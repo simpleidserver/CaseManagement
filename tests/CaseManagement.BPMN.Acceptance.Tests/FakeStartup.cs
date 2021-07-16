@@ -36,7 +36,7 @@ namespace CaseManagement.BPMN.Acceptance.Tests
             services.AddAuthorization(_ =>
             {
                 _.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
-                _.AddPolicy(HumanTaskConstants.ScopeNames.CreateHumanTaskInstance, p => p.RequireAssertion(__ => true));
+                _.AddPolicy(HumanTaskConstants.ScopeNames.ManageHumanTaskInstance, p => p.RequireAssertion(__ => true));
             });
             services
                 .AddMvc(opts => opts.EnableEndpointRouting = false)

@@ -58,7 +58,7 @@ namespace CaseManagement.CMMN.Acceptance.Tests
                 // Case worker task
                 policy.AddPolicy("get_caseworkertasks", p => p.RequireAuthenticatedUser());
                 policy.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
-                policy.AddPolicy(HumanTaskConstants.ScopeNames.CreateHumanTaskInstance, p => p.RequireAssertion(__ => true));
+                policy.AddPolicy(HumanTaskConstants.ScopeNames.ManageHumanTaskInstance, p => p.RequireAssertion(__ => true));
             });
             var emptyTask = HumanTaskDefBuilder.New("emptyTask")
                 .SetTaskInitiatorUserIdentifiers(new List<string> { "thabart" })

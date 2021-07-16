@@ -50,7 +50,7 @@ namespace CaseManagement.BPMN.Tests
         [Fact]
         public async Task When_Execute_StartEvent_With_MessageEventDefinition()
         {
-            const string messageName = "alert";
+            const string messageName = "message";
             var processInstance = ProcessInstanceBuilder.New("processFile")
                 .AddMessage(messageName, "message", string.Empty)
                 .AddStartEvent("1", "evt", _ =>
@@ -70,9 +70,8 @@ namespace CaseManagement.BPMN.Tests
             await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
             await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
             var casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
-            await jobServer.EnqueueMessage(processInstance.AggregateId, "message", null, CancellationToken.None);
-            casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
-            await jobServer.EnqueueMessage(processInstance.AggregateId, "message", null, CancellationToken.None);
+            await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, null, CancellationToken.None);
+            await jobServer.EnqueueMessage(processInstance.AggregateId, messageName, null, CancellationToken.None);
             casePlanInstance = await jobServer.Get(processInstance.AggregateId, CancellationToken.None);
             var startEventInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "1");
             var emptyTaskInstance = casePlanInstance.ElementInstances.First(_ => _.FlowNodeId == "2");
@@ -298,7 +297,7 @@ namespace CaseManagement.BPMN.Tests
                 .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
                 {
-                    Content = new StringContent("{ 'id' : '{" + humanTaskInstanceId + "}' }")
+                    Content = new StringContent("{ 'id' : '" + humanTaskInstanceId + "', 'defId': 'defId' }")
                 });
             await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
             await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);
@@ -342,7 +341,7 @@ namespace CaseManagement.BPMN.Tests
                 .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
                 {
-                    Content = new StringContent("{ 'id' : '{" + humanTaskInstanceId + "}' }")
+                    Content = new StringContent("{ 'id' : '" + humanTaskInstanceId + "', 'defId': 'defId' }")
                 });
 
             await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
@@ -359,8 +358,8 @@ namespace CaseManagement.BPMN.Tests
             Assert.Equal(1, executionPath.Pointers.First(p => p.FlowNodeId == "1").Outgoing.Count());
             Assert.Equal(1, executionPath.Pointers.First(p => p.FlowNodeId == "2").Incoming.Count());
             Assert.Equal(1, executionPath.Pointers.First(p => p.FlowNodeId == "2").Outgoing.Count());
-            Assert.Equal(3, executionPath.Pointers.First(p => p.FlowNodeId == "3").Incoming.Count());
-            Assert.Equal(3, executionPath.Pointers.First(p => p.FlowNodeId == "4").Incoming.Count());
+            Assert.Equal(2, executionPath.Pointers.First(p => p.FlowNodeId == "3").Incoming.Count());
+            Assert.Equal(2, executionPath.Pointers.First(p => p.FlowNodeId == "4").Incoming.Count());
         }
 
         [Fact]
@@ -398,7 +397,7 @@ namespace CaseManagement.BPMN.Tests
                 .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
                 {
-                    Content = new StringContent("{ 'id' : '{" + humanTaskInstanceId + "}' }")
+                    Content = new StringContent("{ 'id' : '" + humanTaskInstanceId + "', 'defId': 'defId' }")
                 });
             await jobServer.RegisterProcessInstance(processInstance, CancellationToken.None);
             await jobServer.EnqueueProcessInstance(processInstance.AggregateId, true, CancellationToken.None);

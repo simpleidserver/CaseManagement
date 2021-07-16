@@ -24,7 +24,7 @@ namespace CaseManagement.HumanTasks.Acceptance.Tests
             services.AddAuthorization(policy =>
             {
                 policy.AddPolicy("Authenticated", p => p.RequireAuthenticatedUser());
-                policy.AddPolicy("create_humantaskinstance", p => p.RequireAuthenticatedUser());
+                policy.AddPolicy("manage_humantaskinstance", p => p.RequireAuthenticatedUser());
             });
             services
                 .AddMvc(opts => opts.EnableEndpointRouting = false)
