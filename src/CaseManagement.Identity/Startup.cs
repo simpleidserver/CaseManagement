@@ -47,17 +47,16 @@ namespace CaseManagement.Identity
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()));
-            services.AddMvc();
+            services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthorization(opts => opts.AddDefaultOAUTHAuthorizationPolicy());
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddSIDOpenID(opt =>
             {
                 
             })
-                .AddClients(DefaultConfiguration.Clients)
+                .AddClients(DefaultConfiguration.Clients, DefaultConfiguration.Scopes)
                 .AddAcrs(DefaultConfiguration.AcrLst)
                 .AddUsers(DefaultConfiguration.Users)
-                .AddScopes(DefaultConfiguration.Scopes)
                 .AddJsonWebKeys(new List<JsonWebKey> { sigJsonWebKey })
                 .AddLoginPasswordAuthentication();
             services.Configure<ForwardedHeadersOptions>(options =>

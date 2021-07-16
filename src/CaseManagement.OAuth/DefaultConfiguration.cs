@@ -13,7 +13,7 @@ namespace CaseManagement.OAuth
         {
             new OAuthScope
             {
-                Name = "create_humantaskinstance",
+                Name = "manage_humantaskinstance",
                 IsExposedInConfigurationEdp = true
             }
         };
@@ -25,7 +25,7 @@ namespace CaseManagement.OAuth
                 ClientId = "bpmnClient",
                 Secrets = new List<ClientSecret>
                 {
-                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("bpmnClientSecret"))
+                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("bpmnClientSecret"), null)
                 },
                 ClientNames = new []
                 {
@@ -55,7 +55,7 @@ namespace CaseManagement.OAuth
                 ClientId = "cmmnClient",
                 Secrets = new List<ClientSecret>
                 {
-                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("cmmnClientSecret"))
+                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("cmmnClientSecret"), null)
                 },
                 ClientNames = new []
                 {
@@ -85,7 +85,7 @@ namespace CaseManagement.OAuth
                 ClientId = "humanTaskClient",
                 Secrets = new List<ClientSecret>
                 {
-                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("humanTaskClientSecret"))
+                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("humanTaskClientSecret"), null)
                 },
                 ClientNames = new []
                 {

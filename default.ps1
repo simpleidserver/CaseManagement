@@ -55,7 +55,6 @@ task compile -depends clean {
 task pack -depends compile {
 	exec { dotnet pack $source_dir\CaseManagement.BPMN\CaseManagement.BPMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.BPMN.AspNetCore\CaseManagement.BPMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }
-	exec { dotnet pack $source_dir\CaseManagement.BPMN.Common\CaseManagement.BPMN.Common.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.BPMN.Persistence.EF\CaseManagement.BPMN.Persistence.EF.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN\CaseManagement.CMMN.csproj -c $config --no-build $versionSuffix --output $result_dir }
 	exec { dotnet pack $source_dir\CaseManagement.CMMN.AspNetCore\CaseManagement.CMMN.AspNetCore.csproj -c $config --no-build $versionSuffix --output $result_dir }

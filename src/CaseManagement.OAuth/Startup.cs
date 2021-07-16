@@ -33,7 +33,7 @@ namespace CaseManagement.OAuth
                 }).SetAlg(rsa, "RS256").Build();
             }
 
-            services.AddMvc();
+            services.AddMvc(option => option.EnableEndpointRouting = false).AddNewtonsoftJson();
             services.AddAuthorization(opts => opts.AddDefaultOAUTHAuthorizationPolicy());
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddSIDOAuth(o =>

@@ -6,6 +6,7 @@ using SimpleIdServer.OpenID;
 using SimpleIdServer.OpenID.Domains;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace CaseManagement.Identity
 {
@@ -14,9 +15,9 @@ namespace CaseManagement.Identity
         private static OpenIdScope SCOPE_ROLE = new OpenIdScope
         {
             Name = "role",
-            Claims = new List<string>
+            Claims = new List<OpenIdScopeClaim>
             {
-                "role"
+                new OpenIdScopeClaim("role", true)
             }
         };
 
@@ -51,11 +52,11 @@ namespace CaseManagement.Identity
                         Value = PasswordHelper.ComputeHash("password")
                     }
                 },
-                Claims = new List<KeyValuePair<string, string>>
+                Claims = new List<Claim>
                 {
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "administrator"),
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "administrator"),
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Role, "admin")
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "administrator"),
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "administrator"),
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.Role, "admin")
                 }
             },
             new OAuthUser
@@ -69,11 +70,11 @@ namespace CaseManagement.Identity
                         Value = PasswordHelper.ComputeHash("password")
                     }
                 },
-                Claims = new List<KeyValuePair<string, string>>
+                Claims = new List<Claim>
                 {
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "businessanalyst"),
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "businessanalyst"),
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Role, "businessanalyst")
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "businessanalyst"),
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "businessanalyst"),
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.Role, "businessanalyst")
                 }
             },
             new OAuthUser
@@ -87,11 +88,11 @@ namespace CaseManagement.Identity
                         Value = PasswordHelper.ComputeHash("password")
                     }
                 },
-                Claims = new List<KeyValuePair<string, string>>
+                Claims = new List<Claim>
                 {
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "caseworker"),
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "caseworker"),
-                    new KeyValuePair<string, string>(SimpleIdServer.Jwt.Constants.UserClaims.Role, "caseworker")
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.Subject, "caseworker"),
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.GivenName, "caseworker"),
+                    new Claim(SimpleIdServer.Jwt.Constants.UserClaims.Role, "caseworker")
                 }
             }
         };
@@ -103,7 +104,7 @@ namespace CaseManagement.Identity
                 ClientId = "caseManagementWebsite",
                 Secrets = new List<ClientSecret>
                 {
-                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("b98113b5-f45f-4a4a-9db5-610b7183e148"))
+                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("b98113b5-f45f-4a4a-9db5-610b7183e148"), null)
                 },
                 TokenEndPointAuthMethod = "client_secret_post",
                 ApplicationType = "web",
@@ -141,7 +142,7 @@ namespace CaseManagement.Identity
                 ClientId = "caseManagementTasklistWebsite",
                 Secrets = new List<ClientSecret>
                 {
-                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("b98113b5-f45f-4a4a-9db5-610b7183e148"))
+                    new ClientSecret(ClientSecretTypes.SharedSecret, PasswordHelper.ComputeHash("b98113b5-f45f-4a4a-9db5-610b7183e148"), null)
                 },
                 TokenEndPointAuthMethod = "client_secret_post",
                 ApplicationType = "web",
