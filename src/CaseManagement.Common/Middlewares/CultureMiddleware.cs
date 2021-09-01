@@ -33,7 +33,7 @@ namespace CaseManagement.Common.Middlewares
                     catch (CultureNotFoundException) { }
                 }
 
-                if (culture != null)
+                if (culture != null && IsCultureValid(culture.Name))
                 {
                     _logger.LogInformation($"Culture '{culture.ThreeLetterISOLanguageName}' is used");
                     Thread.CurrentThread.CurrentCulture = culture;
@@ -42,6 +42,22 @@ namespace CaseManagement.Common.Middlewares
             }
 
             await _next.Invoke(context);
+        }
+
+        private static bool IsCultureValid(string cultureName)
+        {
+            for (int i = 0; i < cultureName.Length; i++)
+            {
+                char c = cultureName[i];
+                if (char.IsLetterOrDigit(c) || c == '-' || c == '_')
+                {
+                    continue;
+                }
+
+                return false;
+            }
+
+            return true;
         }
     }
 }
